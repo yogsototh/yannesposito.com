@@ -1,50 +1,48 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>YBlog - Haskell Progressive Example</title>
         <meta name="keywords" content="Haskell, programming, functional, tutorial, fractal">
 
-        <link rel="shortcut icon" type="image/x-icon" href="/Scratch/img/favicon.ico" />
-        <link rel="stylesheet" type="text/css" href="/Scratch/css/scientific.css" />
-        <link rel="stylesheet" type="text/css" href="/Scratch/css/solarized.css" />
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/solarized.css" />
 		<!-- Font -->
-        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
-		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomen"/>
+        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+		<link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomen" />
         <!--[if lt IE 9]>
         <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
         <![endif]-->
     </head>
     <body lang="en">
-		<script type="text/javascript">// <![CDATA[
-            document.write('<div id="blackpage"><div>Soon<img src="/Scratch/img/loading.gif" alt="Loading"/></div></div>');
-            // ]]>
+		<script type="text/javascript">// 
+            document.write('<div id="blackpage"><div>Soon<img src="/Scratch/img/loading.gif" alt="Loading"></img></div></div>');
+            // 
         </script>
         <div id="content">
 	        			<div id="header">
 			    <div id="choix">
         	        <div id="choixlang">
-						<a href="/Scratch/fr/blog/Haskell-OpenGL-Mandelbrot/index.html"
-							onclick="setLanguage('fr')">
+						<a href="../../../../Scratch/fr/blog/Haskell-OpenGL-Mandelbrot" onclick="setLanguage('fr')">
 							Français </a>
         	        </div>
-					<script type="text/javascript">// <![CDATA[
+					<script type="text/javascript">// 
 					document.write('<div id="switchcss"><a href="#">Change Theme</a></div>');
-					// ]]>
+					// 
 					</script>
         	        <div class="flush"></div>
         	    </div>
         	    <div id="navigation">
-                    <a href="/">Home</a>
+                    <a href="../../../../">Home</a>
                     <span class="sep">¦</span>
-        	        <a href="/Scratch/en/blog">Blog</a>
+        	        <a href="../../../../Scratch/en/blog">Blog</a>
                     <span class="sep">¦</span>
-                    <a href="/Scratch/en/softwares">Softwares</a>
+                    <a href="../../../../Scratch/en/softwares">Softwares</a>
                     <span class="sep">¦</span>
-                    <a href="/Scratch/en/about">About</a>
+                    <a href="../../../../Scratch/en/about">About</a>
         	    </div>
 			</div>
 
@@ -54,14 +52,14 @@
 			<div class="flush"></div>
 			<div id="afterheader">
 				<div class="corps">
-					<p><img src="/Scratch/img/blog/Haskell-OpenGL-Mandelbrot/BenoitBMandelbrot.jpg" alt="The B in Benoît B. Mandelbrot stand for Benoît B. Mandelbrot"/></p>
+					<p><img src="../../../../Scratch/img/blog/Haskell-OpenGL-Mandelbrot/BenoitBMandelbrot.jpg" alt="The B in Benoît B. Mandelbrot stand for Benoît B. Mandelbrot" /></p>
 <div class="intro">
 
 <p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span> A progressive Haskell example. A Mandelbrot set extended in 3D, rendered using OpenGL and coded with Haskell. In the end the code will be very clean. The significant stuff will be in a pure functional bubble. The display details will be put in an external module playing the role of a wrapper. Imperative language could also benefit from this functional organization.</p>
 </div>
 
 <h2 id="introduction">Introduction</h2>
-<p>In my <a href="/Scratch/en/blog/Haskell-the-Hard-Way/">preceding article</a> I introduced Haskell.</p>
+<p>In my <a href="../../../../Scratch/en/blog/Haskell-the-Hard-Way/">preceding article</a> I introduced Haskell.</p>
 <p>This article goes further. It will show how to use functional programming with interactive programs. But more than that, it will show how to organize your code in a functional way. This article is more about functional paradigm than functional language. The code organization can be used in most imperative language.</p>
 <p>As Haskell is designed for functional paradigm, it is easier to use in this context. In reality, the firsts sections will use an imperative paradigm. As you can use functional paradigm in imperative language, you can also use imperative paradigm in functional languages.</p>
 <p>This article is about creating an useful and clean program. It can interact with the user in real time. It uses OpenGL, a library with imperative programming foundations. Despite this fact, most of the final code will remain in the pure part (no <code>IO</code>).</p>
@@ -76,25 +74,25 @@
 <p>This time, we will not parallelize the computation. Instead, we will display the Mandelbrot set extended in 3D using OpenGL and Haskell. You will be able to move it using your keyboard. This object is a Mandelbrot set in the plan (z=0), and something nice to see in 3D.</p>
 <p>Here are some screenshots of the result:</p>
 <figure>
-<img src="/Scratch/img/blog/Haskell-OpenGL-Mandelbrot/GoldenMandelbulb.png" alt="The entire Mandelbulb"/>
+<img src="../../../../Scratch/img/blog/Haskell-OpenGL-Mandelbrot/GoldenMandelbulb.png" alt="The entire Mandelbulb" />
 <figcaption>
 The entire Mandelbulb
 </figcaption></figure>
 <figure>
-<img src="/Scratch/img/blog/Haskell-OpenGL-Mandelbrot/3DMandelbulbDetail.png" alt="A Mandelbulb detail"/>
+<img src="../../../../Scratch/img/blog/Haskell-OpenGL-Mandelbrot/3DMandelbulbDetail.png" alt="A Mandelbulb detail" />
 <figcaption>
 A Mandelbulb detail
 </figcaption></figure>
 <figure>
-<img src="/Scratch/img/blog/Haskell-OpenGL-Mandelbrot/3DMandelbulbDetail2.png" alt="Another detail of the Mandelbulb"/>
+<img src="../../../../Scratch/img/blog/Haskell-OpenGL-Mandelbrot/3DMandelbulbDetail2.png" alt="Another detail of the Mandelbulb" />
 <figcaption>
 Another detail of the Mandelbulb
 </figcaption></figure>
 
 <p>And you can see the intermediate steps to reach this goal:</p>
-<p><img src="/Scratch/img/blog/Haskell-OpenGL-Mandelbrot/HGL_Plan.png" alt="The parts of the article"/></p>
+<p><img src="../../../../Scratch/img/blog/Haskell-OpenGL-Mandelbrot/HGL_Plan.png" alt="The parts of the article" /></p>
 <p>From the 2nd section to the 4th it will be <em>dirtier</em> and <em>dirtier</em>. We start cleaning the code at the 5th section.</p>
-<hr/>
+<hr />
 <p><a href="code/01_Introduction/hglmandel.lhs" class="cut">Download the source code of this section → 01_Introduction/<strong>hglmandel.lhs</strong></a></p>
 <h2 id="first-version">First version</h2>
 <p>We can consider two parts. The first being mostly some boilerplate<sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup>. And the second part more focused on OpenGL and content.</p>
@@ -146,7 +144,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
   <span class="co">-- We create a window with some title</span>
   createWindow <span class="st">&quot;Mandelbrot Set with Haskell and OpenGL&quot;</span>
   <span class="co">-- Each time we will need to update the display</span>
-  <span class="co">-- we will call the function &#39;display&#39;</span>
+  <span class="co">-- we will call the function 'display'</span>
   displayCallback <span class="fu">$=</span> display
   <span class="co">-- We enter the main loop</span>
   mainLoop</code></pre>
@@ -172,7 +170,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
       drawColoredPoint (x,y,c) <span class="fu">=</span> <span class="kw">do</span>
           color c <span class="co">-- set the current color to c</span>
           <span class="co">-- then draw the point at position (x,y,0)</span>
-          <span class="co">-- remember we&#39;re in 3D</span>
+          <span class="co">-- remember we're in 3D</span>
           vertex <span class="fu">$</span> <span class="dt">Vertex3</span> x y <span class="dv">0</span> </code></pre>
 </div>
 
@@ -232,13 +230,13 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
 </div>
 
 <p>Well, if you download this file (look at the bottom of this section), compile it and run it this is the result:</p>
-<p><img src="/Scratch/img/blog/Haskell-OpenGL-Mandelbrot/hglmandel_v01.png" alt="The mandelbrot set version 1"/></p>
+<p><img src="../../../../Scratch/img/blog/Haskell-OpenGL-Mandelbrot/hglmandel_v01.png" alt="The mandelbrot set version 1" /></p>
 <p>A first very interesting property of this program is that the computation for all the points is done only once. It is a bit long before the first image appears, but if you resize the window, it updates instantaneously. This property is a direct consequence of purity. If you look closely, you see that <code>allPoints</code> is a pure list. Therefore, calling <code>allPoints</code> will always render the same result and Haskell is clever enough to use this property. While Haskell doesn’t garbage collect <code>allPoints</code> the result is reused for free. We did not specified this value should be saved for later use. It is saved for us.</p>
 <p>See what occurs if we make the window bigger:</p>
-<p><img src="/Scratch/img/blog/Haskell-OpenGL-Mandelbrot/hglmandel_v01_too_wide.png" alt="The mandelbrot too wide, black lines and columns"/></p>
+<p><img src="../../../../Scratch/img/blog/Haskell-OpenGL-Mandelbrot/hglmandel_v01_too_wide.png" alt="The mandelbrot too wide, black lines and columns" /></p>
 <p>We see some black lines because we have drawn less point than there is on the surface. We can repair this by drawing little squares instead of just points. But, instead we will do something a bit different and unusual.</p>
 <p><a href="code/01_Introduction/hglmandel.lhs" class="cut">Download the source code of this section → 01_Introduction/<strong>hglmandel.lhs</strong> </a></p>
-<hr/>
+<hr />
 <p><a href="code/02_Edges/HGLMandelEdge.lhs" class="cut">Download the source code of this section → 02_Edges/<strong>HGLMandelEdge.lhs</strong></a></p>
 <h2 id="only-the-edges">Only the edges</h2>
 <div style="display:none">
@@ -278,7 +276,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
   <span class="co">-- We create a window with some title</span>
   createWindow <span class="st">&quot;Mandelbrot Set with Haskell and OpenGL&quot;</span>
   <span class="co">-- Each time we will need to update the display</span>
-  <span class="co">-- we will call the function &#39;display&#39;</span>
+  <span class="co">-- we will call the function 'display'</span>
   displayCallback <span class="fu">$=</span> display
   <span class="co">-- We enter the main loop</span>
   mainLoop
@@ -307,7 +305,7 @@ height <span class="fu">=</span> <span class="dv">320</span><span class="ot"> ::
       drawColoredPoint (x,y,c) <span class="fu">=</span> <span class="kw">do</span>
           color c <span class="co">-- set the current color to c</span>
           <span class="co">-- then draw the point at position (x,y,0)</span>
-          <span class="co">-- remember we&#39;re in 3D</span>
+          <span class="co">-- remember we're in 3D</span>
           vertex <span class="fu">$</span> <span class="dt">Vertex3</span> x y <span class="dv">0</span> </code></pre>
 </div>
 
@@ -323,7 +321,7 @@ height <span class="fu">=</span> <span class="dv">320</span><span class="ot"> ::
 positivePoints <span class="fu">=</span> <span class="kw">do</span>
      x <span class="ot">&lt;-</span> [<span class="fu">-</span>width<span class="fu">..</span>width]
      <span class="kw">let</span> y <span class="fu">=</span> maxZeroIndex (mandel x) <span class="dv">0</span> height (log2 height)
-     <span class="kw">if</span> y <span class="fu">&lt;</span> <span class="dv">1</span> <span class="co">-- We don&#39;t draw point in the absciss</span>
+     <span class="kw">if</span> y <span class="fu">&lt;</span> <span class="dv">1</span> <span class="co">-- We don't draw point in the absciss</span>
         <span class="kw">then</span> []
         <span class="kw">else</span> <span class="fu">return</span> (x<span class="fu">/</span>width,y<span class="fu">/</span>height,colorFromValue <span class="fu">$</span> mandel x y)
      <span class="kw">where</span>
@@ -334,7 +332,7 @@ positivePoints <span class="fu">=</span> <span class="kw">do</span>
 <pre class="no-highlight"><code>positivePoints =
     for all x in the range [-width..width]
     let y be smallest number s.t. mandel x y &gt; 0
-    if y is on 0 then don&#39;t return a point
+    if y is on 0 then don't return a point
     else return the value corresonding to (x,y,color for (x+iy))</code></pre>
 <p>In fact using the list monad you write like if you consider only one element at a time and the computation is done non deterministically. To find the smallest number such that <code>mandel x y &gt; 0</code> we use a simple dichotomy:</p>
 <div class="codehighlight">
@@ -355,7 +353,7 @@ maxZeroIndex func minval maxval n <span class="fu">=</span>
 </div>
 
 <p>No rocket science here. See the result now:</p>
-<p><img src="/Scratch/img/blog/Haskell-OpenGL-Mandelbrot/HGLMandelEdges.png" alt="The edges of the mandelbrot set"/></p>
+<p><img src="../../../../Scratch/img/blog/Haskell-OpenGL-Mandelbrot/HGLMandelEdges.png" alt="The edges of the mandelbrot set" /></p>
 <div style="display:none">
 
 <div class="codehighlight">
@@ -386,7 +384,7 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
 </div>
 
 <p><a href="code/02_Edges/HGLMandelEdge.lhs" class="cut">Download the source code of this section → 02_Edges/<strong>HGLMandelEdge.lhs</strong> </a></p>
-<hr/>
+<hr />
 <p><a href="code/03_Mandelbulb/Mandelbulb.lhs" class="cut">Download the source code of this section → 03_Mandelbulb/<strong>Mandelbulb.lhs</strong></a></p>
 <h2 id="d-mandelbrot">3D Mandelbrot?</h2>
 <p>Now we will we extend to a third dimension. But, there is no 3D equivalent to complex. In fact, the only extension known are quaternions (in 4D). As I know almost nothing about quaternions, I will use some extended complex, instead of using a 3D projection of quaternions. I am pretty sure this construction is not useful for numbers. But it will be enough for us to create something that look nice.</p>
@@ -403,9 +401,7 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
 <li><p>Keyboard: hitting some key change the state of IORef</p></li>
 <li><p>Generate 3D Object</p></li>
 </ul>
-<p><sub>~</sub> allPoints :: [ColoredPoint]<br /> allPoints = for all (x,y), -width<x<width, 0<y<height
-      Let z be the minimal depth such that
-          mandel x y z > 0 add the points (x, y, z,color) (x,-y, z,color) (x, y,-z,color) (x,-y,-z,color) + neighbors to make triangles <sub>~</sub></p>
+<p><sub>~</sub> allPoints :: [ColoredPoint]<br /> allPoints = for all (x,y), -width<x<width, 0<y<height Let z be the minimal depth such that mandel x y z> 0 add the points (x, y, z,color) (x,-y, z,color) (x, y,-z,color) (x,-y,-z,color) + neighbors to make triangles <sub>~</sub></p>
 </blockquote>
 <div style="display:none">
 
@@ -425,12 +421,12 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
 <span class="kw">instance</span> <span class="kw">Num</span> <span class="dt">ExtComplex</span> <span class="kw">where</span>
     <span class="co">-- The shape of the 3D mandelbrot </span>
     <span class="co">-- will depend on this formula</span>
-    <span class="dt">C</span> (x,y,z) <span class="fu">*</span> <span class="dt">C</span> (x&#39;,y&#39;,z&#39;) <span class="fu">=</span> <span class="dt">C</span> (x<span class="fu">*</span>x&#39; <span class="fu">-</span> y<span class="fu">*</span>y&#39; <span class="fu">-</span> z<span class="fu">*</span>z&#39;, 
-                                  x<span class="fu">*</span>y&#39; <span class="fu">+</span> y<span class="fu">*</span>x&#39; <span class="fu">+</span> z<span class="fu">*</span>z&#39;, 
-                                  x<span class="fu">*</span>z&#39; <span class="fu">+</span> z<span class="fu">*</span>x&#39; )
+    <span class="dt">C</span> (x,y,z) <span class="fu">*</span> <span class="dt">C</span> (x',y',z') <span class="fu">=</span> <span class="dt">C</span> (x<span class="fu">*</span>x' <span class="fu">-</span> y<span class="fu">*</span>y' <span class="fu">-</span> z<span class="fu">*</span>z', 
+                                  x<span class="fu">*</span>y' <span class="fu">+</span> y<span class="fu">*</span>x' <span class="fu">+</span> z<span class="fu">*</span>z', 
+                                  x<span class="fu">*</span>z' <span class="fu">+</span> z<span class="fu">*</span>x' )
     <span class="co">-- The rest is straightforward</span>
     <span class="fu">fromInteger</span> n <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">fromIntegral</span> n, <span class="dv">0</span>, <span class="dv">0</span>)
-    <span class="dt">C</span> (x,y,z) <span class="fu">+</span> <span class="dt">C</span> (x&#39;,y&#39;,z&#39;) <span class="fu">=</span> <span class="dt">C</span> (x<span class="fu">+</span>x&#39;, y<span class="fu">+</span>y&#39;, z<span class="fu">+</span>z&#39;)
+    <span class="dt">C</span> (x,y,z) <span class="fu">+</span> <span class="dt">C</span> (x',y',z') <span class="fu">=</span> <span class="dt">C</span> (x<span class="fu">+</span>x', y<span class="fu">+</span>y', z<span class="fu">+</span>z')
     <span class="fu">abs</span> (<span class="dt">C</span> (x,y,z))     <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">sqrt</span> (x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y <span class="fu">+</span> z<span class="fu">*</span>z), <span class="dv">0</span>, <span class="dv">0</span>)
     <span class="fu">signum</span> (<span class="dt">C</span> (x,y,z))  <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">signum</span> x, <span class="fu">signum</span> y, <span class="fu">signum</span> z)</code></pre>
 </div>
@@ -487,7 +483,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
   keyboardMouseCallback <span class="fu">$=</span> 
           <span class="kw">Just</span> (keyboardMouse angle zoom campos)
   <span class="co">-- Each time we will need to update the display</span>
-  <span class="co">-- we will call the function &#39;display&#39;</span>
+  <span class="co">-- we will call the function 'display'</span>
   <span class="co">-- But this time, we add some parameters</span>
   displayCallback <span class="fu">$=</span> display angle zoom campos
   <span class="co">-- We enter the main loop</span>
@@ -502,8 +498,8 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <p>We introduce some helper function to manipulate standard <code>IORef</code>. Mainly <code>modVar x f</code> is equivalent to the imperative <code>x:=f(x)</code>, <code>modFst (x,y) (+1)</code> is equivalent to <code>(x,y) := (x+1,y)</code> and <code>modSnd (x,y) (+1)</code> is equivalent to <code>(x,y) := (x,y+1)</code></p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">modVar v f <span class="fu">=</span> <span class="kw">do</span>
-  v&#39; <span class="ot">&lt;-</span> get v
-  v <span class="fu">$=</span> (f v&#39;)
+  v' <span class="ot">&lt;-</span> get v
+  v <span class="fu">$=</span> (f v')
 mapFst f (x,y) <span class="fu">=</span> (f x,  y)
 mapSnd f (x,y) <span class="fu">=</span> (  x,f y)</code></pre>
 </div>
@@ -511,27 +507,27 @@ mapSnd f (x,y) <span class="fu">=</span> (  x,f y)</code></pre>
 <p>And we use them to code the function handling keyboard. We will use the keys <code>hjkl</code> to rotate, <code>oi</code> to zoom and <code>sedf</code> to move. Also, hitting space will reset the view. Remember that <code>angle</code> and <code>campos</code> are pairs and <code>zoom</code> is a scalar. Also note <code>(+0.5)</code> is the function <code>\x-&gt;x+0.5</code> and <code>(-0.5)</code> is the number <code>-0.5</code> (yes I share your pain).</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">keyboardMouse angle zoom campos key state modifiers position <span class="fu">=</span>
-  <span class="co">-- We won&#39;t use modifiers nor position</span>
+  <span class="co">-- We won't use modifiers nor position</span>
   kact angle zoom campos key state
   <span class="kw">where</span> 
     <span class="co">-- reset view when hitting space</span>
-    kact a z p (<span class="dt">Char</span> <span class="ch">&#39; &#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> <span class="kw">do</span>
+    kact a z p (<span class="dt">Char</span> <span class="ch">' '</span>) <span class="dt">Down</span> <span class="fu">=</span> <span class="kw">do</span>
           a <span class="fu">$=</span> (<span class="dv">0</span>,<span class="dv">0</span>) <span class="co">-- angle </span>
           z <span class="fu">$=</span> <span class="dv">1</span>     <span class="co">-- zoom</span>
           p <span class="fu">$=</span> (<span class="dv">0</span>,<span class="dv">0</span>) <span class="co">-- camera position</span>
     <span class="co">-- use of hjkl to rotate</span>
-    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;h&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapFst (<span class="fu">+</span><span class="fl">0.5</span>))
-    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;l&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapFst (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.5</span>)))
-    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;j&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapSnd (<span class="fu">+</span><span class="fl">0.5</span>))
-    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;k&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapSnd (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.5</span>)))
+    kact a _ _ (<span class="dt">Char</span> <span class="ch">'h'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapFst (<span class="fu">+</span><span class="fl">0.5</span>))
+    kact a _ _ (<span class="dt">Char</span> <span class="ch">'l'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapFst (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.5</span>)))
+    kact a _ _ (<span class="dt">Char</span> <span class="ch">'j'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapSnd (<span class="fu">+</span><span class="fl">0.5</span>))
+    kact a _ _ (<span class="dt">Char</span> <span class="ch">'k'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapSnd (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.5</span>)))
     <span class="co">-- use o and i to zoom</span>
-    kact _ z _ (<span class="dt">Char</span> <span class="ch">&#39;o&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar z (<span class="fu">*</span><span class="fl">1.1</span>)
-    kact _ z _ (<span class="dt">Char</span> <span class="ch">&#39;i&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar z (<span class="fu">*</span><span class="fl">0.9</span>)
+    kact _ z _ (<span class="dt">Char</span> <span class="ch">'o'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar z (<span class="fu">*</span><span class="fl">1.1</span>)
+    kact _ z _ (<span class="dt">Char</span> <span class="ch">'i'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar z (<span class="fu">*</span><span class="fl">0.9</span>)
     <span class="co">-- use sdfe to move the camera</span>
-    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;s&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapFst (<span class="fu">+</span><span class="fl">0.1</span>))
-    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;f&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapFst (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.1</span>)))
-    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;d&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapSnd (<span class="fu">+</span><span class="fl">0.1</span>))
-    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;e&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapSnd (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.1</span>)))
+    kact _ _ p (<span class="dt">Char</span> <span class="ch">'s'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapFst (<span class="fu">+</span><span class="fl">0.1</span>))
+    kact _ _ p (<span class="dt">Char</span> <span class="ch">'f'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapFst (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.1</span>)))
+    kact _ _ p (<span class="dt">Char</span> <span class="ch">'d'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapSnd (<span class="fu">+</span><span class="fl">0.1</span>))
+    kact _ _ p (<span class="dt">Char</span> <span class="ch">'e'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapSnd (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.1</span>)))
     <span class="co">-- any other keys does nothing</span>
     kact _ _ _ _ _ <span class="fu">=</span> <span class="fu">return</span> ()</code></pre>
 </div>
@@ -585,7 +581,7 @@ deep   <span class="fu">=</span> nbDetails</code></pre>
 </div>
 
 <p>In fact, we will provide six ordered points. These points will be used to draw two triangles.</p>
-<p><img src="/Scratch/img/blog/Haskell-OpenGL-Mandelbrot/triangles.png" alt="Explain triangles"/></p>
+<p><img src="../../../../Scratch/img/blog/Haskell-OpenGL-Mandelbrot/triangles.png" alt="Explain triangles" /></p>
 <p>The next function is a bit long. Here is an approximative English version:</p>
 <pre><code>forall x from -width to width
   forall y from -height to height
@@ -599,7 +595,7 @@ depthPoints <span class="fu">=</span> <span class="kw">do</span>
   x <span class="ot">&lt;-</span> [<span class="fu">-</span>width<span class="fu">..</span>width]
   y <span class="ot">&lt;-</span> [<span class="fu">-</span>height<span class="fu">..</span>height]
   <span class="kw">let</span> 
-      depthOf x&#39; y&#39; <span class="fu">=</span> maxZeroIndex (mandel x&#39; y&#39;) <span class="dv">0</span> deep logdeep 
+      depthOf x' y' <span class="fu">=</span> maxZeroIndex (mandel x' y') <span class="dv">0</span> deep logdeep 
       logdeep <span class="fu">=</span> <span class="fu">floor</span> ((<span class="fu">log</span> deep) <span class="fu">/</span> <span class="fu">log</span> <span class="dv">2</span>)
       z1 <span class="fu">=</span> depthOf    x     y
       z2 <span class="fu">=</span> depthOf (x<span class="dv">+1</span>)    y
@@ -631,9 +627,9 @@ depthPoints <span class="fu">=</span> <span class="kw">do</span>
     <span class="co">-- ts are 3D pixels + mandel value</span>
     ts <span class="fu">=</span> <span class="fu">map</span> (\(u,v,w) <span class="ot">-&gt;</span> (u,v,w,mandel u v (w<span class="dv">+1</span>))) zs
     <span class="co">-- ps are 3D opengl points + color value</span>
-    ps <span class="fu">=</span> <span class="fu">map</span> (\(u,v,w,c&#39;) <span class="ot">-&gt;</span> 
-        (u<span class="fu">/</span>width,v<span class="fu">/</span>height,w<span class="fu">/</span>deep,colorFromValue c&#39;)) ts
-  <span class="co">-- If the point diverged too fast, don&#39;t display it</span>
+    ps <span class="fu">=</span> <span class="fu">map</span> (\(u,v,w,c') <span class="ot">-&gt;</span> 
+        (u<span class="fu">/</span>width,v<span class="fu">/</span>height,w<span class="fu">/</span>deep,colorFromValue c')) ts
+  <span class="co">-- If the point diverged too fast, don't display it</span>
   <span class="kw">if</span> (<span class="fu">and</span> <span class="fu">$</span> <span class="fu">map</span> (\(_,_,_,c) <span class="ot">-&gt;</span> c<span class="fu">&gt;=</span><span class="dv">57</span>) ts)
   <span class="kw">then</span> []
   <span class="co">-- Draw two triangles</span>
@@ -704,9 +700,9 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
 </div>
 
 <p>Here is the result:</p>
-<p><img src="/Scratch/img/blog/Haskell-OpenGL-Mandelbrot/mandelbrot_3D.png" alt="A 3D mandelbrot like"/></p>
+<p><img src="../../../../Scratch/img/blog/Haskell-OpenGL-Mandelbrot/mandelbrot_3D.png" alt="A 3D mandelbrot like" /></p>
 <p><a href="code/03_Mandelbulb/Mandelbulb.lhs" class="cut">Download the source code of this section → 03_Mandelbulb/<strong>Mandelbulb.lhs</strong> </a></p>
-<hr/>
+<hr />
 <p><a href="code/04_Mandelbulb/Mandelbulb.lhs" class="cut">Download the source code of this section → 04_Mandelbulb/<strong>Mandelbulb.lhs</strong></a></p>
 <h2 id="naïve-code-cleaning">Naïve code cleaning</h2>
 <p>The first approach to clean the code is to separate the GLUT/OpenGL part from the computation of the shape. Here is the cleaned version of the preceding section. Most boilerplate was put in external files.</p>
@@ -757,9 +753,9 @@ depthPoints <span class="fu">=</span> <span class="kw">do</span>
     <span class="co">-- ts are 3D pixels + mandel value</span>
     ts <span class="fu">=</span> <span class="fu">map</span> (\(u,v,w) <span class="ot">-&gt;</span> (u,v,w,ymandel u v (w<span class="dv">+1</span>))) zs
     <span class="co">-- ps are 3D opengl points + color value</span>
-    ps <span class="fu">=</span> <span class="fu">map</span> (\(u,v,w,c&#39;) <span class="ot">-&gt;</span> 
-        (u<span class="fu">/</span>width,v<span class="fu">/</span>height,w<span class="fu">/</span>deep,colorFromValue c&#39;)) ts
-  <span class="co">-- If the point diverged too fast, don&#39;t display it</span>
+    ps <span class="fu">=</span> <span class="fu">map</span> (\(u,v,w,c') <span class="ot">-&gt;</span> 
+        (u<span class="fu">/</span>width,v<span class="fu">/</span>height,w<span class="fu">/</span>deep,colorFromValue c')) ts
+  <span class="co">-- If the point diverged too fast, don't display it</span>
   <span class="kw">if</span> (<span class="fu">and</span> <span class="fu">$</span> <span class="fu">map</span> (\(_,_,_,c) <span class="ot">-&gt;</span> c<span class="fu">&gt;=</span><span class="dv">57</span>) ts)
   <span class="kw">then</span> []
   <span class="co">-- Draw two triangles</span>
@@ -793,7 +789,7 @@ ymandel x y z <span class="fu">=</span> mandel (<span class="dv">2</span><span c
 <p>This code is cleaner but many things doesn’t feel right. First, all the user interaction code is outside our main file. I feel it is okay to hide the detail for the rendering. But I would have preferred to control the user actions.</p>
 <p>On the other hand, we continue to handle a lot rendering details. For example, we provide ordered vertices.</p>
 <p><a href="code/04_Mandelbulb/Mandelbulb.lhs" class="cut">Download the source code of this section → 04_Mandelbulb/<strong>Mandelbulb.lhs</strong> </a></p>
-<hr/>
+<hr />
 <p><a href="code/05_Mandelbulb/Mandelbulb.lhs" class="cut">Download the source code of this section → 05_Mandelbulb/<strong>Mandelbulb.lhs</strong></a></p>
 <h2 id="functional-organization">Functional organization?</h2>
 <p>Some points:</p>
@@ -828,22 +824,22 @@ ymandel x y z <span class="fu">=</span> mandel (<span class="dv">2</span><span c
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Centralize all user input interaction</span>
 <span class="ot">inputActionMap ::</span> <span class="dt">InputMap</span> <span class="dt">World</span>
 inputActionMap <span class="fu">=</span> inputMapFromList [
-     (<span class="dt">Press</span> <span class="ch">&#39;k&#39;</span> , rotate xdir   <span class="dv">5</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;i&#39;</span> , rotate xdir (<span class="fu">-</span><span class="dv">5</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;j&#39;</span> , rotate ydir   <span class="dv">5</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;l&#39;</span> , rotate ydir (<span class="fu">-</span><span class="dv">5</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;o&#39;</span> , rotate zdir   <span class="dv">5</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;u&#39;</span> , rotate zdir (<span class="fu">-</span><span class="dv">5</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;f&#39;</span> , translate xdir   <span class="fl">0.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;s&#39;</span> , translate xdir (<span class="fu">-</span><span class="fl">0.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;e&#39;</span> , translate ydir   <span class="fl">0.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;d&#39;</span> , translate ydir (<span class="fu">-</span><span class="fl">0.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;z&#39;</span> , translate zdir   <span class="fl">0.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;r&#39;</span> , translate zdir (<span class="fu">-</span><span class="fl">0.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;+&#39;</span> , zoom    <span class="fl">1.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;-&#39;</span> , zoom (<span class="dv">1</span><span class="fu">/</span><span class="fl">1.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;h&#39;</span> , resize    <span class="fl">1.2</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;g&#39;</span> , resize (<span class="dv">1</span><span class="fu">/</span><span class="fl">1.2</span>))
+     (<span class="dt">Press</span> <span class="ch">'k'</span> , rotate xdir   <span class="dv">5</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'i'</span> , rotate xdir (<span class="fu">-</span><span class="dv">5</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'j'</span> , rotate ydir   <span class="dv">5</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'l'</span> , rotate ydir (<span class="fu">-</span><span class="dv">5</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'o'</span> , rotate zdir   <span class="dv">5</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'u'</span> , rotate zdir (<span class="fu">-</span><span class="dv">5</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'f'</span> , translate xdir   <span class="fl">0.1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'s'</span> , translate xdir (<span class="fu">-</span><span class="fl">0.1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'e'</span> , translate ydir   <span class="fl">0.1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'d'</span> , translate ydir (<span class="fu">-</span><span class="fl">0.1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'z'</span> , translate zdir   <span class="fl">0.1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'r'</span> , translate zdir (<span class="fu">-</span><span class="fl">0.1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'+'</span> , zoom    <span class="fl">1.1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'-'</span> , zoom (<span class="dv">1</span><span class="fu">/</span><span class="fl">1.1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'h'</span> , resize    <span class="fl">1.2</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'g'</span> , resize (<span class="dv">1</span><span class="fu">/</span><span class="fl">1.2</span>))
     ]</code></pre>
 </div>
 
@@ -1013,7 +1009,7 @@ ymandel x y z <span class="fu">=</span> <span class="fu">fromIntegral</span> (ma
 <li><a href="code/05_Mandelbulb/ExtComplex.hs"><code>ExtComplex</code></a>, the extended complexes</li>
 </ul>
 <p><a href="code/05_Mandelbulb/Mandelbulb.lhs" class="cut">Download the source code of this section → 05_Mandelbulb/<strong>Mandelbulb.lhs</strong> </a></p>
-<hr/>
+<hr />
 <p><a href="code/06_Mandelbulb/Mandelbulb.lhs" class="cut">Download the source code of this section → 06_Mandelbulb/<strong>Mandelbulb.lhs</strong></a></p>
 <h2 id="optimization">Optimization</h2>
 <p>Our code architecture feel very clean. All the meaningful code is in our main file and all display details are externalized. If you read the code of <code>YGL.hs</code>, you’ll see I didn’t made everything perfect. For example, I didn’t finished the code of the lights. But I believe it is a good first step and it will be easy to go further. Unfortunately the program of the preceding session is extremely slow. We compute the Mandelbulb for each frame now.</p>
@@ -1032,23 +1028,23 @@ ymandel x y z <span class="fu">=</span> <span class="fu">fromIntegral</span> (ma
 <span class="co">-- Centralize all user input interaction</span>
 <span class="ot">inputActionMap ::</span> <span class="dt">InputMap</span> <span class="dt">World</span>
 inputActionMap <span class="fu">=</span> inputMapFromList [
-     (<span class="dt">Press</span> <span class="ch">&#39; &#39;</span> , switchRotation)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;k&#39;</span> , rotate xdir <span class="dv">5</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;i&#39;</span> , rotate xdir (<span class="fu">-</span><span class="dv">5</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;j&#39;</span> , rotate ydir <span class="dv">5</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;l&#39;</span> , rotate ydir (<span class="fu">-</span><span class="dv">5</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;o&#39;</span> , rotate zdir <span class="dv">5</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;u&#39;</span> , rotate zdir (<span class="fu">-</span><span class="dv">5</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;f&#39;</span> , translate xdir <span class="fl">0.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;s&#39;</span> , translate xdir (<span class="fu">-</span><span class="fl">0.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;e&#39;</span> , translate ydir <span class="fl">0.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;d&#39;</span> , translate ydir (<span class="fu">-</span><span class="fl">0.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;z&#39;</span> , translate zdir <span class="fl">0.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;r&#39;</span> , translate zdir (<span class="fu">-</span><span class="fl">0.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;+&#39;</span> , zoom <span class="fl">1.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;-&#39;</span> , zoom (<span class="dv">1</span><span class="fu">/</span><span class="fl">1.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;h&#39;</span> , resize <span class="fl">2.0</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;g&#39;</span> , resize (<span class="dv">1</span><span class="fu">/</span><span class="fl">2.0</span>))
+     (<span class="dt">Press</span> <span class="ch">' '</span> , switchRotation)
+    ,(<span class="dt">Press</span> <span class="ch">'k'</span> , rotate xdir <span class="dv">5</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'i'</span> , rotate xdir (<span class="fu">-</span><span class="dv">5</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'j'</span> , rotate ydir <span class="dv">5</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'l'</span> , rotate ydir (<span class="fu">-</span><span class="dv">5</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'o'</span> , rotate zdir <span class="dv">5</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'u'</span> , rotate zdir (<span class="fu">-</span><span class="dv">5</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'f'</span> , translate xdir <span class="fl">0.1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'s'</span> , translate xdir (<span class="fu">-</span><span class="fl">0.1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'e'</span> , translate ydir <span class="fl">0.1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'d'</span> , translate ydir (<span class="fu">-</span><span class="fl">0.1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'z'</span> , translate zdir <span class="fl">0.1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'r'</span> , translate zdir (<span class="fu">-</span><span class="fl">0.1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'+'</span> , zoom <span class="fl">1.1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'-'</span> , zoom (<span class="dv">1</span><span class="fu">/</span><span class="fl">1.1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'h'</span> , resize <span class="fl">2.0</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'g'</span> , resize (<span class="dv">1</span><span class="fu">/</span><span class="fl">2.0</span>))
     ]</code></pre>
 </div>
 
@@ -1298,10 +1294,10 @@ ymandel x y z <span class="fu">=</span> <span class="fu">fromIntegral</span> (ma
 
         </div>
     </body>
-    <script type="text/javascript" src="/Scratch/js/jquery-1.3.1.min.js"></script>
-    <script type="text/javascript" src="/Scratch/js/jquery.cookie.js"></script>
-    <script type="text/javascript" src="/Scratch/js/index.js"></script>
-    <script type="text/javascript" src="/Scratch/js/highlight/highlight.pack.js"></script>
-    <script type="text/javascript" src="/Scratch/js/article.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/index.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/article.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </html>

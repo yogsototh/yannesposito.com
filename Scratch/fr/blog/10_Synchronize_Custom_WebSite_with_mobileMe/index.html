@@ -1,50 +1,48 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>YBlog - Héberger son site personnel sur le site mobileMe</title>
         <meta name="keywords" content="Apple, mobileme, WebDav, synchronisation, zsh, script">
 
-        <link rel="shortcut icon" type="image/x-icon" href="/Scratch/img/favicon.ico" />
-        <link rel="stylesheet" type="text/css" href="/Scratch/css/scientific.css" />
-        <link rel="stylesheet" type="text/css" href="/Scratch/css/solarized.css" />
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/solarized.css" />
 		<!-- Font -->
-        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
-		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomfr"/>
+        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+		<link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomfr" />
         <!--[if lt IE 9]>
         <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
         <![endif]-->
     </head>
     <body lang="fr">
-		<script type="text/javascript">// <![CDATA[
-            document.write('<div id="blackpage"><div>Bientôt<img src="/Scratch/img/loading.gif" alt="Chargement en cours"/></div></div>');
-            // ]]>
+		<script type="text/javascript">// 
+            document.write('<div id="blackpage"><div>Bientôt<img src="/Scratch/img/loading.gif" alt="Chargement en cours"></img></div></div>');
+            // 
         </script>
         <div id="content">
 	        			<div id="header">
 			    <div id="choix">
         	        <div id="choixlang">
-						<a href="/Scratch/en/blog/10_Synchronize_Custom_WebSite_with_mobileMe/index.html"
-							onclick="setLanguage('en')">
+						<a href="../../../../Scratch/en/blog/10_Synchronize_Custom_WebSite_with_mobileMe" onclick="setLanguage('en')">
 							English </a>
         	        </div>
-					<script type="text/javascript">// <![CDATA[
+					<script type="text/javascript">// 
 					document.write('<div id="switchcss"><a href="#">Changer de theme</a></div>');
-					// ]]>
+					// 
 					</script>
         	        <div class="flush"></div>
         	    </div>
         	    <div id="navigation">
-                    <a href="/">Home</a>
+                    <a href="../../../../">Home</a>
                     <span class="sep">¦</span>
-        	        <a href="/Scratch/fr/blog">Blog</a>
+        	        <a href="../../../../Scratch/fr/blog">Blog</a>
                     <span class="sep">¦</span>
-                    <a href="/Scratch/fr/softwares">Softwares</a>
+                    <a href="../../../../Scratch/fr/softwares">Softwares</a>
                     <span class="sep">¦</span>
-                    <a href="/Scratch/fr/about">About</a>
+                    <a href="../../../../Scratch/fr/about">About</a>
         	    </div>
 			</div>
 
@@ -57,7 +55,7 @@
 					<h1 id="mise-à-jour-du-20120111">Mise à jour du <small>(2012/01/11)</small></h1>
 <p>iDisk va bientôt disparaître. Cet article est donc presque complètement obsolète.</p>
 <h1 id="mise-à-jour-du-28102009">mise à jour du <small>28/10/2009</small></h1>
-<p>J’ai mis à jour mon script <a href="/Scratch/fr/blog/2009-10-28-custom-website-synchronisation-with-mobileme--2-">avec une version incrémentale</a> bien plus pratique. En plus depuis l’écriture de cet article Apple(c) semble avoir nettement amélioré la vitesse de ses serveurs en Europe.</p>
+<p>J’ai mis à jour mon script <a href="../../../../Scratch/fr/blog/2009-10-28-custom-website-synchronisation-with-mobileme--2-">avec une version incrémentale</a> bien plus pratique. En plus depuis l’écriture de cet article Apple(c) semble avoir nettement amélioré la vitesse de ses serveurs en Europe.</p>
 <hr />
 <h1 id="webdav-terror">WebDav terror</h1>
 <p>En France l’iDisk d’Apple(c) est très lent. La vitesse d’upload me rapelle l’époque des modem 56k, c’est dire. La plupart du temps les opérations telles que lister le contenu d’un répertoire prennent au moins 30 secondes (pour 15 éléments). Renommer un répertoire échoue presque systématiquement.</p>
@@ -65,7 +63,7 @@
 <p>J’<em>uploade</em> mes fichiers à partir de mon Mac et de temps en temps à partir d’un PC sous Ubuntu (iDisk monté avec webdavfs).</p>
 <h1 id="synchroniser-de-façon-sûre">Synchroniser de façon sûre</h1>
 <p>Voici le script que j’utilise pour synchroniser mon site web (non créé avec iWeb(c)) avec le maximum de sécurité. Chaque opération est répétée jusqu’à ce qu’elle fonctionne.</p>
-<p>Les idées sont&nbsp;:</p>
+<p>Les idées sont :</p>
 <ul>
 <li>Synchroniser vers un répertoire temporaire sur le serveur distant, puis “swapper” les noms des répertoires. Ainsi le site ne reste indisponible que le temps du “swap” du nom des deux répertoires.</li>
 <li>Réitérer toutes les opérations jusqu’à ce qu’elle aient réussi (par exemple pour le renommage)</li>
@@ -85,8 +83,8 @@ mobileMeUser=&quot;yann.esposito&quot;
 siteName=&quot;siteName&quot;
 
 # Depending of my hostname the 
-if [[ $(hostname) == &#39;ubuntu&#39; ]]; then
-    iDisk=&#39;/mnt/iDisk&#39;
+if [[ $(hostname) == 'ubuntu' ]]; then
+    iDisk='/mnt/iDisk'
 else
     iDisk=&quot;/Volumes/$mobileMeUser&quot;
 fi
@@ -95,31 +93,31 @@ root=$HOME/Sites/$siteName
 destRep=$iDisk/Web/Sites/$siteName
 
 [[ ! -d $root ]] &amp;&amp; { 
-    print -- &quot;$root n&#39;existe pas ; vérifiez la conf&quot; &gt;&amp;2; 
+    print -- &quot;$root n'existe pas ; vérifiez la conf&quot; &gt;&amp;2; 
     exit 1 
 }
 
 [[ ! -d $destRep ]] &amp;&amp; { 
-    print -- &quot;$destRep n&#39;existe pas, veuillez remonter le FS&quot; &gt;&amp;2; 
+    print -- &quot;$destRep n'existe pas, veuillez remonter le FS&quot; &gt;&amp;2; 
     exit 1 
 }
 
-if [[ $1 == &#39;-h&#39; ]]; then
+if [[ $1 == '-h' ]]; then
     print -- &quot;usage: $0:h [-h|-a|-s]&quot;
-    print -- &quot;  -a sychronise aussi l&#39;index&quot;
-    print -- &quot;  -h affiche l&#39;aide&quot;
+    print -- &quot;  -a sychronise aussi l'index&quot;
+    print -- &quot;  -h affiche l'aide&quot;
     print -- &quot;  -s swappe simplement les répertoires&quot;
 fi
 
-if [[ $1 == &#39;-a&#39; ]]; then
-    print -- &quot;Synchronisation de l&#39;index (${destRep:h})&quot;
+if [[ $1 == '-a' ]]; then
+    print -- &quot;Synchronisation de l'index (${destRep:h})&quot;
     rsync -av $root/index.html ${destRep:h}/index.html
 fi
 
 print -- &quot;Root = $root&quot;
 print -- &quot;Dest = $destRep&quot;
 
-if [[ ! $1 = &#39;-s&#39; ]]; then
+if [[ ! $1 = '-s' ]]; then
     [[ ! -d $destRep.tmp ]] &amp;&amp; mkdir $destRep.tmp
     print -P -- &quot;%B[Sync =&gt; tmp]%b&quot;
     result=1
@@ -189,8 +187,8 @@ mobileMeUser=&quot;firstname.lastname&quot;
 siteName=&quot;siteName&quot;
 
 # Depending of my hostname the 
-if [[ $(hostname) == &#39;ubuntu&#39; ]]; then
-    iDisk=&#39;/mnt/iDisk&#39;
+if [[ $(hostname) == 'ubuntu' ]]; then
+    iDisk='/mnt/iDisk'
 else
     iDisk=&quot;/Volumes/$mobileMeUser&quot;
 fi
@@ -208,14 +206,14 @@ destRep=$iDisk/Web/Sites/$siteName
     exit 1 
 }
 
-if [[ $1 == &#39;-h&#39; ]]; then
+if [[ $1 == '-h' ]]; then
     print -- &quot;usage: $0:h [-h|-a|-s]&quot;
     print -- &quot;  -a sychronize primary index&quot;
     print -- &quot;  -h show this help&quot;
     print -- &quot;  -s only swap directories&quot;
 fi
 
-if [[ $1 == &#39;-a&#39; ]]; then
+if [[ $1 == '-a' ]]; then
     print -- &quot;Index synchronisation (${destRep:h})&quot;
     rsync -av $root/index.html ${destRep:h}/index.html
 fi
@@ -223,7 +221,7 @@ fi
 print -- &quot;Root = $root&quot;
 print -- &quot;Dest = $destRep&quot;
 
-if [[ ! $1 = &#39;-s&#39; ]]; then
+if [[ ! $1 = '-s' ]]; then
     [[ ! -d $destRep.tmp ]] &amp;&amp; mkdir $destRep.tmp
     print -P -- &quot;%B[Sync =&gt; tmp]%b&quot;
     result=1
@@ -261,7 +259,7 @@ while [[ -e $destRep ]]; do
 done
 
 print -- &quot;  renaming folder tmp (new) to the standard one&quot;
-print -P -- &quot;  %BThe WebSite isn&#39;t working%b $(date)&quot;
+print -P -- &quot;  %BThe WebSite isn't working%b $(date)&quot;
 essai=1
 while [[ ! -e $destRep ]]; do
     mv $destRep.tmp $destRep
@@ -343,10 +341,10 @@ print -P -- &quot;  Publish terminated&quot;</code></pre>
 
         </div>
     </body>
-    <script type="text/javascript" src="/Scratch/js/jquery-1.3.1.min.js"></script>
-    <script type="text/javascript" src="/Scratch/js/jquery.cookie.js"></script>
-    <script type="text/javascript" src="/Scratch/js/index.js"></script>
-    <script type="text/javascript" src="/Scratch/js/highlight/highlight.pack.js"></script>
-    <script type="text/javascript" src="/Scratch/js/article.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/index.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/article.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </html>

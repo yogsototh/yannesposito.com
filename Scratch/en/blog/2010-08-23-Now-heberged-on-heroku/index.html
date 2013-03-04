@@ -1,50 +1,48 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>YBlog - Now hosted by heroku</title>
         <meta name="keywords" content="blog">
 
-        <link rel="shortcut icon" type="image/x-icon" href="/Scratch/img/favicon.ico" />
-        <link rel="stylesheet" type="text/css" href="/Scratch/css/scientific.css" />
-        <link rel="stylesheet" type="text/css" href="/Scratch/css/solarized.css" />
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/solarized.css" />
 		<!-- Font -->
-        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
-		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomen"/>
+        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+		<link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomen" />
         <!--[if lt IE 9]>
         <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
         <![endif]-->
     </head>
     <body lang="en">
-		<script type="text/javascript">// <![CDATA[
-            document.write('<div id="blackpage"><div>Soon<img src="/Scratch/img/loading.gif" alt="Loading"/></div></div>');
-            // ]]>
+		<script type="text/javascript">// 
+            document.write('<div id="blackpage"><div>Soon<img src="/Scratch/img/loading.gif" alt="Loading"></img></div></div>');
+            // 
         </script>
         <div id="content">
 	        			<div id="header">
 			    <div id="choix">
         	        <div id="choixlang">
-						<a href="/Scratch/fr/blog/2010-08-23-Now-heberged-on-heroku/index.html"
-							onclick="setLanguage('fr')">
+						<a href="../../../../Scratch/fr/blog/2010-08-23-Now-heberged-on-heroku" onclick="setLanguage('fr')">
 							Français </a>
         	        </div>
-					<script type="text/javascript">// <![CDATA[
+					<script type="text/javascript">// 
 					document.write('<div id="switchcss"><a href="#">Change Theme</a></div>');
-					// ]]>
+					// 
 					</script>
         	        <div class="flush"></div>
         	    </div>
         	    <div id="navigation">
-                    <a href="/">Home</a>
+                    <a href="../../../../">Home</a>
                     <span class="sep">¦</span>
-        	        <a href="/Scratch/en/blog">Blog</a>
+        	        <a href="../../../../Scratch/en/blog">Blog</a>
                     <span class="sep">¦</span>
-                    <a href="/Scratch/en/softwares">Softwares</a>
+                    <a href="../../../../Scratch/en/softwares">Softwares</a>
                     <span class="sep">¦</span>
-                    <a href="/Scratch/en/about">About</a>
+                    <a href="../../../../Scratch/en/about">About</a>
         	    </div>
 			</div>
 
@@ -58,11 +56,11 @@
 <p>I now changed my hosting to <a href="http://heroku.com">Heroku</a>. I believe it will be far more reliable.</p>
 <p>But as you should know my website is completely static. I use <a href="http://nanoc.stoneship.org/">nanoc</a> to generate it. But here is the conf to make it work on heroku.</p>
 <p>The root of my files is <code>/output</code>. You only need to create a <code>config.ru</code><sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup> file:</p>
-<pre class="sourceCode ruby"><code class="sourceCode ruby">require <span class="st">&#39;rubygems&#39;</span>
-require <span class="st">&#39;rack&#39;</span>
-require <span class="st">&#39;rack/contrib&#39;</span>
-require <span class="st">&#39;rack-rewrite&#39;</span>
-require <span class="st">&#39;mime/types&#39;</span>
+<pre class="sourceCode ruby"><code class="sourceCode ruby">require <span class="st">'rubygems'</span>
+require <span class="st">'rack'</span>
+require <span class="st">'rack/contrib'</span>
+require <span class="st">'rack-rewrite'</span>
+require <span class="st">'mime/types'</span>
 
 use <span class="dt">Rack</span>::<span class="dt">ETag</span>
 <span class="kw">module</span> ::<span class="dt">Rack</span>
@@ -70,7 +68,7 @@ use <span class="dt">Rack</span>::<span class="dt">ETag</span>
 
         <span class="kw">def</span> initialize(app, options)
             <span class="dv">super</span>
-            <span class="ot">@try</span> = ([<span class="st">&#39;&#39;</span>] + <span class="dt">Array</span>(options.delete(<span class="st">:try</span>)) + [<span class="st">&#39;&#39;</span>])
+            <span class="ot">@try</span> = ([<span class="st">''</span>] + <span class="dt">Array</span>(options.delete(<span class="st">:try</span>)) + [<span class="st">''</span>])
         <span class="kw">end</span>
 
         <span class="kw">def</span> call(env)
@@ -83,7 +81,7 @@ use <span class="dt">Rack</span>::<span class="dt">ETag</span>
 
         <span class="kw">private</span>
         <span class="kw">def</span> try_next(env)
-            env.merge(<span class="st">&#39;PATH_INFO&#39;</span> =&gt; env[<span class="st">&#39;PATH_INFO&#39;</span>] + <span class="ot">@try</span>[<span class="ot">@next</span>])
+            env.merge(<span class="st">'PATH_INFO'</span> =&gt; env[<span class="st">'PATH_INFO'</span>] + <span class="ot">@try</span>[<span class="ot">@next</span>])
         <span class="kw">end</span>
 
     <span class="kw">end</span>
@@ -92,9 +90,9 @@ use <span class="dt">Rack</span>::<span class="dt">ETag</span>
 use <span class="dt">Rack</span>::<span class="dt">TryStatic</span>, 
     <span class="st">:root</span> =&gt; <span class="st">&quot;output&quot;</span>,                              <span class="co"># static files root dir</span>
     <span class="st">:urls</span> =&gt;<span class="ot"> %w[</span><span class="st">/</span><span class="ot">]</span>,                                 <span class="co"># match all requests </span>
-    <span class="st">:try</span> =&gt; [<span class="st">&#39;.html&#39;</span>, <span class="st">&#39;index.html&#39;</span>, <span class="st">&#39;/index.html&#39;</span>]  <span class="co"># try these postfixes sequentially</span>
+    <span class="st">:try</span> =&gt; [<span class="st">'.html'</span>, <span class="st">'index.html'</span>, <span class="st">'/index.html'</span>]  <span class="co"># try these postfixes sequentially</span>
 
-errorFile=<span class="st">&#39;output/Scratch/en/error/404-not_found/index.html&#39;</span>
+errorFile=<span class="st">'output/Scratch/en/error/404-not_found/index.html'</span>
 run lambda { [<span class="dv">404</span>, {
                 <span class="st">&quot;Last-Modified&quot;</span>  =&gt; <span class="dt">File</span>.mtime(errorFile).httpdate,
                 <span class="st">&quot;Content-Type&quot;</span>   =&gt; <span class="st">&quot;text/html&quot;</span>,
@@ -104,7 +102,7 @@ run lambda { [<span class="dv">404</span>, {
 <pre class="sourceCode ruby"><code class="sourceCode ruby">rack
 rack-rewrite
 rack-contrib</code></pre>
-<p>Now, just follow the heroku tutorial to create an application&nbsp;:</p>
+<p>Now, just follow the heroku tutorial to create an application :</p>
 <pre class="zsh"><code>git init
 git add .
 heroku create
@@ -176,10 +174,10 @@ git push heroku master</code></pre>
 
         </div>
     </body>
-    <script type="text/javascript" src="/Scratch/js/jquery-1.3.1.min.js"></script>
-    <script type="text/javascript" src="/Scratch/js/jquery.cookie.js"></script>
-    <script type="text/javascript" src="/Scratch/js/index.js"></script>
-    <script type="text/javascript" src="/Scratch/js/highlight/highlight.pack.js"></script>
-    <script type="text/javascript" src="/Scratch/js/article.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/index.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/article.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </html>
