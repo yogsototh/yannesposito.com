@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>YBlog - jQuery Tag Cloud [en]</title>
+        <meta name="keywords" content="jQuery, javascript, web, ruby">
+
+        <link rel="shortcut icon" type="image/x-icon" href="/Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/solarized.css" />
+		<!-- Font -->
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomfr"/>
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+    </head>
+    <body lang="fr">
+		<script type="text/javascript">// <![CDATA[
+            document.write('<div id="blackpage"><div>Bientôt<img src="/Scratch/img/loading.gif" alt="Chargement en cours"/></div></div>');
+            // ]]>
+        </script>
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	        <div id="choixlang">
+						<a href="/Scratch/en/blog/2009-09-jQuery-Tag-Cloud/index.html"
+							onclick="setLanguage('en')">
+							English </a>
+        	        </div>
+					<script type="text/javascript">// <![CDATA[
+					document.write('<div id="switchcss"><a href="#">Changer de theme</a></div>');
+					// ]]>
+					</script>
+        	        <div class="flush"></div>
+        	    </div>
+        	    <div id="navigation">
+                    <a href="/">Home</a>
+                    <span class="sep">¦</span>
+        	        <a href="/Scratch/fr/blog">Blog</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/fr/softwares">Softwares</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/fr/about">About</a>
+        	    </div>
+			</div>
+
+			<div id="titre">
+				<h1>jQuery Tag Cloud [en]</h1>
+			</div>
+			<div class="flush"></div>
+			<div id="afterheader">
+				<div class="corps">
+					<p>Here is how I done the tag cloud of my blog. It is done mostly in jQuery. All my site is static and pages are generated with <a href="nanoc.stoneship.org">nanoc</a>. It is (in my humble opinion) the modern geek way to make a website.</p>
+<p>This is why I’ll give only a Ruby Generator, not a full javascript generator. But you can easily translate from Ruby to Javascript.</p>
+<p>Here is what you should obtain:</p>
+<hr />
+<div>
+&lt;%= tagCloud %&gt;
+</div>
+
+<hr />
+<h1 id="jquery">jQuery</h1>
+<p>Here is the simple jQuery code:</p>
+<div>
+<pre class="sourceCode javascript"><code class="sourceCode javascript">    $(<span class="kw">document</span>).<span class="fu">ready</span>( <span class="kw">function</span>(){$(<span class="ch">&#39;.list&#39;</span>).<span class="fu">hide</span>();} );
+    <span class="kw">function</span> tagSelected(id) {
+        $(<span class="ch">&#39;.list&#39;</span>).<span class="fu">hide</span>();
+        $(<span class="ch">&#39;#&#39;</span>+id).<span class="fu">fadeIn</span>();
+        $(<span class="ch">&#39;.tag.selected&#39;</span>).<span class="fu">removeClass</span>(<span class="ch">&#39;selected&#39;</span>);
+        $(<span class="ch">&#39;#tag_&#39;</span>+id).<span class="fu">addClass</span>(<span class="ch">&#39;selected&#39;</span>);
+    }</code></pre>
+</div>
+
+<p>This code will hide all the div containing links to articles containing the tag. And create a function do show the div containing the tag.</p>
+<p>For each tag I create a span element:</p>
+<div>
+<pre class="sourceCode html"><code class="sourceCode html">    <span class="kw">&lt;span</span><span class="ot">   style=</span><span class="st">&quot;font-size: 1.0em;&quot;</span> 
+<span class="ot">            class=</span><span class="st">&quot;tag&quot;</span> 
+<span class="ot">            onClick=</span><span class="st">&quot;tagSelected(&#39;[TAG]&#39;)&quot;</span> 
+<span class="ot">            id=</span><span class="st">&quot;tag_[TAG]&quot;</span><span class="kw">&gt;</span>
+        [TAG]
+    <span class="kw">&lt;/span&gt;</span> </code></pre>
+</div>
+
+<p>and a div containing links associtated to this tag:</p>
+<div>
+<pre class="sourceCode html"><code class="sourceCode html">    <span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;[TAG]&quot;</span><span class="kw">&gt;</span>
+        <span class="kw">&lt;h4&gt;</span>[TAG]<span class="kw">&lt;/h4&gt;</span>
+        <span class="kw">&lt;ul&gt;</span>
+            <span class="kw">&lt;li&gt;</span> LINK 1 <span class="kw">&lt;/li&gt;</span>
+            <span class="kw">&lt;li&gt;</span> LINK 2 <span class="kw">&lt;/li&gt;</span>
+        <span class="kw">&lt;/ul&gt;</span>
+    <span class="kw">&lt;/div&gt;</span> </code></pre>
+</div>
+
+<hr />
+<h1 id="nanoc">nanoc</h1>
+<p>Here is how I generate this using nanoc 2.</p>
+<p>If you want to make it fully jQuery one, it shouldn’t be too difficult, to use my ruby code and translate it into javascript.</p>
+<p>In a first time <code>tags</code> correpond of the list of all tags.</p>
+<div>
+<pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="kw">def</span> tags
+    <span class="kw">return</span> <span class="ot">@page</span>.tags.join(<span class="st">&#39;, &#39;</span>)
+<span class="kw">end</span></code></pre>
+</div>
+
+<p>A function to create a data structure associating to each tag its occurence.</p>
+<div>
+<pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># generate an hash tag =&gt; number of occurence of tag</span>
+<span class="kw">def</span> tagNumber
+    tags={}
+    <span class="ot">@pages</span>.each <span class="kw">do</span> |p|
+        <span class="kw">if</span> p.tags.nil?
+            <span class="kw">next</span>
+        <span class="kw">end</span>
+        p.tags.each <span class="kw">do</span> |t|
+            <span class="kw">if</span> tags[t]
+                tags[t]+=<span class="dv">1</span>
+            <span class="kw">else</span>
+                tags[t]=<span class="dv">1</span>
+            <span class="kw">end</span>
+        <span class="kw">end</span>
+    <span class="kw">end</span>
+    <span class="kw">return</span> tags
+<span class="kw">end</span></code></pre>
+</div>
+
+<p>I also need a data structure who associate to each tag a list of pages (at least url and title).</p>
+<div>
+<pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># generate an hash tag =&gt; [ page1, page2 ... ]</span>
+<span class="kw">def</span> tagRefs
+    tagLinks={}
+    <span class="ot">@pages</span>.each <span class="kw">do</span> |p|
+        <span class="kw">if</span> p.tags.nil?
+            <span class="kw">next</span>
+        <span class="kw">end</span>
+        p.tags.each <span class="kw">do</span> |t|
+            <span class="kw">if</span> tagLinks[t].nil?
+                tagLinks[t]=[ p ]
+            <span class="kw">else</span>
+                tagLinks[t] &lt;&lt;= p
+            <span class="kw">end</span>
+        <span class="kw">end</span>
+    <span class="kw">end</span>
+    <span class="kw">return</span> tagLinks
+<span class="kw">end</span></code></pre>
+</div>
+
+<p>Calculate the real size of each tag to be displayed.</p>
+<p>I choosen not to use the full range of size for all the tag. Because if no tag has more than <code>n</code> (here 10) occurences, then it doesn’t deserve to be of the maximal size.</p>
+<div>
+<pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="kw">def</span> tagRealSize
+    tags=tagNumber
+    max=tags.values.max
+    min=tags.values.min
+    <span class="co"># size in CSS em.</span>
+    minSize=<span class="fl">1.0</span>
+    maxSize=<span class="fl">2.5</span>
+    tagSize={}
+    tags.each <span class="kw">do</span> |t,n|
+        <span class="kw">if</span> ( max == min )
+            tagSize[t]=minSize
+        <span class="kw">else</span>
+            <span class="co"># normalized value between 0 and 1</span>
+            <span class="co"># if not tag appear more than 10 times, </span>
+            <span class="co"># then it cannot have the maximal size</span>
+            tagSize[t]=[ ( n - min + <span class="fl">0.0</span> ) / ( max - min ) , 
+                         (n - min) / <span class="fl">10.0</span> ].min
+            <span class="co"># from normalized size to real size</span>
+            tagSize[t]=( tagSize[t] ) * (maxSize - minSize) + minSize
+        <span class="kw">end</span>
+    <span class="kw">end</span>
+    <span class="kw">return</span> tagSize
+<span class="kw">end</span></code></pre>
+</div>
+
+<p>Finaly a function to generate the XHTML/jQuery code</p>
+<div>
+<pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># generate an XHTML/jQuery code for tag cloud</span>
+<span class="kw">def</span> tagCloud
+    tagLinks=tagRefs
+    tagSize=tagRealSize
+
+    <span class="co"># begin to write the code</span>
+    tagCloud=<span class="ot">%{</span><span class="st">&lt;script type=&quot;text/javascript&quot;&gt;</span>
+<span class="st">        $(document).ready( function(){$(&#39;.list&#39;).hide();} );</span>
+<span class="st">        function tagSelected(id) {</span>
+<span class="st">            $(&#39;.list&#39;).hide();</span>
+<span class="st">            $(&#39;#&#39;+id).fadeIn();</span>
+<span class="st">            $(&#39;.tag.selected&#39;).removeClass(&#39;selected&#39;);</span>
+<span class="st">            $(&#39;#tag_&#39;+id).addClass(&#39;selected&#39;);</span>
+<span class="st">        }</span>
+<span class="st">    &lt;/script&gt;&lt;div id=&quot;tagcloud&quot;&gt;</span><span class="ot">}</span>
+    <span class="co"># Creation of the tags &lt;span&gt;</span>
+    tagSize.sort{|a,b| a[<span class="dv">0</span>].downcase &lt;=&gt; b[<span class="dv">0</span>].downcase}.each <span class="kw">do</span> |t,s|
+        tag_in_id=t.gsub(<span class="ot">/\W/</span>,<span class="st">&#39;_&#39;</span>)
+        <span class="co"># HTML protected version of the tag</span>
+        <span class="co"># for example, replace &#39; &#39; by &#39;&amp;nbsp;&#39;</span>
+        <span class="kw">protected</span>=t.gsub(<span class="ot">/&amp;/</span>,<span class="st">&#39;&amp;amp;&#39;</span>).gsub(<span class="ot">/ /</span>,<span class="st">&#39;&amp;nbsp;&#39;</span>).gsub(<span class="ot">/&lt;/</span>,<span class="st">&#39;&amp;lt;&#39;</span>).gsub(<span class="ot">/&gt;/</span>,<span class="st">&#39;&amp;gt;&#39;</span>)
+        tagCloud &lt;&lt;=<span class="ot"> %{</span>
+<span class="st">            &lt;span style=&quot;font-size: </span><span class="ot">#{</span>s<span class="ot">}</span><span class="st">em;&quot; </span>
+<span class="st">                  class=&quot;tag&quot; </span>
+<span class="st">                  onClick=&quot;tagSelected(&#39;</span><span class="ot">#{</span>tag_in_id<span class="ot">}</span><span class="st">&#39;)&quot; </span>
+<span class="st">                  id=&quot;tag_</span><span class="ot">#{</span>tag_in_id<span class="ot">}</span><span class="st">&quot;&gt;</span>
+<span class="st">                </span><span class="ot">#{</span><span class="kw">protected</span><span class="ot">}</span>
+<span class="st">            &lt;/span&gt; </span><span class="ot">}</span>
+    <span class="kw">end</span>
+    tagCloud &lt;&lt;=<span class="ot"> %{</span><span class="st">&lt;/div&gt;&lt;div id=&quot;hiddenDivs&quot; &gt;</span><span class="ot">}</span>
+    <span class="co"># Creation of the divs containing links associated to a tag.</span>
+    tagLinks.each <span class="kw">do</span> |t,l|
+        tag_in_id=t.gsub(<span class="ot">/\W/</span>,<span class="st">&#39;_&#39;</span>)
+        tagCloud &lt;&lt;=<span class="ot"> %{</span>
+<span class="st">            &lt;div id=&quot;</span><span class="ot">#{</span>tag_in_id<span class="ot">}</span><span class="st">&quot; class=&quot;list&quot;&gt;</span>
+<span class="st">                &lt;h4&gt;</span><span class="ot">#{</span>t<span class="ot">}</span><span class="st">&lt;/h4&gt;&lt;ul&gt;</span><span class="ot">}</span>
+        <span class="co"># generate the link list</span>
+        l.each <span class="kw">do</span> |p|
+            tagCloud &lt;&lt;=<span class="ot"> %{</span><span class="st">&lt;li&gt;&lt;a href=&quot;</span><span class="ot">#{</span>p.path<span class="ot">}</span><span class="st">&quot;&gt;</span><span class="ot">#{</span>p.title<span class="ot">}</span><span class="st">&lt;/a&gt;&lt;/li&gt;</span><span class="ot">}</span>
+        <span class="kw">end</span>
+        tagCloud &lt;&lt;=<span class="ot"> %{</span><span class="st">&lt;/ul&gt;&lt;/div&gt;</span><span class="ot">}</span>
+    <span class="kw">end</span>
+    tagCloud &lt;&lt;=<span class="ot"> %{</span><span class="st">&lt;/div&gt;</span><span class="ot">}</span>
+    <span class="kw">return</span> tagCloud <span class="co"># yeah I know it is not necessary</span>
+<span class="kw">end</span></code></pre>
+</div>
+
+<p>You can <a href="/Scratch/en/blog/2009-09-jQuery-Tag-Cloud/code/tag.rb">download the complete file</a> to put in your ‘lib’ directory. <strong>Beware, it is a nanoc 2 version, you’ll have to make some small changes like replace <code>@pages</code> by <code>@items</code> to be nanoc3 compatible.</strong></p>
+<p>Of course to be nice you need the associated CSS</p>
+<div>
+<pre class="sourceCode css"><code class="sourceCode css">
+// Change the color when mouse over
+<span class="fl">.tag</span><span class="dv">:hover</span> <span class="kw">{</span>
+  <span class="kw">color:</span> <span class="dt">#cc0000</span><span class="kw">;</span> <span class="kw">}</span>
+
+// Change the color when tag selected
+<span class="fl">.tag.selected</span> <span class="kw">{</span>
+  <span class="kw">color:</span> <span class="dt">#6c0000</span><span class="kw">;</span> <span class="kw">}</span>
+
+// a bit of space and pointer cursor
+<span class="fl">.tag</span> <span class="kw">{</span>
+  <span class="kw">cursor:</span> <span class="dt">pointer</span><span class="kw">;</span>
+  <span class="kw">margin-left:</span> <span class="dt">.5em</span><span class="kw">;</span>
+  <span class="kw">margin-right:</span> <span class="dt">.5em</span><span class="kw">;</span> <span class="kw">}</span></code></pre>
+</div>
+
+<p>That’s all folks.</p>
+				</div>
+
+                <div id="social">
+                   <span>
+                       <a class="rss" href="http://feeds.feedburner.com/yannespositocomfr">RSS</a>
+                   </span>
+                    <span>
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-via="yogsototh">Tweet</a>
+                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                    </span>
+                    <span>
+                        <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="106"></div>
+                        <script type="text/javascript">
+                            (function() {
+                             var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                             po.src = 'https://apis.google.com/js/plusone.js';
+                             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                             })();
+                        </script>
+                   </span>
+                   <div class="flush"></div>
+                </div>
+				<div class="corps" id="comment">
+            	    <h2 class="first">Comments</h2>
+					<div id="disqus_thread"></div>
+        			<script type="text/javascript">
+        			    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        			    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
+
+        			    /* * * DON'T EDIT BELOW THIS LINE * * */
+        			    (function() {
+        			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        			    })();
+        			</script>
+        			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+				</div>
+				<div id="bottom">
+            	    <div>
+            	        Published on 2009-09-23
+            	    </div>
+            	    <div>
+            	        <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+            	    </div>
+            	    <div>
+            	       Yann Esposito©
+            	    </div>
+            	    <div>
+            	        Done with
+            	        <a href="http://www.vim.org">Vim</a>
+						<span class="nicer">&amp;</span>
+						<a href="http://jaspervdj.be/hakyll">Hakyll</a>
+            	    </div>
+            	</div>
+			</div>
+
+        </div>
+    </body>
+    <script type="text/javascript" src="/Scratch/js/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="/Scratch/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/Scratch/js/index.js"></script>
+    <script type="text/javascript" src="/Scratch/js/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="/Scratch/js/article.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</html>

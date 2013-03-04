@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>YBlog - How to handle evil IE</title>
+        <meta name="keywords" content="web, webdesign, jQuery">
+
+        <link rel="shortcut icon" type="image/x-icon" href="/Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/solarized.css" />
+		<!-- Font -->
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomen"/>
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+    </head>
+    <body lang="en">
+		<script type="text/javascript">// <![CDATA[
+            document.write('<div id="blackpage"><div>Soon<img src="/Scratch/img/loading.gif" alt="Loading"/></div></div>');
+            // ]]>
+        </script>
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	        <div id="choixlang">
+						<a href="/Scratch/fr/blog/2009-10-30-How-to-handle-evil-IE/index.html"
+							onclick="setLanguage('fr')">
+							Français </a>
+        	        </div>
+					<script type="text/javascript">// <![CDATA[
+					document.write('<div id="switchcss"><a href="#">Change Theme</a></div>');
+					// ]]>
+					</script>
+        	        <div class="flush"></div>
+        	    </div>
+        	    <div id="navigation">
+                    <a href="/">Home</a>
+                    <span class="sep">¦</span>
+        	        <a href="/Scratch/en/blog">Blog</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/en/softwares">Softwares</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/en/about">About</a>
+        	    </div>
+			</div>
+
+			<div id="titre">
+				<h1>How to handle evil IE</h1>
+			</div>
+			<div class="flush"></div>
+			<div id="afterheader">
+				<div class="corps">
+					<p>For developer IE is a nightmare. This is why, I use a method to disable my standard CSS and enable a IE only CSS. I use jQuery to accomplish that.</p>
+<div>
+<code class="javascript"> <span class="math">$(document).ready( function() {     if ($</span>.browser[“msie”]) { // include the ie.js file $(‘head’).append(’
+<script type="text/javascript" src="/js/ie.js">
+</scr' + 'ipt>’); } }); </code>
+</div>
+
+<div>
+<p><code class="javascript" file="ie.js"> // Remove all CSS I don’t want to use on IE $(‘link[rel=stylesheet]’).each(function(i) { if (this.getAttribute(‘href’) == ‘/css/layout.css’) this.disabled = true; if (this.getAttribute(‘href’) == ‘/css/shadows.css’) this.disabled = true; if (this.getAttribute(‘href’) == ‘/css/gen.css’)<br /> this.disabled = true; }) ;</p>
+<p>// Append the CSS for IE only $(‘head’).append(‘<link rel="stylesheet" type="text/css" href="/css/ie.css"/>’);</p>
+// I also add a message on top of the page $(‘body’).prepend(’
+<div id="iemessage"><p>
+<span class="fr"><em>Avec <a href="http://www.firefox.com"> Firefox </a> et <a href="http://www.apple.com/safari">Safari</a> cette page est bien plus jolie !</em></span><span class="en"><em>This page is far nicer with <a href="http://www.firefox.com"> Firefox </a> and <a href="http://www.apple.com/safari">Safari</a>!</em></span>
+</p>
+.
+</div>
+<p>’);</p>
+</code>
+</div>
+
+<p>That’s it.</p>
+				</div>
+
+                <div id="social">
+                   <span>
+                       <a class="rss" href="http://feeds.feedburner.com/yannespositocomen">RSS</a>
+                   </span>
+                    <span>
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-via="yogsototh">Tweet</a>
+                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                    </span>
+                    <span>
+                        <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="106"></div>
+                        <script type="text/javascript">
+                            (function() {
+                             var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                             po.src = 'https://apis.google.com/js/plusone.js';
+                             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                             })();
+                        </script>
+                   </span>
+                   <div class="flush"></div>
+                </div>
+				<div class="corps" id="comment">
+            	    <h2 class="first">Comments</h2>
+					<div id="disqus_thread"></div>
+        			<script type="text/javascript">
+        			    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        			    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
+
+        			    /* * * DON'T EDIT BELOW THIS LINE * * */
+        			    (function() {
+        			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        			    })();
+        			</script>
+        			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+				</div>
+				<div id="bottom">
+            	    <div>
+            	        Published on 2009-10-30
+            	    </div>
+            	    <div>
+            	        <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+            	    </div>
+            	    <div>
+            	       Yann Esposito©
+            	    </div>
+            	    <div>
+            	        Done with
+            	        <a href="http://www.vim.org">Vim</a>
+						<span class="nicer">&amp;</span>
+						<a href="http://jaspervdj.be/hakyll">Hakyll</a>
+            	    </div>
+            	</div>
+			</div>
+
+        </div>
+    </body>
+    <script type="text/javascript" src="/Scratch/js/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="/Scratch/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/Scratch/js/index.js"></script>
+    <script type="text/javascript" src="/Scratch/js/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="/Scratch/js/article.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</html>

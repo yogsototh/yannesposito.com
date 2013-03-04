@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>YBlog - Yesod excellent ideas</title>
+        <meta name="keywords" content="yesod, framework, web, haskell, ideas">
+
+        <link rel="shortcut icon" type="image/x-icon" href="/Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/solarized.css" />
+		<!-- Font -->
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomen"/>
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+    </head>
+    <body lang="en">
+		<script type="text/javascript">// <![CDATA[
+            document.write('<div id="blackpage"><div>Soon<img src="/Scratch/img/loading.gif" alt="Loading"/></div></div>');
+            // ]]>
+        </script>
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	        <div id="choixlang">
+						<a href="/Scratch/fr/blog/Yesod-excellent-ideas/index.html"
+							onclick="setLanguage('fr')">
+							Français </a>
+        	        </div>
+					<script type="text/javascript">// <![CDATA[
+					document.write('<div id="switchcss"><a href="#">Change Theme</a></div>');
+					// ]]>
+					</script>
+        	        <div class="flush"></div>
+        	    </div>
+        	    <div id="navigation">
+                    <a href="/">Home</a>
+                    <span class="sep">¦</span>
+        	        <a href="/Scratch/en/blog">Blog</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/en/softwares">Softwares</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/en/about">About</a>
+        	    </div>
+			</div>
+
+			<div id="titre">
+				<h1>Yesod excellent ideas</h1>
+			</div>
+			<div class="flush"></div>
+			<div id="afterheader">
+				<div class="corps">
+					<p><img src="/Scratch/img/blog/Yesod-excellent-ideas/main.png" alt="Title image"/></p>
+<div class="intro">
+
+<p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span></p>
+<p><a href="http://www.yesodweb.com">Yesod</a> is a framework which has recently matured to the point where you should consider using it. Before telling you why you should learn Haskell and use Yesod, I will illustrate the many features Yesod introduces which are missing in other frameworks.</p>
+</div>
+
+<h2 id="type-safety">Type safety</h2>
+<p>Let’s start by an obligatory link from <a href="http://xkcd.com">xkcd</a>:</p>
+<div class="figure">
+<img src="http://imgs.xkcd.com/comics/exploits_of_a_mom.png" alt="SQL injection by a mom" /><p class="caption">SQL injection by a mom</p>
+</div>
+<p>When you create a web application, a lot of time is spent dealing with strings. Strings for URL, HTML, JavaScript, CSS, SQL, etc… To prevent malicious usage you have to protect each strings to be sure, no script will pass from one point to another. Suppose a user enter this user name:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript">Newton&lt;script&gt;alert(<span class="st">&quot;An apple fall&quot;</span>)&lt;/script&gt;</code></pre>
+<p>You must transform each <code>&lt;</code> into <code>&amp;lt;</code>. Without this transformation alert will appear each time you try to display this user name. Safe types associate with each string what kind of string it is. Is it a string for URL? For javascript? For HTML? And the right protection is made by default to prevent problems.</p>
+<p>Yesod does its best to handle cross scripting issues. Both between the client and the server and between the server and your DB. Here is an example:</p>
+<p><code class="html"><a href=@[AnotherPageR]>Go to the other page ~~~~~~</p>
+<p>As <code>AnotherPageR</code> is of type URL and it could not contains something nefarious. It will be an URL safe. Not something like:</p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="er">falselink&quot;&gt;&lt;script&gt; bad_code(); &lt;/script&gt;&lt;a href=&quot;pipo</span></code></pre>
+<h2 id="widgets">Widgets</h2>
+<p>Yesod’s widgets are different from javascript widget. For yesod, widgets are sets of small parts of a web application. If you want to use many widgets in a same page yesod do the work. Some examples of widget are:</p>
+<ul>
+<li>the footer of a webpage,</li>
+<li>the header of a webpage with a menu,</li>
+<li>a button which appears only when scrolling down,</li>
+<li>etc…</li>
+</ul>
+<p>For each of this part, you might need,</p>
+<ul>
+<li>a bit of HTML,</li>
+<li>a bit of CSS and</li>
+<li>a bit of javascript.</li>
+</ul>
+<p>Some in the header, some in the body.</p>
+<p>You can declare a widget as this (note I use a very high meta-language):</p>
+<pre><code>htmlheader = ...
+cssheader = ...
+javascriptheader = ...
+htmlbody = ...</code></pre>
+<p>The real syntax is:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">toWidgetHeader cassiusFile <span class="st">&quot;button.cassius&quot;</span>
+toWidgetHeader juliusFile <span class="st">&quot;button.julius&quot;</span>
+toWidget       hamletFile <span class="st">&quot;buttonTemplate.hamlet&quot;</span></code></pre>
+<p>Note the awesome Shakespearean inspired name convention. Another good reason to use yesod.</p>
+<ul>
+<li>Cassius <em>&amp;</em> Lucius of CSS (a lot similar to SASS and SCSS),</li>
+<li>Julius for JavaScript (note a CoffeeScript is somewhere in the source of yesod),</li>
+<li>Hamlet for HTML (similar to haml)</li>
+</ul>
+<p>And when your page render, yesod makes it easy to render everything nicely:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">myBigWidget <span class="fu">=</span>  menuWidget <span class="fu">&gt;&gt;</span> contentWidget <span class="fu">&gt;&gt;</span> footerWidget</code></pre>
+<p>Furthermore, if you use say 10 widgets each with a bit of CSS, yesod will create a unique and compressed CSS file. Except if you expressed a need to change the header by using different CSS.</p>
+<p>This is just awesome!</p>
+<h2 id="optimized-routing">Optimized routing</h2>
+<p>In standard routing system you have for each entry a couple: regexp → handler</p>
+<p>The only way to discover the right rules is to match each regexp to the current URL. Then you can see behaviour such as, if you change the order of the rules you can lose or win time.</p>
+<p>On the other hand yesod compiles the routes. Therefore it can optimize it. Of course two routes must not interfere.</p>
+<pre class="sourceCode html"><code class="sourceCode html">/blog/2003  Date2003R
+/blog/$DATE DateR</code></pre>
+<p>is invalid by default (you can make it valid, but I don’t think it is a good idea).</p>
+<p>You’d better</p>
+<pre class="sourceCode html"><code class="sourceCode html">/blog/$DATE DateR</code></pre>
+<p>and test if <code>date = 2003</code> inside the handler.</p>
+<h2 id="why-yesod">Why yesod?</h2>
+<ol style="list-style-type: decimal">
+<li><em>Speed</em>. This is just astounding. Look at <a href="http://snapframework.com/blog/2010/11/17/snap-0.3-benchmarks">this</a> and then to <a href="http://www.yesodweb.com/blog/2011/02/warp-speed-ahead">this</a>.</li>
+<li><em>Haskell</em>. This is certainly hard to learn but also incredibly awesome. If you want to make you a favor. Just learn Haskell. It will be difficult, far more than you can imagine. It is very different from all other languages I used. But it will blow your mind and learn you a bunch of new programming concepts.</li>
+<li><em>Good ideas, excellent community</em>. I follow yesod from some month now and the speed at which the project progress is incredible.</li>
+</ol>
+<p>If you are a haskeller, I believe you shouldn’t fear the special syntax imposed by the standard yesod way of doing things. Just try it more than the firsts basic tutorials.</p>
+<p>Until here I believe it goes in the right direction. Even if I believe the real future is by generating HTML pages from the client (using javascript) and server limited to serve JSON (or XML, or any object representation system).</p>
+<p>To conclude, Yesod is awesome. Just overcome the difficulties about learning a bit of haskell and try it!</p>
+				</div>
+
+                <div id="social">
+                   <span>
+                       <a class="rss" href="http://feeds.feedburner.com/yannespositocomen">RSS</a>
+                   </span>
+                    <span>
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-via="yogsototh">Tweet</a>
+                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                    </span>
+                    <span>
+                        <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="106"></div>
+                        <script type="text/javascript">
+                            (function() {
+                             var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                             po.src = 'https://apis.google.com/js/plusone.js';
+                             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                             })();
+                        </script>
+                   </span>
+                   <div class="flush"></div>
+                </div>
+				<div class="corps" id="comment">
+            	    <h2 class="first">Comments</h2>
+					<div id="disqus_thread"></div>
+        			<script type="text/javascript">
+        			    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        			    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
+
+        			    /* * * DON'T EDIT BELOW THIS LINE * * */
+        			    (function() {
+        			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        			    })();
+        			</script>
+        			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+				</div>
+				<div id="bottom">
+            	    <div>
+            	        Published on 2011-10-04
+            	    </div>
+            	    <div>
+            	        <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+            	    </div>
+            	    <div>
+            	       Yann Esposito©
+            	    </div>
+            	    <div>
+            	        Done with
+            	        <a href="http://www.vim.org">Vim</a>
+						<span class="nicer">&amp;</span>
+						<a href="http://jaspervdj.be/hakyll">Hakyll</a>
+            	    </div>
+            	</div>
+			</div>
+
+        </div>
+    </body>
+    <script type="text/javascript" src="/Scratch/js/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="/Scratch/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/Scratch/js/index.js"></script>
+    <script type="text/javascript" src="/Scratch/js/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="/Scratch/js/article.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</html>

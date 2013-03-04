@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>YBlog - Now hosted by heroku</title>
+        <meta name="keywords" content="blog">
+
+        <link rel="shortcut icon" type="image/x-icon" href="/Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/solarized.css" />
+		<!-- Font -->
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomen"/>
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+    </head>
+    <body lang="en">
+		<script type="text/javascript">// <![CDATA[
+            document.write('<div id="blackpage"><div>Soon<img src="/Scratch/img/loading.gif" alt="Loading"/></div></div>');
+            // ]]>
+        </script>
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	        <div id="choixlang">
+						<a href="/Scratch/fr/blog/2010-08-23-Now-heberged-on-heroku/index.html"
+							onclick="setLanguage('fr')">
+							Français </a>
+        	        </div>
+					<script type="text/javascript">// <![CDATA[
+					document.write('<div id="switchcss"><a href="#">Change Theme</a></div>');
+					// ]]>
+					</script>
+        	        <div class="flush"></div>
+        	    </div>
+        	    <div id="navigation">
+                    <a href="/">Home</a>
+                    <span class="sep">¦</span>
+        	        <a href="/Scratch/en/blog">Blog</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/en/softwares">Softwares</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/en/about">About</a>
+        	    </div>
+			</div>
+
+			<div id="titre">
+				<h1>Now hosted by heroku</h1>
+			</div>
+			<div class="flush"></div>
+			<div id="afterheader">
+				<div class="corps">
+					<h1 id="now-on-heroku">Now on <a href="http://heroku.com">Heroku</a></h1>
+<p>I now changed my hosting to <a href="http://heroku.com">Heroku</a>. I believe it will be far more reliable.</p>
+<p>But as you should know my website is completely static. I use <a href="http://nanoc.stoneship.org/">nanoc</a> to generate it. But here is the conf to make it work on heroku.</p>
+<p>The root of my files is <code>/output</code>. You only need to create a <code>config.ru</code><sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup> file:</p>
+<pre class="sourceCode ruby"><code class="sourceCode ruby">require <span class="st">&#39;rubygems&#39;</span>
+require <span class="st">&#39;rack&#39;</span>
+require <span class="st">&#39;rack/contrib&#39;</span>
+require <span class="st">&#39;rack-rewrite&#39;</span>
+require <span class="st">&#39;mime/types&#39;</span>
+
+use <span class="dt">Rack</span>::<span class="dt">ETag</span>
+<span class="kw">module</span> ::<span class="dt">Rack</span>
+    <span class="kw">class</span> <span class="dt">TryStatic</span> &lt; <span class="dt">Static</span>
+
+        <span class="kw">def</span> initialize(app, options)
+            <span class="dv">super</span>
+            <span class="ot">@try</span> = ([<span class="st">&#39;&#39;</span>] + <span class="dt">Array</span>(options.delete(<span class="st">:try</span>)) + [<span class="st">&#39;&#39;</span>])
+        <span class="kw">end</span>
+
+        <span class="kw">def</span> call(env)
+            <span class="ot">@next</span> = <span class="dv">0</span>
+            <span class="kw">while</span> <span class="ot">@next</span> &lt; <span class="ot">@try</span>.size &amp;&amp; <span class="dv">404</span> == (resp = <span class="dv">super</span>(try_next(env)))[<span class="dv">0</span>] 
+                <span class="ot">@next</span> += <span class="dv">1</span>
+            <span class="kw">end</span>
+            <span class="dv">404</span> == resp[<span class="dv">0</span>] ? <span class="ot">@app</span>.call : resp
+        <span class="kw">end</span>
+
+        <span class="kw">private</span>
+        <span class="kw">def</span> try_next(env)
+            env.merge(<span class="st">&#39;PATH_INFO&#39;</span> =&gt; env[<span class="st">&#39;PATH_INFO&#39;</span>] + <span class="ot">@try</span>[<span class="ot">@next</span>])
+        <span class="kw">end</span>
+
+    <span class="kw">end</span>
+<span class="kw">end</span>
+
+use <span class="dt">Rack</span>::<span class="dt">TryStatic</span>, 
+    <span class="st">:root</span> =&gt; <span class="st">&quot;output&quot;</span>,                              <span class="co"># static files root dir</span>
+    <span class="st">:urls</span> =&gt;<span class="ot"> %w[</span><span class="st">/</span><span class="ot">]</span>,                                 <span class="co"># match all requests </span>
+    <span class="st">:try</span> =&gt; [<span class="st">&#39;.html&#39;</span>, <span class="st">&#39;index.html&#39;</span>, <span class="st">&#39;/index.html&#39;</span>]  <span class="co"># try these postfixes sequentially</span>
+
+errorFile=<span class="st">&#39;output/Scratch/en/error/404-not_found/index.html&#39;</span>
+run lambda { [<span class="dv">404</span>, {
+                <span class="st">&quot;Last-Modified&quot;</span>  =&gt; <span class="dt">File</span>.mtime(errorFile).httpdate,
+                <span class="st">&quot;Content-Type&quot;</span>   =&gt; <span class="st">&quot;text/html&quot;</span>,
+                <span class="st">&quot;Content-Length&quot;</span> =&gt; <span class="dt">File</span>.size(errorFile).to_s
+            }, <span class="dt">File</span>.read(errorFile)] }</code></pre>
+<p>and the <code>.gems</code> file needed to install <code>rack</code> middlewares.</p>
+<pre class="sourceCode ruby"><code class="sourceCode ruby">rack
+rack-rewrite
+rack-contrib</code></pre>
+<p>Now, just follow the heroku tutorial to create an application&nbsp;:</p>
+<pre class="zsh"><code>git init
+git add .
+heroku create
+git push heroku master</code></pre>
+<p>Now I’ll should be able to redirect properly to my own 404 page for example. I hope it is helpful.</p>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>I was inspired by this <a href="http://gmarik.info/blog/2010/05/10/blogging-with-jekyll-and-heroku-for-free">article</a>.<a href="#fnref1">↩</a></p></li>
+</ol>
+</div>
+				</div>
+
+                <div id="social">
+                   <span>
+                       <a class="rss" href="http://feeds.feedburner.com/yannespositocomen">RSS</a>
+                   </span>
+                    <span>
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-via="yogsototh">Tweet</a>
+                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                    </span>
+                    <span>
+                        <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="106"></div>
+                        <script type="text/javascript">
+                            (function() {
+                             var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                             po.src = 'https://apis.google.com/js/plusone.js';
+                             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                             })();
+                        </script>
+                   </span>
+                   <div class="flush"></div>
+                </div>
+				<div class="corps" id="comment">
+            	    <h2 class="first">Comments</h2>
+					<div id="disqus_thread"></div>
+        			<script type="text/javascript">
+        			    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        			    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
+
+        			    /* * * DON'T EDIT BELOW THIS LINE * * */
+        			    (function() {
+        			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        			    })();
+        			</script>
+        			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+				</div>
+				<div id="bottom">
+            	    <div>
+            	        Published on 2010-08-23
+            	    </div>
+            	    <div>
+            	        <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+            	    </div>
+            	    <div>
+            	       Yann Esposito©
+            	    </div>
+            	    <div>
+            	        Done with
+            	        <a href="http://www.vim.org">Vim</a>
+						<span class="nicer">&amp;</span>
+						<a href="http://jaspervdj.be/hakyll">Hakyll</a>
+            	    </div>
+            	</div>
+			</div>
+
+        </div>
+    </body>
+    <script type="text/javascript" src="/Scratch/js/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="/Scratch/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/Scratch/js/index.js"></script>
+    <script type="text/javascript" src="/Scratch/js/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="/Scratch/js/article.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</html>

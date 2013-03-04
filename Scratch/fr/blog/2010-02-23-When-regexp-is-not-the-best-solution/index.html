@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>YBlog - Quand se passer des expressions régulières ?</title>
+        <meta name="keywords" content="programmation, regexp, expressions régulières, extension, fichier">
+
+        <link rel="shortcut icon" type="image/x-icon" href="/Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/solarized.css" />
+		<!-- Font -->
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomfr"/>
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+    </head>
+    <body lang="fr">
+		<script type="text/javascript">// <![CDATA[
+            document.write('<div id="blackpage"><div>Bientôt<img src="/Scratch/img/loading.gif" alt="Chargement en cours"/></div></div>');
+            // ]]>
+        </script>
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	        <div id="choixlang">
+						<a href="/Scratch/en/blog/2010-02-23-When-regexp-is-not-the-best-solution/index.html"
+							onclick="setLanguage('en')">
+							English </a>
+        	        </div>
+					<script type="text/javascript">// <![CDATA[
+					document.write('<div id="switchcss"><a href="#">Changer de theme</a></div>');
+					// ]]>
+					</script>
+        	        <div class="flush"></div>
+        	    </div>
+        	    <div id="navigation">
+                    <a href="/">Home</a>
+                    <span class="sep">¦</span>
+        	        <a href="/Scratch/fr/blog">Blog</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/fr/softwares">Softwares</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/fr/about">About</a>
+        	    </div>
+			</div>
+
+			<div id="titre">
+				<h1>Quand se passer des expressions régulières ?</h1>
+			</div>
+			<div class="flush"></div>
+			<div id="afterheader">
+				<div class="corps">
+					<p>Les expressions régulières sont très utiles. Cependant, elles ne sont pas toujours la meilleure manière d’aborder certain problème autour des chaines de caractères. Et surtout quand les transformations que vous voulez accomplir sont simples.</p>
+<p>Je voulais savoir comment récupérer le plus vite possible l’extension d’un nom de fichier. Il y a trois manière naturelle d’accomplir celà&nbsp;:</p>
+<div>
+<p><code class="ruby"> # regexp str.match(/[^.]*<span class="math"> / ); <em>e</em><em>x</em><em>t</em> = </span>&amp;</p>
+<h1 id="split">split</h1>
+<p>ext=str.split(‘.’)[-1]</p>
+<h1 id="file-module">File module</h1>
+ext=File.extname(str) </code>
+</div>
+
+<p>A première vue, je pensais que l’expression régulière serait plus rapide que le <code>split</code> parce qu’il pouvait y avoir plusieurs de <code>.</code> dans un nom de fichier. Mais la majorité du temps il n’y a qu’un seul point par nom de fichier. C’est pourquoi j’ai réalisé que le <code>split</code> serait plus rapide. Mais pas le plus rapide possible. Il y a une fonction qui est dédiée à faire ce travail dans un module standard de ruby ; le module <code>File</code>.</p>
+<p>Voici le code pour faire un benchmark&nbsp;:</p>
+<div>
+<p><code class="ruby" file="regex_benchmark_ext.rb"> #!/usr/bin/env ruby require ‘benchmark’ n=80000 tab=[ ‘/accounts/user.json’, ‘/accounts/user.xml’, ‘/user/titi/blog/toto.json’, ‘/user/titi/blog/toto.xml’ ]</p>
+puts “Get extname” Benchmark.bm do |x| x.report(“regexp:”) { n.times do str=tab[rand(4)]; str.match(/[^.]*<span class="math"> / ); <em>e</em><em>x</em><em>t</em> = </span>&amp;; end } x.report(&quot; split:“) { n.times do str=tab[rand(4)]; ext=str.split(‘.’)[-1] ; end } x.report(” File:&quot;) { n.times do str=tab[rand(4)]; ext=File.extname(str); end } end </code>
+</div>
+
+<p>Et voici les résultats&nbsp;:</p>
+<pre class="twilight">
+Get extname
+            user     system      total        real
+regexp:  2.550000   0.020000   2.570000 (  2.693407)
+ split:  1.080000   0.050000   1.130000 (  1.190408)
+  File:  0.640000   0.030000   0.670000 (  0.717748)
+</pre>
+
+<p>En conclusion, les fonction dédiées sont meilleures que votre façon de faire (la plupart du temps).</p>
+<h2 id="chemin-complet-dun-fichier-sans-lextension">Chemin complet d’un fichier sans l’extension</h2>
+<div>
+<p><code class="ruby" file="regex_benchmark_strip.rb"> #!/usr/bin/env ruby require ‘benchmark’ n=80000 tab=[ ‘/accounts/user.json’, ‘/accounts/user.xml’, ‘/user/titi/blog/toto.json’, ‘/user/titi/blog/toto.xml’ ]</p>
+puts “remove extension” Benchmark.bm do |x| x.report(&quot; File:“) { n.times do str=tab[rand(4)]; path=File.expand_path(str,File.basename(str,File.extname(str))); end } x.report(”chomp:&quot;) { n.times do str=tab[rand(4)]; ext=File.extname(str); path=str.chomp(ext); end } end </code>
+</div>
+
+<p>et voici les résultats&nbsp;:</p>
+<pre class="twilight">
+remove extension
+          user     system      total        real
+ File:  0.970000   0.060000   1.030000 (  1.081398)
+chomp:  0.820000   0.040000   0.860000 (  0.947432)
+</pre>
+
+<p>En conclusion du ce second benchmark. Un fonction simple est meilleure que trois fonctions dédiées. Pas de surprise, mais c’est toujours bien de savoir.</p>
+				</div>
+
+                <div id="social">
+                   <span>
+                       <a class="rss" href="http://feeds.feedburner.com/yannespositocomfr">RSS</a>
+                   </span>
+                    <span>
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-via="yogsototh">Tweet</a>
+                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                    </span>
+                    <span>
+                        <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="106"></div>
+                        <script type="text/javascript">
+                            (function() {
+                             var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                             po.src = 'https://apis.google.com/js/plusone.js';
+                             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                             })();
+                        </script>
+                   </span>
+                   <div class="flush"></div>
+                </div>
+				<div class="corps" id="comment">
+            	    <h2 class="first">Comments</h2>
+					<div id="disqus_thread"></div>
+        			<script type="text/javascript">
+        			    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        			    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
+
+        			    /* * * DON'T EDIT BELOW THIS LINE * * */
+        			    (function() {
+        			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        			    })();
+        			</script>
+        			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+				</div>
+				<div id="bottom">
+            	    <div>
+            	        Published on 2010-02-23
+            	    </div>
+            	    <div>
+            	        <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+            	    </div>
+            	    <div>
+            	       Yann Esposito©
+            	    </div>
+            	    <div>
+            	        Done with
+            	        <a href="http://www.vim.org">Vim</a>
+						<span class="nicer">&amp;</span>
+						<a href="http://jaspervdj.be/hakyll">Hakyll</a>
+            	    </div>
+            	</div>
+			</div>
+
+        </div>
+    </body>
+    <script type="text/javascript" src="/Scratch/js/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="/Scratch/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/Scratch/js/index.js"></script>
+    <script type="text/javascript" src="/Scratch/js/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="/Scratch/js/article.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</html>

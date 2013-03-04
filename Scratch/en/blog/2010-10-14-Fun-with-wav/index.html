@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>YBlog - Fun with wav</title>
+        <meta name="keywords" content="wav, C, format, programming">
+
+        <link rel="shortcut icon" type="image/x-icon" href="/Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/solarized.css" />
+		<!-- Font -->
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomen"/>
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+    </head>
+    <body lang="en">
+		<script type="text/javascript">// <![CDATA[
+            document.write('<div id="blackpage"><div>Soon<img src="/Scratch/img/loading.gif" alt="Loading"/></div></div>');
+            // ]]>
+        </script>
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	        <div id="choixlang">
+						<a href="/Scratch/fr/blog/2010-10-14-Fun-with-wav/index.html"
+							onclick="setLanguage('fr')">
+							Français </a>
+        	        </div>
+					<script type="text/javascript">// <![CDATA[
+					document.write('<div id="switchcss"><a href="#">Change Theme</a></div>');
+					// ]]>
+					</script>
+        	        <div class="flush"></div>
+        	    </div>
+        	    <div id="navigation">
+                    <a href="/">Home</a>
+                    <span class="sep">¦</span>
+        	        <a href="/Scratch/en/blog">Blog</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/en/softwares">Softwares</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/en/about">About</a>
+        	    </div>
+			</div>
+
+			<div id="titre">
+				<h1>Fun with wav</h1>
+			</div>
+			<div class="flush"></div>
+			<div id="afterheader">
+				<div class="corps">
+					<div class="intro">
+
+<p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span> Played to process a <code>wav</code> file. <code>C</code> was easier and cleaner than Ruby.</p>
+<p>edit: I wanted this program to work only on one specific machine (a x86 on a 32 bit Ubuntu). Therefore I didn’t had any portability consideration. This is only a <em>hack</em>.</p>
+</div>
+
+<p>I had to compute the sum of the absolute values of data of a <code>.wav</code> file. For efficiency (and fun) reasons, I had chosen <code>C</code> language.</p>
+<p>I didn’t programmed in <code>C</code> for a long time. From my memory it was a pain to read and write to files. But in the end I was really impressed by the code I get. It was really clean. This is even more impressive knowing I used mostly low level functions.</p>
+<p>A <code>wav</code> file has an header containing many metadata. This header was optimized to take as few space as possible. The header is then a block of packed bytes.</p>
+<ul>
+<li>The 4th first bytes must contains <code>RIFF</code> in ASCII,</li>
+<li>the following 4th Bytes is an 32 bits integer giving the size of the file minus 8, etc…</li>
+</ul>
+<p>Surprisingly, I believe that reading this kind of file is easier in <code>C</code> than in most higher level language. Proof: I only have to search on the web the complete header format and write it in a struct.</p>
+<pre class="sourceCode c"><code class="sourceCode c"><span class="kw">struct</span> wavfile
+{
+    <span class="dt">char</span>        id[<span class="dv">4</span>];          <span class="co">// should always contain &quot;RIFF&quot;</span>
+    <span class="dt">int</span>     totallength;    <span class="co">// total file length minus 8</span>
+    <span class="dt">char</span>        wavefmt[<span class="dv">8</span>];     <span class="co">// should be &quot;WAVEfmt &quot;</span>
+    <span class="dt">int</span>     format;         <span class="co">// 16 for PCM format</span>
+    <span class="dt">short</span>     pcm;            <span class="co">// 1 for PCM format</span>
+    <span class="dt">short</span>     channels;       <span class="co">// channels</span>
+    <span class="dt">int</span>     frequency;      <span class="co">// sampling frequency</span>
+    <span class="dt">int</span>     bytes_per_second;
+    <span class="dt">short</span>     bytes_by_capture;
+    <span class="dt">short</span>     bits_per_sample;
+    <span class="dt">char</span>        data[<span class="dv">4</span>];        <span class="co">// should always contain &quot;data&quot;</span>
+    <span class="dt">int</span>     bytes_in_data;
+};</code></pre>
+<p>To read this kind of data in Ruby, I certainly had to write a block of code for each element in the struct. But in <code>C</code> I simply written:</p>
+<pre class="sourceCode c"><code class="sourceCode c">fread(&amp;header,<span class="kw">sizeof</span>(header),<span class="dv">1</span>,wav)</code></pre>
+<p>Only one step to fill my data structure. Magic!</p>
+<p>Then, get an int value coded on two Bytes is also not a natural operation for high level language. In <code>C</code>, to read a sequence of 2 Bytes numbers I only had to write:</p>
+<pre class="sourceCode c"><code class="sourceCode c"><span class="dt">short</span> value=<span class="dv">0</span>;
+<span class="kw">while</span>( fread(&amp;value,<span class="kw">sizeof</span>(value),<span class="dv">1</span>,wav) ) {
+    <span class="co">// do something with value</span>
+}</code></pre>
+<p>Finally I ended with the following code. Remark I know the wav format (16 bit / 48000Hz):</p>
+<pre class="sourceCode c"><code class="sourceCode c"><span class="ot">#include &lt;stdio.h&gt;</span>
+<span class="ot">#include &lt;stdlib.h&gt;</span>
+<span class="ot">#include &lt;stdint.h&gt;</span>
+
+<span class="kw">struct</span> wavfile
+{
+    <span class="dt">char</span>        id[<span class="dv">4</span>];          <span class="co">// should always contain &quot;RIFF&quot;</span>
+    <span class="dt">int</span>     totallength;    <span class="co">// total file length minus 8</span>
+    <span class="dt">char</span>        wavefmt[<span class="dv">8</span>];     <span class="co">// should be &quot;WAVEfmt &quot;</span>
+    <span class="dt">int</span>     format;         <span class="co">// 16 for PCM format</span>
+    <span class="dt">short</span>     pcm;            <span class="co">// 1 for PCM format</span>
+    <span class="dt">short</span>     channels;       <span class="co">// channels</span>
+    <span class="dt">int</span>     frequency;      <span class="co">// sampling frequency</span>
+    <span class="dt">int</span>     bytes_per_second;
+    <span class="dt">short</span>     bytes_by_capture;
+    <span class="dt">short</span>     bits_per_sample;
+    <span class="dt">char</span>        data[<span class="dv">4</span>];        <span class="co">// should always contain &quot;data&quot;</span>
+    <span class="dt">int</span>     bytes_in_data;
+};
+
+<span class="dt">int</span> main(<span class="dt">int</span> argc, <span class="dt">char</span> *argv[]) {
+    <span class="dt">char</span> *filename=argv[<span class="dv">1</span>];
+    FILE *wav = fopen(filename,<span class="st">&quot;rb&quot;</span>);
+    <span class="kw">struct</span> wavfile header;
+
+    <span class="kw">if</span> ( wav == NULL ) {
+        fprintf(stderr,<span class="st">&quot;Can&#39;t open input file %s&quot;</span>, filename);
+        exit(<span class="dv">1</span>);
+    }
+
+    <span class="co">// read header</span>
+    <span class="kw">if</span> ( fread(&amp;header,<span class="kw">sizeof</span>(header),<span class="dv">1</span>,wav) &lt; <span class="dv">1</span> )
+    {
+        fprintf(stderr,<span class="st">&quot;Can&#39;t read file header</span><span class="ch">\n</span><span class="st">&quot;</span>);
+        exit(<span class="dv">1</span>);
+    }
+    <span class="kw">if</span> (    header.id[<span class="dv">0</span>] != &#39;R&#39;
+         || header.id[<span class="dv">1</span>] != &#39;I&#39; 
+         || header.id[<span class="dv">2</span>] != &#39;F&#39; 
+         || header.id[<span class="dv">3</span>] != &#39;F&#39; ) { 
+        fprintf(stderr,<span class="st">&quot;ERROR: Not wav format</span><span class="ch">\n</span><span class="st">&quot;</span>); 
+        exit(<span class="dv">1</span>); 
+    }
+
+    fprintf(stderr,<span class="st">&quot;wav format</span><span class="ch">\n</span><span class="st">&quot;</span>);
+
+    <span class="co">// read data</span>
+    <span class="dt">long</span> sum=<span class="dv">0</span>;
+    <span class="dt">short</span> value=<span class="dv">0</span>;
+    <span class="kw">while</span>( fread(&amp;value,<span class="kw">sizeof</span>(value),<span class="dv">1</span>,wav) ) {
+        <span class="co">// fprintf(stderr,&quot;%d\n&quot;, value);</span>
+        <span class="kw">if</span> (value&lt;<span class="dv">0</span>) { value=-value; }
+        sum += value;
+    }
+    printf(<span class="st">&quot;%ld</span><span class="ch">\n</span><span class="st">&quot;</span>,sum);
+    exit(<span class="dv">0</span>);
+}</code></pre>
+<p>Of course it is only a hack. But we can see how easy and clean it should be to improve. As I say often: the right tool for your need instead of the same tool for all your needs. Because here <code>C</code> is clearly far superior than Ruby to handle this simple tasks.</p>
+<p>I am curious to know if somebody know a nice way to do this with Ruby or Python.</p>
+<p><em>edit: for compatibility reasons (64bit machines) used <code>int16_t</code> instead of <code>short</code> and <code>int</code> instead of <code>int</code>.</em></p>
+<div class="intro">
+
+<p>Edit (2): after most consideration about portability I made an <em>hopefully</em> more portable version. But I must confess this task was a bit tedious. The code remain as readable as before. But I had to use some compiler specific declaration to force the structure to be packed:</p>
+<pre class="sourceCode c"><code class="sourceCode c">__attribute__((__packed__))</code></pre>
+<p>Therefore this implementation should for big and little endian architecture. However, it must be compiled with <code>gcc</code>. The new code make more tests but still don’t use <code>mmap</code>. Here it is:</p>
+</div>
+
+<pre class="sourceCode c"><code class="sourceCode c"><span class="ot">#include &lt;stdio.h&gt;</span>
+<span class="ot">#include &lt;stdlib.h&gt;</span>
+<span class="ot">#include &lt;string.h&gt; </span><span class="co">// for memcmp</span>
+<span class="ot">#include &lt;stdint.h&gt; </span><span class="co">// for int16_t and int32_t</span>
+
+<span class="kw">struct</span> wavfile
+{
+    <span class="dt">char</span>    id[<span class="dv">4</span>];          <span class="co">// should always contain &quot;RIFF&quot;</span>
+    <span class="dt">int32_t</span> totallength;    <span class="co">// total file length minus 8</span>
+    <span class="dt">char</span>    wavefmt[<span class="dv">8</span>];     <span class="co">// should be &quot;WAVEfmt &quot;</span>
+    <span class="dt">int32_t</span> format;         <span class="co">// 16 for PCM format</span>
+    <span class="dt">int16_t</span> pcm;            <span class="co">// 1 for PCM format</span>
+    <span class="dt">int16_t</span> channels;       <span class="co">// channels</span>
+    <span class="dt">int32_t</span> frequency;      <span class="co">// sampling frequency</span>
+    <span class="dt">int32_t</span> bytes_per_second;
+    <span class="dt">int16_t</span> bytes_by_capture;
+    <span class="dt">int16_t</span> bits_per_sample;
+    <span class="dt">char</span>    data[<span class="dv">4</span>];        <span class="co">// should always contain &quot;data&quot;</span>
+    <span class="dt">int32_t</span> bytes_in_data;
+} __attribute__((__packed__));
+
+<span class="dt">int</span> is_big_endian(<span class="dt">void</span>) {
+    <span class="kw">union</span> {
+        <span class="dt">uint32_t</span> i;
+        <span class="dt">char</span> c[<span class="dv">4</span>];
+    } bint = {<span class="bn">0x01000000</span>};
+    <span class="kw">return</span> bint.c[<span class="dv">0</span>]==<span class="dv">1</span>;
+}
+
+<span class="dt">int</span> main(<span class="dt">int</span> argc, <span class="dt">char</span> *argv[]) {
+    <span class="dt">char</span> *filename=argv[<span class="dv">1</span>];
+    FILE *wav = fopen(filename,<span class="st">&quot;rb&quot;</span>);
+    <span class="kw">struct</span> wavfile header;
+
+    <span class="kw">if</span> ( wav == NULL ) {
+        fprintf(stderr,<span class="st">&quot;Can&#39;t open input file %s</span><span class="ch">\n</span><span class="st">&quot;</span>, filename);
+        exit(<span class="dv">1</span>);
+    }
+
+    <span class="co">// read header</span>
+    <span class="kw">if</span> ( fread(&amp;header,<span class="kw">sizeof</span>(header),<span class="dv">1</span>,wav) &lt; <span class="dv">1</span> ) {
+        fprintf(stderr,<span class="st">&quot;Can&#39;t read input file header %s</span><span class="ch">\n</span><span class="st">&quot;</span>, filename);
+        exit(<span class="dv">1</span>);
+    }
+
+    <span class="co">// if wav file isn&#39;t the same endianness than the current environment</span>
+    <span class="co">// we quit</span>
+    <span class="kw">if</span> ( is_big_endian() ) {
+        <span class="kw">if</span> (   memcmp( header.id,<span class="st">&quot;RIFX&quot;</span>, <span class="dv">4</span>) != <span class="dv">0</span> ) {
+            fprintf(stderr,<span class="st">&quot;ERROR: %s is not a big endian wav file</span><span class="ch">\n</span><span class="st">&quot;</span>, filename); 
+            exit(<span class="dv">1</span>);
+        }
+    } <span class="kw">else</span> {
+        <span class="kw">if</span> (   memcmp( header.id,<span class="st">&quot;RIFF&quot;</span>, <span class="dv">4</span>) != <span class="dv">0</span> ) {
+            fprintf(stderr,<span class="st">&quot;ERROR: %s is not a little endian wav file</span><span class="ch">\n</span><span class="st">&quot;</span>, filename); 
+            exit(<span class="dv">1</span>);
+        }
+    }
+
+    <span class="kw">if</span> (   memcmp( header.wavefmt, <span class="st">&quot;WAVEfmt &quot;</span>, <span class="dv">8</span>) != <span class="dv">0</span> 
+        || memcmp( header.data, <span class="st">&quot;data&quot;</span>, <span class="dv">4</span>) != <span class="dv">0</span> 
+            ) {
+        fprintf(stderr,<span class="st">&quot;ERROR: Not wav format</span><span class="ch">\n</span><span class="st">&quot;</span>); 
+        exit(<span class="dv">1</span>); 
+    }
+    <span class="kw">if</span> (header.format != <span class="dv">16</span>) {
+        fprintf(stderr,<span class="st">&quot;</span><span class="ch">\n</span><span class="st">ERROR: not 16 bit wav format.&quot;</span>);
+        exit(<span class="dv">1</span>);
+    }
+    fprintf(stderr,<span class="st">&quot;format: %d bits&quot;</span>, header.format);
+    <span class="kw">if</span> (header.format == <span class="dv">16</span>) {
+        fprintf(stderr,<span class="st">&quot;, PCM&quot;</span>);
+    } <span class="kw">else</span> {
+        fprintf(stderr,<span class="st">&quot;, not PCM (%d)&quot;</span>, header.format);
+    }
+    <span class="kw">if</span> (header.pcm == <span class="dv">1</span>) {
+        fprintf(stderr, <span class="st">&quot; uncompressed&quot;</span> );
+    } <span class="kw">else</span> {
+        fprintf(stderr, <span class="st">&quot; compressed&quot;</span> );
+    }
+    fprintf(stderr,<span class="st">&quot;, channel %d&quot;</span>, header.pcm);
+    fprintf(stderr,<span class="st">&quot;, freq %d&quot;</span>, header.frequency );
+    fprintf(stderr,<span class="st">&quot;, %d bytes per sec&quot;</span>, header.bytes_per_second );
+    fprintf(stderr,<span class="st">&quot;, %d bytes by capture&quot;</span>, header.bytes_by_capture );
+    fprintf(stderr,<span class="st">&quot;, %d bits per sample&quot;</span>, header.bytes_by_capture );
+    fprintf(stderr,<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span> );
+
+    <span class="kw">if</span> ( memcmp( header.data, <span class="st">&quot;data&quot;</span>, <span class="dv">4</span>) != <span class="dv">0</span> ) { 
+        fprintf(stderr,<span class="st">&quot;ERROR: Prrroblem?</span><span class="ch">\n</span><span class="st">&quot;</span>); 
+        exit(<span class="dv">1</span>); 
+    }
+    fprintf(stderr,<span class="st">&quot;wav format</span><span class="ch">\n</span><span class="st">&quot;</span>);
+
+    <span class="co">// read data</span>
+    <span class="dt">long</span> <span class="dt">long</span> sum=<span class="dv">0</span>;
+    <span class="dt">int16_t</span> value;
+    <span class="dt">int</span> i=<span class="dv">0</span>;
+    fprintf(stderr,<span class="st">&quot;---</span><span class="ch">\n</span><span class="st">&quot;</span>, value);
+    <span class="kw">while</span>( fread(&amp;value,<span class="kw">sizeof</span>(value),<span class="dv">1</span>,wav) ) {
+        <span class="kw">if</span> (value&lt;<span class="dv">0</span>) { value=-value; }
+        sum += value;
+    }
+    printf(<span class="st">&quot;%lld</span><span class="ch">\n</span><span class="st">&quot;</span>,sum);
+    exit(<span class="dv">0</span>);
+}</code></pre>
+<p><em>Edit(3)</em>: On <a href="http://reddit.com">reddit</a> <a href="http://www.reddit.com/user/Bogdanp">Bogdanp</a> proposed a Python version:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="co">#!/usr/bin/env python</span>
+<span class="ch">from</span> struct <span class="ch">import</span> calcsize, unpack
+<span class="ch">from</span> sys <span class="ch">import</span> argv, exit
+
+<span class="kw">def</span> word_iter(f):
+    <span class="kw">while</span> <span class="ot">True</span>:
+        _bytes = f.read(<span class="dv">2</span>)
+
+    <span class="kw">if</span> <span class="dt">len</span>(_bytes) != <span class="dv">2</span>:
+        <span class="kw">raise</span> <span class="ot">StopIteration</span>
+
+    <span class="kw">yield</span> unpack(<span class="st">&quot;=h&quot;</span>, _bytes)[<span class="dv">0</span>]
+
+<span class="kw">try</span>:
+    <span class="kw">with</span> <span class="dt">open</span>(argv[<span class="dv">1</span>], <span class="st">&quot;rb&quot;</span>) <span class="ch">as</span> f:
+        wav = <span class="st">&quot;=4ci8cihhiihh4ci&quot;</span>
+        wav_size = calcsize(wav)
+        metadata = unpack(wav, f.read(wav_size))
+
+        <span class="kw">if</span> <span class="st">&quot;&quot;</span>.join(metadata[:<span class="dv">4</span>]) != <span class="st">&quot;RIFF&quot;</span>:
+            <span class="kw">print</span> <span class="st">&quot;error: not wav file.&quot;</span>
+            exit(<span class="dv">1</span>)
+
+        <span class="kw">print</span> <span class="dt">sum</span>(<span class="dt">abs</span>(word) <span class="kw">for</span> word in word_iter(f))
+<span class="kw">except</span> <span class="ot">IOError</span>:
+    <span class="kw">print</span> <span class="st">&quot;error: can&#39;t open input file &#39;</span><span class="ot">%s</span><span class="st">&#39;.&quot;</span> % argv[<span class="dv">1</span>]
+    exit(<span class="dv">1</span>)</code></pre>
+<p>and <a href="http://www.reddit.com/user/luikore">luikore</a> proposed an impressive Ruby version:</p>
+<pre class="sourceCode ruby"><code class="sourceCode ruby">data = <span class="dt">ARGF</span>.read
+ keys =<span class="ot"> %w[</span><span class="st">id totallength wavefmt format</span>
+<span class="st">       pcm channels frequency bytes_per_second</span>
+<span class="st">         bytes_by_capture bits_per_sample</span>
+<span class="st">           data bytes_in_data sum</span>
+<span class="st"> </span><span class="ot">]</span>
+ values = data.unpack <span class="st">&#39;Z4 i Z8 i s s i i s s Z4 i s*&#39;</span>
+ sum = values.drop(<span class="dv">12</span>).map(&amp;<span class="st">:abs</span>).inject(:+)
+ keys.zip(values.take(<span class="dv">12</span>) &lt;&lt; sum) {|k, v|
+       puts <span class="st">&quot;</span><span class="ot">#{</span>k.ljust <span class="dv">17</span><span class="ot">}</span><span class="st">: </span><span class="ot">#{</span>v<span class="ot">}</span><span class="st">&quot;</span>
+ }</code></pre>
+				</div>
+
+                <div id="social">
+                   <span>
+                       <a class="rss" href="http://feeds.feedburner.com/yannespositocomen">RSS</a>
+                   </span>
+                    <span>
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-via="yogsototh">Tweet</a>
+                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                    </span>
+                    <span>
+                        <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="106"></div>
+                        <script type="text/javascript">
+                            (function() {
+                             var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                             po.src = 'https://apis.google.com/js/plusone.js';
+                             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                             })();
+                        </script>
+                   </span>
+                   <div class="flush"></div>
+                </div>
+				<div class="corps" id="comment">
+            	    <h2 class="first">Comments</h2>
+					<div id="disqus_thread"></div>
+        			<script type="text/javascript">
+        			    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        			    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
+
+        			    /* * * DON'T EDIT BELOW THIS LINE * * */
+        			    (function() {
+        			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        			    })();
+        			</script>
+        			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+				</div>
+				<div id="bottom">
+            	    <div>
+            	        Published on 2010-10-14
+            	    </div>
+            	    <div>
+            	        <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+            	    </div>
+            	    <div>
+            	       Yann Esposito©
+            	    </div>
+            	    <div>
+            	        Done with
+            	        <a href="http://www.vim.org">Vim</a>
+						<span class="nicer">&amp;</span>
+						<a href="http://jaspervdj.be/hakyll">Hakyll</a>
+            	    </div>
+            	</div>
+			</div>
+
+        </div>
+    </body>
+    <script type="text/javascript" src="/Scratch/js/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="/Scratch/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/Scratch/js/index.js"></script>
+    <script type="text/javascript" src="/Scratch/js/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="/Scratch/js/article.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</html>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>YBlog - Pourquoi je n'utiliserai pas CoffeeScript (malheureusement)</title>
+        <meta name="keywords" content="Coffeescript">
+
+        <link rel="shortcut icon" type="image/x-icon" href="/Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/solarized.css" />
+		<!-- Font -->
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomfr"/>
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+    </head>
+    <body lang="fr">
+		<script type="text/javascript">// <![CDATA[
+            document.write('<div id="blackpage"><div>Bientôt<img src="/Scratch/img/loading.gif" alt="Chargement en cours"/></div></div>');
+            // ]]>
+        </script>
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	        <div id="choixlang">
+						<a href="/Scratch/en/blog/2011-01-03-Why-I-sadly-won-t-use-coffeescript/index.html"
+							onclick="setLanguage('en')">
+							English </a>
+        	        </div>
+					<script type="text/javascript">// <![CDATA[
+					document.write('<div id="switchcss"><a href="#">Changer de theme</a></div>');
+					// ]]>
+					</script>
+        	        <div class="flush"></div>
+        	    </div>
+        	    <div id="navigation">
+                    <a href="/">Home</a>
+                    <span class="sep">¦</span>
+        	        <a href="/Scratch/fr/blog">Blog</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/fr/softwares">Softwares</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/fr/about">About</a>
+        	    </div>
+			</div>
+
+			<div id="titre">
+				<h1>Pourquoi je n'utiliserai pas CoffeeScript (malheureusement)</h1>
+			</div>
+			<div class="flush"></div>
+			<div id="afterheader">
+				<div class="corps">
+					<p><img src="/Scratch/img/blog/2011-01-03-Why-I-sadly-won-t-use-coffeescript/main.png" alt="Title image"/></p>
+<div class="encadre">
+
+<p><em>Mise à jour :</em> Je pense que je vais finallement changer d’avis. Pourquoi ? Tout d’abord, je viens de découvrir un convertisseur javascript vers coffeescript, ensuite Denis Knauf m’a laissé un commentaire et m’a appris l’existence d’une fonction <code>CoffeeScript.eval</code>. De plus, il faut voir CoffeeScript comme javascript avec une syntaxe similaire à Ruby et pas comme un langage similaire à Ruby.</p>
+</div>
+
+<div class="intro">
+
+<p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Qu’est-ce qui n’allait pas avec Coffeescript? La meta-programmation, il faut le “vendre” aux autres, une nouvelle étape de compilation intermédiaire sans fournir les avantages de Cappuccino, la sensation que c’est un peu instable.</p>
+</div>
+
+<p>Le commentaire le mieux classé de <a href="http://news.ycombinator.com/item?id=2053956">la question suivante</a> posée sur HackerNews mentionnait <a href="http://coffeescript.org">CoffeeScript</a>. Récemment j’ai beaucoup programmé en javascript. Après avoir essayé <a href="http://sproutcore.com">Sroutcore</a>, <a href="http://cappuccino.org">Cappuccino</a>, <a href="documentcloud.github.com/backbone/">backbone.js</a> <em>&amp;</em> <a href="javascriptmvc.com">javascriptMVC</a>, Je me suis décidé à créer mon propre framework MVC minimal pour client javascript.<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup></p>
+<p>Je me suis battu avec l’horrible syntaxe de javascript. C’était comme revenir des années dans le passé&nbsp;:</p>
+<ul>
+<li>une syntaxe à la Java très verbeuse ;</li>
+<li>une syntaxe follement verbeuse et étrange pour la programmation orientée objet ;</li>
+<li>pas de manière naturelle de se référer à l’instance d’une classe ;</li>
+<li>etc…</li>
+</ul>
+<p>J’étais tellement ennuyé par tous ces point qu’il était arrivé un moment où je commençais à vouloir faire mon propre CoffeeScript.</p>
+<p>J’ai fini une première version de mon framework MVC en javascript et j’ai appris l’existence de CoffeeScript. Merci à git, j’ai immédiatement créé une nouvelle branche dans le seul but d’essayer CoffeeScript.</p>
+<p>Voici mon expérience&nbsp;:</p>
+<ol style="list-style-type: decimal">
+<li>J’ai dû installer <code>node.js</code> et utiliser <code>npm</code> simplement pour utiliser CoffeeScript. Ce n’était pas très difficile, mais pas aussi facile que ce que j’aurai aimé.</li>
+<li>Les fichier javascript existants ne sont pas compatible avec coffee.</li>
+<li>Il n’y a pas script pour aider à transformer les anciens fichiers javascripts en fichier coffee. Du coups j’ai dû faire ça manuellement. Merci à <a href="http://vim.org">vim</a>, il ne fut pas très difficile de transformer 90% des fichiers avec des expressions régulières. L’option <code>--watch</code> de coffee était très utile pour debugger cette transformation. Cependant, il m’a fallu écrire mon propre script pour que tous mes fichiers soient <em>watchés</em> dans tous les sous-répertoires.</li>
+<li>Quelque chose à laquelle je n’avais pas pensé. J’ai fait un peu de meta-programmation en javascript en utilisant <code>eval</code>. Mais pour que celà fonctionne correctement, il faut que la chaîne de caractère que je passe à <code>eval</code> soit codée en javascript et pas en coffee. C’est un peu comme écrire dans deux langages différents au même endroit. Ça ne me parraissait vraiment pas agréable.</li>
+</ol>
+<h2 id="conclusion">Conclusion</h2>
+<p>Avantages&nbsp;:</p>
+<ul>
+<li>Code plus lisible : CoffeeScript résoud la majorité des problèmes de syntaxes de javascript</li>
+<li>Concision : j’ai gagné 14% de lignes, 22% de mots et 14% de caractères.</li>
+</ul>
+<p>Inconvénients&nbsp;:</p>
+<ul>
+<li>Ajout d’une nouvelle étape de compilation avant de pouvoir vérifier le comportement de mon site</li>
+<li>Facilité d’utilisation : il m’a fallu créer un script pour gérer la génératio automatique des fichiers</li>
+<li>Il faut apprendre un autre langage proche de ruby</li>
+<li>La meta-programmation devient une expérience désagréable</li>
+<li>Je dois convaincre les personnes travaillant avec moi :
+<ul>
+<li>d’installer <code>node.js</code>, <code>npm</code> et CoffeeScript ;</li>
+<li>de se souvenir de lancer un script à chaque session de codage ;</li>
+<li>d’apprendre un autre language proche de ruby.</li>
+</ul></li>
+</ul>
+<p>Les deux derniers points étant de mon point de vue les plus problématiques.</p>
+<p>Mais même si j’avais à travailler seul, je n’utiliserai certainement pas CoffeeScript. Il s’agit d’un tier dont la moindre mise à jour pourrait rendre mon code inutilisable. Cette situation m’est déjà arrivée plusieurs fois et c’est très désagrable. Beaucoup plus que coder avec une mauvaise syntaxe.</p>
+<h2 id="digression">Digression</h2>
+<p>Je suis attristé. J’espérais tant pouvoir programmer Javascript avec une touche de Ruby. En fin de compte, cette solution n’est pas pour moi. Je vais devoir utiliser l’<em>horrible</em> syntaxe javascript pour l’instant. À la limite j’aurai préféré un script Ruby2Js par exemple<sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup>. Mais il me semble que ça serait un travail très difficile rien que pour simuler l’accès à la classe courante.</p>
+<p>Typiquement <code>@x</code> est transformé en <code>this.x</code>. Mais le code suivant ne fait pas ce que j’attendrai de lui.</p>
+<pre class="sourceCode ruby"><code class="sourceCode ruby">-&gt; 
+<span class="kw">class</span> <span class="dt">MyClass</span>
+  foo: -&gt;
+    alert(<span class="st">&#39;ok&#39;</span>)
+
+  bar: -&gt;
+    $(<span class="st">&#39;#content&#39;</span>).load( <span class="st">&#39;/content.html&#39;</span>, ( -&gt; <span class="ot">@foo</span>(x) ) )
+    <span class="co"># Ça n&#39;appellera pas MyClass.foo</span></code></pre>
+<p>La seule façon de résoudre ce problème est avec le code suivant&nbsp;:</p>
+<pre class="sourceCode ruby"><code class="sourceCode ruby">-&gt; 
+<span class="kw">class</span> <span class="dt">MyClass</span>
+  foo: -&gt;
+    alert(<span class="st">&#39;ok&#39;</span>)
+
+  bar: -&gt;
+    <span class="dv">self</span>=this
+    $(<span class="st">&#39;#content&#39;</span>).load( <span class="st">&#39;/content.html&#39;</span>, ( -&gt; <span class="dv">self</span>.foo(x) ) )</code></pre>
+<p>Sachant celà, la notation <code>@</code> perd tout son intérêt pour moi.</p>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Je sais que ce n’est certainement ni la meilleure ni la plus productive des décisions. Mais j’aime bien fabriquer les choses pour savoir comment tout fonctionne dans le détail.<a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p>Je sais qu’il existe un projet <code>rb2js</code>, mais il ne résoud pas le problème dont je parle.<a href="#fnref2">↩</a></p></li>
+</ol>
+</div>
+				</div>
+
+                <div id="social">
+                   <span>
+                       <a class="rss" href="http://feeds.feedburner.com/yannespositocomfr">RSS</a>
+                   </span>
+                    <span>
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-via="yogsototh">Tweet</a>
+                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                    </span>
+                    <span>
+                        <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="106"></div>
+                        <script type="text/javascript">
+                            (function() {
+                             var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                             po.src = 'https://apis.google.com/js/plusone.js';
+                             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                             })();
+                        </script>
+                   </span>
+                   <div class="flush"></div>
+                </div>
+				<div class="corps" id="comment">
+            	    <h2 class="first">Comments</h2>
+					<div id="disqus_thread"></div>
+        			<script type="text/javascript">
+        			    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        			    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
+
+        			    /* * * DON'T EDIT BELOW THIS LINE * * */
+        			    (function() {
+        			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        			    })();
+        			</script>
+        			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+				</div>
+				<div id="bottom">
+            	    <div>
+            	        Published on 2011-01-03
+            	    </div>
+            	    <div>
+            	        <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+            	    </div>
+            	    <div>
+            	       Yann Esposito©
+            	    </div>
+            	    <div>
+            	        Done with
+            	        <a href="http://www.vim.org">Vim</a>
+						<span class="nicer">&amp;</span>
+						<a href="http://jaspervdj.be/hakyll">Hakyll</a>
+            	    </div>
+            	</div>
+			</div>
+
+        </div>
+    </body>
+    <script type="text/javascript" src="/Scratch/js/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="/Scratch/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/Scratch/js/index.js"></script>
+    <script type="text/javascript" src="/Scratch/js/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="/Scratch/js/article.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</html>

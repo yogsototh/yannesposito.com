@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>YBlog - base64 et sha1 sur iPhone</title>
+        <meta name="keywords" content="iPhone, ObjectiveC, programmation">
+
+        <link rel="shortcut icon" type="image/x-icon" href="/Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/solarized.css" />
+		<!-- Font -->
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomfr"/>
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+    </head>
+    <body lang="fr">
+		<script type="text/javascript">// <![CDATA[
+            document.write('<div id="blackpage"><div>Bientôt<img src="/Scratch/img/loading.gif" alt="Chargement en cours"/></div></div>');
+            // ]]>
+        </script>
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	        <div id="choixlang">
+						<a href="/Scratch/en/blog/2010-09-02-base64-and-sha1-on-iPhone/index.html"
+							onclick="setLanguage('en')">
+							English </a>
+        	        </div>
+					<script type="text/javascript">// <![CDATA[
+					document.write('<div id="switchcss"><a href="#">Changer de theme</a></div>');
+					// ]]>
+					</script>
+        	        <div class="flush"></div>
+        	    </div>
+        	    <div id="navigation">
+                    <a href="/">Home</a>
+                    <span class="sep">¦</span>
+        	        <a href="/Scratch/fr/blog">Blog</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/fr/softwares">Softwares</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/fr/about">About</a>
+        	    </div>
+			</div>
+
+			<div id="titre">
+				<h1>base64 et sha1 sur iPhone</h1>
+			</div>
+			<div class="flush"></div>
+			<div id="afterheader">
+				<div class="corps">
+					<p>Allons directement à l’essentiel : voici deux fonctions à intégrer à votre application iPhone pour afficher l’encodage en base64 ou en hexadecimal du hash sha1 d’un string en Objective-C pour iPhone.</p>
+<p>Pour l’usage c’est très simple, copiez le code dans la classe de votre choix. Puis&nbsp;:</p>
+<pre class="objective-c"><code>#import &lt;CommonCrypto/CommonDigest.h&gt;
+...
+NSString *b64_hash = [self b64_sha1:@&quot;some NSString to be sha1&#39;ed&quot;];
+...
+NSString *hex_hash = [self hex_sha1:@&quot;some NSString to be sha1&#39;ed&quot;];</code></pre>
+<p>L’algorithme pour l’encodage en <code>base64</code> doit être programmé sur iPhone. Il n’y a pas de librairie officielle qui s’occupe de ça.</p>
+<pre class="sourceCode c"><code class="sourceCode c">
+- (<span class="dt">unsigned</span> <span class="dt">char</span> *)sha1:(NSString *)baseString result:(<span class="dt">unsigned</span> <span class="dt">char</span> *)result {
+    <span class="dt">char</span> *c_baseString=(<span class="dt">char</span> *)[baseString UTF8String];
+    CC_SHA1(c_baseString, strlen(c_baseString), result);
+    <span class="kw">return</span> result;
+}
+
+- (NSString *)base64:(<span class="dt">unsigned</span> <span class="dt">char</span> *)result {
+    NSString *password=[[NSString alloc] init];
+    <span class="dt">static</span> <span class="dt">const</span> <span class="dt">unsigned</span> <span class="dt">char</span> cb64[<span class="dv">65</span>]=<span class="st">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/&quot;</span>;
+    <span class="kw">for</span> (<span class="dt">int</span> i=<span class="dv">0</span>; i&lt;CC_SHA1_DIGEST_LENGTH; i+=<span class="dv">3</span>) {
+        password=[password stringByAppendingFormat:@<span class="st">&quot;%c%c%c%c&quot;</span>,
+            cb64[(result[i] &amp;<span class="bn">0xFC</span>)&gt;&gt;<span class="dv">2</span>],
+            cb64[((result[i] &amp; <span class="bn">0x03</span>) &lt;&lt; <span class="dv">4</span>)
+                | ((result[i + <span class="dv">1</span>] &amp; <span class="bn">0xF0</span>) &gt;&gt; <span class="dv">4</span>)],
+            cb64[((result[i + <span class="dv">1</span>] &amp; <span class="bn">0x0F</span>) &lt;&lt; <span class="dv">2</span>)
+                | ((result[i + <span class="dv">2</span>] &amp; <span class="bn">0xC0</span>) &gt;&gt; <span class="dv">6</span>)],
+            cb64[result[i<span class="dv">+2</span>]&amp;<span class="bn">0x3F</span>]
+                ];            
+    }
+    <span class="kw">return</span> password;
+}
+
+- (NSString *)hexadecimalRepresentation:(<span class="dt">unsigned</span> <span class="dt">char</span> *)result {
+    NSString *password=[[NSString alloc] init];
+    <span class="kw">for</span> (<span class="dt">int</span> i=<span class="dv">0</span>; i&lt;CC_SHA1_DIGEST_LENGTH; i++) {
+        password=[password stringByAppendingFormat:@<span class="st">&quot;%02x&quot;</span>, result[i]];
+    }
+    <span class="kw">return</span> password;
+}
+
+- (NSString *)b64_sha1:(NSString *)inputString {
+    <span class="dt">unsigned</span> <span class="dt">char</span> result[CC_SHA1_DIGEST_LENGTH<span class="dv">+1</span>];
+    [self sha1:inputString result:result];
+    <span class="kw">return</span> [self base64:result];
+}
+
+- (NSString *)hex_sha1:(NSString *)inputString {
+    <span class="dt">unsigned</span> <span class="dt">char</span> result[CC_SHA1_DIGEST_LENGTH<span class="dv">+1</span>];
+    [self sha1:inputString result:result];
+    <span class="kw">return</span> [self hexadecimalRepresentation:result];
+}</code></pre>
+				</div>
+
+                <div id="social">
+                   <span>
+                       <a class="rss" href="http://feeds.feedburner.com/yannespositocomfr">RSS</a>
+                   </span>
+                    <span>
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-via="yogsototh">Tweet</a>
+                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                    </span>
+                    <span>
+                        <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="106"></div>
+                        <script type="text/javascript">
+                            (function() {
+                             var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                             po.src = 'https://apis.google.com/js/plusone.js';
+                             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                             })();
+                        </script>
+                   </span>
+                   <div class="flush"></div>
+                </div>
+				<div class="corps" id="comment">
+            	    <h2 class="first">Comments</h2>
+					<div id="disqus_thread"></div>
+        			<script type="text/javascript">
+        			    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        			    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
+
+        			    /* * * DON'T EDIT BELOW THIS LINE * * */
+        			    (function() {
+        			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        			    })();
+        			</script>
+        			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+				</div>
+				<div id="bottom">
+            	    <div>
+            	        Published on 2010-09-02
+            	    </div>
+            	    <div>
+            	        <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+            	    </div>
+            	    <div>
+            	       Yann Esposito©
+            	    </div>
+            	    <div>
+            	        Done with
+            	        <a href="http://www.vim.org">Vim</a>
+						<span class="nicer">&amp;</span>
+						<a href="http://jaspervdj.be/hakyll">Hakyll</a>
+            	    </div>
+            	</div>
+			</div>
+
+        </div>
+    </body>
+    <script type="text/javascript" src="/Scratch/js/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="/Scratch/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/Scratch/js/index.js"></script>
+    <script type="text/javascript" src="/Scratch/js/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="/Scratch/js/article.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</html>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>YBlog - Encapsulate git</title>
+        <meta name="keywords" content="git, protection, branches, diverged">
+
+        <link rel="shortcut icon" type="image/x-icon" href="/Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/solarized.css" />
+		<!-- Font -->
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomen"/>
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+    </head>
+    <body lang="en">
+		<script type="text/javascript">// <![CDATA[
+            document.write('<div id="blackpage"><div>Soon<img src="/Scratch/img/loading.gif" alt="Loading"/></div></div>');
+            // ]]>
+        </script>
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	        <div id="choixlang">
+						<a href="/Scratch/fr/blog/2010-03-23-Encapsulate-git/index.html"
+							onclick="setLanguage('fr')">
+							Français </a>
+        	        </div>
+					<script type="text/javascript">// <![CDATA[
+					document.write('<div id="switchcss"><a href="#">Change Theme</a></div>');
+					// ]]>
+					</script>
+        	        <div class="flush"></div>
+        	    </div>
+        	    <div id="navigation">
+                    <a href="/">Home</a>
+                    <span class="sep">¦</span>
+        	        <a href="/Scratch/en/blog">Blog</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/en/softwares">Softwares</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/en/about">About</a>
+        	    </div>
+			</div>
+
+			<div id="titre">
+				<h1>Encapsulate git</h1>
+			</div>
+			<div class="flush"></div>
+			<div id="afterheader">
+				<div class="corps">
+					<div class="intro">
+Here is a solution to maintain divergent branches in git. Because it is easy to merge by mistake. I give a script that encapsulate git in order to forbid some merge and warn you some merge should be dangerous.
+</div>
+
+<h2 id="how-to-protect-against-your-own-dumb">how to protect against your own dumb</h2>
+<p>I work on a project in which some of my git branches should remain divergent. And divergences should grow.</p>
+<p>I also use some branch to contain what is common between projects.</p>
+<p>Say I have some branches:</p>
+<p>master: common to all branches dev: branch devoted to unstable development client: branch with features for all client but not general enough for master clientA: project adapted for client A clientB: project adapted for client B</p>
+<p>Here how I want to work:</p>
+<p><img src="/Scratch/img/blog/2010-03-23-Encapsulate-git/dynamic_branching.png" alt="Dynamic branching"/></p>
+<p>And more precisely the branch hierarchy:</p>
+<p><img src="/Scratch/img/blog/2010-03-23-Encapsulate-git/branch_hierarchy.png" alt="Branch hierarchy"/></p>
+<p>An arrow from A to B means, you can merge A in B. If there is no arrow from A to B that means it is <em>forbidden</em> to merge A in B. Here is the corresponding rubycode:</p>
+<div>
+<code class="ruby"> $architecture={ :master =&gt; [ :dev, :client ], :dev =&gt; [ :master ], :client =&gt; [ :clientA, :clientB ] } </code>
+</div>
+
+<p>Having a <code>:master =&gt; [ :dev, :client ]</code> means you can merge <code>master</code> branch into <code>dev</code> and <code>client</code>.</p>
+<p>If by mistake I make a <code>git checkout master &amp;&amp; git merge clientA</code>, I made a mistake. This is why I made a script which encapsulate the git behaviour to dodge this kind of mistake.</p>
+<p>But this script do far more than that. It also merge from top to down. The action <code>allmerges</code> will do:</p>
+<div>
+<code class="zsh"> git co dev &amp;&amp; git merge master git co client &amp;&amp; git merge master git co clientA &amp;&amp; git merge client git co clientB &amp;&amp; git merge client </code>
+</div>
+
+<p>That means, I can update all branches. The algorithm will not make loop even if there is a cycle in the branch hierarchy.</p>
+<p>Here it is:</p>
+<div class="small">
+<p><code class="ruby" file="eng"> #!/usr/bin/env ruby # encoding: utf-8</p>
+<h1 id="architecture">architecture</h1>
+<h1 id="section"></h1>
+<h1 id="master---dev">master &lt;-&gt; dev</h1>
+<h1 id="master---client">master -&gt; client</h1>
+<h1 id="clien---clienta-clientb">clien -&gt; clientA | clientB</h1>
+<h1 id="section-1"></h1>
+<h1 id="merge-using-two-of-these-branches-should-be">merge using two of these branches should be</h1>
+<h1 id="restricted-to-these-rules">restricted to these rules</h1>
+<h1 id="merge-to-one-of-these-branch-and-an-unknown-one-should">merge to one of these branch and an unknown one should</h1>
+<h1 id="raise-a-warning-and-may-the-option-to-add-this-new-branch">raise a warning, and may the option to add this new branch</h1>
+<h1 id="to-the-hierarchy">to the hierarchy</h1>
+<p>$architecture={ :master =&gt; [ :dev, :client ], :dev =&gt; [ :master ], :client =&gt; [ :clientA, :clientB ] }</p>
+<p>def get_current_branch() (<code>git branch --no-color | awk '$1 == &quot;*&quot; {print $2}'</code>).chop.intern end</p>
+<p>if ARGV.length == 0 puts %{usage: $0:t [git_command or local_command]</p>
+<p>local commands: allmerges: merge from top to down} exit 0 end</p>
+<p>require ‘set’ <span class="math"><em>k</em><em>n</em><em>o</em><em>w</em><em>n</em><sub><em>b</em></sub><em>r</em><em>a</em><em>n</em><em>c</em><em>h</em><em>e</em><em>s</em> = <em>S</em><em>e</em><em>t</em>. <em>n</em><em>e</em><em>w</em></span>architecture.each do |k,v| <span class="math">$known_branches.add(k)     v.each { |b| $</span>known_branches.add(b) } end</p>
+<p>def rec_merge(branch) if <span class="math"><em>a</em><em>r</em><em>c</em><em>h</em><em>i</em><em>t</em><em>e</em><em>c</em><em>t</em><em>u</em><em>r</em><em>e</em>[<em>b</em><em>r</em><em>a</em><em>n</em><em>c</em><em>h</em>]. <em>n</em><em>i</em><em>l</em>? <em>r</em><em>e</em><em>t</em><em>u</em><em>r</em><em>n</em><em>e</em><em>n</em><em>d</em></span>architecture[branch].each do |b| if <span class="math"><em>f</em><em>l</em><em>a</em><em>g</em>. <em>h</em><em>a</em><em>s</em><sub><em>k</em></sub><em>e</em><em>y</em>? (<em>b</em>. <em>t</em><em>o</em><sub><em>s</em></sub> + <em>b</em><em>r</em><em>a</em><em>n</em><em>c</em><em>h</em>. <em>t</em><em>o</em><sub><em>s</em></sub>)<em>n</em><em>e</em><em>x</em><em>t</em><em>e</em><em>n</em><em>d</em><em>f</em><em>l</em><em>a</em><em>g</em><em>n</em><em>a</em><em>m</em><em>e</em> = <em>b</em><em>r</em><em>a</em><em>n</em><em>c</em><em>h</em>. <em>t</em><em>o</em><sub><em>s</em></sub> + <em>b</em>. <em>t</em><em>o</em><sub><em>s</em></sub><em>i</em><em>f</em></span>flag.has_key?(flagname) next end if system %{eng checkout #{b}} if get_current_branch != b puts “Can’t checkout to #{b}” exit 2 end if system %{eng merge #{branch}} $flag[flagname]=true rec_merge(b) else exit 1 end else exit 1 end end end</p>
+<p>def do_all_merges puts ‘Will merge from father to sons’ current_branch=get_current_branch $flag={} rec_merge(:master) system %{git co #{current_branch}} end</p>
+<p>def do_merge current_branch=get_current_branch src_branch=ARGV[1].intern puts %{do_merge: #{src_branch} =&gt; #{current_branch}} if <span class="math"><em>k</em><em>n</em><em>o</em><em>w</em><em>n</em><sub><em>b</em></sub><em>r</em><em>a</em><em>n</em><em>c</em><em>h</em><em>e</em><em>s</em>. <em>i</em><em>n</em><em>c</em><em>l</em><em>u</em><em>d</em><em>e</em>? (<em>c</em><em>u</em><em>r</em><em>r</em><em>e</em><em>n</em><em>t</em><sub><em>b</em></sub><em>r</em><em>a</em><em>n</em><em>c</em><em>h</em>)<em>i</em><em>f</em></span>known_branches.include?(src_branch) if <span class="math"><em>a</em><em>r</em><em>c</em><em>h</em><em>i</em><em>t</em><em>e</em><em>c</em><em>t</em><em>u</em><em>r</em><em>e</em>. <em>h</em><em>a</em><em>s</em><sub><em>k</em></sub><em>e</em><em>y</em>? (<em>s</em><em>r</em><em>c</em><sub><em>b</em></sub><em>r</em><em>a</em><em>n</em><em>c</em><em>h</em>)<em>a</em><em>n</em><em>d</em></span>architecture[src_branch].include?(current_branch) system %{git merge #{src_branch}} else puts %{Forbidden merge: #{src_branch} =&gt; #{current_branch}} end else puts %{Warning! #{src_branch} not mentionned in rb configuration} sleep 2 system %{git merge #{src_branch}} puts %{Warning! #{src_branch} not mentionned in rb configuration} end end end</p>
+case ARGV[0] when ‘allmerges’ then do_all_merges when ‘merge’ then do_merge else system %{git #{ARGV.join(‘’)}} end </code>
+</div>
+
+<p>All you need to do to make it work is simply to copy eng in a directory contained in your PATH.</p>
+<p>Of course try to use as few as possible <code>cherry-pick</code> and <code>rebase</code>. This script was intended to work with workflow using <code>pull</code> and <code>merge</code>.</p>
+				</div>
+
+                <div id="social">
+                   <span>
+                       <a class="rss" href="http://feeds.feedburner.com/yannespositocomen">RSS</a>
+                   </span>
+                    <span>
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-via="yogsototh">Tweet</a>
+                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                    </span>
+                    <span>
+                        <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="106"></div>
+                        <script type="text/javascript">
+                            (function() {
+                             var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                             po.src = 'https://apis.google.com/js/plusone.js';
+                             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                             })();
+                        </script>
+                   </span>
+                   <div class="flush"></div>
+                </div>
+				<div class="corps" id="comment">
+            	    <h2 class="first">Comments</h2>
+					<div id="disqus_thread"></div>
+        			<script type="text/javascript">
+        			    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        			    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
+
+        			    /* * * DON'T EDIT BELOW THIS LINE * * */
+        			    (function() {
+        			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        			    })();
+        			</script>
+        			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+				</div>
+				<div id="bottom">
+            	    <div>
+            	        Published on 2010-03-23
+            	    </div>
+            	    <div>
+            	        <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+            	    </div>
+            	    <div>
+            	       Yann Esposito©
+            	    </div>
+            	    <div>
+            	        Done with
+            	        <a href="http://www.vim.org">Vim</a>
+						<span class="nicer">&amp;</span>
+						<a href="http://jaspervdj.be/hakyll">Hakyll</a>
+            	    </div>
+            	</div>
+			</div>
+
+        </div>
+    </body>
+    <script type="text/javascript" src="/Scratch/js/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="/Scratch/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/Scratch/js/index.js"></script>
+    <script type="text/javascript" src="/Scratch/js/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="/Scratch/js/article.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</html>

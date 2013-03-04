@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>YBlog - Héberger son site personnel sur le site mobileMe</title>
+        <meta name="keywords" content="Apple, mobileme, WebDav, synchronisation, zsh, script">
+
+        <link rel="shortcut icon" type="image/x-icon" href="/Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/solarized.css" />
+		<!-- Font -->
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomfr"/>
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+    </head>
+    <body lang="fr">
+		<script type="text/javascript">// <![CDATA[
+            document.write('<div id="blackpage"><div>Bientôt<img src="/Scratch/img/loading.gif" alt="Chargement en cours"/></div></div>');
+            // ]]>
+        </script>
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	        <div id="choixlang">
+						<a href="/Scratch/en/blog/10_Synchronize_Custom_WebSite_with_mobileMe/index.html"
+							onclick="setLanguage('en')">
+							English </a>
+        	        </div>
+					<script type="text/javascript">// <![CDATA[
+					document.write('<div id="switchcss"><a href="#">Changer de theme</a></div>');
+					// ]]>
+					</script>
+        	        <div class="flush"></div>
+        	    </div>
+        	    <div id="navigation">
+                    <a href="/">Home</a>
+                    <span class="sep">¦</span>
+        	        <a href="/Scratch/fr/blog">Blog</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/fr/softwares">Softwares</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/fr/about">About</a>
+        	    </div>
+			</div>
+
+			<div id="titre">
+				<h1>Héberger son site personnel sur le site mobileMe</h1>
+			</div>
+			<div class="flush"></div>
+			<div id="afterheader">
+				<div class="corps">
+					<h1 id="mise-à-jour-du-20120111">Mise à jour du <small>(2012/01/11)</small></h1>
+<p>iDisk va bientôt disparaître. Cet article est donc presque complètement obsolète.</p>
+<h1 id="mise-à-jour-du-28102009">mise à jour du <small>28/10/2009</small></h1>
+<p>J’ai mis à jour mon script <a href="/Scratch/fr/blog/2009-10-28-custom-website-synchronisation-with-mobileme--2-">avec une version incrémentale</a> bien plus pratique. En plus depuis l’écriture de cet article Apple(c) semble avoir nettement amélioré la vitesse de ses serveurs en Europe.</p>
+<hr />
+<h1 id="webdav-terror">WebDav terror</h1>
+<p>En France l’iDisk d’Apple(c) est très lent. La vitesse d’upload me rapelle l’époque des modem 56k, c’est dire. La plupart du temps les opérations telles que lister le contenu d’un répertoire prennent au moins 30 secondes (pour 15 éléments). Renommer un répertoire échoue presque systématiquement.</p>
+<p>Apple(c) utilise des serveurs WebDav pour héberger les fichiers. Le protocole fonctionne sur le port 80 (comme http). Je me suis rendu compte qu’utiliser WebDav via https fontionne bien mieux (2 à 3 fois plus rapide avec moins d’erreurs). Mais, ça reste quand même très lent et insuffisant.</p>
+<p>J’<em>uploade</em> mes fichiers à partir de mon Mac et de temps en temps à partir d’un PC sous Ubuntu (iDisk monté avec webdavfs).</p>
+<h1 id="synchroniser-de-façon-sûre">Synchroniser de façon sûre</h1>
+<p>Voici le script que j’utilise pour synchroniser mon site web (non créé avec iWeb(c)) avec le maximum de sécurité. Chaque opération est répétée jusqu’à ce qu’elle fonctionne.</p>
+<p>Les idées sont&nbsp;:</p>
+<ul>
+<li>Synchroniser vers un répertoire temporaire sur le serveur distant, puis “swapper” les noms des répertoires. Ainsi le site ne reste indisponible que le temps du “swap” du nom des deux répertoires.</li>
+<li>Réitérer toutes les opérations jusqu’à ce qu’elle aient réussi (par exemple pour le renommage)</li>
+</ul>
+<p>Jusqu’ici j’utilise <code>rsync</code> qui n’est en fait pas plus efficace qu’une simple copie <code>cp</code> avec WebDav. Je devrais utiliser une méthode pour mémoriser les changements entre chaque publication.</p>
+<p>En réalité quand je suis sur mon Mac j’utilise <a href="http://www.panic.com/transmit">Transmit</a> qui est vraiment très bien et surtout beaucoup plus efficace que le finder pour synchroniser des fichiers. Ensuite, je ne fait que le “swap” des répertoires.</p>
+<p>Mon script prend un paramètre <code>-s</code> pour ne faire que le “swap”. Il prend aussi une option <code>-a</code> pour envoyer le fichier <code>index.html</code> qui va rediriger vers ma nouvelle page principale (iWeb(c) à la fâcheuse habitude de le remplacer).</p>
+<p>Pour utiliser le script vous devriez remplacer la valeur de la variable <code>mobileMeUser</code> par votre nom d’utilisateur mobileMe(c).</p>
+<div class="fr">
+<pre class="zsh"><code>#!/usr/bin/env zsh
+
+# Script synchronisant le site sur me.com
+# normalement, le site est indisponible le moins de temps possible
+# le temps de deux renommages de répertoire
+
+mobileMeUser=&quot;yann.esposito&quot;
+siteName=&quot;siteName&quot;
+
+# Depending of my hostname the 
+if [[ $(hostname) == &#39;ubuntu&#39; ]]; then
+    iDisk=&#39;/mnt/iDisk&#39;
+else
+    iDisk=&quot;/Volumes/$mobileMeUser&quot;
+fi
+
+root=$HOME/Sites/$siteName
+destRep=$iDisk/Web/Sites/$siteName
+
+[[ ! -d $root ]] &amp;&amp; { 
+    print -- &quot;$root n&#39;existe pas ; vérifiez la conf&quot; &gt;&amp;2; 
+    exit 1 
+}
+
+[[ ! -d $destRep ]] &amp;&amp; { 
+    print -- &quot;$destRep n&#39;existe pas, veuillez remonter le FS&quot; &gt;&amp;2; 
+    exit 1 
+}
+
+if [[ $1 == &#39;-h&#39; ]]; then
+    print -- &quot;usage: $0:h [-h|-a|-s]&quot;
+    print -- &quot;  -a sychronise aussi l&#39;index&quot;
+    print -- &quot;  -h affiche l&#39;aide&quot;
+    print -- &quot;  -s swappe simplement les répertoires&quot;
+fi
+
+if [[ $1 == &#39;-a&#39; ]]; then
+    print -- &quot;Synchronisation de l&#39;index (${destRep:h})&quot;
+    rsync -av $root/index.html ${destRep:h}/index.html
+fi
+
+print -- &quot;Root = $root&quot;
+print -- &quot;Dest = $destRep&quot;
+
+if [[ ! $1 = &#39;-s&#39; ]]; then
+    [[ ! -d $destRep.tmp ]] &amp;&amp; mkdir $destRep.tmp
+    print -P -- &quot;%B[Sync =&gt; tmp]%b&quot;
+    result=1
+    essai=1
+    while (( $result &gt; 0 )); do
+        rsync -arv $root/Scratch/ $destRep.tmp
+        result=$?
+        if (( $result &gt; 0 )); then
+            print -P -- &quot;%BEchec du rsync%b (essai n°$essai)&quot; &gt;&amp;2
+        fi
+        ((essai++))
+    done
+fi
+
+# SWAP
+print -P -- &quot;%B[Swap des Répertoires (tmp &lt;=&gt; target)]%b&quot;
+essai=1
+while [[ -e $destRep.old ]]; do
+    print -n -- &quot;suppression de $destRep.old&quot;
+    if ((essai&gt;1)); then 
+        print &quot; (essai n°$essai)&quot;
+    else
+        print
+    fi
+    ((essai++))
+    \rm -rf $destRep.old
+done
+
+print -- &quot;  renommage du repertoire sandard vers le .old&quot;
+essai=1
+while [[ -e $destRep ]]; do
+    mv $destRep $destRep.old 
+    (($?)) &amp;&amp; print -- &quot;Echec du renommage (essai n°$essai)&quot; &gt;&amp;2
+    ((essai++))
+done
+
+print -- &quot;  renommage du repertoire tmp (nouveau) vers le standard&quot;
+print -P -- &quot;  %BSite Indisponible%b $(date)&quot;
+essai=1
+while [[ ! -e $destRep ]]; do
+    mv $destRep.tmp $destRep
+    (($?)) &amp;&amp; print -P -- &quot;%B[Site Indisponible]%b(essai n°$essai) Echec du renommage (mv $destRep.tmp $destRep)&quot; &gt;&amp;2
+    ((essai++))
+done
+
+print -P -- &quot;\t===\t%BSITE DISPONIBLE%b\t===&quot;
+
+print -- &quot;  renommage du repertoire old vers le tmp&quot;
+essai=1
+while [[ ! -e $destRep ]]; do
+    mv $destRep.old $destRep.tmp
+    (($?)) &amp;&amp; print -P -- &quot;Echec du renommage n°$essai&quot; &gt;&amp;2
+    ((essai++))
+done
+
+print -P -- &quot;  publication terminée&quot;</code></pre>
+</div>
+
+<div class="en">
+<pre class="zsh"><code>#!/usr/bin/env zsh
+
+# Author: Yann Esposito
+#   Mail: yann.esposito@gmail.com
+# Synchronize with &quot;mobileMe&quot; iDisk account.
+
+mobileMeUser=&quot;firstname.lastname&quot;
+siteName=&quot;siteName&quot;
+
+# Depending of my hostname the 
+if [[ $(hostname) == &#39;ubuntu&#39; ]]; then
+    iDisk=&#39;/mnt/iDisk&#39;
+else
+    iDisk=&quot;/Volumes/$mobileMeUser&quot;
+fi
+
+root=$HOME/Sites/$siteName
+destRep=$iDisk/Web/Sites/$siteName
+
+[[ ! -d $root ]] &amp;&amp; { 
+    print -- &quot;$root does not exist ; please verify the configuration ($0)&quot; &gt;&amp;2; 
+    exit 1 
+}
+
+[[ ! -d $destRep ]] &amp;&amp; { 
+    print -- &quot;$destRep does not exist, please mount the filesystem&quot; &gt;&amp;2; 
+    exit 1 
+}
+
+if [[ $1 == &#39;-h&#39; ]]; then
+    print -- &quot;usage: $0:h [-h|-a|-s]&quot;
+    print -- &quot;  -a sychronize primary index&quot;
+    print -- &quot;  -h show this help&quot;
+    print -- &quot;  -s only swap directories&quot;
+fi
+
+if [[ $1 == &#39;-a&#39; ]]; then
+    print -- &quot;Index synchronisation (${destRep:h})&quot;
+    rsync -av $root/index.html ${destRep:h}/index.html
+fi
+
+print -- &quot;Root = $root&quot;
+print -- &quot;Dest = $destRep&quot;
+
+if [[ ! $1 = &#39;-s&#39; ]]; then
+    [[ ! -d $destRep.tmp ]] &amp;&amp; mkdir $destRep.tmp
+    print -P -- &quot;%B[Sync =&gt; tmp]%b&quot;
+    result=1
+    essai=1
+    while (( $result &gt; 0 )); do
+        rsync -arv $root/Scratch/ $destRep.tmp
+        result=$?
+        if (( $result &gt; 0 )); then
+            print -P -- &quot;%Brsync failed%b (try n°$essai)&quot; &gt;&amp;2
+        fi
+        ((essai++))
+    done
+fi
+
+# SWAP
+print -P -- &quot;%B[Directory Swap (tmp &lt;=&gt; target)]%b&quot;
+essai=1
+while [[ -e $destRep.old ]]; do
+    print -n -- &quot;remove $destRep.old&quot;
+    if ((essai&gt;1)); then 
+        print &quot; (try n°$essai)&quot;
+    else
+        print
+    fi
+    ((essai++))
+    \rm -rf $destRep.old
+done
+
+print -- &quot;  renommage du repertoire sandard vers le .old&quot;
+essai=1
+while [[ -e $destRep ]]; do
+    mv $destRep $destRep.old 
+    (($?)) &amp;&amp; print -- &quot;Failed to rename (try n°$essai)&quot; &gt;&amp;2
+    ((essai++))
+done
+
+print -- &quot;  renaming folder tmp (new) to the standard one&quot;
+print -P -- &quot;  %BThe WebSite isn&#39;t working%b $(date)&quot;
+essai=1
+while [[ ! -e $destRep ]]; do
+    mv $destRep.tmp $destRep
+    (($?)) &amp;&amp; print -P -- &quot;%B[WebSite not working]%b(try n°$essai) Failed to rename (mv $destRep.tmp $destRep)&quot; &gt;&amp;2
+    ((essai++))
+done
+
+print -P -- &quot;\t===\t%BWEBSITE SHOULD WORK NOW%b\t===&quot;
+
+print -- &quot;  rename old folder to tmp folder&quot;
+essai=1
+while [[ ! -e $destRep ]]; do
+    mv $destRep.old $destRep.tmp
+    (($?)) &amp;&amp; print -P -- &quot;Failed to rename n°$essai&quot; &gt;&amp;2
+    ((essai++))
+done
+
+print -P -- &quot;  Publish terminated&quot;</code></pre>
+</div>
+
+
+				</div>
+
+                <div id="social">
+                   <span>
+                       <a class="rss" href="http://feeds.feedburner.com/yannespositocomfr">RSS</a>
+                   </span>
+                    <span>
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-via="yogsototh">Tweet</a>
+                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                    </span>
+                    <span>
+                        <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="106"></div>
+                        <script type="text/javascript">
+                            (function() {
+                             var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                             po.src = 'https://apis.google.com/js/plusone.js';
+                             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                             })();
+                        </script>
+                   </span>
+                   <div class="flush"></div>
+                </div>
+				<div class="corps" id="comment">
+            	    <h2 class="first">Comments</h2>
+					<div id="disqus_thread"></div>
+        			<script type="text/javascript">
+        			    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        			    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
+
+        			    /* * * DON'T EDIT BELOW THIS LINE * * */
+        			    (function() {
+        			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        			    })();
+        			</script>
+        			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+				</div>
+				<div id="bottom">
+            	    <div>
+            	        Published on 2009-09-11
+            	    </div>
+            	    <div>
+            	        <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+            	    </div>
+            	    <div>
+            	       Yann Esposito©
+            	    </div>
+            	    <div>
+            	        Done with
+            	        <a href="http://www.vim.org">Vim</a>
+						<span class="nicer">&amp;</span>
+						<a href="http://jaspervdj.be/hakyll">Hakyll</a>
+            	    </div>
+            	</div>
+			</div>
+
+        </div>
+    </body>
+    <script type="text/javascript" src="/Scratch/js/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="/Scratch/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/Scratch/js/index.js"></script>
+    <script type="text/javascript" src="/Scratch/js/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="/Scratch/js/article.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</html>

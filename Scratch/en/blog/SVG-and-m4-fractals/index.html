@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>YBlog - Increase the power of deficient languages.</title>
+        <meta name="keywords" content="m4, SVG, XSLT, XML, design, programming, fractal">
+
+        <link rel="shortcut icon" type="image/x-icon" href="/Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/solarized.css" />
+		<!-- Font -->
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomen"/>
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+    </head>
+    <body lang="en">
+		<script type="text/javascript">// <![CDATA[
+            document.write('<div id="blackpage"><div>Soon<img src="/Scratch/img/loading.gif" alt="Loading"/></div></div>');
+            // ]]>
+        </script>
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	        <div id="choixlang">
+						<a href="/Scratch/fr/blog/SVG-and-m4-fractals/index.html"
+							onclick="setLanguage('fr')">
+							Français </a>
+        	        </div>
+					<script type="text/javascript">// <![CDATA[
+					document.write('<div id="switchcss"><a href="#">Change Theme</a></div>');
+					// ]]>
+					</script>
+        	        <div class="flush"></div>
+        	    </div>
+        	    <div id="navigation">
+                    <a href="/">Home</a>
+                    <span class="sep">¦</span>
+        	        <a href="/Scratch/en/blog">Blog</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/en/softwares">Softwares</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/en/about">About</a>
+        	    </div>
+			</div>
+
+			<div id="titre">
+				<h1>Increase the power of deficient languages.</h1>
+			</div>
+			<div class="flush"></div>
+			<div id="afterheader">
+				<div class="corps">
+					<p><img src="/Scratch/img/blog/SVG-and-m4-fractals/main.png" alt="Yesod logo made in SVG and m4"/></p>
+<div class="intro">
+
+<p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span> How to use m4 to increase the power of deficient languages. Two examples: improve <span class="sc">xslt</span> syntax and make fractal with <span class="sc">svg</span>.</p>
+</div>
+
+<p><span class="sc">xml</span> was a very nice idea about structuring data. Some people where so enthusiastic about <span class="sc">xml</span> they saw it everywhere. The idea was: the future is <span class="sc">xml</span>. Then some believed it would be a good idea to invent many <span class="sc">xml</span> compatible format and even programming languages with <span class="sc">xml</span> syntax.</p>
+<p>Happy! Happy! Joy! Joy!</p>
+<p>Unfortunately, <span class="sc">xml</span> was made to transfert structured data. Not a format a human should see or edit directly. The sad reality is <span class="sc">xml</span> syntax is simply verbose and ugly. Most of the time it shouldn’t be a problem, as nobody should see it. In a perfect nice world, we should never deal directly with <span class="sc">xml</span> but only use software which deal with it for us. Guess what? Our world isn’t perfect. Too sad, a bunch of developer have to deal directly with this ugly <span class="sc">xml</span>.</p>
+<p>Unfortunately <span class="sc">xml</span> isn’t the only case of misused format I know. You have many format for which it would be very nice to add variables, loops, functions…</p>
+<p>If like me you hate with passion <span class="sc">xslt</span> or writing <span class="sc">xml</span>, I will show you how you could deal with this bad format or language.</p>
+<h2 id="the-xslt-example">The <span class="sc">xslt</span> Example</h2>
+<p>Let’s start by the worst case of misused <span class="sc">xml</span> I know: <span class="sc">xslt</span>. Any developer who had to deal with <span class="sc">xslt</span> know how horrible it is.</p>
+<p>In order to reduce the verbosity of such a bad languages, there is a way. <strong><code>m4</code></strong>. Yes, the preprocessor you use when you program in <code>C</code> and <code>C++</code>.</p>
+<p>Here are some example:</p>
+<ul>
+<li>Variable, instead of writing the natural <code>myvar = value</code>, here is the <sc>xslt</sc> way of doing this:</li>
+</ul>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;xsl:variable</span><span class="ot"> name=</span><span class="st">&quot;myvar&quot;</span><span class="ot"> select=</span><span class="st">&quot;value&quot;</span><span class="kw">/&gt;</span></code></pre>
+<ul>
+<li>Printing something. Instead of <code>print &quot;Hello world!&quot;</code> here is the <sc>xslt</sc> equivalent:</li>
+</ul>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;xsl:text</span> 
+<span class="ot">    disable-output-escaping=</span><span class="st">&quot;yes&quot;</span><span class="kw">&gt;</span><span class="bn">&lt;![CDATA[</span>Hello world!
+<span class="bn">]]&gt;</span><span class="kw">&lt;/xsl:text&gt;</span></code></pre>
+<ul>
+<li>printing the value of a variable, instead of <code>print myvar</code> the <sc>xslt</sc> is:</li>
+</ul>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;xslt:value-of</span><span class="ot"> select=</span><span class="st">&quot;myvar&quot;</span><span class="kw">/&gt;</span></code></pre>
+<ul>
+<li>Just try to imagine how verbose it is to declare a function with this language.</li>
+</ul>
+<h2 id="the-cure-m4-to-the-rescue">The cure (m4 to the rescue)</h2>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; standalone=&quot;yes&quot;<span class="kw">?&gt;</span> <span class="co">&lt;!-- YES its &lt;span class=&quot;sc&quot;&gt;xml&lt;/span&gt; --&gt;</span>
+<span class="co">&lt;!-- ← start a comment, then write some m4 directives:</span>
+
+<span class="co">define(`ydef&#39;,`&lt;xsl:variable name=&quot;$1&quot; select=&quot;$2&quot;/&gt;&#39;)</span>
+<span class="co">define(`yprint&#39;,`&lt;xsl:text disable-output-escaping=&quot;yes&quot;&gt;&lt;![CDATA[$1]]&gt;&lt;/xsl:text&gt;&#39;)</span>
+<span class="co">define(`yshow&#39;,`&lt;xsl:value-of select=&quot;$1&quot;/&gt;&#39;)</span>
+
+<span class="co">--&gt;</span>
+<span class="co">&lt;!-- Yes, &lt;span class=&quot;sc&quot;&gt;xml&lt;/span&gt; sucks to be read --&gt;</span>
+<span class="kw">&lt;xsl:stylesheet</span><span class="ot"> version=</span><span class="st">&quot;1.0&quot;</span><span class="ot"> xmlns:xsl=</span><span class="st">&quot;http://www.w3.org/1999/XSL/Transform&quot;</span><span class="kw">&gt;</span>
+<span class="co">&lt;!-- And it sucks even more to edit --&gt;</span>
+<span class="kw">&lt;xsl:template</span><span class="ot"> match=</span><span class="st">&quot;/&quot;</span><span class="kw">&gt;</span>
+    ydef(myvar,value)
+    yprint(Hello world!)
+    yshow(myvar)
+<span class="kw">&lt;/xsl:template&gt;</span></code></pre>
+<p>Now just compile this file:</p>
+<pre class="zsh"><code>m4 myfile.m4 &gt; myfile.xslt</code></pre>
+<p>Profit! Now <sc>xslt</sc> is more readable and easier to edit!</p>
+<h2 id="the-cool-part-fractals">The cool part: Fractals!</h2>
+<p><span class="sc">svg</span> is an <span class="sc">xml</span> format used to represent vector graphics, it even support animations. At its beginning some people believed it would be the new Flash. Apparently, it will be more canvas + js.</p>
+<p>Let me show you the result:</p>
+<p><a href="blogimagedirmain.svg"> <img src="/Scratch/img/blog/SVG-and-m4-fractals/main.png" alt="Yesod logo made in SVG and m4"/> Click to view directly the <span class="sc">svg</span>. It might slow down your computers if you have an old one. </a></p>
+<p>The positionning of the “esod” text with regards to the reversed “λ” was done by changing position in firebug. I didn’t had to manually regenerate to test.</p>
+<p>Making such a fractal is mostly:</p>
+<ol style="list-style-type: decimal">
+<li>take a root element</li>
+<li>duplicate and transform it (scaling, translating, rotate)</li>
+<li>the result is a sub new element.</li>
+<li>repeat from 2 but by taking the sub new element as new root.</li>
+<li>Stop when recursion is deep enough.</li>
+</ol>
+<p>If I had to do this for each step, I had make a lot of copy/paste in my <span class="sc">svg</span>, because the transformation is always the same, but I cannot say, use transformation named “titi”. Then instead of manually copying some <span class="sc">xml</span>, I used m4</p>
+<p>and here is the commented code:</p>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;<span class="kw">?&gt;</span>
+<span class="co">&lt;!--</span>
+<span class="co">     M4 Macros</span>
+<span class="co">define(`YTRANSFORMONE&#39;, `scale(.43) translate(-120,-69) rotate(-10)&#39;)</span>
+<span class="co">define(`YTRANSFORMTWO&#39;, `scale(.43) translate(-9,-67.5) rotate(10)&#39;)</span>
+<span class="co">define(`YTRANSFORMTHREE&#39;, `scale(.43) translate(53,41) rotate(120)&#39;)</span>
+<span class="co">define(`YGENTRANSFORM&#39;, `translate(364,274) scale(3)&#39;)</span>
+<span class="co">define(`YTRANSCOMPLETE&#39;, `</span>
+<span class="co">    &lt;g id=&quot;level_$1&quot;&gt;</span>
+<span class="co">        &lt;use style=&quot;opacity: .8&quot; transform=&quot;YTRANSFORMONE&quot; xlink:href=&quot;#level_$2&quot; /&gt;</span>
+<span class="co">        &lt;use style=&quot;opacity: .8&quot; transform=&quot;YTRANSFORMTWO&quot; xlink:href=&quot;#level_$2&quot; /&gt;</span>
+<span class="co">        &lt;use style=&quot;opacity: .8&quot; transform=&quot;YTRANSFORMTHREE&quot; xlink:href=&quot;#level_$2&quot; /&gt;</span>
+<span class="co">    &lt;/g&gt;</span>
+<span class="co">    &lt;use transform=&quot;YGENTRANSFORM&quot; xlink:href=&quot;#level_$1&quot; /&gt;</span>
+<span class="co">&#39;)</span>
+<span class="co"> --&gt;</span>
+<span class="kw">&lt;svg</span> 
+<span class="ot">    xmlns=</span><span class="st">&quot;http://www.w3.org/2000/svg&quot;</span> 
+<span class="ot">    xmlns:xlink=</span><span class="st">&quot;http://www.w3.org/1999/xlink&quot;</span>
+<span class="ot">    x=</span><span class="st">&quot;64&quot;</span><span class="ot"> y=</span><span class="st">&quot;64&quot;</span><span class="ot"> width=</span><span class="st">&quot;512&quot;</span><span class="ot"> height=</span><span class="st">&quot;512&quot;</span><span class="ot"> viewBox=</span><span class="st">&quot;64 64 512 512&quot;</span>
+<span class="ot">    id=</span><span class="st">&quot;svg2&quot;</span><span class="ot"> version=</span><span class="st">&quot;1.1&quot;</span><span class="kw">&gt;</span>
+    <span class="kw">&lt;g</span><span class="ot"> id=</span><span class="st">&quot;level_0&quot;</span><span class="kw">&gt;</span> <span class="co">&lt;!-- some group, if I want to add other elements --&gt;</span>
+        <span class="co">&lt;!-- the text &quot;λ&quot; --&gt;</span>
+        <span class="kw">&lt;text</span><span class="ot"> id=</span><span class="st">&quot;lambda&quot;</span> 
+<span class="ot">            fill=</span><span class="st">&quot;#333&quot;</span><span class="ot"> style=</span><span class="st">&quot;font-family:Ubuntu; font-size: 100px&quot;</span>
+<span class="ot">            transform=</span><span class="st">&quot;rotate(180)&quot;</span><span class="kw">&gt;</span>λ<span class="er">&lt;</span>/text&gt;
+    <span class="kw">&lt;/g&gt;</span>
+    <span class="co">&lt;!-- the text &quot;esod&quot; --&gt;</span>
+    <span class="kw">&lt;text</span> 
+<span class="ot">        fill=</span><span class="st">&quot;#333&quot;</span> 
+<span class="ot">        style=</span><span class="st">&quot;font-family:Ubuntu; font-size: 28px; letter-spacing: -0.10em&quot;</span> 
+<span class="ot">        x=</span><span class="st">&quot;-17.3&quot;</span> 
+<span class="ot">        y=</span><span class="st">&quot;69&quot;</span> 
+<span class="ot">        transform=</span><span class="st">&quot;YGENTRANSFORM&quot;</span><span class="kw">&gt;</span>esod<span class="kw">&lt;/text&gt;</span>
+    <span class="co">&lt;!-- ROOT ELEMENT --&gt;</span>
+    <span class="kw">&lt;use</span><span class="ot"> transform=</span><span class="st">&quot;YGENTRANSFORM&quot;</span><span class="ot"> xlink:href=</span><span class="st">&quot;#level_0&quot;</span> <span class="kw">/&gt;</span>
+
+    YTRANSCOMPLETE(1,0) <span class="co">&lt;!-- First recursion --&gt;</span>
+    YTRANSCOMPLETE(2,1) <span class="co">&lt;!-- deeper --&gt;</span>
+    YTRANSCOMPLETE(3,2) <span class="co">&lt;!-- deeper --&gt;</span>
+    YTRANSCOMPLETE(4,3) <span class="co">&lt;!-- even deeper --&gt;</span>
+    YTRANSCOMPLETE(5,4) <span class="co">&lt;!-- Five level seems enough --&gt;</span>
+<span class="kw">&lt;/svg&gt;</span></code></pre>
+<p>and I compiled it to <sc>svg</sc> and then to <sc>png</sc> with:</p>
+<pre class="zsh"><code>m4 yesodlogo.m4 &gt; yesodlogo.svg &amp;&amp; convert yesodlogo.svg yesodlogo.png</code></pre>
+<p>The main λ is duplicated 3 times. Each transformation is named by: <code>YTRANSFORMONE</code>, <code>YTRANSFORMTWO</code> and <code>YTRANSFORMTHREE</code>.</p>
+<p>Each transformation is just a similarity (translate + rotation + scale).</p>
+<p>Once fixed, we should now simply copy and repeat for each new level.</p>
+<p>Now it is time to talk about where the magic occurs: <code>YTRANSCOMPLETE</code>. This macro takes two arguments. The current depth and the preceding one. It duplicates using the three transformations the preceding level.</p>
+<ul>
+<li>At level 0 there is only one λ,</li>
+<li>at level 1 there is 3 λ,</li>
+<li>at level 2 there is 9 λ</li>
+<li>etc…</li>
+</ul>
+<p>At the final 5th level there is 3<sup>5</sup>=243 λ. All level combined have 3<sup>6</sup>-1 / 2 = 364 λ.</p>
+<p>I could preview the final result easily. Without the macro system, I would have to make 5 copy/paste + modifications for each try.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>It was fun to make a fractal in <sc>svg</sc>, but the interesting part is how to augment the power of a language using this preprocessor method. I used the <sc>xslt</sc> trick at work for example. I also used it to make include inside obscure format. If all you want is to generate a minimal static website withou using nanoc, jekyll or hakyll (ther are plenty other alternatives). You can consider using m4 to generate your <sc>html</sc> instead of copy/paste the menu and the footer, or using AJAX.</p>
+<p>Another usage I thouhgt about is to use m4 to organize languages such as brainfuck.</p>
+				</div>
+
+                <div id="social">
+                   <span>
+                       <a class="rss" href="http://feeds.feedburner.com/yannespositocomen">RSS</a>
+                   </span>
+                    <span>
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-via="yogsototh">Tweet</a>
+                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                    </span>
+                    <span>
+                        <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="106"></div>
+                        <script type="text/javascript">
+                            (function() {
+                             var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                             po.src = 'https://apis.google.com/js/plusone.js';
+                             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                             })();
+                        </script>
+                   </span>
+                   <div class="flush"></div>
+                </div>
+				<div class="corps" id="comment">
+            	    <h2 class="first">Comments</h2>
+					<div id="disqus_thread"></div>
+        			<script type="text/javascript">
+        			    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        			    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
+
+        			    /* * * DON'T EDIT BELOW THIS LINE * * */
+        			    (function() {
+        			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        			    })();
+        			</script>
+        			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+				</div>
+				<div id="bottom">
+            	    <div>
+            	        Published on 2011-10-20
+            	    </div>
+            	    <div>
+            	        <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+            	    </div>
+            	    <div>
+            	       Yann Esposito©
+            	    </div>
+            	    <div>
+            	        Done with
+            	        <a href="http://www.vim.org">Vim</a>
+						<span class="nicer">&amp;</span>
+						<a href="http://jaspervdj.be/hakyll">Hakyll</a>
+            	    </div>
+            	</div>
+			</div>
+
+        </div>
+    </body>
+    <script type="text/javascript" src="/Scratch/js/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="/Scratch/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/Scratch/js/index.js"></script>
+    <script type="text/javascript" src="/Scratch/js/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="/Scratch/js/article.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</html>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>YBlog - Tout sauf quelquechose en expression régulière.</title>
+        <meta name="keywords" content="regexp, regular expression">
+
+        <link rel="shortcut icon" type="image/x-icon" href="/Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="/Scratch/css/solarized.css" />
+		<!-- Font -->
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomfr"/>
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+    </head>
+    <body lang="fr">
+		<script type="text/javascript">// <![CDATA[
+            document.write('<div id="blackpage"><div>Bientôt<img src="/Scratch/img/loading.gif" alt="Chargement en cours"/></div></div>');
+            // ]]>
+        </script>
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	        <div id="choixlang">
+						<a href="/Scratch/en/blog/2010-02-16-All-but-something-regexp--2-/index.html"
+							onclick="setLanguage('en')">
+							English </a>
+        	        </div>
+					<script type="text/javascript">// <![CDATA[
+					document.write('<div id="switchcss"><a href="#">Changer de theme</a></div>');
+					// ]]>
+					</script>
+        	        <div class="flush"></div>
+        	    </div>
+        	    <div id="navigation">
+                    <a href="/">Home</a>
+                    <span class="sep">¦</span>
+        	        <a href="/Scratch/fr/blog">Blog</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/fr/softwares">Softwares</a>
+                    <span class="sep">¦</span>
+                    <a href="/Scratch/fr/about">About</a>
+        	    </div>
+			</div>
+
+			<div id="titre">
+				<h1>Tout sauf quelquechose en expression régulière.</h1>
+			</div>
+			<div class="flush"></div>
+			<div id="afterheader">
+				<div class="corps">
+					<p>Dans mon <a href="previouspost">précédent article</a> j’ai donné certaines astuces pour matcher ‘tout sauf quelque chose’. De la même manière, un truc pour matcher la chaine de caractère la plus petite possible. Disons que vous voulez matcher la chaine de caractère entre ‘a’ et ‘b’. Par exemple, vous voulez matcher&nbsp;:</p>
+<pre class="twilight">
+a.....<span class="Constant"><strong>a......b</strong></span>..b..a....<span class="Constant"><strong>a....b</strong></span>...
+</pre>
+
+<p>Voici les deux erreurs communes et une solution&nbsp;:</p>
+<pre class="twilight">
+/a.*b/
+<span class="Constant"><strong>a.....a......b..b..a....a....b</strong></span>...
+</pre>
+
+<p>La première erreur vient de l’utilisation du <em>terrible</em> <code>.*</code>. Parce que vous allez matcher la chaîne de caractère la plus longue possible.</p>
+<pre class="twilight">
+/a.*?b/
+<span class="Constant"><strong>a.....a......b</strong></span>..b..<span class="Constant"><strong>a....a....b</strong></span>...
+</pre>
+
+<p>L’autre manière naturelle de répondre à ce problème est de changer la <em>greediness</em>. Mais ce n’est pas assez parce que vous allez matcher du premier <code>a</code> au premier <code>b</code> après celui-ci. On peut alors constater que votre chaine de caractère ne devrait comprendre ni la lettre <code>a</code> ni la lettre <code>b</code>. Ce qui emène à la dernière solution élégante.</p>
+<pre class="twilight">
+/a[^ab]*b/
+a.....<span class="Constant"><strong>a......b</strong></span>..b..a....<span class="Constant"><strong>a....b</strong></span>...
+</pre>
+
+<p>Jusqu’ici, c’était facile. Maintenant comment fait vous quand au lieu de <code>a</code> vous avez une chaine de caractère ?</p>
+Par exemple, vous voulez matcher:
+<div>
+<code class="perl">
+<li>
+…
+<li>
+</code>
+</div>
+
+C’est un peu difficile. Vous devez matcher
+<div>
+<code class="perl">
+<li>
+[anything not containing ]
+</li>
+</code>
+</div>
+
+<p>La première méthode serait d’utiliser le même rainsonnement que dans mon <a href="previouspost">article précédent</a>. Ici un premier essai&nbsp;:</p>
+<div>
+<code class="perl">
+<li>
+([^&lt;]|&lt;[^l]|<l[^i]|<li[^>])*
+</li>
+</code>
+</div>
+
+Mais il y a encore une erreur. Pensez à la chaine de caractère suivante :
+<div>
+<code class="perl">
+<li>
+…<li</li> </code>
+</div>
+
+Cette chaine ne matchera pas. C’est pourquoi si on veut vraiment la matcher correctement<sup><a href="#note1">†</a></sup> nous devons ajouter :
+<div>
+<code class="perl">
+<li>
+([^&lt;]|&lt;[^l]|<l[^i]|<li[^>])*(|&lt;|<l|<li)</li> </code>
+</div>
+
+<p>Oui, c’est un peu compliqué. Mais que se passe t’il lorsque la chaine de caractère que vous voulez matcher est encore plus longue que <code>&lt;li&gt;</code> ?</p>
+<p>Voici un algorithme qui permet de résoudre ce problème aisément. Vous devez réduire ce problème au premier. C’est-à-dire celui avec une seule lettre&nbsp;:</p>
+<div>
+<p><code class="perl"> # transforme un simple caractère choisi aléatoirement # en un identifiant unique # (vous devez vérifier que l’identifier est VRAIMENT unique) # attention l’identifiant unique ne doit pas # contenir le caractère choisi. s/X/<em>was_x</em>/g s/Y/<em>was_y</em>/g</p>
+<h1 id="transforme-la-longue-chaine-de-caractère">transforme la longue chaine de caractère</h1>
+<h1 id="en-un-seul-caractère">en un seul caractère</h1>
+s/
+<li>
+<p>/X/g s/&lt;/li&gt;/Y/g</p>
+<h1 id="utilisation-de-la-première-méthode">Utilisation de la première méthode</h1>
+<p>s/X([^X]*)Y//g</p>
+<h1 id="retransformation-des-lettres-en-chaines">Retransformation des lettres en chaines</h1>
+<h1 id="de-caractères">de caractères</h1>
+s/X/
+<li>
+<p>/g s/Y/&lt;/li&gt;/g</p>
+<h1 id="retour-des-anciens-caractères.">retour des anciens caractères.</h1>
+s/<em>was_x</em>/X/g s/<em>was_y</em>/Y/g </code>
+</div>
+
+<p>Et ça fonctionne en seulement 9 lignes pour toute chaine de début et de fin. Cette solution fait un peu moins <em>I AM THE GREAT REGEXP M45T3R, URAN00B</em>, mais elle est mieux adaptée à mon avis. De plus, utiliser cette dernière solution prouve que vous maitrisez les expressions régulières. Simplement parce que vous savez qu’il est difficile de résoudre des problèmes de cette forme en utilisant seulement des expressions régulières.</p>
+<hr />
+<p><small><a name="note1"><sup>†</sup></a> Je sais que j’ai utilisé une syntaxe HTML dans mon exemple. Mais dans l’utilisation réelle que j’en ai faite, je devais matcher entre <code>en:</code> et <code>::</code>, sachant que parfois les chaines pouvaient se terminer par <code>e::</code>. </small></p>
+				</div>
+
+                <div id="social">
+                   <span>
+                       <a class="rss" href="http://feeds.feedburner.com/yannespositocomfr">RSS</a>
+                   </span>
+                    <span>
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-via="yogsototh">Tweet</a>
+                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                    </span>
+                    <span>
+                        <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="106"></div>
+                        <script type="text/javascript">
+                            (function() {
+                             var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                             po.src = 'https://apis.google.com/js/plusone.js';
+                             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                             })();
+                        </script>
+                   </span>
+                   <div class="flush"></div>
+                </div>
+				<div class="corps" id="comment">
+            	    <h2 class="first">Comments</h2>
+					<div id="disqus_thread"></div>
+        			<script type="text/javascript">
+        			    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        			    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
+
+        			    /* * * DON'T EDIT BELOW THIS LINE * * */
+        			    (function() {
+        			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        			    })();
+        			</script>
+        			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+				</div>
+				<div id="bottom">
+            	    <div>
+            	        Published on 2010-02-16
+            	    </div>
+            	    <div>
+            	        <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+            	    </div>
+            	    <div>
+            	       Yann Esposito©
+            	    </div>
+            	    <div>
+            	        Done with
+            	        <a href="http://www.vim.org">Vim</a>
+						<span class="nicer">&amp;</span>
+						<a href="http://jaspervdj.be/hakyll">Hakyll</a>
+            	    </div>
+            	</div>
+			</div>
+
+        </div>
+    </body>
+    <script type="text/javascript" src="/Scratch/js/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="/Scratch/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/Scratch/js/index.js"></script>
+    <script type="text/javascript" src="/Scratch/js/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="/Scratch/js/article.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</html>
