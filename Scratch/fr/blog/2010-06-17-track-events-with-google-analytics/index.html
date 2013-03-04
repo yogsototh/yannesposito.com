@@ -1,50 +1,48 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>YBlog - Analyser les clicks sur votre Site</title>
         <meta name="keywords" content="blog, javascript, jQuery, Google, analytics, analyser, utilisateur, asynchrone">
 
-        <link rel="shortcut icon" type="image/x-icon" href="/Scratch/img/favicon.ico" />
-        <link rel="stylesheet" type="text/css" href="/Scratch/css/scientific.css" />
-        <link rel="stylesheet" type="text/css" href="/Scratch/css/solarized.css" />
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/solarized.css" />
 		<!-- Font -->
-        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
-		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomfr"/>
+        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+		<link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomfr" />
         <!--[if lt IE 9]>
         <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
         <![endif]-->
     </head>
     <body lang="fr">
-		<script type="text/javascript">// <![CDATA[
+		<script type="text/javascript">// 
             document.write('<div id="blackpage"><div>Bientôt<img src="/Scratch/img/loading.gif" alt="Chargement en cours"/></div></div>');
-            // ]]>
+            // 
         </script>
         <div id="content">
 	        			<div id="header">
 			    <div id="choix">
         	        <div id="choixlang">
-						<a href="/Scratch/en/blog/2010-06-17-track-events-with-google-analytics/index.html"
-							onclick="setLanguage('en')">
+						<a href="../../../../Scratch/en/blog/2010-06-17-track-events-with-google-analytics/index.html" onclick="setLanguage('en')">
 							English </a>
         	        </div>
-					<script type="text/javascript">// <![CDATA[
+					<script type="text/javascript">// 
 					document.write('<div id="switchcss"><a href="#">Changer de theme</a></div>');
-					// ]]>
+					// 
 					</script>
         	        <div class="flush"></div>
         	    </div>
         	    <div id="navigation">
-                    <a href="/">Home</a>
+                    <a href="../../../../">Home</a>
                     <span class="sep">¦</span>
-        	        <a href="/Scratch/fr/blog">Blog</a>
+        	        <a href="../../../../Scratch/fr/blog">Blog</a>
                     <span class="sep">¦</span>
-                    <a href="/Scratch/fr/softwares">Softwares</a>
+                    <a href="../../../../Scratch/fr/softwares">Softwares</a>
                     <span class="sep">¦</span>
-                    <a href="/Scratch/fr/about">About</a>
+                    <a href="../../../../Scratch/fr/about">About</a>
         	    </div>
 			</div>
 
@@ -55,32 +53,32 @@
 			<div id="afterheader">
 				<div class="corps">
 					<p>Voici comment analyser tous les clics que font vos utilisateurs sur votre blog en incluant google analytics de façon asynchrone.</p>
-<p>Dans le html, il faut utiliser <a href="http://jquery.com">jQuery</a> et un fichier que j’ai appelé <code>yga.js</code>&nbsp;:</p>
+<p>Dans le html, il faut utiliser <a href="http://jquery.com">jQuery</a> et un fichier que j’ai appelé <code>yga.js</code> :</p>
 <pre class="sourceCode html"><code class="sourceCode html">    <span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span><span class="ot"> src=</span><span class="st">&quot;jquery.js&quot;</span><span class="kw">&gt;&lt;/script&gt;</span>
     <span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span><span class="ot"> src=</span><span class="st">&quot;yga.js&quot;</span><span class="kw">&gt;&lt;/script&gt;</span></code></pre>
-<p>Voici le contenu du fichier <code>yga.js</code>&nbsp;:</p>
+<p>Voici le contenu du fichier <code>yga.js</code> :</p>
 <pre class="sourceCode javascript"><code class="sourceCode javascript">$(<span class="kw">document</span>).<span class="fu">ready</span>( <span class="kw">function</span>() {
     <span class="co">// add an event to all link for google analytics</span>
-    $(<span class="ch">&#39;a&#39;</span>).<span class="fu">click</span>(<span class="kw">function</span> () {
+    $(<span class="ch">'a'</span>).<span class="fu">click</span>(<span class="kw">function</span> () {
         <span class="co">// tell analytics to save event</span>
         <span class="kw">try</span> {
-            <span class="kw">var</span> identifier=$(<span class="kw">this</span>).<span class="fu">attr</span>(<span class="ch">&#39;id&#39;</span>) ;
-            <span class="kw">var</span> href=$(<span class="kw">this</span>).<span class="fu">attr</span>(<span class="ch">&#39;href&#39;</span>)
+            <span class="kw">var</span> identifier=$(<span class="kw">this</span>).<span class="fu">attr</span>(<span class="ch">'id'</span>) ;
+            <span class="kw">var</span> href=$(<span class="kw">this</span>).<span class="fu">attr</span>(<span class="ch">'href'</span>)
             <span class="kw">var</span> label=<span class="st">&quot;&quot;</span>;
-            <span class="kw">if</span> ( <span class="kw">typeof</span>( identifier ) != <span class="ch">&#39;undefined&#39;</span> ) {
-                label=label+<span class="ch">&#39;[id]:&#39;</span>+identifier
-                category=<span class="ch">&#39;JSLink&#39;</span>
+            <span class="kw">if</span> ( <span class="kw">typeof</span>( identifier ) != <span class="ch">'undefined'</span> ) {
+                label=label+<span class="ch">'[id]:'</span>+identifier
+                category=<span class="ch">'JSLink'</span>
             }
-            <span class="kw">if</span> ( <span class="kw">typeof</span>( href ) != <span class="ch">&#39;undefined&#39;</span> ) {
-                label=label+<span class="ch">&#39; [href]:&#39;</span>+href
-                <span class="kw">if</span> ( href[<span class="dv">0</span>] == <span class="ch">&#39;#&#39;</span> ) {
-                    category=<span class="ch">&#39;Anchor&#39;</span>;
+            <span class="kw">if</span> ( <span class="kw">typeof</span>( href ) != <span class="ch">'undefined'</span> ) {
+                label=label+<span class="ch">' [href]:'</span>+href
+                <span class="kw">if</span> ( href[<span class="dv">0</span>] == <span class="ch">'#'</span> ) {
+                    category=<span class="ch">'Anchor'</span>;
                 } <span class="kw">else</span> {
-                    category=<span class="ch">&#39;Link&#39;</span>;
+                    category=<span class="ch">'Link'</span>;
                 }
             }
-            <span class="kw">_gaq</span>.<span class="fu">push</span>([<span class="ch">&#39;_trackEvent&#39;</span>, category, <span class="ch">&#39;clicked&#39;</span>, label]);
-            <span class="co">// console.log(&#39;[tracked]: &#39; + category + &#39; ; clicked ; &#39; + label );</span>
+            <span class="kw">_gaq</span>.<span class="fu">push</span>([<span class="ch">'_trackEvent'</span>, category, <span class="ch">'clicked'</span>, label]);
+            <span class="co">// console.log('[tracked]: ' + category + ' ; clicked ; ' + label );</span>
         }
         <span class="kw">catch</span> (err) {
             <span class="kw">console</span>.<span class="fu">log</span>(err);
@@ -96,17 +94,17 @@
 });
 
 <span class="kw">var</span> _gaq = _gaq || [];
-<span class="kw">_gaq</span>.<span class="fu">push</span>([<span class="ch">&#39;_setAccount&#39;</span>, <span class="ch">&#39;UA-XXXXXXXX-1&#39;</span>]);
-<span class="kw">_gaq</span>.<span class="fu">push</span>([<span class="ch">&#39;_trackPageview&#39;</span>]);
+<span class="kw">_gaq</span>.<span class="fu">push</span>([<span class="ch">'_setAccount'</span>, <span class="ch">'UA-XXXXXXXX-1'</span>]);
+<span class="kw">_gaq</span>.<span class="fu">push</span>([<span class="ch">'_trackPageview'</span>]);
 
 (<span class="kw">function</span>() {
- <span class="kw">var</span> ga = <span class="kw">document</span>.<span class="fu">createElement</span>(<span class="ch">&#39;script&#39;</span>); <span class="kw">ga</span>.<span class="fu">type</span> = <span class="ch">&#39;text/javascript&#39;</span>; <span class="kw">ga</span>.<span class="fu">async</span> = <span class="kw">true</span>;
- <span class="kw">ga</span>.<span class="fu">src</span> = (<span class="ch">&#39;https:&#39;</span> == <span class="kw">document</span>.<span class="fu">location</span>.<span class="fu">protocol</span> ? <span class="ch">&#39;https://ssl&#39;</span> : <span class="ch">&#39;http://www&#39;</span>) + <span class="ch">&#39;.google-analytics.com/ga.js&#39;</span>;
- <span class="kw">var</span> s = <span class="kw">document</span>.<span class="fu">getElementsByTagName</span>(<span class="ch">&#39;script&#39;</span>)[<span class="dv">0</span>]; <span class="kw">s.parentNode</span>.<span class="fu">insertBefore</span>(ga, s);
+ <span class="kw">var</span> ga = <span class="kw">document</span>.<span class="fu">createElement</span>(<span class="ch">'script'</span>); <span class="kw">ga</span>.<span class="fu">type</span> = <span class="ch">'text/javascript'</span>; <span class="kw">ga</span>.<span class="fu">async</span> = <span class="kw">true</span>;
+ <span class="kw">ga</span>.<span class="fu">src</span> = (<span class="ch">'https:'</span> == <span class="kw">document</span>.<span class="fu">location</span>.<span class="fu">protocol</span> ? <span class="ch">'https://ssl'</span> : <span class="ch">'http://www'</span>) + <span class="ch">'.google-analytics.com/ga.js'</span>;
+ <span class="kw">var</span> s = <span class="kw">document</span>.<span class="fu">getElementsByTagName</span>(<span class="ch">'script'</span>)[<span class="dv">0</span>]; <span class="kw">s.parentNode</span>.<span class="fu">insertBefore</span>(ga, s);
  })();</code></pre>
 <p>Remplacez le : <code>UA-XXXXXXXX-1</code> par votre code google analytics. Maintenant l’installation est finie.</p>
-<p>Pour l’utiliser il suffit de se rendre dans google analytics rubrique <code>Content</code> puis <code>Event Tracking</code> comme sur la capture d’écran suivante&nbsp;:</p>
-<p><img src="/Scratch/img/blog/2010-06-17-track-events-with-google-analytics/GA_events.png" alt=""/></p>
+<p>Pour l’utiliser il suffit de se rendre dans google analytics rubrique <code>Content</code> puis <code>Event Tracking</code> comme sur la capture d’écran suivante :</p>
+<p><img src="../../../../Scratch/img/blog/2010-06-17-track-events-with-google-analytics/GA_events.png" alt /></p>
 <p>Joyeuse inspection du comportement de vos utilisateurs.</p>
 				</div>
 
@@ -168,10 +166,10 @@
 
         </div>
     </body>
-    <script type="text/javascript" src="/Scratch/js/jquery-1.3.1.min.js"></script>
-    <script type="text/javascript" src="/Scratch/js/jquery.cookie.js"></script>
-    <script type="text/javascript" src="/Scratch/js/index.js"></script>
-    <script type="text/javascript" src="/Scratch/js/highlight/highlight.pack.js"></script>
-    <script type="text/javascript" src="/Scratch/js/article.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/index.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/article.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </html>

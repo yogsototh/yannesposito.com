@@ -1,50 +1,48 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>YBlog - ssh sur le port 443 avec Snow Leopard</title>
         <meta name="keywords" content="Apple, mac, ssh, securité">
 
-        <link rel="shortcut icon" type="image/x-icon" href="/Scratch/img/favicon.ico" />
-        <link rel="stylesheet" type="text/css" href="/Scratch/css/scientific.css" />
-        <link rel="stylesheet" type="text/css" href="/Scratch/css/solarized.css" />
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/solarized.css" />
 		<!-- Font -->
-        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
-		<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomfr"/>
+        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+		<link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomfr" />
         <!--[if lt IE 9]>
         <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
         <![endif]-->
     </head>
     <body lang="fr">
-		<script type="text/javascript">// <![CDATA[
+		<script type="text/javascript">// 
             document.write('<div id="blackpage"><div>Bientôt<img src="/Scratch/img/loading.gif" alt="Chargement en cours"/></div></div>');
-            // ]]>
+            // 
         </script>
         <div id="content">
 	        			<div id="header">
 			    <div id="choix">
         	        <div id="choixlang">
-						<a href="/Scratch/en/blog/08_Configure_ssh_to_listen_the_port_443_on_Snow_Leopard/index.html"
-							onclick="setLanguage('en')">
+						<a href="../../../../Scratch/en/blog/08_Configure_ssh_to_listen_the_port_443_on_Snow_Leopard/index.html" onclick="setLanguage('en')">
 							English </a>
         	        </div>
-					<script type="text/javascript">// <![CDATA[
+					<script type="text/javascript">// 
 					document.write('<div id="switchcss"><a href="#">Changer de theme</a></div>');
-					// ]]>
+					// 
 					</script>
         	        <div class="flush"></div>
         	    </div>
         	    <div id="navigation">
-                    <a href="/">Home</a>
+                    <a href="../../../../">Home</a>
                     <span class="sep">¦</span>
-        	        <a href="/Scratch/fr/blog">Blog</a>
+        	        <a href="../../../../Scratch/fr/blog">Blog</a>
                     <span class="sep">¦</span>
-                    <a href="/Scratch/fr/softwares">Softwares</a>
+                    <a href="../../../../Scratch/fr/softwares">Softwares</a>
                     <span class="sep">¦</span>
-                    <a href="/Scratch/fr/about">About</a>
+                    <a href="../../../../Scratch/fr/about">About</a>
         	    </div>
 			</div>
 
@@ -56,7 +54,7 @@
 				<div class="corps">
 					<h1 id="surfez-partout-comme-si-vous-étiez-chez-vous">Surfez partout comme si vous étiez chez vous</h1>
 <p>Que ce soit pour surfer en toute sécurité depuis un accès <sc>wifi</sc> non sécurisé ou pour contourner les parefeux diaboliques des entreprises. J’ai configuré un serveur ssh écoutant sur le port 443 chez moi.</p>
-<p>Ensuite de mon portable ou de mon ordinateur local, je dois simplement lancé la merveilleuse commande&nbsp;:</p>
+<p>Ensuite de mon portable ou de mon ordinateur local, je dois simplement lancé la merveilleuse commande :</p>
 <div>
 <pre class="zsh"><code>ssh -p 443 -D 9050 username@host</code></pre>
 </div>
@@ -65,8 +63,8 @@
 <p>J’ai eu cette information à partir de <a href="http://dltj.org/article/ssh-as-socks-proxy/">cet article</a>.</p>
 <h1 id="ssh-et-snow-leopardc">Ssh et Snow Leopard(c)</h1>
 <p>J’ai un Mac avec Snow Leopard(c) à la maison. Il ne suffit pas de modifier le fichier <code>/etc/sshd.config</code> pour changer le port d’écoute d’<code>sshd</code>. Le système utilise <code>launchd</code> pour lancer les démons.</p>
-<p>J’ai posé cette question sur <a href="discussions.apple.com">Apple Discussions</a> dans ce <a href="http://discussions.apple.com/thread.jspa?messageID=10141032">fil de discussion</a>. Merci à tous ceux qui m’ont aidé. Et la solution est&nbsp;:</p>
-<p>Créer un fichier <tt>/Library/LaunchDaemons/ssh-443.plist</tt> contenant&nbsp;:</p>
+<p>J’ai posé cette question sur <a href="discussions.apple.com">Apple Discussions</a> dans ce <a href="http://discussions.apple.com/thread.jspa?messageID=10141032">fil de discussion</a>. Merci à tous ceux qui m’ont aidé. Et la solution est :</p>
+<p>Créer un fichier <tt>/Library/LaunchDaemons/ssh-443.plist</tt> contenant :</p>
 <div>
 <pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span>
 <span class="dt">&lt;!DOCTYPE </span>plist PUBLIC &quot;-//Apple Computer//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;<span class="dt">&gt;</span>
@@ -104,7 +102,7 @@
 <span class="kw">&lt;/plist&gt;</span></code></pre>
 </div>
 
-<p>C’est une copie de <code>/System/Library/LaunchDaemons/ssh.plist</code> avec quelques modifications&nbsp;:</p>
+<p>C’est une copie de <code>/System/Library/LaunchDaemons/ssh.plist</code> avec quelques modifications :</p>
 <ul>
 <li>le <code>SockServiceName</code> est devenu <code>https</code> au lieu de <code>ssh</code></li>
 <li>le <code>Label</code> est passé de <code>com.openssh.sshd</code> à quelque chose qui n’existait pas comme <code>local.sshd</code></li>
@@ -170,10 +168,10 @@
 
         </div>
     </body>
-    <script type="text/javascript" src="/Scratch/js/jquery-1.3.1.min.js"></script>
-    <script type="text/javascript" src="/Scratch/js/jquery.cookie.js"></script>
-    <script type="text/javascript" src="/Scratch/js/index.js"></script>
-    <script type="text/javascript" src="/Scratch/js/highlight/highlight.pack.js"></script>
-    <script type="text/javascript" src="/Scratch/js/article.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/index.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/article.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </html>
