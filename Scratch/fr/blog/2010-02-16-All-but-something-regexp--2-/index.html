@@ -33,16 +33,8 @@
 					document.write('<div id="switchcss"><a href="#">Changer de theme</a></div>');
 					// 
 					</script>
+                    <div class="tomenu"><a href="#navigation">↓ Menu ↓</a></div>
         	        <div class="flush"></div>
-        	    </div>
-        	    <div id="navigation">
-                    <a href="../../../../">Home</a>
-                    <span class="sep">¦</span>
-        	        <a href="../../../../Scratch/fr/blog">Blog</a>
-                    <span class="sep">¦</span>
-                    <a href="../../../../Scratch/fr/softwares">Softwares</a>
-                    <span class="sep">¦</span>
-                    <a href="../../../../Scratch/fr/about">About</a>
         	    </div>
 			</div>
 
@@ -50,7 +42,7 @@
 				<h1>Tout sauf quelquechose en expression régulière.</h1>
 			</div>
 			<div class="flush"></div>
-			<div id="afterheader">
+			<div id="afterheader" class="article">
 				<div class="corps">
 					<p>Dans mon <a href="previouspost">précédent article</a> j’ai donné certaines astuces pour matcher ‘tout sauf quelque chose’. De la même manière, un truc pour matcher la chaine de caractère la plus petite possible. Disons que vous voulez matcher la chaine de caractère entre ‘a’ et ‘b’. Par exemple, vous voulez matcher :</p>
 <pre class="twilight">
@@ -120,7 +112,7 @@ Cette chaine ne matchera pas. C’est pourquoi si on veut vraiment la matcher co
 <p>Oui, c’est un peu compliqué. Mais que se passe t’il lorsque la chaine de caractère que vous voulez matcher est encore plus longue que <code>&lt;li&gt;</code> ?</p>
 <p>Voici un algorithme qui permet de résoudre ce problème aisément. Vous devez réduire ce problème au premier. C’est-à-dire celui avec une seule lettre :</p>
 <div>
-<p><code class="perl"> # transforme un simple caractère choisi aléatoirement # en un identifiant unique # (vous devez vérifier que l’identifier est VRAIMENT unique) # attention l’identifiant unique ne doit pas # contenir le caractère choisi. s/X/<em>was_x</em>/g s/Y/<em>was_y</em>/g</p>
+<p><code class="perl"> # transforme un simple caractère choisi aléatoirement # en un identifiant unique # (vous devez vérifier que l’identifier est VRAIMENT unique) # attention l’identifiant unique ne doit pas # contenir le caractère choisi. s/X/<em>was</em>x_/g s/Y/<em>was</em>y_/g</p>
 <h1 id="transforme-la-longue-chaine-de-caractère">transforme la longue chaine de caractère</h1>
 <h1 id="en-un-seul-caractère">en un seul caractère</h1>
 s/
@@ -134,7 +126,7 @@ s/X/
 <li>
 <p>/g s/Y/&lt;/li&gt;/g</p>
 <h1 id="retour-des-anciens-caractères.">retour des anciens caractères.</h1>
-s/<em>was_x</em>/X/g s/<em>was_y</em>/Y/g </code>
+s/<em>was</em>x_/X/g s/<em>was</em>y_/Y/g </code>
 </div>
 
 <p>Et ça fonctionne en seulement 9 lignes pour toute chaine de début et de fin. Cette solution fait un peu moins <em>I AM THE GREAT REGEXP M45T3R, URAN00B</em>, mais elle est mieux adaptée à mon avis. De plus, utiliser cette dernière solution prouve que vous maitrisez les expressions régulières. Simplement parce que vous savez qu’il est difficile de résoudre des problèmes de cette forme en utilisant seulement des expressions régulières.</p>
@@ -143,25 +135,26 @@ s/<em>was_x</em>/X/g s/<em>was_y</em>/Y/g </code>
 				</div>
 
                 <div id="social">
-                   <span>
-                       <a class="rss" href="http://feeds.feedburner.com/yannespositocomfr">RSS</a>
-                   </span>
-                    <span>
-                        <a href="https://twitter.com/share" class="twitter-share-button" data-via="yogsototh">Tweet</a>
-                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-                    </span>
-                    <span>
-                        <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="106"></div>
-                        <script type="text/javascript">
-                            (function() {
-                             var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-                             po.src = 'https://apis.google.com/js/plusone.js';
-                             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-                             })();
-                        </script>
-                   </span>
-                   <div class="flush"></div>
+                    <a target="_blank" href="http://feeds.feedburner.com/yannespositocomfr" class="social">r</a>
+                    ·
+                     <a target="_blank" href="https://twitter.com/home?status=http://yannesposito.com/Scratch/fr/blog/2010-02-16-All-but-something-regexp--2-/index.html%22via%22@yogsototh" class="social">t</a>
+                    ·
+                    <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=/Scratch/fr/blog/2010-02-16-All-but-something-regexp--2-" class="social">`</a>
+                    ·
+                     <a target="_blank" href="https://plus.google.com/share?url=http://yannesposito.com/Scratch/fr/blog/2010-02-16-All-but-something-regexp--2-" class="social">g</a>
+                    <br />
+                    <a class="message" href="../../../../Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
                 </div>
+        	    <div id="navigation">
+                    <a href="../../../../">Home</a>
+                    <span class="sep">¦</span>
+        	        <a href="../../../../Scratch/fr/blog">Blog</a>
+                    <span class="sep">¦</span>
+                    <a href="../../../../Scratch/fr/softwares">Softwares</a>
+                    <span class="sep">¦</span>
+                    <a href="../../../../Scratch/fr/about">About</a>
+        	    </div>
+                <div id="totop"><a href="#header">↑ Top ↑</a></div>
 				<div class="corps" id="comment">
             	    <h2 class="first">Comments</h2>
 					<div id="disqus_thread"></div>
@@ -179,6 +172,7 @@ s/<em>was_x</em>/X/g s/<em>was_y</em>/Y/g </code>
         			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
         			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 				</div>
+                <div class="tomenu"><a href="#navigation">↑ Menu ↑</a></div>
 				<div id="bottom">
             	    <div>
             	        Published on 2010-02-16

@@ -33,8 +33,56 @@
 					document.write('<div id="switchcss"><a href="#">Change Theme</a></div>');
 					// 
 					</script>
+                    <div class="tomenu"><a href="#navigation">↓ Menu ↓</a></div>
         	        <div class="flush"></div>
         	    </div>
+			</div>
+
+			<div id="titre">
+				<h1>jQuery popup the easy way</h1>
+			</div>
+			<div class="flush"></div>
+			<div id="afterheader" class="article">
+				<div class="corps">
+					<p>Here is a fast and easy way to create jQuery popup.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// --- code popup ---</span>
+<span class="kw">function</span> <span class="fu">openPopup</span>() {
+    <span class="fu">$</span>(<span class="kw">this</span>).<span class="fu">clone</span>(<span class="kw">false</span>).<span class="fu">appendTo</span>(<span class="fu">$</span>(<span class="st">&quot;#_code&quot;</span>));
+    <span class="fu">$</span>(<span class="st">&quot;#_code&quot;</span>).<span class="fu">show</span>();
+}
+
+<span class="kw">function</span> <span class="fu">closePopup</span>() {
+    <span class="fu">$</span>(<span class="st">&quot;#_code&quot;</span>).<span class="fu">html</span>(<span class="st">&quot;&quot;</span>);
+    <span class="fu">$</span>(<span class="st">&quot;#_code&quot;</span>).<span class="fu">hide</span>();
+}
+
+<span class="kw">function</span> <span class="fu">initCode</span>() {
+    <span class="fu">$</span>(<span class="st">&quot;.code&quot;</span>).<span class="fu">click</span>(openPopup);
+    <span class="fu">$</span>(<span class="st">&quot;.code&quot;</span>).<span class="fu">css</span>({<span class="dt">cursor</span>: <span class="st">&quot;pointer&quot;</span>});
+    <span class="fu">$</span>(<span class="st">'body'</span>).<span class="fu">append</span>(<span class="st">'&lt;div id=&quot;_code&quot;&gt;&lt;/div&gt;'</span>);
+    <span class="fu">$</span>(<span class="st">'#_code'</span>).<span class="fu">css</span>( { <span class="st">'text-align'</span>: <span class="st">&quot;justify&quot;</span>, <span class="dt">position</span>: <span class="st">&quot;fixed&quot;</span>, 
+                        <span class="dt">left</span>:<span class="dv">0</span>, <span class="dt">top</span>:<span class="dv">0</span>, <span class="dt">width</span>: <span class="st">&quot;100%&quot;</span>, <span class="dt">height</span>: <span class="st">&quot;100%&quot;</span>, 
+                        <span class="st">&quot;background-color&quot;</span>: <span class="st">&quot;rgba(0, 0, 0, 0.8)&quot;</span>, <span class="st">'z-index'</span>:<span class="dv">2000</span>, <span class="st">'padding'</span>:<span class="st">'3px'</span>} );
+    <span class="fu">$</span>(<span class="st">'#_code'</span>).<span class="fu">hide</span>();
+    <span class="fu">$</span>(<span class="st">'#_code'</span>).<span class="fu">click</span>(closePopup);
+}
+<span class="co">// --- end of code popup section ---</span></code></pre>
+<p>What does this code do?</p>
+<p>At the loading of the page, I create a <code>div</code> as wide as the window. This <code>div</code> is a bit transparent. Then I hide it. I also take care to its <code>z-index</code> value to be sure it is behind all elements.</p>
+<p>Then when we click on a <code>div</code> of class <code>code</code>, I copy the content into this new wide <code>div</code>, and I show it. Really simple but really efficient. No need to use a <code>jQuery</code> plugin.</p>
+				</div>
+
+                <div id="social">
+                    <a target="_blank" href="http://feeds.feedburner.com/yannespositocomen" class="social">r</a>
+                    ·
+                     <a target="_blank" href="https://twitter.com/home?status=http://yannesposito.com/Scratch/en/blog/2010-06-19-jQuery-popup-the-easy-way/index.html%22via%22@yogsototh" class="social">t</a>
+                    ·
+                    <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=/Scratch/en/blog/2010-06-19-jQuery-popup-the-easy-way" class="social">`</a>
+                    ·
+                     <a target="_blank" href="https://plus.google.com/share?url=http://yannesposito.com/Scratch/en/blog/2010-06-19-jQuery-popup-the-easy-way" class="social">g</a>
+                    <br />
+                    <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
+                </div>
         	    <div id="navigation">
                     <a href="../../../../">Home</a>
                     <span class="sep">¦</span>
@@ -44,62 +92,7 @@
                     <span class="sep">¦</span>
                     <a href="../../../../Scratch/en/about">About</a>
         	    </div>
-			</div>
-
-			<div id="titre">
-				<h1>jQuery popup the easy way</h1>
-			</div>
-			<div class="flush"></div>
-			<div id="afterheader">
-				<div class="corps">
-					<p>Here is a fast and easy way to create jQuery popup.</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// --- code popup ---</span>
-<span class="kw">function</span> openPopup() {
-    $(<span class="kw">this</span>).<span class="fu">clone</span>(<span class="kw">false</span>).<span class="fu">appendTo</span>($(<span class="st">&quot;#_code&quot;</span>));
-    $(<span class="st">&quot;#_code&quot;</span>).<span class="fu">show</span>();
-}
-
-<span class="kw">function</span> closePopup() {
-    $(<span class="st">&quot;#_code&quot;</span>).<span class="fu">html</span>(<span class="st">&quot;&quot;</span>);
-    $(<span class="st">&quot;#_code&quot;</span>).<span class="fu">hide</span>();
-}
-
-<span class="kw">function</span> initCode() {
-    $(<span class="st">&quot;.code&quot;</span>).<span class="fu">click</span>(openPopup);
-    $(<span class="st">&quot;.code&quot;</span>).<span class="fu">css</span>({<span class="dt">cursor</span>: <span class="st">&quot;pointer&quot;</span>});
-    $(<span class="ch">'body'</span>).<span class="fu">append</span>(<span class="ch">'&lt;div id=&quot;_code&quot;&gt;&lt;/div&gt;'</span>);
-    $(<span class="ch">'#_code'</span>).<span class="fu">css</span>( { <span class="ch">'text-align'</span>: <span class="st">&quot;justify&quot;</span>, <span class="dt">position</span>: <span class="st">&quot;fixed&quot;</span>, 
-                        <span class="dt">left</span>:<span class="dv">0</span>, <span class="dt">top</span>:<span class="dv">0</span>, <span class="dt">width</span>: <span class="st">&quot;100%&quot;</span>, <span class="dt">height</span>: <span class="st">&quot;100%&quot;</span>, 
-                        <span class="st">&quot;background-color&quot;</span>: <span class="st">&quot;rgba(0, 0, 0, 0.8)&quot;</span>, <span class="ch">'z-index'</span>:<span class="dv">2000</span>, <span class="ch">'padding'</span>:<span class="ch">'3px'</span>} );
-    $(<span class="ch">'#_code'</span>).<span class="fu">hide</span>();
-    $(<span class="ch">'#_code'</span>).<span class="fu">click</span>(closePopup);
-}
-<span class="co">// --- end of code popup section ---</span></code></pre>
-<p>What does this code do?</p>
-<p>At the loading of the page, I create a <code>div</code> as wide as the window. This <code>div</code> is a bit transparent. Then I hide it. I also take care to its <code>z-index</code> value to be sure it is behind all elements.</p>
-<p>Then when we click on a <code>div</code> of class <code>code</code>, I copy the content into this new wide <code>div</code>, and I show it. Really simple but really efficient. No need to use a <code>jQuery</code> plugin.</p>
-				</div>
-
-                <div id="social">
-                   <span>
-                       <a class="rss" href="http://feeds.feedburner.com/yannespositocomen">RSS</a>
-                   </span>
-                    <span>
-                        <a href="https://twitter.com/share" class="twitter-share-button" data-via="yogsototh">Tweet</a>
-                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-                    </span>
-                    <span>
-                        <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="106"></div>
-                        <script type="text/javascript">
-                            (function() {
-                             var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-                             po.src = 'https://apis.google.com/js/plusone.js';
-                             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-                             })();
-                        </script>
-                   </span>
-                   <div class="flush"></div>
-                </div>
+                <div id="totop"><a href="#header">↑ Top ↑</a></div>
 				<div class="corps" id="comment">
             	    <h2 class="first">Comments</h2>
 					<div id="disqus_thread"></div>
@@ -117,6 +110,7 @@
         			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
         			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 				</div>
+                <div class="tomenu"><a href="#navigation">↑ Menu ↑</a></div>
 				<div id="bottom">
             	    <div>
             	        Published on 2010-06-19

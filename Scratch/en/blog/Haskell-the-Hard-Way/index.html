@@ -33,16 +33,8 @@
 					document.write('<div id="switchcss"><a href="#">Change Theme</a></div>');
 					// 
 					</script>
+                    <div class="tomenu"><a href="#navigation">↓ Menu ↓</a></div>
         	        <div class="flush"></div>
-        	    </div>
-        	    <div id="navigation">
-                    <a href="../../../../">Home</a>
-                    <span class="sep">¦</span>
-        	        <a href="../../../../Scratch/en/blog">Blog</a>
-                    <span class="sep">¦</span>
-                    <a href="../../../../Scratch/en/softwares">Softwares</a>
-                    <span class="sep">¦</span>
-                    <a href="../../../../Scratch/en/about">About</a>
         	    </div>
 			</div>
 
@@ -50,7 +42,7 @@
 				<h1>Learn Haskell Fast and Hard</h1>
 			</div>
 			<div class="flush"></div>
-			<div id="afterheader">
+			<div id="afterheader" class="article">
 				<div class="corps">
 					<p><img src="../../../../Scratch/img/blog/Haskell-the-Hard-Way/magritte_pleasure_principle.jpg" alt="Magritte pleasure principle" /></p>
 <div class="intro">
@@ -258,7 +250,7 @@ Function declaration
     <span class="kw">return</span> x*x + y*y;
 }</code></pre>
 <p>In Javascript:</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> f(x,y) {
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="fu">f</span>(x,y) {
     <span class="kw">return</span> x*x + y*y;
 }</code></pre>
 <p>in Python:</p>
@@ -298,7 +290,7 @@ main <span class="fu">=</span> <span class="fu">print</span> (f <span class="dv"
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
 f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
 
-main <span class="fu">=</span> <span class="fu">print</span> (f <span class="fl">2.3</span> <span class="fl">4.2</span>)</code></pre>
+main <span class="fu">=</span> <span class="fu">print</span> (f <span class="dv">2</span><span class="fu">.</span><span class="dv">3</span> <span class="dv">4</span><span class="fu">.</span><span class="dv">2</span>)</code></pre>
 </div>
 <p>You get this error:</p>
 <pre><code>21_very_basic.lhs:6:23:
@@ -316,7 +308,7 @@ main <span class="fu">=</span> <span class="fu">print</span> (f <span class="fl"
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
 
-main <span class="fu">=</span> <span class="fu">print</span> (f <span class="fl">2.3</span> <span class="fl">4.2</span>)</code></pre>
+main <span class="fu">=</span> <span class="fu">print</span> (f <span class="dv">2</span><span class="fu">.</span><span class="dv">3</span> <span class="dv">4</span><span class="fu">.</span><span class="dv">2</span>)</code></pre>
 </div>
 <p>It works! Great, we don’t have to declare a new function for every single type. For example, in <code>C</code>, you’ll have to declare a function for <code>int</code>, for <code>float</code>, for <code>long</code>, for <code>double</code>, etc…</p>
 <p>But, what type should we declare? To discover the type Haskell has found for us, just launch ghci:</p>
@@ -363,7 +355,7 @@ g y ⇔ 3*3 + y*y</code></pre>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="kw">Num</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> a
 f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
 
-main <span class="fu">=</span> <span class="fu">print</span> (f <span class="dv">3</span> <span class="fl">2.4</span>)</code></pre>
+main <span class="fu">=</span> <span class="fu">print</span> (f <span class="dv">3</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">4</span>)</code></pre>
 </div>
 <p>It works, because, <code>3</code> is a valid representation both for Fractional numbers like Float and for Integer. As <code>2.4</code> is a Fractional number, <code>3</code> is then interpreted as being also a Fractional number.</p>
 <p><a href="code/01_basic/10_Introduction/23_very_basic.lhs" class="cut">01_basic/10_Introduction/<strong>23_very_basic.lhs</strong> </a></p>
@@ -377,7 +369,7 @@ f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</
 <span class="ot">x ::</span> <span class="dt">Int</span>
 x <span class="fu">=</span> <span class="dv">3</span>
 <span class="ot">y ::</span> <span class="dt">Float</span>
-y <span class="fu">=</span> <span class="fl">2.4</span>
+y <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">4</span>
 main <span class="fu">=</span> <span class="fu">print</span> (f x y) <span class="co">-- won't work because type x ≠ type y</span></code></pre>
 </div>
 <p>The compiler complains. The two parameters must have the same type.</p>
@@ -566,9 +558,9 @@ Functional style
 <p>example: <code>[1,2,3,4,5] ⇒  2 + 4 ⇒  6</code></p>
 </blockquote>
 <p>To show differences between the functional and imperative approach, I’ll start by providing an imperative solution (in Javascript):</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> evenSum(list) {
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="fu">evenSum</span>(list) {
     <span class="kw">var</span> result = <span class="dv">0</span>;
-    <span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>; i&lt; <span class="kw">list</span>.<span class="fu">length</span> ; i++) {
+    <span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>; i&lt; <span class="ot">list</span>.<span class="fu">length</span> ; i++) {
         <span class="kw">if</span> (list[i] % <span class="dv">2</span> ==<span class="dv">0</span>) {
             result += list[i];
         }
@@ -809,7 +801,7 @@ myfunc list = foldl <span class="yellow">bar</span> <span class="blue">initialVa
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 6</span>
 <span class="co">-- foldl' isn't accessible by default</span>
 <span class="co">-- we need to import it from the module Data.List</span>
-<span class="kw">import</span> <span class="dt">Data.List</span>
+<span class="kw">import</span> Data.List
 evenSum l <span class="fu">=</span> foldl' mysum <span class="dv">0</span> (<span class="fu">filter</span> <span class="fu">even</span> l)
   <span class="kw">where</span> mysum acc value <span class="fu">=</span> acc <span class="fu">+</span> value</code></pre>
 <p>Version we can simplify by using directly a lambda notation. This way we don’t have to create the temporary name <code>mysum</code>.</p>
@@ -817,7 +809,7 @@ evenSum l <span class="fu">=</span> foldl' mysum <span class="dv">0</span> (<spa
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 7</span>
 <span class="co">-- Generally it is considered a good practice</span>
 <span class="co">-- to import only the necessary function(s)</span>
-<span class="kw">import</span> <span class="dt">Data.List</span> (foldl')
+<span class="kw">import</span> Data.List (foldl')
 evenSum l <span class="fu">=</span> foldl' (\x y <span class="ot">-&gt;</span> x<span class="fu">+</span>y) <span class="dv">0</span> (<span class="fu">filter</span> <span class="fu">even</span> l)</code></pre>
 </div>
 <p>And of course, we note that</p>
@@ -834,7 +826,7 @@ evenSum l <span class="fu">=</span> foldl' (\x y <span class="ot">-&gt;</span> x
 <p><a href="code/02_Hard_Part/16_Functions.lhs" class="cut">02_Hard_Part/<strong>16_Functions.lhs</strong></a></p>
 <p>Finally</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 8</span>
-<span class="kw">import</span> <span class="dt">Data.List</span> (foldl')
+<span class="kw">import</span> Data.List (foldl')
 <span class="ot">evenSum ::</span> <span class="kw">Integral</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a
 evenSum l <span class="fu">=</span> foldl' (<span class="fu">+</span>) <span class="dv">0</span> (<span class="fu">filter</span> <span class="fu">even</span> l)</code></pre>
 <p><code>foldl'</code> isn’t the easiest function to intuit. If you are not used to it, you should study it a bit.</p>
@@ -854,13 +846,13 @@ evenSum l <span class="fu">=</span> foldl' (<span class="fu">+</span>) <span cla
 <pre class="sourceCode haskell"><code class="sourceCode haskell">(f <span class="fu">.</span> g <span class="fu">.</span> h) x ⇔  f ( g (h x))</code></pre>
 <p>We can take advantage of this operator to η-reduce our function:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 9</span>
-<span class="kw">import</span> <span class="dt">Data.List</span> (foldl')
+<span class="kw">import</span> Data.List (foldl')
 <span class="ot">evenSum ::</span> <span class="kw">Integral</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a
 evenSum <span class="fu">=</span> (foldl' (<span class="fu">+</span>) <span class="dv">0</span>) <span class="fu">.</span> (<span class="fu">filter</span> <span class="fu">even</span>)</code></pre>
 <p>Also, we could rename some parts to make it clearer:</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 10 </span>
-<span class="kw">import</span> <span class="dt">Data.List</span> (foldl')
+<span class="kw">import</span> Data.List (foldl')
 <span class="ot">sum' ::</span> (<span class="kw">Num</span> a) <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a
 sum' <span class="fu">=</span> foldl' (<span class="fu">+</span>) <span class="dv">0</span>
 <span class="ot">evenSum ::</span> <span class="kw">Integral</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a
@@ -1012,9 +1004,9 @@ main <span class="fu">=</span> <span class="fu">putStrLn</span> <span class="fu"
 <p>And many accessors are made for you. Furthermore you can use another order when setting values.</p>
 <p>Example:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Complex</span> <span class="fu">=</span> <span class="kw">Num</span> a <span class="ot">=&gt;</span> <span class="dt">Complex</span> {<span class="ot"> real ::</span> a,<span class="ot"> img ::</span> a}
-c <span class="fu">=</span> <span class="dt">Complex</span> <span class="fl">1.0</span> <span class="fl">2.0</span>
+c <span class="fu">=</span> <span class="dt">Complex</span> <span class="dv">1</span><span class="fu">.</span><span class="dv">0</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span>
 z <span class="fu">=</span> <span class="dt">Complex</span> { real <span class="fu">=</span> <span class="dv">3</span>, img <span class="fu">=</span> <span class="dv">4</span> }
-real c <span class="ot">⇒</span> <span class="fl">1.0</span>
+real c <span class="ot">⇒</span> <span class="dv">1</span><span class="fu">.</span><span class="dv">0</span>
 img z <span class="ot">⇒</span> <span class="dv">4</span></code></pre>
 <p><a href="code/02_Hard_Part/22_Types.lhs" class="cut">02_Hard_Part/<strong>22_Types.lhs</strong> </a></p>
 <hr />
@@ -1058,7 +1050,7 @@ Trees
 <p><img src="../../../../Scratch/img/blog/Haskell-the-Hard-Way/magritte-l-arbre.jpg" alt="Magritte, l" /></p>
 <p>We’ll just give another standard example: binary trees.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Data.List</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Data.List
 
 <span class="kw">data</span> <span class="dt">BinTree</span> a <span class="fu">=</span> <span class="dt">Empty</span>
                  <span class="fu">|</span> <span class="dt">Node</span> a (<span class="dt">BinTree</span> a) (<span class="dt">BinTree</span> a)
@@ -1263,7 +1255,7 @@ numbers <span class="fu">=</span> <span class="dv">0</span><span class="fu">:map
 
 take' n [] <span class="fu">=</span> []
 take' <span class="dv">0</span> l <span class="fu">=</span> []
-take' n (x<span class="fu">:</span>xs) <span class="fu">=</span> x<span class="fu">:</span>take' (n<span class="dv">-1</span>) xs
+take' n (x<span class="fu">:</span>xs) <span class="fu">=</span> x<span class="fu">:</span>take' (n<span class="fu">-</span><span class="dv">1</span>) xs
 
 main <span class="fu">=</span> <span class="fu">print</span> <span class="fu">$</span> take' <span class="dv">10</span> numbers</code></pre>
 </div>
@@ -1281,8 +1273,8 @@ main <span class="fu">=</span> <span class="fu">print</span> <span class="fu">$<
 
 <p>This code is mostly the same as the previous one.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Debug.Trace</span> (trace)
-<span class="kw">import</span> <span class="dt">Data.List</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Debug.Trace (trace)
+<span class="kw">import</span> Data.List
 <span class="kw">data</span> <span class="dt">BinTree</span> a <span class="fu">=</span> <span class="dt">Empty</span> 
                  <span class="fu">|</span> <span class="dt">Node</span> a (<span class="dt">BinTree</span> a) (<span class="dt">BinTree</span> a) 
                   <span class="kw">deriving</span> (<span class="kw">Eq</span>,<span class="kw">Ord</span>)</code></pre>
@@ -1339,8 +1331,8 @@ main <span class="fu">=</span> <span class="fu">print</span> <span class="fu">$<
 treeTakeDepth _ <span class="dt">Empty</span> <span class="fu">=</span> <span class="dt">Empty</span>
 treeTakeDepth <span class="dv">0</span> _     <span class="fu">=</span> <span class="dt">Empty</span>
 treeTakeDepth n (<span class="dt">Node</span> x left right) <span class="fu">=</span> <span class="kw">let</span>
-          nl <span class="fu">=</span> treeTakeDepth (n<span class="dv">-1</span>) left
-          nr <span class="fu">=</span> treeTakeDepth (n<span class="dv">-1</span>) right
+          nl <span class="fu">=</span> treeTakeDepth (n<span class="fu">-</span><span class="dv">1</span>) left
+          nr <span class="fu">=</span> treeTakeDepth (n<span class="fu">-</span><span class="dv">1</span>) right
           <span class="kw">in</span>
               <span class="dt">Node</span> x nl nr</code></pre>
 </div>
@@ -1366,8 +1358,8 @@ treeTakeDepth n (<span class="dt">Node</span> x left right) <span class="fu">=</
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">iTree <span class="fu">=</span> <span class="dt">Node</span> <span class="dv">0</span> (dec iTree) (inc iTree)
         <span class="kw">where</span>
-           dec (<span class="dt">Node</span> x l r) <span class="fu">=</span> <span class="dt">Node</span> (x<span class="dv">-1</span>) (dec l) (dec r) 
-           inc (<span class="dt">Node</span> x l r) <span class="fu">=</span> <span class="dt">Node</span> (x<span class="dv">+1</span>) (inc l) (inc r) </code></pre>
+           dec (<span class="dt">Node</span> x l r) <span class="fu">=</span> <span class="dt">Node</span> (x<span class="fu">-</span><span class="dv">1</span>) (dec l) (dec r) 
+           inc (<span class="dt">Node</span> x l r) <span class="fu">=</span> <span class="dt">Node</span> (x<span class="fu">+</span><span class="dv">1</span>) (inc l) (inc r) </code></pre>
 </div>
 <p>Another way to create this tree is to use a higher order function. This function should be similar to <code>map</code>, but should work on <code>BinTree</code> instead of list. Here is such a function:</p>
 <div class="codehighlight">
@@ -1382,8 +1374,8 @@ treeMap f (<span class="dt">Node</span> x left right) <span class="fu">=</span> 
 <p>Our definition is now:</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">infTreeTwo ::</span> <span class="dt">BinTree</span> <span class="dt">Int</span>
-infTreeTwo <span class="fu">=</span> <span class="dt">Node</span> <span class="dv">0</span> (treeMap (\x <span class="ot">-&gt;</span> x<span class="dv">-1</span>) infTreeTwo) 
-                    (treeMap (\x <span class="ot">-&gt;</span> x<span class="dv">+1</span>) infTreeTwo) </code></pre>
+infTreeTwo <span class="fu">=</span> <span class="dt">Node</span> <span class="dv">0</span> (treeMap (\x <span class="ot">-&gt;</span> x<span class="fu">-</span><span class="dv">1</span>) infTreeTwo) 
+                    (treeMap (\x <span class="ot">-&gt;</span> x<span class="fu">+</span><span class="dv">1</span>) infTreeTwo) </code></pre>
 </div>
 <p>Look at the result for</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="fu">print</span> <span class="fu">$</span> treeTakeDepth <span class="dv">4</span> infTreeTwo</code></pre>
@@ -1500,7 +1492,7 @@ main = do
 <p>Argh! An evil error message and a crash! The first evolution will be to answer with a more friendly message.</p>
 <p>In order to do this, we must detect that something went wrong. Here is one way to do this. Use the type <code>Maybe</code>. It is a very common type in Haskell.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Data.Maybe</span></code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Data.Maybe</code></pre>
 </div>
 <p>What is this thing? <code>Maybe</code> is a type which takes one parameter. Its definition is:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Maybe</span> a <span class="fu">=</span> <span class="kw">Nothing</span> <span class="fu">|</span> <span class="kw">Just</span> a</code></pre>
@@ -1543,7 +1535,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <p>Our next evolution will be to prompt the user again and again until she enters a valid answer.</p>
 <p>We keep the first part:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Data.Maybe</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Data.Maybe
 
 <span class="ot">maybeRead ::</span> <span class="kw">Read</span> a <span class="ot">=&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
 maybeRead s <span class="fu">=</span> <span class="kw">case</span> <span class="fu">reads</span> s <span class="kw">of</span>
@@ -1806,7 +1798,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
   <span class="fu">print</span> <span class="fu">$</span> <span class="fu">sum</span> list</code></pre>
 <p>Is translated into:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Data.Maybe</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Data.Maybe
 
 <span class="ot">maybeRead ::</span> <span class="kw">Read</span> a <span class="ot">=&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
 maybeRead s <span class="fu">=</span> <span class="kw">case</span> <span class="fu">reads</span> s <span class="kw">of</span>
@@ -1979,7 +1971,7 @@ The list monad
 <p><img src="../../../../Scratch/img/blog/Haskell-the-Hard-Way/golconde.jpg" alt="Golconde de Magritte" /></p>
 <p>The list monad helps us to simulate non deterministic computations. Here we go:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Control.Monad</span> (guard)
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Control.Monad (guard)
 
 allCases <span class="fu">=</span> [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>]
 
@@ -2035,7 +2027,7 @@ More on Infinite Tree
 
 <p>This code is mostly the same as the one in the <a href="#trees">tree section</a>.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Data.List</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Data.List
 <span class="kw">data</span> <span class="dt">BinTree</span> a <span class="fu">=</span> <span class="dt">Empty</span> 
                  <span class="fu">|</span> <span class="dt">Node</span> a (<span class="dt">BinTree</span> a) (<span class="dt">BinTree</span> a) 
                   <span class="kw">deriving</span> (<span class="kw">Eq</span>,<span class="kw">Ord</span>)
@@ -2096,8 +2088,8 @@ treeFromList (x<span class="fu">:</span>xs) <span class="fu">=</span> <span clas
 <pre class="sourceCode haskell"><code class="sourceCode haskell">treeTakeDepth _ <span class="dt">Empty</span> <span class="fu">=</span> <span class="dt">Empty</span>
 treeTakeDepth <span class="dv">0</span> _     <span class="fu">=</span> <span class="dt">Empty</span>
 treeTakeDepth n (<span class="dt">Node</span> x left right) <span class="fu">=</span> <span class="kw">let</span>
-          nl <span class="fu">=</span> treeTakeDepth (n<span class="dv">-1</span>) left
-          nr <span class="fu">=</span> treeTakeDepth (n<span class="dv">-1</span>) right
+          nl <span class="fu">=</span> treeTakeDepth (n<span class="fu">-</span><span class="dv">1</span>) left
+          nr <span class="fu">=</span> treeTakeDepth (n<span class="fu">-</span><span class="dv">1</span>) right
           <span class="kw">in</span>
               <span class="dt">Node</span> x nl nr</code></pre>
 </div>
@@ -2147,8 +2139,8 @@ treeTakeDepth 4 (treeFromList shuffle)
 
 <p>This code is mostly the same as the preceding one.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Debug.Trace</span> (trace)
-<span class="kw">import</span> <span class="dt">Data.List</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Debug.Trace (trace)
+<span class="kw">import</span> Data.List
 <span class="kw">data</span> <span class="dt">BinTree</span> a <span class="fu">=</span> <span class="dt">Empty</span> 
                  <span class="fu">|</span> <span class="dt">Node</span> a (<span class="dt">BinTree</span> a) (<span class="dt">BinTree</span> a) 
                   <span class="kw">deriving</span> (<span class="kw">Eq</span>,<span class="kw">Ord</span>)</code></pre>
@@ -2195,8 +2187,8 @@ treeTakeDepth 4 (treeFromList shuffle)
 treeTakeDepth _ <span class="dt">Empty</span> <span class="fu">=</span> <span class="dt">Empty</span>
 treeTakeDepth <span class="dv">0</span> _     <span class="fu">=</span> <span class="dt">Empty</span>
 treeTakeDepth n (<span class="dt">Node</span> x left right) <span class="fu">=</span> <span class="kw">let</span>
-          nl <span class="fu">=</span> treeTakeDepth (n<span class="dv">-1</span>) left
-          nr <span class="fu">=</span> treeTakeDepth (n<span class="dv">-1</span>) right
+          nl <span class="fu">=</span> treeTakeDepth (n<span class="fu">-</span><span class="dv">1</span>) left
+          nr <span class="fu">=</span> treeTakeDepth (n<span class="fu">-</span><span class="dv">1</span>) right
           <span class="kw">in</span>
               <span class="dt">Node</span> x nl nr</code></pre>
 </div>
@@ -2240,7 +2232,7 @@ safefilter f l <span class="fu">=</span> safefilter' f l nbTry
       safefilter' f (x<span class="fu">:</span>xs) n <span class="fu">=</span> 
                   <span class="kw">if</span> f x 
                      <span class="kw">then</span> x <span class="fu">:</span> safefilter' f xs nbTry 
-                     <span class="kw">else</span> safefilter' f xs (n<span class="dv">-1</span>) </code></pre>
+                     <span class="kw">else</span> safefilter' f xs (n<span class="fu">-</span><span class="dv">1</span>) </code></pre>
 </div>
 <p>Now run the program and be happy:</p>
 <div class="codehighlight">
@@ -2291,25 +2283,26 @@ treeFromList' (x<span class="fu">:</span>xs) n <span class="fu">=</span> <span c
 				</div>
 
                 <div id="social">
-                   <span>
-                       <a class="rss" href="http://feeds.feedburner.com/yannespositocomen">RSS</a>
-                   </span>
-                    <span>
-                        <a href="https://twitter.com/share" class="twitter-share-button" data-via="yogsototh">Tweet</a>
-                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-                    </span>
-                    <span>
-                        <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="106"></div>
-                        <script type="text/javascript">
-                            (function() {
-                             var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-                             po.src = 'https://apis.google.com/js/plusone.js';
-                             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-                             })();
-                        </script>
-                   </span>
-                   <div class="flush"></div>
+                    <a target="_blank" href="http://feeds.feedburner.com/yannespositocomen" class="social">r</a>
+                    ·
+                     <a target="_blank" href="https://twitter.com/home?status=http://yannesposito.com/Scratch/en/blog/Haskell-the-Hard-Way/index.html%22via%22@yogsototh" class="social">t</a>
+                    ·
+                    <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=/Scratch/en/blog/Haskell-the-Hard-Way" class="social">`</a>
+                    ·
+                     <a target="_blank" href="https://plus.google.com/share?url=http://yannesposito.com/Scratch/en/blog/Haskell-the-Hard-Way" class="social">g</a>
+                    <br />
+                    <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
                 </div>
+        	    <div id="navigation">
+                    <a href="../../../../">Home</a>
+                    <span class="sep">¦</span>
+        	        <a href="../../../../Scratch/en/blog">Blog</a>
+                    <span class="sep">¦</span>
+                    <a href="../../../../Scratch/en/softwares">Softwares</a>
+                    <span class="sep">¦</span>
+                    <a href="../../../../Scratch/en/about">About</a>
+        	    </div>
+                <div id="totop"><a href="#header">↑ Top ↑</a></div>
 				<div class="corps" id="comment">
             	    <h2 class="first">Comments</h2>
 					<div id="disqus_thread"></div>
@@ -2327,6 +2320,7 @@ treeFromList' (x<span class="fu">:</span>xs) n <span class="fu">=</span> <span c
         			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
         			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 				</div>
+                <div class="tomenu"><a href="#navigation">↑ Menu ↑</a></div>
 				<div id="bottom">
             	    <div>
             	        Published on 2012-02-08

@@ -33,16 +33,8 @@
 					document.write('<div id="switchcss"><a href="#">Change Theme</a></div>');
 					// 
 					</script>
+                    <div class="tomenu"><a href="#navigation">↓ Menu ↓</a></div>
         	        <div class="flush"></div>
-        	    </div>
-        	    <div id="navigation">
-                    <a href="../../../../">Home</a>
-                    <span class="sep">¦</span>
-        	        <a href="../../../../Scratch/en/blog">Blog</a>
-                    <span class="sep">¦</span>
-                    <a href="../../../../Scratch/en/softwares">Softwares</a>
-                    <span class="sep">¦</span>
-                    <a href="../../../../Scratch/en/about">About</a>
         	    </div>
 			</div>
 
@@ -50,7 +42,7 @@
 				<h1>Haskell Progressive Example</h1>
 			</div>
 			<div class="flush"></div>
-			<div id="afterheader">
+			<div id="afterheader" class="article">
 				<div class="corps">
 					<p><img src="../../../../Scratch/img/blog/Haskell-OpenGL-Mandelbrot/BenoitBMandelbrot.jpg" alt="The B in Benoît B. Mandelbrot stand for Benoît B. Mandelbrot" /></p>
 <div class="intro">
@@ -98,9 +90,9 @@ Another detail of the Mandelbulb
 <p>We can consider two parts. The first being mostly some boilerplate<sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup>. And the second part more focused on OpenGL and content.</p>
 <h3 id="lets-play-the-song-of-our-people">Let’s play the song of our people</h3>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Graphics.Rendering.OpenGL</span>
-<span class="kw">import</span> <span class="dt">Graphics.UI.GLUT</span>
-<span class="kw">import</span> <span class="dt">Data.IORef</span></code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Graphics.Rendering.OpenGL
+<span class="kw">import</span> Graphics.UI.GLUT
+<span class="kw">import</span> Data.IORef</code></pre>
 </div>
 
 <p>For efficiency reason<sup><a href="#fn3" class="footnoteRef" id="fnref3">3</a></sup>, I will not use the default Haskell <code>Complex</code> data type.</p>
@@ -110,11 +102,11 @@ Another detail of the Mandelbulb
 
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="kw">Num</span> <span class="dt">Complex</span> <span class="kw">where</span>
-    <span class="fu">fromInteger</span> n <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">fromIntegral</span> n,<span class="fl">0.0</span>)
+    <span class="fu">fromInteger</span> n <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">fromIntegral</span> n,<span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>)
     <span class="dt">C</span> (x,y) <span class="fu">*</span> <span class="dt">C</span> (z,t) <span class="fu">=</span> <span class="dt">C</span> (z<span class="fu">*</span>x <span class="fu">-</span> y<span class="fu">*</span>t, y<span class="fu">*</span>z <span class="fu">+</span> x<span class="fu">*</span>t)
     <span class="dt">C</span> (x,y) <span class="fu">+</span> <span class="dt">C</span> (z,t) <span class="fu">=</span> <span class="dt">C</span> (x<span class="fu">+</span>z, y<span class="fu">+</span>t)
-    <span class="fu">abs</span> (<span class="dt">C</span> (x,y))     <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">sqrt</span> (x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y),<span class="fl">0.0</span>)
-    <span class="fu">signum</span> (<span class="dt">C</span> (x,y))  <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">signum</span> x , <span class="fl">0.0</span>)</code></pre>
+    <span class="fu">abs</span> (<span class="dt">C</span> (x,y))     <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">sqrt</span> (x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y),<span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>)
+    <span class="fu">signum</span> (<span class="dt">C</span> (x,y))  <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">signum</span> x , <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>)</code></pre>
 </div>
 
 <p>We declare some useful functions for manipulating complex numbers:</p>
@@ -201,16 +193,16 @@ allPoints <span class="fu">=</span> [ (x<span class="fu">/</span>width,y<span cl
 <pre class="sourceCode haskell"><code class="sourceCode haskell">colorFromValue n <span class="fu">=</span>
   <span class="kw">let</span> 
 <span class="ot">      t ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">GLfloat</span>
-      t i <span class="fu">=</span> <span class="fl">0.5</span> <span class="fu">+</span> <span class="fl">0.5</span><span class="fu">*cos</span>( <span class="fu">fromIntegral</span> i <span class="fu">/</span> <span class="dv">10</span> )
+      t i <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">5</span> <span class="fu">+</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">5</span><span class="fu">*cos</span>( <span class="fu">fromIntegral</span> i <span class="fu">/</span> <span class="dv">10</span> )
   <span class="kw">in</span>
-    <span class="dt">Color3</span> (t n) (t (n<span class="dv">+5</span>)) (t (n<span class="dv">+10</span>))</code></pre>
+    <span class="dt">Color3</span> (t n) (t (n<span class="fu">+</span><span class="dv">5</span>)) (t (n<span class="fu">+</span><span class="dv">10</span>))</code></pre>
 </div>
 
 <p>And now the <code>mandel</code> function. Given two coordinates in pixels, it returns some integer value:</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">mandel x y <span class="fu">=</span> 
-  <span class="kw">let</span> r <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> x <span class="fu">/</span> width
-      i <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> y <span class="fu">/</span> height
+  <span class="kw">let</span> r <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> x <span class="fu">/</span> width
+      i <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> y <span class="fu">/</span> height
   <span class="kw">in</span>
       f (complex r i) <span class="dv">0</span> <span class="dv">64</span></code></pre>
 </div>
@@ -226,7 +218,7 @@ allPoints <span class="fu">=</span> [ (x<span class="fu">/</span>width,y<span cl
 f c z <span class="dv">0</span> <span class="fu">=</span> <span class="dv">0</span>
 f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span class="fu">&gt;</span> <span class="dv">2</span> ) 
           <span class="kw">then</span> n
-          <span class="kw">else</span> f c ((z<span class="fu">*</span>z)<span class="fu">+</span>c) (n<span class="dv">-1</span>)</code></pre>
+          <span class="kw">else</span> f c ((z<span class="fu">*</span>z)<span class="fu">+</span>c) (n<span class="fu">-</span><span class="dv">1</span>)</code></pre>
 </div>
 
 <p>Well, if you download this file (look at the bottom of this section), compile it and run it this is the result:</p>
@@ -242,20 +234,20 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
 <div style="display:none">
 
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Graphics.Rendering.OpenGL</span>
-<span class="kw">import</span> <span class="dt">Graphics.UI.GLUT</span>
-<span class="kw">import</span> <span class="dt">Data.IORef</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Graphics.Rendering.OpenGL
+<span class="kw">import</span> Graphics.UI.GLUT
+<span class="kw">import</span> Data.IORef
 <span class="co">-- Use UNPACK data because it is faster</span>
 <span class="co">-- The ! is for strict instead of lazy</span>
 <span class="kw">data</span> <span class="dt">Complex</span> <span class="fu">=</span> <span class="dt">C</span>  <span class="ot">{-# UNPACK #-}</span> <span class="fu">!</span><span class="dt">Float</span> 
                   <span class="ot">{-# UNPACK #-}</span> <span class="fu">!</span><span class="dt">Float</span> 
                <span class="kw">deriving</span> (<span class="kw">Show</span>,<span class="kw">Eq</span>)
 <span class="kw">instance</span> <span class="kw">Num</span> <span class="dt">Complex</span> <span class="kw">where</span>
-    <span class="fu">fromInteger</span> n <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">fromIntegral</span> n) <span class="fl">0.0</span>
+    <span class="fu">fromInteger</span> n <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">fromIntegral</span> n) <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>
     (<span class="dt">C</span> x y) <span class="fu">*</span> (<span class="dt">C</span> z t) <span class="fu">=</span> <span class="dt">C</span> (z<span class="fu">*</span>x <span class="fu">-</span> y<span class="fu">*</span>t) (y<span class="fu">*</span>z <span class="fu">+</span> x<span class="fu">*</span>t)
     (<span class="dt">C</span> x y) <span class="fu">+</span> (<span class="dt">C</span> z t) <span class="fu">=</span> <span class="dt">C</span> (x<span class="fu">+</span>z) (y<span class="fu">+</span>t)
-    <span class="fu">abs</span> (<span class="dt">C</span> x y)     <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">sqrt</span> (x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y)) <span class="fl">0.0</span>
-    <span class="fu">signum</span> (<span class="dt">C</span> x y)  <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">signum</span> x) <span class="fl">0.0</span>
+    <span class="fu">abs</span> (<span class="dt">C</span> x y)     <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">sqrt</span> (x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y)) <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>
+    <span class="fu">signum</span> (<span class="dt">C</span> x y)  <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">signum</span> x) <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>
 <span class="ot">complex ::</span> <span class="dt">Float</span> <span class="ot">-&gt;</span> <span class="dt">Float</span> <span class="ot">-&gt;</span> <span class="dt">Complex</span>
 complex x y <span class="fu">=</span> <span class="dt">C</span> x y
 
@@ -282,7 +274,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
   mainLoop
 display <span class="fu">=</span> <span class="kw">do</span>
    <span class="co">-- set the background color (dark solarized theme)</span>
-  clearColor <span class="fu">$=</span> <span class="dt">Color4</span> <span class="dv">0</span> <span class="fl">0.1686</span> <span class="fl">0.2117</span> <span class="dv">1</span>
+  clearColor <span class="fu">$=</span> <span class="dt">Color4</span> <span class="dv">0</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">1686</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">2117</span> <span class="dv">1</span>
   clear [<span class="dt">ColorBuffer</span>] <span class="co">-- make the window black</span>
   loadIdentity <span class="co">-- reset any transformation</span>
   preservingMatrix drawMandelbrot
@@ -347,8 +339,8 @@ positivePoints <span class="fu">=</span> <span class="kw">do</span>
 maxZeroIndex func minval maxval <span class="dv">0</span> <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span>
 maxZeroIndex func minval maxval n <span class="fu">=</span> 
   <span class="kw">if</span> (func medpoint) <span class="fu">/=</span> <span class="dv">0</span> 
-       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="dv">-1</span>)
-       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="dv">-1</span>)
+       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="fu">-</span><span class="dv">1</span>)
+       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="fu">-</span><span class="dv">1</span>)
   <span class="kw">where</span> medpoint <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span></code></pre>
 </div>
 
@@ -360,15 +352,15 @@ maxZeroIndex func minval maxval n <span class="fu">=</span>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">colorFromValue n <span class="fu">=</span>
   <span class="kw">let</span> 
 <span class="ot">      t ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">GLfloat</span>
-      t i <span class="fu">=</span> <span class="fl">0.5</span> <span class="fu">+</span> <span class="fl">0.5</span><span class="fu">*cos</span>( <span class="fu">fromIntegral</span> i <span class="fu">/</span> <span class="dv">10</span> )
+      t i <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">5</span> <span class="fu">+</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">5</span><span class="fu">*cos</span>( <span class="fu">fromIntegral</span> i <span class="fu">/</span> <span class="dv">10</span> )
   <span class="kw">in</span>
-    <span class="dt">Color3</span> (t n) (t (n<span class="dv">+5</span>)) (t (n<span class="dv">+10</span>))</code></pre>
+    <span class="dt">Color3</span> (t n) (t (n<span class="fu">+</span><span class="dv">5</span>)) (t (n<span class="fu">+</span><span class="dv">10</span>))</code></pre>
 </div>
 
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">mandel x y <span class="fu">=</span> 
-  <span class="kw">let</span> r <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> x <span class="fu">/</span> width
-      i <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> y <span class="fu">/</span> height
+  <span class="kw">let</span> r <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> x <span class="fu">/</span> width
+      i <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> y <span class="fu">/</span> height
   <span class="kw">in</span>
       f (complex r i) <span class="dv">0</span> <span class="dv">64</span></code></pre>
 </div>
@@ -378,7 +370,7 @@ maxZeroIndex func minval maxval n <span class="fu">=</span>
 f c z <span class="dv">0</span> <span class="fu">=</span> <span class="dv">0</span>
 f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span class="fu">&gt;</span> <span class="dv">2</span> ) 
           <span class="kw">then</span> n
-          <span class="kw">else</span> f c ((z<span class="fu">*</span>z)<span class="fu">+</span>c) (n<span class="dv">-1</span>)</code></pre>
+          <span class="kw">else</span> f c ((z<span class="fu">*</span>z)<span class="fu">+</span>c) (n<span class="fu">-</span><span class="dv">1</span>)</code></pre>
 </div>
 
 </div>
@@ -406,9 +398,9 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
 <div style="display:none">
 
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Graphics.Rendering.OpenGL</span>
-<span class="kw">import</span> <span class="dt">Graphics.UI.GLUT</span>
-<span class="kw">import</span> <span class="dt">Data.IORef</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Graphics.Rendering.OpenGL
+<span class="kw">import</span> Graphics.UI.GLUT
+<span class="kw">import</span> Data.IORef
 <span class="kw">type</span> <span class="dt">ColoredPoint</span> <span class="fu">=</span> (<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>,<span class="dt">Color3</span> <span class="dt">GLfloat</span>)</code></pre>
 </div>
 
@@ -476,7 +468,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
   <span class="co">-- Some state variables (I know it feels BAD)</span>
   angle   <span class="ot">&lt;-</span> newIORef ((<span class="dv">35</span>,<span class="dv">0</span>)<span class="ot">::</span>(<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>))
   zoom    <span class="ot">&lt;-</span> newIORef (<span class="dv">2</span><span class="ot">::</span><span class="dt">GLfloat</span>)
-  campos  <span class="ot">&lt;-</span> newIORef ((<span class="fl">0.7</span>,<span class="dv">0</span>)<span class="ot">::</span>(<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>))
+  campos  <span class="ot">&lt;-</span> newIORef ((<span class="dv">0</span><span class="fu">.</span><span class="dv">7</span>,<span class="dv">0</span>)<span class="ot">::</span>(<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>))
   <span class="co">-- Function to call each frame</span>
   idleCallback <span class="fu">$=</span> <span class="kw">Just</span> idle
   <span class="co">-- Function to call when keyboard or mouse is used</span>
@@ -516,18 +508,18 @@ mapSnd f (x,y) <span class="fu">=</span> (  x,f y)</code></pre>
           z <span class="fu">$=</span> <span class="dv">1</span>     <span class="co">-- zoom</span>
           p <span class="fu">$=</span> (<span class="dv">0</span>,<span class="dv">0</span>) <span class="co">-- camera position</span>
     <span class="co">-- use of hjkl to rotate</span>
-    kact a _ _ (<span class="dt">Char</span> <span class="ch">'h'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapFst (<span class="fu">+</span><span class="fl">0.5</span>))
-    kact a _ _ (<span class="dt">Char</span> <span class="ch">'l'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapFst (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.5</span>)))
-    kact a _ _ (<span class="dt">Char</span> <span class="ch">'j'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapSnd (<span class="fu">+</span><span class="fl">0.5</span>))
-    kact a _ _ (<span class="dt">Char</span> <span class="ch">'k'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapSnd (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.5</span>)))
+    kact a _ _ (<span class="dt">Char</span> <span class="ch">'h'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapFst (<span class="fu">+</span><span class="dv">0</span><span class="fu">.</span><span class="dv">5</span>))
+    kact a _ _ (<span class="dt">Char</span> <span class="ch">'l'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapFst (<span class="fu">+</span>(<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">5</span>)))
+    kact a _ _ (<span class="dt">Char</span> <span class="ch">'j'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapSnd (<span class="fu">+</span><span class="dv">0</span><span class="fu">.</span><span class="dv">5</span>))
+    kact a _ _ (<span class="dt">Char</span> <span class="ch">'k'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapSnd (<span class="fu">+</span>(<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">5</span>)))
     <span class="co">-- use o and i to zoom</span>
-    kact _ z _ (<span class="dt">Char</span> <span class="ch">'o'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar z (<span class="fu">*</span><span class="fl">1.1</span>)
-    kact _ z _ (<span class="dt">Char</span> <span class="ch">'i'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar z (<span class="fu">*</span><span class="fl">0.9</span>)
+    kact _ z _ (<span class="dt">Char</span> <span class="ch">'o'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar z (<span class="fu">*</span><span class="dv">1</span><span class="fu">.</span><span class="dv">1</span>)
+    kact _ z _ (<span class="dt">Char</span> <span class="ch">'i'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar z (<span class="fu">*</span><span class="dv">0</span><span class="fu">.</span><span class="dv">9</span>)
     <span class="co">-- use sdfe to move the camera</span>
-    kact _ _ p (<span class="dt">Char</span> <span class="ch">'s'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapFst (<span class="fu">+</span><span class="fl">0.1</span>))
-    kact _ _ p (<span class="dt">Char</span> <span class="ch">'f'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapFst (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.1</span>)))
-    kact _ _ p (<span class="dt">Char</span> <span class="ch">'d'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapSnd (<span class="fu">+</span><span class="fl">0.1</span>))
-    kact _ _ p (<span class="dt">Char</span> <span class="ch">'e'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapSnd (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.1</span>)))
+    kact _ _ p (<span class="dt">Char</span> <span class="ch">'s'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapFst (<span class="fu">+</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
+    kact _ _ p (<span class="dt">Char</span> <span class="ch">'f'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapFst (<span class="fu">+</span>(<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)))
+    kact _ _ p (<span class="dt">Char</span> <span class="ch">'d'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapSnd (<span class="fu">+</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
+    kact _ _ p (<span class="dt">Char</span> <span class="ch">'e'</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapSnd (<span class="fu">+</span>(<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)))
     <span class="co">-- any other keys does nothing</span>
     kact _ _ _ _ _ <span class="fu">=</span> <span class="fu">return</span> ()</code></pre>
 </div>
@@ -536,7 +528,7 @@ mapSnd f (x,y) <span class="fu">=</span> (  x,f y)</code></pre>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">display angle zoom position <span class="fu">=</span> <span class="kw">do</span>
    <span class="co">-- set the background color (dark solarized theme)</span>
-  clearColor <span class="fu">$=</span> <span class="dt">Color4</span> <span class="dv">0</span> <span class="fl">0.1686</span> <span class="fl">0.2117</span> <span class="dv">1</span>
+  clearColor <span class="fu">$=</span> <span class="dt">Color4</span> <span class="dv">0</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">1686</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">2117</span> <span class="dv">1</span>
   clear [<span class="dt">ColorBuffer</span>,<span class="dt">DepthBuffer</span>]
   <span class="co">-- Transformation to change the view</span>
   loadIdentity <span class="co">-- reset any transformation</span>
@@ -548,8 +540,8 @@ mapSnd f (x,y) <span class="fu">=</span> (  x,f y)</code></pre>
   scale z z z
   <span class="co">-- rotate</span>
   (xangle,yangle) <span class="ot">&lt;-</span> get angle
-  rotate xangle <span class="fu">$</span> <span class="dt">Vector3</span> <span class="fl">1.0</span> <span class="fl">0.0</span> (<span class="fl">0.0</span><span class="ot">::</span><span class="dt">GLfloat</span>)
-  rotate yangle <span class="fu">$</span> <span class="dt">Vector3</span> <span class="fl">0.0</span> <span class="fl">1.0</span> (<span class="fl">0.0</span><span class="ot">::</span><span class="dt">GLfloat</span>)
+  rotate xangle <span class="fu">$</span> <span class="dt">Vector3</span> <span class="dv">1</span><span class="fu">.</span><span class="dv">0</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span> (<span class="dv">0</span><span class="fu">.</span><span class="dv">0</span><span class="ot">::</span><span class="dt">GLfloat</span>)
+  rotate yangle <span class="fu">$</span> <span class="dt">Vector3</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span> <span class="dv">1</span><span class="fu">.</span><span class="dv">0</span> (<span class="dv">0</span><span class="fu">.</span><span class="dv">0</span><span class="ot">::</span><span class="dt">GLfloat</span>)
 
   <span class="co">-- Now that all transformation were made</span>
   <span class="co">-- We create the object(s)</span>
@@ -598,17 +590,17 @@ depthPoints <span class="fu">=</span> <span class="kw">do</span>
       depthOf x' y' <span class="fu">=</span> maxZeroIndex (mandel x' y') <span class="dv">0</span> deep logdeep 
       logdeep <span class="fu">=</span> <span class="fu">floor</span> ((<span class="fu">log</span> deep) <span class="fu">/</span> <span class="fu">log</span> <span class="dv">2</span>)
       z1 <span class="fu">=</span> depthOf    x     y
-      z2 <span class="fu">=</span> depthOf (x<span class="dv">+1</span>)    y
-      z3 <span class="fu">=</span> depthOf (x<span class="dv">+1</span>) (y<span class="dv">+1</span>)
-      z4 <span class="fu">=</span> depthOf    x  (y<span class="dv">+1</span>)
-      c1 <span class="fu">=</span> mandel    x     y  (z1<span class="dv">+1</span>)
-      c2 <span class="fu">=</span> mandel (x<span class="dv">+1</span>)    y  (z2<span class="dv">+1</span>)
-      c3 <span class="fu">=</span> mandel (x<span class="dv">+1</span>) (y<span class="dv">+1</span>) (z3<span class="dv">+1</span>)
-      c4 <span class="fu">=</span> mandel    x  (y<span class="dv">+1</span>) (z4<span class="dv">+1</span>)
+      z2 <span class="fu">=</span> depthOf (x<span class="fu">+</span><span class="dv">1</span>)    y
+      z3 <span class="fu">=</span> depthOf (x<span class="fu">+</span><span class="dv">1</span>) (y<span class="fu">+</span><span class="dv">1</span>)
+      z4 <span class="fu">=</span> depthOf    x  (y<span class="fu">+</span><span class="dv">1</span>)
+      c1 <span class="fu">=</span> mandel    x     y  (z1<span class="fu">+</span><span class="dv">1</span>)
+      c2 <span class="fu">=</span> mandel (x<span class="fu">+</span><span class="dv">1</span>)    y  (z2<span class="fu">+</span><span class="dv">1</span>)
+      c3 <span class="fu">=</span> mandel (x<span class="fu">+</span><span class="dv">1</span>) (y<span class="fu">+</span><span class="dv">1</span>) (z3<span class="fu">+</span><span class="dv">1</span>)
+      c4 <span class="fu">=</span> mandel    x  (y<span class="fu">+</span><span class="dv">1</span>) (z4<span class="fu">+</span><span class="dv">1</span>)
       p1 <span class="fu">=</span> (   x <span class="fu">/</span>width,   y <span class="fu">/</span>height, z1<span class="fu">/</span>deep, colorFromValue c1)
-      p2 <span class="fu">=</span> ((x<span class="dv">+1</span>)<span class="fu">/</span>width,   y <span class="fu">/</span>height, z2<span class="fu">/</span>deep, colorFromValue c2)
-      p3 <span class="fu">=</span> ((x<span class="dv">+1</span>)<span class="fu">/</span>width,(y<span class="dv">+1</span>)<span class="fu">/</span>height, z3<span class="fu">/</span>deep, colorFromValue c3)
-      p4 <span class="fu">=</span> (   x <span class="fu">/</span>width,(y<span class="dv">+1</span>)<span class="fu">/</span>height, z4<span class="fu">/</span>deep, colorFromValue c4)
+      p2 <span class="fu">=</span> ((x<span class="fu">+</span><span class="dv">1</span>)<span class="fu">/</span>width,   y <span class="fu">/</span>height, z2<span class="fu">/</span>deep, colorFromValue c2)
+      p3 <span class="fu">=</span> ((x<span class="fu">+</span><span class="dv">1</span>)<span class="fu">/</span>width,(y<span class="fu">+</span><span class="dv">1</span>)<span class="fu">/</span>height, z3<span class="fu">/</span>deep, colorFromValue c3)
+      p4 <span class="fu">=</span> (   x <span class="fu">/</span>width,(y<span class="fu">+</span><span class="dv">1</span>)<span class="fu">/</span>height, z4<span class="fu">/</span>deep, colorFromValue c4)
   <span class="kw">if</span> (<span class="fu">and</span> <span class="fu">$</span> <span class="fu">map</span> (<span class="fu">&gt;=</span><span class="dv">57</span>) [c1,c2,c3,c4])
   <span class="kw">then</span> []
   <span class="kw">else</span> [p1,p2,p3,p1,p3,p4]</code></pre>
@@ -619,13 +611,13 @@ depthPoints <span class="fu">=</span> <span class="kw">do</span>
   x <span class="ot">&lt;-</span> [<span class="fu">-</span>width<span class="fu">..</span>width]
   y <span class="ot">&lt;-</span> [<span class="fu">-</span>height<span class="fu">..</span>height]
   <span class="kw">let</span> 
-    neighbors <span class="fu">=</span> [(x,y),(x<span class="dv">+1</span>,y),(x<span class="dv">+1</span>,y<span class="dv">+1</span>),(x,y<span class="dv">+1</span>)]
+    neighbors <span class="fu">=</span> [(x,y),(x<span class="fu">+</span><span class="dv">1</span>,y),(x<span class="fu">+</span><span class="dv">1</span>,y<span class="fu">+</span><span class="dv">1</span>),(x,y<span class="fu">+</span><span class="dv">1</span>)]
     depthOf (u,v) <span class="fu">=</span> maxZeroIndex (mandel u v) <span class="dv">0</span> deep logdeep
     logdeep <span class="fu">=</span> <span class="fu">floor</span> ((<span class="fu">log</span> deep) <span class="fu">/</span> <span class="fu">log</span> <span class="dv">2</span>)
     <span class="co">-- zs are 3D points with found depth</span>
     zs <span class="fu">=</span> <span class="fu">map</span> (\(u,v) <span class="ot">-&gt;</span> (u,v,depthOf (u,v))) neighbors
     <span class="co">-- ts are 3D pixels + mandel value</span>
-    ts <span class="fu">=</span> <span class="fu">map</span> (\(u,v,w) <span class="ot">-&gt;</span> (u,v,w,mandel u v (w<span class="dv">+1</span>))) zs
+    ts <span class="fu">=</span> <span class="fu">map</span> (\(u,v,w) <span class="ot">-&gt;</span> (u,v,w,mandel u v (w<span class="fu">+</span><span class="dv">1</span>))) zs
     <span class="co">-- ps are 3D opengl points + color value</span>
     ps <span class="fu">=</span> <span class="fu">map</span> (\(u,v,w,c') <span class="ot">-&gt;</span> 
         (u<span class="fu">/</span>width,v<span class="fu">/</span>height,w<span class="fu">/</span>deep,colorFromValue c')) ts
@@ -643,7 +635,7 @@ depthPoints <span class="fu">=</span> <span class="kw">do</span>
 allPoints <span class="fu">=</span> planPoints <span class="fu">++</span> <span class="fu">map</span> inverseDepth  planPoints
   <span class="kw">where</span> 
       planPoints <span class="fu">=</span> depthPoints
-      inverseDepth (x,y,z,c) <span class="fu">=</span> (x,y,<span class="fu">-</span>z<span class="dv">+1</span><span class="fu">/</span>deep,c)</code></pre>
+      inverseDepth (x,y,z,c) <span class="fu">=</span> (x,y,<span class="fu">-</span>z<span class="fu">+</span><span class="dv">1</span><span class="fu">/</span>deep,c)</code></pre>
 </div>
 
 <p>The rest of the program is very close to the preceding one.</p>
@@ -663,8 +655,8 @@ allPoints <span class="fu">=</span> planPoints <span class="fu">++</span> <span 
 maxZeroIndex func minval maxval <span class="dv">0</span> <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span>
 maxZeroIndex func minval maxval n <span class="fu">=</span> 
   <span class="kw">if</span> (func medpoint) <span class="fu">/=</span> <span class="dv">0</span> 
-       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="dv">-1</span>)
-       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="dv">-1</span>)
+       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="fu">-</span><span class="dv">1</span>)
+       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="fu">-</span><span class="dv">1</span>)
   <span class="kw">where</span> medpoint <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span></code></pre>
 </div>
 
@@ -673,9 +665,9 @@ maxZeroIndex func minval maxval n <span class="fu">=</span>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">colorFromValue n <span class="fu">=</span>
   <span class="kw">let</span> 
 <span class="ot">      t ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">GLfloat</span>
-      t i <span class="fu">=</span> <span class="fl">0.7</span> <span class="fu">+</span> <span class="fl">0.3</span><span class="fu">*cos</span>( <span class="fu">fromIntegral</span> i <span class="fu">/</span> <span class="dv">10</span> )
+      t i <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">7</span> <span class="fu">+</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">3</span><span class="fu">*cos</span>( <span class="fu">fromIntegral</span> i <span class="fu">/</span> <span class="dv">10</span> )
   <span class="kw">in</span>
-    <span class="dt">Color3</span> (t n) (t (n<span class="dv">+5</span>)) (t (n<span class="dv">+10</span>))</code></pre>
+    <span class="dt">Color3</span> (t n) (t (n<span class="fu">+</span><span class="dv">5</span>)) (t (n<span class="fu">+</span><span class="dv">10</span>))</code></pre>
 </div>
 
 <p>We only changed from <code>Complex</code> to <code>ExtComplex</code> of the main <code>f</code> function.</p>
@@ -684,7 +676,7 @@ maxZeroIndex func minval maxval n <span class="fu">=</span>
 f c z <span class="dv">0</span> <span class="fu">=</span> <span class="dv">0</span>
 f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span class="fu">&gt;</span> <span class="dv">2</span> ) 
           <span class="kw">then</span> n
-          <span class="kw">else</span> f c ((z<span class="fu">*</span>z)<span class="fu">+</span>c) (n<span class="dv">-1</span>)</code></pre>
+          <span class="kw">else</span> f c ((z<span class="fu">*</span>z)<span class="fu">+</span>c) (n<span class="fu">-</span><span class="dv">1</span>)</code></pre>
 </div>
 
 </div>
@@ -692,9 +684,9 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
 <p>We simply add a new dimension to the <code>mandel</code> function and change the type signature of <code>f</code> from <code>Complex</code> to <code>ExtComplex</code>.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">mandel x y z <span class="fu">=</span> 
-  <span class="kw">let</span> r <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> x <span class="fu">/</span> width
-      i <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> y <span class="fu">/</span> height
-      s <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> z <span class="fu">/</span> deep
+  <span class="kw">let</span> r <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> x <span class="fu">/</span> width
+      i <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> y <span class="fu">/</span> height
+      s <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> z <span class="fu">/</span> deep
   <span class="kw">in</span>
       f (extcomplex r i s) <span class="dv">0</span> <span class="dv">64</span></code></pre>
 </div>
@@ -712,8 +704,8 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
 <li><a href="code/04_Mandelbulb/ExtComplex.hs"><code>ExtComplex</code></a>, the extended complexes</li>
 </ul>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">YBoiler</span> <span class="co">-- Most the OpenGL Boilerplate</span>
-<span class="kw">import</span> <span class="dt">Mandel</span> <span class="co">-- The 3D Mandelbrot maths</span></code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> YBoiler -- Most the OpenGL Boilerplate
+<span class="kw">import</span> Mandel -- The 3D Mandelbrot maths</code></pre>
 </div>
 
 <p>The <code>yMainLoop</code> takes two arguments: the title of the window and a function from time to triangles</p>
@@ -737,7 +729,7 @@ allPoints <span class="fu">=</span> planPoints <span class="fu">++</span> <span 
   <span class="kw">where</span> 
       planPoints <span class="fu">=</span> depthPoints <span class="fu">++</span> <span class="fu">map</span> inverseHeight depthPoints
       inverseHeight (x,y,z,c) <span class="fu">=</span> (x,<span class="fu">-</span>y,z,c)
-      inverseDepth (x,y,z,c) <span class="fu">=</span> (x,y,<span class="fu">-</span>z<span class="dv">+1</span><span class="fu">/</span>deep,c)</code></pre>
+      inverseDepth (x,y,z,c) <span class="fu">=</span> (x,y,<span class="fu">-</span>z<span class="fu">+</span><span class="dv">1</span><span class="fu">/</span>deep,c)</code></pre>
 </div>
 
 <div class="codehighlight">
@@ -746,12 +738,12 @@ depthPoints <span class="fu">=</span> <span class="kw">do</span>
   x <span class="ot">&lt;-</span> [<span class="fu">-</span>width<span class="fu">..</span>width]
   y <span class="ot">&lt;-</span> [<span class="dv">0</span><span class="fu">..</span>height]
   <span class="kw">let</span> 
-    neighbors <span class="fu">=</span> [(x,y),(x<span class="dv">+1</span>,y),(x<span class="dv">+1</span>,y<span class="dv">+1</span>),(x,y<span class="dv">+1</span>)]
+    neighbors <span class="fu">=</span> [(x,y),(x<span class="fu">+</span><span class="dv">1</span>,y),(x<span class="fu">+</span><span class="dv">1</span>,y<span class="fu">+</span><span class="dv">1</span>),(x,y<span class="fu">+</span><span class="dv">1</span>)]
     depthOf (u,v) <span class="fu">=</span> maxZeroIndex (ymandel u v) <span class="dv">0</span> deep <span class="dv">7</span>
     <span class="co">-- zs are 3D points with found depth</span>
     zs <span class="fu">=</span> <span class="fu">map</span> (\(u,v) <span class="ot">-&gt;</span> (u,v,depthOf (u,v))) neighbors
     <span class="co">-- ts are 3D pixels + mandel value</span>
-    ts <span class="fu">=</span> <span class="fu">map</span> (\(u,v,w) <span class="ot">-&gt;</span> (u,v,w,ymandel u v (w<span class="dv">+1</span>))) zs
+    ts <span class="fu">=</span> <span class="fu">map</span> (\(u,v,w) <span class="ot">-&gt;</span> (u,v,w,ymandel u v (w<span class="fu">+</span><span class="dv">1</span>))) zs
     <span class="co">-- ps are 3D opengl points + color value</span>
     ps <span class="fu">=</span> <span class="fu">map</span> (\(u,v,w,c') <span class="ot">-&gt;</span> 
         (u<span class="fu">/</span>width,v<span class="fu">/</span>height,w<span class="fu">/</span>deep,colorFromValue c')) ts
@@ -772,16 +764,16 @@ depthPoints <span class="fu">=</span> <span class="kw">do</span>
 maxZeroIndex func minval maxval <span class="dv">0</span> <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span>
 maxZeroIndex func minval maxval n <span class="fu">=</span> 
   <span class="kw">if</span> (func medpoint) <span class="fu">/=</span> <span class="dv">0</span> 
-       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="dv">-1</span>)
-       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="dv">-1</span>)
+       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="fu">-</span><span class="dv">1</span>)
+       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="fu">-</span><span class="dv">1</span>)
   <span class="kw">where</span> medpoint <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span>
 
 colorFromValue n <span class="fu">=</span>
   <span class="kw">let</span> 
 <span class="ot">      t ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">GLfloat</span>
-      t i <span class="fu">=</span> <span class="fl">0.7</span> <span class="fu">+</span> <span class="fl">0.3</span><span class="fu">*cos</span>( <span class="fu">fromIntegral</span> i <span class="fu">/</span> <span class="dv">10</span> )
+      t i <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">7</span> <span class="fu">+</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">3</span><span class="fu">*cos</span>( <span class="fu">fromIntegral</span> i <span class="fu">/</span> <span class="dv">10</span> )
   <span class="kw">in</span>
-    ((t n),(t (n<span class="dv">+5</span>)),(t (n<span class="dv">+10</span>)))
+    ((t n),(t (n<span class="fu">+</span><span class="dv">5</span>)),(t (n<span class="fu">+</span><span class="dv">10</span>)))
 
 ymandel x y z <span class="fu">=</span> mandel (<span class="dv">2</span><span class="fu">*</span>x<span class="fu">/</span>width) (<span class="dv">2</span><span class="fu">*</span>y<span class="fu">/</span>height) (<span class="dv">2</span><span class="fu">*</span>z<span class="fu">/</span>deep) <span class="dv">64</span></code></pre>
 </div>
@@ -815,8 +807,8 @@ ymandel x y z <span class="fu">=</span> mandel (<span class="dv">2</span><span c
 </ul>
 <p>Here is a real working code, I’ve hidden most display functions. The YGL, is a kind of framework to display 3D functions. But it can easily be extended to many kind of representation.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">YGL</span> <span class="co">-- Most the OpenGL Boilerplate</span>
-<span class="kw">import</span> <span class="dt">Mandel</span> <span class="co">-- The 3D Mandelbrot maths</span></code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> YGL -- Most the OpenGL Boilerplate
+<span class="kw">import</span> Mandel -- The 3D Mandelbrot maths</code></pre>
 </div>
 
 <p>We first set the mapping between user input and actions. The type of each couple should be of the form <code>(user input, f)</code> where (in a first time) <code>f:World -&gt; World</code>. It means, the user input will transform the world state.</p>
@@ -830,16 +822,16 @@ inputActionMap <span class="fu">=</span> inputMapFromList [
     ,(<span class="dt">Press</span> <span class="ch">'l'</span> , rotate ydir (<span class="fu">-</span><span class="dv">5</span>))
     ,(<span class="dt">Press</span> <span class="ch">'o'</span> , rotate zdir   <span class="dv">5</span>)
     ,(<span class="dt">Press</span> <span class="ch">'u'</span> , rotate zdir (<span class="fu">-</span><span class="dv">5</span>))
-    ,(<span class="dt">Press</span> <span class="ch">'f'</span> , translate xdir   <span class="fl">0.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">'s'</span> , translate xdir (<span class="fu">-</span><span class="fl">0.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">'e'</span> , translate ydir   <span class="fl">0.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">'d'</span> , translate ydir (<span class="fu">-</span><span class="fl">0.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">'z'</span> , translate zdir   <span class="fl">0.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">'r'</span> , translate zdir (<span class="fu">-</span><span class="fl">0.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">'+'</span> , zoom    <span class="fl">1.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">'-'</span> , zoom (<span class="dv">1</span><span class="fu">/</span><span class="fl">1.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">'h'</span> , resize    <span class="fl">1.2</span>)
-    ,(<span class="dt">Press</span> <span class="ch">'g'</span> , resize (<span class="dv">1</span><span class="fu">/</span><span class="fl">1.2</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'f'</span> , translate xdir   <span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'s'</span> , translate xdir (<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'e'</span> , translate ydir   <span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'d'</span> , translate ydir (<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'z'</span> , translate zdir   <span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'r'</span> , translate zdir (<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'+'</span> , zoom    <span class="dv">1</span><span class="fu">.</span><span class="dv">1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'-'</span> , zoom (<span class="dv">1</span><span class="fu">/</span><span class="dv">1</span><span class="fu">.</span><span class="dv">1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'h'</span> , resize    <span class="dv">1</span><span class="fu">.</span><span class="dv">2</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'g'</span> , resize (<span class="dv">1</span><span class="fu">/</span><span class="dv">1</span><span class="fu">.</span><span class="dv">2</span>))
     ]</code></pre>
 </div>
 
@@ -932,11 +924,11 @@ main <span class="fu">=</span> yMainLoop inputActionMap idleAction initialWorld<
 initialWorld <span class="fu">=</span> <span class="dt">World</span> {
    angle <span class="fu">=</span> makePoint3D (<span class="fu">-</span><span class="dv">30</span>,<span class="fu">-</span><span class="dv">30</span>,<span class="dv">0</span>)
  , position <span class="fu">=</span> makePoint3D (<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)
- , scale <span class="fu">=</span> <span class="fl">0.8</span>
+ , scale <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">8</span>
  , shape <span class="fu">=</span> shapeFunc 
  , box <span class="fu">=</span> <span class="dt">Box3D</span> { minPoint <span class="fu">=</span> makePoint3D (<span class="fu">-</span><span class="dv">2</span>,<span class="fu">-</span><span class="dv">2</span>,<span class="fu">-</span><span class="dv">2</span>)
                , maxPoint <span class="fu">=</span>  makePoint3D (<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">2</span>)
-               , resolution <span class="fu">=</span>  <span class="fl">0.16</span> }
+               , resolution <span class="fu">=</span>  <span class="dv">0</span><span class="fu">.</span><span class="dv">16</span> }
  , told <span class="fu">=</span> <span class="dv">0</span>
  }</code></pre>
 </div>
@@ -949,8 +941,8 @@ idleAction tnew world <span class="fu">=</span> world {
   , told <span class="fu">=</span> tnew
   }
   <span class="kw">where</span> 
-      anglePerSec <span class="fu">=</span> <span class="fl">5.0</span>
-      delta <span class="fu">=</span> anglePerSec <span class="fu">*</span> elapsed <span class="fu">/</span> <span class="fl">1000.0</span>
+      anglePerSec <span class="fu">=</span> <span class="dv">5</span><span class="fu">.</span><span class="dv">0</span>
+      delta <span class="fu">=</span> anglePerSec <span class="fu">*</span> elapsed <span class="fu">/</span> <span class="dv">1000</span><span class="fu">.</span><span class="dv">0</span>
       elapsed <span class="fu">=</span> <span class="fu">fromIntegral</span> (tnew <span class="fu">-</span> (told world))</code></pre>
 </div>
 
@@ -962,7 +954,7 @@ shapeFunc res x y <span class="fu">=</span>
   <span class="kw">let</span> 
       z <span class="fu">=</span> maxZeroIndex (ymandel x y) <span class="dv">0</span> <span class="dv">1</span> <span class="dv">20</span>
   <span class="kw">in</span>
-  <span class="kw">if</span> <span class="fu">and</span> [ maxZeroIndex (ymandel (x<span class="fu">+</span>xeps) (y<span class="fu">+</span>yeps)) <span class="dv">0</span> <span class="dv">1</span> <span class="dv">20</span> <span class="fu">&lt;</span> <span class="fl">0.000001</span> <span class="fu">|</span>
+  <span class="kw">if</span> <span class="fu">and</span> [ maxZeroIndex (ymandel (x<span class="fu">+</span>xeps) (y<span class="fu">+</span>yeps)) <span class="dv">0</span> <span class="dv">1</span> <span class="dv">20</span> <span class="fu">&lt;</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">000001</span> <span class="fu">|</span>
               val <span class="ot">&lt;-</span> [res], xeps <span class="ot">&lt;-</span> [<span class="fu">-</span>val,val], yeps<span class="ot">&lt;-</span>[<span class="fu">-</span>val,val]]
       <span class="kw">then</span> <span class="kw">Nothing</span> 
       <span class="kw">else</span> <span class="kw">Just</span> (z,colorFromValue ((ymandel x y z) <span class="fu">*</span> <span class="dv">64</span>))</code></pre>
@@ -974,9 +966,9 @@ shapeFunc res x y <span class="fu">=</span>
 colorFromValue n <span class="fu">=</span>
   <span class="kw">let</span> 
 <span class="ot">      t ::</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Scalar</span>
-      t i <span class="fu">=</span> <span class="fl">0.7</span> <span class="fu">+</span> <span class="fl">0.3</span><span class="fu">*cos</span>( i <span class="fu">/</span> <span class="dv">10</span> )
+      t i <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">7</span> <span class="fu">+</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">3</span><span class="fu">*cos</span>( i <span class="fu">/</span> <span class="dv">10</span> )
   <span class="kw">in</span>
-    makeColor (t n) (t (n<span class="dv">+5</span>)) (t (n<span class="dv">+10</span>))</code></pre>
+    makeColor (t n) (t (n<span class="fu">+</span><span class="dv">5</span>)) (t (n<span class="fu">+</span><span class="dv">10</span>))</code></pre>
 </div>
 
 <p>The rest is similar to the preceding sections.</p>
@@ -994,8 +986,8 @@ colorFromValue n <span class="fu">=</span>
 maxZeroIndex _ minval maxval <span class="dv">0</span> <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span>
 maxZeroIndex func minval maxval n <span class="fu">=</span> 
   <span class="kw">if</span> (func medpoint) <span class="fu">/=</span> <span class="dv">0</span> 
-       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="dv">-1</span>)
-       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="dv">-1</span>)
+       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="fu">-</span><span class="dv">1</span>)
+       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="fu">-</span><span class="dv">1</span>)
   <span class="kw">where</span> medpoint <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span>
 
 <span class="ot">ymandel ::</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span>
@@ -1022,8 +1014,8 @@ ymandel x y z <span class="fu">=</span> <span class="fu">fromIntegral</span> (ma
 <div style="display:none">
 
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">YGL</span> <span class="co">-- Most the OpenGL Boilerplate</span>
-<span class="kw">import</span> <span class="dt">Mandel</span> <span class="co">-- The 3D Mandelbrot maths</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> YGL -- Most the OpenGL Boilerplate
+<span class="kw">import</span> Mandel -- The 3D Mandelbrot maths
 
 <span class="co">-- Centralize all user input interaction</span>
 <span class="ot">inputActionMap ::</span> <span class="dt">InputMap</span> <span class="dt">World</span>
@@ -1035,16 +1027,16 @@ inputActionMap <span class="fu">=</span> inputMapFromList [
     ,(<span class="dt">Press</span> <span class="ch">'l'</span> , rotate ydir (<span class="fu">-</span><span class="dv">5</span>))
     ,(<span class="dt">Press</span> <span class="ch">'o'</span> , rotate zdir <span class="dv">5</span>)
     ,(<span class="dt">Press</span> <span class="ch">'u'</span> , rotate zdir (<span class="fu">-</span><span class="dv">5</span>))
-    ,(<span class="dt">Press</span> <span class="ch">'f'</span> , translate xdir <span class="fl">0.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">'s'</span> , translate xdir (<span class="fu">-</span><span class="fl">0.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">'e'</span> , translate ydir <span class="fl">0.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">'d'</span> , translate ydir (<span class="fu">-</span><span class="fl">0.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">'z'</span> , translate zdir <span class="fl">0.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">'r'</span> , translate zdir (<span class="fu">-</span><span class="fl">0.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">'+'</span> , zoom <span class="fl">1.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">'-'</span> , zoom (<span class="dv">1</span><span class="fu">/</span><span class="fl">1.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">'h'</span> , resize <span class="fl">2.0</span>)
-    ,(<span class="dt">Press</span> <span class="ch">'g'</span> , resize (<span class="dv">1</span><span class="fu">/</span><span class="fl">2.0</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'f'</span> , translate xdir <span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'s'</span> , translate xdir (<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'e'</span> , translate ydir <span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'d'</span> , translate ydir (<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'z'</span> , translate zdir <span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'r'</span> , translate zdir (<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'+'</span> , zoom <span class="dv">1</span><span class="fu">.</span><span class="dv">1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'-'</span> , zoom (<span class="dv">1</span><span class="fu">/</span><span class="dv">1</span><span class="fu">.</span><span class="dv">1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">'h'</span> , resize <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span>)
+    ,(<span class="dt">Press</span> <span class="ch">'g'</span> , resize (<span class="dv">1</span><span class="fu">/</span><span class="dv">2</span><span class="fu">.</span><span class="dv">0</span>))
     ]</code></pre>
 </div>
 
@@ -1092,7 +1084,7 @@ rotate dir angleValue world <span class="fu">=</span>
 <span class="ot">switchRotation ::</span> <span class="dt">World</span> <span class="ot">-&gt;</span> <span class="dt">World</span>
 switchRotation world <span class="fu">=</span> 
   world {
-     anglePerSec <span class="fu">=</span> <span class="kw">if</span> anglePerSec world <span class="fu">&gt;</span> <span class="dv">0</span> <span class="kw">then</span> <span class="dv">0</span> <span class="kw">else</span> <span class="fl">5.0</span> }
+     anglePerSec <span class="fu">=</span> <span class="kw">if</span> anglePerSec world <span class="fu">&gt;</span> <span class="dv">0</span> <span class="kw">then</span> <span class="dv">0</span> <span class="kw">else</span> <span class="dv">5</span><span class="fu">.</span><span class="dv">0</span> }
 
 <span class="ot">translate ::</span> <span class="dt">Point3D</span> <span class="ot">-&gt;</span> <span class="dt">Scalar</span> <span class="ot">-&gt;</span> <span class="dt">World</span> <span class="ot">-&gt;</span> <span class="dt">World</span>
 translate dir len world <span class="fu">=</span> 
@@ -1119,12 +1111,12 @@ main <span class="fu">=</span> yMainLoop inputActionMap idleAction initialWorld<
 <span class="ot">initialWorld ::</span> <span class="dt">World</span>
 initialWorld <span class="fu">=</span> <span class="dt">World</span> {
    angle <span class="fu">=</span> makePoint3D (<span class="dv">30</span>,<span class="dv">30</span>,<span class="dv">0</span>)
- , anglePerSec <span class="fu">=</span> <span class="fl">5.0</span>
+ , anglePerSec <span class="fu">=</span> <span class="dv">5</span><span class="fu">.</span><span class="dv">0</span>
  , position <span class="fu">=</span> makePoint3D (<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)
- , scale <span class="fu">=</span> <span class="fl">1.0</span>
+ , scale <span class="fu">=</span> <span class="dv">1</span><span class="fu">.</span><span class="dv">0</span>
  , box <span class="fu">=</span> <span class="dt">Box3D</span> { minPoint <span class="fu">=</span> makePoint3D (<span class="dv">0</span><span class="fu">-</span>eps, <span class="dv">0</span><span class="fu">-</span>eps, <span class="dv">0</span><span class="fu">-</span>eps)
                , maxPoint <span class="fu">=</span> makePoint3D (<span class="dv">0</span><span class="fu">+</span>eps, <span class="dv">0</span><span class="fu">+</span>eps, <span class="dv">0</span><span class="fu">+</span>eps)
-               , resolution <span class="fu">=</span>  <span class="fl">0.02</span> }
+               , resolution <span class="fu">=</span>  <span class="dv">0</span><span class="fu">.</span><span class="dv">02</span> }
  , told <span class="fu">=</span> <span class="dv">0</span>
  <span class="co">-- We declare cache directly this time</span>
  , cache <span class="fu">=</span> objectFunctionFromWorld initialWorld
@@ -1168,7 +1160,7 @@ idleAction tnew world <span class="fu">=</span>
       , told <span class="fu">=</span> tnew
       }
   <span class="kw">where</span> 
-      delta <span class="fu">=</span> anglePerSec world <span class="fu">*</span> elapsed <span class="fu">/</span> <span class="fl">1000.0</span>
+      delta <span class="fu">=</span> anglePerSec world <span class="fu">*</span> elapsed <span class="fu">/</span> <span class="dv">1000</span><span class="fu">.</span><span class="dv">0</span>
       elapsed <span class="fu">=</span> <span class="fu">fromIntegral</span> (tnew <span class="fu">-</span> (told world))
 
 <span class="ot">shapeFunc ::</span> <span class="dt">Scalar</span> <span class="ot">-&gt;</span> <span class="dt">Function3D</span>
@@ -1176,7 +1168,7 @@ shapeFunc res x y <span class="fu">=</span>
   <span class="kw">let</span> 
       z <span class="fu">=</span> maxZeroIndex (ymandel x y) <span class="dv">0</span> <span class="dv">1</span> <span class="dv">20</span>
   <span class="kw">in</span>
-  <span class="kw">if</span> <span class="fu">and</span> [ maxZeroIndex (ymandel (x<span class="fu">+</span>xeps) (y<span class="fu">+</span>yeps)) <span class="dv">0</span> <span class="dv">1</span> <span class="dv">20</span> <span class="fu">&lt;</span> <span class="fl">0.000001</span> <span class="fu">|</span>
+  <span class="kw">if</span> <span class="fu">and</span> [ maxZeroIndex (ymandel (x<span class="fu">+</span>xeps) (y<span class="fu">+</span>yeps)) <span class="dv">0</span> <span class="dv">1</span> <span class="dv">20</span> <span class="fu">&lt;</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">000001</span> <span class="fu">|</span>
               val <span class="ot">&lt;-</span> [res], xeps <span class="ot">&lt;-</span> [<span class="fu">-</span>val,val], yeps<span class="ot">&lt;-</span>[<span class="fu">-</span>val,val]]
       <span class="kw">then</span> <span class="kw">Nothing</span> 
       <span class="kw">else</span> <span class="kw">Just</span> (z,colorFromValue <span class="dv">0</span>)
@@ -1185,9 +1177,9 @@ shapeFunc res x y <span class="fu">=</span>
 colorFromValue n <span class="fu">=</span>
   <span class="kw">let</span> 
 <span class="ot">      t ::</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Scalar</span>
-      t i <span class="fu">=</span> <span class="fl">0.0</span> <span class="fu">+</span> <span class="fl">0.5</span><span class="fu">*cos</span>( i <span class="fu">/</span><span class="dv">10</span> )
+      t i <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">+</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">5</span><span class="fu">*cos</span>( i <span class="fu">/</span><span class="dv">10</span> )
   <span class="kw">in</span>
-    makeColor (t n) (t (n<span class="dv">+5</span>)) (t (n<span class="dv">+10</span>))
+    makeColor (t n) (t (n<span class="fu">+</span><span class="dv">5</span>)) (t (n<span class="fu">+</span><span class="dv">10</span>))
 
 <span class="co">-- given f min max nbtest,</span>
 <span class="co">-- considering </span>
@@ -1202,8 +1194,8 @@ colorFromValue n <span class="fu">=</span>
 maxZeroIndex _ minval maxval <span class="dv">0</span> <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span>
 maxZeroIndex func minval maxval n <span class="fu">=</span> 
   <span class="kw">if</span> func medpoint <span class="fu">/=</span> <span class="dv">0</span> 
-       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="dv">-1</span>)
-       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="dv">-1</span>)
+       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="fu">-</span><span class="dv">1</span>)
+       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="fu">-</span><span class="dv">1</span>)
   <span class="kw">where</span> medpoint <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span>
 
 <span class="ot">ymandel ::</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span>
@@ -1237,25 +1229,26 @@ ymandel x y z <span class="fu">=</span> <span class="fu">fromIntegral</span> (ma
 				</div>
 
                 <div id="social">
-                   <span>
-                       <a class="rss" href="http://feeds.feedburner.com/yannespositocomen">RSS</a>
-                   </span>
-                    <span>
-                        <a href="https://twitter.com/share" class="twitter-share-button" data-via="yogsototh">Tweet</a>
-                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-                    </span>
-                    <span>
-                        <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="106"></div>
-                        <script type="text/javascript">
-                            (function() {
-                             var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-                             po.src = 'https://apis.google.com/js/plusone.js';
-                             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-                             })();
-                        </script>
-                   </span>
-                   <div class="flush"></div>
+                    <a target="_blank" href="http://feeds.feedburner.com/yannespositocomen" class="social">r</a>
+                    ·
+                     <a target="_blank" href="https://twitter.com/home?status=http://yannesposito.com/Scratch/en/blog/Haskell-OpenGL-Mandelbrot/index.html%22via%22@yogsototh" class="social">t</a>
+                    ·
+                    <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=/Scratch/en/blog/Haskell-OpenGL-Mandelbrot" class="social">`</a>
+                    ·
+                     <a target="_blank" href="https://plus.google.com/share?url=http://yannesposito.com/Scratch/en/blog/Haskell-OpenGL-Mandelbrot" class="social">g</a>
+                    <br />
+                    <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
                 </div>
+        	    <div id="navigation">
+                    <a href="../../../../">Home</a>
+                    <span class="sep">¦</span>
+        	        <a href="../../../../Scratch/en/blog">Blog</a>
+                    <span class="sep">¦</span>
+                    <a href="../../../../Scratch/en/softwares">Softwares</a>
+                    <span class="sep">¦</span>
+                    <a href="../../../../Scratch/en/about">About</a>
+        	    </div>
+                <div id="totop"><a href="#header">↑ Top ↑</a></div>
 				<div class="corps" id="comment">
             	    <h2 class="first">Comments</h2>
 					<div id="disqus_thread"></div>
@@ -1273,6 +1266,7 @@ ymandel x y z <span class="fu">=</span> <span class="fu">fromIntegral</span> (ma
         			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
         			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 				</div>
+                <div class="tomenu"><a href="#navigation">↑ Menu ↑</a></div>
 				<div id="bottom">
             	    <div>
             	        Published on 2012-06-15
