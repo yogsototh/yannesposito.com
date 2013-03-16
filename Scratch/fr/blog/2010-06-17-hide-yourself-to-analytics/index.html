@@ -33,7 +33,7 @@
 					document.write('<div id="switchcss"><a href="#">Changer de theme</a></div>');
 					// 
 					</script>
-                    <div id="tomenu"><a href="#navigation">↓ Menu ↓</a></div>
+                    <div class="tomenu"><a href="#navigation">↓ Menu ↓</a></div>
         	        <div class="flush"></div>
         	    </div>
 			</div>
@@ -42,16 +42,16 @@
 				<h1>Se cacher de ses statistiques web</h1>
 			</div>
 			<div class="flush"></div>
-			<div id="afterheader">
+			<div id="afterheader" class="article">
 				<div class="corps">
 					<p>Voici un moyen très simple de ne plus être comptabilisé dans les visites de son propre site. Tout d’abord, vous devriez jeter un coup d’œil sur comment <a href="../../../../Scratch/fr/blog/2010-06-17-track-events-with-google-analytics">je gère les systèmes de récupération de statistiques</a>. Je centralise tout dans un seul fichier javascript ce qui facilite le travail.</p>
 <p>Cette méthode nécessite l’utilisation de <code>jquery-cookie</code>.</p>
 <p>Avant de comptabiliser les visites, je vérifie que la clé <code>admin</code> n’est pas utilisée dans mes cookies.</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript">    <span class="kw">var</span> admin = $.<span class="fu">cookie</span>(<span class="ch">'admin'</span>);
+<pre class="sourceCode javascript"><code class="sourceCode javascript">    <span class="kw">var</span> admin = <span class="ot">$</span>.<span class="fu">cookie</span>(<span class="st">'admin'</span>);
     <span class="kw">if</span> (! admin) {
         <span class="co">// put your analytics code here</span>
     } <span class="kw">else</span> {
-        <span class="kw">console</span>.<span class="fu">log</span>(<span class="st">&quot;[WARNING] you're HIDDEN to analytics&quot;</span>);
+        <span class="ot">console</span>.<span class="fu">log</span>(<span class="st">&quot;[WARNING] you're HIDDEN to analytics&quot;</span>);
     }</code></pre>
 <p>et il suffit de créer deux fichier <sc>html</sc>. Un pour se cacher :</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;utf-8&quot;<span class="kw">?&gt;</span>
@@ -64,8 +64,8 @@
         <span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span><span class="ot"> src=</span><span class="st">&quot;jquery.cookie.js&quot;</span><span class="kw">&gt;&lt;/script&gt;</span>
         <span class="kw">&lt;script&gt;</span>
 <span class="er">            $(document).ready(function(){</span>
-                $.<span class="fu">cookie</span>(<span class="ch">'admin'</span>,<span class="dv">1</span>);
-                $(<span class="ch">'#info'</span>).<span class="fu">html</span>(<span class="ch">'Analytics can no more see you.'</span>)
+<span class="er">                $.cookie('admin',1);</span>
+<span class="er">                $('#info').html('Analytics can no more see you.')</span>
             });
         <span class="kw">&lt;/script&gt;</span>
         <span class="kw">&lt;title&gt;</span>Hide to analytics<span class="kw">&lt;/title&gt;</span>
@@ -85,8 +85,8 @@
         <span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span><span class="ot"> src=</span><span class="st">&quot;jquery.cookie.js&quot;</span><span class="kw">&gt;&lt;/script&gt;</span>
         <span class="kw">&lt;script&gt;</span>
 <span class="er">            $(document).ready(function(){</span>
-                $.<span class="fu">cookie</span>(<span class="ch">'admin'</span>,null);
-                $(<span class="ch">'#info'</span>).<span class="fu">html</span>(<span class="ch">'Analytics can see you.'</span>)
+<span class="er">                $.cookie('admin',null);</span>
+<span class="er">                $('#info').html('Analytics can see you.')</span>
             });
         <span class="kw">&lt;/script&gt;</span>
         <span class="kw">&lt;title&gt;</span>Hide to analytics<span class="kw">&lt;/title&gt;</span>
@@ -105,9 +105,9 @@
                     ·
                     <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=/Scratch/fr/blog/2010-06-17-hide-yourself-to-analytics" class="social">`</a>
                     ·
-                     <a target="_blank" href="https://plusone.google.com/_/+1/confirm?hl=en&amp;url=http://yannesposito.com/Scratch/fr/blog/2010-06-17-hide-yourself-to-analytics" class="social">g</a>
+                     <a target="_blank" href="https://plus.google.com/share?url=http://yannesposito.com/Scratch/fr/blog/2010-06-17-hide-yourself-to-analytics" class="social">g</a>
                     <br />
-                    <p class="message">Ces liens sociaux préservent votre vie privée</p>
+                    <a class="message" href="../../../../Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
                 </div>
         	    <div id="navigation">
                     <a href="../../../../">Home</a>
@@ -136,6 +136,7 @@
         			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
         			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 				</div>
+                <div class="tomenu"><a href="#navigation">↑ Menu ↑</a></div>
 				<div id="bottom">
             	    <div>
             	        Published on 2010-06-17

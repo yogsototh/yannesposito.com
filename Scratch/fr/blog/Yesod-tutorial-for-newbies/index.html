@@ -33,7 +33,7 @@
 					document.write('<div id="switchcss"><a href="#">Changer de theme</a></div>');
 					// 
 					</script>
-                    <div id="tomenu"><a href="#navigation">↓ Menu ↓</a></div>
+                    <div class="tomenu"><a href="#navigation">↓ Menu ↓</a></div>
         	        <div class="flush"></div>
         	    </div>
 			</div>
@@ -42,7 +42,7 @@
 				<h1>Site en Haskell</h1>
 			</div>
 			<div class="flush"></div>
-			<div id="afterheader">
+			<div id="afterheader" class="article">
 				<div class="corps">
 					<p><img src="../../../../Scratch/img/blog/Yesod-tutorial-for-newbies/flying_neo.jpg" alt="Neo Flying at warp speed" /></p>
 <div class="intro">
@@ -135,7 +135,7 @@ static/tmp
 <li><code>config/models</code></li>
 </ol>
 <p>Obviously:</p>
-<p><code>config/routes</code> | is where you’ll configure the map %url → Code. |<br /><code>Handler/</code> | contains the files that will contain the code called when a %url is accessed. |<br /><code>templates/</code> | contains <span class="sc">html</span>, js and <span class="sc">css</span> templates. |<br /><code>config/models</code> | is where you’ll configure the persistent objects (database tables). |</p>
+<p><code>config/routes</code> | is where you’ll configure the map <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> → Code. |<br /><code>Handler/</code> | contains the files that will contain the code called when a <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> is accessed. |<br /><code>templates/</code> | contains <span class="sc">html</span>, js and <span class="sc">css</span> templates. |<br /><code>config/models</code> | is where you’ll configure the persistent objects (database tables). |</p>
 <p>During this tutorial we’ll modify other files as well, but we won’t explore them in detail.</p>
 <p>Also note, shell commands are executed in the root directory of your project instead specified otherwise.</p>
 <p>We are now ready to start!</p>
@@ -145,7 +145,7 @@ static/tmp
 <p>Goal:</p>
 <p>Make a server that when accessed <code>/echo/[some text]</code> should return a web page containing “some text” inside an <code>h1</code> bloc.</p>
 </blockquote>
-<p>In a first time, we must declare the %url of the form <code>/echo/...</code> are meaningful. Let’s take a look at the file <code>config/routes</code>:</p>
+<p>In a first time, we must declare the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> of the form <code>/echo/...</code> are meaningful. Let’s take a look at the file <code>config/routes</code>:</p>
 <pre>
 /static StaticR Static getStatic
 /auth   AuthR   Auth   getAuth
@@ -161,7 +161,7 @@ static/tmp
 /echo/#String EchoR GET
 </pre>
 
-<p>This line contains three elements: the %url pattern, a handler name, an %http method. I am not particularly fan of the big R notation but this is the standard convention.</p>
+<p>This line contains three elements: the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> pattern, a handler name, an %http method. I am not particularly fan of the big R notation but this is the standard convention.</p>
 <p>If you save <code>config/routes</code>, you should see your terminal in which you launched <code>yesod devel</code> activate and certainly displaying an error message.</p>
 <pre>
 Application.hs:31:1: Not in scope: `getEchoR'
@@ -178,12 +178,12 @@ getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
 <p>TADA! It works!</p>
 <h3 id="bulletproof">Bulletproof?</h3>
 <p><img src="../../../../Scratch/img/blog/Yesod-tutorial-for-newbies/neo_bullet_proof.jpg" alt="Neo stops a myriad of bullets" /></p>
-<p>Even this extremely minimal web application has some impressive properties. For exemple, imagine an attacker entering this %url:</p>
+<p>Even this extremely minimal web application has some impressive properties. For exemple, imagine an attacker entering this <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span>:</p>
 [<code>http://localhost:3000/echo/&lt;a&gt;I'm &lt;script&gt;alert(&quot;Bad!&quot;);</code>](http://localhost:3000/echo/<a>I’m
 <script>alert("Bad!");)<% "</script>
 <p>&quot; %&gt;</p>
 <p>The special characters are protected for us. A malicious user could not hide some bad script inside.</p>
-<p>This behavior is a direct consequence of <em>type safety</em>. The %url string is put inside a %url type. Then the interesting part in the %url is put inside a String type. To pass from %url type to String type some transformation are made. For example, replace all “<code>%20</code>” by space characters. Then to show the String inside an <span class="sc">html</span> document, the string is put inside an <span class="sc">html</span> type. Some transformations occurs like replace “<code>&lt;</code>” by “<code>&amp;lt;</code>”. Thanks to yesod, this tedious job is done for us.</p>
+<p>This behavior is a direct consequence of <em>type safety</em>. The <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> string is put inside a <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type. Then the interesting part in the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> is put inside a String type. To pass from <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type to String type some transformation are made. For example, replace all “<code>%20</code>” by space characters. Then to show the String inside an <span class="sc">html</span> document, the string is put inside an <span class="sc">html</span> type. Some transformations occurs like replace “<code>&lt;</code>” by “<code>&amp;lt;</code>”. Thanks to yesod, this tedious job is done for us.</p>
 <pre class="zsh"><code>&quot;http://localhost:3000/echo/some%20text&lt;a&gt;&quot; :: URL
                     ↓
               &quot;some text&lt;a&gt;&quot;                 :: String
@@ -228,7 +228,7 @@ a<span class="dv">:visited</span> <span class="kw">{</span> <span class="kw">col
 <p>Generally you don’t want to have all your code inside a unique file. This is why we will separate our handlers. In a first time create a new file <code>Handler/Echo.hs</code> containing:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
-<span class="kw">import</span> <span class="dt">Import</span>
+<span class="kw">import</span> Import
 
 <span class="ot">getEchoR ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
@@ -241,7 +241,7 @@ getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
 </pre>
 
 <p>We must also declare this new Handler module inside <code>Application.hs</code>. Just after the “<code>import Handler.Home</code>”, add:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Handler.Echo</span></code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Handler.Echo</code></pre>
 <p>This is it.</p>
 <p><small><em>ps:</em> I am sure not so far in the future we could simply write <code>yesod add-handler Echo</code> to declare it and create a new handler file.</small></p>
 <h4 id="data.text"><code>Data.Text</code></h4>
@@ -256,7 +256,7 @@ getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
 <p>And do the same in <code>Handler/Echo.hs</code>:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
-<span class="kw">import</span> <span class="dt">Import</span>
+<span class="kw">import</span> Import
 
 <span class="ot">getEchoR ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
@@ -282,8 +282,8 @@ getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
 <p>This time the path <code>/mirror</code> will accept GET and POST requests. Add the corresponding new Handler file:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Mirror</span> <span class="kw">where</span>
 
-<span class="kw">import</span> <span class="dt">Import</span>
-<span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.Text</span> <span class="kw">as</span> <span class="dt">T</span>
+<span class="kw">import</span> Import
+<span class="kw">import</span> <span class="kw">qualified</span> Data.Text <span class="kw">as</span> T
 
 <span class="ot">getMirrorR ::</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 getMirrorR <span class="fu">=</span> <span class="kw">do</span>
@@ -341,11 +341,11 @@ Article
     )
 <span class="kw">where</span>
 
-<span class="kw">import</span> <span class="dt">Import</span>
-<span class="kw">import</span> <span class="dt">Data.Monoid</span>
+<span class="kw">import</span> Import
+<span class="kw">import</span> Data.Monoid
 
 <span class="co">-- to use Html into forms</span>
-<span class="kw">import</span> <span class="dt">Yesod.Form.Nic</span> (<span class="dt">YesodNic</span>, nicHtmlField)
+<span class="kw">import</span> Yesod.Form.Nic (YesodNic, nicHtmlField)
 <span class="kw">instance</span> <span class="dt">YesodNic</span> <span class="dt">App</span></code></pre>
 <p><small>Remark: it is a best practice to add the YesodNic instance inside <code>Foundation.hs</code>. I put this definition here to make things easier but you should see a warning about this orphan instance. To put the include inside Foundation.hs is left as an exercice to the reader.</small></p>
 <p><small><em>Hint: Do not forget to put <code>YesodNic</code> and <code>nicHtmlField</code> inside the exported objects of the module.</em> </small></p>
@@ -420,7 +420,7 @@ getArticleR articleId <span class="fu">=</span> <span class="kw">do</span>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;p&gt;</span>A last try to <span class="kw">&lt;em&gt;</span>cross script<span class="kw">&lt;/em&gt;</span> 
    and <span class="kw">&lt;em&gt;</span>SQL injection<span class="kw">&lt;/em&gt;&lt;/p&gt;</span>
 <span class="kw">&lt;p&gt;</span>Here is the first try: 
-   <span class="kw">&lt;script&gt;</span>alert(<span class="st">&quot;You loose&quot;</span>);<span class="kw">&lt;/script&gt;&lt;/p&gt;</span>
+<span class="er">   &lt;script&gt;alert(&quot;You loose&quot;);&lt;/script&gt;&lt;/p&gt;</span>
 <span class="kw">&lt;p&gt;</span> And Here is the last <span class="kw">&lt;/p&gt;</span>
 &quot;); DROP TABLE ARTICLE;;</code></pre>
 <h2 id="conclusion">Conclusion</h2>
@@ -456,9 +456,9 @@ getArticleR articleId <span class="fu">=</span> <span class="kw">do</span>
                     ·
                     <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=/Scratch/fr/blog/Yesod-tutorial-for-newbies" class="social">`</a>
                     ·
-                     <a target="_blank" href="https://plusone.google.com/_/+1/confirm?hl=en&amp;url=http://yannesposito.com/Scratch/fr/blog/Yesod-tutorial-for-newbies" class="social">g</a>
+                     <a target="_blank" href="https://plus.google.com/share?url=http://yannesposito.com/Scratch/fr/blog/Yesod-tutorial-for-newbies" class="social">g</a>
                     <br />
-                    <p class="message">Ces liens sociaux préservent votre vie privée</p>
+                    <a class="message" href="../../../../Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
                 </div>
         	    <div id="navigation">
                     <a href="../../../../">Home</a>
@@ -487,6 +487,7 @@ getArticleR articleId <span class="fu">=</span> <span class="kw">do</span>
         			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
         			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 				</div>
+                <div class="tomenu"><a href="#navigation">↑ Menu ↑</a></div>
 				<div id="bottom">
             	    <div>
             	        Published on 2012-01-15

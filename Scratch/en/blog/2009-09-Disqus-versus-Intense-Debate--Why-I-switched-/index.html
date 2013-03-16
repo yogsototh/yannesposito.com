@@ -33,7 +33,7 @@
 					document.write('<div id="switchcss"><a href="#">Change Theme</a></div>');
 					// 
 					</script>
-                    <div id="tomenu"><a href="#navigation">↓ Menu ↓</a></div>
+                    <div class="tomenu"><a href="#navigation">↓ Menu ↓</a></div>
         	        <div class="flush"></div>
         	    </div>
 			</div>
@@ -42,7 +42,7 @@
 				<h1>Disqus versus Intense Debate (Why I switched)</h1>
 			</div>
 			<div class="flush"></div>
-			<div id="afterheader">
+			<div id="afterheader" class="article">
 				<div class="corps">
 					<h1 id="disqus-vs.-intense-debate"><a href="http://disqus.com/">Disqus</a> <em>vs.</em> <a href="http://intensedebate.com/">Intense Debate</a></h1>
 <p>I made a blog entry about how I tried to integrate <a href="http://disqus.com">Disqus</a>. I had to wait Disqus comment to be displayed before loading correctly my page. This is why I tried to include it in a “non-blocking” way. Unfortunately, I had <a href="../../../../Scratch/en/blog/11_Load_Disqus_Asynchronously/">difficulties to make it works correctly</a>.</p>
@@ -51,13 +51,13 @@
 <p>During the time I tried to integrate <a href="http://disqus.com/">Disqus</a> I never tried <a href="http://intensedebate.com">Intense Debate</a>. Now that I have tried, i must confess it does exactly what I needed.</p>
 <p>In order to make it fully asynchronous, you’ve just to download their common js and replace the following line:</p>
 <div>
-<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">document</span>.<span class="fu">getElementsByTagName</span>(<span class="st">&quot;head&quot;</span>)[<span class="dv">0</span>].<span class="fu">appendChild</span>(commentScript);</code></pre>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="ot">document</span>.<span class="fu">getElementsByTagName</span>(<span class="st">&quot;head&quot;</span>)[<span class="dv">0</span>].<span class="fu">appendChild</span>(commentScript);</code></pre>
 </div>
 
 <p>by:</p>
 <div>
-<pre class="sourceCode javascript"><code class="sourceCode javascript">$(<span class="kw">document</span>).<span class="fu">ready</span>( <span class="kw">function</span>() {
-    <span class="kw">document</span>.<span class="fu">getElementsByTagName</span>(<span class="st">&quot;head&quot;</span>)[<span class="dv">0</span>].<span class="fu">appendChild</span>(commentScript);
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(document).<span class="fu">ready</span>( <span class="kw">function</span>() {
+    <span class="ot">document</span>.<span class="fu">getElementsByTagName</span>(<span class="st">&quot;head&quot;</span>)[<span class="dv">0</span>].<span class="fu">appendChild</span>(commentScript);
 });</code></pre>
 </div>
 
@@ -77,9 +77,9 @@
                     ·
                     <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=/Scratch/en/blog/2009-09-Disqus-versus-Intense-Debate--Why-I-switched-" class="social">`</a>
                     ·
-                     <a target="_blank" href="https://plusone.google.com/_/+1/confirm?hl=en&amp;url=http://yannesposito.com/Scratch/en/blog/2009-09-Disqus-versus-Intense-Debate--Why-I-switched-" class="social">g</a>
+                     <a target="_blank" href="https://plus.google.com/share?url=http://yannesposito.com/Scratch/en/blog/2009-09-Disqus-versus-Intense-Debate--Why-I-switched-" class="social">g</a>
                     <br />
-                    <p class="message">These social sharing links preserve your privacy</p>
+                    <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
                 </div>
         	    <div id="navigation">
                     <a href="../../../../">Home</a>
@@ -108,6 +108,7 @@
         			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
         			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 				</div>
+                <div class="tomenu"><a href="#navigation">↑ Menu ↑</a></div>
 				<div id="bottom">
             	    <div>
             	        Published on 2009-09-28

@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>YBlog - Être correct avec les boutons share</title>
+        <meta name="keywords" content="programming">
+
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/solarized.css" />
+		<!-- Font -->
+        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+		<link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomfr" />
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+    </head>
+    <body lang="fr">
+		<script type="text/javascript">// 
+            document.write('<div id="blackpage"><div>Bientôt<img src="/Scratch/img/loading.gif" alt="Chargement en cours"></img></div></div>');
+            // 
+        </script>
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	        <div id="choixlang">
+						<a href="../../../../Scratch/en/blog/Social-link-the-right-way" onclick="setLanguage('en')">
+							English </a>
+        	        </div>
+					<script type="text/javascript">// 
+					document.write('<div id="switchcss"><a href="#">Changer de theme</a></div>');
+					// 
+					</script>
+                    <div class="tomenu"><a href="#navigation">↓ Menu ↓</a></div>
+        	        <div class="flush"></div>
+        	    </div>
+			</div>
+
+			<div id="titre">
+				<h1>Être correct avec les boutons share</h1>
+			</div>
+			<div class="flush"></div>
+			<div id="afterheader" class="article">
+				<div class="corps">
+					<p><img src="../../../../Scratch/img/blog/Social-link-the-right-way/main.png" alt="Main image" /></p>
+<div class="intro">
+
+
+<p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Les boutons des réseaux sociaux traquent vos utilisateurs, ont un design incohérent avec celui de votre site, utilisent des ressources, ralentissent le rendu de vos pages.</p>
+<p>Faite les choses bien. Utilisez des liens statiques.</p>
+<p>Si vous n’avez pas envie de lire, copiez et collez simplement le code suivant dans votre <span class="sc">html</span> :</p>
+<pre class="js"><code>&lt;script&gt;
+var url=document.location;
+document.write(
+  '&lt;'+'a href=&quot;https://twitter.com/home?status='+url+'&quot; '
+    +'target=&quot;_blank&quot;&gt;Tweet this&lt;'+'/a&gt; - '
+
++ '&lt;'+'a href=&quot;http://www.facebook.com/sharer/sharer.php?u='+url+'&quot; '
+    +'target=&quot;_blank&quot;&gt;Like this&lt;'+'/a&gt; - '
+
++ '&lt;'+'a href=&quot;https://plus.google.com/share?url='+url+'&quot; '
+    +'target=&quot;_blank&quot;&gt;Share on G+&lt;'+'/a&gt;');
+&lt;/script&gt;</code></pre>
+</div>
+
+<h2 id="the-problem">The problem</h2>
+<p>Ever been on a website and want to tweet about it? Fortunately, the website might have a button to help you. But do you really know what this button do?</p>
+<p>The “Like”, “Tweet” and “+1” buttons will call a javascript. It will get access to your cookies. It helps the provider of the button to know who you are.</p>
+<p>In plain English, the “+1” button will inform Google you are visiting the website, <strong>even if you don’t click on “+1”</strong>. The same is true for the “like” button for facebook and the “tweet this” button for twitter.</p>
+<p>The problem is not only a privacy issue. In fact (sadly <span class="sc"><abbr title="In my Humble Opinion">imho</abbr></span>) this isn’t an issue for most people. These button consume computer ressources. Far more than a simple link. It thus slow down a bit the computer and consume energy. These button could also slow down the rendering of your web page.</p>
+<p>Another aspect is their design. Their look and feel is mostly imposed by the provider.</p>
+<p>The most problematic aspect in my opinion is to use a third party js on your website. What if tomorrow twitter update their tweet button? If the upgrade broke something for only a minority of people, they won’t fix it. This could occur anytime without any notification. They just have to add a <code>document.write</code> in their <code>js</code> you call asynchronously and BAM! Your website is just an empty blank page. And as you call many external ressources, it can be very difficult to find the origin of the problem.</p>
+<p><strong>Using social network buttons:</strong></p>
+<ul>
+<li>Pros:
+<ul>
+<li>help user share your website,</li>
+<li>can provide a popularity indicator to your users.</li>
+</ul></li>
+<li>Cons:
+<ul>
+<li>you help tracking your users,</li>
+<li>generally doesn’t follow the design of your website,</li>
+<li>use more computer ressources,</li>
+<li>slow down your website,</li>
+<li>executing third party js can break things silently.</li>
+</ul></li>
+</ul>
+<h2 id="solutions">Solutions</h2>
+<p>I will provide you two solutions with the following properties:</p>
+<ul>
+<li>Pros:
+<ul>
+<li>help user share your website,</li>
+<li>doesn’t follow your user,</li>
+<li>use almost no computer ressource,</li>
+<li>doesn’t slow down your website,</li>
+<li>doesn’t execute any third party js on your website.</li>
+</ul></li>
+<li>Cons:
+<ul>
+<li>doesn’t provide any popularity information.</li>
+</ul></li>
+</ul>
+<p><strong>Solution 1 (no js):</strong></p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://twitter.com/home?status=$url$&quot;</span>
+<span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>Tweet this<span class="kw">&lt;/a&gt;</span>
+
+<span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;http://www.facebook.com/sharer/sharer.php?u=$url$&quot;</span>
+<span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>Like this<span class="kw">&lt;/a&gt;</span>
+
+<span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://plus.google.com/share?url=$url$&quot;</span>
+<span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>Share on G+<span class="kw">&lt;/a&gt;</span></code></pre>
+<p>But you have to replace <code>$url$</code> by the current <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span>.</p>
+<p><strong>Solution 2 (Just copy/paste):</strong></p>
+<p>If you don’t want to write the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> yourself, you could use some minimal js:</p>
+<pre class="js"><code>&lt;script&gt;
+var url=document.location;
+document.write(
+  '&lt;'+'a href=&quot;https://twitter.com/home?status='+url+'&quot; '
+    +'target=&quot;_blank&quot;&gt;Tweet this&lt;'+'/a&gt; - '
+
++ '&lt;'+'a href=&quot;http://www.facebook.com/sharer/sharer.php?u='+url+'&quot; '
+    +'target=&quot;_blank&quot;&gt;Like this&lt;'+'/a&gt; - '
+
++ '&lt;'+'a href=&quot;https://plus.google.com/share?url='+url+'&quot; '
+    +'target=&quot;_blank&quot;&gt;Share on G+&lt;'+'/a&gt;');
+&lt;/script&gt;</code></pre>
+<p>Here is the result:</p>
+<div style="text-align:center" class="nostar">
+<script>
+var url=document.location;
+document.write(
+  '<'+'a href="https://twitter.com/home?status='+url+'" '
+    +'target="_blank">Tweet this<'+'/a> - '
+
++ '<'+'a href="http://www.facebook.com/sharer/sharer.php?u='+url+'" '
+    +'target="_blank">Like this<'+'/a> - '
+
++ '<'+'a href="https://plus.google.com/share?url='+url+'" '
+    +'target="_blank">Share on G+<'+'/a>');
+</script>
+</div>
+
+<h2 id="good-looking-solutions">Good looking solutions</h2>
+<p>If you don’t want just text but nice icons. You have many choices:</p>
+<ul>
+<li>Use images <code>&lt;img src=&quot;...&quot;/&gt;</code> in the links.</li>
+<li>Use icon fonts</li>
+</ul>
+<p>As the first solution is pretty straightforward, I’ll explain the second one.</p>
+<ol style="list-style-type: decimal">
+<li>Download the icon font <a href="http://blog.martianwabbit.com/post/4344642365.html">here</a></li>
+<li>put the font file(s) at some place (here ‘fonts/social_font.ttf’ relatively to your <span class="sc">css</span> file)</li>
+<li>Add this to your <span class="sc">css</span></li>
+</ol>
+<pre class="sourceCode css"><code class="sourceCode css"><span class="dv">@font-face</span>
+  font-family<span class="dv">:</span> <span class="st">'social'</span>
+  src<span class="dv">:</span> url(<span class="st">'fonts/social_font.ttf'</span>) format(<span class="st">'truetype'</span>)
+  font-weight<span class="dv">:</span> normal
+  font-style<span class="dv">:</span> normal
+<span class="fl">.social</span>
+  font-family<span class="dv">:</span> social</code></pre>
+<p>Now add this to your <span class="sc">html</span>:</p>
+<p><strong>Solution 1 (without js):</strong></p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://twitter.com/home?status=$url$&quot;</span>
+<span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span>
+<span class="ot">    class=</span><span class="st">&quot;social&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;#116;</span><span class="kw">&lt;/a&gt;</span>
+·
+<span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;http://www.facebook.com/sharer/sharer.php?u=$url$&quot;</span>
+<span class="ot">   target=</span><span class="st">&quot;_blank&quot;</span>
+<span class="ot">   class=</span><span class="st">&quot;social&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;#0096;</span><span class="kw">&lt;/a&gt;</span>
+·
+<span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://plus.google.com/share?url=$url$&quot;</span>
+<span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span>
+<span class="ot">    class=</span><span class="st">&quot;social&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;#0103;</span><span class="kw">&lt;/a&gt;</span></code></pre>
+<p><strong>Solution 2 (just copy/paste):</strong></p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;script&gt;</span>
+<span class="kw">var</span> url=<span class="ot">document</span>.<span class="fu">location</span>;
+<span class="er">document.write(</span>
+    <span class="st">'&lt;a href=&quot;https://twitter.com/home?status='</span>+url+<span class="st">'&quot;'</span>
+        + <span class="st">' target=&quot;_blank&quot;'</span>
+        + <span class="st">' class=&quot;social&quot;&gt;&amp;#116;&lt;'</span>+<span class="st">'/a&gt;'</span>
+    + <span class="st">' · '</span>
+    + <span class="st">'&lt;'</span> + <span class="st">'a href=&quot;http://www.facebook.com/sharer/sharer.php?u='</span>+url+<span class="st">'&quot;'</span>
+       + <span class="st">' target=&quot;_blank&quot;'</span>
+       + <span class="st">' class=&quot;social&quot;&gt;&amp;#0096;&lt;'</span>+<span class="st">'/a&gt;'</span>
+    + <span class="st">' · '</span>
+    + <span class="st">'&lt;a href=&quot;https://plus.google.com/share?url='</span>+url+<span class="st">'&quot;'</span>
+        + <span class="st">' target=&quot;_blank&quot;'</span>
+        + <span class="st">' class=&quot;social&quot;&gt;&amp;#0103;&lt;'</span>+<span class="st">'/a&gt;'</span>);
+<span class="kw">&lt;/script&gt;</span></code></pre>
+<p>Here is the result:</p>
+<div style="font-size: 2em; text-align: center;" class="nostar">
+<script>
+document.write(
+    '<a href="https://twitter.com/home?status='+url+'" ' + ' target="_blank" ' + ' class="social">t<'+'/a>'
+    + ' · '
+    + '<' + 'a href="http://www.facebook.com/sharer/sharer.php?u='+url+'"'
+       + ' target="_blank"'
+       + ' class="social">`<'+'/a>'
+    + ' · '
+    + '<a href="https://plus.google.com/share?url='+url+'" ' + ' target="_blank" ' + ' class="social">g<'+'/a>');
+</script>
+</div>
+
+<h2 id="conclusion">Conclusion</h2>
+<ol style="list-style-type: decimal">
+<li>You get your design back,</li>
+<li>You stop to help tracking people,</li>
+<li>You use less computer ressources and more generally power ressources which is good for the planet,</li>
+<li>Your web pages will load faster.</li>
+</ol>
+<p><em>ps</em>: On my personal website I continue to use Google analytics. Therefore, Google (and only Google, not facebook nor twitter) can track you here. But I might change this in the future.</p>
+				</div>
+
+                <div id="social">
+                    <a target="_blank" href="http://feeds.feedburner.com/yannespositocomfr" class="social">r</a>
+                    ·
+                     <a target="_blank" href="https://twitter.com/home?status=http://yannesposito.com/Scratch/fr/blog/Social-link-the-right-way/index.html%22via%22@yogsototh" class="social">t</a>
+                    ·
+                    <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=/Scratch/fr/blog/Social-link-the-right-way" class="social">`</a>
+                    ·
+                     <a target="_blank" href="https://plus.google.com/share?url=http://yannesposito.com/Scratch/fr/blog/Social-link-the-right-way" class="social">g</a>
+                    <br />
+                    <a class="message" href="../../../../Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
+                </div>
+        	    <div id="navigation">
+                    <a href="../../../../">Home</a>
+                    <span class="sep">¦</span>
+        	        <a href="../../../../Scratch/fr/blog">Blog</a>
+                    <span class="sep">¦</span>
+                    <a href="../../../../Scratch/fr/softwares">Softwares</a>
+                    <span class="sep">¦</span>
+                    <a href="../../../../Scratch/fr/about">About</a>
+        	    </div>
+                <div id="totop"><a href="#header">↑ Top ↑</a></div>
+				<div class="corps" id="comment">
+            	    <h2 class="first">Comments</h2>
+					<div id="disqus_thread"></div>
+        			<script type="text/javascript">
+        			    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        			    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
+
+        			    /* * * DON'T EDIT BELOW THIS LINE * * */
+        			    (function() {
+        			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        			    })();
+        			</script>
+        			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+				</div>
+                <div class="tomenu"><a href="#navigation">↑ Menu ↑</a></div>
+				<div id="bottom">
+            	    <div>
+            	        Published on 2013-03-14
+            	    </div>
+            	    <div>
+            	        <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+            	    </div>
+            	    <div>
+            	       Yann Esposito©
+            	    </div>
+            	    <div>
+            	        Done with
+            	        <a href="http://www.vim.org">Vim</a>
+						<span class="nicer">&amp;</span>
+						<a href="http://jaspervdj.be/hakyll">Hakyll</a>
+            	    </div>
+            	</div>
+			</div>
+
+        </div>
+    </body>
+    <script type="text/javascript" src="../../../../Scratch/js/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/index.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/article.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</html>
