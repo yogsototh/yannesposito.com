@@ -21,6 +21,19 @@
 
 <p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Les boutons des réseaux sociaux traquent vos utilisateurs, ont un design incohérent avec celui de votre site, utilisent des ressources, ralentissent le rendu de vos pages.</p>
 <p>Faite les choses bien. Utilisez des liens statiques.</p>
+<p>Si vous n’avez pas envie de lire, copiez et collez simplement le code suivant dans votre <span class="sc">html</span>&nbsp;:</p>
+<pre class="js"><code>&lt;script&gt;
+var url=document.location;
+document.write(
+  &#39;&lt;&#39;+&#39;a href=&quot;https://twitter.com/home?status=&#39;+url+&#39;&quot; &#39;
+    +&#39;target=&quot;_blank&quot;&gt;Tweet this&lt;&#39;+&#39;/a&gt; - &#39;
+
++ &#39;&lt;&#39;+&#39;a href=&quot;http://www.facebook.com/sharer/sharer.php?u=&#39;+url+&#39;&quot; &#39;
+    +&#39;target=&quot;_blank&quot;&gt;Like this&lt;&#39;+&#39;/a&gt; - &#39;
+
++ &#39;&lt;&#39;+&#39;a href=&quot;https://plus.google.com/share?url=&#39;+url+&#39;&quot; &#39;
+    +&#39;target=&quot;_blank&quot;&gt;Share on G+&lt;&#39;+&#39;/a&gt;&#39;);
+&lt;/script&gt;</code></pre>
 </div>
 
 <h2 id="the-problem">The problem</h2>
@@ -70,7 +83,7 @@
 <span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>Like this<span class="kw">&lt;/a&gt;</span>
 
 <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://plus.google.com/share?url=$url$&quot;</span>
-<span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>+1 this<span class="kw">&lt;/a&gt;</span></code></pre>
+<span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>Share on G+<span class="kw">&lt;/a&gt;</span></code></pre>
 <p>But you have to replace <code>$url$</code> by the current <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span>.</p>
 <p><strong>Solution 2 (Just copy/paste):</strong></p>
 <p>If you don’t want to write the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> yourself, you could use some minimal js:</p>
@@ -84,7 +97,7 @@ document.write(
     +&#39;target=&quot;_blank&quot;&gt;Like this&lt;&#39;+&#39;/a&gt; - &#39;
 
 + &#39;&lt;&#39;+&#39;a href=&quot;https://plus.google.com/share?url=&#39;+url+&#39;&quot; &#39;
-    +&#39;target=&quot;_blank&quot;&gt;+1 this&lt;&#39;+&#39;/a&gt;&#39;);
+    +&#39;target=&quot;_blank&quot;&gt;Share on G+&lt;&#39;+&#39;/a&gt;&#39;);
 &lt;/script&gt;</code></pre>
 <p>Here is the result:</p>
 <div style="text-align:center" class="nostar">
@@ -98,7 +111,7 @@ document.write(
     +'target="_blank">Like this<'+'/a> - '
 
 + '<'+'a href="https://plus.google.com/share?url='+url+'" '
-    +'target="_blank">+1 this<'+'/a>');
+    +'target="_blank">Share on G+<'+'/a>');
 </script>
 </div>
 
