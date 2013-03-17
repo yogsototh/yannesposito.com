@@ -50,22 +50,27 @@
 <p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span> Default share buttons track your user, aren’t uniform with your design, use computer ressources and slow down your web page loading.</p>
 <p>Do it right. Use static links instead.</p>
 <p>If you don’t want to read, just copy/paste this in your <span class="sc">html</span>:</p>
-<pre class="js"><code>&lt;script&gt;
-(function(){
-    if (document.readyState === 'loading') {
-var url=document.location;
-document.write(
-  '&lt;'+'a href=&quot;https://twitter.com/home?status='+url+'&quot; '
-    +'target=&quot;_blank&quot;&gt;Tweet this&lt;'+'/a&gt; - '
-
-+ '&lt;'+'a href=&quot;http://www.facebook.com/sharer/sharer.php?u='+url+'&quot; '
-    +'target=&quot;_blank&quot;&gt;Like this&lt;'+'/a&gt; - '
-
-+ '&lt;'+'a href=&quot;https://plus.google.com/share?url='+url+'&quot; '
-    +'target=&quot;_blank&quot;&gt;Share on G+&lt;'+'/a&gt;');
-}
-})();
-&lt;/script&gt;</code></pre>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;sociallinks&quot;</span><span class="kw">&gt;&lt;/div&gt;</span>
+<span class="kw">&lt;script&gt;</span>
+<span class="er">(function(){window.addEventListener(&quot;DOMContentLoaded&quot;,function(){</span>
+<span class="kw">var</span> url=<span class="kw">document</span>.<span class="fu">location</span>;
+<span class="kw">var</span> link=<span class="kw">function</span>(href,txt){
+    <span class="kw">var</span> node=<span class="kw">document</span>.<span class="fu">createElement</span>(<span class="ch">'a'</span>);
+    <span class="kw">node</span>.<span class="fu">setAttribute</span>(<span class="ch">'href'</span>,href);
+    <span class="kw">node</span>.<span class="fu">setAttribute</span>(<span class="ch">'target'</span>,<span class="ch">'_blank'</span>);
+    <span class="kw">node</span>.<span class="fu">appendChild</span>(<span class="kw">document</span>.<span class="fu">createTextNode</span>(txt));
+    <span class="kw">return</span> node;};
+<span class="kw">var</span> elems=[
+     link(<span class="ch">'https://twitter.com/home?status='</span>+url,<span class="ch">'Tweet this'</span>)
+    ,<span class="kw">document</span>.<span class="fu">createTextNode</span>(<span class="ch">' - '</span>)
+    ,link(<span class="ch">'http://www.facebook.com/sharer/sharer.php?u='</span>+url,<span class="ch">'Like this'</span>)
+    ,<span class="kw">document</span>.<span class="fu">createTextNode</span>(<span class="ch">' - '</span>)
+    ,link(<span class="ch">'https://plus.google.com/share?url='</span>+url,<span class="ch">'Share on g+'</span>)];
+<span class="kw">var</span> divs=<span class="kw">document</span>.<span class="fu">getElementsByClassName</span>(<span class="st">&quot;sociallinks&quot;</span>);
+<span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span> ; i!=<span class="kw">divs</span>.<span class="fu">length</span> ; i++){
+    <span class="kw">for</span> (<span class="kw">var</span> e=<span class="dv">0</span> ; e!=<span class="kw">elems</span>.<span class="fu">length</span> ; e++){
+<span class="er">        divs[i].appendChild(elems[e].cloneNode(true));}}})})();</span>
+<span class="kw">&lt;/script&gt;</span></code></pre>
 </div>
 
 <h2 id="the-problem">The problem</h2>
@@ -119,40 +124,51 @@ document.write(
 <p>But you have to replace <code>$url$</code> by the current <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span>.</p>
 <p><strong>Solution 2 (Just copy/paste):</strong></p>
 <p>If you don’t want to write the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> yourself, you could use some minimal js:</p>
-<pre class="js"><code>&lt;script&gt;
-(function(){
-    if (document.readyState === 'loading') {
-var url=document.location;
-document.write(
-  '&lt;'+'a href=&quot;https://twitter.com/home?status='+url+'&quot; '
-    +'target=&quot;_blank&quot;&gt;Tweet this&lt;'+'/a&gt; - '
-
-+ '&lt;'+'a href=&quot;http://www.facebook.com/sharer/sharer.php?u='+url+'&quot; '
-    +'target=&quot;_blank&quot;&gt;Like this&lt;'+'/a&gt; - '
-
-+ '&lt;'+'a href=&quot;https://plus.google.com/share?url='+url+'&quot; '
-    +'target=&quot;_blank&quot;&gt;Share on G+&lt;'+'/a&gt;');
-}
-})();
-&lt;/script&gt;</code></pre>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;sociallinks&quot;</span><span class="kw">&gt;&lt;/div&gt;</span>
+<span class="kw">&lt;script&gt;</span>
+<span class="er">(function(){window.addEventListener(&quot;DOMContentLoaded&quot;,function(){</span>
+<span class="kw">var</span> url=<span class="kw">document</span>.<span class="fu">location</span>;
+<span class="kw">var</span> link=<span class="kw">function</span>(href,txt){
+        <span class="kw">var</span> node=<span class="kw">document</span>.<span class="fu">createElement</span>(<span class="ch">'a'</span>);
+        <span class="kw">node</span>.<span class="fu">setAttribute</span>(<span class="ch">'href'</span>,href);
+        <span class="kw">node</span>.<span class="fu">setAttribute</span>(<span class="ch">'target'</span>,<span class="ch">'_blank'</span>);
+        <span class="kw">node</span>.<span class="fu">appendChild</span>(<span class="kw">document</span>.<span class="fu">createTextNode</span>(txt));
+        <span class="kw">return</span> node;};
+<span class="kw">var</span> elems=[
+ link(<span class="ch">'https://twitter.com/home?status='</span>+url,<span class="ch">'Tweet this'</span>)
+,link(<span class="ch">'http://www.facebook.com/sharer/sharer.php?u='</span>+url,<span class="ch">'Like this'</span>)
+,link(<span class="ch">'https://plus.google.com/share?url='</span>+url,<span class="ch">'Share on g+'</span>)];
+<span class="kw">var</span> divs=<span class="kw">document</span>.<span class="fu">getElementsByClassName</span>(<span class="st">&quot;sociallinks&quot;</span>);
+<span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>;i&lt;<span class="kw">div</span>.<span class="fu">length</span>;i++){
+    <span class="kw">for</span> (<span class="kw">var</span> e=<span class="dv">0</span>;e&lt;<span class="kw">elems</span>.<span class="fu">length</span>;e++){
+        divs[i].<span class="fu">appendChild</span>(elems[e].<span class="fu">cloneNode</span>(<span class="kw">true</span>)); } }
+<span class="er">}})();</span>
+<span class="kw">&lt;/script&gt;</span></code></pre>
 <p>Here is the result:</p>
 <div style="text-align:center" class="nostar">
+
+<div class="sociallinks"></div>
 <script>
-(function(){
-    if (document.readyState === 'loading') {
+(function(){window.addEventListener("DOMContentLoaded",function(){
 var url=document.location;
-document.write(
-  '<'+'a href="https://twitter.com/home?status='+url+'" '
-    +'target="_blank">Tweet this<'+'/a> - '
-
-+ '<'+'a href="http://www.facebook.com/sharer/sharer.php?u='+url+'" '
-    +'target="_blank">Like this<'+'/a> - '
-
-+ '<'+'a href="https://plus.google.com/share?url='+url+'" '
-    +'target="_blank">Share on G+<'+'/a>');
-}
-})();
+var link=function(href,txt){
+    var node=document.createElement('a');
+    node.setAttribute('href',href);
+    node.setAttribute('target','_blank');
+    node.appendChild(document.createTextNode(txt));
+    return node;};
+var elems=[
+     link('https://twitter.com/home?status='+url,'Tweet this')
+    ,document.createTextNode(' - ')
+    ,link('http://www.facebook.com/sharer/sharer.php?u='+url,'Like this')
+    ,document.createTextNode(' - ')
+    ,link('https://plus.google.com/share?url='+url,'Share on g+')];
+var divs=document.getElementsByClassName("sociallinks");
+for (var i=0 ; i!=divs.length ; i++){
+    for (var e=0 ; e!=elems.length ; e++){
+        divs[i].appendChild(elems[e].cloneNode(true));}}})})();
 </script>
+
 </div>
 
 <h2 id="good-looking-solutions">Good looking solutions</h2>
@@ -189,24 +205,27 @@ document.write(
 <span class="ot">    class=</span><span class="st">&quot;social&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;#0103;</span><span class="kw">&lt;/a&gt;</span></code></pre>
 <p><strong>Solution 2 (just copy/paste):</strong></p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;script&gt;</span>
-(<span class="kw">function</span>(){
-    <span class="kw">if</span> (<span class="ot">document</span>.<span class="fu">readyState</span> === <span class="st">'loading'</span>) {
-<span class="kw">var</span> url=<span class="ot">document</span>.<span class="fu">location</span>;
-<span class="ot">document</span>.<span class="fu">write</span>(
-    <span class="st">'&lt;a href=&quot;https://twitter.com/home?status='</span>+url+<span class="st">'&quot;'</span>
-        + <span class="st">' target=&quot;_blank&quot;'</span>
-        + <span class="st">' class=&quot;social&quot;&gt;&amp;#116;&lt;'</span>+<span class="st">'/a&gt;'</span>
-    + <span class="st">' · '</span>
-    + <span class="st">'&lt;'</span> + <span class="st">'a href=&quot;http://www.facebook.com/sharer/sharer.php?u='</span>+url+<span class="st">'&quot;'</span>
-       + <span class="st">' target=&quot;_blank&quot;'</span>
-       + <span class="st">' class=&quot;social&quot;&gt;&amp;#0096;&lt;'</span>+<span class="st">'/a&gt;'</span>
-    + <span class="st">' · '</span>
-    + <span class="st">'&lt;a href=&quot;https://plus.google.com/share?url='</span>+url+<span class="st">'&quot;'</span>
-        + <span class="st">' target=&quot;_blank&quot;'</span>
-        + <span class="st">' class=&quot;social&quot;&gt;&amp;#0103;&lt;'</span>+<span class="st">'/a&gt;'</span>);
-}
-<span class="er">})();</span>
-&lt;<span class="ot">/script&gt;</span></code></pre>
+&lt;div class=<span class="st">&quot;sociallinksunicode&quot;</span>&gt;&lt;/div&gt;
+&lt;script&gt;
+<span class="er">(function(){window.addEventListener(&quot;DOMContentLoaded&quot;,function(){</span>
+<span class="kw">var</span> url=<span class="kw">document</span>.<span class="fu">location</span>;
+<span class="kw">var</span> link=<span class="kw">function</span>(href,txt){
+    <span class="kw">var</span> node=<span class="kw">document</span>.<span class="fu">createElement</span>(<span class="ch">'a'</span>);
+    <span class="kw">node</span>.<span class="fu">setAttribute</span>(<span class="ch">'href'</span>,href);
+    <span class="kw">node</span>.<span class="fu">setAttribute</span>(<span class="ch">'target'</span>,<span class="ch">'_blank'</span>);
+    <span class="kw">node</span>.<span class="fu">appendChild</span>(<span class="kw">document</span>.<span class="fu">createTextNode</span>(txt));
+    <span class="kw">return</span> node;};
+<span class="kw">var</span> elems=[
+     link(<span class="ch">'https://twitter.com/home?status='</span>+url,<span class="ch">'&amp;#116;'</span>)
+    ,<span class="kw">document</span>.<span class="fu">createTextNode</span>(<span class="ch">' - '</span>)
+    ,link(<span class="ch">'http://www.facebook.com/sharer/sharer.php?u='</span>+url,<span class="ch">'&amp;#0096;'</span>)
+    ,<span class="kw">document</span>.<span class="fu">createTextNode</span>(<span class="ch">' - '</span>)
+    ,link(<span class="ch">'https://plus.google.com/share?url='</span>+url,<span class="ch">'&amp;#0103;'</span>)];
+<span class="kw">var</span> divs=<span class="kw">document</span>.<span class="fu">getElementsByClassName</span>(<span class="st">&quot;sociallinksunicode&quot;</span>);
+<span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span> ; i!=<span class="kw">divs</span>.<span class="fu">length</span> ; i++){
+    <span class="kw">for</span> (<span class="kw">var</span> e=<span class="dv">0</span> ; e!=<span class="kw">elems</span>.<span class="fu">length</span> ; e++){
+<span class="er">        divs[i].appendChild(elems[e].cloneNode(true));}}})})();</span>
+<span class="kw">&lt;/script&gt;</span></code></pre>
 <p>Here is the result:</p>
 <div style="font-size: 2em; text-align: center;" class="nostar">
 <script>

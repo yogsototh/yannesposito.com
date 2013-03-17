@@ -112,7 +112,7 @@ Cette chaine ne matchera pas. C’est pourquoi si on veut vraiment la matcher co
 <p>Oui, c’est un peu compliqué. Mais que se passe t’il lorsque la chaine de caractère que vous voulez matcher est encore plus longue que <code>&lt;li&gt;</code> ?</p>
 <p>Voici un algorithme qui permet de résoudre ce problème aisément. Vous devez réduire ce problème au premier. C’est-à-dire celui avec une seule lettre :</p>
 <div>
-<p><code class="perl"> # transforme un simple caractère choisi aléatoirement # en un identifiant unique # (vous devez vérifier que l’identifier est VRAIMENT unique) # attention l’identifiant unique ne doit pas # contenir le caractère choisi. s/X/<em>was</em>x_/g s/Y/<em>was</em>y_/g</p>
+<p><code class="perl"> # transforme un simple caractère choisi aléatoirement # en un identifiant unique # (vous devez vérifier que l’identifier est VRAIMENT unique) # attention l’identifiant unique ne doit pas # contenir le caractère choisi. s/X/<em>was_x</em>/g s/Y/<em>was_y</em>/g</p>
 <h1 id="transforme-la-longue-chaine-de-caractère">transforme la longue chaine de caractère</h1>
 <h1 id="en-un-seul-caractère">en un seul caractère</h1>
 s/
@@ -126,7 +126,7 @@ s/X/
 <li>
 <p>/g s/Y/&lt;/li&gt;/g</p>
 <h1 id="retour-des-anciens-caractères.">retour des anciens caractères.</h1>
-s/<em>was</em>x_/X/g s/<em>was</em>y_/Y/g </code>
+s/<em>was_x</em>/X/g s/<em>was_y</em>/Y/g </code>
 </div>
 
 <p>Et ça fonctionne en seulement 9 lignes pour toute chaine de début et de fin. Cette solution fait un peu moins <em>I AM THE GREAT REGEXP M45T3R, URAN00B</em>, mais elle est mieux adaptée à mon avis. De plus, utiliser cette dernière solution prouve que vous maitrisez les expressions régulières. Simplement parce que vous savez qu’il est difficile de résoudre des problèmes de cette forme en utilisant seulement des expressions régulières.</p>

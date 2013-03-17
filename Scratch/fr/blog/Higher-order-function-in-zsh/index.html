@@ -99,11 +99,11 @@ done</code></pre>
 <li>Le <code>:t</code> signfie “tail” ; si <code>toto=/path/to/file.ext</code> alors <code>${toto:t}=file.ext</code>.</li>
 </ul>
 <p>Après</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">gif_to_png()</span> <span class="kw">{</span> <span class="kw">convert</span> <span class="ot">$1</span> <span class="ot">${1:r}</span>.png <span class="kw">&amp;&amp;</span> \<span class="kw">rm</span> -f <span class="ot">$1</span> <span class="kw">}</span>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">gif_to_png()</span> <span class="kw">{</span> convert <span class="ot">$1</span> <span class="ot">${1:r}</span>.png <span class="kw">&amp;&amp;</span> \<span class="kw">rm</span> -f <span class="ot">$1</span> <span class="kw">}</span>
 
-<span class="fu">handle_resources()</span> <span class="kw">{</span> <span class="kw">map</span> gif_to_png <span class="ot">$1</span>/resources/*.gif(.N) <span class="kw">}</span>
+<span class="fu">handle_resources()</span> <span class="kw">{</span> map gif_to_png <span class="ot">$1</span>/resources/*.gif<span class="kw">(</span>.N<span class="kw">)</span> <span class="kw">}</span>
 
-<span class="kw">map</span> handle_resources /path/to/projects/*(/N)</code></pre>
+map handle_resources /path/to/projects/*<span class="kw">(</span>/N<span class="kw">)</span></code></pre>
 <p>Plus de bloc ! Oui, c’est un poil plus difficile à lire pour les non initiés. Mais c’est à la fois plus concis et plus robuste.</p>
 <p>Et encore ce code ne possède pas de test. Recommençons sur le même principe.</p>
 <p>Trouver les fichiers des projets qui ne contiennent pas de s dans leur nom qui ont le même nom que leur projet.</p>

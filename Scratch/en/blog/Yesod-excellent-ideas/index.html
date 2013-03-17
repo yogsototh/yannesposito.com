@@ -57,7 +57,7 @@
 <img src="http://imgs.xkcd.com/comics/exploits_of_a_mom.png" alt="SQL injection by a mom" /><p class="caption">SQL injection by a mom</p>
 </div>
 <p>When you create a web application, a lot of time is spent dealing with strings. Strings for URL, HTML, JavaScript, CSS, SQL, etc… To prevent malicious usage you have to protect each strings to be sure, no script will pass from one point to another. Suppose a user enter this user name:</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript">Newton&lt;script&gt;<span class="fu">alert</span>(<span class="st">&quot;An apple fall&quot;</span>)&lt;<span class="ot">/script&gt;</span></code></pre>
+<pre class="sourceCode javascript"><code class="sourceCode javascript">Newton&lt;script&gt;alert(<span class="st">&quot;An apple fall&quot;</span>)&lt;/script&gt;</code></pre>
 <p>You must transform each <code>&lt;</code> into <code>&amp;lt;</code>. Without this transformation alert will appear each time you try to display this user name. Safe types associate with each string what kind of string it is. Is it a string for URL? For javascript? For HTML? And the right protection is made by default to prevent problems.</p>
 <p>Yesod does its best to handle cross scripting issues. Both between the client and the server and between the server and your DB. Here is an example:</p>
 <p><code class="html"><a href="@[AnotherPageR]">Go to the other page ~~~~~~</p>

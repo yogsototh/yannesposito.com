@@ -47,11 +47,11 @@
 					<p>This is a way not to count your own visits to your blog. First you should look on how <a href="../../../../Scratch/en/blog/2010-06-17-track-events-with-google-analytics">I handle analytics</a>. All analytics are handled in one javascript file, this make things really convenient.</p>
 <p>Then you need to know my method use the <code>jquery-cookie</code>.</p>
 <p>I check if the key <code>admin</code> is not set in the cookie before adding the visit.</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript">    <span class="kw">var</span> admin = <span class="ot">$</span>.<span class="fu">cookie</span>(<span class="st">'admin'</span>);
+<pre class="sourceCode javascript"><code class="sourceCode javascript">    <span class="kw">var</span> admin = $.<span class="fu">cookie</span>(<span class="ch">'admin'</span>);
     <span class="kw">if</span> (! admin) {
         <span class="co">// put your analytics code here</span>
     } <span class="kw">else</span> {
-        <span class="ot">console</span>.<span class="fu">log</span>(<span class="st">&quot;[WARNING] you're HIDDEN to analytics&quot;</span>);
+        <span class="kw">console</span>.<span class="fu">log</span>(<span class="st">&quot;[WARNING] you're HIDDEN to analytics&quot;</span>);
     }</code></pre>
 <p>then create two <sc>html</sc> files. One to hide:</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;utf-8&quot;<span class="kw">?&gt;</span>
@@ -64,8 +64,8 @@
         <span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span><span class="ot"> src=</span><span class="st">&quot;jquery.cookie.js&quot;</span><span class="kw">&gt;&lt;/script&gt;</span>
         <span class="kw">&lt;script&gt;</span>
 <span class="er">            $(document).ready(function(){</span>
-<span class="er">                $.cookie('admin',1);</span>
-<span class="er">                $('#info').html('Analytics can no more see you.')</span>
+                $.<span class="fu">cookie</span>(<span class="ch">'admin'</span>,<span class="dv">1</span>);
+                $(<span class="ch">'#info'</span>).<span class="fu">html</span>(<span class="ch">'Analytics can no more see you.'</span>)
             });
         <span class="kw">&lt;/script&gt;</span>
         <span class="kw">&lt;title&gt;</span>Hide to analytics<span class="kw">&lt;/title&gt;</span>
@@ -85,8 +85,8 @@
         <span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span><span class="ot"> src=</span><span class="st">&quot;jquery.cookie.js&quot;</span><span class="kw">&gt;&lt;/script&gt;</span>
         <span class="kw">&lt;script&gt;</span>
 <span class="er">            $(document).ready(function(){</span>
-<span class="er">                $.cookie('admin',null);</span>
-<span class="er">                $('#info').html('Analytics can see you.')</span>
+                $.<span class="fu">cookie</span>(<span class="ch">'admin'</span>,null);
+                $(<span class="ch">'#info'</span>).<span class="fu">html</span>(<span class="ch">'Analytics can see you.'</span>)
             });
         <span class="kw">&lt;/script&gt;</span>
         <span class="kw">&lt;title&gt;</span>Hide to analytics<span class="kw">&lt;/title&gt;</span>
