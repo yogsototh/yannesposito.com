@@ -126,7 +126,6 @@ function animatedToMenu() {
 $(document).ready(function() {
     var client=detectClient();
     if ( ! /msie/.test(client) ) { initCode(); }
-    $('#blackpage').fadeOut('slow',function(){ $('#blackpage').remove(); });
     animatedToTop();
     animatedToMenu();
     analytics();
