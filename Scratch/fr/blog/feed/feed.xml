@@ -76,12 +76,16 @@ Saint John Perse.
 <p>Le code Hakyll est&nbsp;:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- pour chaque fichier dans le répertoire static</span>
 match <span class="st">&quot;static/*&quot;</span> <span class="kw">do</span>
+  <span class="co">-- on ne change pas le nom ni le répertoire</span>
   route   idRoute
+  <span class="co">-- on ne modifie pas le contenu</span>
   compile copyFileCompiler</code></pre>
 <p>Ce programme va copier <code>static/foo.jpg</code> dans <code>_site/static/foo.jpg</code>. C’est un peu lourd pour un simple <code>cp</code>. Maintenant comment faire pour transformer automatiquement un fichier markdown dans le bon <span class="sc">html</span>?</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- pour chaque fichier avec un extension md</span>
 match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
+  <span class="co">-- changer son extension en html</span>
   route <span class="fu">$</span> setExtension <span class="st">&quot;html&quot;</span>
+  <span class="co">-- utiliser la librairie pandoc pour compiler le markdown en html</span>
   compile <span class="fu">$</span> pandocCompiler</code></pre>
 <p>Si vous créez un fichier <code>posts/toto.md</code>, cela créera un fichier <code>_site/posts/toto.html</code>.</p>
 <p>Si le fichier <code>posts/foo.md</code> contient</p>

@@ -98,19 +98,15 @@ Ask me the questions, bridgekeeper. I am not afraid.
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- for each file in the static directory</span>
 match <span class="st">&quot;static/*&quot;</span> <span class="kw">do</span>
   <span class="co">-- don't change its name nor directory</span>
-  <span class="co">-- on ne change pas le nom ni le répertoire</span>
   route   idRoute
   <span class="co">-- don't change its content</span>
-  <span class="co">-- on ne modifie pas le contenu</span>
   compile copyFileCompiler</code></pre>
 <p>This program will copy <code>static/foo.jpg</code> to <code>_site/static/foo.jpg</code>. I concede this is a bit overkill for a simple <code>cp</code>. Now how to write a markdown file and generate an <span class="sc">html</span> one?</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- for each file with md extension in the &quot;posts/&quot; directory</span>
 match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
   <span class="co">-- change its extension to html</span>
-  <span class="co">-- changer son extension en html</span>
   route <span class="fu">$</span> setExtension <span class="st">&quot;html&quot;</span>
   <span class="co">-- use pandoc library to compile the markdown content into html</span>
-  <span class="co">-- utiliser la librairie pandoc pour compiler le markdown en html</span>
   compile <span class="fu">$</span> pandocCompiler</code></pre>
 <p>If you create a file <code>posts/foo.md</code>, it will create a file <code>_site/posts/foo.html</code>.</p>
 <p>If the file <code>posts/foo.md</code> contains</p>
