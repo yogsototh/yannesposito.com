@@ -22,7 +22,7 @@
 	        			<div id="header">
 			    <div id="choix">
         	        <div id="choixlang">
-						<a href="../../../../Scratch/en/blog/Hakyll-setup" onclick="setLanguage('en')">
+						<a href="../../../../Scratch/en/blog/Hakyll-setup/" onclick="setLanguage('en')">
 							English </a>
         	        </div>
 					<div id="switchcss"><a href="#">Changer de theme</a></div>
@@ -227,9 +227,10 @@ niceRoute <span class="fu">=</span> customRoute createIndexRoute
 removeIndexHtml item <span class="fu">=</span> <span class="fu">return</span> <span class="fu">$</span> <span class="fu">fmap</span> (withUrls removeIndexStr) item
   <span class="kw">where</span>
 <span class="ot">    removeIndexStr ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span>
-    removeIndexStr str<span class="fu">@</span>(x<span class="fu">:</span>xs) <span class="fu">|</span> str <span class="fu">==</span> <span class="st">&quot;/index.html&quot;</span> <span class="fu">=</span> <span class="st">&quot;&quot;</span>
-                              <span class="fu">|</span> <span class="fu">otherwise</span> <span class="fu">=</span> x<span class="fu">:</span>removeIndexStr xs
-    removeIndexStr [] <span class="fu">=</span> []</code></pre>
+    removeIndexStr url <span class="fu">=</span> <span class="kw">case</span> splitFileName url <span class="kw">of</span>
+        (dir, <span class="st">&quot;index.html&quot;</span>) <span class="fu">|</span> isLocal dir <span class="ot">-&gt;</span> dir
+        _                                 <span class="ot">-&gt;</span> dir
+        <span class="kw">where</span> islocal uri <span class="fu">=</span> <span class="fu">not</span> (isInfixOf <span class="st">&quot;://&quot;</span> uri)</code></pre>
 <p>And we apply this filter at the end of our compilation</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
   route <span class="fu">$</span> setExtension <span class="st">&quot;html&quot;</span>
@@ -448,11 +449,11 @@ main = putStrLn &quot;Cthulhu!&quot;
                 <div id="social">
                     <a target="_blank" href="http://feeds.feedburner.com/yannespositocomfr" class="social">r</a>
                     ·
-                     <a target="_blank" href="https://twitter.com/home?status=http://yannesposito.com/Scratch/fr/blog/Hakyll-setup/index.html%20via%20@yogsototh" class="social">t</a>
+                     <a target="_blank" href="https://twitter.com/home?status=http://yannesposito.com/Scratch/fr/blog/Hakyll-setup/%20via%20@yogsototh" class="social">t</a>
                     ·
-                    <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=/Scratch/fr/blog/Hakyll-setup" class="social">`</a>
+                    <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=/Scratch/fr/blog/Hakyll-setup/" class="social">`</a>
                     ·
-                     <a target="_blank" href="https://plus.google.com/share?url=http://yannesposito.com/Scratch/fr/blog/Hakyll-setup" class="social">g</a>
+                     <a target="_blank" href="https://plus.google.com/share?url=http://yannesposito.com/Scratch/fr/blog/Hakyll-setup/" class="social">g</a>
                     <br />
                     <a class="message" href="../../../../Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
                 </div>

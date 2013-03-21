@@ -205,9 +205,10 @@ niceRoute <span class="fu">=</span> customRoute createIndexRoute
 removeIndexHtml item <span class="fu">=</span> <span class="fu">return</span> <span class="fu">$</span> <span class="fu">fmap</span> (withUrls removeIndexStr) item
   <span class="kw">where</span>
 <span class="ot">    removeIndexStr ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span>
-    removeIndexStr str<span class="fu">@</span>(x<span class="fu">:</span>xs) <span class="fu">|</span> str <span class="fu">==</span> <span class="st">&quot;/index.html&quot;</span> <span class="fu">=</span> <span class="st">&quot;&quot;</span>
-                              <span class="fu">|</span> <span class="fu">otherwise</span> <span class="fu">=</span> x<span class="fu">:</span>removeIndexStr xs
-    removeIndexStr [] <span class="fu">=</span> []</code></pre>
+    removeIndexStr url <span class="fu">=</span> <span class="kw">case</span> splitFileName url <span class="kw">of</span>
+        (dir, <span class="st">&quot;index.html&quot;</span>) <span class="fu">|</span> isLocal dir <span class="ot">-&gt;</span> dir
+        _                                 <span class="ot">-&gt;</span> dir
+        <span class="kw">where</span> islocal uri <span class="fu">=</span> <span class="fu">not</span> (isInfixOf <span class="st">&quot;://&quot;</span> uri)</code></pre>
 <p>And we apply this filter at the end of our compilation</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
   route <span class="fu">$</span> setExtension <span class="st">&quot;html&quot;</span>
