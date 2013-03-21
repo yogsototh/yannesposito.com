@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>YBlog - Hakyll setup</title>
@@ -44,86 +44,82 @@
 <p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Comment j’utilise <a href="http://jaspervdj.be/hakyll">hakyll</a>. Abréviations, corrections typographiques, multi-language, utilisation d’<code>index.html</code>, etc…</p>
 </div>
 
-<p>This website is done with <a href="http://jaspervdj.be/hakyll">Hakyll</a>.</p>
-<p><a href="http://jaspervdj.be/hakyll">Hakyll</a> can be considered as a minimal <span class="sc"><abbr title="Content Management System">cms</abbr></span>. But more generally it is a library helping file generation.</p>
-<p>From the user perspective I blog this way:</p>
+<p>Ce site web est fait avec <a href="http://jaspervdj.be/hakyll">Hakyll</a>.</p>
+<p><a href="http://jaspervdj.be/hakyll">Hakyll</a> peut être vu comme un <span class="sc"><abbr title="Content Management System">cms</abbr></span> minimaliste. D’une façon plus générale, il s’agit d’une bibliothèque qui facilite la création automatique de fichiers.</p>
+<p>D’un point de vue utilisateur voici comment j’écris mes articles :</p>
 <ol style="list-style-type: decimal">
-<li>I open an editor (vim in my case) and edit a markdown file. It looks like this</li>
+<li>J’ouvre un éditeur de texte (vim dans mon cas). J’édite un fichier markdow qui ressemble à ça :</li>
 </ol>
-<pre class="markdown"><code>A First Level Header
-====================
+<pre class="markdown"><code>Un titre de page
+================
 
-A Second Level Header
----------------------
+Un titre de chapitre
+--------------------
 
-Who would cross the Bridge of Death must answer me
-these questions three, ere the other side he see.
-This is just a regular paragraph.
+Azur, nos bêtes sont bondées d'un cri.
+Je m'éveille songeant au fruit noir de l'anibe dans sa cupule
+véruqueuse et tronquée.
 
-Ask me the questions, bridgekeeper. I am not afraid.
+Saint John Perse.
 
-### Header 3
+### Titre 3
 
-&gt; This is a blockquote.
+&gt; C'est un blockquote.
 &gt;
-&gt; This is the second paragraph in the blockquote.
+&gt; C'est un second paragraphe dans le blockquote
 &gt;
-&gt; ## This is an H2 in a blockquote</code></pre>
+&gt; ## C'est un H2 dans un blockquote</code></pre>
 <ol start="2" style="list-style-type: decimal">
-<li>I open a browser and reload time to time to see the change.</li>
-<li>Once I finished I’ve written a very minimal script which mainly to a git push. My blog is hosted on <a href="http//github.com">github</a>.</li>
+<li>J’ouvre mon navigateur et je rafraichis de temps en temps pour voir les changements.</li>
+<li>Une fois satisfait, je lance un script minimal qui fait grosso modo un simple <code>git push</code>. Mon blog est hébergé sur <a href="http//github.com">github</a>.</li>
 </ol>
-<p>Being short sighted one could reduce the role of Hakyll to:</p>
+<p>A ne pas y regarder de trop près, on peut réduire le rôle d’Hakyll à :</p>
 <blockquote>
-<p>create (resp. update) <span class="sc">html</span> file when I create (resp. change) a markdown file.</p>
+<p>Créer (resp. mettre à jour) un fichier <span class="sc">html</span> lorsque je crée (resp. modifie) un fichier markdown.</p>
 </blockquote>
-<p>While it sounds easy, there are a lot of hidden details:</p>
+<p>Bien que cela semble facile, il y a de nombreux détails cachés :</p>
 <ul>
-<li>Add metadatas like keywords.</li>
-<li>Create an archive page containing a list of all the posts.</li>
-<li>Deal with static files.</li>
-<li>Creating an RSS feed.</li>
-<li>Filter the content with some function.</li>
-<li>Dealing with dependencies.</li>
+<li>Ajouter des métadatas comme des mots clés</li>
+<li>Créer un page archive qui contient la liste de tous les articles</li>
+<li>Gérer les fichier statiques</li>
+<li>Créer un flux <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span></li>
+<li>Filtrer le contenu</li>
+<li>Gérer les dépendances</li>
 </ul>
-<p>The work of Hakyll is to help you with these. But let’s start with the basic concepts.</p>
-<h2 id="the-concepts-and-syntax">The concepts and syntax</h2>
+<p>Le travail d’Hakyll est de vous aider avec tout ça. Commençons par expliquer les concepts basiques.</p>
+<h2 id="les-concepts-et-la-syntaxe">Les concepts et la syntaxe</h2>
 <p><img src="../../../../Scratch/img/blog/Hakyll-setup/overview.png" alt="Overview" /></p>
-<p>For each file you create, you have to provide:</p>
+<p>Pour chaque fichier que vous créer, il faut fournir :</p>
 <ul>
-<li>a destination path</li>
-<li>a list of content filters.</li>
+<li>un chemin de destination</li>
+<li>une liste de filtres du contenu</li>
 </ul>
-<p>First, let’s start with the simplest case: static files (images, fonts, etc…). Generally, you have a source directory (here is the current directory) and a destination directory <code>_site</code>.</p>
-<p>The Hakyll code is:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- for each file in the static directory</span>
+<p>Commençons par le cas le plus simple ; les fichiers statiques (images, fontes, etc…) Généralement, vous avec un répertoire source (ici le répertoire courant) et une répertoire destination <code>_site</code>.</p>
+<p>Le code Hakyll est :</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- pour chaque fichier dans le répertoire static</span>
 match <span class="st">&quot;static/*&quot;</span> <span class="kw">do</span>
-  <span class="co">-- don't change its name nor directory</span>
   route   idRoute
-  <span class="co">-- don't change its content</span>
   compile copyFileCompiler</code></pre>
-<p>This program will copy <code>static/foo.jpg</code> to <code>_site/static/foo.jpg</code>. I concede this is a bit overkill for a simple <code>cp</code>. Now how to write a markdown file and generate an <span class="sc">html</span> one?</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- for each file with md extension in the &quot;posts/&quot; directory</span>
+<p>Ce programme va copier <code>static/foo.jpg</code> dans <code>_site/static/foo.jpg</code>. C’est un peu lourd pour un simple <code>cp</code>. Maintenant comment faire pour transformer automatiquement un fichier markdown dans le bon <span class="sc">html</span>?</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- pour chaque fichier avec un extension md</span>
 match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
-  <span class="co">-- change its extension to html</span>
   route <span class="fu">$</span> setExtension <span class="st">&quot;html&quot;</span>
-  <span class="co">-- use pandoc library to compile the markdown content into html</span>
   compile <span class="fu">$</span> pandocCompiler</code></pre>
-<p>If you create a file <code>posts/foo.md</code>, it will create a file <code>_site/posts/foo.html</code>.</p>
-<p>If the file <code>posts/foo.md</code>, contained</p>
+<p>Si vous créez un fichier <code>posts/toto.md</code>, cela créera un fichier <code>_site/posts/toto.html</code>.</p>
+<p>Si le fichier <code>posts/foo.md</code> contient</p>
 <pre class="markdown"><code># Cthulhu
 
 ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn</code></pre>
-<p>The file <code>posts/foo.md</code>, would contain</p>
+<p>le fichier <code>posts/foo.md</code>, contiendra</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span>Cthulhu<span class="kw">&lt;/h1&gt;</span>
 <span class="kw">&lt;p&gt;</span>ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn<span class="kw">&lt;/p&gt;</span></code></pre>
-<p>But horror! <code>_site/posts/cthulhu.html</code> is not a valid <span class="sc">html</span> file. It doesn’t have any header nor footer, etc… This is where you use templates. I simply add a new directive in the compile block.</p>
+<p>Mais horreur ! <code>_site/posts/cthulhu.html</code> n’est pas un <span class="sc">html</span> complet. Il ne possède ni header, ni footer, etc… C’est ici que nous utilisons des templates. J’ajoute une nouvelle directive dans le bloc “compile”.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
   route <span class="fu">$</span> setExtension <span class="st">&quot;html&quot;</span>
   compile <span class="fu">$</span> pandocCompiler
     <span class="co">-- use the template with the current content</span>
     <span class="highlight"><span class="fu">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/post.html&quot;</span> defaultContext</span></code></pre>
-<p>Now if <code>templates/posts.html</code> contains:</p>
+<p>Maintenant si <code>templates/posts.html</code> contient:</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;html&gt;</span>
   <span class="kw">&lt;head&gt;</span>
     <span class="kw">&lt;title&gt;</span>How could I get the title?<span class="kw">&lt;/title&gt;</span>
@@ -132,7 +128,7 @@ ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn</code></pre>
     <span class="highlight">$body$</span>
   <span class="kw">&lt;/body&gt;</span>
 <span class="kw">&lt;/html&gt;</span></code></pre>
-<p>Now our <code>cthulhu.html</code> contains (indention added for readability):</p>
+<p>Maintenant notre <code>ctuhlhu.html</code> contient</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;html&gt;</span>
   <span class="kw">&lt;head&gt;</span>
     <span class="kw">&lt;title&gt;</span>How could I get the title?<span class="kw">&lt;/title&gt;</span>
@@ -142,15 +138,15 @@ ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn</code></pre>
     </span><span class="kw">&lt;p&gt;</span>ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn<span class="kw">&lt;/p&gt;</span></span>
   <span class="kw">&lt;/body&gt;</span>
 <span class="kw">&lt;/html&gt;</span></code></pre>
-<p>See, its easy But we have a problem. How could we change the title? Or for example, add keywords?</p>
-<p>The solution is to use <code>Context</code>s. For this, we first need to add some metadatas to our markdown<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup>.</p>
+<p>C’est facile. Mais il reste un problème à résoudre. Comment pouvons-nous changer le titre ? Ou par exemple, ajouter des mots clés ?</p>
+<p>La solution est d’utiliser les <code>Context</code>s. Pour cela, nous devrons ajouter des <em>metadonnées</em> à notre markdown<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup>.</p>
 <pre class="markdown"><code><span class="highlight">---
 title: Cthulhu
 ---</span>
 # Cthulhu
 
 ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn</code></pre>
-<p>And modify slightly our template:</p>
+<p>Et modifier légèrement notre template :</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;html&gt;</span>
   <span class="kw">&lt;head&gt;</span>
     <span class="kw">&lt;title&gt;</span><span class="highlight">$title$</span><span class="kw">&lt;/title&gt;</span>
@@ -159,11 +155,8 @@ ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn</code></pre>
     $body$
   <span class="kw">&lt;/body&gt;</span>
 <span class="kw">&lt;/html&gt;</span></code></pre>
-<p>As Sir Robin said just before dying before the Bridge of Death:</p>
-<blockquote>
-<p><strong>“That’s EASY!”</strong></p>
-<p>– <cite>Sir Robin, the Not-Quite-So-Brave-As-Sir-Lancelot</cite></p>
-</blockquote>
+<p>Super facile!</p>
+<p>La suite de l’article est en Anglais. Je la traduirai volontier si suffisamment de personnes me le demande gentillement.</p>
 <h2 id="real-customization">Real customization</h2>
 <p>Now that we understand the basic functionality. How to:</p>
 <ul>
@@ -171,7 +164,7 @@ ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn</code></pre>
 <li>add keywords?</li>
 <li>simplify <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span>?</li>
 <li>create an archive page?</li>
-<li>create an RSS feed?</li>
+<li>create an <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span> feed?</li>
 <li>filter the content?</li>
 <li>add abbreviations support?</li>
 <li>manage two languages?</li>
@@ -213,7 +206,7 @@ metaKeywordContext <span class="fu">=</span> field <span class="st">&quot;metaKe
             (defaultContext <span class="highlight"><span class="fu">&lt;&gt;</span> metaKeywordContext</span>)</code></pre>
 <h3 id="simplify-url">Simplify <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span></h3>
 <p>What I mean is to use url of the form:</p>
-<pre><code>http://domain.name/post/title-of-the-post/</code></pre>
+<p><code>http://domain.name/post/title-of-the-post/</code></p>
 <p>I prefer this than having to add file with <code>.html</code> extension. We have to change the default Hakyll route behavior. We create another function <code>niceRoute</code>.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- replace a foo/bar.md by foo/bar/index.html</span>
 <span class="co">-- this way the url looks like: foo/bar in most browsers</span>
@@ -289,18 +282,18 @@ createdFirst items <span class="fu">=</span> <span class="kw">do</span>
   <span class="co">-- we return a sorted item list</span>
   <span class="fu">return</span> <span class="fu">$</span> <span class="fu">map</span> <span class="fu">snd</span> <span class="fu">$</span> <span class="fu">reverse</span> <span class="fu">$</span> sortBy (comparing <span class="fu">fst</span>) itemsWithTime</code></pre>
 <p>It wasn’t so easy. But it works pretty well.</p>
-<h3 id="create-an-rss-feed">Create an RSS feed</h3>
-<p>To create an RSS feed, we have to:</p>
+<h3 id="create-an-rss-feed">Create an <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span> feed</h3>
+<p>To create an <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span> feed, we have to:</p>
 <ul>
 <li>select only the lasts posts.</li>
 <li>generate partially rendered posts (no css, js, etc…)</li>
 </ul>
-<p>We could then render the posts twice. One for <span class="sc">html</span> rendering and another time for %rss. Remark we need to generate the %rss version to create the <span class="sc">html</span> one.</p>
+<p>We could then render the posts twice. One for <span class="sc">html</span> rendering and another time for <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span>. Remark we need to generate the <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span> version to create the <span class="sc">html</span> one.</p>
 <p>One of the great feature of Hakyll is to be able to save snapshots. Here is how:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
   route <span class="fu">$</span> setExtension <span class="st">&quot;html&quot;</span>
   compile <span class="fu">$</span> pandocCompiler
-    <span class="co">-- save a snapshot to be used later in RSS generation</span>
+    <span class="co">-- save a snapshot to be used later in &lt;span class=&quot;sc&quot;&gt;&lt;abbr title=&quot;Rich Site Summary&quot;&gt;rss&lt;/abbr&gt;&lt;/span&gt; generation</span>
     <span class="highlight"><span class="fu">&gt;&gt;=</span> saveSnapshot <span class="st">&quot;content&quot;</span></span>
     <span class="fu">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/post.html&quot;</span> defaultContext</code></pre>
 <p>Now to each post there is a snapshot named “content” associated. Furthermore feed don’t need a source markdown file. Then we create a new file from no one. Instead of using <code>match</code>, we use <code>create</code>:</p>
@@ -443,7 +436,7 @@ main = putStrLn &quot;Cthulhu!&quot;
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>We could also add the metadatas in an external file (<code>foo.md.metadata</code>).<a href="#fnref1">↩</a></p></li>
+<li id="fn1"><p>Nous pouvons aussi ajouter ces métadonnées dans un fichier externe (<code>toto.md.metadata</code>).<a href="#fnref1">↩</a></p></li>
 </ol>
 </div>
 				</div>
