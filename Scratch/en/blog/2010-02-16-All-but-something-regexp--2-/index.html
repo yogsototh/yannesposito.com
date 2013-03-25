@@ -104,7 +104,7 @@ That string should not match. This is why if we really want to match it correctl
 <p>Yes a bit complicated. But what if the string I wanted to match was even longer?</p>
 <p>Here is the algorithm way to handle this easily. You reduce the problem to the first one letter matching:</p>
 <div>
-<p><code class="perl"> # transform a simple randomly choosen character # to an unique ID # (you should verify the identifier is REALLY unique) # beware the unique ID must not contain the # choosen character s/X/<em>was_x</em>/g s/Y/<em>was_y</em>/g</p>
+<p><code class="perl"> # transform a simple randomly choosen character # to an unique ID # (you should verify the identifier is REALLY unique) # beware the unique ID must not contain the # choosen character s/X/<em>was</em>x_/g s/Y/<em>was</em>y_/g</p>
 <h1 id="transform-the-long-string-in-this-simple-character">transform the long string in this simple character</h1>
 s/
 <li>
@@ -116,7 +116,7 @@ s/X/
 <li>
 <p>/g s/Y/&lt;/li&gt;/g</p>
 <h1 id="retransform-the-choosen-character-back">retransform the choosen character back</h1>
-s/<em>was_x</em>/X/g s/<em>was_y</em>/Y/g </code>
+s/<em>was</em>x_/X/g s/<em>was</em>y_/Y/g </code>
 </div>
 
 <p>And it works in only 9 lines for any beginning and ending string. This solution should look less <em>I AM THE GREAT REGEXP M45T3R, URAN00B</em>, but is more convenient in my humble opinion. Further more, using this last solution prove you master regexp, because you know it is difficult to manage such problems with only a regexp.</p>
