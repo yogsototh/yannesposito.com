@@ -37,91 +37,66 @@
 			<div class="flush"></div>
 			<div id="afterheader" class="article">
 				<div class="corps">
-					<p>Dans mon <a href="previouspost">précédent article</a> j’ai donné certaines astuces pour matcher ‘tout sauf quelque chose’. De la même manière, un truc pour matcher la chaine de caractère la plus petite possible. Disons que vous voulez matcher la chaine de caractère entre ‘a’ et ‘b’. Par exemple, vous voulez matcher :</p>
+					<p>Dans mon <a href="../../../../Scratch/fr/blog/2010-02-15-All-but-something-regexp">précédent article</a> j’ai donné certaines astuces pour matcher ‘tout sauf quelque chose’. De la même manière, un truc pour matcher la chaine de caractère la plus petite possible. Disons que vous voulez matcher la chaine de caractère entre ‘a’ et ‘b’. Par exemple, vous voulez matcher :</p>
 <pre class="twilight">
-a.....<span class="Constant"><strong>a......b</strong></span>..b..a....<span class="Constant"><strong>a....b</strong></span>...
+a.....<strong class="blue">a......b</strong>..b..a....<strong class="blue">a....b</strong>...
 </pre>
 
 <p>Voici les deux erreurs communes et une solution :</p>
-<pre class="twilight">
+<pre>
 /a.*b/
-<span class="Constant"><strong>a.....a......b..b..a....a....b</strong></span>...
+<strong class="red">a.....a......b..b..a....a....b</strong>...
 </pre>
 
 <p>La première erreur vient de l’utilisation du <em>terrible</em> <code>.*</code>. Parce que vous allez matcher la chaîne de caractère la plus longue possible.</p>
-<pre class="twilight">
+<pre>
 /a.*?b/
-<span class="Constant"><strong>a.....a......b</strong></span>..b..<span class="Constant"><strong>a....a....b</strong></span>...
+<strong class="red">a.....a......b</strong>..b..<strong class="red">a....a....b</strong>...
 </pre>
 
 <p>L’autre manière naturelle de répondre à ce problème est de changer la <em>greediness</em>. Mais ce n’est pas assez parce que vous allez matcher du premier <code>a</code> au premier <code>b</code> après celui-ci. On peut alors constater que votre chaine de caractère ne devrait comprendre ni la lettre <code>a</code> ni la lettre <code>b</code>. Ce qui emène à la dernière solution élégante.</p>
-<pre class="twilight">
+<pre>
 /a[^ab]*b/
-a.....<span class="Constant"><strong>a......b</strong></span>..b..a....<span class="Constant"><strong>a....b</strong></span>...
+a.....<strong class="blue">a......b</strong>..b..a....<strong class="blue">a....b</strong>...
 </pre>
 
 <p>Jusqu’ici, c’était facile. Maintenant comment fait vous quand au lieu de <code>a</code> vous avez une chaine de caractère ?</p>
-Par exemple, vous voulez matcher:
-<div>
-<code class="perl">
-<li>
-…
-<li>
-</code>
-</div>
-
-C’est un peu difficile. Vous devez matcher
-<div>
-<code class="perl">
-<li>
-[anything not containing ]
-</li>
-</code>
-</div>
-
-<p>La première méthode serait d’utiliser le même rainsonnement que dans mon <a href="previouspost">article précédent</a>. Ici un premier essai :</p>
-<div>
-<code class="perl">
-<li>
-([^&lt;]|&lt;[^l]|<l[^i]|<li[^>])*
-</li>
-</code>
-</div>
-
-Mais il y a encore une erreur. Pensez à la chaine de caractère suivante :
-<div>
-<code class="perl">
-<li>
-…<li< li> </code>
-</div>
-
-Cette chaine ne matchera pas. C’est pourquoi si on veut vraiment la matcher correctement<sup><a href="#note1">†</a></sup> nous devons ajouter :
-<div>
-<code class="perl">
-<li>
-([^&lt;]|&lt;[^l]|<l[^i]|<li[^>])*(|&lt;|<l|<li)< li> </code>
-</div>
-
+<p>Par exemple, vous voulez matcher:</p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;li&gt;</span>...<span class="kw">&lt;li&gt;</span></code></pre>
+<p>C’est un peu difficile. Vous devez matcher</p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;li&gt;</span>[anything not containing <span class="kw">&lt;li&gt;</span>]<span class="kw">&lt;/li&gt;</span></code></pre>
+<p>La première méthode serait d’utiliser le même rainsonnement que dans mon <a href="../../../../Scratch/fr/blog/2010-02-15-All-but-something-regexp">article précédent</a>. Ici un premier essai :</p>
+<pre class="sourceCode perl"><code class="sourceCode perl">&lt;li&gt;([^&lt;]|&lt;[^l]|&lt;l[^i]|&lt;li[^&gt;])<span class="dt">*&lt;</span><span class="kw">/</span><span class="ot">li&gt;</span></code></pre>
+<p>Mais il y a encore une erreur. Pensez à la chaine de caractère suivante :</p>
+<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;li&gt;</span>...<span class="kw">&lt;li</span><span class="er">&lt;/li</span><span class="kw">&gt;</span></code></pre>
+<p>Cette chaine ne matchera pas. C’est pourquoi si on veut vraiment la matcher correctement<sup><a href="#note1">†</a></sup> nous devons ajouter :</p>
+<pre class="sourceCode perl"><code class="sourceCode perl">&lt;li&gt;([^&lt;]|&lt;[^l]|&lt;l[^i]|&lt;li[^&gt;])*(|&lt;|&lt;l|&lt;li)&lt;/li&gt;</code></pre>
 <p>Oui, c’est un peu compliqué. Mais que se passe t’il lorsque la chaine de caractère que vous voulez matcher est encore plus longue que <code>&lt;li&gt;</code> ?</p>
 <p>Voici un algorithme qui permet de résoudre ce problème aisément. Vous devez réduire ce problème au premier. C’est-à-dire celui avec une seule lettre :</p>
-<div>
-<p><code class="perl"> # transforme un simple caractère choisi aléatoirement # en un identifiant unique # (vous devez vérifier que l’identifier est VRAIMENT unique) # attention l’identifiant unique ne doit pas # contenir le caractère choisi. s/X/<em>was</em>x_/g s/Y/<em>was</em>y_/g</p>
-<h1 id="transforme-la-longue-chaine-de-caractère">transforme la longue chaine de caractère</h1>
-<h1 id="en-un-seul-caractère">en un seul caractère</h1>
-s/
-<li>
-<p>/X/g s/&lt;/li&gt;/Y/g</p>
-<h1 id="utilisation-de-la-première-méthode">Utilisation de la première méthode</h1>
-<p>s/X([^X]*)Y//g</p>
-<h1 id="retransformation-des-lettres-en-chaines">Retransformation des lettres en chaines</h1>
-<h1 id="de-caractères">de caractères</h1>
-s/X/
-<li>
-<p>/g s/Y/&lt;/li&gt;/g</p>
-<h1 id="retour-des-anciens-caractères.">retour des anciens caractères.</h1>
-s/<em>was</em>x_/X/g s/<em>was</em>y_/Y/g </code>
-</div>
+<pre><code># transforme un simple caractère choisi aléatoirement
+# en un identifiant unique
+# (vous devez vérifier que l'identifier est VRAIMENT unique)
+# attention l'identifiant unique ne doit pas 
+# contenir le caractère choisi.
+s/X/_was_x_/g
+s/Y/_was_y_/g
 
+# transforme la longue chaine de caractère
+# en un seul caractère
+s/&lt;li&gt;/X/g
+s/&lt;\/li&gt;/Y/g
+
+# Utilisation de la première méthode
+s/X([^X]*)Y//g
+
+# Retransformation des lettres en chaines
+# de caractères
+s/X/&lt;li&gt;/g
+s/Y/&lt;\/li&gt;/g
+
+# retour des anciens caractères.
+s/_was_x_/X/g
+s/_was_y_/Y/g</code></pre>
 <p>Et ça fonctionne en seulement 9 lignes pour toute chaine de début et de fin. Cette solution fait un peu moins <em>I AM THE GREAT REGEXP M45T3R, URAN00B</em>, mais elle est mieux adaptée à mon avis. De plus, utiliser cette dernière solution prouve que vous maitrisez les expressions régulières. Simplement parce que vous savez qu’il est difficile de résoudre des problèmes de cette forme en utilisant seulement des expressions régulières.</p>
 <hr />
 <p><small><a name="note1"><sup>†</sup></a> Je sais que j’ai utilisé une syntaxe HTML dans mon exemple. Mais dans l’utilisation réelle que j’en ai faite, je devais matcher entre <code>en:</code> et <code>::</code>, sachant que parfois les chaines pouvaient se terminer par <code>e::</code>. </small></p>
