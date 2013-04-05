@@ -37,7 +37,7 @@
 			<div class="flush"></div>
 			<div id="afterheader" class="article">
 				<div class="corps">
-					<p>Here is how I done the tag cloud of my blog. It is done mostly in jQuery. All my site is static and pages are generated with <a href="nanoc.stoneship.org">nanoc</a>. It is (in my humble opinion) the modern geek way to make a website. The tagcloud should work for machine with and without javascript.</p>
+					<p>Here is how I done the tag cloud of my blog. It is done mostly in jQuery. All my site is static and pages are generated with <a href="http://nanoc.stoneship.org">nanoc</a>. It is (in my humble opinion) the modern geek way to make a website. The tagcloud should work for machine with and without javascript.</p>
 <p>This is why I’ll give only a Ruby Generator, not a full javascript generator. But you can easily translate from Ruby to Javascript.</p>
 <p>Here is what you should obtain:</p>
 <hr />
@@ -61,12 +61,12 @@
 <p>This code will hide all the div containing links to articles containing the tag. And create a function do show the div containing the tag.</p>
 <p>For each tag I create a span element:</p>
 <div>
-<pre class="sourceCode html"><code class="sourceCode html">    <span class="kw">&lt;span</span><span class="ot">   style=</span><span class="st">&quot;font-size: 1.0em;&quot;</span> 
-<span class="ot">            class=</span><span class="st">&quot;tag&quot;</span> 
-<span class="ot">            onClick=</span><span class="st">&quot;tagSelected('[TAG]')&quot;</span> 
+<pre class="sourceCode html"><code class="sourceCode html">    <span class="kw">&lt;span</span><span class="ot">   style=</span><span class="st">&quot;font-size: 1.0em;&quot;</span>
+<span class="ot">            class=</span><span class="st">&quot;tag&quot;</span>
+<span class="ot">            onClick=</span><span class="st">&quot;tagSelected('[TAG]')&quot;</span>
 <span class="ot">            id=</span><span class="st">&quot;tag_[TAG]&quot;</span><span class="kw">&gt;</span>
         [TAG]
-    <span class="kw">&lt;/span&gt;</span> </code></pre>
+    <span class="kw">&lt;/span&gt;</span></code></pre>
 </div>
 
 <p>and a div containing links associtated to this tag:</p>
@@ -77,7 +77,7 @@
             <span class="kw">&lt;li&gt;</span> LINK 1 <span class="kw">&lt;/li&gt;</span>
             <span class="kw">&lt;li&gt;</span> LINK 2 <span class="kw">&lt;/li&gt;</span>
         <span class="kw">&lt;/ul&gt;</span>
-    <span class="kw">&lt;/div&gt;</span> </code></pre>
+    <span class="kw">&lt;/div&gt;</span></code></pre>
 </div>
 
 <hr />
@@ -149,9 +149,9 @@
             tagSize[t]=minSize
         <span class="kw">else</span>
             <span class="co"># normalized value between 0 and 1</span>
-            <span class="co"># if not tag appear more than 10 times, </span>
+            <span class="co"># if not tag appear more than 10 times,</span>
             <span class="co"># then it cannot have the maximal size</span>
-            tagSize[t]=[ ( n - min + <span class="fl">0.0</span> ) / ( max - min ) , 
+            tagSize[t]=[ ( n - min + <span class="fl">0.0</span> ) / ( max - min ) ,
                          (n - min) / <span class="fl">10.0</span> ].min
             <span class="co"># from normalized size to real size</span>
             tagSize[t]=( tagSize[t] ) * (maxSize - minSize) + minSize
@@ -185,9 +185,9 @@
         <span class="co"># for example, replace ' ' by '&amp;nbsp;'</span>
         <span class="kw">protected</span>=t.gsub(<span class="ot">/&amp;/</span>,<span class="st">'&amp;amp;'</span>).gsub(<span class="ot">/ /</span>,<span class="st">'&amp;nbsp;'</span>).gsub(<span class="ot">/&lt;/</span>,<span class="st">'&amp;lt;'</span>).gsub(<span class="ot">/&gt;/</span>,<span class="st">'&amp;gt;'</span>)
         tagCloud &lt;&lt;=<span class="ot"> %{</span>
-<span class="st">            &lt;span style=&quot;font-size: </span><span class="ot">#{</span>s<span class="ot">}</span><span class="st">em;&quot; </span>
-<span class="st">                  class=&quot;tag&quot; </span>
-<span class="st">                  onClick=&quot;tagSelected('</span><span class="ot">#{</span>tag_in_id<span class="ot">}</span><span class="st">')&quot; </span>
+<span class="st">            &lt;span style=&quot;font-size: </span><span class="ot">#{</span>s<span class="ot">}</span><span class="st">em;&quot;</span>
+<span class="st">                  class=&quot;tag&quot;</span>
+<span class="st">                  onClick=&quot;tagSelected('</span><span class="ot">#{</span>tag_in_id<span class="ot">}</span><span class="st">')&quot;</span>
 <span class="st">                  id=&quot;tag_</span><span class="ot">#{</span>tag_in_id<span class="ot">}</span><span class="st">&quot;&gt;</span>
 <span class="st">                </span><span class="ot">#{</span><span class="kw">protected</span><span class="ot">}</span>
 <span class="st">            &lt;/span&gt; </span><span class="ot">}</span>
