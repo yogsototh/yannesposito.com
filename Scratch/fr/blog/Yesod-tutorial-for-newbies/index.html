@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+<!DOCTYPE html>
+<html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>YBlog - Site en Haskell</title>
@@ -10,12 +9,15 @@
         <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/scientific.css" />
         <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/solarized.css" />
 		<!-- Font -->
-        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
-		<link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css" />
+		<link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css" />
         <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomfr" />
         <!--[if lt IE 9]>
         <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
         <![endif]-->
+        <script type="text/javascript" src="../../../../Scratch/js/jquery-1.3.1.min.js"></script>
+        <script type="text/javascript" src="../../../../Scratch/js/jquery.cookie.js"></script>
+        <script type="text/javascript" src="../../../../Scratch/js/index.js"></script>
     </head>
     <body lang="fr">
         <div id="content">
@@ -236,7 +238,7 @@ a<span class="dv">:visited</span> <span class="kw">{</span> <span class="kw">col
 <p>Generally you don’t want to have all your code inside a unique file. This is why we will separate our handlers. In a first time create a new file <code>Handler/Echo.hs</code> containing:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
-<span class="kw">import</span> Import
+<span class="kw">import</span> <span class="dt">Import</span>
 
 <span class="ot">getEchoR ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
@@ -249,7 +251,7 @@ getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
 </pre>
 
 <p>We must also declare this new Handler module inside <code>Application.hs</code>. Just after the “<code>import Handler.Home</code>”, add:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Handler.Echo</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Handler.Echo</span></code></pre>
 <p>This is it.</p>
 <p><small><em>ps:</em> I am sure not so far in the future we could simply write <code>yesod add-handler Echo</code> to declare it and create a new handler file.</small></p>
 <h4 id="data.text"><code>Data.Text</code></h4>
@@ -264,7 +266,7 @@ getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
 <p>And do the same in <code>Handler/Echo.hs</code>:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
-<span class="kw">import</span> Import
+<span class="kw">import</span> <span class="dt">Import</span>
 
 <span class="ot">getEchoR ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
@@ -293,8 +295,8 @@ getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
 <p>This time the path <code>/mirror</code> will accept GET and POST requests. Add the corresponding new Handler file:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Mirror</span> <span class="kw">where</span>
 
-<span class="kw">import</span> Import
-<span class="kw">import</span> <span class="kw">qualified</span> Data.Text <span class="kw">as</span> T
+<span class="kw">import</span> <span class="dt">Import</span>
+<span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.Text</span> <span class="kw">as</span> <span class="dt">T</span>
 
 <span class="ot">getMirrorR ::</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 getMirrorR <span class="fu">=</span> <span class="kw">do</span>
@@ -352,11 +354,11 @@ Article
     )
 <span class="kw">where</span>
 
-<span class="kw">import</span> Import
-<span class="kw">import</span> Data.Monoid
+<span class="kw">import</span> <span class="dt">Import</span>
+<span class="kw">import</span> <span class="dt">Data.Monoid</span>
 
 <span class="co">-- to use Html into forms</span>
-<span class="kw">import</span> Yesod.Form.Nic (YesodNic, nicHtmlField)
+<span class="kw">import</span> <span class="dt">Yesod.Form.Nic</span> (<span class="dt">YesodNic</span>, nicHtmlField)
 <span class="kw">instance</span> <span class="dt">YesodNic</span> <span class="dt">App</span></code></pre>
 <p><small>Remark: it is a best practice to add the YesodNic instance inside <code>Foundation.hs</code>. I put this definition here to make things easier but you should see a warning about this orphan instance. To put the include inside Foundation.hs is left as an exercice to the reader.</small></p>
 <p><small><em>Hint: Do not forget to put <code>YesodNic</code> and <code>nicHtmlField</code> inside the exported objects of the module.</em> </small></p>
@@ -431,7 +433,7 @@ getArticleR articleId <span class="fu">=</span> <span class="kw">do</span>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;p&gt;</span>A last try to <span class="kw">&lt;em&gt;</span>cross script<span class="kw">&lt;/em&gt;</span> 
    and <span class="kw">&lt;em&gt;</span>SQL injection<span class="kw">&lt;/em&gt;&lt;/p&gt;</span>
 <span class="kw">&lt;p&gt;</span>Here is the first try: 
-<span class="er">   &lt;script&gt;alert(&quot;You loose&quot;);&lt;/script&gt;&lt;/p&gt;</span>
+   <span class="kw">&lt;script&gt;</span>alert(<span class="st">&quot;You loose&quot;</span>);<span class="kw">&lt;/script&gt;&lt;/p&gt;</span>
 <span class="kw">&lt;p&gt;</span> And Here is the last <span class="kw">&lt;/p&gt;</span>
 &quot;); DROP TABLE ARTICLE;;</code></pre>
 <h2 id="conclusion">Conclusion</h2>
@@ -515,18 +517,15 @@ getArticleR articleId <span class="fu">=</span> <span class="kw">do</span>
             	        Done with
             	        <a href="http://www.vim.org" target="_blank">Vim</a>
 						<span class="nicer">&amp;</span>
-                        <a href="http://nanoc.ws" target="_blank"><strike>nanoc</strike></a>
+                        <a href="http://nanoc.ws" target="_blank"><span class="strike">nanoc</span></a>
 						<a href="http://jaspervdj.be/hakyll" target="_blank">Hakyll</a>
             	    </div>
             	</div>
 			</div>
 
         </div>
+        <script type="text/javascript" src="../../../../Scratch/js/highlight/highlight.pack.js"></script>
+        <script type="text/javascript" src="../../../../Scratch/js/article.js"></script>
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     </body>
-    <script type="text/javascript" src="../../../../Scratch/js/jquery-1.3.1.min.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/jquery.cookie.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/index.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/highlight/highlight.pack.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/article.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </html>
