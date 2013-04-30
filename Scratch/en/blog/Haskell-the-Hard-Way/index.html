@@ -1782,8 +1782,8 @@ let (y,w2) = action2 w1 in</code></pre>
 <p>Didn’t you notice something? Yes, no temporary World variables are used anywhere! This is <em>MA</em>. <em>GIC</em>.</p>
 <p>We can use a better notation. Let’s use <code>(&gt;&gt;=)</code> instead of <code>bind</code>. <code>(&gt;&gt;=)</code> is an infix function like <code>(+)</code>; reminder <code>3 + 4 ⇔ (+) 3 4</code></p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">(res,w3) <span class="fu">=</span> <span class="fu">getLine</span> <span class="fu">&gt;&gt;=</span>
-           \line1 <span class="ot">-&gt;</span> <span class="fu">getLine</span> <span class="fu">&gt;&gt;=</span>
-           \line2 <span class="ot">-&gt;</span> <span class="fu">print</span> (line1 <span class="fu">++</span> line2)</code></pre>
+           (\line1 <span class="ot">-&gt;</span> <span class="fu">getLine</span> <span class="fu">&gt;&gt;=</span>
+           (\line2 <span class="ot">-&gt;</span> <span class="fu">print</span> (line1 <span class="fu">++</span> line2)))</code></pre>
 <p>Ho Ho Ho! Happy Christmas Everyone! Haskell has made syntactical sugar for us:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">do</span>
   x <span class="ot">&lt;-</span> action1
