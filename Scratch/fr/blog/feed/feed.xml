@@ -56,7 +56,7 @@ Saint John Perse.
 </ol>
 <p>A ne pas y regarder de trop près, on peut réduire le rôle d’Hakyll à&nbsp;:</p>
 <blockquote>
-<p>Créer (resp. mettre à jour) un fichier <span class="sc">html</span> lorsque je crée (resp. modifie) un fichier markdown.</p>
+<p>Créer (resp. mettre à jour) un fichier <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> lorsque je crée (resp. modifie) un fichier markdown.</p>
 </blockquote>
 <p>Bien que cela semble facile, il y a de nombreux détails cachés&nbsp;:</p>
 <ul>
@@ -86,7 +86,7 @@ match <span class="st">&quot;static/*&quot;</span> <span class="kw">do</span>
   route   idRoute
   <span class="co">-- on ne modifie pas le contenu</span>
   compile copyFileCompiler</code></pre>
-<p>Ce programme va copier <code>static/foo.jpg</code> dans <code>_site/static/foo.jpg</code>. C’est un peu lourd pour un simple <code>cp</code>. Maintenant comment faire pour transformer automatiquement un fichier markdown dans le bon <span class="sc">html</span>?</p>
+<p>Ce programme va copier <code>static/foo.jpg</code> dans <code>_site/static/foo.jpg</code>. C’est un peu lourd pour un simple <code>cp</code>. Maintenant comment faire pour transformer automatiquement un fichier markdown dans le bon <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span>?</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- pour chaque fichier avec un extension md</span>
 match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
   <span class="co">-- changer son extension en html</span>
@@ -101,7 +101,7 @@ ph&#39;nglui mglw&#39;nafh Cthulhu R&#39;lyeh wgah&#39;nagl fhtagn</code></pre>
 <p>le fichier <code>posts/foo.md</code>, contiendra</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span>Cthulhu<span class="kw">&lt;/h1&gt;</span>
 <span class="kw">&lt;p&gt;</span>ph&#39;nglui mglw&#39;nafh Cthulhu R&#39;lyeh wgah&#39;nagl fhtagn<span class="kw">&lt;/p&gt;</span></code></pre>
-<p>Mais horreur ! <code>_site/posts/cthulhu.html</code> n’est pas un <span class="sc">html</span> complet. Il ne possède ni header, ni footer, etc… C’est ici que nous utilisons des templates. J’ajoute une nouvelle directive dans le bloc “compile”.</p>
+<p>Mais horreur ! <code>_site/posts/cthulhu.html</code> n’est pas un <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> complet. Il ne possède ni header, ni footer, etc… C’est ici que nous utilisons des templates. J’ajoute une nouvelle directive dans le bloc “compile”.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
   route <span class="fu">$</span> setExtension <span class="st">&quot;html&quot;</span>
   compile <span class="fu">$</span> pandocCompiler
@@ -165,10 +165,10 @@ ph&#39;nglui mglw&#39;nafh Cthulhu R&#39;lyeh wgah&#39;nagl fhtagn</code></pre>
               withItemBody (unixFilter <span class="st">&quot;sass&quot;</span> [<span class="st">&quot;--trace&quot;</span>]) <span class="fu">&gt;&gt;=</span>
               <span class="fu">return</span> <span class="fu">.</span> <span class="fu">fmap</span> compressCss</code></pre>
 <h3 id="add-keywords">Add keywords</h3>
-<p>In order to help to reference your website on the web, it is nice to add some keywords as meta datas to your <span class="sc">html</span> page.</p>
+<p>In order to help to reference your website on the web, it is nice to add some keywords as meta datas to your <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> page.</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;meta</span><span class="ot"> name=</span><span class="st">&quot;keywords&quot;</span>
 <span class="ot">      content=</span><span class="st">&quot;Cthulhu, Yog-Sothoth, Shub-Niggurath&quot;</span><span class="kw">&gt;</span></code></pre>
-<p>In order to add keywords, we could not directly use the markdown metadatas. Because, without any, there should be any meta tag in the <span class="sc">html</span>.</p>
+<p>In order to add keywords, we could not directly use the markdown metadatas. Because, without any, there should be any meta tag in the <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span>.</p>
 <p>An easy answer is to create a <code>Context</code> that will contains the meta tag.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- metaKeywordContext will return a Context containing a String</span>
 <span class="ot">metaKeywordContext ::</span> <span class="dt">Context</span> <span class="dt">String</span>
@@ -240,12 +240,12 @@ removeIndexHtml item <span class="fu">=</span> <span class="fu">return</span> <s
     $posts$
 <span class="kw">&lt;/ul&gt;</span></code></pre>
 <p>And <code>base.html</code> is a standard template (simpler than <code>post.html</code>).</p>
-<p><code>archiveCtx</code> provide a context containing an <span class="sc">html</span> representation of a list of posts in the metadata named <code>posts</code>. It will be used in the <code>templates/archive.html</code> file with <code>$posts$</code>.</p>
+<p><code>archiveCtx</code> provide a context containing an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> representation of a list of posts in the metadata named <code>posts</code>. It will be used in the <code>templates/archive.html</code> file with <code>$posts$</code>.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">archiveCtx <span class="fu">=</span>
   defaultContext <span class="fu">&lt;&gt;</span>
   metaKeywordContext <span class="fu">&lt;&gt;</span>
   <span class="highlight">field <span class="st">&quot;posts&quot;</span> (\_ <span class="ot">-&gt;</span> postList createdFirst)</span></code></pre>
-<p><code>postList</code> returns an <span class="sc">html</span> representation of a list of posts given an Item sort function. The representation will apply a minimal template on all posts. Then it concatenate all the results. The template is <code>post-item.html</code>:</p>
+<p><code>postList</code> returns an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> representation of a list of posts given an Item sort function. The representation will apply a minimal template on all posts. Then it concatenate all the results. The template is <code>post-item.html</code>:</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;li&gt;&lt;a</span><span class="ot"> href=</span><span class="st">&quot;$url$&quot;</span><span class="kw">&gt;</span>$published$ - $title$<span class="kw">&lt;/a&gt;&lt;/li&gt;</span></code></pre>
 <p>Here is how it is done:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">postList ::</span> [<span class="dt">Item</span> <span class="dt">String</span>] <span class="ot">-&gt;</span> <span class="dt">Compiler</span> [<span class="dt">Item</span> <span class="dt">String</span>]
@@ -277,7 +277,7 @@ createdFirst items <span class="fu">=</span> <span class="kw">do</span>
 <li>select only the lasts posts.</li>
 <li>generate partially rendered posts (no css, js, etc…)</li>
 </ul>
-<p>We could then render the posts twice. One for <span class="sc">html</span> rendering and another time for <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span>. Remark we need to generate the <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span> version to create the <span class="sc">html</span> one.</p>
+<p>We could then render the posts twice. One for <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> rendering and another time for <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span>. Remark we need to generate the <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span> version to create the <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> one.</p>
 <p>One of the great feature of Hakyll is to be able to save snapshots. Here is how:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
   route <span class="fu">$</span> setExtension <span class="st">&quot;html&quot;</span>
@@ -312,7 +312,7 @@ feedConfiguration <span class="fu">=</span> <span class="dt">FeedConfiguration</
 <p>Great idea certainly steal from <a href="http://nanoc.ws">nanoc</a> (my previous blog engine)!</p>
 <h3 id="filter-the-content">Filter the content</h3>
 <p>As I just said, <a href="http://nanoc.ws">nanoc</a> was my preceding blog engine. It is written in Ruby and as Hakyll, it is quite awesome. And one thing Ruby does more naturally than Haskell is regular expressions. I had a <em>lot</em> of filters in nanoc. I lost some because I don’t use them much. But I wanted to keep some. Generally, filtering the content is just a way to apply to the body a function of type <code>String -&gt; String</code>.</p>
-<p>Also we generally want prefilters (to filter the markdown) and postfilters (to filter the <span class="sc">html</span> after the pandoc compilation).</p>
+<p>Also we generally want prefilters (to filter the markdown) and postfilters (to filter the <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> after the pandoc compilation).</p>
 <p>Here is how I do it:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">markdownPostBehavior <span class="fu">=</span> <span class="kw">do</span>
   route <span class="fu">$</span> niceRoute
@@ -444,7 +444,7 @@ main = putStrLn &quot;Cthulhu!&quot;
 
 <p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Les boutons des réseaux sociaux traquent vos utilisateurs, ont un design incohérent avec celui de votre site, utilisent des ressources, ralentissent le rendu de vos pages.</p>
 <p>Faite les choses bien. Utilisez des liens statiques.</p>
-<p>Si vous n’avez pas envie de lire, copiez et collez simplement le code suivant dans votre <span class="sc">html</span>&nbsp;:</p>
+<p>Si vous n’avez pas envie de lire, copiez et collez simplement le code suivant dans votre <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span>&nbsp;:</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;sociallinks&quot;</span><span class="kw">&gt;</span>
   <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://twitter.com/home?status=$url$&quot;</span>
 <span class="ot">     target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>Tweet this<span class="kw">&lt;/a&gt;</span> -
@@ -454,14 +454,14 @@ main = putStrLn &quot;Cthulhu!&quot;
 <span class="ot">     target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>Share on G+<span class="kw">&lt;/a&gt;</span>
 <span class="kw">&lt;/div&gt;</span>
 <span class="kw">&lt;script&gt;</span>
-<span class="er">(function(){window.addEventListener(&quot;DOMContentLoaded&quot;,function(){</span>
-    <span class="kw">var</span> url=<span class="kw">document</span>.<span class="fu">location</span>;
-    <span class="kw">var</span> links=<span class="kw">document</span>.<span class="fu">getElementById</span>(<span class="st">&quot;sociallinks&quot;</span>)
-                      .<span class="fu">getElementsByTagName</span>(<span class="ch">&#39;a&#39;</span>);
-    <span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>;i!=<span class="kw">links</span>.<span class="fu">length</span>;i++){
+(<span class="kw">function</span>(){<span class="ot">window</span>.<span class="fu">addEventListener</span>(<span class="st">&quot;DOMContentLoaded&quot;</span>,<span class="kw">function</span>(){
+    <span class="kw">var</span> url=<span class="ot">document</span>.<span class="fu">location</span>;
+    <span class="kw">var</span> links=<span class="ot">document</span>.<span class="fu">getElementById</span>(<span class="st">&quot;sociallinks&quot;</span>)
+                      .<span class="fu">getElementsByTagName</span>(<span class="st">&#39;a&#39;</span>);
+    <span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>;i!=<span class="ot">links</span>.<span class="fu">length</span>;i++){
         links[i].<span class="fu">setAttribute</span>(<span class="st">&quot;href&quot;</span>,
 <span class="er">            links[i].href.replace(&#39;$url$&#39;,url));}})})();</span>
-<span class="kw">&lt;/script&gt;</span></code></pre>
+&lt;<span class="ot">/script&gt;</span></code></pre>
 </div>
 
 <h2 id="the-problem">The problem</h2>
@@ -524,14 +524,14 @@ main = putStrLn &quot;Cthulhu!&quot;
 <span class="ot">     target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>Share on G+<span class="kw">&lt;/a&gt;</span>
 <span class="kw">&lt;/div&gt;</span>
 <span class="kw">&lt;script&gt;</span>
-<span class="er">(function(){window.addEventListener(&quot;DOMContentLoaded&quot;,function(){</span>
-    <span class="kw">var</span> url=<span class="kw">document</span>.<span class="fu">location</span>;
-    <span class="kw">var</span> links=<span class="kw">document</span>.<span class="fu">getElementById</span>(<span class="st">&quot;sociallinks&quot;</span>)
-                      .<span class="fu">getElementsByTagName</span>(<span class="ch">&#39;a&#39;</span>);
-    <span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>;i!=<span class="kw">links</span>.<span class="fu">length</span>;i++){
+(<span class="kw">function</span>(){<span class="ot">window</span>.<span class="fu">addEventListener</span>(<span class="st">&quot;DOMContentLoaded&quot;</span>,<span class="kw">function</span>(){
+    <span class="kw">var</span> url=<span class="ot">document</span>.<span class="fu">location</span>;
+    <span class="kw">var</span> links=<span class="ot">document</span>.<span class="fu">getElementById</span>(<span class="st">&quot;sociallinks&quot;</span>)
+                      .<span class="fu">getElementsByTagName</span>(<span class="st">&#39;a&#39;</span>);
+    <span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>;i!=<span class="ot">links</span>.<span class="fu">length</span>;i++){
         links[i].<span class="fu">setAttribute</span>(<span class="st">&quot;href&quot;</span>,
 <span class="er">            links[i].href.replace(&#39;$url$&#39;,url));}})})();</span>
-<span class="kw">&lt;/script&gt;</span></code></pre>
+&lt;<span class="ot">/script&gt;</span></code></pre>
 <p>Here is the result:</p>
 <div style="text-align:center" class="nostar">
 
@@ -573,7 +573,7 @@ main = putStrLn &quot;Cthulhu!&quot;
   font-style<span class="dv">:</span> normal
 <span class="fl">.social</span>
   font-family<span class="dv">:</span> social</code></pre>
-<p>Now add this to your <span class="sc">html</span>:</p>
+<p>Now add this to your <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span>:</p>
 <p><strong>Solution 1 (without js):</strong></p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://twitter.com/home?status=$url$&quot;</span>
 <span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span>
@@ -601,14 +601,14 @@ main = putStrLn &quot;Cthulhu!&quot;
 <span class="ot">    class=</span><span class="st">&quot;social&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;#0103;</span><span class="kw">&lt;/a&gt;</span>
 <span class="kw">&lt;/div&gt;</span>
 <span class="kw">&lt;script&gt;</span>
-<span class="er">(function(){window.addEventListener(&quot;DOMContentLoaded&quot;,function(){</span>
-    <span class="kw">var</span> url=<span class="kw">document</span>.<span class="fu">location</span>;
-    <span class="kw">var</span> links=<span class="kw">document</span>.<span class="fu">getElementById</span>(<span class="st">&quot;sociallinksunicode&quot;</span>)
-                      .<span class="fu">getElementsByTagName</span>(<span class="ch">&#39;a&#39;</span>);
-    <span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>;i!=<span class="kw">links</span>.<span class="fu">length</span>;i++){
+(<span class="kw">function</span>(){<span class="ot">window</span>.<span class="fu">addEventListener</span>(<span class="st">&quot;DOMContentLoaded&quot;</span>,<span class="kw">function</span>(){
+    <span class="kw">var</span> url=<span class="ot">document</span>.<span class="fu">location</span>;
+    <span class="kw">var</span> links=<span class="ot">document</span>.<span class="fu">getElementById</span>(<span class="st">&quot;sociallinksunicode&quot;</span>)
+                      .<span class="fu">getElementsByTagName</span>(<span class="st">&#39;a&#39;</span>);
+    <span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>;i!=<span class="ot">links</span>.<span class="fu">length</span>;i++){
         links[i].<span class="fu">setAttribute</span>(<span class="st">&quot;href&quot;</span>,
 <span class="er">            links[i].href.replace(&#39;$url$&#39;,url));}})})();</span>
-<span class="kw">&lt;/script&gt;</span></code></pre>
+&lt;<span class="ot">/script&gt;</span></code></pre>
 <p>Here is the result:</p>
 <div style="font-size: 2em; text-align: center;" class="nostar">
 <div id="sociallinksunicode">
@@ -1675,9 +1675,9 @@ Another detail of the Mandelbulb
 <p>We can consider two parts. The first being mostly some boilerplate<sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup>. And the second part more focused on OpenGL and content.</p>
 <h3 id="lets-play-the-song-of-our-people">Let’s play the song of our people</h3>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Graphics.Rendering.OpenGL</span>
-<span class="kw">import</span> <span class="dt">Graphics.UI.GLUT</span>
-<span class="kw">import</span> <span class="dt">Data.IORef</span></code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Graphics.Rendering.OpenGL
+<span class="kw">import</span> Graphics.UI.GLUT
+<span class="kw">import</span> Data.IORef</code></pre>
 </div>
 
 <p>For efficiency reason<sup><a href="#fn3" class="footnoteRef" id="fnref3">3</a></sup>, I will not use the default Haskell <code>Complex</code> data type.</p>
@@ -1687,11 +1687,11 @@ Another detail of the Mandelbulb
 
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="kw">Num</span> <span class="dt">Complex</span> <span class="kw">where</span>
-    <span class="fu">fromInteger</span> n <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">fromIntegral</span> n,<span class="fl">0.0</span>)
+    <span class="fu">fromInteger</span> n <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">fromIntegral</span> n,<span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>)
     <span class="dt">C</span> (x,y) <span class="fu">*</span> <span class="dt">C</span> (z,t) <span class="fu">=</span> <span class="dt">C</span> (z<span class="fu">*</span>x <span class="fu">-</span> y<span class="fu">*</span>t, y<span class="fu">*</span>z <span class="fu">+</span> x<span class="fu">*</span>t)
     <span class="dt">C</span> (x,y) <span class="fu">+</span> <span class="dt">C</span> (z,t) <span class="fu">=</span> <span class="dt">C</span> (x<span class="fu">+</span>z, y<span class="fu">+</span>t)
-    <span class="fu">abs</span> (<span class="dt">C</span> (x,y))     <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">sqrt</span> (x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y),<span class="fl">0.0</span>)
-    <span class="fu">signum</span> (<span class="dt">C</span> (x,y))  <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">signum</span> x , <span class="fl">0.0</span>)</code></pre>
+    <span class="fu">abs</span> (<span class="dt">C</span> (x,y))     <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">sqrt</span> (x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y),<span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>)
+    <span class="fu">signum</span> (<span class="dt">C</span> (x,y))  <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">signum</span> x , <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>)</code></pre>
 </div>
 
 <p>We declare some useful functions for manipulating complex numbers:</p>
@@ -1778,16 +1778,16 @@ allPoints <span class="fu">=</span> [ (x<span class="fu">/</span>width,y<span cl
 <pre class="sourceCode haskell"><code class="sourceCode haskell">colorFromValue n <span class="fu">=</span>
   <span class="kw">let</span> 
 <span class="ot">      t ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">GLfloat</span>
-      t i <span class="fu">=</span> <span class="fl">0.5</span> <span class="fu">+</span> <span class="fl">0.5</span><span class="fu">*cos</span>( <span class="fu">fromIntegral</span> i <span class="fu">/</span> <span class="dv">10</span> )
+      t i <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">5</span> <span class="fu">+</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">5</span><span class="fu">*cos</span>( <span class="fu">fromIntegral</span> i <span class="fu">/</span> <span class="dv">10</span> )
   <span class="kw">in</span>
-    <span class="dt">Color3</span> (t n) (t (n<span class="dv">+5</span>)) (t (n<span class="dv">+10</span>))</code></pre>
+    <span class="dt">Color3</span> (t n) (t (n<span class="fu">+</span><span class="dv">5</span>)) (t (n<span class="fu">+</span><span class="dv">10</span>))</code></pre>
 </div>
 
 <p>And now the <code>mandel</code> function. Given two coordinates in pixels, it returns some integer value:</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">mandel x y <span class="fu">=</span> 
-  <span class="kw">let</span> r <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> x <span class="fu">/</span> width
-      i <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> y <span class="fu">/</span> height
+  <span class="kw">let</span> r <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> x <span class="fu">/</span> width
+      i <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> y <span class="fu">/</span> height
   <span class="kw">in</span>
       f (complex r i) <span class="dv">0</span> <span class="dv">64</span></code></pre>
 </div>
@@ -1803,7 +1803,7 @@ allPoints <span class="fu">=</span> [ (x<span class="fu">/</span>width,y<span cl
 f c z <span class="dv">0</span> <span class="fu">=</span> <span class="dv">0</span>
 f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span class="fu">&gt;</span> <span class="dv">2</span> ) 
           <span class="kw">then</span> n
-          <span class="kw">else</span> f c ((z<span class="fu">*</span>z)<span class="fu">+</span>c) (n<span class="dv">-1</span>)</code></pre>
+          <span class="kw">else</span> f c ((z<span class="fu">*</span>z)<span class="fu">+</span>c) (n<span class="fu">-</span><span class="dv">1</span>)</code></pre>
 </div>
 
 <p>Well, if you download this file (look at the bottom of this section), compile it and run it this is the result:</p>
@@ -1825,20 +1825,20 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
 <div style="display:none">
 
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Graphics.Rendering.OpenGL</span>
-<span class="kw">import</span> <span class="dt">Graphics.UI.GLUT</span>
-<span class="kw">import</span> <span class="dt">Data.IORef</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Graphics.Rendering.OpenGL
+<span class="kw">import</span> Graphics.UI.GLUT
+<span class="kw">import</span> Data.IORef
 <span class="co">-- Use UNPACK data because it is faster</span>
 <span class="co">-- The ! is for strict instead of lazy</span>
 <span class="kw">data</span> <span class="dt">Complex</span> <span class="fu">=</span> <span class="dt">C</span>  <span class="ot">{-# UNPACK #-}</span> <span class="fu">!</span><span class="dt">Float</span> 
                   <span class="ot">{-# UNPACK #-}</span> <span class="fu">!</span><span class="dt">Float</span> 
                <span class="kw">deriving</span> (<span class="kw">Show</span>,<span class="kw">Eq</span>)
 <span class="kw">instance</span> <span class="kw">Num</span> <span class="dt">Complex</span> <span class="kw">where</span>
-    <span class="fu">fromInteger</span> n <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">fromIntegral</span> n) <span class="fl">0.0</span>
+    <span class="fu">fromInteger</span> n <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">fromIntegral</span> n) <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>
     (<span class="dt">C</span> x y) <span class="fu">*</span> (<span class="dt">C</span> z t) <span class="fu">=</span> <span class="dt">C</span> (z<span class="fu">*</span>x <span class="fu">-</span> y<span class="fu">*</span>t) (y<span class="fu">*</span>z <span class="fu">+</span> x<span class="fu">*</span>t)
     (<span class="dt">C</span> x y) <span class="fu">+</span> (<span class="dt">C</span> z t) <span class="fu">=</span> <span class="dt">C</span> (x<span class="fu">+</span>z) (y<span class="fu">+</span>t)
-    <span class="fu">abs</span> (<span class="dt">C</span> x y)     <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">sqrt</span> (x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y)) <span class="fl">0.0</span>
-    <span class="fu">signum</span> (<span class="dt">C</span> x y)  <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">signum</span> x) <span class="fl">0.0</span>
+    <span class="fu">abs</span> (<span class="dt">C</span> x y)     <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">sqrt</span> (x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y)) <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>
+    <span class="fu">signum</span> (<span class="dt">C</span> x y)  <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">signum</span> x) <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>
 <span class="ot">complex ::</span> <span class="dt">Float</span> <span class="ot">-&gt;</span> <span class="dt">Float</span> <span class="ot">-&gt;</span> <span class="dt">Complex</span>
 complex x y <span class="fu">=</span> <span class="dt">C</span> x y
 
@@ -1865,7 +1865,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
   mainLoop
 display <span class="fu">=</span> <span class="kw">do</span>
    <span class="co">-- set the background color (dark solarized theme)</span>
-  clearColor <span class="fu">$=</span> <span class="dt">Color4</span> <span class="dv">0</span> <span class="fl">0.1686</span> <span class="fl">0.2117</span> <span class="dv">1</span>
+  clearColor <span class="fu">$=</span> <span class="dt">Color4</span> <span class="dv">0</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">1686</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">2117</span> <span class="dv">1</span>
   clear [<span class="dt">ColorBuffer</span>] <span class="co">-- make the window black</span>
   loadIdentity <span class="co">-- reset any transformation</span>
   preservingMatrix drawMandelbrot
@@ -1930,8 +1930,8 @@ positivePoints <span class="fu">=</span> <span class="kw">do</span>
 maxZeroIndex func minval maxval <span class="dv">0</span> <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span>
 maxZeroIndex func minval maxval n <span class="fu">=</span> 
   <span class="kw">if</span> (func medpoint) <span class="fu">/=</span> <span class="dv">0</span> 
-       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="dv">-1</span>)
-       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="dv">-1</span>)
+       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="fu">-</span><span class="dv">1</span>)
+       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="fu">-</span><span class="dv">1</span>)
   <span class="kw">where</span> medpoint <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span></code></pre>
 </div>
 
@@ -1946,15 +1946,15 @@ maxZeroIndex func minval maxval n <span class="fu">=</span>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">colorFromValue n <span class="fu">=</span>
   <span class="kw">let</span> 
 <span class="ot">      t ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">GLfloat</span>
-      t i <span class="fu">=</span> <span class="fl">0.5</span> <span class="fu">+</span> <span class="fl">0.5</span><span class="fu">*cos</span>( <span class="fu">fromIntegral</span> i <span class="fu">/</span> <span class="dv">10</span> )
+      t i <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">5</span> <span class="fu">+</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">5</span><span class="fu">*cos</span>( <span class="fu">fromIntegral</span> i <span class="fu">/</span> <span class="dv">10</span> )
   <span class="kw">in</span>
-    <span class="dt">Color3</span> (t n) (t (n<span class="dv">+5</span>)) (t (n<span class="dv">+10</span>))</code></pre>
+    <span class="dt">Color3</span> (t n) (t (n<span class="fu">+</span><span class="dv">5</span>)) (t (n<span class="fu">+</span><span class="dv">10</span>))</code></pre>
 </div>
 
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">mandel x y <span class="fu">=</span> 
-  <span class="kw">let</span> r <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> x <span class="fu">/</span> width
-      i <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> y <span class="fu">/</span> height
+  <span class="kw">let</span> r <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> x <span class="fu">/</span> width
+      i <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> y <span class="fu">/</span> height
   <span class="kw">in</span>
       f (complex r i) <span class="dv">0</span> <span class="dv">64</span></code></pre>
 </div>
@@ -1964,7 +1964,7 @@ maxZeroIndex func minval maxval n <span class="fu">=</span>
 f c z <span class="dv">0</span> <span class="fu">=</span> <span class="dv">0</span>
 f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span class="fu">&gt;</span> <span class="dv">2</span> ) 
           <span class="kw">then</span> n
-          <span class="kw">else</span> f c ((z<span class="fu">*</span>z)<span class="fu">+</span>c) (n<span class="dv">-1</span>)</code></pre>
+          <span class="kw">else</span> f c ((z<span class="fu">*</span>z)<span class="fu">+</span>c) (n<span class="fu">-</span><span class="dv">1</span>)</code></pre>
 </div>
 
 </div>
@@ -1994,9 +1994,9 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
 <div style="display:none">
 
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Graphics.Rendering.OpenGL</span>
-<span class="kw">import</span> <span class="dt">Graphics.UI.GLUT</span>
-<span class="kw">import</span> <span class="dt">Data.IORef</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Graphics.Rendering.OpenGL
+<span class="kw">import</span> Graphics.UI.GLUT
+<span class="kw">import</span> Data.IORef
 <span class="kw">type</span> <span class="dt">ColoredPoint</span> <span class="fu">=</span> (<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>,<span class="dt">Color3</span> <span class="dt">GLfloat</span>)</code></pre>
 </div>
 
@@ -2064,7 +2064,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
   <span class="co">-- Some state variables (I know it feels BAD)</span>
   angle   <span class="ot">&lt;-</span> newIORef ((<span class="dv">35</span>,<span class="dv">0</span>)<span class="ot">::</span>(<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>))
   zoom    <span class="ot">&lt;-</span> newIORef (<span class="dv">2</span><span class="ot">::</span><span class="dt">GLfloat</span>)
-  campos  <span class="ot">&lt;-</span> newIORef ((<span class="fl">0.7</span>,<span class="dv">0</span>)<span class="ot">::</span>(<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>))
+  campos  <span class="ot">&lt;-</span> newIORef ((<span class="dv">0</span><span class="fu">.</span><span class="dv">7</span>,<span class="dv">0</span>)<span class="ot">::</span>(<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>))
   <span class="co">-- Function to call each frame</span>
   idleCallback <span class="fu">$=</span> <span class="kw">Just</span> idle
   <span class="co">-- Function to call when keyboard or mouse is used</span>
@@ -2104,18 +2104,18 @@ mapSnd f (x,y) <span class="fu">=</span> (  x,f y)</code></pre>
           z <span class="fu">$=</span> <span class="dv">1</span>     <span class="co">-- zoom</span>
           p <span class="fu">$=</span> (<span class="dv">0</span>,<span class="dv">0</span>) <span class="co">-- camera position</span>
     <span class="co">-- use of hjkl to rotate</span>
-    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;h&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapFst (<span class="fu">+</span><span class="fl">0.5</span>))
-    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;l&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapFst (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.5</span>)))
-    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;j&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapSnd (<span class="fu">+</span><span class="fl">0.5</span>))
-    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;k&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapSnd (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.5</span>)))
+    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;h&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapFst (<span class="fu">+</span><span class="dv">0</span><span class="fu">.</span><span class="dv">5</span>))
+    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;l&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapFst (<span class="fu">+</span>(<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">5</span>)))
+    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;j&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapSnd (<span class="fu">+</span><span class="dv">0</span><span class="fu">.</span><span class="dv">5</span>))
+    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;k&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapSnd (<span class="fu">+</span>(<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">5</span>)))
     <span class="co">-- use o and i to zoom</span>
-    kact _ z _ (<span class="dt">Char</span> <span class="ch">&#39;o&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar z (<span class="fu">*</span><span class="fl">1.1</span>)
-    kact _ z _ (<span class="dt">Char</span> <span class="ch">&#39;i&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar z (<span class="fu">*</span><span class="fl">0.9</span>)
+    kact _ z _ (<span class="dt">Char</span> <span class="ch">&#39;o&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar z (<span class="fu">*</span><span class="dv">1</span><span class="fu">.</span><span class="dv">1</span>)
+    kact _ z _ (<span class="dt">Char</span> <span class="ch">&#39;i&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar z (<span class="fu">*</span><span class="dv">0</span><span class="fu">.</span><span class="dv">9</span>)
     <span class="co">-- use sdfe to move the camera</span>
-    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;s&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapFst (<span class="fu">+</span><span class="fl">0.1</span>))
-    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;f&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapFst (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.1</span>)))
-    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;d&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapSnd (<span class="fu">+</span><span class="fl">0.1</span>))
-    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;e&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapSnd (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.1</span>)))
+    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;s&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapFst (<span class="fu">+</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
+    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;f&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapFst (<span class="fu">+</span>(<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)))
+    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;d&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapSnd (<span class="fu">+</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
+    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;e&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapSnd (<span class="fu">+</span>(<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)))
     <span class="co">-- any other keys does nothing</span>
     kact _ _ _ _ _ <span class="fu">=</span> <span class="fu">return</span> ()</code></pre>
 </div>
@@ -2124,7 +2124,7 @@ mapSnd f (x,y) <span class="fu">=</span> (  x,f y)</code></pre>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">display angle zoom position <span class="fu">=</span> <span class="kw">do</span>
    <span class="co">-- set the background color (dark solarized theme)</span>
-  clearColor <span class="fu">$=</span> <span class="dt">Color4</span> <span class="dv">0</span> <span class="fl">0.1686</span> <span class="fl">0.2117</span> <span class="dv">1</span>
+  clearColor <span class="fu">$=</span> <span class="dt">Color4</span> <span class="dv">0</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">1686</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">2117</span> <span class="dv">1</span>
   clear [<span class="dt">ColorBuffer</span>,<span class="dt">DepthBuffer</span>]
   <span class="co">-- Transformation to change the view</span>
   loadIdentity <span class="co">-- reset any transformation</span>
@@ -2136,8 +2136,8 @@ mapSnd f (x,y) <span class="fu">=</span> (  x,f y)</code></pre>
   scale z z z
   <span class="co">-- rotate</span>
   (xangle,yangle) <span class="ot">&lt;-</span> get angle
-  rotate xangle <span class="fu">$</span> <span class="dt">Vector3</span> <span class="fl">1.0</span> <span class="fl">0.0</span> (<span class="fl">0.0</span><span class="ot">::</span><span class="dt">GLfloat</span>)
-  rotate yangle <span class="fu">$</span> <span class="dt">Vector3</span> <span class="fl">0.0</span> <span class="fl">1.0</span> (<span class="fl">0.0</span><span class="ot">::</span><span class="dt">GLfloat</span>)
+  rotate xangle <span class="fu">$</span> <span class="dt">Vector3</span> <span class="dv">1</span><span class="fu">.</span><span class="dv">0</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span> (<span class="dv">0</span><span class="fu">.</span><span class="dv">0</span><span class="ot">::</span><span class="dt">GLfloat</span>)
+  rotate yangle <span class="fu">$</span> <span class="dt">Vector3</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span> <span class="dv">1</span><span class="fu">.</span><span class="dv">0</span> (<span class="dv">0</span><span class="fu">.</span><span class="dv">0</span><span class="ot">::</span><span class="dt">GLfloat</span>)
 
   <span class="co">-- Now that all transformation were made</span>
   <span class="co">-- We create the object(s)</span>
@@ -2189,17 +2189,17 @@ depthPoints <span class="fu">=</span> <span class="kw">do</span>
       depthOf x&#39; y&#39; <span class="fu">=</span> maxZeroIndex (mandel x&#39; y&#39;) <span class="dv">0</span> deep logdeep 
       logdeep <span class="fu">=</span> <span class="fu">floor</span> ((<span class="fu">log</span> deep) <span class="fu">/</span> <span class="fu">log</span> <span class="dv">2</span>)
       z1 <span class="fu">=</span> depthOf    x     y
-      z2 <span class="fu">=</span> depthOf (x<span class="dv">+1</span>)    y
-      z3 <span class="fu">=</span> depthOf (x<span class="dv">+1</span>) (y<span class="dv">+1</span>)
-      z4 <span class="fu">=</span> depthOf    x  (y<span class="dv">+1</span>)
-      c1 <span class="fu">=</span> mandel    x     y  (z1<span class="dv">+1</span>)
-      c2 <span class="fu">=</span> mandel (x<span class="dv">+1</span>)    y  (z2<span class="dv">+1</span>)
-      c3 <span class="fu">=</span> mandel (x<span class="dv">+1</span>) (y<span class="dv">+1</span>) (z3<span class="dv">+1</span>)
-      c4 <span class="fu">=</span> mandel    x  (y<span class="dv">+1</span>) (z4<span class="dv">+1</span>)
+      z2 <span class="fu">=</span> depthOf (x<span class="fu">+</span><span class="dv">1</span>)    y
+      z3 <span class="fu">=</span> depthOf (x<span class="fu">+</span><span class="dv">1</span>) (y<span class="fu">+</span><span class="dv">1</span>)
+      z4 <span class="fu">=</span> depthOf    x  (y<span class="fu">+</span><span class="dv">1</span>)
+      c1 <span class="fu">=</span> mandel    x     y  (z1<span class="fu">+</span><span class="dv">1</span>)
+      c2 <span class="fu">=</span> mandel (x<span class="fu">+</span><span class="dv">1</span>)    y  (z2<span class="fu">+</span><span class="dv">1</span>)
+      c3 <span class="fu">=</span> mandel (x<span class="fu">+</span><span class="dv">1</span>) (y<span class="fu">+</span><span class="dv">1</span>) (z3<span class="fu">+</span><span class="dv">1</span>)
+      c4 <span class="fu">=</span> mandel    x  (y<span class="fu">+</span><span class="dv">1</span>) (z4<span class="fu">+</span><span class="dv">1</span>)
       p1 <span class="fu">=</span> (   x <span class="fu">/</span>width,   y <span class="fu">/</span>height, z1<span class="fu">/</span>deep, colorFromValue c1)
-      p2 <span class="fu">=</span> ((x<span class="dv">+1</span>)<span class="fu">/</span>width,   y <span class="fu">/</span>height, z2<span class="fu">/</span>deep, colorFromValue c2)
-      p3 <span class="fu">=</span> ((x<span class="dv">+1</span>)<span class="fu">/</span>width,(y<span class="dv">+1</span>)<span class="fu">/</span>height, z3<span class="fu">/</span>deep, colorFromValue c3)
-      p4 <span class="fu">=</span> (   x <span class="fu">/</span>width,(y<span class="dv">+1</span>)<span class="fu">/</span>height, z4<span class="fu">/</span>deep, colorFromValue c4)
+      p2 <span class="fu">=</span> ((x<span class="fu">+</span><span class="dv">1</span>)<span class="fu">/</span>width,   y <span class="fu">/</span>height, z2<span class="fu">/</span>deep, colorFromValue c2)
+      p3 <span class="fu">=</span> ((x<span class="fu">+</span><span class="dv">1</span>)<span class="fu">/</span>width,(y<span class="fu">+</span><span class="dv">1</span>)<span class="fu">/</span>height, z3<span class="fu">/</span>deep, colorFromValue c3)
+      p4 <span class="fu">=</span> (   x <span class="fu">/</span>width,(y<span class="fu">+</span><span class="dv">1</span>)<span class="fu">/</span>height, z4<span class="fu">/</span>deep, colorFromValue c4)
   <span class="kw">if</span> (<span class="fu">and</span> <span class="fu">$</span> <span class="fu">map</span> (<span class="fu">&gt;=</span><span class="dv">57</span>) [c1,c2,c3,c4])
   <span class="kw">then</span> []
   <span class="kw">else</span> [p1,p2,p3,p1,p3,p4]</code></pre>
@@ -2210,13 +2210,13 @@ depthPoints <span class="fu">=</span> <span class="kw">do</span>
   x <span class="ot">&lt;-</span> [<span class="fu">-</span>width<span class="fu">..</span>width]
   y <span class="ot">&lt;-</span> [<span class="fu">-</span>height<span class="fu">..</span>height]
   <span class="kw">let</span> 
-    neighbors <span class="fu">=</span> [(x,y),(x<span class="dv">+1</span>,y),(x<span class="dv">+1</span>,y<span class="dv">+1</span>),(x,y<span class="dv">+1</span>)]
+    neighbors <span class="fu">=</span> [(x,y),(x<span class="fu">+</span><span class="dv">1</span>,y),(x<span class="fu">+</span><span class="dv">1</span>,y<span class="fu">+</span><span class="dv">1</span>),(x,y<span class="fu">+</span><span class="dv">1</span>)]
     depthOf (u,v) <span class="fu">=</span> maxZeroIndex (mandel u v) <span class="dv">0</span> deep logdeep
     logdeep <span class="fu">=</span> <span class="fu">floor</span> ((<span class="fu">log</span> deep) <span class="fu">/</span> <span class="fu">log</span> <span class="dv">2</span>)
     <span class="co">-- zs are 3D points with found depth</span>
     zs <span class="fu">=</span> <span class="fu">map</span> (\(u,v) <span class="ot">-&gt;</span> (u,v,depthOf (u,v))) neighbors
     <span class="co">-- ts are 3D pixels + mandel value</span>
-    ts <span class="fu">=</span> <span class="fu">map</span> (\(u,v,w) <span class="ot">-&gt;</span> (u,v,w,mandel u v (w<span class="dv">+1</span>))) zs
+    ts <span class="fu">=</span> <span class="fu">map</span> (\(u,v,w) <span class="ot">-&gt;</span> (u,v,w,mandel u v (w<span class="fu">+</span><span class="dv">1</span>))) zs
     <span class="co">-- ps are 3D opengl points + color value</span>
     ps <span class="fu">=</span> <span class="fu">map</span> (\(u,v,w,c&#39;) <span class="ot">-&gt;</span> 
         (u<span class="fu">/</span>width,v<span class="fu">/</span>height,w<span class="fu">/</span>deep,colorFromValue c&#39;)) ts
@@ -2234,7 +2234,7 @@ depthPoints <span class="fu">=</span> <span class="kw">do</span>
 allPoints <span class="fu">=</span> planPoints <span class="fu">++</span> <span class="fu">map</span> inverseDepth  planPoints
   <span class="kw">where</span> 
       planPoints <span class="fu">=</span> depthPoints
-      inverseDepth (x,y,z,c) <span class="fu">=</span> (x,y,<span class="fu">-</span>z<span class="dv">+1</span><span class="fu">/</span>deep,c)</code></pre>
+      inverseDepth (x,y,z,c) <span class="fu">=</span> (x,y,<span class="fu">-</span>z<span class="fu">+</span><span class="dv">1</span><span class="fu">/</span>deep,c)</code></pre>
 </div>
 
 <p>The rest of the program is very close to the preceding one.</p>
@@ -2254,8 +2254,8 @@ allPoints <span class="fu">=</span> planPoints <span class="fu">++</span> <span 
 maxZeroIndex func minval maxval <span class="dv">0</span> <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span>
 maxZeroIndex func minval maxval n <span class="fu">=</span> 
   <span class="kw">if</span> (func medpoint) <span class="fu">/=</span> <span class="dv">0</span> 
-       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="dv">-1</span>)
-       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="dv">-1</span>)
+       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="fu">-</span><span class="dv">1</span>)
+       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="fu">-</span><span class="dv">1</span>)
   <span class="kw">where</span> medpoint <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span></code></pre>
 </div>
 
@@ -2264,9 +2264,9 @@ maxZeroIndex func minval maxval n <span class="fu">=</span>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">colorFromValue n <span class="fu">=</span>
   <span class="kw">let</span> 
 <span class="ot">      t ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">GLfloat</span>
-      t i <span class="fu">=</span> <span class="fl">0.7</span> <span class="fu">+</span> <span class="fl">0.3</span><span class="fu">*cos</span>( <span class="fu">fromIntegral</span> i <span class="fu">/</span> <span class="dv">10</span> )
+      t i <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">7</span> <span class="fu">+</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">3</span><span class="fu">*cos</span>( <span class="fu">fromIntegral</span> i <span class="fu">/</span> <span class="dv">10</span> )
   <span class="kw">in</span>
-    <span class="dt">Color3</span> (t n) (t (n<span class="dv">+5</span>)) (t (n<span class="dv">+10</span>))</code></pre>
+    <span class="dt">Color3</span> (t n) (t (n<span class="fu">+</span><span class="dv">5</span>)) (t (n<span class="fu">+</span><span class="dv">10</span>))</code></pre>
 </div>
 
 <p>We only changed from <code>Complex</code> to <code>ExtComplex</code> of the main <code>f</code> function.</p>
@@ -2275,7 +2275,7 @@ maxZeroIndex func minval maxval n <span class="fu">=</span>
 f c z <span class="dv">0</span> <span class="fu">=</span> <span class="dv">0</span>
 f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span class="fu">&gt;</span> <span class="dv">2</span> ) 
           <span class="kw">then</span> n
-          <span class="kw">else</span> f c ((z<span class="fu">*</span>z)<span class="fu">+</span>c) (n<span class="dv">-1</span>)</code></pre>
+          <span class="kw">else</span> f c ((z<span class="fu">*</span>z)<span class="fu">+</span>c) (n<span class="fu">-</span><span class="dv">1</span>)</code></pre>
 </div>
 
 </div>
@@ -2283,9 +2283,9 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
 <p>We simply add a new dimension to the <code>mandel</code> function and change the type signature of <code>f</code> from <code>Complex</code> to <code>ExtComplex</code>.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">mandel x y z <span class="fu">=</span> 
-  <span class="kw">let</span> r <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> x <span class="fu">/</span> width
-      i <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> y <span class="fu">/</span> height
-      s <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> z <span class="fu">/</span> deep
+  <span class="kw">let</span> r <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> x <span class="fu">/</span> width
+      i <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> y <span class="fu">/</span> height
+      s <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> z <span class="fu">/</span> deep
   <span class="kw">in</span>
       f (extcomplex r i s) <span class="dv">0</span> <span class="dv">64</span></code></pre>
 </div>
@@ -2306,8 +2306,8 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
 <li><a href="code/04_Mandelbulb/ExtComplex.hs"><code>ExtComplex</code></a>, the extended complexes</li>
 </ul>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">YBoiler</span> <span class="co">-- Most the OpenGL Boilerplate</span>
-<span class="kw">import</span> <span class="dt">Mandel</span> <span class="co">-- The 3D Mandelbrot maths</span></code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> YBoiler -- Most the OpenGL Boilerplate
+<span class="kw">import</span> Mandel -- The 3D Mandelbrot maths</code></pre>
 </div>
 
 <p>The <code>yMainLoop</code> takes two arguments: the title of the window and a function from time to triangles</p>
@@ -2331,7 +2331,7 @@ allPoints <span class="fu">=</span> planPoints <span class="fu">++</span> <span 
   <span class="kw">where</span> 
       planPoints <span class="fu">=</span> depthPoints <span class="fu">++</span> <span class="fu">map</span> inverseHeight depthPoints
       inverseHeight (x,y,z,c) <span class="fu">=</span> (x,<span class="fu">-</span>y,z,c)
-      inverseDepth (x,y,z,c) <span class="fu">=</span> (x,y,<span class="fu">-</span>z<span class="dv">+1</span><span class="fu">/</span>deep,c)</code></pre>
+      inverseDepth (x,y,z,c) <span class="fu">=</span> (x,y,<span class="fu">-</span>z<span class="fu">+</span><span class="dv">1</span><span class="fu">/</span>deep,c)</code></pre>
 </div>
 
 <div class="codehighlight">
@@ -2340,12 +2340,12 @@ depthPoints <span class="fu">=</span> <span class="kw">do</span>
   x <span class="ot">&lt;-</span> [<span class="fu">-</span>width<span class="fu">..</span>width]
   y <span class="ot">&lt;-</span> [<span class="dv">0</span><span class="fu">..</span>height]
   <span class="kw">let</span> 
-    neighbors <span class="fu">=</span> [(x,y),(x<span class="dv">+1</span>,y),(x<span class="dv">+1</span>,y<span class="dv">+1</span>),(x,y<span class="dv">+1</span>)]
+    neighbors <span class="fu">=</span> [(x,y),(x<span class="fu">+</span><span class="dv">1</span>,y),(x<span class="fu">+</span><span class="dv">1</span>,y<span class="fu">+</span><span class="dv">1</span>),(x,y<span class="fu">+</span><span class="dv">1</span>)]
     depthOf (u,v) <span class="fu">=</span> maxZeroIndex (ymandel u v) <span class="dv">0</span> deep <span class="dv">7</span>
     <span class="co">-- zs are 3D points with found depth</span>
     zs <span class="fu">=</span> <span class="fu">map</span> (\(u,v) <span class="ot">-&gt;</span> (u,v,depthOf (u,v))) neighbors
     <span class="co">-- ts are 3D pixels + mandel value</span>
-    ts <span class="fu">=</span> <span class="fu">map</span> (\(u,v,w) <span class="ot">-&gt;</span> (u,v,w,ymandel u v (w<span class="dv">+1</span>))) zs
+    ts <span class="fu">=</span> <span class="fu">map</span> (\(u,v,w) <span class="ot">-&gt;</span> (u,v,w,ymandel u v (w<span class="fu">+</span><span class="dv">1</span>))) zs
     <span class="co">-- ps are 3D opengl points + color value</span>
     ps <span class="fu">=</span> <span class="fu">map</span> (\(u,v,w,c&#39;) <span class="ot">-&gt;</span> 
         (u<span class="fu">/</span>width,v<span class="fu">/</span>height,w<span class="fu">/</span>deep,colorFromValue c&#39;)) ts
@@ -2366,16 +2366,16 @@ depthPoints <span class="fu">=</span> <span class="kw">do</span>
 maxZeroIndex func minval maxval <span class="dv">0</span> <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span>
 maxZeroIndex func minval maxval n <span class="fu">=</span> 
   <span class="kw">if</span> (func medpoint) <span class="fu">/=</span> <span class="dv">0</span> 
-       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="dv">-1</span>)
-       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="dv">-1</span>)
+       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="fu">-</span><span class="dv">1</span>)
+       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="fu">-</span><span class="dv">1</span>)
   <span class="kw">where</span> medpoint <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span>
 
 colorFromValue n <span class="fu">=</span>
   <span class="kw">let</span> 
 <span class="ot">      t ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">GLfloat</span>
-      t i <span class="fu">=</span> <span class="fl">0.7</span> <span class="fu">+</span> <span class="fl">0.3</span><span class="fu">*cos</span>( <span class="fu">fromIntegral</span> i <span class="fu">/</span> <span class="dv">10</span> )
+      t i <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">7</span> <span class="fu">+</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">3</span><span class="fu">*cos</span>( <span class="fu">fromIntegral</span> i <span class="fu">/</span> <span class="dv">10</span> )
   <span class="kw">in</span>
-    ((t n),(t (n<span class="dv">+5</span>)),(t (n<span class="dv">+10</span>)))
+    ((t n),(t (n<span class="fu">+</span><span class="dv">5</span>)),(t (n<span class="fu">+</span><span class="dv">10</span>)))
 
 ymandel x y z <span class="fu">=</span> mandel (<span class="dv">2</span><span class="fu">*</span>x<span class="fu">/</span>width) (<span class="dv">2</span><span class="fu">*</span>y<span class="fu">/</span>height) (<span class="dv">2</span><span class="fu">*</span>z<span class="fu">/</span>deep) <span class="dv">64</span></code></pre>
 </div>
@@ -2409,8 +2409,8 @@ ymandel x y z <span class="fu">=</span> mandel (<span class="dv">2</span><span c
 </ul>
 <p>Here is a real working code, I’ve hidden most display functions. The YGL, is a kind of framework to display 3D functions. But it can easily be extended to many kind of representation.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">YGL</span> <span class="co">-- Most the OpenGL Boilerplate</span>
-<span class="kw">import</span> <span class="dt">Mandel</span> <span class="co">-- The 3D Mandelbrot maths</span></code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> YGL -- Most the OpenGL Boilerplate
+<span class="kw">import</span> Mandel -- The 3D Mandelbrot maths</code></pre>
 </div>
 
 <p>We first set the mapping between user input and actions. The type of each couple should be of the form <code>(user input, f)</code> where (in a first time) <code>f:World -&gt; World</code>. It means, the user input will transform the world state.</p>
@@ -2424,16 +2424,16 @@ inputActionMap <span class="fu">=</span> inputMapFromList [
     ,(<span class="dt">Press</span> <span class="ch">&#39;l&#39;</span> , rotate ydir (<span class="fu">-</span><span class="dv">5</span>))
     ,(<span class="dt">Press</span> <span class="ch">&#39;o&#39;</span> , rotate zdir   <span class="dv">5</span>)
     ,(<span class="dt">Press</span> <span class="ch">&#39;u&#39;</span> , rotate zdir (<span class="fu">-</span><span class="dv">5</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;f&#39;</span> , translate xdir   <span class="fl">0.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;s&#39;</span> , translate xdir (<span class="fu">-</span><span class="fl">0.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;e&#39;</span> , translate ydir   <span class="fl">0.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;d&#39;</span> , translate ydir (<span class="fu">-</span><span class="fl">0.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;z&#39;</span> , translate zdir   <span class="fl">0.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;r&#39;</span> , translate zdir (<span class="fu">-</span><span class="fl">0.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;+&#39;</span> , zoom    <span class="fl">1.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;-&#39;</span> , zoom (<span class="dv">1</span><span class="fu">/</span><span class="fl">1.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;h&#39;</span> , resize    <span class="fl">1.2</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;g&#39;</span> , resize (<span class="dv">1</span><span class="fu">/</span><span class="fl">1.2</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;f&#39;</span> , translate xdir   <span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;s&#39;</span> , translate xdir (<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;e&#39;</span> , translate ydir   <span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;d&#39;</span> , translate ydir (<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;z&#39;</span> , translate zdir   <span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;r&#39;</span> , translate zdir (<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;+&#39;</span> , zoom    <span class="dv">1</span><span class="fu">.</span><span class="dv">1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;-&#39;</span> , zoom (<span class="dv">1</span><span class="fu">/</span><span class="dv">1</span><span class="fu">.</span><span class="dv">1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;h&#39;</span> , resize    <span class="dv">1</span><span class="fu">.</span><span class="dv">2</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;g&#39;</span> , resize (<span class="dv">1</span><span class="fu">/</span><span class="dv">1</span><span class="fu">.</span><span class="dv">2</span>))
     ]</code></pre>
 </div>
 
@@ -2526,11 +2526,11 @@ main <span class="fu">=</span> yMainLoop inputActionMap idleAction initialWorld<
 initialWorld <span class="fu">=</span> <span class="dt">World</span> {
    angle <span class="fu">=</span> makePoint3D (<span class="fu">-</span><span class="dv">30</span>,<span class="fu">-</span><span class="dv">30</span>,<span class="dv">0</span>)
  , position <span class="fu">=</span> makePoint3D (<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)
- , scale <span class="fu">=</span> <span class="fl">0.8</span>
+ , scale <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">8</span>
  , shape <span class="fu">=</span> shapeFunc 
  , box <span class="fu">=</span> <span class="dt">Box3D</span> { minPoint <span class="fu">=</span> makePoint3D (<span class="fu">-</span><span class="dv">2</span>,<span class="fu">-</span><span class="dv">2</span>,<span class="fu">-</span><span class="dv">2</span>)
                , maxPoint <span class="fu">=</span>  makePoint3D (<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">2</span>)
-               , resolution <span class="fu">=</span>  <span class="fl">0.16</span> }
+               , resolution <span class="fu">=</span>  <span class="dv">0</span><span class="fu">.</span><span class="dv">16</span> }
  , told <span class="fu">=</span> <span class="dv">0</span>
  }</code></pre>
 </div>
@@ -2543,8 +2543,8 @@ idleAction tnew world <span class="fu">=</span> world {
   , told <span class="fu">=</span> tnew
   }
   <span class="kw">where</span> 
-      anglePerSec <span class="fu">=</span> <span class="fl">5.0</span>
-      delta <span class="fu">=</span> anglePerSec <span class="fu">*</span> elapsed <span class="fu">/</span> <span class="fl">1000.0</span>
+      anglePerSec <span class="fu">=</span> <span class="dv">5</span><span class="fu">.</span><span class="dv">0</span>
+      delta <span class="fu">=</span> anglePerSec <span class="fu">*</span> elapsed <span class="fu">/</span> <span class="dv">1000</span><span class="fu">.</span><span class="dv">0</span>
       elapsed <span class="fu">=</span> <span class="fu">fromIntegral</span> (tnew <span class="fu">-</span> (told world))</code></pre>
 </div>
 
@@ -2556,7 +2556,7 @@ shapeFunc res x y <span class="fu">=</span>
   <span class="kw">let</span> 
       z <span class="fu">=</span> maxZeroIndex (ymandel x y) <span class="dv">0</span> <span class="dv">1</span> <span class="dv">20</span>
   <span class="kw">in</span>
-  <span class="kw">if</span> <span class="fu">and</span> [ maxZeroIndex (ymandel (x<span class="fu">+</span>xeps) (y<span class="fu">+</span>yeps)) <span class="dv">0</span> <span class="dv">1</span> <span class="dv">20</span> <span class="fu">&lt;</span> <span class="fl">0.000001</span> <span class="fu">|</span>
+  <span class="kw">if</span> <span class="fu">and</span> [ maxZeroIndex (ymandel (x<span class="fu">+</span>xeps) (y<span class="fu">+</span>yeps)) <span class="dv">0</span> <span class="dv">1</span> <span class="dv">20</span> <span class="fu">&lt;</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">000001</span> <span class="fu">|</span>
               val <span class="ot">&lt;-</span> [res], xeps <span class="ot">&lt;-</span> [<span class="fu">-</span>val,val], yeps<span class="ot">&lt;-</span>[<span class="fu">-</span>val,val]]
       <span class="kw">then</span> <span class="kw">Nothing</span> 
       <span class="kw">else</span> <span class="kw">Just</span> (z,colorFromValue ((ymandel x y z) <span class="fu">*</span> <span class="dv">64</span>))</code></pre>
@@ -2568,9 +2568,9 @@ shapeFunc res x y <span class="fu">=</span>
 colorFromValue n <span class="fu">=</span>
   <span class="kw">let</span> 
 <span class="ot">      t ::</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Scalar</span>
-      t i <span class="fu">=</span> <span class="fl">0.7</span> <span class="fu">+</span> <span class="fl">0.3</span><span class="fu">*cos</span>( i <span class="fu">/</span> <span class="dv">10</span> )
+      t i <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">7</span> <span class="fu">+</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">3</span><span class="fu">*cos</span>( i <span class="fu">/</span> <span class="dv">10</span> )
   <span class="kw">in</span>
-    makeColor (t n) (t (n<span class="dv">+5</span>)) (t (n<span class="dv">+10</span>))</code></pre>
+    makeColor (t n) (t (n<span class="fu">+</span><span class="dv">5</span>)) (t (n<span class="fu">+</span><span class="dv">10</span>))</code></pre>
 </div>
 
 <p>The rest is similar to the preceding sections.</p>
@@ -2588,8 +2588,8 @@ colorFromValue n <span class="fu">=</span>
 maxZeroIndex _ minval maxval <span class="dv">0</span> <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span>
 maxZeroIndex func minval maxval n <span class="fu">=</span> 
   <span class="kw">if</span> (func medpoint) <span class="fu">/=</span> <span class="dv">0</span> 
-       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="dv">-1</span>)
-       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="dv">-1</span>)
+       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="fu">-</span><span class="dv">1</span>)
+       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="fu">-</span><span class="dv">1</span>)
   <span class="kw">where</span> medpoint <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span>
 
 <span class="ot">ymandel ::</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span>
@@ -2616,8 +2616,8 @@ ymandel x y z <span class="fu">=</span> <span class="fu">fromIntegral</span> (ma
 <div style="display:none">
 
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">YGL</span> <span class="co">-- Most the OpenGL Boilerplate</span>
-<span class="kw">import</span> <span class="dt">Mandel</span> <span class="co">-- The 3D Mandelbrot maths</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> YGL -- Most the OpenGL Boilerplate
+<span class="kw">import</span> Mandel -- The 3D Mandelbrot maths
 
 <span class="co">-- Centralize all user input interaction</span>
 <span class="ot">inputActionMap ::</span> <span class="dt">InputMap</span> <span class="dt">World</span>
@@ -2629,16 +2629,16 @@ inputActionMap <span class="fu">=</span> inputMapFromList [
     ,(<span class="dt">Press</span> <span class="ch">&#39;l&#39;</span> , rotate ydir (<span class="fu">-</span><span class="dv">5</span>))
     ,(<span class="dt">Press</span> <span class="ch">&#39;o&#39;</span> , rotate zdir <span class="dv">5</span>)
     ,(<span class="dt">Press</span> <span class="ch">&#39;u&#39;</span> , rotate zdir (<span class="fu">-</span><span class="dv">5</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;f&#39;</span> , translate xdir <span class="fl">0.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;s&#39;</span> , translate xdir (<span class="fu">-</span><span class="fl">0.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;e&#39;</span> , translate ydir <span class="fl">0.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;d&#39;</span> , translate ydir (<span class="fu">-</span><span class="fl">0.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;z&#39;</span> , translate zdir <span class="fl">0.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;r&#39;</span> , translate zdir (<span class="fu">-</span><span class="fl">0.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;+&#39;</span> , zoom <span class="fl">1.1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;-&#39;</span> , zoom (<span class="dv">1</span><span class="fu">/</span><span class="fl">1.1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;h&#39;</span> , resize <span class="fl">2.0</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;g&#39;</span> , resize (<span class="dv">1</span><span class="fu">/</span><span class="fl">2.0</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;f&#39;</span> , translate xdir <span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;s&#39;</span> , translate xdir (<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;e&#39;</span> , translate ydir <span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;d&#39;</span> , translate ydir (<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;z&#39;</span> , translate zdir <span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;r&#39;</span> , translate zdir (<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;+&#39;</span> , zoom <span class="dv">1</span><span class="fu">.</span><span class="dv">1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;-&#39;</span> , zoom (<span class="dv">1</span><span class="fu">/</span><span class="dv">1</span><span class="fu">.</span><span class="dv">1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;h&#39;</span> , resize <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;g&#39;</span> , resize (<span class="dv">1</span><span class="fu">/</span><span class="dv">2</span><span class="fu">.</span><span class="dv">0</span>))
     ]</code></pre>
 </div>
 
@@ -2686,7 +2686,7 @@ rotate dir angleValue world <span class="fu">=</span>
 <span class="ot">switchRotation ::</span> <span class="dt">World</span> <span class="ot">-&gt;</span> <span class="dt">World</span>
 switchRotation world <span class="fu">=</span> 
   world {
-     anglePerSec <span class="fu">=</span> <span class="kw">if</span> anglePerSec world <span class="fu">&gt;</span> <span class="dv">0</span> <span class="kw">then</span> <span class="dv">0</span> <span class="kw">else</span> <span class="fl">5.0</span> }
+     anglePerSec <span class="fu">=</span> <span class="kw">if</span> anglePerSec world <span class="fu">&gt;</span> <span class="dv">0</span> <span class="kw">then</span> <span class="dv">0</span> <span class="kw">else</span> <span class="dv">5</span><span class="fu">.</span><span class="dv">0</span> }
 
 <span class="ot">translate ::</span> <span class="dt">Point3D</span> <span class="ot">-&gt;</span> <span class="dt">Scalar</span> <span class="ot">-&gt;</span> <span class="dt">World</span> <span class="ot">-&gt;</span> <span class="dt">World</span>
 translate dir len world <span class="fu">=</span> 
@@ -2713,12 +2713,12 @@ main <span class="fu">=</span> yMainLoop inputActionMap idleAction initialWorld<
 <span class="ot">initialWorld ::</span> <span class="dt">World</span>
 initialWorld <span class="fu">=</span> <span class="dt">World</span> {
    angle <span class="fu">=</span> makePoint3D (<span class="dv">30</span>,<span class="dv">30</span>,<span class="dv">0</span>)
- , anglePerSec <span class="fu">=</span> <span class="fl">5.0</span>
+ , anglePerSec <span class="fu">=</span> <span class="dv">5</span><span class="fu">.</span><span class="dv">0</span>
  , position <span class="fu">=</span> makePoint3D (<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)
- , scale <span class="fu">=</span> <span class="fl">1.0</span>
+ , scale <span class="fu">=</span> <span class="dv">1</span><span class="fu">.</span><span class="dv">0</span>
  , box <span class="fu">=</span> <span class="dt">Box3D</span> { minPoint <span class="fu">=</span> makePoint3D (<span class="dv">0</span><span class="fu">-</span>eps, <span class="dv">0</span><span class="fu">-</span>eps, <span class="dv">0</span><span class="fu">-</span>eps)
                , maxPoint <span class="fu">=</span> makePoint3D (<span class="dv">0</span><span class="fu">+</span>eps, <span class="dv">0</span><span class="fu">+</span>eps, <span class="dv">0</span><span class="fu">+</span>eps)
-               , resolution <span class="fu">=</span>  <span class="fl">0.02</span> }
+               , resolution <span class="fu">=</span>  <span class="dv">0</span><span class="fu">.</span><span class="dv">02</span> }
  , told <span class="fu">=</span> <span class="dv">0</span>
  <span class="co">-- We declare cache directly this time</span>
  , cache <span class="fu">=</span> objectFunctionFromWorld initialWorld
@@ -2762,7 +2762,7 @@ idleAction tnew world <span class="fu">=</span>
       , told <span class="fu">=</span> tnew
       }
   <span class="kw">where</span> 
-      delta <span class="fu">=</span> anglePerSec world <span class="fu">*</span> elapsed <span class="fu">/</span> <span class="fl">1000.0</span>
+      delta <span class="fu">=</span> anglePerSec world <span class="fu">*</span> elapsed <span class="fu">/</span> <span class="dv">1000</span><span class="fu">.</span><span class="dv">0</span>
       elapsed <span class="fu">=</span> <span class="fu">fromIntegral</span> (tnew <span class="fu">-</span> (told world))
 
 <span class="ot">shapeFunc ::</span> <span class="dt">Scalar</span> <span class="ot">-&gt;</span> <span class="dt">Function3D</span>
@@ -2770,7 +2770,7 @@ shapeFunc res x y <span class="fu">=</span>
   <span class="kw">let</span> 
       z <span class="fu">=</span> maxZeroIndex (ymandel x y) <span class="dv">0</span> <span class="dv">1</span> <span class="dv">20</span>
   <span class="kw">in</span>
-  <span class="kw">if</span> <span class="fu">and</span> [ maxZeroIndex (ymandel (x<span class="fu">+</span>xeps) (y<span class="fu">+</span>yeps)) <span class="dv">0</span> <span class="dv">1</span> <span class="dv">20</span> <span class="fu">&lt;</span> <span class="fl">0.000001</span> <span class="fu">|</span>
+  <span class="kw">if</span> <span class="fu">and</span> [ maxZeroIndex (ymandel (x<span class="fu">+</span>xeps) (y<span class="fu">+</span>yeps)) <span class="dv">0</span> <span class="dv">1</span> <span class="dv">20</span> <span class="fu">&lt;</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">000001</span> <span class="fu">|</span>
               val <span class="ot">&lt;-</span> [res], xeps <span class="ot">&lt;-</span> [<span class="fu">-</span>val,val], yeps<span class="ot">&lt;-</span>[<span class="fu">-</span>val,val]]
       <span class="kw">then</span> <span class="kw">Nothing</span> 
       <span class="kw">else</span> <span class="kw">Just</span> (z,colorFromValue <span class="dv">0</span>)
@@ -2779,9 +2779,9 @@ shapeFunc res x y <span class="fu">=</span>
 colorFromValue n <span class="fu">=</span>
   <span class="kw">let</span> 
 <span class="ot">      t ::</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Scalar</span>
-      t i <span class="fu">=</span> <span class="fl">0.0</span> <span class="fu">+</span> <span class="fl">0.5</span><span class="fu">*cos</span>( i <span class="fu">/</span><span class="dv">10</span> )
+      t i <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">+</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">5</span><span class="fu">*cos</span>( i <span class="fu">/</span><span class="dv">10</span> )
   <span class="kw">in</span>
-    makeColor (t n) (t (n<span class="dv">+5</span>)) (t (n<span class="dv">+10</span>))
+    makeColor (t n) (t (n<span class="fu">+</span><span class="dv">5</span>)) (t (n<span class="fu">+</span><span class="dv">10</span>))
 
 <span class="co">-- given f min max nbtest,</span>
 <span class="co">-- considering </span>
@@ -2796,8 +2796,8 @@ colorFromValue n <span class="fu">=</span>
 maxZeroIndex _ minval maxval <span class="dv">0</span> <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span>
 maxZeroIndex func minval maxval n <span class="fu">=</span> 
   <span class="kw">if</span> func medpoint <span class="fu">/=</span> <span class="dv">0</span> 
-       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="dv">-1</span>)
-       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="dv">-1</span>)
+       <span class="kw">then</span> maxZeroIndex func minval medpoint (n<span class="fu">-</span><span class="dv">1</span>)
+       <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="fu">-</span><span class="dv">1</span>)
   <span class="kw">where</span> medpoint <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span>
 
 <span class="ot">ymandel ::</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span>
@@ -3054,7 +3054,7 @@ Function declaration
     <span class="kw">return</span> x*x + y*y;
 }</code></pre>
 <p>In Javascript:</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> f(x,y) {
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="fu">f</span>(x,y) {
     <span class="kw">return</span> x*x + y*y;
 }</code></pre>
 <p>in Python:</p>
@@ -3094,7 +3094,7 @@ main <span class="fu">=</span> <span class="fu">print</span> (f <span class="dv"
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
 f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
 
-main <span class="fu">=</span> <span class="fu">print</span> (f <span class="fl">2.3</span> <span class="fl">4.2</span>)</code></pre>
+main <span class="fu">=</span> <span class="fu">print</span> (f <span class="dv">2</span><span class="fu">.</span><span class="dv">3</span> <span class="dv">4</span><span class="fu">.</span><span class="dv">2</span>)</code></pre>
 </div>
 <p>You get this error:</p>
 <pre><code>21_very_basic.lhs:6:23:
@@ -3112,7 +3112,7 @@ main <span class="fu">=</span> <span class="fu">print</span> (f <span class="fl"
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
 
-main <span class="fu">=</span> <span class="fu">print</span> (f <span class="fl">2.3</span> <span class="fl">4.2</span>)</code></pre>
+main <span class="fu">=</span> <span class="fu">print</span> (f <span class="dv">2</span><span class="fu">.</span><span class="dv">3</span> <span class="dv">4</span><span class="fu">.</span><span class="dv">2</span>)</code></pre>
 </div>
 <p>It works! Great, we don’t have to declare a new function for every single type. For example, in <code>C</code>, you’ll have to declare a function for <code>int</code>, for <code>float</code>, for <code>long</code>, for <code>double</code>, etc…</p>
 <p>But, what type should we declare? To discover the type Haskell has found for us, just launch ghci:</p>
@@ -3159,7 +3159,7 @@ g y ⇔ 3*3 + y*y</code></pre>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="kw">Num</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> a
 f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
 
-main <span class="fu">=</span> <span class="fu">print</span> (f <span class="dv">3</span> <span class="fl">2.4</span>)</code></pre>
+main <span class="fu">=</span> <span class="fu">print</span> (f <span class="dv">3</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">4</span>)</code></pre>
 </div>
 <p>It works, because, <code>3</code> is a valid representation both for Fractional numbers like Float and for Integer. As <code>2.4</code> is a Fractional number, <code>3</code> is then interpreted as being also a Fractional number.</p>
 <p><a href="/Scratch/en/blog/Haskell-the-Hard-Way/code/01_basic/10_Introduction/23_very_basic.lhs" class="cut">01_basic/10_Introduction/<strong>23_very_basic.lhs</strong> </a></p>
@@ -3173,7 +3173,7 @@ f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</
 <span class="ot">x ::</span> <span class="dt">Int</span>
 x <span class="fu">=</span> <span class="dv">3</span>
 <span class="ot">y ::</span> <span class="dt">Float</span>
-y <span class="fu">=</span> <span class="fl">2.4</span>
+y <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">4</span>
 main <span class="fu">=</span> <span class="fu">print</span> (f x y) <span class="co">-- won&#39;t work because type x ≠ type y</span></code></pre>
 </div>
 <p>The compiler complains. The two parameters must have the same type.</p>
@@ -3368,9 +3368,9 @@ Functional style
 <p>example: <code>[1,2,3,4,5] ⇒  2 + 4 ⇒  6</code></p>
 </blockquote>
 <p>To show differences between the functional and imperative approach, I’ll start by providing an imperative solution (in Javascript):</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> evenSum(list) {
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="fu">evenSum</span>(list) {
     <span class="kw">var</span> result = <span class="dv">0</span>;
-    <span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>; i&lt; <span class="kw">list</span>.<span class="fu">length</span> ; i++) {
+    <span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>; i&lt; <span class="ot">list</span>.<span class="fu">length</span> ; i++) {
         <span class="kw">if</span> (list[i] % <span class="dv">2</span> ==<span class="dv">0</span>) {
             result += list[i];
         }
@@ -3614,7 +3614,7 @@ myfunc list = foldl <span class="yellow">bar</span> <span class="blue">initialVa
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 6</span>
 <span class="co">-- foldl&#39; isn&#39;t accessible by default</span>
 <span class="co">-- we need to import it from the module Data.List</span>
-<span class="kw">import</span> <span class="dt">Data.List</span>
+<span class="kw">import</span> Data.List
 evenSum l <span class="fu">=</span> foldl&#39; mysum <span class="dv">0</span> (<span class="fu">filter</span> <span class="fu">even</span> l)
   <span class="kw">where</span> mysum acc value <span class="fu">=</span> acc <span class="fu">+</span> value</code></pre>
 <p>Version we can simplify by using directly a lambda notation. This way we don’t have to create the temporary name <code>mysum</code>.</p>
@@ -3622,7 +3622,7 @@ evenSum l <span class="fu">=</span> foldl&#39; mysum <span class="dv">0</span> (
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 7</span>
 <span class="co">-- Generally it is considered a good practice</span>
 <span class="co">-- to import only the necessary function(s)</span>
-<span class="kw">import</span> <span class="dt">Data.List</span> (foldl&#39;)
+<span class="kw">import</span> Data.List (foldl&#39;)
 evenSum l <span class="fu">=</span> foldl&#39; (\x y <span class="ot">-&gt;</span> x<span class="fu">+</span>y) <span class="dv">0</span> (<span class="fu">filter</span> <span class="fu">even</span> l)</code></pre>
 </div>
 <p>And of course, we note that</p>
@@ -3639,7 +3639,7 @@ evenSum l <span class="fu">=</span> foldl&#39; (\x y <span class="ot">-&gt;</spa
 <p><a href="/Scratch/en/blog/Haskell-the-Hard-Way/code/02_Hard_Part/16_Functions.lhs" class="cut">02_Hard_Part/<strong>16_Functions.lhs</strong></a></p>
 <p>Finally</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 8</span>
-<span class="kw">import</span> <span class="dt">Data.List</span> (foldl&#39;)
+<span class="kw">import</span> Data.List (foldl&#39;)
 <span class="ot">evenSum ::</span> <span class="kw">Integral</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a
 evenSum l <span class="fu">=</span> foldl&#39; (<span class="fu">+</span>) <span class="dv">0</span> (<span class="fu">filter</span> <span class="fu">even</span> l)</code></pre>
 <p><code>foldl'</code> isn’t the easiest function to intuit. If you are not used to it, you should study it a bit.</p>
@@ -3659,13 +3659,13 @@ evenSum l <span class="fu">=</span> foldl&#39; (<span class="fu">+</span>) <span
 <pre class="sourceCode haskell"><code class="sourceCode haskell">(f <span class="fu">.</span> g <span class="fu">.</span> h) x ⇔  f ( g (h x))</code></pre>
 <p>We can take advantage of this operator to η-reduce our function:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 9</span>
-<span class="kw">import</span> <span class="dt">Data.List</span> (foldl&#39;)
+<span class="kw">import</span> Data.List (foldl&#39;)
 <span class="ot">evenSum ::</span> <span class="kw">Integral</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a
 evenSum <span class="fu">=</span> (foldl&#39; (<span class="fu">+</span>) <span class="dv">0</span>) <span class="fu">.</span> (<span class="fu">filter</span> <span class="fu">even</span>)</code></pre>
 <p>Also, we could rename some parts to make it clearer:</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 10 </span>
-<span class="kw">import</span> <span class="dt">Data.List</span> (foldl&#39;)
+<span class="kw">import</span> Data.List (foldl&#39;)
 <span class="ot">sum&#39; ::</span> (<span class="kw">Num</span> a) <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a
 sum&#39; <span class="fu">=</span> foldl&#39; (<span class="fu">+</span>) <span class="dv">0</span>
 <span class="ot">evenSum ::</span> <span class="kw">Integral</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a
@@ -3820,9 +3820,9 @@ main <span class="fu">=</span> <span class="fu">putStrLn</span> <span class="fu"
 <p>And many accessors are made for you. Furthermore you can use another order when setting values.</p>
 <p>Example:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Complex</span> <span class="fu">=</span> <span class="kw">Num</span> a <span class="ot">=&gt;</span> <span class="dt">Complex</span> {<span class="ot"> real ::</span> a,<span class="ot"> img ::</span> a}
-c <span class="fu">=</span> <span class="dt">Complex</span> <span class="fl">1.0</span> <span class="fl">2.0</span>
+c <span class="fu">=</span> <span class="dt">Complex</span> <span class="dv">1</span><span class="fu">.</span><span class="dv">0</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span>
 z <span class="fu">=</span> <span class="dt">Complex</span> { real <span class="fu">=</span> <span class="dv">3</span>, img <span class="fu">=</span> <span class="dv">4</span> }
-real c <span class="ot">⇒</span> <span class="fl">1.0</span>
+real c <span class="ot">⇒</span> <span class="dv">1</span><span class="fu">.</span><span class="dv">0</span>
 img z <span class="ot">⇒</span> <span class="dv">4</span></code></pre>
 <p><a href="/Scratch/en/blog/Haskell-the-Hard-Way/code/02_Hard_Part/22_Types.lhs" class="cut">02_Hard_Part/<strong>22_Types.lhs</strong> </a></p>
 <hr/>
@@ -3869,7 +3869,7 @@ Trees
 
 <p>We’ll just give another standard example: binary trees.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Data.List</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Data.List
 
 <span class="kw">data</span> <span class="dt">BinTree</span> a <span class="fu">=</span> <span class="dt">Empty</span>
                  <span class="fu">|</span> <span class="dt">Node</span> a (<span class="dt">BinTree</span> a) (<span class="dt">BinTree</span> a)
@@ -4080,7 +4080,7 @@ numbers <span class="fu">=</span> <span class="dv">0</span><span class="fu">:map
 
 take&#39; n [] <span class="fu">=</span> []
 take&#39; <span class="dv">0</span> l <span class="fu">=</span> []
-take&#39; n (x<span class="fu">:</span>xs) <span class="fu">=</span> x<span class="fu">:</span>take&#39; (n<span class="dv">-1</span>) xs
+take&#39; n (x<span class="fu">:</span>xs) <span class="fu">=</span> x<span class="fu">:</span>take&#39; (n<span class="fu">-</span><span class="dv">1</span>) xs
 
 main <span class="fu">=</span> <span class="fu">print</span> <span class="fu">$</span> take&#39; <span class="dv">10</span> numbers</code></pre>
 </div>
@@ -4098,8 +4098,8 @@ main <span class="fu">=</span> <span class="fu">print</span> <span class="fu">$<
 
 <p>This code is mostly the same as the previous one.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Debug.Trace</span> (trace)
-<span class="kw">import</span> <span class="dt">Data.List</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Debug.Trace (trace)
+<span class="kw">import</span> Data.List
 <span class="kw">data</span> <span class="dt">BinTree</span> a <span class="fu">=</span> <span class="dt">Empty</span> 
                  <span class="fu">|</span> <span class="dt">Node</span> a (<span class="dt">BinTree</span> a) (<span class="dt">BinTree</span> a) 
                   <span class="kw">deriving</span> (<span class="kw">Eq</span>,<span class="kw">Ord</span>)</code></pre>
@@ -4156,8 +4156,8 @@ main <span class="fu">=</span> <span class="fu">print</span> <span class="fu">$<
 treeTakeDepth _ <span class="dt">Empty</span> <span class="fu">=</span> <span class="dt">Empty</span>
 treeTakeDepth <span class="dv">0</span> _     <span class="fu">=</span> <span class="dt">Empty</span>
 treeTakeDepth n (<span class="dt">Node</span> x left right) <span class="fu">=</span> <span class="kw">let</span>
-          nl <span class="fu">=</span> treeTakeDepth (n<span class="dv">-1</span>) left
-          nr <span class="fu">=</span> treeTakeDepth (n<span class="dv">-1</span>) right
+          nl <span class="fu">=</span> treeTakeDepth (n<span class="fu">-</span><span class="dv">1</span>) left
+          nr <span class="fu">=</span> treeTakeDepth (n<span class="fu">-</span><span class="dv">1</span>) right
           <span class="kw">in</span>
               <span class="dt">Node</span> x nl nr</code></pre>
 </div>
@@ -4183,8 +4183,8 @@ treeTakeDepth n (<span class="dt">Node</span> x left right) <span class="fu">=</
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">iTree <span class="fu">=</span> <span class="dt">Node</span> <span class="dv">0</span> (dec iTree) (inc iTree)
         <span class="kw">where</span>
-           dec (<span class="dt">Node</span> x l r) <span class="fu">=</span> <span class="dt">Node</span> (x<span class="dv">-1</span>) (dec l) (dec r) 
-           inc (<span class="dt">Node</span> x l r) <span class="fu">=</span> <span class="dt">Node</span> (x<span class="dv">+1</span>) (inc l) (inc r) </code></pre>
+           dec (<span class="dt">Node</span> x l r) <span class="fu">=</span> <span class="dt">Node</span> (x<span class="fu">-</span><span class="dv">1</span>) (dec l) (dec r) 
+           inc (<span class="dt">Node</span> x l r) <span class="fu">=</span> <span class="dt">Node</span> (x<span class="fu">+</span><span class="dv">1</span>) (inc l) (inc r) </code></pre>
 </div>
 <p>Another way to create this tree is to use a higher order function. This function should be similar to <code>map</code>, but should work on <code>BinTree</code> instead of list. Here is such a function:</p>
 <div class="codehighlight">
@@ -4199,8 +4199,8 @@ treeMap f (<span class="dt">Node</span> x left right) <span class="fu">=</span> 
 <p>Our definition is now:</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">infTreeTwo ::</span> <span class="dt">BinTree</span> <span class="dt">Int</span>
-infTreeTwo <span class="fu">=</span> <span class="dt">Node</span> <span class="dv">0</span> (treeMap (\x <span class="ot">-&gt;</span> x<span class="dv">-1</span>) infTreeTwo) 
-                    (treeMap (\x <span class="ot">-&gt;</span> x<span class="dv">+1</span>) infTreeTwo) </code></pre>
+infTreeTwo <span class="fu">=</span> <span class="dt">Node</span> <span class="dv">0</span> (treeMap (\x <span class="ot">-&gt;</span> x<span class="fu">-</span><span class="dv">1</span>) infTreeTwo) 
+                    (treeMap (\x <span class="ot">-&gt;</span> x<span class="fu">+</span><span class="dv">1</span>) infTreeTwo) </code></pre>
 </div>
 <p>Look at the result for</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="fu">print</span> <span class="fu">$</span> treeTakeDepth <span class="dv">4</span> infTreeTwo</code></pre>
@@ -4320,7 +4320,7 @@ main = do
 <p>Argh! An evil error message and a crash! The first evolution will be to answer with a more friendly message.</p>
 <p>In order to do this, we must detect that something went wrong. Here is one way to do this. Use the type <code>Maybe</code>. It is a very common type in Haskell.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Data.Maybe</span></code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Data.Maybe</code></pre>
 </div>
 <p>What is this thing? <code>Maybe</code> is a type which takes one parameter. Its definition is:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Maybe</span> a <span class="fu">=</span> <span class="kw">Nothing</span> <span class="fu">|</span> <span class="kw">Just</span> a</code></pre>
@@ -4363,7 +4363,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <p>Our next evolution will be to prompt the user again and again until she enters a valid answer.</p>
 <p>We keep the first part:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Data.Maybe</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Data.Maybe
 
 <span class="ot">maybeRead ::</span> <span class="kw">Read</span> a <span class="ot">=&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
 maybeRead s <span class="fu">=</span> <span class="kw">case</span> <span class="fu">reads</span> s <span class="kw">of</span>
@@ -4632,7 +4632,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
   <span class="fu">print</span> <span class="fu">$</span> <span class="fu">sum</span> list</code></pre>
 <p>Is translated into:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Data.Maybe</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Data.Maybe
 
 <span class="ot">maybeRead ::</span> <span class="kw">Read</span> a <span class="ot">=&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
 maybeRead s <span class="fu">=</span> <span class="kw">case</span> <span class="fu">reads</span> s <span class="kw">of</span>
@@ -4811,7 +4811,7 @@ The list monad
 
 <p>The list monad helps us to simulate non deterministic computations. Here we go:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Control.Monad</span> (guard)
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Control.Monad (guard)
 
 allCases <span class="fu">=</span> [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>]
 
@@ -4867,7 +4867,7 @@ More on Infinite Tree
 
 <p>This code is mostly the same as the one in the <a href="#trees">tree section</a>.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Data.List</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Data.List
 <span class="kw">data</span> <span class="dt">BinTree</span> a <span class="fu">=</span> <span class="dt">Empty</span> 
                  <span class="fu">|</span> <span class="dt">Node</span> a (<span class="dt">BinTree</span> a) (<span class="dt">BinTree</span> a) 
                   <span class="kw">deriving</span> (<span class="kw">Eq</span>,<span class="kw">Ord</span>)
@@ -4928,8 +4928,8 @@ treeFromList (x<span class="fu">:</span>xs) <span class="fu">=</span> <span clas
 <pre class="sourceCode haskell"><code class="sourceCode haskell">treeTakeDepth _ <span class="dt">Empty</span> <span class="fu">=</span> <span class="dt">Empty</span>
 treeTakeDepth <span class="dv">0</span> _     <span class="fu">=</span> <span class="dt">Empty</span>
 treeTakeDepth n (<span class="dt">Node</span> x left right) <span class="fu">=</span> <span class="kw">let</span>
-          nl <span class="fu">=</span> treeTakeDepth (n<span class="dv">-1</span>) left
-          nr <span class="fu">=</span> treeTakeDepth (n<span class="dv">-1</span>) right
+          nl <span class="fu">=</span> treeTakeDepth (n<span class="fu">-</span><span class="dv">1</span>) left
+          nr <span class="fu">=</span> treeTakeDepth (n<span class="fu">-</span><span class="dv">1</span>) right
           <span class="kw">in</span>
               <span class="dt">Node</span> x nl nr</code></pre>
 </div>
@@ -4979,8 +4979,8 @@ treeTakeDepth 4 (treeFromList shuffle)
 
 <p>This code is mostly the same as the preceding one.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Debug.Trace</span> (trace)
-<span class="kw">import</span> <span class="dt">Data.List</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Debug.Trace (trace)
+<span class="kw">import</span> Data.List
 <span class="kw">data</span> <span class="dt">BinTree</span> a <span class="fu">=</span> <span class="dt">Empty</span> 
                  <span class="fu">|</span> <span class="dt">Node</span> a (<span class="dt">BinTree</span> a) (<span class="dt">BinTree</span> a) 
                   <span class="kw">deriving</span> (<span class="kw">Eq</span>,<span class="kw">Ord</span>)</code></pre>
@@ -5027,8 +5027,8 @@ treeTakeDepth 4 (treeFromList shuffle)
 treeTakeDepth _ <span class="dt">Empty</span> <span class="fu">=</span> <span class="dt">Empty</span>
 treeTakeDepth <span class="dv">0</span> _     <span class="fu">=</span> <span class="dt">Empty</span>
 treeTakeDepth n (<span class="dt">Node</span> x left right) <span class="fu">=</span> <span class="kw">let</span>
-          nl <span class="fu">=</span> treeTakeDepth (n<span class="dv">-1</span>) left
-          nr <span class="fu">=</span> treeTakeDepth (n<span class="dv">-1</span>) right
+          nl <span class="fu">=</span> treeTakeDepth (n<span class="fu">-</span><span class="dv">1</span>) left
+          nr <span class="fu">=</span> treeTakeDepth (n<span class="fu">-</span><span class="dv">1</span>) right
           <span class="kw">in</span>
               <span class="dt">Node</span> x nl nr</code></pre>
 </div>
@@ -5072,7 +5072,7 @@ safefilter f l <span class="fu">=</span> safefilter&#39; f l nbTry
       safefilter&#39; f (x<span class="fu">:</span>xs) n <span class="fu">=</span> 
                   <span class="kw">if</span> f x 
                      <span class="kw">then</span> x <span class="fu">:</span> safefilter&#39; f xs nbTry 
-                     <span class="kw">else</span> safefilter&#39; f xs (n<span class="dv">-1</span>) </code></pre>
+                     <span class="kw">else</span> safefilter&#39; f xs (n<span class="fu">-</span><span class="dv">1</span>) </code></pre>
 </div>
 <p>Now run the program and be happy:</p>
 <div class="codehighlight">
@@ -5308,7 +5308,7 @@ static/tmp
 <li><code>config/models</code></li>
 </ol>
 <p>Obviously:</p>
-<p><code>config/routes</code> | is where you’ll configure the map <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> → Code. |<br /><code>Handler/</code> | contains the files that will contain the code called when a <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> is accessed. |<br /><code>templates/</code> | contains <span class="sc">html</span>, js and <span class="sc">css</span> templates. |<br /><code>config/models</code> | is where you’ll configure the persistent objects (database tables). |</p>
+<p><code>config/routes</code> | is where you’ll configure the map <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> → Code. |<br /><code>Handler/</code> | contains the files that will contain the code called when a <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> is accessed. |<br /><code>templates/</code> | contains <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span>, js and <span class="sc">css</span> templates. |<br /><code>config/models</code> | is where you’ll configure the persistent objects (database tables). |</p>
 <p>During this tutorial we’ll modify other files as well, but we won’t explore them in detail.</p>
 <p>Also note, shell commands are executed in the root directory of your project instead specified otherwise.</p>
 <p>We are now ready to start!</p>
@@ -5334,7 +5334,7 @@ static/tmp
 /echo/#String EchoR GET
 </pre>
 
-<p>This line contains three elements: the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> pattern, a handler name, an %http method. I am not particularly fan of the big R notation but this is the standard convention.</p>
+<p>This line contains three elements: the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> pattern, a handler name, an <span class="sc"><abbr title="HyperText Transfer Protocol">http</abbr></span> method. I am not particularly fan of the big R notation but this is the standard convention.</p>
 <p>If you save <code>config/routes</code>, you should see your terminal in which you launched <code>yesod devel</code> activate and certainly displaying an error message.</p>
 <pre>
 Application.hs:31:1: Not in scope: `getEchoR'
@@ -5345,7 +5345,7 @@ Application.hs:31:1: Not in scope: `getEchoR'
 getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
     defaultLayout <span class="fu">$</span> <span class="kw">do</span>
         [whamlet<span class="fu">|&lt;</span>h1<span class="fu">&gt;#</span>{theText}<span class="fu">|</span>]</code></pre>
-<p>Don’t worry if you find all of this a bit cryptic. In short it just declare a function named <code>getEchoR</code> with one argument (<code>theText</code>) of type String. When this function is called, it return a <code>Handler RepHtml</code> whatever it is. But mainly this will encapsulate our expected result inside an <span class="sc">html</span> text.</p>
+<p>Don’t worry if you find all of this a bit cryptic. In short it just declare a function named <code>getEchoR</code> with one argument (<code>theText</code>) of type String. When this function is called, it return a <code>Handler RepHtml</code> whatever it is. But mainly this will encapsulate our expected result inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> text.</p>
 <p>After saving the file, you should see yesod recompile the application. When the compilation is finished you’ll see the message: <code>Starting devel application</code>.</p>
 <p>Now you can visit: <a href="http://localhost:3000/echo/Yesod%20rocks!"><code>http://localhost:3000/echo/Yesod%20rocks!</code></a></p>
 <p>TADA! It works!</p>
@@ -5359,7 +5359,7 @@ getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
 <script>alert("Bad!");)<% "</script>
 <p>&quot; %&gt;</p>
 <p>The special characters are protected for us. A malicious user could not hide some bad script inside.</p>
-<p>This behavior is a direct consequence of <em>type safety</em>. The <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> string is put inside a <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type. Then the interesting part in the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> is put inside a String type. To pass from <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type to String type some transformation are made. For example, replace all “<code>%20</code>” by space characters. Then to show the String inside an <span class="sc">html</span> document, the string is put inside an <span class="sc">html</span> type. Some transformations occurs like replace “<code>&lt;</code>” by “<code>&amp;lt;</code>”. Thanks to yesod, this tedious job is done for us.</p>
+<p>This behavior is a direct consequence of <em>type safety</em>. The <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> string is put inside a <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type. Then the interesting part in the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> is put inside a String type. To pass from <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type to String type some transformation are made. For example, replace all “<code>%20</code>” by space characters. Then to show the String inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> document, the string is put inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> type. Some transformations occurs like replace “<code>&lt;</code>” by “<code>&amp;lt;</code>”. Thanks to yesod, this tedious job is done for us.</p>
 <pre class="zsh"><code>&quot;http://localhost:3000/echo/some%20text&lt;a&gt;&quot; :: URL
                     ↓
               &quot;some text&lt;a&gt;&quot;                 :: String
@@ -5375,7 +5375,7 @@ getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
 <li>Put our “views”<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup> inside the <code>template</code> directory</li>
 </ul>
 <h4 id="use-a-better-css">Use a better <span class="sc">css</span></h4>
-<p>It is nice to note, the default template is based on %html5 boilerplate. Let’s change the default <span class="sc">css</span>. Add a file named <code>default-layout.lucius</code> inside the <code>templates/</code> directory containing:</p>
+<p>It is nice to note, the default template is based on <span class="sc"><abbr title="HyperText Markup Language 5">html5</abbr></span> boilerplate. Let’s change the default <span class="sc">css</span>. Add a file named <code>default-layout.lucius</code> inside the <code>templates/</code> directory containing:</p>
 <pre class="sourceCode css"><code class="sourceCode css">body <span class="kw">{</span>
     <span class="kw">font-family:</span> Helvetica, <span class="dt">sans-serif</span><span class="kw">;</span> 
     <span class="kw">font-size:</span> <span class="dt">18px</span><span class="kw">;</span> <span class="kw">}</span>
@@ -5399,12 +5399,12 @@ a <span class="kw">{</span> <span class="kw">color:</span> <span class="dt">#A56
 a<span class="dv">:hover</span> <span class="kw">{</span> <span class="kw">color:</span> <span class="dt">#C58</span><span class="kw">;</span> <span class="kw">}</span>
 a<span class="dv">:active</span> <span class="kw">{</span> <span class="kw">color:</span> <span class="dt">#C58</span><span class="kw">;</span> <span class="kw">}</span>
 a<span class="dv">:visited</span> <span class="kw">{</span> <span class="kw">color:</span> <span class="dt">#943</span><span class="kw">;</span> <span class="kw">}</span></code></pre>
-<p>Personally I would prefer if such a minimal <span class="sc">css</span> was put with the scaffolding tool. I am sure somebody already made such a minimal <span class="sc">css</span> which give the impression the browser handle correctly <span class="sc">html</span> without any style applied to it. But I digress.</p>
+<p>Personally I would prefer if such a minimal <span class="sc">css</span> was put with the scaffolding tool. I am sure somebody already made such a minimal <span class="sc">css</span> which give the impression the browser handle correctly <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> without any style applied to it. But I digress.</p>
 <h4 id="separate-handlers">Separate Handlers</h4>
 <p>Generally you don’t want to have all your code inside a unique file. This is why we will separate our handlers. In a first time create a new file <code>Handler/Echo.hs</code> containing:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
-<span class="kw">import</span> <span class="dt">Import</span>
+<span class="kw">import</span> Import
 
 <span class="ot">getEchoR ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
@@ -5417,7 +5417,7 @@ getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
 </pre>
 
 <p>We must also declare this new Handler module inside <code>Application.hs</code>. Just after the “<code>import Handler.Home</code>”, add:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Handler.Echo</span></code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Handler.Echo</code></pre>
 <p>This is it.</p>
 <p><small><em>ps:</em> I am sure not so far in the future we could simply write <code>yesod add-handler Echo</code> to declare it and create a new handler file.</small></p>
 <h4 id="data.text"><code>Data.Text</code></h4>
@@ -5432,14 +5432,14 @@ getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
 <p>And do the same in <code>Handler/Echo.hs</code>:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
-<span class="kw">import</span> <span class="dt">Import</span>
+<span class="kw">import</span> Import
 
 <span class="ot">getEchoR ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
     defaultLayout <span class="fu">$</span> <span class="kw">do</span>
         [whamlet<span class="fu">|&lt;</span>h1<span class="fu">&gt;#</span>{theText}<span class="fu">|</span>]</code></pre>
 <h4 id="use-templates">Use templates</h4>
-<p>Some <span class="sc">html</span> (more precisely hamlet) is written directly inside our handler. We should put this part inside another file. Create the new file <code>templates/echo.hamlet</code> containing:</p>
+<p>Some <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> (more precisely hamlet) is written directly inside our handler. We should put this part inside another file. Create the new file <code>templates/echo.hamlet</code> containing:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&lt;</span>h1<span class="fu">&gt;</span> <span class="fu">#</span>{theText}</code></pre>
 <p>and modify the handler <code>Handler/Echo.hs</code>:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">getEchoR ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
@@ -5461,8 +5461,8 @@ getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
 <p>This time the path <code>/mirror</code> will accept GET and POST requests. Add the corresponding new Handler file:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Mirror</span> <span class="kw">where</span>
 
-<span class="kw">import</span> <span class="dt">Import</span>
-<span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.Text</span> <span class="kw">as</span> <span class="dt">T</span>
+<span class="kw">import</span> Import
+<span class="kw">import</span> <span class="kw">qualified</span> Data.Text <span class="kw">as</span> T
 
 <span class="ot">getMirrorR ::</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 getMirrorR <span class="fu">=</span> <span class="kw">do</span>
@@ -5490,7 +5490,7 @@ postMirrorR <span class="fu">=</span>  <span class="kw">do</span>
 <p>Just try it by <a href="http://localhost:3000/mirror">clicking here</a>.</p>
 <p>Also you can try to enter strange values. Like before, your application is quite secure.</p>
 <h2 id="a-blog">A Blog</h2>
-<p>We saw how to retrieve %http parameters. It is the time to save things into a database.</p>
+<p>We saw how to retrieve <span class="sc"><abbr title="HyperText Transfer Protocol">http</abbr></span> parameters. It is the time to save things into a database.</p>
 <p>As before add some routes inside <code>config/routes</code>:</p>
 <pre>
 /blog               BlogR       GET POST
@@ -5520,11 +5520,11 @@ Article
     )
 <span class="kw">where</span>
 
-<span class="kw">import</span> <span class="dt">Import</span>
-<span class="kw">import</span> <span class="dt">Data.Monoid</span>
+<span class="kw">import</span> Import
+<span class="kw">import</span> Data.Monoid
 
 <span class="co">-- to use Html into forms</span>
-<span class="kw">import</span> <span class="dt">Yesod.Form.Nic</span> (<span class="dt">YesodNic</span>, nicHtmlField)
+<span class="kw">import</span> Yesod.Form.Nic (YesodNic, nicHtmlField)
 <span class="kw">instance</span> <span class="dt">YesodNic</span> <span class="dt">App</span></code></pre>
 <p><small>Remark: it is a best practice to add the YesodNic instance inside <code>Foundation.hs</code>. I put this definition here to make things easier but you should see a warning about this orphan instance. To put the include inside Foundation.hs is left as an exercice to the reader.</small></p>
 <p><small><em>Hint: Do not forget to put <code>YesodNic</code> and <code>nicHtmlField</code> inside the exported objects of the module.</em> </small></p>
@@ -5599,7 +5599,7 @@ getArticleR articleId <span class="fu">=</span> <span class="kw">do</span>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;p&gt;</span>A last try to <span class="kw">&lt;em&gt;</span>cross script<span class="kw">&lt;/em&gt;</span> 
    and <span class="kw">&lt;em&gt;</span>SQL injection<span class="kw">&lt;/em&gt;&lt;/p&gt;</span>
 <span class="kw">&lt;p&gt;</span>Here is the first try: 
-   <span class="kw">&lt;script&gt;</span>alert(<span class="st">&quot;You loose&quot;</span>);<span class="kw">&lt;/script&gt;&lt;/p&gt;</span>
+<span class="er">   &lt;script&gt;alert(&quot;You loose&quot;);&lt;/script&gt;&lt;/p&gt;</span>
 <span class="kw">&lt;p&gt;</span> And Here is the last <span class="kw">&lt;/p&gt;</span>
 &quot;); DROP TABLE ARTICLE;;</code></pre>
 <h2 id="conclusion">Conclusion</h2>
@@ -5783,7 +5783,7 @@ getArticleR articleId <span class="fu">=</span> <span class="kw">do</span>
 <img src="http://imgs.xkcd.com/comics/exploits_of_a_mom.png" alt="SQL injection by a mom" /><p class="caption">SQL injection by a mom</p>
 </div>
 <p>Lorsque vous créez une application web, beaucoup de temps est passé à s’occuper de chaînes de caractères. Des chaînes de caractère pour les URL, le HTML, le Javascript, les CSS, les requêtes SQL, etc… Pour éviter des utilisation malicieuses vous devez protéger chaque chaîne de caractère entre chaque étape. Par exemple supposons que vous entriez comme nom&nbsp;:</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript">Newton&lt;script&gt;alert(<span class="st">&quot;An apple fall&quot;</span>)&lt;/script&gt;</code></pre>
+<pre class="sourceCode javascript"><code class="sourceCode javascript">Newton&lt;script&gt;<span class="fu">alert</span>(<span class="st">&quot;An apple fall&quot;</span>)&lt;<span class="ot">/script&gt;</span></code></pre>
 <p>Sans une protection correcte, le message “An apple fall” sera affiché à chaque fois que quelqu’un essayera d’accéder au nom de cet utilisateur. Les “types saufs” sont le <a href="https://www.youtube.com/watch?v=1IWF3IsEPBE">tonyglandil du web</a>. A chaque chaine de caractère, on lui associe un “type”. A quoi sert cette chaîne de caractère ? Est-ce une URL ? Du javascript ? De l’HTML ? Entre chaque passage d’une représentation à une autre, un transformation is faite par défaut.</p>
 <p>Yesod fait de son mieux pour typer les objets manipulés et ainsi il fera ce qu’il faut pour ne pas mettre du script dans une URL par exemple.</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">@[AnotherPageR]</span><span class="kw">&gt;</span>Go to the other page</code></pre>

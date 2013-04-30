@@ -1,5 +1,6 @@
-<!DOCTYPE html>
-<html>
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>YBlog - Site en Haskell</title>
@@ -9,15 +10,12 @@
         <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/scientific.css" />
         <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/solarized.css" />
 		<!-- Font -->
-        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css" />
-		<link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css" />
+        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+		<link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
         <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomfr" />
         <!--[if lt IE 9]>
         <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
         <![endif]-->
-        <script type="text/javascript" src="../../../../Scratch/js/jquery-1.3.1.min.js"></script>
-        <script type="text/javascript" src="../../../../Scratch/js/jquery.cookie.js"></script>
-        <script type="text/javascript" src="../../../../Scratch/js/index.js"></script>
     </head>
     <body lang="fr">
         <div id="content">
@@ -142,7 +140,7 @@ static/tmp
 <li><code>config/models</code></li>
 </ol>
 <p>Obviously:</p>
-<p><code>config/routes</code> | is where you’ll configure the map <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> → Code. |<br /><code>Handler/</code> | contains the files that will contain the code called when a <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> is accessed. |<br /><code>templates/</code> | contains <span class="sc">html</span>, js and <span class="sc">css</span> templates. |<br /><code>config/models</code> | is where you’ll configure the persistent objects (database tables). |</p>
+<p><code>config/routes</code> | is where you’ll configure the map <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> → Code. |<br /><code>Handler/</code> | contains the files that will contain the code called when a <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> is accessed. |<br /><code>templates/</code> | contains <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span>, js and <span class="sc">css</span> templates. |<br /><code>config/models</code> | is where you’ll configure the persistent objects (database tables). |</p>
 <p>During this tutorial we’ll modify other files as well, but we won’t explore them in detail.</p>
 <p>Also note, shell commands are executed in the root directory of your project instead specified otherwise.</p>
 <p>We are now ready to start!</p>
@@ -168,7 +166,7 @@ static/tmp
 /echo/#String EchoR GET
 </pre>
 
-<p>This line contains three elements: the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> pattern, a handler name, an %http method. I am not particularly fan of the big R notation but this is the standard convention.</p>
+<p>This line contains three elements: the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> pattern, a handler name, an <span class="sc"><abbr title="HyperText Transfer Protocol">http</abbr></span> method. I am not particularly fan of the big R notation but this is the standard convention.</p>
 <p>If you save <code>config/routes</code>, you should see your terminal in which you launched <code>yesod devel</code> activate and certainly displaying an error message.</p>
 <pre>
 Application.hs:31:1: Not in scope: `getEchoR'
@@ -179,7 +177,7 @@ Application.hs:31:1: Not in scope: `getEchoR'
 getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
     defaultLayout <span class="fu">$</span> <span class="kw">do</span>
         [whamlet<span class="fu">|&lt;</span>h1<span class="fu">&gt;#</span>{theText}<span class="fu">|</span>]</code></pre>
-<p>Don’t worry if you find all of this a bit cryptic. In short it just declare a function named <code>getEchoR</code> with one argument (<code>theText</code>) of type String. When this function is called, it return a <code>Handler RepHtml</code> whatever it is. But mainly this will encapsulate our expected result inside an <span class="sc">html</span> text.</p>
+<p>Don’t worry if you find all of this a bit cryptic. In short it just declare a function named <code>getEchoR</code> with one argument (<code>theText</code>) of type String. When this function is called, it return a <code>Handler RepHtml</code> whatever it is. But mainly this will encapsulate our expected result inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> text.</p>
 <p>After saving the file, you should see yesod recompile the application. When the compilation is finished you’ll see the message: <code>Starting devel application</code>.</p>
 <p>Now you can visit: <a href="http://localhost:3000/echo/Yesod%20rocks!"><code>http://localhost:3000/echo/Yesod%20rocks!</code></a></p>
 <p>TADA! It works!</p>
@@ -193,7 +191,7 @@ getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
 <script>alert("Bad!");)<% "</script>
 <p>&quot; %&gt;</p>
 <p>The special characters are protected for us. A malicious user could not hide some bad script inside.</p>
-<p>This behavior is a direct consequence of <em>type safety</em>. The <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> string is put inside a <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type. Then the interesting part in the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> is put inside a String type. To pass from <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type to String type some transformation are made. For example, replace all “<code>%20</code>” by space characters. Then to show the String inside an <span class="sc">html</span> document, the string is put inside an <span class="sc">html</span> type. Some transformations occurs like replace “<code>&lt;</code>” by “<code>&amp;lt;</code>”. Thanks to yesod, this tedious job is done for us.</p>
+<p>This behavior is a direct consequence of <em>type safety</em>. The <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> string is put inside a <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type. Then the interesting part in the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> is put inside a String type. To pass from <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type to String type some transformation are made. For example, replace all “<code>%20</code>” by space characters. Then to show the String inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> document, the string is put inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> type. Some transformations occurs like replace “<code>&lt;</code>” by “<code>&amp;lt;</code>”. Thanks to yesod, this tedious job is done for us.</p>
 <pre class="zsh"><code>&quot;http://localhost:3000/echo/some%20text&lt;a&gt;&quot; :: URL
                     ↓
               &quot;some text&lt;a&gt;&quot;                 :: String
@@ -209,7 +207,7 @@ getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
 <li>Put our “views”<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup> inside the <code>template</code> directory</li>
 </ul>
 <h4 id="use-a-better-css">Use a better <span class="sc">css</span></h4>
-<p>It is nice to note, the default template is based on %html5 boilerplate. Let’s change the default <span class="sc">css</span>. Add a file named <code>default-layout.lucius</code> inside the <code>templates/</code> directory containing:</p>
+<p>It is nice to note, the default template is based on <span class="sc"><abbr title="HyperText Markup Language 5">html5</abbr></span> boilerplate. Let’s change the default <span class="sc">css</span>. Add a file named <code>default-layout.lucius</code> inside the <code>templates/</code> directory containing:</p>
 <pre class="sourceCode css"><code class="sourceCode css">body <span class="kw">{</span>
     <span class="kw">font-family:</span> Helvetica, <span class="dt">sans-serif</span><span class="kw">;</span> 
     <span class="kw">font-size:</span> <span class="dt">18px</span><span class="kw">;</span> <span class="kw">}</span>
@@ -233,12 +231,12 @@ a <span class="kw">{</span> <span class="kw">color:</span> <span class="dt">#A56
 a<span class="dv">:hover</span> <span class="kw">{</span> <span class="kw">color:</span> <span class="dt">#C58</span><span class="kw">;</span> <span class="kw">}</span>
 a<span class="dv">:active</span> <span class="kw">{</span> <span class="kw">color:</span> <span class="dt">#C58</span><span class="kw">;</span> <span class="kw">}</span>
 a<span class="dv">:visited</span> <span class="kw">{</span> <span class="kw">color:</span> <span class="dt">#943</span><span class="kw">;</span> <span class="kw">}</span></code></pre>
-<p>Personally I would prefer if such a minimal <span class="sc">css</span> was put with the scaffolding tool. I am sure somebody already made such a minimal <span class="sc">css</span> which give the impression the browser handle correctly <span class="sc">html</span> without any style applied to it. But I digress.</p>
+<p>Personally I would prefer if such a minimal <span class="sc">css</span> was put with the scaffolding tool. I am sure somebody already made such a minimal <span class="sc">css</span> which give the impression the browser handle correctly <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> without any style applied to it. But I digress.</p>
 <h4 id="separate-handlers">Separate Handlers</h4>
 <p>Generally you don’t want to have all your code inside a unique file. This is why we will separate our handlers. In a first time create a new file <code>Handler/Echo.hs</code> containing:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
-<span class="kw">import</span> <span class="dt">Import</span>
+<span class="kw">import</span> Import
 
 <span class="ot">getEchoR ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
@@ -251,7 +249,7 @@ getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
 </pre>
 
 <p>We must also declare this new Handler module inside <code>Application.hs</code>. Just after the “<code>import Handler.Home</code>”, add:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Handler.Echo</span></code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Handler.Echo</code></pre>
 <p>This is it.</p>
 <p><small><em>ps:</em> I am sure not so far in the future we could simply write <code>yesod add-handler Echo</code> to declare it and create a new handler file.</small></p>
 <h4 id="data.text"><code>Data.Text</code></h4>
@@ -266,14 +264,14 @@ getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
 <p>And do the same in <code>Handler/Echo.hs</code>:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
-<span class="kw">import</span> <span class="dt">Import</span>
+<span class="kw">import</span> Import
 
 <span class="ot">getEchoR ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
     defaultLayout <span class="fu">$</span> <span class="kw">do</span>
         [whamlet<span class="fu">|&lt;</span>h1<span class="fu">&gt;#</span>{theText}<span class="fu">|</span>]</code></pre>
 <h4 id="use-templates">Use templates</h4>
-<p>Some <span class="sc">html</span> (more precisely hamlet) is written directly inside our handler. We should put this part inside another file. Create the new file <code>templates/echo.hamlet</code> containing:</p>
+<p>Some <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> (more precisely hamlet) is written directly inside our handler. We should put this part inside another file. Create the new file <code>templates/echo.hamlet</code> containing:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&lt;</span>h1<span class="fu">&gt;</span> <span class="fu">#</span>{theText}</code></pre>
 <p>and modify the handler <code>Handler/Echo.hs</code>:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">getEchoR ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
@@ -295,8 +293,8 @@ getEchoR theText <span class="fu">=</span> <span class="kw">do</span>
 <p>This time the path <code>/mirror</code> will accept GET and POST requests. Add the corresponding new Handler file:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Mirror</span> <span class="kw">where</span>
 
-<span class="kw">import</span> <span class="dt">Import</span>
-<span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.Text</span> <span class="kw">as</span> <span class="dt">T</span>
+<span class="kw">import</span> Import
+<span class="kw">import</span> <span class="kw">qualified</span> Data.Text <span class="kw">as</span> T
 
 <span class="ot">getMirrorR ::</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 getMirrorR <span class="fu">=</span> <span class="kw">do</span>
@@ -324,7 +322,7 @@ postMirrorR <span class="fu">=</span>  <span class="kw">do</span>
 <p>Just try it by <a href="http://localhost:3000/mirror">clicking here</a>.</p>
 <p>Also you can try to enter strange values. Like before, your application is quite secure.</p>
 <h2 id="a-blog">A Blog</h2>
-<p>We saw how to retrieve %http parameters. It is the time to save things into a database.</p>
+<p>We saw how to retrieve <span class="sc"><abbr title="HyperText Transfer Protocol">http</abbr></span> parameters. It is the time to save things into a database.</p>
 <p>As before add some routes inside <code>config/routes</code>:</p>
 <pre>
 /blog               BlogR       GET POST
@@ -354,11 +352,11 @@ Article
     )
 <span class="kw">where</span>
 
-<span class="kw">import</span> <span class="dt">Import</span>
-<span class="kw">import</span> <span class="dt">Data.Monoid</span>
+<span class="kw">import</span> Import
+<span class="kw">import</span> Data.Monoid
 
 <span class="co">-- to use Html into forms</span>
-<span class="kw">import</span> <span class="dt">Yesod.Form.Nic</span> (<span class="dt">YesodNic</span>, nicHtmlField)
+<span class="kw">import</span> Yesod.Form.Nic (YesodNic, nicHtmlField)
 <span class="kw">instance</span> <span class="dt">YesodNic</span> <span class="dt">App</span></code></pre>
 <p><small>Remark: it is a best practice to add the YesodNic instance inside <code>Foundation.hs</code>. I put this definition here to make things easier but you should see a warning about this orphan instance. To put the include inside Foundation.hs is left as an exercice to the reader.</small></p>
 <p><small><em>Hint: Do not forget to put <code>YesodNic</code> and <code>nicHtmlField</code> inside the exported objects of the module.</em> </small></p>
@@ -433,7 +431,7 @@ getArticleR articleId <span class="fu">=</span> <span class="kw">do</span>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;p&gt;</span>A last try to <span class="kw">&lt;em&gt;</span>cross script<span class="kw">&lt;/em&gt;</span> 
    and <span class="kw">&lt;em&gt;</span>SQL injection<span class="kw">&lt;/em&gt;&lt;/p&gt;</span>
 <span class="kw">&lt;p&gt;</span>Here is the first try: 
-   <span class="kw">&lt;script&gt;</span>alert(<span class="st">&quot;You loose&quot;</span>);<span class="kw">&lt;/script&gt;&lt;/p&gt;</span>
+<span class="er">   &lt;script&gt;alert(&quot;You loose&quot;);&lt;/script&gt;&lt;/p&gt;</span>
 <span class="kw">&lt;p&gt;</span> And Here is the last <span class="kw">&lt;/p&gt;</span>
 &quot;); DROP TABLE ARTICLE;;</code></pre>
 <h2 id="conclusion">Conclusion</h2>
@@ -517,15 +515,18 @@ getArticleR articleId <span class="fu">=</span> <span class="kw">do</span>
             	        Done with
             	        <a href="http://www.vim.org" target="_blank">Vim</a>
 						<span class="nicer">&amp;</span>
-                        <a href="http://nanoc.ws" target="_blank"><span class="strike">nanoc</span></a>
+                        <a href="http://nanoc.ws" target="_blank"><strike>nanoc</strike></a>
 						<a href="http://jaspervdj.be/hakyll" target="_blank">Hakyll</a>
             	    </div>
             	</div>
 			</div>
 
         </div>
-        <script type="text/javascript" src="../../../../Scratch/js/highlight/highlight.pack.js"></script>
-        <script type="text/javascript" src="../../../../Scratch/js/article.js"></script>
-        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     </body>
+    <script type="text/javascript" src="../../../../Scratch/js/jquery-1.3.1.min.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/index.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/highlight/highlight.pack.js"></script>
+    <script type="text/javascript" src="../../../../Scratch/js/article.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </html>
