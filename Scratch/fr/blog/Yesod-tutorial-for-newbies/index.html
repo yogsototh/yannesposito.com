@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>YBlog - Haskell web programming</title>
-        <meta name="keywords" content="yesod, haskell, programming, web">
+        <meta name="keywords" content="yesod, haskell, programming, web" />
 
         <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
         <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/scientific.css" />
@@ -89,22 +89,22 @@
 <h3 id="install">Install</h3>
 <p>The recommended way to install <a href="http://www.haskell.org">Haskell</a> is to download the <a href="http://www.haskell.org/platform">Haskell Platform</a>.</p>
 <p>Once done, you need to install yesod. Open a terminal session and do:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">~ cabal update
-~ cabal <span class="kw">install</span> yesod cabal-dev</code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">~</span> <span class="kw">cabal</span> update
+<span class="kw">~</span> <span class="kw">cabal</span> install yesod cabal-dev</code></pre>
 <p>There are few steps but it should take some time to finish.</p>
 <h3 id="initialize">Initialize</h3>
 <p>You are now ready to initialize your first yesod project. Open a terminal and type:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">~ yesod init</code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">~</span> <span class="kw">yesod</span> init</code></pre>
 <p>Enter your name, choose <code>yosog</code> for the project name and enter <code>Yosog</code> for the name of the Foundation. Finally choose <code>sqlite</code>. Now, start the development cycle:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">~ <span class="kw">cd</span> yosog
-~ cabal-dev <span class="kw">install</span> <span class="kw">&amp;&amp;</span> yesod --dev devel</code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">~</span> <span class="kw">cd</span> yosog
+<span class="kw">~</span> <span class="kw">cabal-dev</span> install <span class="kw">&amp;&amp;</span> <span class="kw">yesod</span> --dev devel</code></pre>
 <p>This will compile the entire project. Be patient it could take a while the first time. Once finished a server is launched and you could visit it by clicking this link:</p>
 <p><a href="http://localhost:3000"><code>http://localhost:3000</code></a></p>
 <p>Congratulation! Yesod works!</p>
 <blockquote>
 
 <p>Note: if something is messed up use the following command line inside the project directory.</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">\<span class="kw">rm</span> -rf dist/* ; cabal-dev <span class="kw">install</span> <span class="kw">&amp;&amp;</span> yesod --dev devel</code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash">\<span class="kw">rm</span> -rf dist/* <span class="kw">;</span> <span class="kw">cabal-dev</span> install <span class="kw">&amp;&amp;</span> <span class="kw">yesod</span> --dev devel</code></pre>
 </blockquote>
 
 <p>Until the end of the tutorial, use another terminal and let this one open in a corner to see what occurs.</p>
@@ -113,9 +113,9 @@
 <p>Of course this step is not mandatory for the tutorial but it is a good practice.</p>
 </blockquote>
 <p>Fortunately, there is already a <code>.gitignore</code> file into the <code>yosog</code> folder. You just have to initialize your git repository:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">~ git init .
-~ git add .
-~ git commit -a -m <span class="st">&quot;Initial yesod commit&quot;</span></code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">~</span> <span class="kw">git</span> init .
+<span class="kw">~</span> <span class="kw">git</span> add .
+<span class="kw">~</span> <span class="kw">git</span> commit -a -m <span class="st">&quot;Initial yesod commit&quot;</span></code></pre>
 <p>We are almost ready to start.</p>
 <h3 id="some-last-minute-words">Some last minute words</h3>
 <p>Up until here, we have a directory containing a bunch of files and a local web server listening the port 3000. If we modify a file inside this directory, yesod should try to recompile as fast as possible the site. Instead of explaining the role of every file, let’s focus only on the important files/directories for this tutorial:</p>
@@ -137,7 +137,7 @@ contains the files that will contain the code called when a <span class="sc"><ab
 </td></tr><tr><td> 
 <code>templates/</code>
 </td><td> 
-contains <span class="sc">html</span>, js and <span class="sc">css</span> templates.
+contains <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span>, js and <span class="sc">css</span> templates.
 </td></tr><tr><td> 
 <code>config/models</code>
 </td><td> 
@@ -160,7 +160,7 @@ Enter space-separated list of methods (ex: GET POST): <span class="highlight">GE
 <p>Almost all work is done for us. The <code>add-handler</code> do the following:</p>
 <p>Update the <code>config/route</code> file by appending:</p>
 <pre><code>/echo/#String EchoR GET</code></pre>
-<p>This line contains three elements: the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> pattern, a handler name, an %http method.</p>
+<p>This line contains three elements: the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> pattern, a handler name, an <span class="sc"><abbr title="HyperText Transfer Protocol">http</abbr></span> method.</p>
 <ul>
 <li>create a <code>Handler/Echo.hs</code> file</li>
 <li>import <code>Handler.Echo</code> in the main <code>Application.hs</code> file</li>
@@ -170,18 +170,18 @@ Enter space-separated list of methods (ex: GET POST): <span class="highlight">GE
 <p>So let’s take a look at <code>Handler/Echo.hs</code>:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
-<span class="kw">import</span> <span class="dt">Import</span>
+<span class="kw">import</span> Import
 
 <span class="ot">getEchoR ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 getEchoR <span class="fu">=</span> <span class="fu">error</span> <span class="st">&quot;Not yet implemented: getEchoR&quot;</span></code></pre>
 <p>This should be straightforward. Now we changes it by:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
-<span class="kw">import</span> <span class="dt">Import</span>
+<span class="kw">import</span> Import
 
 <span class="ot">getEchoR ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 getEchoR theText <span class="fu">=</span> defaultLayout [whamlet<span class="fu">|&lt;</span>h1<span class="fu">&gt;#</span>{theText}<span class="fu">|</span>]</code></pre>
-<p>Don’t worry if you find all of this a bit cryptic. In short it just declare a function named <code>getEchoR</code> with one argument (<code>theText</code>) of type <code>String</code>. When this function is called, it return a <code>Handler RepHtml</code> whatever it is. But mainly this will encapsulate our expected result inside an <span class="sc">html</span> text.</p>
+<p>Don’t worry if you find all of this a bit cryptic. In short it just declare a function named <code>getEchoR</code> with one argument (<code>theText</code>) of type <code>String</code>. When this function is called, it return a <code>Handler RepHtml</code> whatever it is. But mainly this will encapsulate our expected result inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> text.</p>
 <p>After saving the file, you should see yesod recompile the application. When the compilation is finished you’ll see the message: <code>Starting devel application</code>.</p>
 <p>Now you can visit: <a href="http://localhost:3000/echo/Yesod%20rocks!"><code>http://localhost:3000/echo/Yesod%20rocks!</code></a></p>
 <p>TADA! It works!</p>
@@ -198,12 +198,12 @@ getEchoR theText <span class="fu">=</span> defaultLayout [whamlet<span class="fu
 
 <p>You can click on it to test it.</p>
 <p>The special characters are protected for us. A malicious user could not hide some bad script inside.</p>
-<p>This behavior is a direct consequence of <em>type safety</em>. The <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> string is put inside a <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type. Then the interesting part in the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> is put inside a String type. To pass from <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type to String type some transformation are made. For example, replace all “<code>%20</code>” by space characters. Then to show the String inside an <span class="sc">html</span> document, the string is put inside an <span class="sc">html</span> type. Some transformations occurs like replace “<code>&lt;</code>” by “<code>&amp;lt;</code>”. Thanks to yesod, this tedious job is done for us.</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="st">&quot;http://localhost:3000/echo/some%20text%3Ca%3E&quot;</span> :: URL
+<p>This behavior is a direct consequence of <em>type safety</em>. The <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> string is put inside a <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type. Then the interesting part in the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> is put inside a String type. To pass from <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type to String type some transformation are made. For example, replace all “<code>%20</code>” by space characters. Then to show the String inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> document, the string is put inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> type. Some transformations occurs like replace “<code>&lt;</code>” by “<code>&amp;lt;</code>”. Thanks to yesod, this tedious job is done for us.</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="st">&quot;http://localhost:3000/echo/some%20text%3Ca%3E&quot;</span> :: <span class="kw">URL</span>
                     ↓
-              <span class="st">&quot;some text&lt;a&gt;&quot;</span>                    :: String
+              <span class="st">&quot;some text&lt;a&gt;&quot;</span>                    :: <span class="kw">String</span>
                     ↓
-          <span class="st">&quot;some text &amp;amp;lt;a&amp;amp;gt;&quot;</span>         :: Html</code></pre>
+          <span class="st">&quot;some text &amp;amp;lt;a&amp;amp;gt;&quot;</span>         :: <span class="kw">Html</span></code></pre>
 <p>Yesod is not only fast, it helps us to remain secure. It protects us from many common errors in other paradigms. Yes, I am looking at you PHP!</p>
 <h3 id="cleaning-up">Cleaning up</h3>
 <p>Even this very minimal example should be enhanced. We will clean up many details:</p>
@@ -223,17 +223,17 @@ getEchoR theText <span class="fu">=</span> defaultLayout [whamlet<span class="fu
 <p>And do the same in <code>Handler/Echo.hs</code>:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
-<span class="kw">import</span> <span class="dt">Import</span>
+<span class="kw">import</span> Import
 
 <span class="ot">getEchoR ::</span> <span class="highlight"><span class="dt">Text</span></span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 getEchoR theText <span class="fu">=</span> defaultLayout [whamlet<span class="fu">|&lt;</span>h1<span class="fu">&gt;#</span>{theText}<span class="fu">|</span>]</code></pre>
 <h4 id="use-templates">Use templates</h4>
-<p>Some <span class="sc">html</span> (more precisely hamlet) is written directly inside our handler. We should put this part inside another file. Create the new file <code>templates/echo.hamlet</code> containing:</p>
+<p>Some <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> (more precisely hamlet) is written directly inside our handler. We should put this part inside another file. Create the new file <code>templates/echo.hamlet</code> containing:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&lt;</span>h1<span class="fu">&gt;</span> <span class="fu">#</span>{theText}</code></pre>
 <p>and modify the handler <code>Handler/Echo.hs</code>:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
-<span class="kw">import</span> <span class="dt">Import</span>
+<span class="kw">import</span> Import
 
 <span class="ot">getEchoR ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 getEchoR theText <span class="fu">=</span> defaultLayout <span class="highlight"><span class="fu">$</span>(widgetFile <span class="st">&quot;echo&quot;</span>)</span></code></pre>
@@ -252,8 +252,8 @@ Enter space-separated list of methods (ex: GET POST): <span class="highlight">GE
 <p>This time the path <code>/mirror</code> will accept GET and POST requests. Update the corresponding new Handler file (<code>Handler/Mirror.hs</code>):</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Mirror</span> <span class="kw">where</span>
 
-<span class="kw">import</span> <span class="dt">Import</span>
-<span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.Text</span> <span class="kw">as</span> <span class="dt">T</span>
+<span class="kw">import</span> Import
+<span class="kw">import</span> <span class="kw">qualified</span> Data.Text <span class="kw">as</span> T
 
 <span class="ot">getMirrorR ::</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 getMirrorR <span class="fu">=</span> defaultLayout <span class="fu">$</span>(widgetFile <span class="st">&quot;mirror&quot;</span>)
@@ -277,7 +277,7 @@ postMirrorR <span class="fu">=</span>  <span class="kw">do</span>
 <p>Just try it by <a href="http://localhost:3000/mirror">clicking here</a>.</p>
 <p>Also you can try to enter strange values (like <code>&lt;script&gt;alert('Bad');&lt;/script&gt;</code>). Like before, your application is quite secure.</p>
 <h2 id="a-blog">A Blog</h2>
-<p>We saw how to retrieve %http parameters. It is the time to save things into a database.</p>
+<p>We saw how to retrieve <span class="sc"><abbr title="HyperText Transfer Protocol">http</abbr></span> parameters. It is the time to save things into a database.</p>
 <p>This example will be very minimal:</p>
 <ul>
 <li><code>GET</code> on <code>/blog</code> should display the list of articles,</li>
@@ -308,10 +308,10 @@ Enter space-separated list of methods (ex: GET POST): GET</code></pre>
     )
 <span class="kw">where</span>
 
-<span class="kw">import</span> <span class="dt">Import</span>
+<span class="kw">import</span> Import
 
 <span class="co">-- to use Html into forms</span>
-<span class="kw">import</span> <span class="dt">Yesod.Form.Nic</span> (<span class="dt">YesodNic</span>, nicHtmlField)
+<span class="kw">import</span> Yesod.Form.Nic (YesodNic, nicHtmlField)
 <span class="kw">instance</span> <span class="dt">YesodNic</span> <span class="dt">App</span></code></pre>
 <p><em>Remark</em>: it is a best practice to add the YesodNic instance inside <code>Foundation.hs</code>. I put this definition here to make things easier but you should see a warning about this orphan instance. To put the include inside Foundation.hs is left as an exercice to the reader.</p>
 <p><em>Hint</em>: Do not forget to put <code>YesodNic</code> and <code>nicHtmlField</code> inside the exported objects of the module.</p>
@@ -382,7 +382,7 @@ getArticleR articleId <span class="fu">=</span> <span class="kw">do</span>
 <span class="kw">&lt;article&gt;</span> #{articleContent article}</code></pre>
 <p>The blog system is finished. Just for fun, you can try to create an article with the following content:</p>
 <pre class="sourceCode html"><code class="sourceCode html">Cross Script:
-   <span class="kw">&lt;script&gt;</span>alert(<span class="st">&quot;You loose&quot;</span>);<span class="kw">&lt;/script&gt;</span>
+<span class="er">   &lt;script&gt;alert(&quot;You loose&quot;);&lt;/script&gt;</span>
 
 SQL injection: &quot;); DROP TABLE ARTICLE;;</code></pre>
 <h2 id="conclusion">Conclusion</h2>
@@ -468,7 +468,7 @@ SQL injection: &quot;); DROP TABLE ARTICLE;;</code></pre>
             	    <div>
             	        Done with
             	        <a href="http://www.vim.org" target="_blank">Vim</a>
-						<span class="nicer">&amp;</span>
+						<span class="pala">&amp;</span>
                         <a href="http://nanoc.ws" target="_blank"><span class="strike">nanoc</span></a>
 						<a href="http://jaspervdj.be/hakyll" target="_blank">Hakyll</a>
             	    </div>

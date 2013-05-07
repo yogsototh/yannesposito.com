@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>YBlog - Quand se passer des expressions régulières ?</title>
-        <meta name="keywords" content="programmation, regexp, expressions régulières, extension, fichier">
+        <meta name="keywords" content="programmation, regexp, expressions régulières, extension, fichier" />
 
         <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
         <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/scientific.css" />
@@ -53,7 +53,7 @@ ext=File.extname(str) </code>
 <p>Voici le code pour faire un benchmark :</p>
 <div>
 <p><code class="ruby" file="regex_benchmark_ext.rb"> #!/usr/bin/env ruby require ‘benchmark’ n=80000 tab=[ ‘/accounts/user.json’, ‘/accounts/user.xml’, ‘/user/titi/blog/toto.json’, ‘/user/titi/blog/toto.xml’ ]</p>
-puts “Get extname” Benchmark.bm do |x| x.report(“regexp:”) { n.times do str=tab[rand(4)]; str.match(/[^.]*<span class="math"> / ); <em>e</em><em>x</em><em>t</em> = </span>&amp;; end } x.report(&quot; split:“) { n.times do str=tab[rand(4)]; ext=str.split(‘.’)[-1] ; end } x.report(” File:&quot;) { n.times do str=tab[rand(4)]; ext=File.extname(str); end } end </code>
+puts “Get extname” Benchmark.bm do |x| x.report(“regexp:”) { n.times do str=tab[rand(4)]; str.match(/[^.]*<span class="math"> / ); <em>e</em><em>x</em><em>t</em> = </span>&amp;; end } x.report(&quot; split:“) { n.times do str=tab[rand(4)]; ext=str.split(‘.’)[-1] ; end } x.report(” File:“) { n.times do str=tab[rand(4)]; ext=File.extname(str); end } end </code>
 </div>
 
 <p>Et voici les résultats :</p>
@@ -69,7 +69,7 @@ regexp:  2.550000   0.020000   2.570000 (  2.693407)
 <h2 id="chemin-complet-dun-fichier-sans-lextension">Chemin complet d’un fichier sans l’extension</h2>
 <div>
 <p><code class="ruby" file="regex_benchmark_strip.rb"> #!/usr/bin/env ruby require ‘benchmark’ n=80000 tab=[ ‘/accounts/user.json’, ‘/accounts/user.xml’, ‘/user/titi/blog/toto.json’, ‘/user/titi/blog/toto.xml’ ]</p>
-puts “remove extension” Benchmark.bm do |x| x.report(&quot; File:“) { n.times do str=tab[rand(4)]; path=File.expand_path(str,File.basename(str,File.extname(str))); end } x.report(”chomp:&quot;) { n.times do str=tab[rand(4)]; ext=File.extname(str); path=str.chomp(ext); end } end </code>
+puts “remove extension” Benchmark.bm do |x| x.report(&quot; File:“) { n.times do str=tab[rand(4)]; path=File.expand_path(str,File.basename(str,File.extname(str))); end } x.report(”chomp:“) { n.times do str=tab[rand(4)]; ext=File.extname(str); path=str.chomp(ext); end } end </code>
 </div>
 
 <p>et voici les résultats :</p>
@@ -136,7 +136,7 @@ chomp:  0.820000   0.040000   0.860000 (  0.947432)
             	    <div>
             	        Done with
             	        <a href="http://www.vim.org" target="_blank">Vim</a>
-						<span class="nicer">&amp;</span>
+						<span class="pala">&amp;</span>
                         <a href="http://nanoc.ws" target="_blank"><span class="strike">nanoc</span></a>
 						<a href="http://jaspervdj.be/hakyll" target="_blank">Hakyll</a>
             	    </div>

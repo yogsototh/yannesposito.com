@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>YBlog - Hakyll setup</title>
-        <meta name="keywords" content="programming, hakyll, Haskell, nanoc">
+        <meta name="keywords" content="programming, hakyll, Haskell, nanoc" />
 
         <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
         <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/scientific.css" />
@@ -79,7 +79,7 @@ Ask me the questions, bridgekeeper. I am not afraid.
 </ol>
 <p>Being short sighted one could reduce the role of Hakyll to:</p>
 <blockquote>
-<p>create (resp. update) <span class="sc">html</span> file when I create (resp. change) a markdown file.</p>
+<p>create (resp. update) <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> file when I create (resp. change) a markdown file.</p>
 </blockquote>
 <p>While it sounds easy, there are a lot of hidden details:</p>
 <ul>
@@ -109,7 +109,7 @@ match <span class="st">&quot;static/*&quot;</span> <span class="kw">do</span>
   route   idRoute
   <span class="co">-- don't change its content</span>
   compile copyFileCompiler</code></pre>
-<p>This program will copy <code>static/foo.jpg</code> to <code>_site/static/foo.jpg</code>. I concede this is a bit overkill for a simple <code>cp</code>. Now how to write a markdown file and generate an <span class="sc">html</span> one?</p>
+<p>This program will copy <code>static/foo.jpg</code> to <code>_site/static/foo.jpg</code>. I concede this is a bit overkill for a simple <code>cp</code>. Now how to write a markdown file and generate an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> one?</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- for each file with md extension in the &quot;posts/&quot; directory</span>
 match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
   <span class="co">-- change its extension to html</span>
@@ -124,7 +124,7 @@ ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn</code></pre>
 <p>the file <code>posts/foo.md</code>, will contain</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span>Cthulhu<span class="kw">&lt;/h1&gt;</span>
 <span class="kw">&lt;p&gt;</span>ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn<span class="kw">&lt;/p&gt;</span></code></pre>
-<p>But horror! <code>_site/posts/cthulhu.html</code> is not a complete <span class="sc">html</span> file. It doesn’t have any header nor footer, etc… This is where you use templates. I simply add a new directive in the compile block.</p>
+<p>But horror! <code>_site/posts/cthulhu.html</code> is not a complete <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> file. It doesn’t have any header nor footer, etc… This is where you use templates. I simply add a new directive in the compile block.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
   route <span class="fu">$</span> setExtension <span class="st">&quot;html&quot;</span>
   compile <span class="fu">$</span> pandocCompiler
@@ -191,10 +191,10 @@ ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn</code></pre>
               withItemBody (unixFilter <span class="st">&quot;sass&quot;</span> [<span class="st">&quot;--trace&quot;</span>]) <span class="fu">&gt;&gt;=</span>
               <span class="fu">return</span> <span class="fu">.</span> <span class="fu">fmap</span> compressCss</code></pre>
 <h3 id="add-keywords">Add keywords</h3>
-<p>In order to help to reference your website on the web, it is nice to add some keywords as meta datas to your <span class="sc">html</span> page.</p>
+<p>In order to help to reference your website on the web, it is nice to add some keywords as meta datas to your <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> page.</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;meta</span><span class="ot"> name=</span><span class="st">&quot;keywords&quot;</span>
 <span class="ot">      content=</span><span class="st">&quot;Cthulhu, Yog-Sothoth, Shub-Niggurath&quot;</span><span class="kw">&gt;</span></code></pre>
-<p>In order to add keywords, we could not directly use the markdown metadatas. Because, without any, there should be any meta tag in the <span class="sc">html</span>.</p>
+<p>In order to add keywords, we could not directly use the markdown metadatas. Because, without any, there should be any meta tag in the <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span>.</p>
 <p>An easy answer is to create a <code>Context</code> that will contains the meta tag.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- metaKeywordContext will return a Context containing a String</span>
 <span class="ot">metaKeywordContext ::</span> <span class="dt">Context</span> <span class="dt">String</span>
@@ -266,12 +266,12 @@ removeIndexHtml item <span class="fu">=</span> <span class="fu">return</span> <s
     $posts$
 <span class="kw">&lt;/ul&gt;</span></code></pre>
 <p>And <code>base.html</code> is a standard template (simpler than <code>post.html</code>).</p>
-<p><code>archiveCtx</code> provide a context containing an <span class="sc">html</span> representation of a list of posts in the metadata named <code>posts</code>. It will be used in the <code>templates/archive.html</code> file with <code>$posts$</code>.</p>
+<p><code>archiveCtx</code> provide a context containing an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> representation of a list of posts in the metadata named <code>posts</code>. It will be used in the <code>templates/archive.html</code> file with <code>$posts$</code>.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">archiveCtx <span class="fu">=</span>
   defaultContext <span class="fu">&lt;&gt;</span>
   metaKeywordContext <span class="fu">&lt;&gt;</span>
   <span class="highlight">field <span class="st">&quot;posts&quot;</span> (\_ <span class="ot">-&gt;</span> postList createdFirst)</span></code></pre>
-<p><code>postList</code> returns an <span class="sc">html</span> representation of a list of posts given an Item sort function. The representation will apply a minimal template on all posts. Then it concatenate all the results. The template is <code>post-item.html</code>:</p>
+<p><code>postList</code> returns an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> representation of a list of posts given an Item sort function. The representation will apply a minimal template on all posts. Then it concatenate all the results. The template is <code>post-item.html</code>:</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;li&gt;&lt;a</span><span class="ot"> href=</span><span class="st">&quot;$url$&quot;</span><span class="kw">&gt;</span>$published$ - $title$<span class="kw">&lt;/a&gt;&lt;/li&gt;</span></code></pre>
 <p>Here is how it is done:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">postList ::</span> [<span class="dt">Item</span> <span class="dt">String</span>] <span class="ot">-&gt;</span> <span class="dt">Compiler</span> [<span class="dt">Item</span> <span class="dt">String</span>]
@@ -303,7 +303,7 @@ createdFirst items <span class="fu">=</span> <span class="kw">do</span>
 <li>select only the lasts posts.</li>
 <li>generate partially rendered posts (no css, js, etc…)</li>
 </ul>
-<p>We could then render the posts twice. One for <span class="sc">html</span> rendering and another time for <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span>. Remark we need to generate the <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span> version to create the <span class="sc">html</span> one.</p>
+<p>We could then render the posts twice. One for <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> rendering and another time for <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span>. Remark we need to generate the <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span> version to create the <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> one.</p>
 <p>One of the great feature of Hakyll is to be able to save snapshots. Here is how:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
   route <span class="fu">$</span> setExtension <span class="st">&quot;html&quot;</span>
@@ -338,7 +338,7 @@ feedConfiguration <span class="fu">=</span> <span class="dt">FeedConfiguration</
 <p>Great idea certainly steal from <a href="http://nanoc.ws">nanoc</a> (my previous blog engine)!</p>
 <h3 id="filter-the-content">Filter the content</h3>
 <p>As I just said, <a href="http://nanoc.ws">nanoc</a> was my preceding blog engine. It is written in Ruby and as Hakyll, it is quite awesome. And one thing Ruby does more naturally than Haskell is regular expressions. I had a <em>lot</em> of filters in nanoc. I lost some because I don’t use them much. But I wanted to keep some. Generally, filtering the content is just a way to apply to the body a function of type <code>String -&gt; String</code>.</p>
-<p>Also we generally want prefilters (to filter the markdown) and postfilters (to filter the <span class="sc">html</span> after the pandoc compilation).</p>
+<p>Also we generally want prefilters (to filter the markdown) and postfilters (to filter the <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> after the pandoc compilation).</p>
 <p>Here is how I do it:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">markdownPostBehavior <span class="fu">=</span> <span class="kw">do</span>
   route <span class="fu">$</span> niceRoute
@@ -509,7 +509,7 @@ main = putStrLn &quot;Cthulhu!&quot;
             	    <div>
             	        Done with
             	        <a href="http://www.vim.org" target="_blank">Vim</a>
-						<span class="nicer">&amp;</span>
+						<span class="pala">&amp;</span>
                         <a href="http://nanoc.ws" target="_blank"><span class="strike">nanoc</span></a>
 						<a href="http://jaspervdj.be/hakyll" target="_blank">Hakyll</a>
             	    </div>

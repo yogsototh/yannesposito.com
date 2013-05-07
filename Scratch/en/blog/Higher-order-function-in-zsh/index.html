@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>YBlog - Higher order function in zsh</title>
-        <meta name="keywords" content="zsh, map, foldr, filter, functional, programming, higher order functions">
+        <meta name="keywords" content="zsh, map, foldr, filter, functional, programming, higher order functions" />
 
         <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
         <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/scientific.css" />
@@ -97,11 +97,11 @@ done</code></pre>
 <li>The <code>:t</code> means tail; if <code>toto=/path/to/file.ext</code> then <code>${toto:t}=file.ext</code>.</li>
 </ul>
 <p>After ⇒</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">gif_to_png()</span> <span class="kw">{</span> convert <span class="ot">$1</span> <span class="ot">${1:r}</span>.png <span class="kw">&amp;&amp;</span> \<span class="kw">rm</span> -f <span class="ot">$1</span> <span class="kw">}</span>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">gif_to_png()</span> <span class="kw">{</span> <span class="kw">convert</span> <span class="ot">$1</span> <span class="ot">${1:r}</span>.png <span class="kw">&amp;&amp;</span> \<span class="kw">rm</span> -f <span class="ot">$1</span> <span class="kw">}</span>
 
-<span class="fu">handle_resources()</span> <span class="kw">{</span> map gif_to_png <span class="ot">$1</span>/resources/*.gif<span class="kw">(</span>.N<span class="kw">)</span> <span class="kw">}</span>
+<span class="fu">handle_resources()</span> <span class="kw">{</span> <span class="kw">map</span> gif_to_png <span class="ot">$1</span>/resources/*.gif(.N) <span class="kw">}</span>
 
-map handle_resources /path/to/projects/*<span class="kw">(</span>/N<span class="kw">)</span></code></pre>
+<span class="kw">map</span> handle_resources /path/to/projects/*(/N)</code></pre>
 <p>No more bloc! It might be a little bit harder to read if you’re not used to functional programming notation. But it is more concise and robusts.</p>
 <p>Another example with some tests.</p>
 <p>Find all files in project not containing an <code>s</code> which their name contains their project name:</p>
@@ -247,7 +247,7 @@ function filter {
             	    <div>
             	        Done with
             	        <a href="http://www.vim.org" target="_blank">Vim</a>
-						<span class="nicer">&amp;</span>
+						<span class="pala">&amp;</span>
                         <a href="http://nanoc.ws" target="_blank"><span class="strike">nanoc</span></a>
 						<a href="http://jaspervdj.be/hakyll" target="_blank">Hakyll</a>
             	    </div>
