@@ -3132,7 +3132,42 @@ Prelude></code></span> let f x y = x*x + y*y
 <p>Uh? What is this strange type?</p>
 <pre><code>Num a =&gt; a -&gt; a -&gt; a</code></pre>
 <p>First, let’s focus on the right part <code>a -&gt; a -&gt; a</code>. To understand it, just look at a list of progressive examples:</p>
-<p>The written type | Its meaning |<br /><code>Int</code> | the type <code>Int</code> |<br /><code>Int -&gt; Int</code> | the type function from <code>Int</code> to <code>Int</code> |<br /><code>Float -&gt; Int</code> | the type function from <code>Float</code> to <code>Int</code> |<br /><code>a -&gt; Int</code> | the type function from any type to <code>Int</code> |<br /><code>a -&gt; a</code> | the type function from any type <code>a</code> to the same type <code>a</code> |<br /><code>a -&gt; a -&gt; a</code> | the type function of two arguments of any type <code>a</code> to the same type <code>a</code> |</p>
+<table>
+<col width="27%" />
+<col width="72%" />
+<thead>
+<tr class="header">
+<th align="left">The written type</th>
+<th align="left">Its meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>Int</code></td>
+<td align="left">the type <code>Int</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>Int -&gt; Int</code></td>
+<td align="left">the type function from <code>Int</code> to <code>Int</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>Float -&gt; Int</code></td>
+<td align="left">the type function from <code>Float</code> to <code>Int</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>a -&gt; Int</code></td>
+<td align="left">the type function from any type to <code>Int</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>a -&gt; a</code></td>
+<td align="left">the type function from any type <code>a</code> to the same type <code>a</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>a -&gt; a -&gt; a</code></td>
+<td align="left">the type function of two arguments of any type <code>a</code> to the same type <code>a</code></td>
+</tr>
+</tbody>
+</table>
 <p>In the type <code>a -&gt; a -&gt; a</code>, the letter <code>a</code> is a <em>type variable</em>. It means <code>f</code> is a function with two arguments and both arguments and the result have the same type. The type variable <code>a</code> could take many different type values. For example <code>Int</code>, <code>Integer</code>, <code>Float</code>…</p>
 <p>So instead of having a forced type like in <code>C</code> and having to declare a function for <code>int</code>, <code>long</code>, <code>float</code>, <code>double</code>, etc., we declare only one function like in a dynamically typed language.</p>
 <p>This is sometimes called parametric polymorphism. It’s also called having your cake and eating it too.</p>
