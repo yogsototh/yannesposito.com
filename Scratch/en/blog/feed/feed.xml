@@ -5245,8 +5245,8 @@ treeFromList&#39; (x<span class="fu">:</span>xs) n <span class="fu">=</span> <sp
 
 <div class="intro">
 
-<p><em>update</em>: updated for yesod 1.1.9</p>
-<p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span> A simple yesod tutorial. Yesod is a Haskell web framework. You shouldn’t need to know Haskell.</p>
+<p><em>update</em>: updated for Yesod 1.1.9</p>
+<p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span> A simple Yesod tutorial. Yesod is a Haskell web framework. You shouldn’t need to know Haskell.</p>
 </div>
 
 <p>Why Haskell?</p>
@@ -5255,59 +5255,59 @@ treeFromList&#39; (x<span class="fu">:</span>xs) n <span class="fu">=</span> <sp
 </div>
 
 <p>Its efficiency (see <a href="http://snapframework.com/blog/2010/11/17/snap-0.3-benchmarks">Snap Benchmark</a> <em>&amp;</em> <a href="http://www.yesodweb.com/blog/2011/03/preliminary-warp-cross-language-benchmarks">Warp Benchmark</a><sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup>). Haskell is an order of magnitude faster than interpreted languages like <a href="http://shootout.alioth.debian.org/u64q/benchmark.php?test=all&amp;lang=ghc&amp;lang2=yarv">Ruby</a> and <a href="http://shootout.alioth.debian.org/u64q/benchmark.php?test=all&amp;lang=ghc&amp;lang2=python3">Python</a><sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup>.</p>
-<p>Haskell is a high level language and make it harder to shoot you in the foot than <code>C</code>, <code>C++</code> or <code>Java</code> for example. One of the best property of Haskell being:</p>
+<p>Haskell is a high level language that makes it harder to shoot yourself in the foot than <code>C</code>, <code>C++</code> or <code>Java</code>, for example. One of the best properties of Haskell is:</p>
 <blockquote>
-<p>“If your program compile it will be very close to what the programmer intended”.</p>
+<p>“If your program compiles it will be very close to what the programmer intended”.</p>
 </blockquote>
-<p>Haskell web frameworks handle parallel tasks perfectly. For example even better than node.js<sup><a href="#fn3" class="footnoteRef" id="fnref3">3</a></sup>.</p>
+<p>Haskell web frameworks handle parallel tasks perfectly—even better than node.js<sup><a href="#fn3" class="footnoteRef" id="fnref3">3</a></sup>, for example.</p>
 <div>
 <img src="/Scratch/img/blog/Yesod-tutorial-for-newbies/thousands_smiths.jpg" alt="Thousands of Agent Smith" class="left"/>
 </div>
 
-<p>From the pure technical point of view, Haskell seems to be the perfect web development tool. Weaknesses of Haskell certainly won’t be technical:</p>
+<p>From a purely technical point of view, Haskell seems to be the perfect web development tool. Weaknesses of Haskell certainly won’t be technical:</p>
 <ul>
 <li>Hard to grasp Haskell</li>
 <li>Hard to find a Haskell programmer</li>
 <li>The Haskell community is smaller than the community for <code>/.*/</code></li>
-<li>There is not yet an <a href="http://heroku.com">heroku</a> for Haskell. In fact, I use heroku to host my websites but this isn’t straightforward (see the <a href="https://github.com/yesodweb/yesod/wiki/Deploying-Yesod-Apps-to-Heroku">how to</a>).</li>
+<li>There is not yet a <a href="http://heroku.com">heroku</a> for Haskell. In fact, I use heroku to host my websites but this isn’t straightforward (see the <a href="https://github.com/yesodweb/yesod/wiki/Deploying-Yesod-Apps-to-Heroku">how to</a>).</li>
 </ul>
-<p>I won’t say these are not important drawbacks. But, with Haskell your web application will have both properties to absorb an impressive number of parallel requests securely and to adapt to change.</p>
+<p>I won’t say these are not important drawbacks. But with Haskell your web application will be able to both absorb an impressive number of parallel requests securely and to adapt to change.</p>
 <p>Actually there are three main Haskell web frameworks:</p>
 <ol style="list-style-type: decimal">
 <li><a href="http://happstack.com">Happstack</a></li>
 <li><a href="http://snapframework.com">Snap</a></li>
 <li><a href="http://yesodweb.com">Yesod</a></li>
 </ol>
-<p>I don’t think there is a real winner between these three framework. The choice I made for yesod is highly subjective. I just lurked a bit and tried some tutorials. I had the feeling yesod make a better job at helping newcomers. Furthermore, apparently the yesod team seems the most active. Of course I might be wrong since it is a matter of feeling.</p>
+<p>I don’t think there is a real winner between these three framework. The choice I made for Yesod is highly subjective. I just lurked a bit and tried some tutorials. I had the feeling Yesod did a better job at helping newcomers. Furthermore, the Yesod team seems the most active. Of course I might be wrong since this is just an impression.</p>
 <div>
 <img src="/Scratch/img/blog/Yesod-tutorial-for-newbies/owl_draw.png" alt="1. Draw some circles. 2. Draw the rest of the fucking owl"/>
 </div>
 
-<p>Why did I write this article? The yesod documentation and particularly the book are excellent. But I missed an intermediate tutorial. This tutorial won’t explain all details. I tried to give a step by step of how to start from a five minute tutorial to an almost production ready architecture. Furthermore explaining something to others is a great way to learn. If you are used to Haskell and Yesod, this tutorial won’t learn you much. If you are completely new to Haskell and Yesod it might hopefully helps you. Also if you find yourself too confused by the syntax, it might helps to read this <a href="http://blog.ezyang.com/2011/11/how-to-read-haskell/">article</a></p>
-<p>During this tutorial you’ll install, initialize and configure your first yesod project. Then there is a very minimal 5 minutes yesod tutorial to heat up and verify the awesomeness of yesod. Then we will clean up the 5 minutes tutorial to use some “best practices”. Finally there will be a more standard real world example; a minimal blog system.</p>
+<p>Why did I write this article? The Yesod documentation and particularly the book are excellent. But I missed an intermediate tutorial. This tutorial won’t explain all details. I tried to give a step by step of how to start from a five minute tutorial to an almost production ready architecture. Furthermore explaining something to others is a great way to learn. If you are used to Haskell and Yesod, this tutorial won’t teach you much. If you are completely new to Haskell and Yesod, hopefully it will help you. Also if you find yourself too confused by the syntax, it might helps to read this <a href="http://blog.ezyang.com/2011/11/how-to-read-haskell/">article</a></p>
+<p>During this tutorial you’ll install, initialize, and configure your first Yesod project. Then there is a very minimal 5 minute Yesod tutorial to get us warmed up and confirm the awesomeness of Yesod. Then we will clean up the 5 minute tutorial to use some “best practices”. Finally there will be a more standard real world example: a minimal blog system.</p>
 <h2 id="before-the-real-start">Before the real start</h2>
 <h3 id="install">Install</h3>
 <p>The recommended way to install <a href="http://www.haskell.org">Haskell</a> is to download the <a href="http://www.haskell.org/platform">Haskell Platform</a>.</p>
-<p>Once done, you need to install yesod. Open a terminal session and do:</p>
+<p>Once done, you need to install Yesod. Open a terminal session and do:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">~</span> <span class="kw">cabal</span> update
 <span class="kw">~</span> <span class="kw">cabal</span> install yesod cabal-dev</code></pre>
 <p>There are few steps but it should take some time to finish.</p>
 <h3 id="initialize">Initialize</h3>
-<p>You are now ready to initialize your first yesod project. Open a terminal and type:</p>
+<p>You are now ready to initialize your first Yesod project. Open a terminal and type:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">~</span> <span class="kw">yesod</span> init</code></pre>
 <p>Enter your name, choose <code>yosog</code> for the project name and enter <code>Yosog</code> for the name of the Foundation. Finally choose <code>sqlite</code>. Now, start the development cycle:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">~</span> <span class="kw">cd</span> yosog
 <span class="kw">~</span> <span class="kw">cabal-dev</span> install <span class="kw">&amp;&amp;</span> <span class="kw">yesod</span> --dev devel</code></pre>
-<p>This will compile the entire project. Be patient it could take a while the first time. Once finished a server is launched and you could visit it by clicking this link:</p>
+<p>This will compile the entire project. Be patient, since it will take a while the first time. Once finished a server is launched and you can visit it by clicking this link:</p>
 <p><a href="http://localhost:3000"><code>http://localhost:3000</code></a></p>
 <p>Congratulation! Yesod works!</p>
 <blockquote>
 
-<p>Note: if something is messed up use the following command line inside the project directory.</p>
+<p>Note: if something is messed up use the following command at the command line inside the project directory.</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">\<span class="kw">rm</span> -rf dist/* <span class="kw">;</span> <span class="kw">cabal-dev</span> install <span class="kw">&amp;&amp;</span> <span class="kw">yesod</span> --dev devel</code></pre>
 </blockquote>
 
-<p>Until the end of the tutorial, use another terminal and let this one open in a corner to see what occurs.</p>
+<p>For the rest of the tutorial, use another terminal and keep this one open in a corner to see what happens.</p>
 <h3 id="configure-git">Configure git</h3>
 <blockquote>
 <p>Of course this step is not mandatory for the tutorial but it is a good practice.</p>
@@ -5317,8 +5317,8 @@ treeFromList&#39; (x<span class="fu">:</span>xs) n <span class="fu">=</span> <sp
 <span class="kw">~</span> <span class="kw">git</span> add .
 <span class="kw">~</span> <span class="kw">git</span> commit -a -m <span class="st">&quot;Initial yesod commit&quot;</span></code></pre>
 <p>We are almost ready to start.</p>
-<h3 id="some-last-minute-words">Some last minute words</h3>
-<p>Up until here, we have a directory containing a bunch of files and a local web server listening the port 3000. If we modify a file inside this directory, yesod should try to recompile as fast as possible the site. Instead of explaining the role of every file, let’s focus only on the important files/directories for this tutorial:</p>
+<h3 id="a-few-words-before-we-start">A few words before we start</h3>
+<p>Up until here, we have a directory containing a bunch of files and a local web server listening the port 3000. If we modify a file inside this directory, Yesod should try to recompile as fast as possible the site. Instead of explaining the role of every file, let’s focus only on the important files/directories for this tutorial:</p>
 <ol style="list-style-type: decimal">
 <li><code>config/routes</code></li>
 <li><code>Handler/</code></li>
@@ -5345,10 +5345,10 @@ is where you’ll configure the persistent objects (database tables).
 </td></tr></table>
 
 <p>During this tutorial we’ll modify other files as well, but we won’t explore them in detail.</p>
-<p>Also note, shell commands are executed in the root directory of your project instead specified otherwise.</p>
+<p>Also note, shell commands are executed in the root directory of your project unless specified otherwise.</p>
 <p>We are now ready to start!</p>
 <h2 id="echo">Echo</h2>
-<p>To verify the quality of the security of the yesod framework, let’s make a minimal echo application.</p>
+<p>To verify the quality of the security of the Yesod framework, let’s make a minimal echo application.</p>
 <blockquote>
 <p>Goal:</p>
 <p>Make a server that when accessed <code>/echo/[some text]</code> should return a web page containing “some text” inside an <code>h1</code> bloc.</p>
@@ -5357,16 +5357,16 @@ is where you’ll configure the persistent objects (database tables).
 Name of route (without trailing R): <span class="highlight">Echo</span>
 Enter route pattern (ex: /entry/#EntryId): <span class="highlight">/echo/#String</span>
 Enter space-separated list of methods (ex: GET POST): <span class="highlight">GET</span></code></pre>
-<p>Almost all work is done for us. The <code>add-handler</code> do the following:</p>
-<p>Update the <code>config/route</code> file by appending:</p>
+<p>Almost all the work is done for us. The <code>add-handler</code> does the following:</p>
+<p>Updates the <code>config/route</code> file by appending:</p>
 <pre><code>/echo/#String EchoR GET</code></pre>
 <p>This line contains three elements: the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> pattern, a handler name, an <span class="sc"><abbr title="HyperText Transfer Protocol">http</abbr></span> method.</p>
 <ul>
-<li>create a <code>Handler/Echo.hs</code> file</li>
-<li>import <code>Handler.Echo</code> in the main <code>Application.hs</code> file</li>
-<li>declare <code>Handler.Echo</code> in the cabal file for building the application</li>
+<li>creates a <code>Handler/Echo.hs</code> file</li>
+<li>imports <code>Handler.Echo</code> in the main <code>Application.hs</code> file</li>
+<li>declares <code>Handler.Echo</code> in the cabal file for building the application</li>
 </ul>
-<p>Now try to go to <a href="http://localhost:3000/echo/foo"><code>localhost:3000/echo/foo</code></a>. You should get a message explaining <code>getEchoR</code> is not yet implemented.</p>
+<p>Now try to go to <a href="http://localhost:3000/echo/foo"><code>localhost:3000/echo/foo</code></a>. You should get a message explaining that <code>getEchoR</code> is not yet implemented.</p>
 <p>So let’s take a look at <code>Handler/Echo.hs</code>:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
@@ -5374,15 +5374,15 @@ Enter space-separated list of methods (ex: GET POST): <span class="highlight">GE
 
 <span class="ot">getEchoR ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 getEchoR <span class="fu">=</span> <span class="fu">error</span> <span class="st">&quot;Not yet implemented: getEchoR&quot;</span></code></pre>
-<p>This should be straightforward. Now we changes it by:</p>
+<p>This should be straightforward. Now we can replace it with this:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
 <span class="kw">import</span> Import
 
 <span class="ot">getEchoR ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 getEchoR theText <span class="fu">=</span> defaultLayout [whamlet<span class="fu">|&lt;</span>h1<span class="fu">&gt;#</span>{theText}<span class="fu">|</span>]</code></pre>
-<p>Don’t worry if you find all of this a bit cryptic. In short it just declare a function named <code>getEchoR</code> with one argument (<code>theText</code>) of type <code>String</code>. When this function is called, it return a <code>Handler RepHtml</code> whatever it is. But mainly this will encapsulate our expected result inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> text.</p>
-<p>After saving the file, you should see yesod recompile the application. When the compilation is finished you’ll see the message: <code>Starting devel application</code>.</p>
+<p>Don’t worry if you find all of this a bit cryptic. In short it just declares a function named <code>getEchoR</code> with one argument (<code>theText</code>) of type <code>String</code>. When this function is called, it returns a <code>Handler RepHtml</code> whatever it is. But mainly this will encapsulate our expected result inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> text.</p>
+<p>After saving the file, you should see Yesod recompile the application. When the compilation is finished you’ll see the message: <code>Starting devel application</code>.</p>
 <p>Now you can visit: <a href="http://localhost:3000/echo/Yesod%20rocks!"><code>http://localhost:3000/echo/Yesod%20rocks!</code></a></p>
 <p>TADA! It works!</p>
 <h3 id="bulletproof">Bulletproof?</h3>
@@ -5390,21 +5390,21 @@ getEchoR theText <span class="fu">=</span> defaultLayout [whamlet<span class="fu
 <img src="/Scratch/img/blog/Yesod-tutorial-for-newbies/neo_bullet_proof.jpg" alt="Neo stops a myriad of bullets"/>
 </div>
 
-<p>Even this extremely minimal web application has some impressive properties. For exemple, imagine an attacker entering this <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span>:</p>
+<p>Even this extremely minimal web application has some impressive properties. For example, imagine an attacker entering this <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span>:</p>
 <div class="small">
 
 <p><a href="http://localhost:3000/echo/I&#39;m%20%3Cscript%3Ealert(%22Bad!%22);%3C%2Fscript%3E"><code>http://localhost:3000/echo/I'm &lt;script&gt;alert(\&quot;Bad!\&quot;);&lt;/script&gt;</code></a></p>
 </div>
 
 <p>You can click on it to test it.</p>
-<p>The special characters are protected for us. A malicious user could not hide some bad script inside.</p>
-<p>This behavior is a direct consequence of <em>type safety</em>. The <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> string is put inside a <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type. Then the interesting part in the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> is put inside a String type. To pass from <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type to String type some transformation are made. For example, replace all “<code>%20</code>” by space characters. Then to show the String inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> document, the string is put inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> type. Some transformations occurs like replace “<code>&lt;</code>” by “<code>&amp;lt;</code>”. Thanks to yesod, this tedious job is done for us.</p>
+<p>The special characters are protected for us, preventing a malicious user from hiding a bad script within the url.</p>
+<p>This behavior is a direct consequence of <em>type safety</em>. The <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> string is put inside a <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type. Then the interesting part in the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> is put inside a String type. To pass from <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type to String type some transformations are made. For example, all instances of “<code>%20</code>” are replaced by space characters. Then to show the String inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> document, the string is put inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> type. Some transformations occurs like replace “<code>&lt;</code>” by “<code>&amp;lt;</code>”. Thanks to Yesod, this tedious job is done for us.</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="st">&quot;http://localhost:3000/echo/some%20text%3Ca%3E&quot;</span> :: <span class="kw">URL</span>
                     ↓
               <span class="st">&quot;some text&lt;a&gt;&quot;</span>                    :: <span class="kw">String</span>
                     ↓
           <span class="st">&quot;some text &amp;amp;lt;a&amp;amp;gt;&quot;</span>         :: <span class="kw">Html</span></code></pre>
-<p>Yesod is not only fast, it helps us to remain secure. It protects us from many common errors in other paradigms. Yes, I am looking at you PHP!</p>
+<p>Yesod is not only fast, it helps us to remain secure. It protects us from many common errors in other paradigms. Yes, I am looking at you, PHP!</p>
 <h3 id="cleaning-up">Cleaning up</h3>
 <p>Even this very minimal example should be enhanced. We will clean up many details:</p>
 <ul>
@@ -5443,7 +5443,7 @@ getEchoR theText <span class="fu">=</span> defaultLayout <span class="highlight"
 <img src="/Scratch/img/blog/Yesod-tutorial-for-newbies/mirror.jpg" alt="Neo touching a mirror" class="left"/>
 </div>
 
-<p>Let’s make another minimal application. You should see a form containing a text field and a validation button. When you enter some text (for example “Jormungad”) and validate, the next page present you the content and its reverse appended to it. In our example it should return “JormungaddagnumroJ”.</p>
+<p>Let’s make another minimal application. You should see a form containing a text field and a validation button. When you enter some text (for example “Jormungad”) and validate it, the next page presents the content to you with its reverse appended to it. In our example, it should return “JormungaddagnumroJ”.</p>
 <p>First, add a new handler:</p>
 <pre class="no-highlight"><code> ~/Sites/yosog (master) $ <span class="highlight">yesod add-handler</span>
 Name of route (without trailing R): <span class="highlight">Mirror</span>
@@ -5462,8 +5462,8 @@ getMirrorR <span class="fu">=</span> defaultLayout <span class="fu">$</span>(wid
 postMirrorR <span class="fu">=</span>  <span class="kw">do</span>
         postedText <span class="ot">&lt;-</span> runInputPost <span class="fu">$</span> ireq textField <span class="st">&quot;content&quot;</span>
         defaultLayout <span class="fu">$</span>(widgetFile <span class="st">&quot;posted&quot;</span>)</code></pre>
-<p>We will need to use the <code>reverse</code> function provided by <code>Data.Text</code> which explain the additional import.</p>
-<p>The only new thing here is the line that get the POST parameter named “content”. If you want to know more detail about it and form in general you can take look at <a href="http://www.yesodweb.com/book/forms">the yesod book</a>.</p>
+<p>We will need to use the <code>reverse</code> function provided by <code>Data.Text</code> which explains the additional import.</p>
+<p>The only new thing here is the line that gets the POST parameter named “content”. If you want to know more detail about it and forms in general you can take a look at <a href="http://www.yesodweb.com/book/forms">the Yesod book</a>.</p>
 <p>Create the two corresponding templates (<code>templates/mirror.hamlet</code> and <code>templates/posted.hamlet</code>):</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span> Enter your text
 <span class="kw">&lt;form</span><span class="ot"> method=</span><span class="st">post</span><span class="ot"> action=</span><span class="st">@{MirrorR}</span><span class="kw">&gt;</span>
@@ -5473,9 +5473,9 @@ postMirrorR <span class="fu">=</span>  <span class="kw">do</span>
 <span class="kw">&lt;p&gt;</span>#{postedText}#{T.reverse postedText}
 <span class="kw">&lt;hr&gt;</span>
 <span class="kw">&lt;p&gt;&lt;a</span><span class="ot"> href=</span><span class="st">@{MirrorR}</span><span class="kw">&gt;</span>Get back</code></pre>
-<p>And that is all. This time, we won’t need to clean up. We may have used another way to generate the form but we’ll see this in the next section.</p>
+<p>And that is all. This time, we won’t need to clean up. We might have generated the form a different way, but we’ll see how to do this in the next section.</p>
 <p>Just try it by <a href="http://localhost:3000/mirror">clicking here</a>.</p>
-<p>Also you can try to enter strange values (like <code>&lt;script&gt;alert('Bad');&lt;/script&gt;</code>). Like before, your application is quite secure.</p>
+<p>Also you can try to enter strange values (like <code>&lt;script&gt;alert('Bad');&lt;/script&gt;</code>). As before, your application is quite secure.</p>
 <h2 id="a-blog">A Blog</h2>
 <p>We saw how to retrieve <span class="sc"><abbr title="HyperText Transfer Protocol">http</abbr></span> parameters. It is the time to save things into a database.</p>
 <p>This example will be very minimal:</p>
@@ -5484,7 +5484,7 @@ postMirrorR <span class="fu">=</span>  <span class="kw">do</span>
 <li><code>POST</code> on <code>/blog</code> should create a new article,</li>
 <li><code>GET</code> on <code>/blog/&lt;article id&gt;</code> should display the content of the article.</li>
 </ul>
-<p>As before add some handlers</p>
+<p>As before, we’ll start by adding some handlers:</p>
 <pre><code>~/Sites/yosog (master) $ yesod add-handler
 Name of route (without trailing R): Blog
 Enter route pattern (ex: /entry/#EntryId): /blog
@@ -5544,9 +5544,9 @@ $else
     ^{articleWidget}
     <span class="kw">&lt;div&gt;</span>
         <span class="kw">&lt;input</span><span class="ot"> type=</span><span class="st">submit</span><span class="ot"> value=</span><span class="st">&quot;Post New Article&quot;</span><span class="kw">&gt;</span></code></pre>
-<p>You should remark we added some logic inside the template. There is a test and a “loop”.</p>
-<p>Another very interesting part is the creation of the form. The <code>articleWidget</code> was created by yesod. We have given him the right parameters (input required or optional, labels, default values). And now we have a protected form made for us. But we have to create the submit button.</p>
-<p>You could take a first look by <a href="localhost:3000/blog">clicking here</a>. Of course, you could not post something yet.</p>
+<p>Notice we added some logic inside the template. There is a test and a “loop”.</p>
+<p>Another very interesting part is the creation of the form. The <code>articleWidget</code> was created by Yesod. We have given it the right parameters (input required or optional, labels, default values), and now we have a protected form made for us. But now we have to create the submit button.</p>
+<p>You can take a first look by <a href="localhost:3000/blog">clicking here</a>. Of course, you can’t post something yet.</p>
 <p>Get back to <code>Handler/Blog.hs</code>.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">postBlogR ::</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
 postBlogR <span class="fu">=</span> <span class="kw">do</span>
@@ -5559,7 +5559,7 @@ postBlogR <span class="fu">=</span> <span class="kw">do</span>
          _ <span class="ot">-&gt;</span> defaultLayout <span class="fu">$</span> <span class="kw">do</span>
                 setTitle <span class="st">&quot;Please correct your entry form&quot;</span>
                 <span class="fu">$</span>(widgetFile <span class="st">&quot;articleAddError&quot;</span>)</code></pre>
-<p>This function should be used to create a new article. We handle the form response. If there is an error we display an error page. For example if we left some required value blank. If things goes right:</p>
+<p>This function should be used to create a new article. We handle the form response. If there is an error we display an error page, for example if we left some required value blank. If things go well:</p>
 <ul>
 <li>we add the new article inside the DB (<code>runDB $ insert article</code>)</li>
 <li>we add a message to be displayed (<code>setMessage $ ...</code>)</li>
@@ -5577,7 +5577,7 @@ getArticleR articleId <span class="fu">=</span> <span class="kw">do</span>
     defaultLayout <span class="fu">$</span> <span class="kw">do</span>
         setTitle <span class="fu">$</span> toHtml <span class="fu">$</span> articleTitle article
         <span class="fu">$</span>(widgetFile <span class="st">&quot;article&quot;</span>)</code></pre>
-<p>The <code>get404</code> function try to do a get on the DB. If it fails it return a 404 page. The rest should be clear. Here is the content of <code>templates/article.hamlet</code>:</p>
+<p>The <code>get404</code> function tries to do a get on the DB. If it fails, it returns a 404 page. The rest should be clear. Here is the content of <code>templates/article.hamlet</code>:</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span> #{articleTitle article}
 <span class="kw">&lt;article&gt;</span> #{articleContent article}</code></pre>
 <p>The blog system is finished. Just for fun, you can try to create an article with the following content:</p>
@@ -5587,14 +5587,14 @@ getArticleR articleId <span class="fu">=</span> <span class="kw">do</span>
 SQL injection: &quot;); DROP TABLE ARTICLE;;</code></pre>
 <h2 id="conclusion">Conclusion</h2>
 <p>This is the end of this tutorial. I made it very minimal.</p>
-<p>If you already know Haskell and you want to go further, you should take a look at the recent <a href="http://yesodweb.com/blog/2012/01/blog-example">i18n blog tutorial</a>. It will be obvious I inspired my own tutorial on it. You’ll learn in a very straightforward way how easy it is to use authorizations, Time and internationalization.</p>
-<p>If, on the other hand you don’t know Haskell. Then you shouldn’t jump directly to web programming. Haskell is a very complex and unusual language. My advice to go as fast as possible in using Haskell for web programming is:</p>
+<p>If you already know Haskell and you want to go further, you should take a look at the recent <a href="http://yesodweb.com/blog/2012/01/blog-example">i18n blog tutorial</a>. It will be obvious I based my own tutorial on it. You’ll learn in a very straightforward way how easy it is to use authorization, Time and internationalization.</p>
+<p>If, on the other hand, you don’t know Haskell, then you shouldn’t jump directly to web programming with it. Haskell is a very complex and unusual language. My advice to go as fast as possible in using Haskell for web programming is:</p>
 <ol style="list-style-type: decimal">
-<li>Start by <a href="http://tryhaskell.org">try Haskell in your browser</a></li>
+<li>Start by <a href="http://tryhaskell.org">trying Haskell in your browser</a></li>
 <li>Read my tutorial <a href="https://www.fpcomplete.com/school/haskell-fast-hard">Learn Haskell Fast and Hard on School of Haskell</a> or directly <a href="/Scratch/en/blog/Haskell-the-Hard-Way/">on this blog</a></li>
 <li>Then read the excellent <a href="http://learnyouahaskell.com">Learn you a Haskell for Great Good</a></li>
-<li>If you have difficulties in understanding concepts like monads, you should really read <a href="http://homepages.inf.ed.ac.uk/wadler/topics/monads.html">these articles</a>. For me they were enlightening.</li>
-<li>If you feel confident, you should be able to follows the <a href="http://yesodweb.com/book">yesod book</a> and if you find difficult to follows the yesod book, you should read <a href="http://book.realworldhaskell.org">real world Haskell</a> first.</li>
+<li>If you have difficulty understanding concepts like monads, you should really read <a href="http://homepages.inf.ed.ac.uk/wadler/topics/monads.html">these articles</a>. For me they were enlightening.</li>
+<li>If you feel confident, you should be able to follow the <a href="http://yesodweb.com/book">Yesod book</a> but if you find it difficult to follow the Yesod book, you should read <a href="http://book.realworldhaskell.org">real world Haskell</a> first.</li>
 </ol>
 <p>Also, note that:</p>
 <ul>
@@ -5602,14 +5602,14 @@ SQL injection: &quot;); DROP TABLE ARTICLE;;</code></pre>
 <li><a href="http://www.haskell.org/hoogle/">hoogle</a> will be very useful</li>
 <li>Use <a href="http://community.haskell.org/~ndm/hlint/">hlint</a> as soon as possible to get good habits.</li>
 </ul>
-<p>As you should see, if you don’t already know Haskell, the path is long but I guaranty you it will be very rewarding!</p>
-<p><em>ps:</em> You can download the source of this yesod blog tutorial at <a href="http://github.com/yogsototh/yosog">github.com/yogsototh/yosog</a>.</p>
+<p>As you should see, if you don’t already know Haskell, the path is long but I guarantee you it will be very rewarding!</p>
+<p><em>ps:</em> You can download the source of this Yesod blog tutorial at <a href="http://github.com/yogsototh/yosog">github.com/yogsototh/yosog</a>.</p>
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>One can argue these benchmark contains many problems. But the benchmarks are just here to give an order of idea. Mainly Haskell is very fast.<a href="#fnref1">↩</a></p></li>
+<li id="fn1"><p>One can argue these benchmark contains many problems. But the benchmarks are just here to give the basic idea, namely that Haskell is very fast.<a href="#fnref1">↩</a></p></li>
 <li id="fn2"><p>Generally <em>high level</em> Haskell is slower than C, but <em>low level</em> Haskell is equivalent to C speed. It means that even if you can easily link C code with Haskell, this is not needed to reach the same speed. Furthermore writing a web service in C/C++ seems to be a very bad idea. You can take a look at a <a href="http://news.ycombinator.com/item?id=3449388">discussion on HN about this</a>.<a href="#fnref2">↩</a></p></li>
-<li id="fn3"><p>If you are curious, you can search about <a href="http://www.unlimitednovelty.com/2011/10/nodejs-has-jumped-shark.html">the Fibonacci node.js troll</a>. Without any tweaking, <a href="http://mathias-biilmann.net/posts/2011/10/is-haskell-the-cure">Haskell handled this problem perfectly</a>. I tested it myself using yesod instead of Snap.<a href="#fnref3">↩</a></p></li>
+<li id="fn3"><p>If you are curious, you can search about <a href="http://www.unlimitednovelty.com/2011/10/nodejs-has-jumped-shark.html">the Fibonacci node.js troll</a>. Without any tweaking, <a href="http://mathias-biilmann.net/posts/2011/10/is-haskell-the-cure">Haskell handled this problem perfectly</a>. I tested it myself using Yesod instead of Snap.<a href="#fnref3">↩</a></p></li>
 <li id="fn4"><p>By view I mean yesod widget’s hamlet, lucius and julius files.<a href="#fnref4">↩</a></p></li>
 </ol>
 </div>]]></summary>
