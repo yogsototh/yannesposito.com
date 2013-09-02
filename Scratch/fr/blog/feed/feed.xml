@@ -8,8 +8,2204 @@
         <name>Yann Esposito</name>
         <email>yann.esposito@gmail.com</email>
     </author>
-    <updated>2013-03-16T00:00:00Z</updated>
+    <updated>2013-08-06T00:00:00Z</updated>
     <entry>
+    <title>Rational Web Framework Choice</title>
+    <link href="http://yannesposito.com/Scratch/fr/blog/Rational-Web-Framework-Choice/index.html" />
+    <id>http://yannesposito.com/Scratch/fr/blog/Rational-Web-Framework-Choice/index.html</id>
+    <published>2013-08-06T00:00:00Z</published>
+    <updated>2013-08-06T00:00:00Z</updated>
+    <summary type="html"><![CDATA[<div>
+<img src="/Scratch/img/blog/Rational-Web-Framework-Choice/battle-of-lepanto-vicentino-andrea.jpg" alt="Main image"/>
+</div>
+
+<div class="intro">
+
+
+<p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Comment déterminer de la façon la plus rationnelle possible le meilleur framework work relativement à vos besoins. <a href="#the-result">Cliquez ici pour aller au résultats</a>. Cet article n’est disponible qu’en anglais.</p>
+</div>
+
+<p>This is it.<br />You’ve got the next big idea.<br />You just need to make a very simple web application.</p>
+<p>It sounds easy! You just need to choose a good modern web framework, when suddenly:</p>
+<figure>
+<img src="/Scratch/img/blog/Rational-Web-Framework-Choice/choice_paralysis.gif" alt="[Choice Paralysis][choice_paralysis]"/>
+<figcaption>
+<a href="https://en.wikipedia.org/wiki/Analysis_paralysis">Choice Paralysis</a>
+</figcaption>
+</figure>
+
+<p>After your brain stack overflowed, you decide to use a very simple methodology. Answer two questions:</p>
+<p><strong>Which language am I familiar with?<br />What is the most popular web framework for this language?</strong></p>
+<p>Great! This is it.</p>
+<p>But, you continually hear this little voice.</p>
+<blockquote>
+<p><strong>“You didn’t made a bad choice, yes. But …<br />you hadn’t made the best either.”</strong></p>
+</blockquote>
+<p>This article try to determine in the most objective and rational way the best(s) web framework(s) depending on your needs. To reach this goal, I will provide a decision tool in the result section.</p>
+<p>I will use the following methodology:</p>
+<blockquote>
+<h3>Methodology</h3>
+<ol style="list-style-type: decimal">
+<li>Model how to make choice
+<ol style="list-style-type: lower-alpha">
+<li>choose important parameters</li>
+<li>organize (hierarchize) them</li>
+<li>write down an objective chooser</li>
+</ol></li>
+<li>Grab objective quantified informations about web frameworks relatively to choosen parameters</li>
+<li>Sanitize your data in order to handle imprecisions, lack of informations…</li>
+<li>Apply the model of choice to your informations</li>
+</ol>
+</blockquote>
+<h2 id="model">Model</h2>
+<p>Here are the important features (properties/parameters) I selected to make the choice:</p>
+<ol style="list-style-type: decimal">
+<li><em><strong>Popularity</strong></em>, which correlate with:
+<ul>
+<li>number of tested libraries</li>
+<li>facility to find learning material</li>
+<li>ability to find another developer to work with</li>
+</ul></li>
+<li><em><strong>Efficiency</strong></em>, which is generally correlated to:
+<ul>
+<li>how much processing power you’ll need per user</li>
+<li>maintenance price per user</li>
+<li>how long the user will wait to see/update data</li>
+</ul></li>
+<li><em><strong>Expressiveness</strong></em>, which is generally correlated to:
+<ul>
+<li>faster development</li>
+<li>flexibility, adaptability</li>
+</ul></li>
+<li><em><strong>Robustness</strong></em>, which correlate with:
+<ul>
+<li>security</li>
+<li>fewer bugs</li>
+</ul></li>
+</ol>
+<p>Each feature is quite important and mostly independant from each other. I tried to embrace most important topics concerning web frameworks with these four properties. I am fully concious some people might lack another important feature. Nonetheless the methodology used here can be easily replicated. If you lack an important property add it at will and use this choice method.</p>
+<p>Also each feature is very hard to measure with precision. This is why we will only focus on order of magnitude.</p>
+<p>For each property a framework could have one of the six possible values: Excellent, Very Good, Good, Medium, Bad or Very Bad</p>
+<p>So how to make a decision model from these informations?</p>
+<p>One of the most versatile method is to give a weight for each cluster value. And to select the framework maximizing this score:</p>
+<pre><code>score(framework) = efficiency + robustness + expressiveness + popularity</code></pre>
+<blockquote>
+<p>For example:</p>
+<table>
+<tbody>
+<tr class="odd">
+<td align="left">Expressiveness</td>
+<td align="right">10</td>
+<td align="right">7</td>
+<td align="right">1</td>
+<td align="right">-∞</td>
+<td align="right">-∞</td>
+<td align="right">-∞</td>
+</tr>
+<tr class="even">
+<td align="left">Popularity</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">4</td>
+<td align="right">3</td>
+<td align="right">2</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">Efficiency</td>
+<td align="right">10</td>
+<td align="right">8</td>
+<td align="right">6</td>
+<td align="right">4</td>
+<td align="right">2</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">Robustness</td>
+<td align="right">10</td>
+<td align="right">8</td>
+<td align="right">6</td>
+<td align="right">4</td>
+<td align="right">2</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
+<p>Using this weighted table, that means:</p>
+<ul>
+<li>we discard the three least expressive clusters.</li>
+<li>We don’t make any difference between excellent and very good in popularity.</li>
+<li>Concerning efficient framework in excellent cluster will have 2 more points than the “very good” cluster.</li>
+</ul>
+<p>So for each framework we compute its score relatively to a weighted table. And we select the best(s).</p>
+<p><strong>Example</strong>: Using this hypothetic framework and the preceeding table.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">Expressiveness</th>
+<th align="left">Popularity</th>
+<th align="left">Efficiency</th>
+<th align="left">Robustness</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">yog</td>
+<td align="left">Excellent</td>
+<td align="left">Very Bad</td>
+<td align="left">Medium</td>
+<td align="left">Very Good</td>
+</tr>
+</tbody>
+</table>
+<pre><code>score(yog) = 10 + 0 + 4 + 8 = 22</code></pre>
+</blockquote>
+<p>Most needs should be expressed by such a weighted table. In the result section, we will discuss this further.</p>
+<p>It is now time to try to get these measures.</p>
+<h2 id="objective-measures">Objective measures</h2>
+<p>None of the four properties I choosen can be measured with perfect precision. But we could get the order of magnitude for each.</p>
+<p>I tried to focus on the framework only. But it is often easier to start by studying the language first.</p>
+<p>For example, I have datas about popularity by language and I also have different datas concerning popularity by framework. Even if I use only the framework focused datas in my final decision model, it seemed important to me to discuss about the datas for the languages. The goal is to provide a tool to help decision not to give a decision for you.</p>
+<h3 id="popularity">Popularity</h3>
+<p><a href="http://redmonk.com/sogrady/2013/02/28/language-rankings-1-13/">RedMonk Programming Language Rankings (January 2013)</a> provide an apparent good measure of popularity. While not perfect the current measure feel mostly right. They create an image using stack overflow and github data. Vertical correspond to the number of questions on stackoverflow. Horizontal correspond to the number of projects on github.</p>
+<p>If you look at the image, your eye can see about four clusters. The 1<sup>ﬆ</sup> cluster correspond to mainstream languages:</p>
+<figure>
+<img src="/Scratch/img/blog/Rational-Web-Framework-Choice/mainstreamlanguages.png" alt="Mainstream Languages Cluster from [RedMonk][redmonk]"/>
+<figcaption>
+Mainstream Languages Cluster from <a href="http://redmonk.com/sogrady/2013/02/28/language-rankings-1-13/">RedMonk</a>
+</figcaption>
+</figure>
+
+<p>Most developer know at least one of these language.</p>
+<p>The second cluster is quite bigger. It seems to correspond to languages with a solid community behind them.</p>
+<figure>
+<img src="/Scratch/img/blog/Rational-Web-Framework-Choice/secondtierlanguages.png" alt="Second tier languages from [RedMonk][redmonk]"/>
+<figcaption>
+Second tier languages from <a href="http://redmonk.com/sogrady/2013/02/28/language-rankings-1-13/">RedMonk</a>
+</figcaption>
+</figure>
+
+<p>I don’t get into detail, but you could also see third and fourth tier popular languages.</p>
+<p>So:</p>
+<p><strong>Mainstream</strong>: JavaScript, Java, PHP, Python, Ruby, <code>C#</code>, <code>C++</code>, <code>C</code>, Objective-C, Perl, Shell</p>
+<p><strong>Good</strong>: Scala, Haskell, Visual Basic, Assembly, R, Matlab, ASP, ActionScript, Coffeescript, Groovy, Clojure, Lua, Prolog</p>
+<p><strong>Medium</strong>: Erlang, Go, Delphi, D, Racket, Scheme, ColdFusion, F#, FORTRAN, Arduino, Tcl, Ocaml</p>
+<p><strong>Bad</strong>: third tier <strong>Very Bad</strong>: fourth tier</p>
+<p>I don’t thing I could find easily web frameworks for third or fourth tier languages.</p>
+<p>For now, I only talked about language popularity. But what about framework popularity? I made a test using number of question on stackoverflow only. Then by dividing by two for each 6 cluster:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Cluster</th>
+<th align="left">Language</th>
+<th align="left">Framework</th>
+<th align="right">#nb</th>
+<th align="right">%</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Excellent</td>
+<td align="left">Ruby</td>
+<td align="left">Rails</td>
+<td align="right">176208</td>
+<td align="right">100%</td>
+</tr>
+<tr class="even">
+<td align="left">Very Good</td>
+<td align="left">Python</td>
+<td align="left">Django</td>
+<td align="right">57385</td>
+<td align="right">&lt;50%</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Java</td>
+<td align="left">Servlet</td>
+<td align="right">54139</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Java</td>
+<td align="left">Spring</td>
+<td align="right">31641</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Node.js</td>
+<td align="left">node.js</td>
+<td align="right">27243</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">Codeigniter</td>
+<td align="right">21503</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Groovy</td>
+<td align="left">Grails</td>
+<td align="right">20222</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left">Good</td>
+<td align="left">Ruby</td>
+<td align="left">Sinatra</td>
+<td align="right">8631</td>
+<td align="right">&lt;25%</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Python</td>
+<td align="left">Flask</td>
+<td align="right">7062</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">Laravel</td>
+<td align="right">6982</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">Kohana</td>
+<td align="right">5959</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Node.js</td>
+<td align="left">Express</td>
+<td align="right">5009</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left">Medium</td>
+<td align="left">PHP</td>
+<td align="left">Cake</td>
+<td align="right">4554</td>
+<td align="right">&lt;13%</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">C♯</td>
+<td align="left">ServiceStack</td>
+<td align="right">3838</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Scala</td>
+<td align="left">Play</td>
+<td align="right">3823</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Java</td>
+<td align="left">Wicket</td>
+<td align="right">3819</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Dart</td>
+<td align="left">Dart</td>
+<td align="right">3753</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">Slim</td>
+<td align="right">3361</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Python</td>
+<td align="left">Tornado</td>
+<td align="right">3321</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Scala</td>
+<td align="left">Lift</td>
+<td align="right">2844</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Go</td>
+<td align="left">Go</td>
+<td align="right">2689</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left">Bad</td>
+<td align="left">Java</td>
+<td align="left">Tapestry</td>
+<td align="right">1197</td>
+<td align="right">&lt;6%</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">C♯</td>
+<td align="left">aspnet</td>
+<td align="right">1000</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Haskell</td>
+<td align="left">Yesod</td>
+<td align="right">889</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">Silex</td>
+<td align="right">750</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">Lithium</td>
+<td align="right">732</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">C♯</td>
+<td align="left">nancy</td>
+<td align="right">705</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left">Very bad</td>
+<td align="left">Java</td>
+<td align="left">Grizzly</td>
+<td align="right">622</td>
+<td align="right">&lt;3%</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Erlang</td>
+<td align="left">Cowboy</td>
+<td align="right">568</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Perl</td>
+<td align="left">Dancer</td>
+<td align="right">496</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">Symphony2</td>
+<td align="right">491</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Go</td>
+<td align="left">Revel</td>
+<td align="right">459</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Clojure</td>
+<td align="left">Compojure</td>
+<td align="right">391</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Perl</td>
+<td align="left">Mojolicious</td>
+<td align="right">376</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Scala</td>
+<td align="left">Scalatra</td>
+<td align="right">349</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Scala</td>
+<td align="left">Finagle</td>
+<td align="right">336</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">Phalcon</td>
+<td align="right">299</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">js</td>
+<td align="left">Ringo</td>
+<td align="right">299</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Java</td>
+<td align="left">Gemini</td>
+<td align="right">276</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Haskell</td>
+<td align="left">Snap</td>
+<td align="right">263</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Perl</td>
+<td align="left">Plack</td>
+<td align="right">257</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Erlang</td>
+<td align="left">Elli</td>
+<td align="right">230</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Java</td>
+<td align="left">Dropwizard</td>
+<td align="right">188</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">Yaf</td>
+<td align="right">146</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Java</td>
+<td align="left">Play1</td>
+<td align="right">133</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Node.js</td>
+<td align="left">Hapi</td>
+<td align="right">131</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Java</td>
+<td align="left">Vertx</td>
+<td align="right">60</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Scala</td>
+<td align="left">Unfiltered</td>
+<td align="right">42</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">C</td>
+<td align="left">onion</td>
+<td align="right">18</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Clojure</td>
+<td align="left">http-kit</td>
+<td align="right">17</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Perl</td>
+<td align="left">Kelp</td>
+<td align="right">16</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">Micromvc</td>
+<td align="right">13</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Lua</td>
+<td align="left">Openresty</td>
+<td align="right">8</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">C++</td>
+<td align="left">cpoll-cppsp</td>
+<td align="right">5</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Clojure</td>
+<td align="left">Luminus</td>
+<td align="right">3</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">Phreeze</td>
+<td align="right">1</td>
+<td align="right"></td>
+</tr>
+</tbody>
+</table>
+<p>As we can see, our framework popularity indicator can be quite different from its language popularity. For now I didn’t found a nice way to merge the results from RedMonk with these one. So I’ll use these unperfect one. Hopefully the order of magninute is mostly correct for most framework.</p>
+<h3 id="efficiency">Efficiency</h3>
+<p>Another objective measure is efficiency. We all know benchmarks are all flawed. But they are the only indicators concerning efficiency we have.</p>
+<p>I used the benchmark from <a href="http://benchmarksgame.alioth.debian.org/u64q/benchmark.php?test=all&amp;lang=all&amp;data=u64q">benchmarksgame</a>. Mainly, there are five clusters:</p>
+<table>
+<tbody>
+<tr class="odd">
+<td align="left">1x→2x</td>
+<td align="left"><code>C</code>, <code>C++</code></td>
+</tr>
+<tr class="even">
+<td align="left">2x→3x</td>
+<td align="left">Java 7, Scala, OCamL, Haskell, Go, Common LISP</td>
+</tr>
+<tr class="odd">
+<td align="left">3x→10x</td>
+<td align="left">C♯, Clojure, Racket, Dart</td>
+</tr>
+<tr class="even">
+<td align="left">10x→30x</td>
+<td align="left">Erlang</td>
+</tr>
+<tr class="odd">
+<td align="left">30x→</td>
+<td align="left">PHP, Python, Perl, Ruby, JRuby</td>
+</tr>
+</tbody>
+</table>
+<p>Remarks concerning some very slow languages:</p>
+<ul>
+<li>PHP ; huge variations, can be about 1.5x C speed in best case.</li>
+<li>Python ; huge variations, can be about 1.5x C speed in best case</li>
+<li>Perl ; Can be about 3x C speed in best case</li>
+<li>Ruby, JRuby ; mostly very slow.</li>
+</ul>
+<p>This is a first approach. The speed of the language for basic benchmarks. But, here we are interrested in web programming. Fortunately techempower has made some tests focused on most web frameworks:</p>
+<p><a href="http://www.techempower.com/blog/2013/07/02/frameworks-round-6/">Web framework benchmarks</a>.</p>
+<p>These benchmark doesn’t fit well with our needs. The values are certainly quite imprecise to your real usage. The goal is just to get an order of magnitude for each framework. Another problem is the high number of informations.</p>
+<p>As always, we should remember these informations are also imprecise. So I simply made some classes of efficiency.</p>
+<p>Remark: I separated the clusters by using power of 2 relatively to the fastest.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Cluster</th>
+<th align="left">Language</th>
+<th align="left">Framework</th>
+<th align="center">#nb</th>
+<th align="left">slowness</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Excellent</td>
+<td align="left">C++</td>
+<td align="left">cpoll-cppsp</td>
+<td align="center">114,711</td>
+<td align="left">1×</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">gemini</td>
+<td align="center">105,204</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Lua</td>
+<td align="left">openresty</td>
+<td align="center">93,882</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">servlet</td>
+<td align="center">90,580</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">C++</td>
+<td align="left">cpoll-pool</td>
+<td align="center">89,167</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Go</td>
+<td align="left">go</td>
+<td align="center">76,024</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Sca</td>
+<td align="left">finagle</td>
+<td align="center">68,413</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Go</td>
+<td align="left">revel</td>
+<td align="center">66,990</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">rest-express</td>
+<td align="center">63,209</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Very Good</td>
+<td align="left">Jav</td>
+<td align="left">wicket</td>
+<td align="center">48,772</td>
+<td align="left">&gt;2×</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Sca</td>
+<td align="left">scalatra</td>
+<td align="center">48,594</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Clj</td>
+<td align="left">http-kit</td>
+<td align="center">42,703</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">spring</td>
+<td align="center">36,643</td>
+<td align="left">&gt;3×</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">php</td>
+<td align="center">36,605</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">tapestry</td>
+<td align="center">35,032</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Clj</td>
+<td align="left">compojure</td>
+<td align="center">32,088</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">JS</td>
+<td align="left">ringo</td>
+<td align="center">31,962</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">dropwizard</td>
+<td align="center">31,514</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Clj</td>
+<td align="left">luminus</td>
+<td align="center">30,672</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Good</td>
+<td align="left">Sca</td>
+<td align="left">play-slick</td>
+<td align="center">29,950</td>
+<td align="left">&gt;4×</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Sca</td>
+<td align="left">unfiltered</td>
+<td align="center">29,782</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Erl</td>
+<td align="left">elli</td>
+<td align="center">28,862</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">vertx</td>
+<td align="center">28,075</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">JS</td>
+<td align="left">nodejs</td>
+<td align="center">27,598</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Erl</td>
+<td align="left">cowboy</td>
+<td align="center">24,669</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">C</td>
+<td align="left">onion</td>
+<td align="center">23,649</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Hkl</td>
+<td align="left">yesod</td>
+<td align="center">23,304</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">JS</td>
+<td align="left">express</td>
+<td align="center">22,856</td>
+<td align="left">&gt;5×</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Sca</td>
+<td align="left">play-scala</td>
+<td align="center">22,372</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Jav g</td>
+<td align="left">rizzly-jersey</td>
+<td align="center">20,550</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Py</td>
+<td align="left">tornado</td>
+<td align="center">20,372</td>
+<td align="left">&gt;6×</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">phalcon</td>
+<td align="center">18,481</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Grv</td>
+<td align="left">grails</td>
+<td align="center">18,467</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Prl</td>
+<td align="left">plack</td>
+<td align="center">16,647</td>
+<td align="left">&gt;7×</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">yaf</td>
+<td align="center">14,388</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Medium</td>
+<td align="left">JS</td>
+<td align="left">hapi</td>
+<td align="center">11,235</td>
+<td align="left">&gt;10×</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">play1</td>
+<td align="center">9,979</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Hkl</td>
+<td align="left">snap</td>
+<td align="center">9,196</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Prl</td>
+<td align="left">kelp</td>
+<td align="center">8,250</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Py</td>
+<td align="left">flask</td>
+<td align="center">8,167</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">play-java</td>
+<td align="center">7,905</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Jav p</td>
+<td align="left">lay-java-jpa</td>
+<td align="center">7,846</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">micromvc</td>
+<td align="center">7,387</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Prl</td>
+<td align="left">dancer</td>
+<td align="center">5,040</td>
+<td align="left">&gt;20×</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Prl</td>
+<td align="left">mojolicious</td>
+<td align="center">4,371</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">JS</td>
+<td align="left">ringo-conv</td>
+<td align="center">4,249</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Py</td>
+<td align="left">django</td>
+<td align="center">4,026</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">codeigniter</td>
+<td align="center">3,809</td>
+<td align="left">&gt;30×</td>
+</tr>
+<tr class="odd">
+<td align="left">Bad</td>
+<td align="left">Rby</td>
+<td align="left">rails</td>
+<td align="center">3,445</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Sca</td>
+<td align="left">lift</td>
+<td align="center">3,311</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">slim</td>
+<td align="center">3,112</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">kohana</td>
+<td align="center">2,378</td>
+<td align="left">&gt;40×</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">silex</td>
+<td align="center">2,364</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Very Bad</td>
+<td align="left">PHP</td>
+<td align="left">laravel</td>
+<td align="center">1,639</td>
+<td align="left">&gt;60×</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">phreeze</td>
+<td align="center">1,410</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">lithium</td>
+<td align="center">1,410</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">fuel</td>
+<td align="center">1,410</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">cake</td>
+<td align="center">1,287</td>
+<td align="left">&gt;80×</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">symfony2</td>
+<td align="center">879</td>
+<td align="left">&gt;100×</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">C#</td>
+<td align="left">aspnet-mvc</td>
+<td align="center">871</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Rby</td>
+<td align="left">sinatra</td>
+<td align="center">561</td>
+<td align="left">&gt;200×</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">C#</td>
+<td align="left">servicestack</td>
+<td align="center">51</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Dar</td>
+<td align="left">dart</td>
+<td align="center">0</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">C#</td>
+<td align="left">nancy</td>
+<td align="center">0</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Prl</td>
+<td align="left">web-simple</td>
+<td align="center">0</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<p>These are manually made clusters. But you get the idea. Certainly, some framework could jump between two different clusters. So this is something to remember. But as always, the order of magnitude is certainly mostly right.</p>
+<h1 id="expressiveness">Expressiveness</h1>
+<p>Now, how to objectively measure expressiveness?</p>
+<p>RedMonk had a very good idea to find an objective (while imprecise) measure of each language expressiveness. Read this <a href="http://redmonk.com/dberkholz/2013/03/25/programming-languages-ranked-by-expressiveness/">article</a> for details.</p>
+<p>After filtering languages suitable for web development, we end up with some clusters:</p>
+<table>
+<col width="13%" />
+<col width="13%" />
+<thead>
+<tr class="header">
+<th align="left">Cluster</th>
+<th align="left">Languages</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Excellent</td>
+<td align="left">Coffeescript, Clojure, Haskell</td>
+</tr>
+<tr class="even">
+<td align="left">Very Good</td>
+<td align="left">Racket, Groovy, R, Scala, OCamL, F♯, Erlang, Lisp, Go</td>
+</tr>
+<tr class="odd">
+<td align="left">Medium</td>
+<td align="left">Perl, Python, Objective-C, Scheme, Tcl, Ruby</td>
+</tr>
+<tr class="even">
+<td align="left">Bad</td>
+<td align="left">Lua, Fortran (free-format) PHP, Java, C++, C♯</td>
+</tr>
+<tr class="odd">
+<td align="left">Very Bad</td>
+<td align="left">Assembly, C, Javascript,</td>
+</tr>
+</tbody>
+</table>
+<p>Unfortunately there is no information about dart. So I simply give a very fast look at the syntax. As it looked a lot like javascript and js is quite low. I decided to put it close to java.</p>
+<p>Also an important remark, javascript score very badly here while coffeescript (compiling to js) score “excellent”. So if you intend to use a javascript framework but only with coffescript that should change substantially the score. As I don’t believe it is the standard. Javascript oriented framework score very badly regarding expressiveness.</p>
+<div id="toggle-expressiveness-table" class="button">
+Click here to show/hide the table for frameworks
+</div>
+<div id="expressiveness-table">
+
+<table>
+<thead>
+<tr class="header">
+<th align="left">Cluster</th>
+<th align="left">Language</th>
+<th align="left">Framework</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Excellent</td>
+<td align="left">Clj</td>
+<td align="left">luminus</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Clj</td>
+<td align="left">http-kit</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Clj</td>
+<td align="left">compojure</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Hkl</td>
+<td align="left">snap</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Hkl</td>
+<td align="left">yesod</td>
+</tr>
+<tr class="even">
+<td align="left">Very Good</td>
+<td align="left">Erl</td>
+<td align="left">elli</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Erl</td>
+<td align="left">cowboy</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Go</td>
+<td align="left">go</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Go</td>
+<td align="left">revel</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Grv</td>
+<td align="left">grails</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Sca</td>
+<td align="left">lift</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Sca</td>
+<td align="left">finagle</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Sca</td>
+<td align="left">scalatra</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Sca</td>
+<td align="left">play-scala</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Sca</td>
+<td align="left">play-slick</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Sca</td>
+<td align="left">unfiltered</td>
+</tr>
+<tr class="odd">
+<td align="left">Medium</td>
+<td align="left">Prl</td>
+<td align="left">kelp</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Prl</td>
+<td align="left">plack</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Prl</td>
+<td align="left">dancer</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Prl</td>
+<td align="left">web-simple</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Prl</td>
+<td align="left">mojolicious</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Py</td>
+<td align="left">flask</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Py</td>
+<td align="left">django</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Py</td>
+<td align="left">tornado</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Rby</td>
+<td align="left">rails</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Rby</td>
+<td align="left">sinatra</td>
+</tr>
+<tr class="odd">
+<td align="left">Bad</td>
+<td align="left">C#</td>
+<td align="left">nancy</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">C#</td>
+<td align="left">aspnet-mvc</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">C#</td>
+<td align="left">servicestack</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">C++</td>
+<td align="left">cpoll-pool</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">C++</td>
+<td align="left">cpoll-cppsp</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Dar</td>
+<td align="left">dart</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">play1</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">vertx</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">gemini</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">spring</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">wicket</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">servlet</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">tapestry</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">play-java</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">dropwizard</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">rest-express</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">play-java-jpa</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">grizzly-jersey</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Lua</td>
+<td align="left">openresty</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">php</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">yaf</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">cake</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">fuel</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">slim</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">silex</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">kohana</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">laravel</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">lithium</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">phalcon</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">phreeze</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">micromvc</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">symfony2</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">codeigniter</td>
+</tr>
+<tr class="even">
+<td align="left">Very Bad</td>
+<td align="left">C</td>
+<td align="left">onion</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">JS</td>
+<td align="left">hapi</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">JS</td>
+<td align="left">ringo</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">JS</td>
+<td align="left">nodejs</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">JS</td>
+<td align="left">express</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">JS</td>
+<td align="left">ringo-conv</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<h3 id="robustness">Robustness</h3>
+<p>I couldn’t find any complete study to give the number of bug relatively to each framework/language.</p>
+<p>But one thing I saw from experience is the more powerful the type system the safest your application is. While the type system doesn’t remove completely the need to test your application a very good type system tend to remove complete classes of bug.</p>
+<p>Typically, not using pointer help to reduce the number of bugs due to bad references. Also, using a garbage collector, reduce greatly the probability to access unallocated space.</p>
+<figure>
+<img src="/Scratch/img/blog/Rational-Web-Framework-Choice/languagesafety.png" alt="Static Type Properties from [James IRY Blog][typesanalysis]"/>
+<figcaption>
+Static Type Properties from <a href="http://james-iry.blogspot.fr/2010/05/types-la-chart.html">James IRY Blog</a>
+</figcaption>
+</figure>
+
+<p>From my point of view, robustness is mostly identical to safety.</p>
+<p>Here are the clusters:</p>
+<table>
+<tbody>
+<tr class="odd">
+<td align="left">Excellent</td>
+<td align="left">Haskell, Scheme, Erlang</td>
+</tr>
+<tr class="even">
+<td align="left">Very Good</td>
+<td align="left">Scala, Java, Clojure</td>
+</tr>
+<tr class="odd">
+<td align="left">Good</td>
+<td align="left">Ruby, Python, Groovy, javascript, PHP</td>
+</tr>
+<tr class="even">
+<td align="left">Medium</td>
+<td align="left">C++, C#, Perl, Objective-C, Go, C</td>
+</tr>
+</tbody>
+</table>
+<p>So applying this to frameworks gives the following clusters:</p>
+<div id="toggle-robustness-table" class="button">
+Click here to show/hide the table for frameworks
+</div>
+<div id="robustness-table">
+
+<table>
+<thead>
+<tr class="header">
+<th align="left">Cluster</th>
+<th align="left">Language</th>
+<th align="left">Framework</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Excellent</td>
+<td align="left">Erl</td>
+<td align="left">elli</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Erl</td>
+<td align="left">cowboy</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Hkl</td>
+<td align="left">snap</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Hkl</td>
+<td align="left">yesod</td>
+</tr>
+<tr class="odd">
+<td align="left">Very Good</td>
+<td align="left">Clj</td>
+<td align="left">luminus</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Clj</td>
+<td align="left">http-kit</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Clj</td>
+<td align="left">compojure</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">play1</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">vertx</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">gemini</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">spring</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">wicket</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">servlet</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">tapestry</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">play-java</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">dropwizard</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">rest-express</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">play-java-jpa</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Jav</td>
+<td align="left">grizzly-jersey</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Sca</td>
+<td align="left">lift</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Sca</td>
+<td align="left">finagle</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Sca</td>
+<td align="left">scalatra</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Sca</td>
+<td align="left">play-scala</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Sca</td>
+<td align="left">play-slick</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Sca</td>
+<td align="left">unfiltered</td>
+</tr>
+<tr class="even">
+<td align="left">Good</td>
+<td align="left">Grv</td>
+<td align="left">grails</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">JS</td>
+<td align="left">hapi</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">JS</td>
+<td align="left">ringo</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">JS</td>
+<td align="left">nodejs</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">JS</td>
+<td align="left">express</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">JS</td>
+<td align="left">ringo-conv</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Lua</td>
+<td align="left">openresty</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">php</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">yaf</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">cake</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">fuel</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">slim</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">silex</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">kohana</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">laravel</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">lithium</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">phalcon</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">phreeze</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">micromvc</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">symfony2</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">PHP</td>
+<td align="left">codeigniter</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Py</td>
+<td align="left">flask</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Py</td>
+<td align="left">django</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Py</td>
+<td align="left">tornado</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Rby</td>
+<td align="left">rails</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Rby</td>
+<td align="left">sinatra</td>
+</tr>
+<tr class="even">
+<td align="left">Medium</td>
+<td align="left">C</td>
+<td align="left">onion</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">C#</td>
+<td align="left">nancy</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">C#</td>
+<td align="left">aspnet-mvc</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">C#</td>
+<td align="left">servicestack</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">C++</td>
+<td align="left">cpoll-pool</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">C++</td>
+<td align="left">cpoll-cppsp</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Dar</td>
+<td align="left">dart</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Go</td>
+<td align="left">go</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Go</td>
+<td align="left">revel</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Prl</td>
+<td align="left">kelp</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Prl</td>
+<td align="left">plack</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Prl</td>
+<td align="left">dancer</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Prl</td>
+<td align="left">web-simple</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Prl</td>
+<td align="left">mojolicious</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<h2 id="the-result">The result</h2>
+<p>For the result I initialized the table with my own needs.</p>
+<p>And I am quite happy it confirms my current choice. I sware I didn’t given yesod any bonus point. I tried to be the most objective and factual as possible.</p>
+<p>Now, it is up to you to enter your preferences.</p>
+<p>On each line you could change how important a feature is for you. From essential to unsignificant. Of course you could change the matrix at will.</p>
+<p>I just show a top 10 frameworks. In order to give a more understandable measure I provide the log of the score.</p>
+<table id="choice-matrix">
+<tr>
+    <th></th>
+    <th>
+Excellent
+</th>
+    <th>
+Very good
+</th>
+    <th>
+Good
+</th>
+    <th>
+Medium
+</th>
+    <th>
+Bad
+</th>
+    <th>
+Very bad
+</th>
+    <th>
+Importance
+</th>
+</tr>
+<tr id="t-expressiveness"><th>
+Expressiveness
+</th></tr>
+<tr id="t-popularity"><th>
+Popularity
+</th></tr>
+<tr id="t-efficiency"><th>
+Efficiency
+</th></tr>
+<tr id="t-robustness"><th>
+Robustness
+</th></tr>
+</table>
+
+<div id="compute" class="button">
+Click to force refresh
+</div>
+<div id="result"></div>
+
+<script>// <![CDATA[ // <![CDATA[
+    function lt(x,y){return (x < y);}
+    function bal(balname,str){return '<'+balname+'>'+str+'</'+balname+'>';}
+    function ret(){return '<br/>';}
+// ]]> // ]]></script>
+<script>// <![CDATA[
+    String.prototype.repeat = function(num){return new Array(num+1).join(this);};
+    (function(){function run(){if (window.$){
+
+     var languageOf={};
+languageOf["elli"]="Erlang";
+languageOf["cowboy"]="Erlang";
+languageOf["snap"]="Haskell";
+languageOf["yesod"]="Haskell";
+languageOf["luminus"]="Clojure";
+languageOf["http-kit"]="Clojure";
+languageOf["compojure"]="Clojure";
+languageOf["play1"]="Java";
+languageOf["vertx"]="Java";
+languageOf["gemini"]="Java";
+languageOf["spring"]="Java";
+languageOf["wicket"]="Java";
+languageOf["servlet"]="Java";
+languageOf["tapestry"]="Java";
+languageOf["play-java"]="Java";
+languageOf["dropwizard"]="Java";
+languageOf["rest-express"]="Java";
+languageOf["play-java-jpa"]="Java";
+languageOf["grizzly-jersey"]="Java";
+languageOf["lift"]="Scala";
+languageOf["finagle"]="Scala";
+languageOf["scalatra"]="Scala";
+languageOf["play-scala"]="Scala";
+languageOf["play-slick"]="Scala";
+languageOf["unfiltered"]="Scala";
+languageOf["grails"]="Groovy";
+languageOf["hapi"]="javascript";
+languageOf["ringo"]="javascript";
+languageOf["nodejs"]="javascript";
+languageOf["express"]="javascript";
+languageOf["ringo-conv"]="javascript";
+languageOf["openresty"]="Lua";
+languageOf["php"]="PHP";
+languageOf["yaf"]="PHP";
+languageOf["cake"]="PHP";
+languageOf["fuel"]="PHP";
+languageOf["slim"]="PHP";
+languageOf["silex"]="PHP";
+languageOf["kohana"]="PHP";
+languageOf["laravel"]="PHP";
+languageOf["lithium"]="PHP";
+languageOf["phalcon"]="PHP";
+languageOf["phreeze"]="PHP";
+languageOf["micromvc"]="PHP";
+languageOf["symfony2"]="PHP";
+languageOf["codeigniter"]="PHP";
+languageOf["flask"]="Python";
+languageOf["django"]="Python";
+languageOf["tornado"]="Python";
+languageOf["rails"]="Ruby";
+languageOf["sinatra"]="Ruby";
+languageOf["onion"]="C";
+languageOf["nancy"]="C#";
+languageOf["aspnet-mvc"]="C#";
+languageOf["servicestack"]="C#";
+languageOf["cpoll-pool"]="C++";
+languageOf["cpoll-cppsp"]="C++";
+languageOf["dart"]="Dart";
+languageOf["go"]=" Go";
+languageOf["revel"]=" Go";
+languageOf["kelp"]="Perl";
+languageOf["plack"]="Perl";
+languageOf["dancer"]="Perl";
+languageOf["web-simple"]="Perl";
+languageOf["mojolicious"]="Perl";
+
+
+popularityClusters=[[ "rails"
+],[ "django" , "servlet" , "spring" , "nodejs" , "codeigniter" , "grails"
+],[ "sinatra" , "flask" , "laravel" , "kohana" , "express"
+],[ "cake" , "servicestack" , "play-java", "play-slick"
+, "wicket" , "dart" , "slim" , "tornado" , "lift" , "go"
+],[ "tapestry" , "aspnet-mvc" , "yesod" , "silex" , "lithium" , "nancy"
+],[ "grizzly" , "cowboy" , "dancer" , "symfony2" , "revel"
+, "compojure" , "mojolicious" , "scalatra" , "finagle" , "phalcon"
+, "ringo" , "gemini" , "snap" , "plack" , "elli" , "dropwizard"
+, "yaf" , "play1" , "hapi" , "vertx" , "unfiltered" , "onion"
+, "http-kit" , "kelp" , "micromvc" , "openresty" , "cpoll-pool"
+,  "cpoll-cppsp" , "luminus" , "phreeze"
+]];
+
+
+efficiencyClusters=[[ "cpoll-cppsp" , "gemini" , "openresty" , "servlet"
+, "cpoll-pool" , "go" , "finagle" , "revel" , "rest-express"
+],[ "wicket" , "scalatra" , "http-kit" , "spring" , "php" , "tapestry"
+, "compojure" , "ringo" , "dropwizard" , "luminus"
+],[ "play-slick" , "unfiltered" , "elli" , "vertx" , "nodejs" , "cowboy"
+, "onion" , "yesod" , "express" , "play-scala" , "grizzly"
+, "tornado" , "phalcon" , "grails" , "plack" , "yaf"
+],[ "hapi" , "play1" , "snap" , "kelp" , "flask" , "play-java"
+, "play-java-jpa" , "micromvc" , "dancer" , "mojolicious" , "ringo-conv"
+, "django" , "codeigniter"
+],[ "rails" , "lift" , "slim" , "kohana" , "silex"
+],[ "laravel" , "phreeze" , "lithium" , "fuel" , "cake" , "symfony2"
+, "aspnet-mvc" , "sinatra" , "servicestack" , "dart" , "nancy" , "web-simple"
+]];
+
+
+expressivenessClusters=[[
+"luminus" , "http-kit" , "compojure" , "snap" , "yesod"
+],[ "elli" , "cowboy" , "go" , "revel" , "grails" , "lift" , "finagle"
+, "scalatra" , "play-scala" , "play-slick" , "unfiltered"
+],[ "kelp" , "plack" , "dancer" , "web-simple" , "mojolicious" , "flask"
+, "django" , "tornado" , "rails" , "sinatra"
+],[ "nancy" , "aspnet-mvc" , "servicestack" , "cpoll-pool" , "cpoll-cppsp"
+, "dart" , "play1" , "vertx" , "gemini" , "spring" , "wicket" , "servlet"
+, "tapestry" , "play-java" , "dropwizard" , "rest-express" , "play-java-jpa"
+, "grizzly" , "openresty" , "php" , "yaf" , "cake" , "fuel" , "slim"
+, "silex" , "kohana" , "laravel" , "lithium" , "phalcon" , "phreeze"
+, "micromvc" , "symfony2" , "codeigniter"
+],[ "onion" , "hapi" , "ringo" , "nodejs" , "express" , "ringo-conv"
+]];
+
+robustnessClusters=[[ "elli" , "cowboy" , "snap" , "yesod"
+],[ "luminus" , "http-kit" , "compojure" , "play1" , "vertx" , "gemini"
+, "spring" , "wicket" , "servlet" , "tapestry" , "play-java" , "dropwizard"
+, "rest-express" , "play-java-jpa" , "grizzly" , "lift" , "finagle"
+, "scalatra" , "play-scala" , "play-slick" , "unfiltered"
+],[ "grails" , "hapi" , "ringo" , "nodejs" , "express" , "ringo-conv"
+, "openresty" , "php" , "yaf" , "cake" , "fuel" , "slim" , "silex"
+, "kohana" , "laravel" , "lithium" , "phalcon" , "phreeze" , "micromvc"
+, "symfony2" , "codeigniter" , "flask" , "django" , "tornado" , "rails"
+, "sinatra"
+],[ "onion" , "nancy" , "aspnet-mvc" , "servicestack" , "cpoll-pool"
+, "cpoll-cppsp" , "dart" , "go" , "revel" , "kelp" , "plack"
+, "dancer" , "web-simple" , "mojolicious"
+],[
+],[
+]];
+
+        // var essentialVector=[10000,100,1,0,0,0];
+        // var importantVector=[1024,256,64,16,4,1];
+        // var normalVector=[32,16,8,4,2,1];
+        // var somehowVector=[10,8,6,4,2,1];
+        // var whateverVector=[1,1,1,1,1,1];
+
+        var ninfty=Number.NEGATIVE_INFINITY;
+        var essentialVector=[11,7,0,-1000,-1000,-1000];
+        var importantVector=[10,8,6,4,2,0];
+        var normalVector=[5,4,3,2,1,0];
+        var somehowVector=[2,2,1,1,0,0];
+        var whateverVector=[0,0,0,0,0,0];
+
+        var framework=[];
+
+        for (var i=0;lt(i,efficiencyClusters.length);i++) {
+            for (var j=0;lt(j,efficiencyClusters[i].length);j++) {
+                framework[efficiencyClusters[i][j]]={};
+            }
+        }
+        $(["efficiency"
+          ,"popularity"
+          ,"expressiveness"
+          ,"robustness"]).each(function(){
+            var tab;
+            eval("tab = "+this+"Clusters;");
+            for (var i=0;lt(i,tab.length);i++) {
+                for (var j=0;lt(j,tab[i].length);j++) {
+                    eval("framework[tab[i][j]]."+this+"= i;");
+                }
+            }
+          });
+
+        function setLine(name,vector) {
+            $('#' + name+' td input').each(function(i){
+                var len = vector.length;
+                if (lt(i,len)) {
+                    $(this).val(vector[i]); }});}
+        $(['t-expressiveness'
+          ,'t-popularity'
+          ,'t-efficiency'
+          ,'t-robustness']).each(function(){
+                    var name='#'+this;
+                    var tdinput=$('<td align="right"><input style="display: inline-block;width:3.2em;text-align:right" type="text"></input></td>'.repeat(6));
+                    $(name).append(tdinput);
+                    $(name).append($('<td>'+
+                        '<select style="width:6em" id="s-'+this+'">' +
+                        '<option value="essential">Essential</option>' +
+                        '<option value="important">Important</option>' +
+                        '<option value="normal" selected="t">Normal</option>' +
+                        '<option value="somehow">Somehow</option>' +
+                        '<option value="whatever">Unsignificant</option>' +
+                        '</select>' +
+                        '</td>' ));
+                    if (this == "t-expressiveness") {
+                        setLine(this,essentialVector);
+                        $(name+' select').val("essential");
+                    } else if (this == "t-popularity") {
+                        setLine(this,normalVector);
+                        $(name+' select').val("normal");
+                    } else if (this == "t-efficiency") {
+                        setLine(this,importantVector);
+                        $(name+' select').val("important");
+                    } else if (this == "t-robustness") {
+                        setLine(this,importantVector);
+                        $(name+' select').val("important");
+                    }
+                    var strthis=''+this;
+                    $("#s-"+this).change(function(){
+                            var val=$("#s-"+strthis+" option:selected").val();
+                            var tab;
+                            eval('tab='+val+'Vector');
+                            setLine(strthis,tab);
+                            updateResult();
+                        });
+                });
+        function updateResult(){
+            var scoreMatrix=[[0,0,0,0,0,0]
+                            ,[0,0,0,0,0,0]
+                            ,[0,0,0,0,0,0]
+                            ,[0,0,0,0,0,0]
+                            ];
+            $(['t-expressiveness'
+              ,'t-popularity'
+              ,'t-efficiency'
+              ,'t-robustness']).each(function(i){
+                $("#"+this+" td input").each(function(j){
+                    scoreMatrix[i][j]=$(this).val(); }) });
+            var result=[];
+            for (key in framework) {
+                framework[key].score =
+                    parseInt(scoreMatrix[0][framework[key].expressiveness]) +
+                    parseInt(scoreMatrix[1][framework[key].popularity]) +
+                    parseInt(scoreMatrix[2][framework[key].efficiency]) +
+                    parseInt(scoreMatrix[3][framework[key].robustness]);
+                result.push([key,framework[key].score]);
+            }
+            result.sort(function(a,b){return lt(a[1],b[1]);});
+            var winners=[];
+            var i=0;
+            var maxscore=result[0][1];
+            while ((lt(i,result.length)) && (result[i][1]==maxscore)){
+                winners.push(result[i]);
+                i+=1;
+            }
+            if (winners.length == 1) {
+                $('#result').html('<'+'p style="text-align: center">And the winner is<'+'br/><'+'strong>'+result[0][0]+'<'+'/strong> ('+languageOf[result[0][0]]+')<'+'/p><'+'table><'+'tr><'+'th>position<'+'/th><'+'th>framework<'+'/th><'+'th>language<'+'/th><'+'th align="right">score<'+'/th><'+'/tr><'+'/table>');
+            } else {
+                var listwinners=new String;
+                for (i=0;lt(i,winners.length);i++){
+                    listwinners=listwinners+bal('strong', winners[i][0] ) + " ("+languageOf[winners[i][0]]+")"+ret();}
+                $('#result').html('<'+'p style="text-align: center">And the winners are<'+'br/>' + listwinners + '<'+'table><'+'tr><'+'th>position<'+'/th><'+'th>framework<'+'/th><'+'th>language<'+'/th><'+'th align="right">score<'+'/th><'+'/tr><'+'/table>');
+            }
+            for (k=0;lt(k,10);k++){
+                $('#result table').append('<'+'tr><'+'td>'+(k+1)+'<'+'/td><'+'td>'+result[k][0]+'<'+'/td><'+'td>'+languageOf[result[k][0]]+'<'+'/td><'+'td><'+'code>'+result[k][1]+'<'+'/code><'+'/td><'+'/tr>');
+            }
+        }
+        $('#compute').click(updateResult);
+        $("#choice-matrix input[type='text']").change(updateResult);
+        $("#choice-matrix input[type='text']").keyup(updateResult);
+        updateResult();
+
+        // Show hide tables in the article
+        $('#toggle-expressiveness-table').click(function(){
+                                        $('#expressiveness-table').toggle();
+                                        });
+        $('#toggle-robustness-table').click(function(){
+                                        $('#robustness-table').toggle();
+                                        });
+        $('#expressiveness-table').toggle();
+        $('#robustness-table').toggle();
+
+    } else {
+        setTimeout(run,50);
+    }
+        }
+        run();
+    })();
+// ]]></script>
+
+<p>I didn’t had the courage in explaining in what the scoring system is good. Mostly, if you use product instead of sum for the score you could use power of <span class="math"><em>e</em></span> for the values in the matrix. And you could see the matrix as a probability matrix (each line sum to 1). Which provide a slighly better intuition on whats going on.</p>
+<p>Remember only that values are exponential. Do not double an already big value for example the effect would be extreme.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>All of this is based as most as I could on objective data. The choice method seems both rather rational and classical. It is now up to you to edit the score matrix to set your needs.</p>
+<p>I know that in the current state there are many flaws. But it is a first system to help make a choice rationally.</p>
+<p>I encourage you to go further if you are not satisfied by my method.</p>
+<p>The source code for the matrix shouldn’t be too hard to read. Just read the source of this webpage. You could change the positionning of some frameworks if you believe I made some mistake by placing them in some bad clusters.</p>
+<p>So I hope this tool will help you in making your life easier.</p>]]></summary>
+</entry>
+<entry>
     <title>Hakyll setup</title>
     <link href="http://yannesposito.com/Scratch/fr/blog/Hakyll-setup/index.html" />
     <id>http://yannesposito.com/Scratch/fr/blog/Hakyll-setup/index.html</id>
@@ -5835,187 +8031,6 @@ toWidget       hamletFile <span class="st">&quot;buttonTemplate.hamlet&quot;</sp
 <p>Si vous êtes un “haskeller”, je pense que vous ne devriez pas avoir peur de la syntaxe particulière imposée par la façon standard de faire les choses avec yesod. Il faut essayer un peu plus loin que les premiers tutoriaux du livre.</p>
 <p>Je pense que yesod va dans la bonne direction d’un web plus sûr et plus rapide. Même si je pense que l’avenir sera que les serveurs devront être limités à faire serveur d’API (JSON ou XML ou n’importe quel autre mode de représentation d’objets).</p>
 <p>Yesod est juste incroyable. Dépassez les difficultés liées à l’apprentissage d’haskell et essayez le !</p>]]></summary>
-</entry>
-<entry>
-    <title>Expérience avec les languages de programmations</title>
-    <link href="http://yannesposito.com/Scratch/fr/blog/programming-language-experience/index.html" />
-    <id>http://yannesposito.com/Scratch/fr/blog/programming-language-experience/index.html</id>
-    <published>2011-09-28T00:00:00Z</published>
-    <updated>2011-09-28T00:00:00Z</updated>
-    <summary type="html"><![CDATA[<div>
-<img src="/Scratch/img/blog/programming-language-experience/dragon.jpg" alt="Title image"/>
-</div>
-
-<div class="intro">
-<span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Mon avis succinct et hautement subjectif concernant les différents languages de programmation que j’ai utilisé.
-</div>
-
-<h3 id="basic"><code>BASIC</code></h3>
-<div>
-<img src="/Scratch/img/blog/programming-language-experience/basic.gif" alt="Title image" class="left"/>
-</div>
-
-<p>Ah ! Le language de mes premiers programmes ! Je devais avoir 10-11 ans. Sous <code>MO5</code>, <code>Amstrad CPC 6128</code> et même <code>Atari STe</code>. Le langage des <code>GOTO</code>s. Je suis empleint de nostalgie rien que d’y penser. C’est à peu prêt le seul intérêt de ce langage.</p>
-<p>Aujourd’hui ce langage est tombé en désuétude. Ce n’est ni un bon langage pour apprendre, ni un bon langage pour faire de vrai programmes. Même si quelques années plus tard, je me remettais à programmer dans un basic avec un compilateur qui pourrait lui redonner vie. Je m’en était servi pour faire un livre dont vous êtes le héro :-).</p>
-<pre class="zsh"><code>READY
-10 PRINT &quot;HELLO WORLD!&quot;
-20 GOTO 10
-RUN</code></pre>
-<p>Je m’en souviens aussi pour avoir copier des codes de jeux vidéo à partir de magasines. La plupart des lignes ressemblaient à</p>
-<pre class="zsh"><code>3110 DATA FA,01,FF,FF,FF,FF,00,23,22,43,DA,DE,EE,FF,FF,FF,00,03,4A,F2</code></pre>
-<p>Quel plaisir c’était !</p>
-<h3 id="logo">Logo</h3>
-<div>
-<img src="/Scratch/img/blog/programming-language-experience/dragon.jpg" alt="Dragon fractal" class="left"/>
-</div>
-
-<p>Toujours lors que j’avais 10 ans, on pouvait faire de petits programmes sympathiques.</p>
-<p>Je me souviens que lors du chargement de l’application logo on avait droit à de la musique de Bach.</p>
-<p>Oui, il fallait charger le programme en mémoire avec une cassette. Et elle ne faisait pas les ‘Krrrkrr csssss krrrr’.</p>
-<p>Je l’avais utilisé sans les boucles. Des années plus tard, je le réutiliser pour faire de l’initiation à l’informatique à mes étudiants de DEUG MIAS première année. Il s’est en fait révélé très utile. Grace à lui, faire des fractales se révèle être un jeu d’enfant, au sens litéral. Je ne peux que conseiller ce langage pour apprendre à programmer et aussi pour le fun.</p>
-<p>Voici un exemple de code et le résultat est la jolie fractale ‘dragon’.</p>
-<pre class="zsh"><code>HIDETURTLE
-
-PENUP
-SETXY -200 0
-RIGHT 90
-PENDOWN
-
-to dragon :degree :size
-    setpensize 1
-    if :size&gt;5  [setpensize 2]
-    if :size&gt;10 [setpensize 3]
-    if :size&gt;20 [setpensize 4]
-    if :size&gt;40 [setpensize 5]
-    ifelse :degree=0 [
-        fd :size
-    ][
-        left  45 dragon (:degree-1) (size/4)
-        right 90 dragon (:degree-1) (size/2)
-        left  90 dragon (:degree-1) (size/4)
-        right 45
-    ]
-end
-
-dragon 6 3000</code></pre>
-<h3 id="pascal">Pascal</h3>
-<p>L’éternel numéro 2.</p>
-<p>J’ai dû apprendre à programmer en Pascal aux alentour de 15 ans et je l’ai aussi réutiliser un peit peu en faculté. Je dois avouer, que je le trouve inférieur au C en tous points. J’ai fait pas mal de chose avec ça, comme des algorithmes de graphes, des algorithmes de tri, et même un peu d’intelligence artificielle comme des algorithmes génétiques. Mais je préfère largement le C.</p>
-<h3 id="c">C</h3>
-<div>
-<img src="/Scratch/img/blog/programming-language-experience/C.jpg" alt="Pointer representation from Dancing links" class="left"/>
-</div>
-
-<p>Le langage des pointeurs</p>
-<p>Ah, <em>le</em> langage de programmation par excellence.</p>
-<p>Une fois que vous avez compris les boucles et la récursivité. Il est temps de passer aux choses sérieuses. Si vous voulez avoir du code de bonne qualité, alors apprendre le C est quasi-obligatoire.</p>
-<p>Ce langage est très proche du langage machine. En particulier, (la majorité du temps). Il y a une relation linéaire entre la taille du code en C et de son résultat compilé en assembleur.</p>
-<p>Ça signifie qu’à chaque fois que vous écrivez une ligne de C, il ne va pas se passer de choses toutes bizarres comme lancer un algorithme qui va prendre deux plombes.</p>
-<p>Il est très proche de la machine tout en ayant une abstraction suffisante pour ne pas être “trop” désagréable.</p>
-<p>J’ai fait beaucoup de choses avec. Tous les algorithmes de tri, des algorithmes d’intelligence artificielle (résolution de SAT3), du système, du réseau etc… Bref il est versatile, et on ne peut pas dire que l’on sait programmer si on ne s’est jamais mis à programmer sérieusement en <code>C</code>.</p>
-<h3 id="ada">ADA</h3>
-<p>Le langage “super propre”.</p>
-<p>J’avais bien aimé ADA, mais j’avoue que ça n’a duré que le temps d’un semestre de cours. Peut-être qu’un jour je m’y remettrai. Disons qu’il est assez vieux et qu’il a inspiré la plupart des concepts objets.</p>
-<h2 id="les-langages-orientés-objets">Les langages orientés objets</h2>
-<p>Bon, oui, le Pascal, le C, le Basic (fortran, Cobol et autres) étaient tous des langages impératifs, sans notion d’objets.</p>
-<p>En gros, il n’y avait pas d’aide pour structurer votre code.</p>
-<p>Alors, pour aider à limiter le nombre de bug, en particulier pour la création de très gros programmes, on s’est mis à réfléchir à la meilleure façon d’organiser du code d’ordinateur. À la fin, ça à donné la programmation orienté objet. Et donc les langages comme le C manquaient de système pour aider au développement orienté objet. Attention, la programmaiton orienté objet n’est pas la panacée. Combien de programme utilisez-vous qui n’ont pas de bug ? Et ça ne convient pas à tous les type de problème. Mais pour faire une application banquaire, un système de gestion des stocks, des clients ou des archives. C’est-à-dire un système d’information, c’est pas trop mal.</p>
-<p>Donc les langages orientés objets se sont mis à fleurir.</p>
-<h3 id="c-1">C++</h3>
-<div>
-<img src="/Scratch/img/blog/programming-language-experience/cplusplus.jpg" alt="Messy router" class="left"/>
-</div>
-
-<p>Le malpropre</p>
-<p>en:</p>
-<p>Et oui l’industrie voulait un langage objet, mais elle n’était pas prête à mettre à la poubelle tout ses codes en C. La solution, prendre C et lui rajouter une couche objet. Le problème avec C++ c’est qu’il fait trop de choses. L’héritage multiple, des templates, etc… Bon, je l’ai quand même choisi pour faire le plus gros programme que j’ai jamais fais lors de ma thèse. Et je dois avouer que l’expérience m’a plu. Le seul reproche que j’ai à faire, c’est que la STL n’était pas aussi complète que l’on aurait pu l’espérer pour un détail. On ne peut pas faire de <code>String&lt;T&gt;</code> pour autre chose que des <code>char16</code>. Du coup, mon alphabet était limité à 2<sup>16</sup> lettres. Hors, pour certaines application, l’alphabet doit être gigantesque. fr: En conclusion je dirai que C++ est un très bon langage si vous vous fixez à l’avance un sous ensemble de ses fonctionnalités.</p>
-<h3 id="eiffel">Eiffel</h3>
-<div>
-<img src="/Scratch/img/blog/programming-language-experience/eiffel.jpg" alt="Eiffel tower construction" class="left"/>
-</div>
-
-<p>Eiffel est un très beau langage objet. Bien plus propre que C++. Mais, à moins que les choses aient changées, il n’est pas très populaire. Derrière lui il n’a pas la communauté de C++. Pour être franc, j’ai préféré travailler en C++. J’ai menti à mes profs de l’époque pour leur faire plaisir. Lorsqu’on viens du C, il est désagréable de changer ses habitudes.</p>
-<h3 id="java">Java</h3>
-<div>
-<img src="/Scratch/img/blog/programming-language-experience/grail.jpg" alt="Holy Grail from the Monty Python" class="left"/>
-</div>
-
-<p>On continue vers les langages objets. Alors, à une époque où j’en ai entendu parler, c’était <em>le Graal</em> !</p>
-<p>La portabilité, votre programme marchera partout. Il était orienté objet. Incrusté à l’intérieur il y avait des concepts d’architecture qui empêchent de faire n’importe quoi… Sauf que.</p>
-<p>Sauf qu’il est incroyablement verbeux. Et que les limitations sont très désagréables si on sait ce que l’on fait.</p>
-<p>Par exemple, il n’y a pas d’héritage multiple en Java. Ce qui est en général un choix que je trouve cohérent s’il est bien appuyé par des systèmes qui compensent ce manque. En java, il existe les interfaces. Les interfaces permettent d’ajouter des méthodes à une classe. En aucun cas on ne peut rajouter un attribut autrement qu’en héritant. Cet état de fait m’a vraiment géné.</p>
-<p>Typiquement je faisais une GUI en Java Swing. J’avais créé mon propre système de notification entre objets. Au début je considérais qu’un objet ne devait envoyer des notifications qu’à un seul objet. Ô quelle erreur lorsque je réalisais qu’il fallait non plus gérer un seul objet mais parfois plusieurs. Je changeais mon implémentation d’interface partout, conséquence, des copier/coller dans tous les sens pour mes classes. Les copier/coller qui sont justement un problème censé être évité par les langages orientés objets.</p>
-<p>De plus toujours pour ma GUI, je devais évidemment gérer des threads. Hors, il m’a fallu faire mon propre système de gestion de threads pour éviter les locks, pour les notifications (ce thread à fini, etc…). À l’époque j’utilisais Java 1.5. Normallement ce problème devait être réglé sur Java 1.6. J’espère que c’est le cas, mais avoir ce type de “feature” essentielle oubliée par le langage était assez grave.</p>
-<p>De même, il a fallu attendre très longtemps avant d’avoir des boucles foreach qui rendent le code bien plus lisible.</p>
-<p>Bon, après cette expérience je déconseillerai Java. La portabilité, n’est pas si intéressante que ce qu’on pourrait croire.</p>
-<p>En ce qui concerne les GUI, portable signifie interface fonctionnelle mais médiocre sur toutes les plateformes. Quelque soit le système d’ailleurs (wxWidget, QT, etc…). Donc, pour des applications à distribuer à des tiers, c’est à éviter.</p>
-<p>Le système de Java est très clos. Par contre il résout un très bon problème. Il permet à des développeurs médiocres de travailler en groupe sans faire trop de mal. Et un bon programmeur sera tout de même capable d’y faire des choses très intéressantes. Veuillez noter que je n’ai pas dit que les programmeurs Java sont de mauvais programmeurs, ce n’est pas ce que je pense.</p>
-<h3 id="objective-c">Objective-C</h3>
-<div>
-<img src="/Scratch/img/blog/programming-language-experience/xcode_logo.png" alt="Xcode Logo" class="left"/>
-</div>
-
-<p>Le langage que je n’ai appris et utilisé que pour faire des applications sur les plateformes d’Apple(c). J’ai appris Objective-C après Python. Et je dois avouer que j’ai eu du mal à m’y mettre. Je n’ai pas du tout aimé la syntaxe et pas mal d’autres détails. Mais ça fait parti de ces langages que plus on utilise, plus on aime. En réalité, il y a quelque chose dans ce langage qui fait que tout est bien pensé. Mais surtout, ici, ce n’est pas le langage qui est la meilleure partie, c’est plutôt le framework Cocoa qui lui est le plus souvent associé qui est une merveille. Par rapport à tous les autres framework permettant de fabriquer des GUI, Cocoa est de très loin supérieur. Même si ça semble être des détails sur le papier, en pratique cela fait une grande différence.</p>
-<p>Vraiment jusqu’ici, même si Objective-C reste assez bas niveau, le fait que le typage de ce langage soit dynamique est un vrai plus pour l’interface graphique. Je ne peux que vous encourager à vous accrocher à ce langage et de faire un vrai programme avec. Vous en serez certainement plus ravi qu’il n’y parrait eu début.</p>
-<h2 id="les-langages-interprétés-modernes">Les langages interprétés modernes</h2>
-<h3 id="php">PHP</h3>
-<div>
-<img src="/Scratch/img/blog/programming-language-experience/php.jpg" alt="A Jacky Touch Car" class="left"/>
-</div>
-
-<p>Le petit langage de script que nous utilisions tous pour faire des sites web à l’époque des gifs animées !</p>
-<p>Sympatique, mais sans plus. Apparemment il y a eu pas mal de progrès depuis PHP5, un jour peut-être que j’y reviendrai. Mais, il a derrière lui une réputation de langage pour les “scripts kiddies”. En gros ceux qui ne savent pas coder. Des trous de sécurité de tous les cotés, etc…</p>
-<p>En réalité, PHP est au niveau d’abstration à peine supérieur au C. Et donc, il est beaucoup moins bien organisé que des langages objets, favorisant ainsi la création de bug. Pour les applications web, c’est un vrai problème.</p>
-<p>PHP, reste pour moi le langage de l’injection SQL. J’en fait encore un peu de temps en temps. Et j’ai moi-même dû protéger les accès au SQL pour éviter les injections. Oui, je n’ai pas trouvé de librairie toute prête pour protéger les entrées SQL. Je n’ai pas beaucoup cherché non plus.</p>
-<h3 id="python">Python</h3>
-<div>
-<img src="/Scratch/img/blog/programming-language-experience/python.jpg" alt="Python. Do you speak it?" class="left"/>
-</div>
-
-<p>Alors là, attention ! Révélation !</p>
-<p>Lorsqu’on avait l’habitude de travailler avec des langages compilé, type C++, Java et qu’on passe à Python, on se prend une claque magistrale. La programmation comme elle doit être faite. Tout est si naturel, c’est <em>magique</em>. Oui, c’est si bien que ça. Mais quelque chose d’aussi incroyablement bien doit avoir des inconvénients me dirais-vous.</p>
-<p>Et bien, oui, comme tous les langages de scripts de haut niveau, Python est <em>lent</em>. Attention pas juste un peu lent, comme 2 fois plus lent que du C. Non, de l’ordre de 10 à 20 fois plus lent que le C. Argh… Bon ça reste utilisable pour beaucoup de choses. Mais certaines application lui sont donc interdites.</p>
-<h3 id="awk">Awk</h3>
-<p>Des filtres de fichiers à faire. Si ce n’est pas trop compliqué, c’est le langage idéal. Vous avez un fichier et vous voulez savoir quels sont les mots les plus utilisés. Savoir combien de fois un mot est utilisé. Filtrer sous des condition un peu plus compliquées qu’un grep. Super outils. Je l’ai utilisé pour modifier en masse des centaines de fichier XML plus facilement qu’avec du XSLT.</p>
-<h3 id="perl">Perl</h3>
-<p>Perl c’est assez magique, mais la syntaxe est tellement désagréable à lire que personne ne peut vraiment aimer programmer dans un environnement de plusieurs personnes en Perl. A moins que tous les autres soient des cadors du Perl. Mais la feature qui tue, les expressions régulières&nbsp;:</p>
-<pre class="sourceCode perl"><code class="sourceCode perl"><span class="dt">$var</span> =~ <span class="kw">s/</span><span class="ot">toto</span><span class="kw">/</span><span class="st">titi</span><span class="kw">/g</span></code></pre>
-<p>Va remplacer toto par titi dans la valeur de la variable <code>$var</code>. Et oui, les expressions régulière y sont intégrées directement comme avec <code>sed</code> et <code>awk</code>. Et ça rend le code beacoup plus compact (et parfois illisible). Mais c’est vraiment pas mal. C’est une sorte de <code>awk</code> sous stéroides.</p>
-<h3 id="ruby">Ruby</h3>
-<p>C’est une sorte de Perl en plus propre. Un mélange de Perl et de Python. Les notion objets y sont plus fortes qu’en Python. Je l’ai beaucoup utilisé, je reste quand même un Pythoniste de préférence. Mais Ruby est vraiment très bien. Par contre en terme d’efficacité, c’est le pire langage utilisé par beaucoup de monde de ce point de vue. C’est le langage qui perd quasiment tous les benchmarks. Par contre c’est un outil parfait pour faire des prototypes. Et si vous voulez faire un prototype de site web, RoR est ce qui se fait de mieux. De l’idée au site, il ne se passera que peu de temps.</p>
-<h3 id="javascript">Javascript</h3>
-<p>C’est la bonne surprise. Pendant des années, javascript était considéré comme un langage tout bon à vous embéter dans votre navigation web. En réalité, javascript possède beaucoup de qualité des langages de haut niveau. En particulier, il est facille de passer une fonction en paramèter ou de créer des fonctions anonymes (closures). Récemment, il est devenu très rapide et beaucoup de frameworks et de librairies naissent un peu partout.</p>
-<ul>
-<li>Il y a Cappuccino, Objective-J (comme de l’objective-C mais avec du javascript)</li>
-<li>Sproutcore</li>
-<li>Spine.js</li>
-<li>Backbone.js</li>
-<li>jQuery</li>
-<li>prototype.js</li>
-</ul>
-<p>En particulier avec jQuery, on peut faire des appels chainés, très agréables à utiliser. Comme je le disais, c’est une bonne surprise, javascript a été choisi un peu au hasard lors de la création des navigateurs web comme langage de script. Et il s’avère qu’à part sa syntaxe, tout le reste est bien. Heureusement, en ce qui concerne la syntaxe, on peu pallier à ce problème en utilisant CoffeeScript.</p>
-<h2 id="les-langages-fonctionnels">Les langages fonctionnels</h2>
-<h3 id="caml">CamL</h3>
-<p>J’ai appris CamL à la fac, j’avais trouvé cette expérience très interressante. J’étais plutôt bon, et j’avais les bonnes intuitions mathématiques qui vont avec la programmation fonctionnelle. Mais je dois avouer que je ne l’ai plus jamais utilisé. Simplement, ce type de langage semble si loin de ce qui se fait pour fabriquer des produits que ça me donnais vraiment l’impression d’être un langage pour chercheurs.</p>
-<h3 id="haskell">Haskell</h3>
-<p>Je suis en train d’apprendre ce langage. Et je dois dire que c’est un vrai plaisir. En général les concepts derrière tous les langages de programmation sont assez limités. Chaque langage y va de son petit lot de nouveau concepts, et en général en une après-midi, c’est appris. Pour haskell, c’est très différent. Je sens bien qu’il va me falloir plusieurs semaines pour maîtriser la bête. Ça doit faire quatre semaines que j’apprend haskell un peut tous les jours et je sais qu’il y a des notions que j’ai juste survollées et qui sont assez incroyables. Les Monades par exemple, est un concept que je n’avais jamais rencontré ailleurs. C’est un super concept. De plus le design du langage en fait un parfait système pour paralléliser les calculs naturellement. haskell sépare la partie “pure” de la partie “impure” de la programmation. À ma connaissance, c’est le seul langage de programmation qui fait ça. Enfin, je prend beaucoup de plaisir à apprendre ce langage. La communauté est aussi très acceuillante. Pas de “L0L! URAN00B!”. Et aussi pas de concession du langage pour devenir populaire. Le langage est bon, voilà tout. Alors qu’en Java et C++, typiquement certain choix ont été fait en dépis du bon sens pour “faire plaisir”.</p>
-<h2 id="langages-originaux">Langages originaux</h2>
-<h3 id="metapost">Metapost</h3>
-<p>Metapost est un langage qui permet de programmer des dessins. Le gros plus de metapost, c’est sa capacité de résoudre automatiquement les systèmes d’équations linéaires. Par exemple, si vous écrivez&nbsp;:</p>
-<pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="dt">AA</span>=<span class="dv">1</span>/<span class="dv">3</span>[A,B]</code></pre>
-<p>Il va position le point <code>AA</code> entre <code>A</code> et <code>B</code>. Plus précisément, au barycentre <code>(2A + B)/3</code>.</p>
-<pre class="sourceCode ruby"><code class="sourceCode ruby">X=whatever[A,B]
-X=whatever[C,D]</code></pre>
-<p>Ce deuxième exemple positionne <code>X</code> à l’intersection des deux segments <code>AB</code> et <code>CD</code>. Vous pouvez aussi voir pas mal d’<a href="http://tex.loria.fr/prod-graph/zoonekynd/metapost/metapost.html">exemples ici</a>. You could see <a href="http://tex.loria.fr/prod-graph/zoonekynd/metapost/metapost.html">more example there</a>.</p>
-<p>Cette fonction est très utile. Et à mon avis pas seulement pour afficher des choses. De mon point de vue, les autres langages de programmation devraient penser à rajouter les résolutions automatiques simples.</p>
-<h3 id="zsh">zsh</h3>
-<p>Oui, zsh est un shell. Mais c’est aussi un langage de script très bien adapté aux traitement de fichiers. Je le recommande chaudement. C’est pour l’instant le meilleur shell que j’ai utilisé. Je le préfère au bash.</p>
-<h3 id="prolog">Prolog</h3>
-<p>Je n’ai jamais rien fait de conséquent avec Prolog, mais j’ai adoré l’apprendre et l’utiliser. J’ai eu la chance d’apprendre Prolog par <a href="http://alain.colmerauer.free.fr/">Alain Colmerauer</a> lui-même. C’est un langage qui essaye de résoudre les contraintes autant qu’il le peut pour vous. Il en ressort un impression de magie. On ne fait que décrire ce qu’il faut et on ne donne pas d’ordre. Un peu comme la programmation fonctionnelle mais en beaucoup plus puissant.</p>
-<h2 id="les-langages-à-découvrir">Les langages à découvrir</h2>
-<p>Il reste encore pas mal de langages et de framework à essayer. Actuellement je pense que je vais passer un moment avec Haskell. Peut-être demain que j’irai apprendre LISP, Scala ou Erlang. Comme je suis plus dans la création de site web, j’irai certainement jeter un coup d’œil à clojure aussi. Et certainement beaucoup d’autres choses.</p>
-<p>Dites moi si vous avez une autre expérience avec ces langages de programmation. Évidement mes impression sont hautement subjectives. Cependant, j’ai utilisé tous les langages dont j’ai parlé.</p>
-<p><em>[STL]: Standard Tempate Library</em>[GUI]: Graphic User Interface</p>]]></summary>
 </entry>
 
 </feed>
