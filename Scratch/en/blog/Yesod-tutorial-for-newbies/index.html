@@ -169,16 +169,16 @@ Enter space-separated list of methods (ex: GET POST): <span class="highlight">GE
 
 <span class="kw">import</span> Import
 
-<span class="ot">getEchoR ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
-getEchoR <span class="fu">=</span> error <span class="st">&quot;Not yet implemented: getEchoR&quot;</span></code></pre>
+<span class="ot">getEchoR ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">Html</span>
+getEchoR <span class="fu">=</span> <span class="fu">error</span> <span class="st">&quot;Not yet implemented: getEchoR&quot;</span></code></pre>
 <p>This should be straightforward. Now we can replace it with this:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
 <span class="kw">import</span> Import
 
-<span class="ot">getEchoR ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
+<span class="ot">getEchoR ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">Html</span>
 getEchoR theText <span class="fu">=</span> defaultLayout [whamlet<span class="fu">|&lt;</span>h1<span class="fu">&gt;#</span>{theText}<span class="fu">|</span>]</code></pre>
-<p>Don’t worry if you find all of this a bit cryptic. In short it just declares a function named <code>getEchoR</code> with one argument (<code>theText</code>) of type <code>String</code>. When this function is called, it returns a <code>Handler RepHtml</code> whatever it is. But mainly this will encapsulate our expected result inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> text.</p>
+<p>Don’t worry if you find all of this a bit cryptic. In short it just declares a function named <code>getEchoR</code> with one argument (<code>theText</code>) of type <code>String</code>. When this function is called, it returns a <code>Handler Html</code> whatever it is. But mainly this will encapsulate our expected result inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> text.</p>
 <p>After saving the file, you should see Yesod recompile the application. When the compilation is finished you’ll see the message: <code>Starting devel application</code>.</p>
 <p>Now you can visit: <a href="http://localhost:3000/echo/Yesod%20rocks!"><code>http://localhost:3000/echo/Yesod%20rocks!</code></a></p>
 <p>TADA! It works!</p>
@@ -222,7 +222,7 @@ getEchoR theText <span class="fu">=</span> defaultLayout [whamlet<span class="fu
 
 <span class="kw">import</span> Import
 
-<span class="ot">getEchoR ::</span> <span class="highlight"><span class="dt">Text</span></span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
+<span class="ot">getEchoR ::</span> <span class="highlight"><span class="dt">Text</span></span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">Html</span>
 getEchoR theText <span class="fu">=</span> defaultLayout [whamlet<span class="fu">|&lt;</span>h1<span class="fu">&gt;#</span>{theText}<span class="fu">|</span>]</code></pre>
 <h4 id="use-templates">Use templates</h4>
 <p>Some <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> (more precisely hamlet) is written directly inside our handler. We should put this part inside another file. Create the new file <code>templates/echo.hamlet</code> containing:</p>
@@ -232,7 +232,7 @@ getEchoR theText <span class="fu">=</span> defaultLayout [whamlet<span class="fu
 
 <span class="kw">import</span> Import
 
-<span class="ot">getEchoR ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
+<span class="ot">getEchoR ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">Html</span>
 getEchoR theText <span class="fu">=</span> defaultLayout <span class="highlight"><span class="fu">$</span>(widgetFile <span class="st">&quot;echo&quot;</span>)</span></code></pre>
 <p>At this point, our web application is nicely structured. We use <code>Data.Text</code> and our views are in templates. It is the time to make a slightly more complex example.</p>
 <h2 id="mirror">Mirror</h2>
@@ -252,10 +252,10 @@ Enter space-separated list of methods (ex: GET POST): <span class="highlight">GE
 <span class="kw">import</span> Import
 <span class="kw">import</span> <span class="kw">qualified</span> Data.Text <span class="kw">as</span> T
 
-<span class="ot">getMirrorR ::</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
+<span class="ot">getMirrorR ::</span> <span class="dt">Handler</span> <span class="dt">Html</span>
 getMirrorR <span class="fu">=</span> defaultLayout <span class="fu">$</span>(widgetFile <span class="st">&quot;mirror&quot;</span>)
 
-<span class="ot">postMirrorR ::</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
+<span class="ot">postMirrorR ::</span> <span class="dt">Handler</span> <span class="dt">Html</span>
 postMirrorR <span class="fu">=</span>  <span class="kw">do</span>
         postedText <span class="ot">&lt;-</span> runInputPost <span class="fu">$</span> ireq textField <span class="st">&quot;content&quot;</span>
         defaultLayout <span class="fu">$</span>(widgetFile <span class="st">&quot;posted&quot;</span>)</code></pre>
@@ -301,7 +301,6 @@ Enter space-separated list of methods (ex: GET POST): GET</code></pre>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Blog</span>
     ( getBlogR
     , postBlogR
-    , getArticleR
     )
 <span class="kw">where</span>
 
@@ -314,11 +313,11 @@ Enter space-separated list of methods (ex: GET POST): GET</code></pre>
 <p><em>Hint</em>: Do not forget to put <code>YesodNic</code> and <code>nicHtmlField</code> inside the exported objects of the module.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">entryForm ::</span> <span class="dt">Form</span> <span class="dt">Article</span>
 entryForm <span class="fu">=</span> renderDivs <span class="fu">$</span> <span class="dt">Article</span>
-    <span class="fu">&lt;$&gt;</span> areq   textField <span class="st">&quot;Title&quot;</span> <span class="dt">Nothing</span>
-    <span class="fu">&lt;*&gt;</span> areq   nicHtmlField <span class="st">&quot;Content&quot;</span> <span class="dt">Nothing</span></code></pre>
+    <span class="fu">&lt;$&gt;</span> areq   textField <span class="st">&quot;Title&quot;</span> <span class="kw">Nothing</span>
+    <span class="fu">&lt;*&gt;</span> areq   nicHtmlField <span class="st">&quot;Content&quot;</span> <span class="kw">Nothing</span></code></pre>
 <p>This function defines a form for adding a new article. Don’t pay attention to all the syntax. If you are curious you can take a look at Applicative Functor. You just have to remember <code>areq</code> is for required form input. Its arguments being: <code>areq type label default_value</code>.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- The view showing the list of articles</span>
-<span class="ot">getBlogR ::</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
+<span class="ot">getBlogR ::</span> <span class="dt">Handler</span> <span class="dt">Html</span>
 getBlogR <span class="fu">=</span> <span class="kw">do</span>
     <span class="co">-- Get the list of articles inside the database.</span>
     articles <span class="ot">&lt;-</span> runDB <span class="fu">$</span> selectList [] [<span class="dt">Desc</span> <span class="dt">ArticleTitle</span>]
@@ -345,7 +344,7 @@ $else
 <p>Another very interesting part is the creation of the form. The <code>articleWidget</code> was created by Yesod. We have given it the right parameters (input required or optional, labels, default values), and now we have a protected form made for us. But now we have to create the submit button.</p>
 <p>You can take a first look by <a href="localhost:3000/blog">clicking here</a>. Of course, you can’t post something yet.</p>
 <p>Get back to <code>Handler/Blog.hs</code>.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">postBlogR ::</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">postBlogR ::</span> <span class="dt">Handler</span> <span class="dt">Html</span>
 postBlogR <span class="fu">=</span> <span class="kw">do</span>
     ((res,articleWidget),enctype) <span class="ot">&lt;-</span> runFormPost entryForm
     <span class="kw">case</span> res <span class="kw">of</span>
@@ -365,10 +364,10 @@ postBlogR <span class="fu">=</span> <span class="kw">do</span>
 <p>Here is the content of the error Page:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&lt;</span>form method<span class="fu">=</span>post enctype<span class="fu">=#</span>{enctype}<span class="fu">&gt;</span>
     <span class="fu">^</span>{articleWidget}
-    <span class="fu">&lt;</span>div<span class="fu">&gt;</span>
+    <span class="fu">&lt;div&gt;</span>
         <span class="fu">&lt;</span>input <span class="kw">type</span><span class="fu">=</span>submit value<span class="fu">=</span><span class="st">&quot;Post New Article&quot;</span><span class="fu">&gt;</span></code></pre>
 <p>Finally we need to display an article. For this we will modify <code>Handler/Article.hs</code></p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">getArticleR ::</span> <span class="dt">ArticleId</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">getArticleR ::</span> <span class="dt">ArticleId</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">Html</span>
 getArticleR articleId <span class="fu">=</span> <span class="kw">do</span>
     article <span class="ot">&lt;-</span> runDB <span class="fu">$</span> get404 articleId
     defaultLayout <span class="fu">$</span> <span class="kw">do</span>
@@ -376,8 +375,12 @@ getArticleR articleId <span class="fu">=</span> <span class="kw">do</span>
         <span class="fu">$</span>(widgetFile <span class="st">&quot;article&quot;</span>)</code></pre>
 <p>The <code>get404</code> function tries to do a get on the DB. If it fails, it returns a 404 page. The rest should be clear. Here is the content of <code>templates/article.hamlet</code>:</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span> #{articleTitle article}
-<span class="kw">&lt;article&gt;</span> #{articleContent article}</code></pre>
-<p>The blog system is finished. Just for fun, you can try to create an article with the following content:</p>
+<span class="kw">&lt;article&gt;</span> #{articleContent article}
+<span class="kw">&lt;hr&gt;</span>
+<span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">@{BlogR}</span><span class="kw">&gt;</span>
+    Go to article list.</code></pre>
+<p>The blog system is finished. You can jump to it by clicking <a href="http://localhost:3000/blog">here</a>.</p>
+<p>Just for fun, you can try to create an article with the following content:</p>
 <pre class="sourceCode html"><code class="sourceCode html">Cross Script:
 <span class="er">   &lt;script&gt;alert(&quot;You loose&quot;);&lt;/script&gt;</span>
 

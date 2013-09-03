@@ -170,7 +170,7 @@ Enter space-separated list of methods (ex: GET POST): <span class="highlight">GE
 <span class="kw">import</span> Import
 
 <span class="ot">getEchoR ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
-getEchoR <span class="fu">=</span> error <span class="st">&quot;Not yet implemented: getEchoR&quot;</span></code></pre>
+getEchoR <span class="fu">=</span> <span class="fu">error</span> <span class="st">&quot;Not yet implemented: getEchoR&quot;</span></code></pre>
 <p>This should be straightforward. Now we changes it by:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
@@ -314,8 +314,8 @@ Enter space-separated list of methods (ex: GET POST): GET</code></pre>
 <p><em>Hint</em>: Do not forget to put <code>YesodNic</code> and <code>nicHtmlField</code> inside the exported objects of the module.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">entryForm ::</span> <span class="dt">Form</span> <span class="dt">Article</span>
 entryForm <span class="fu">=</span> renderDivs <span class="fu">$</span> <span class="dt">Article</span>
-    <span class="fu">&lt;$&gt;</span> areq   textField <span class="st">&quot;Title&quot;</span> <span class="dt">Nothing</span>
-    <span class="fu">&lt;*&gt;</span> areq   nicHtmlField <span class="st">&quot;Content&quot;</span> <span class="dt">Nothing</span></code></pre>
+    <span class="fu">&lt;$&gt;</span> areq   textField <span class="st">&quot;Title&quot;</span> <span class="kw">Nothing</span>
+    <span class="fu">&lt;*&gt;</span> areq   nicHtmlField <span class="st">&quot;Content&quot;</span> <span class="kw">Nothing</span></code></pre>
 <p>This function defines a form for adding a new article. Don’t pay attention to all the syntax. If you are curious you can take a look at Applicative Functor. You just have to remember <code>areq</code> is for required form input. Its arguments being: <code>areq type label default_value</code>.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- The view showing the list of articles</span>
 <span class="ot">getBlogR ::</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
@@ -365,7 +365,7 @@ postBlogR <span class="fu">=</span> <span class="kw">do</span>
 <p>Here is the content of the error Page:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&lt;</span>form method<span class="fu">=</span>post enctype<span class="fu">=#</span>{enctype}<span class="fu">&gt;</span>
     <span class="fu">^</span>{articleWidget}
-    <span class="fu">&lt;</span>div<span class="fu">&gt;</span>
+    <span class="fu">&lt;div&gt;</span>
         <span class="fu">&lt;</span>input <span class="kw">type</span><span class="fu">=</span>submit value<span class="fu">=</span><span class="st">&quot;Post New Article&quot;</span><span class="fu">&gt;</span></code></pre>
 <p>Finally we need to display an article. For this we will modify <code>Handler/Article.hs</code></p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">getArticleR ::</span> <span class="dt">ArticleId</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span>
