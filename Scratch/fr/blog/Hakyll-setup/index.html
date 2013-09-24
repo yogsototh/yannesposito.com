@@ -184,7 +184,7 @@ ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn</code></pre>
     route   <span class="fu">$</span> setExtension <span class="st">&quot;css&quot;</span>
     compile <span class="fu">$</span> getResourceString <span class="fu">&gt;&gt;=</span>
               withItemBody (unixFilter <span class="st">&quot;sass&quot;</span> [<span class="st">&quot;--trace&quot;</span>]) <span class="fu">&gt;&gt;=</span>
-              <span class="fu">return</span> <span class="fu">.</span> <span class="fu">fmap</span> compressCss</code></pre>
+              return <span class="fu">.</span> fmap compressCss</code></pre>
 <h3 id="add-keywords">Add keywords</h3>
 <p>In order to help to reference your website on the web, it is nice to add some keywords as meta datas to your <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> page.</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;meta</span><span class="ot"> name=</span><span class="st">&quot;keywords&quot;</span>
@@ -202,7 +202,7 @@ metaKeywordContext <span class="fu">=</span> field <span class="st">&quot;metaKe
   <span class="co">-- if tags is empty return an empty string</span>
   <span class="co">-- in the other case return</span>
   <span class="co">--   &lt;meta name=&quot;keywords&quot; content=&quot;$tags$&quot;&gt;</span>
-  <span class="fu">return</span> <span class="fu">$</span> <span class="fu">maybe</span> <span class="st">&quot;&quot;</span> showMetaTags tags
+  return <span class="fu">$</span> maybe <span class="st">&quot;&quot;</span> showMetaTags tags
     <span class="kw">where</span>
       showMetaTags t <span class="fu">=</span> <span class="st">&quot;&lt;meta name=\&quot;keywords\&quot; content=\&quot;&quot;</span>
                        <span class="fu">++</span> t <span class="fu">++</span> <span class="st">&quot;\&quot;&gt;\n&quot;</span></code></pre>
@@ -229,13 +229,13 @@ niceRoute <span class="fu">=</span> customRoute createIndexRoute
 <p>Very simple, we simply remove all ‘/index.html’ to all our links.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- replace url of the form foo/bar/index.html by foo/bar</span>
 <span class="ot">removeIndexHtml ::</span> <span class="dt">Item</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Compiler</span> (<span class="dt">Item</span> <span class="dt">String</span>)
-removeIndexHtml item <span class="fu">=</span> <span class="fu">return</span> <span class="fu">$</span> <span class="fu">fmap</span> (withUrls removeIndexStr) item
+removeIndexHtml item <span class="fu">=</span> return <span class="fu">$</span> fmap (withUrls removeIndexStr) item
   <span class="kw">where</span>
 <span class="ot">    removeIndexStr ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span>
     removeIndexStr url <span class="fu">=</span> <span class="kw">case</span> splitFileName url <span class="kw">of</span>
         (dir, <span class="st">&quot;index.html&quot;</span>) <span class="fu">|</span> isLocal dir <span class="ot">-&gt;</span> dir
         _                                 <span class="ot">-&gt;</span> dir
-        <span class="kw">where</span> islocal uri <span class="fu">=</span> <span class="fu">not</span> (isInfixOf <span class="st">&quot;://&quot;</span> uri)</code></pre>
+        <span class="kw">where</span> islocal uri <span class="fu">=</span> not (isInfixOf <span class="st">&quot;://&quot;</span> uri)</code></pre>
 <p>And we apply this filter at the end of our compilation</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
   route <span class="fu">$</span> setExtension <span class="st">&quot;html&quot;</span>
@@ -250,7 +250,7 @@ removeIndexHtml item <span class="fu">=</span> <span class="fu">return</span> <s
   route <span class="fu">$</span> niceRoute
   compile <span class="fu">$</span> <span class="kw">do</span>
     body <span class="ot">&lt;-</span> getResourceBody
-    <span class="fu">return</span> <span class="fu">$</span> renderPandoc body
+    return <span class="fu">$</span> renderPandoc body
       <span class="highlight"><span class="fu">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/archive.html&quot;</span> archiveCtx</span>
       <span class="fu">&gt;&gt;=</span> loadAndApplyTemplate <span class="highlight"><span class="st">&quot;templates/base.html&quot;</span></span> defaultContext
       <span class="fu">&gt;&gt;=</span> removeIndexHtml</code></pre>
@@ -279,7 +279,7 @@ postList sortFilter <span class="fu">=</span> <span class="kw">do</span>
     <span class="co">-- and we concatenate the result.</span>
     <span class="co">-- list is a string</span>
     list    <span class="ot">&lt;-</span> applyTemplateList itemTpl defaultContext posts
-    <span class="fu">return</span> list</code></pre>
+    return list</code></pre>
 <p><code>createdFirst</code> sort a list of item and put it inside <code>Compiler</code> context. We need to be in the <code>Compiler</code> context to access metadatas.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">createdFirst ::</span> [<span class="dt">Item</span> <span class="dt">String</span>] <span class="ot">-&gt;</span> <span class="dt">Compiler</span> [<span class="dt">Item</span> <span class="dt">String</span>]
 createdFirst items <span class="fu">=</span> <span class="kw">do</span>
@@ -288,9 +288,9 @@ createdFirst items <span class="fu">=</span> <span class="kw">do</span>
     <span class="co">-- getItemUTC will look for the metadata &quot;published&quot; or &quot;date&quot;</span>
     <span class="co">-- then it will try to get the date from some standard formats</span>
     utc <span class="ot">&lt;-</span> getItemUTC defaultTimeLocale <span class="fu">$</span> itemIdentifier item
-    <span class="fu">return</span> (utc,item)
+    return (utc,item)
   <span class="co">-- we return a sorted item list</span>
-  <span class="fu">return</span> <span class="fu">$</span> <span class="fu">map</span> <span class="fu">snd</span> <span class="fu">$</span> <span class="fu">reverse</span> <span class="fu">$</span> sortBy (comparing <span class="fu">fst</span>) itemsWithTime</code></pre>
+  return <span class="fu">$</span> map snd <span class="fu">$</span> reverse <span class="fu">$</span> sortBy (comparing fst) itemsWithTime</code></pre>
 <p>It wasn’t so easy. But it works pretty well.</p>
 <h3 id="create-an-rss-feed">Create an <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span> feed</h3>
 <p>To create an <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span> feed, we have to:</p>
@@ -313,7 +313,7 @@ createdFirst items <span class="fu">=</span> <span class="kw">do</span>
         <span class="co">-- load all &quot;content&quot; snapshots of all posts</span>
         loadAllSnapshots <span class="st">&quot;posts/*&quot;</span> <span class="st">&quot;content&quot;</span>
         <span class="co">-- take the latest 10</span>
-        <span class="fu">&gt;&gt;=</span> (<span class="fu">fmap</span> (<span class="fu">take</span> <span class="dv">10</span>)) <span class="fu">.</span> createdFirst
+        <span class="fu">&gt;&gt;=</span> (fmap (take <span class="dv">10</span>)) <span class="fu">.</span> createdFirst
         <span class="co">-- renderAntom feed using some configuration</span>
         <span class="fu">&gt;&gt;=</span> renderAtom feedConfiguration feedCtx
       <span class="kw">where</span>
@@ -339,8 +339,8 @@ feedConfiguration <span class="fu">=</span> <span class="dt">FeedConfiguration</
   route <span class="fu">$</span> niceRoute
   compile <span class="fu">$</span> <span class="kw">do</span>
     body <span class="ot">&lt;-</span> getResourceBody
-    <span class="highlight">prefilteredText <span class="ot">&lt;-</span> <span class="fu">return</span> <span class="fu">$</span> (<span class="fu">fmap</span> preFilters body)</span>
-    <span class="highlight"><span class="fu">return</span> <span class="fu">$</span> renderPandoc prefilteredText</span>
+    <span class="highlight">prefilteredText <span class="ot">&lt;-</span> return <span class="fu">$</span> (fmap preFilters body)</span>
+    <span class="highlight">return <span class="fu">$</span> renderPandoc prefilteredText</span>
     <span class="highlight"><span class="fu">&gt;&gt;=</span> applyFilter postFilters</span>
     <span class="fu">&gt;&gt;=</span> saveSnapshot <span class="st">&quot;content&quot;</span>
     <span class="fu">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/post.html&quot;</span>    yContext
@@ -348,7 +348,7 @@ feedConfiguration <span class="fu">=</span> <span class="dt">FeedConfiguration</
     <span class="fu">&gt;&gt;=</span> relativizeUrls
     <span class="fu">&gt;&gt;=</span> removeIndexHtml</code></pre>
 <p>Where</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">applyFilter strfilter str <span class="fu">=</span> <span class="fu">return</span> <span class="fu">$</span> (<span class="fu">fmap</span> <span class="fu">$</span> strfilter) str
+<pre class="sourceCode haskell"><code class="sourceCode haskell">applyFilter strfilter str <span class="fu">=</span> return <span class="fu">$</span> (fmap <span class="fu">$</span> strfilter) str
 <span class="ot">preFilters ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span>
 <span class="ot">postFilters ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span></code></pre>
 <p>Now we have a simple way to filter the content. Let’s augment the markdown ability.</p>
@@ -358,9 +358,9 @@ feedConfiguration <span class="fu">=</span> <span class="dt">FeedConfiguration</
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">abbreviationFilter ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span>
 abbreviationFilter <span class="fu">=</span> replaceAll <span class="st">&quot;%[a-zA-Z0-9_]*&quot;</span> newnaming
   <span class="kw">where</span>
-    newnaming matched <span class="fu">=</span> <span class="kw">case</span> M.lookup (<span class="fu">tail</span> matched) abbreviations <span class="kw">of</span>
-                          <span class="kw">Nothing</span> <span class="ot">-&gt;</span> matched
-                          <span class="kw">Just</span> v <span class="ot">-&gt;</span> v
+    newnaming matched <span class="fu">=</span> <span class="kw">case</span> M.lookup (tail matched) abbreviations <span class="kw">of</span>
+                          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> matched
+                          <span class="dt">Just</span> v <span class="ot">-&gt;</span> v
 <span class="ot">abbreviations ::</span> <span class="dt">Map</span> <span class="dt">String</span> <span class="dt">String</span>
 abbreviations <span class="fu">=</span> M.fromList
     [ (<span class="st">&quot;html&quot;</span>, <span class="st">&quot;&lt;span class=\&quot;sc\&quot;&gt;html&lt;/span&gt;&quot;</span>)
@@ -382,7 +382,7 @@ abbreviations <span class="fu">=</span> M.fromList
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Trad</span> <span class="fu">=</span> <span class="dt">Trad</span> {<span class="ot"> frTrad ::</span> <span class="dt">String</span>,<span class="ot"> enTrad ::</span> <span class="dt">String</span> }
 
 <span class="ot">trads ::</span> <span class="dt">Map</span> <span class="dt">String</span> <span class="dt">Trad</span>
-trads <span class="fu">=</span> M.fromList <span class="fu">$</span> <span class="fu">map</span> toTrad [
+trads <span class="fu">=</span> M.fromList <span class="fu">$</span> map toTrad [
    (<span class="st">&quot;changeLanguage&quot;</span>,
       (<span class="st">&quot;English&quot;</span>
       , <span class="st">&quot;Français&quot;</span>))
@@ -406,17 +406,17 @@ tradsContext <span class="fu">=</span> functionField <span class="st">&quot;trad
   <span class="co">-- get the current item language</span>
   lang <span class="ot">&lt;-</span> itemLang item
   <span class="kw">case</span> lang <span class="kw">of</span>
-    <span class="st">&quot;en&quot;</span> <span class="ot">-&gt;</span> <span class="fu">return</span> (enTrad v)
-    <span class="st">&quot;fr&quot;</span> <span class="ot">-&gt;</span> <span class="fu">return</span> (frTrad v)
-    _    <span class="ot">-&gt;</span> <span class="fu">fail</span> <span class="fu">$</span> lang <span class="fu">++</span> <span class="st">&quot; is not a supported language&quot;</span>
+    <span class="st">&quot;en&quot;</span> <span class="ot">-&gt;</span> return (enTrad v)
+    <span class="st">&quot;fr&quot;</span> <span class="ot">-&gt;</span> return (frTrad v)
+    _    <span class="ot">-&gt;</span> fail <span class="fu">$</span> lang <span class="fu">++</span> <span class="st">&quot; is not a supported language&quot;</span>
   <span class="kw">where</span>
-    getArgs [k] <span class="fu">=</span> <span class="fu">return</span> k
-    getArgs _   <span class="fu">=</span> <span class="fu">fail</span> <span class="st">&quot;Wrong arg for trad&quot;</span>
+    getArgs [k] <span class="fu">=</span> return k
+    getArgs _   <span class="fu">=</span> fail <span class="st">&quot;Wrong arg for trad&quot;</span>
     <span class="co">-- search the Trad associated the key</span>
     getValue key hmap <span class="fu">=</span>
         <span class="kw">case</span> M.lookup key hmap <span class="kw">of</span>
-          <span class="kw">Just</span> value <span class="ot">-&gt;</span> <span class="fu">return</span> value
-          <span class="kw">Nothing</span> <span class="ot">-&gt;</span> <span class="fu">fail</span> <span class="st">&quot;Traduction not found&quot;</span></code></pre>
+          <span class="dt">Just</span> value <span class="ot">-&gt;</span> return value
+          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> fail <span class="st">&quot;Traduction not found&quot;</span></code></pre>
 <p>In the real code source I also need more functions. But I just wanted to show how to pass parameters to a metadata tag.</p>
 <h2 id="conclusion">Conclusion</h2>
 <p>The full code is <a href="http://github.com/yogsototh/yblog.git">here</a>. And except from the main file, I use literate Haskell. This way the code should be easier to understand.</p>
