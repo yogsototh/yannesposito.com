@@ -39,39 +39,12 @@
 					<h1 id="update">Update</h1>
 <p>In fact this method works for old threads. But it fails to create new post threads. This is why I tried and be conquered by <a href="http://intensedebate.com">intensedebate</a>, as you can see in the bottom of this page.</p>
 <p>Remark I didn’t have any comment on my blog when I switched. Therefore my lack of influence was a good thing :-).</p>
-<hr />
-<p>Before begining, I must state that I <strong>love</strong> Disqus.</p>
-<p>I know there is a similar blog entry at <a href="http://trephine.org/t/index.php?title=Site_improvements_-_fighting_with_Disqus">Trephine.org</a>. Here I just add a straight and easy way to load disqus asynchronously using jQuery.</p>
-<p>I also know there is a jQuery plugin to make just that. Unfortunately I had some issue with CSS.</p>
-<p><em>Now let’s begin.</em></p>
-<hr />
 <h1 id="why">Why?</h1>
 <p>Why should I want to load the disqus javascript asynchronously?</p>
 <ul>
 <li>Efficiency: I don’t want my page to wait the complete execution of disqus script to load.</li>
 <li>More independance: when disqus is down, my page is blocked!</li>
 </ul>
-<hr />
-<h1 id="how">How?</h1>
-<p>I give a solution with jQuery, but I’m certain it will work with many other js library.</p>
-<h3 id="javascript">Javascript</h3>
-<p>replace:</p>
-<div>
-<pre class="sourceCode javascript"><code class="sourceCode javascript">&lt;script type=<span class="st">&quot;text/javascript&quot;</span> src=<span class="st">&quot;http://disqus.com/forums/YOUR_DISQUS_ID/embed.js&quot;</span>&gt;&lt;<span class="ot">/script&gt;</span></code></pre>
-</div>
-
-<p>by</p>
-<div>
-<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="ot">window</span>.<span class="fu">disqus_no_style</span>=<span class="kw">true</span>;
-<span class="fu">$</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>(){
-    <span class="ot">$</span>.<span class="fu">getScript</span>(<span class="st">&quot;http://disqus.com/forums/YOUR_DISQUS_ID/embed.js&quot;</span>);
-});</code></pre>
-</div>
-
-<p>If you forget the <code>window.disqus_no_style=true;</code> then your page will be blank. Simply because without this option, the javascript use a <code>document.write</code> action after the document was closed, which cause a complete erasing of it.</p>
-<h3 id="css">CSS</h3>
-<p>But with this option you still need to provide a CSS. This is why you have to copy the css code from the <code>embed.js</code> file and rewrite it in a CSS file. You can <a href="../../../../Scratch/en/blog/11_Load_Disqus_Asynchronously/code/original_disqus.css">download the CSS</a> I obtained.</p>
-<hr />
 <p>Now it’s done. I believe all should be fine but I just finished the manip for my own site only 1 hour ago. Therefore there should be some error, tell me if it is the case.</p>
 				</div>
 

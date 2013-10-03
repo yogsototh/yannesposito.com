@@ -37,10 +37,8 @@
 			<div id="afterheader" class="article">
 				<div class="corps">
 					<div class="intro">
-
 <p>Même si je considère que <code>git</code> a beaucoup de points noirs, je pense qu’il reste le meilleur DCVS à ce jour avec lequel travailler. C’est pourquoi je commencerai par parler des qualité de bazaar qui manquent à git. Ensuite seulement je donnerai le seul avantage de git qui suffit à le rendre préférable à Bazaar.</p>
 </div>
-
 <h2 id="la-découverte-des-dcvs">La découverte des DCVS</h2>
 <p>À savoir avant de débuter l’article. Je suis, comme beaucoup, un ancien utilisateur de <em>subversion</em>. Je trouve subversion très bien, mais j’ai été conquis par les capacités supplémentaires apportées par les systèmes de versions concurrentes <em>décentralisés</em>.</p>
 <p>Il y a deux façon de percevoir les systèmes de versions. Soit on voit un système de branches (voir le très bon article sur <a href="http://betterexplained.com/articles/a-visual-guide-to-version-control/">betterexplained</a>). Soit on peut voir les systèmes de versions comme des moyens d’appliquer des patches. C’est-à-dire que l’on peut soit se concentrer sur les nœuds soit sur les transitions du graphe induit par les différentes versions d’un projet.</p>
@@ -52,64 +50,53 @@
 <div>
 <code class="zsh"> git checkout pipo </code>
 </div>
-
 <p>annule une modification courante du fichier <code>pipo</code></p>
 <div>
 <code class="zsh"> git checkout pipo </code>
 </div>
-
 <p>change de la branche courante vers la branche <code>pipo</code></p>
 <p>Et là, comme moi, vous remarquez que la même commande à deux sens complètement différents. Comment ça se passe alors, quand il y a une branche <code>pipo</code> et un fichier <code>pipo</code> alors ? Et bien par défaut, ça change de branche. Pour lever l’ambigüité il faut utiliser la syntaxe</p>
 <div>
 <code class="zsh"> git checkout ./pipo </code>
 </div>
-
 <p>Oui, bon… Voilà, voilà, voilà….</p>
 <p>Ça marche, mais ce n’est pas très convivial. D’autant plus que le mot clé checkout signifiait sous CVS et SVN l’opération pour récupérer un projet distant.</p>
 <p>Là où la différence se creuse c’est avec la terminologie Bazaar qui est bien plus naturelle. Car il n’y a pas de commande pour changer de branche, puisqu’il y a une branche par répertoire. Ainsi, pour changer de branche, il suffit de faire <code>cd path/to/branch</code>. Et pour revenir en arrière :</p>
 <div>
 <code class="zsh"> bzr revert pipo </code>
 </div>
-
 <p>De plus, la plupart des commandes bazaar prennent en paramètre un numéro de révision, par exemple pour revenir 3 versions précédentes il suffit d’écrire :</p>
 <div>
 <code class="zsh"> bzr revert -r -3 pipo </code>
 </div>
-
 <p>L’équivalent sous git est beaucoup plus cryptique :</p>
 <div>
 <code class="zsh"> bzr checkout HEAD~3 pipo </code>
 </div>
-
 <p>Encore un fois, Bazaar est bien plus lisible.</p>
 <p>Revenir dans le temps pour tout le projet :</p>
 <p>avec Bazaar :</p>
 <div>
 <code class="zsh"> bzr revert -r -3 pipo </code>
 </div>
-
 <p>et avec <code>git</code> ? <code>git checkout</code> ? Bien sûr que non voyons ! Ce serait bien trop simple. Ce que l’on trouve dans les forums c’est :</p>
 <div>
 <code class="zsh"> git reset –hard HEAD~3 </code>
 </div>
-
 <p>Sauf que cette syntaxe est horrible. Elle oublie ‘réellement’ les révisions. Il faut donc l’utiliser avec prudence. Mais en effet, je conseillerai plutôt :</p>
 <div>
 <code class="zsh"> git checkout HEAD~3 – . &amp;&amp; git commit -m ‘back in time’ </code>
 </div>
-
 <p>Histoire d’avoir la branche backup sous la main, car sinon, on risque de perdre définitivement la version courante de HEAD. Qui ramène la branche locale à ce point. Mais il reste des erreur s’il y a eu des ajouts de fichier entre temps. <em>Le seul et l’unique vraiment propre de revenir en arrière dans git c’est de lancer la commande suivante :</em></p>
 <div>
 <code class="zsh"> for i in <span class="math">(<em>s</em><em>e</em><em>q</em>02); <em>d</em><em>o</em><em>g</em><em>i</em><em>t</em><em>r</em><em>e</em><em>v</em><em>e</em><em>r</em><em>t</em> − <em>n</em> −  − <em>n</em><em>o</em> − <em>e</em><em>d</em><em>i</em><em>t</em><em>h</em><em>e</em><em>a</em><em>d</em> </span>i; done git commit -m “reverted 3 versions back” </code>
 </div>
-
 <p>ce qui signifie sur un système <code>UNIX</code> en <code>zsh</code> (ou <code>bash</code>) faire <code>git revert</code> de toutes les dernières versions. Même si quelqu’un d’autre à fait un pull de vos modification intermédiaire il ne sera pas embêté et il sera au courant de ce qu’il s’est passé.</p>
 <p>La règle est simple : <em>Ne JAMAIS utiliser la commande <code>git reset</code> avec une version que d’autres personnes auraient pu avoir <code>fetcher</code>.</em></p>
 <p>Voilà, c’est dit. Découvrir ça m’a pris pas mal de temps, avec plein d’essai de tous les cotés. Le plus sûr reste toujours la méthode vue plus haut. Si vous souhaitez automatiser cela, le plus simple est d’ajouter l’alias suivant à votre fichier <code>~/.gitconfig</code>. Bien sûr l’alias ne fonctionnera que sur les environnement possédant <code>zsh</code>, ce qui est le cas de la plupart des environnements UNIX (Ubuntu, Mac OS X…).</p>
 <div>
 <code class="zsh" file="gitconfig"> [alias] uncommit = !zsh -c ‘“if ((<span class="math">0)); <em>t</em><em>h</em><em>e</em><em>n</em><em>n</em><em>b</em> = </span>(( <span class="math">0 − 1)); <em>e</em><em>l</em><em>s</em><em>e</em><em>n</em><em>b</em> = 0; <em>f</em><em>i</em>; <em>i</em> = 0; <em>w</em><em>h</em><em>i</em><em>l</em><em>e</em>((<em>i</em> &lt;  = <em>n</em><em>b</em>)); <em>d</em><em>o</em><em>g</em><em>i</em><em>t</em><em>r</em><em>e</em><em>v</em><em>e</em><em>r</em><em>t</em> − <em>n</em> −  − <em>n</em><em>o</em> − <em>e</em><em>d</em><em>i</em><em>t</em><em>H</em><em>E</em><em>A</em><em>D</em> </span>i; ((i++)); done; git commit -m &quot;revert to $0 version(s) back&quot;”’ </code>
 </div>
-
 <h1 id="ce-qui-fait-que-git-est-le-meilleur-dcvs-jusquà-aujourdhui">Ce qui fait que <code>git</code> est le meilleur DCVS jusqu’à aujourd’hui</h1>
 <p>Après avoir énoncé les cotés négatifs (et je les trouve nombreux) de git. Voici les cotés positifs qui a eux seul valent la peine de se coltiner tous les problèmes inhérent à <code>git</code>.</p>
 <h2 id="cheap-branching">Cheap branching</h2>
@@ -117,7 +104,6 @@
 <div>
 <code class="zsh"> &gt; vim file1 &gt; vim file2 &gt; git br fix1 &gt; git add file1 &gt; git commit -m ‘fix1’ &gt; git br fix2 &gt; git add file2 &gt; git commit -m ‘fix2’ &gt; git commit master &gt; git merge fix1 &gt; git merge fix2 </code>
 </div>
-
 <p>Et il est vraiment très agréable de ne pas se soucier d’être dans la <em>bonne</em> branche. Vous n’avez à vous occuper que de votre code et seulement ensuite vous occuper du système de version.</p>
 <p>Sous Bazaar, il m’est souvent arriver de coder dans la mauvaise branche. Pour récupérer le coup, on doit copier les modifications du fichier dans la bonne branche et faire un revert sur le fichier en question, puis aller dans la bonne branche pour commiter les modifications. Enfin, la plupart du temps, je me trompe de branche et puis tant pis, je merge les deux tout en sachant que c’est sale.</p>
 <p>C’est pourquoi je préfère utiliser <code>git</code>. Si Bazaar venait à implémenter ce système de <em>cheap branching</em>, je le replacerai certainement en tête.</p>

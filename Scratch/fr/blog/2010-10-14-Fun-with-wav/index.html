@@ -37,11 +37,9 @@
 			<div id="afterheader" class="article">
 				<div class="corps">
 					<div class="intro">
-
 <p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Je me suis amusé à lire un fichier <code>wav</code>. Le <code>C</code> fut le langage le mieux adapté à ce traitement. Bien meilleur que Ruby par exemple.</p>
 <p>edit: Je voulais que ce programme fonctionne sur une machine spécifique. En aucun cas je ne pensais publier ce code pour une utilisation autre que celle-ci.</p>
 </div>
-
 <p>J’ai eu besoin de calculer la somme des valeurs absolue des données d’un fichier <code>wav</code>. Pour des raison d’efficacité (et aussi de fun), j’ai fait le programme en <code>C</code>.</p>
 <p>Celà faisait longtemps que je n’avais pas programmé en <code>C</code>. De mémoire il était peu aisé de manipuler des fichiers. Mais je dois concéder que j’ai été étonné de la clarté du code que j’ai obtenu.</p>
 <p>Tout d’abord, un fichier <code>wav</code> se compose d’un entête qui contient pas mal de meta données. Cet entête a été optimisé pour prendre peu de place. Donc on discute de l’entête avec des nombres d’octets :</p>
@@ -135,12 +133,10 @@
 <p>_màj : pour des raisons de compatibilité (machines 64 bits) j’ai utilisé <code>int16_t</code> au lieu de <code>short</code> et <code>int</code> au lieu de <code>int</code>.</p>
 <p>Je serai curieux de savoir s’il existe un manière plus propre en Ruby que je ne connais pas. Certainement qu’en Python ça doit être la cas.</p>
 <div class="intro">
-
 <p>Màj (2) : après toutes les remarques concernant la portabilité. J’ai fait une nouvelle version qui devrait être plus portable. Elle fait aussi plus de test pour vérifier le fichier. Cependant j’utilise une assertion spécifique à <code>gcc</code> pour être certain que la structure de donnée n’ai pas de “trou” :</p>
 <pre class="sourceCode c"><code class="sourceCode c">__attribute__((__packed__))</code></pre>
 <p>Le nouveau code n’utilise pas mmap et devrait être plus compatible.<br />Voici le dernier résultat :</p>
 </div>
-
 <pre class="sourceCode c"><code class="sourceCode c"><span class="ot">#include &lt;stdio.h&gt;</span>
 <span class="ot">#include &lt;stdlib.h&gt;</span>
 <span class="ot">#include &lt;string.h&gt; </span><span class="co">// for memcmp</span>

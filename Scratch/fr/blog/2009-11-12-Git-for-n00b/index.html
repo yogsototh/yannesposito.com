@@ -37,10 +37,8 @@
 			<div id="afterheader" class="article">
 				<div class="corps">
 					<div class="intro">
-
 <p>Voici un tutoriel <a href="http://git-scm.org">Git</a> détaillé pour ceux qui en connaissent très peu sur les systèmes de versions. Vous comprendrez l’utilité de tels systèmes et surtout comment on se sert des systèmes de versions modernes, le tout en restant le plus pragmatique possible.</p>
 </div>
-
 <hr />
 <h1 id="pour-commencer-la-conclusion">Pour commencer, la conclusion</h1>
 <p>Voici la liste des commandes nécessaires et suffisantes pour utiliser <a href="http://git-scm.org" title="Git">Git</a>. Il y en a très peu. Il est normal de ne pas les comprendre tout de suite mais c’est pour vous donner une idée. Malgré la longueur de l’article, 95% de l’utilisation de <a href="http://git-scm.org" title="Git">Git</a> tiens dans les 7 commandes décrites ci-après.</p>
@@ -71,10 +69,8 @@ git push</code></pre>
 <p>Cet article est écrit pour ceux qui en savent très peu sur les systèmes de version. Il est aussi écrit pour ceux qui n’ont pas suivi les progrès accomplis depuis CVS ou subversion (SVN). C’est pourquoi, dans un premier temps, j’explique rapidement quels sont les buts poursuivis par les systèmes de versions. J’explique ensuite comment installer et configurer <a href="http://git-scm.org" title="Git">Git</a>. Puis, pour chaque action que doivent accomplir les <abbr title="Decentralized Concurent Versions System">DCVS</abbr> je donne les commandes <a href="http://git-scm.org" title="Git">Git</a> qui y correspondent.</p>
 <h1 id="gitgit-pour-quoi-faire"><a href="http://git-scm.org" title="Git">Git</a> pour quoi faire ?</h1>
 <div class="intro">
-
 <p>Si tout ce qui vous intéresse c’est d’utiliser <a href="http://git-scm.org" title="Git">Git</a> <strong>tout de suite</strong>. Lisez simplement les parties sur fond noir. Je vous conseille aussi de revenir relire tout ça un peu plus tard, pour mieux comprendre les fondements des systèmes de versions et ne pas faire de bêtises quand vous les utilisez.</p>
 </div>
-
 <p><a href="http://git-scm.org" title="Git">Git</a> est un <abbr title="Decentralized Concurent Versions System">DCVS</abbr>, c’est-à-dire un système de versions concurrentes décentralisé. Analysons chaque partie de cette appellation compliquée.</p>
 <h3 id="système-de-versions">Système de versions</h3>
 <p>Tout d’abord, les systèmes de versions gèrent des fichiers. Quand on travaille avec des fichiers sans système de version voilà ce qui arrive souvent :</p>
@@ -94,7 +90,6 @@ old.fichier_important.c</code></pre>
 <p>Il fut un temps où les versions étaient gérées fichier par fichier. Je pense à CVS. Puis on s’est vite aperçu qu’un projet c’est un ensemble de fichiers cohérents. Et donc il ne suffit pas de pouvoir revenir en arrière par fichier, mais plutôt dans le temps. Les numéros de versions sont donc passé d’un numéro par fichier à un numéro par projet tout entier.</p>
 <p>Ainsi on peut dire, «je veux revenir trois jours en arrière», et tous les fichiers se remettent à jour.</p>
 <div class="black">
-
 <p><em>Qu’apportent les systèmes de versions ?</em> (je n’ai pas tout mentionné)</p>
 <ul>
 <li>backup automatique de tous les fichiers: <em>Revenir dans le temps.</em> ;</li>
@@ -103,7 +98,6 @@ old.fichier_important.c</code></pre>
 <li>permet d’avoir un historique des modifications. Car en général il est demandé aux utilisateurs d’ajouter un petit commentaire à chaque nouvelle version.</li>
 </ul>
 </div>
-
 <h3 id="concurrentes">concurrentes</h3>
 <p>Les systèmes de versions sont déjà intéressants pour gérer ses projets personnels. Car ils permettent de mieux organiser celui-ci. De ne (presque) plus se poser de questions à propos des backups. Je dis presque parce qu’il faut quand même penser à protéger par backup son repository. Mais là où les systèmes de versions deviennent vraiment intéressants, c’est pour la gestion de projets à plusieurs.</p>
 <p>Commençons par un exemple avec un projet fait par deux personnes ; Alex et Béatrice. Sur un fichier contenant une liste de dieux <em>Lovecraftiens</em> :</p>
@@ -146,7 +140,6 @@ Yogsototh
 
 <p>En pratique, au moment où Béatrice veut envoyer ses modifications, le système de version la préviens qu’une modification a eu lieu sur le serveur. Elle utilise la commande qui rapatrie les modifications localement et qui va mettre à jour le fichier. Ensuite Béatrice renvoie le nouveau fichier sur le serveur.</p>
 <div class="black">
-
 <p><strong>Qu’apportent les Systèmes de Versions Concurrentes ?</strong></p>
 <ul>
 <li>récupérer sans problème les modifications des autres ;</li>
@@ -155,7 +148,6 @@ Yogsototh
 <li>permet de savoir qui a fait quoi et quand</li>
 </ul>
 </div>
-
 <h3 id="décentralisé">décentralisé</h3>
 <p>Ce mot n’est devenu populaire que très récemment dans le milieu des systèmes de version. Et bien ça veut dire principalement deux choses.</p>
 <p>Tout d’abord, jusqu’à très récemment (SVN) il fallait être connecté sur un serveur distant pour avoir des informations sur un projet. Comme avoir l’historique. Les nouveaux systèmes décentralisés permettent de travailler avec un <em>REPOSITORY</em> (le répertoire contenant tous les backups, et les différentes info nécessaires au fonctionnement du système de versions) local au projet. Ainsi on peut avoir l’historique du projet sans avoir à se connecter au serveur.</p>
@@ -170,7 +162,6 @@ Yogsototh
 <p>Dans un système non décentralisé, cela est possible, mais fastidieux. Les systèmes décentralisés rendent ce type de comportement très naturels. Ainsi, il devient naturel de tirer des <em>branches</em> pour toutes les features, les bug…</p>
 </blockquote>
 <div class="black">
-
 <p><strong>Avantages donnés par la décentralisation des systèmes de versions concurrentes :</strong></p>
 <ul>
 <li>Possibilité de travailler sans être connecté au serveur de version ;</li>
@@ -178,7 +169,6 @@ Yogsototh
 <li>Grande facilité de maintenance de plusieurs versions différentes de la même application.</li>
 </ul>
 </div>
-
 <h2 id="pour-résumer">Pour résumer</h2>
 <p>Résumons l’ensemble des choses que l’on peut faire facilement avec un <abbr title="Decentralized Concurrent Versions System">DCVS</abbr> :</p>
 <p><strong>Systèmes de versions</strong></p>
@@ -296,7 +286,6 @@ $ git clone --bare . ssh://server/path/to/project</code></pre>
 <div style="width: 18em; margin-left: auto; margin-right: auto">
 <pre class="zsh"><code>Zoot </code></pre>
 </div>
-
 <p>et vous modifiez une ligne</p>
 <div style="width: 18em; margin-left: auto; margin-right: auto">
 <pre class="twilight">
@@ -323,7 +312,6 @@ Auto-merging foo
 CONFLICT (content): Merge conflict in foo
 Automatic merge failed; fix conflicts and then commit the result.</code></pre>
 </div>
-
 <p>Notre fichier <code>foo</code> contient alors :</p>
 <div>
 <pre class="twilight">
@@ -347,7 +335,6 @@ Zoot <span class="Constant"><strong>the not so pure</strong></span>
 <div>
 <pre class="zsh"><code>git commit -a -m &quot;conflict resolved&quot;</code></pre>
 </div>
-
 <p>Maintenant vous êtes fin prêt pour utiliser <a href="http://git-scm.org" title="Git">Git</a>. Sauf que <a href="http://git-scm.org" title="Git">Git</a>, c’est un outil qui permet de faire beaucoup plus que juste ça. Nous allons maintenant voir comment utiliser les fonctionnalités de Git qui n’étaient pas disponibles avec CVS et consorts.</p>
 <h1 id="pourquoi-git-est-cool">Pourquoi Git est cool ?</h1>
 <p>Parce que grace à <a href="http://git-scm.org" title="Git">Git</a> vous pouvez travailler sur plusieurs partie du projet de façon complètement isolée les unes des autres. Ça c’est la partie décentralisée de <a href="http://git-scm.org" title="Git">Git</a>.</p>

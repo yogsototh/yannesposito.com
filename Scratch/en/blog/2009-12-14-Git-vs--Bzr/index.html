@@ -37,10 +37,8 @@
 			<div id="afterheader" class="article">
 				<div class="corps">
 					<div class="intro">
-
 <p>Why even if I believe <code>git</code> has many bad point I believe it is the best DCVS around to work with. This is why I first tell why I prefer <a href="http://bazaar-vcs.org">Bazaar</a> over <a href="http://git-scm.org">Git</a>. Secondly I’ll talk about the only advantage of git against Bazaar which lead me to prefer it.</p>
 </div>
-
 <h2 id="the-dcvs-discovery">The DCVS discovery</h2>
 <p>Before beginning this article, you should know I come from <em>subversion</em>. I find subversion to be a really good CVS. But I was converted to the decentralized ones.</p>
 <p>There is two way of perceive version control system. Either you think in term of branches (see the really good article on <a href="http://betterexplained.com/articles/a-visual-guide-to-version-control/">betterexplained</a>) or think in term of patches. Another way to say that, is weather you concentrate on vertices or on transitions of the graph of possible states of your project.</p>
@@ -52,64 +50,53 @@
 <div>
 <code class="zsh"> git checkout pipo </code>
 </div>
-
 <p>undo the current modification of the file <code>pipo</code></p>
 <div>
 <code class="zsh"> git checkout pipo </code>
 </div>
-
 <p>change the current branch to the branch <code>pipo</code></p>
 <p>And, like me, you remark, it is exactly the same command to make two completely different things. What occur when you have a <code>pipo</code> branch and a <code>pipo</code> file? By default, it change the current branch. In order to leave the ambiguity you have to use the following syntax:</p>
 <div>
 <code class="zsh"> git checkout ./pipo </code>
 </div>
-
 <p>Yes, hum…</p>
 <p>It works, but it is clearly not really user friendly. Furthermore, checkout had a complete different signification in older CSV like <code>cvs</code> et <code>svn</code>. <code>checkout</code> was used to get a distant project locally.</p>
 <p>Bazaar terminology is far more natural, because there is no command to change the current branch as there is only one branch per directory. Changing a branch in Bazaar is changing the current directory. I also believe it is the biggest problem of Bazaar, I’ll tell you why. And to undo things in Bazaar:</p>
 <div>
 <code class="zsh"> bzr revert pipo </code>
 </div>
-
 <p>Furthermore, most Bazaar command take a revision number in parameter. For example, to get back 3 versions earlier, it is enough to write:</p>
 <div>
 <code class="zsh"> bzr revert -r -3 pipo </code>
 </div>
-
 <p>The <code>git</code> equivalent is far more cryptic:</p>
 <div>
 <code class="zsh"> bzr checkout HEAD~3 pipo </code>
 </div>
-
 <p>One more time, Bazaar is far more readable.</p>
 <p>Back in time for all the project:</p>
 <p>with Bazaar:</p>
 <div>
 <code class="zsh"> bzr revert -r -3 pipo </code>
 </div>
-
 <p>and with <code>git</code>? <code>git checkout</code>? Of course not! It would be too simple. What we find in the documentation (<code>man</code>) and everywhere on the net:</p>
 <div>
 <code class="zsh"> git reset –hard HEAD~3 </code>
 </div>
-
 <p>Except that this command is horrible. It forget revisions! Then you must use it with prudence. And you cannot tell other people working on the project you discard some changes. If someone had pulled the <em>bad</em> version, you are <em>doomed</em>. This is why you can also use:</p>
 <div>
 <code class="zsh"> git checkout HEAD~3 – . &amp;&amp; git commit -m ‘back in time’ </code>
 </div>
-
 <p>Just to keep a backup branch. Without it we can definitively loose the current version HEAD. But some error may rest when there were some addition and deletion of files. <em>The unique way to be really clean without any risk is to use the following command:</em></p>
 <div>
 <code class="zsh"> for i in <span class="math">(<em>s</em><em>e</em><em>q</em>02); <em>d</em><em>o</em><em>g</em><em>i</em><em>t</em><em>r</em><em>e</em><em>v</em><em>e</em><em>r</em><em>t</em> − <em>n</em> −  − <em>n</em><em>o</em> − <em>e</em><em>d</em><em>i</em><em>t</em><em>h</em><em>e</em><em>a</em><em>d</em> </span>i; done git commit -m “reverted 3 versions back” </code>
 </div>
-
 <p>And with this command this is the only good way to undo things in a project and tell other contributor you reverted something. You simply revert version in backward order.</p>
 <p>The rule is simple: <em>NEVER use the <code>git reset</code> command on a version somebody else could have <code>fetched</code></em></p>
 <p>It was said. Discover the best method took me some time. I’d made many different tries. The safer and best way of reverting back your tree is to use this method. If you want to make it automatic just had the following alias in your <code>~/.gitconfig</code>. Of course this alias will work only on environment having <code>zsh</code> installed. Which is the cas for most UNIX (Ubuntu, Mac OS X…).</p>
 <div>
 <code class="zsh" file="gitconfig"> [alias] uncommit = !zsh -c ‘“if ((<span class="math">0)); <em>t</em><em>h</em><em>e</em><em>n</em><em>n</em><em>b</em> = </span>(( <span class="math">0 − 1)); <em>e</em><em>l</em><em>s</em><em>e</em><em>n</em><em>b</em> = 0; <em>f</em><em>i</em>; <em>i</em> = 0; <em>w</em><em>h</em><em>i</em><em>l</em><em>e</em>((<em>i</em> &lt;  = <em>n</em><em>b</em>)); <em>d</em><em>o</em><em>g</em><em>i</em><em>t</em><em>r</em><em>e</em><em>v</em><em>e</em><em>r</em><em>t</em> − <em>n</em> −  − <em>n</em><em>o</em> − <em>e</em><em>d</em><em>i</em><em>t</em><em>H</em><em>E</em><em>A</em><em>D</em> </span>i; ((i++)); done; git commit -m &quot;revert to $0 version(s) back&quot;”’ </code>
 </div>
-
 <h1 id="what-make-git-by-far-the-best-dcvs-today">What make <code>git</code> by far the best DCVS today</h1>
 <p>After talking about the negatives points of <code>git</code>, now it’s time to speak about the very positive feature that make <code>git</code> the best DCVS in my humble opinion.</p>
 <h2 id="cheap-branching">Cheap branching</h2>
@@ -117,7 +104,6 @@
 <div>
 <code class="zsh"> &gt; vim file1 &gt; vim file2 &gt; git br fix1 &gt; git add file1 &gt; git commit -m ‘fix1’ &gt; git br fix2 &gt; git add file2 &gt; git commit -m ‘fix2’ &gt; git commit master &gt; git merge fix1 &gt; git merge fix2 </code>
 </div>
-
 <p>And this is great not to worry about working in the <em>good</em> branch and coding in the same time. You just worry about your code and then about the versionning system.</p>
 <p>And I use this possibilities <em>a lot</em>. Working with bazaar, I often made the error to begin a change in the bad branch. then I have to copy my modifications, then revert. In short it was tiedous.</p>
 <p>This is why I prefer using <code>git</code> on an every day usage. If Bazaar implement the same way of cheap branching than git. I should switch again.</p>

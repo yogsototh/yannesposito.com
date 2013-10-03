@@ -52,38 +52,34 @@
 <div>
 <img src="../../../../Scratch/img/blog/2010-03-23-Encapsulate-git/dynamic_branching.png" alt="Dynamic branching" />
 </div>
-
 <p>Et plus précisément la hiérarchie des branches :</p>
 <div>
 <img src="../../../../Scratch/img/blog/2010-03-23-Encapsulate-git/branch_hierarchy.png" alt="Branch hierarchy" />
 </div>
-
 <p>Une flèche de A vers B signifie que l’on peut merger A dans B. S’il n’y a pas de flèche de A vers B cela signifie qu’il est <em>interdit</em> de merger A dans B. Voici le code ruby correspondant :</p>
 <div>
 <code class="ruby"> $architecture={ :master =&gt; [ :dev, :client ], :dev =&gt; [ :master ], :client =&gt; [ :clientA, :clientB ] } </code>
 </div>
-
 <p><code>:master =&gt; [ :dev, :client ]</code> signifie que l’on peut merger la branche <code>master</code> dans la branche <code>dev</code> et la branche <code>client</code>.</p>
 <p>Je fait une erreur si je tape <code>git checkout master &amp;&amp; git merge clientA</code>. C’est pour éviter ça que j’ai fait un script pour encapsuler le comportement de <code>git</code>.</p>
 <p>Mais ce script fait bien plus que ça. Il fait des merges en cascade de la racine vers les feuilles avec l’acion <code>allmerges</code>.</p>
 <div>
 <code class="zsh"> git co dev &amp;&amp; git merge master git co client &amp;&amp; git merge master git co clientA &amp;&amp; git merge client git co clientB &amp;&amp; git merge client </code>
 </div>
-
 <p>Je peux ainsi mettre à jour toutes les branches. L’algorithme ne boucle pas même s’il y a des cycles dans la structure des branches.<br />Le voici :</p>
 <div class="small">
 <p><code class="ruby" file="eng"> #!/usr/bin/env ruby # encoding: utf-8</p>
-<h1 id="architecture">architecture</h1>
-<h1 id="section"></h1>
-<h1 id="master---dev">master &lt;-&gt; dev</h1>
-<h1 id="master---client">master -&gt; client</h1>
-<h1 id="clien---clienta-clientb">clien -&gt; clientA | clientB</h1>
-<h1 id="section-1"></h1>
-<h1 id="merge-using-two-of-these-branches-should-be">merge using two of these branches should be</h1>
-<h1 id="restricted-to-these-rules">restricted to these rules</h1>
-<h1 id="merge-to-one-of-these-branch-and-an-unknown-one-should">merge to one of these branch and an unknown one should</h1>
-<h1 id="raise-a-warning-and-may-the-option-to-add-this-new-branch">raise a warning, and may the option to add this new branch</h1>
-<h1 id="to-the-hierarchy">to the hierarchy</h1>
+<h1>architecture</h1>
+<h1></h1>
+<h1>master &lt;-&gt; dev</h1>
+<h1>master -&gt; client</h1>
+<h1>clien -&gt; clientA | clientB</h1>
+<h1></h1>
+<h1>merge using two of these branches should be</h1>
+<h1>restricted to these rules</h1>
+<h1>merge to one of these branch and an unknown one should</h1>
+<h1>raise a warning, and may the option to add this new branch</h1>
+<h1>to the hierarchy</h1>
 <p>$architecture={ :master =&gt; [ :dev, :client ], :dev =&gt; [ :master ], :client =&gt; [ :clientA, :clientB ] }</p>
 <p>def get_current_branch() (<code>git branch --no-color | awk '$1 == &quot;*&quot; {print $2}'</code>).chop.intern end</p>
 <p>if ARGV.length == 0 puts %{usage: $0:t [git_command or local_command]</p>
@@ -94,7 +90,6 @@
 <p>def do_merge current_branch=get_current_branch src_branch=ARGV[1].intern puts %{do_merge: #{src_branch} =&gt; #{current_branch}} if <span class="math"><em>k</em><em>n</em><em>o</em><em>w</em><em>n</em><sub><em>b</em></sub><em>r</em><em>a</em><em>n</em><em>c</em><em>h</em><em>e</em><em>s</em>. <em>i</em><em>n</em><em>c</em><em>l</em><em>u</em><em>d</em><em>e</em>? (<em>c</em><em>u</em><em>r</em><em>r</em><em>e</em><em>n</em><em>t</em><sub><em>b</em></sub><em>r</em><em>a</em><em>n</em><em>c</em><em>h</em>)<em>i</em><em>f</em></span>known_branches.include?(src_branch) if <span class="math"><em>a</em><em>r</em><em>c</em><em>h</em><em>i</em><em>t</em><em>e</em><em>c</em><em>t</em><em>u</em><em>r</em><em>e</em>. <em>h</em><em>a</em><em>s</em><sub><em>k</em></sub><em>e</em><em>y</em>? (<em>s</em><em>r</em><em>c</em><sub><em>b</em></sub><em>r</em><em>a</em><em>n</em><em>c</em><em>h</em>)<em>a</em><em>n</em><em>d</em></span>architecture[src_branch].include?(current_branch) system %{git merge #{src_branch}} else puts %{Forbidden merge: #{src_branch} =&gt; #{current_branch}} end else puts %{Warning! #{src_branch} not mentionned in rb configuration} sleep 2 f system %{git merge #{src_branch}} puts %{Warning! #{src_branch} not mentionned in rb configuration} end end end</p>
 case ARGV[0] when ‘allmerges’ then do_all_merges when ‘merge’ then do_merge else system %{git #{ARGV.join(‘’)}} end </code>
 </div>
-
 <p>Pour que ça fonctionne il vous suffit de copier <code>eng</code> dans un répertoire présent dans votre <code>PATH</code>.</p>
 <p>Bien entendu, il faut essayer de faire aussi peu que possible des <code>cherry-pick</code> et des <code>rebase</code>. Ce script a pour but de s’intégrer avec les workflow basé sur les <code>pull</code> et <code>merge</code>.</p>
 				</div>

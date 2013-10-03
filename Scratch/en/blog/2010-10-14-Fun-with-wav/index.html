@@ -37,11 +37,9 @@
 			<div id="afterheader" class="article">
 				<div class="corps">
 					<div class="intro">
-
 <p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span> Played to process a <code>wav</code> file. <code>C</code> was easier and cleaner than Ruby.</p>
 <p>edit: I wanted this program to work only on one specific machine (a x86 on a 32 bit Ubuntu). Therefore I didn’t had any portability consideration. This is only a <em>hack</em>.</p>
 </div>
-
 <p>I had to compute the sum of the absolute values of data of a <code>.wav</code> file. For efficiency (and fun) reasons, I had chosen <code>C</code> language.</p>
 <p>I didn’t programmed in <code>C</code> for a long time. From my memory it was a pain to read and write to files. But in the end I was really impressed by the code I get. It was really clean. This is even more impressive knowing I used mostly low level functions.</p>
 <p>A <code>wav</code> file has an header containing many metadata. This header was optimized to take as few space as possible. The header is then a block of packed bytes.</p>
@@ -135,12 +133,10 @@
 <p>I am curious to know if somebody know a nice way to do this with Ruby or Python.</p>
 <p><em>edit: for compatibility reasons (64bit machines) used <code>int16_t</code> instead of <code>short</code> and <code>int</code> instead of <code>int</code>.</em></p>
 <div class="intro">
-
 <p>Edit (2): after most consideration about portability I made an <em>hopefully</em> more portable version. But I must confess this task was a bit tedious. The code remain as readable as before. But I had to use some compiler specific declaration to force the structure to be packed:</p>
 <pre class="sourceCode c"><code class="sourceCode c">__attribute__((__packed__))</code></pre>
 <p>Therefore this implementation should for big and little endian architecture. However, it must be compiled with <code>gcc</code>. The new code make more tests but still don’t use <code>mmap</code>. Here it is:</p>
 </div>
-
 <pre class="sourceCode c"><code class="sourceCode c"><span class="ot">#include &lt;stdio.h&gt;</span>
 <span class="ot">#include &lt;stdlib.h&gt;</span>
 <span class="ot">#include &lt;string.h&gt; </span><span class="co">// for memcmp</span>

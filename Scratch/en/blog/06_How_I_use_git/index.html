@@ -39,67 +39,24 @@
 					<div>
 <img src="../../../../Scratch/img/blog/06_How_I_use_git/central_architecture.png" alt="central architecture" />
 </div>
-
 <p>I use <a href="http://www.git-scm.org/">Git</a> to manage my personnal projects. I have a centralized repository which all my computer should synchronize with. Unfortunately I didn’t find clearly what I needed on the official Git documentation.</p>
 <p>In two words, if you want to use an SVN workflow with Git (and all its advantages) here is how to proceed.</p>
-<hr />
-<h2 id="initialisation">Initialisation</h2>
-<p>Suppose I’ve got a directory on my local computer containing a project I want to manage via Git. Here what to do:</p>
-<div>
-<pre class="zsh"><code>cd to/project/directory/
-git init
-git add
-git commit</code></pre>
-</div>
-
-<p>Now all files in the <code>to/project/directory/</code> are versionned. If you want not to follow some just edit the file <code>.gitignore</code></p>
-<p>for example mine is:</p>
-<div>
-<pre class="zsh"><code>*.swp
-.DS_Store
-ikog.py.bak
-output/Scratch/assets
-output/Scratch/en
-output/Scratch/fr
-output/Scratch/multi</code></pre>
-</div>
-
-<p>Next, you want to put your project on a directory accessible from the web:</p>
-<div>
-<pre class="zsh"><code>git clone --bare . /path/to/repository</code></pre>
-</div>
-
-<p>Now on any computer you can do:</p>
-<div>
-<pre class="zsh"><code>git clone protocol://path/to/repository local_directory</code></pre>
-</div>
-
-<p>and <code>local_directory</code> will contain an up-to-date project.</p>
-<div class="encadre">
-<p><em> You should make this operation also on the computer used to create the repository. Just to verify all will be okay.</p>
-</em>
-</div>
-
-<hr />
 <h2 id="the-workflow">The workflow</h2>
 <p>To resume you now have one repository on the Internet, and one or many computer associated with it. Now, what you want is to synchronize everything.</p>
 <p>Before begining your work, the first thing to do is to get all modification from the Internet to your local host:</p>
 <div>
 <pre class="zsh"><code>git pull</code></pre>
 </div>
-
 <p>After that you can do (many times):</p>
 <div>
 <pre class="zsh"><code>hack, hack, hack...
 git add some files
 git commit</code></pre>
 </div>
-
 <p>When you want your local modification to be on the Internet just do a simple:</p>
 <div>
 <pre class="zsh"><code>git push</code></pre>
 </div>
-
 <p>All should be ok.</p>
 <p>If you have some trouble with the <code>push</code> and <code>pull</code> verify your <code>.git/config</code> file ; it should contain the following lines:</p>
 <div>
@@ -112,7 +69,6 @@ git commit</code></pre>
 	merge = refs/heads/master
 ...</code></pre>
 </div>
-
 <h2 id="branches-synchronisation">Branches Synchronisation</h2>
 <p>Well, now, all seems ok, but you have to worry about two little things. Git is all about decentralisation and branches. It is very easy to manage one branch, or many branches on the same host. But synchronize branches on many hosts is not a natural operation.</p>
 <p>This is why I created two simple scripts to automate this. One for creating a branch locally and remotely. And one to get remotely created branched on your local host.</p>
@@ -120,12 +76,10 @@ git commit</code></pre>
 <div>
 <code class="zsh">git-create-new-branch branch_name</code>
 </div>
-
 <p>and when you are on another computer and want to get locally all the remote branches you execute:</p>
 <div>
 <code class="zsh">git-get-remote-branches</code>
 </div>
-
 <p>Here are the code of theese two scripts:</p>
 <div>
 <pre class="zsh"><code>#!/usr/bin/env zsh
@@ -141,7 +95,6 @@ git co ${branch}
 git config branch.${branch}.remote origin
 git config branch.${branch}.merge refs/heads/${branch}</code></pre>
 </div>
-
 <div>
 <pre class="zsh"><code>#!/usr/bin/env zsh
 
@@ -157,8 +110,6 @@ for br in $remoteMissingBranches; do
   git config branch.${branch}.merge refs/heads/${branch}
 done</code></pre>
 </div>
-
-
 				</div>
 
                 <div id="social">

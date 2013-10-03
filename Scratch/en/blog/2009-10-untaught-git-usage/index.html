@@ -38,32 +38,6 @@
 				<div class="corps">
 					<p><small> <em>I explain why I had so much difficulties to use Git. There is an “untaught rule” that make hard to work without. Until I read the good document. </em></small></p>
 <p><small> <em> “Cheap branches” aren’t designed to be totally isolated branches but rather should follow a “Master Branch”. There is a </em>Standard Workflow<em> to follow. If you don’t follow it, you prepare yourself with some hard time with Git.</em> </small></p>
-<hr />
-<h1 id="my-way-to-decentralisation">My way to decentralisation</h1>
-<h3 id="from-svn-to-bazaar">From SVN to Bazaar</h3>
-<p>I was a huge user of <a href="http://subversion.tigris.org">subversion (svn)</a>. Until the day I saw this <a href="http://www.youtube.com/watch?v=4XpnKHJAok8">video of Linus Torvald</a>. Where he explain Git and all advantages of <em>Decentralized Concurrent Versioning System</em>(<abbr title="Decentralized Concurrent Versioning System">DCVS</abbr>)</p>
-<p>I must say I was completely convinced. And the more you learn about <abbr title="Decentralized Concurrent Versioning System">DCVS</abbr> the more you see good reason to use them.</p>
-<p>I then needed a versioning system for my team. As they were not used to open source versioning system except those heavy, with a GUI and with and administrator<sup><a href="#note1">†</a></sup></p>
-<p>After some web searches, I founded three main choices:</p>
-<ul>
-<li><a href="http://git-scm.com">Git</a></li>
-<li><a href="http://bazaar-vcs.org">Bazaar</a></li>
-<li><a href="http://selenic.com/mercurial">Mercurial</a></li>
-</ul>
-<p>After trying each other I chosen Bazaar. It has the simplest User Interface<sup><a href="#note2">*</a></sup>. My choice was done.</p>
-<h3 id="from-bazaar-to-git">From Bazaar to Git</h3>
-<p>It was really natural to learn when coming from <em>subversion</em>. The <code>pull</code> command corresponding to <code>update</code>, <code>push</code> command to <code>commit</code>. Commands like <code>commit</code> and <code>update</code> are still there if you want to use an SVN <em>workflow</em>.</p>
-<p>After some times, reading on many blogs, I realize Git is far more popular and by influent people.</p>
-<p>I then decide to use Git in particular to <em>version</em> this current website. But after trying it, I found it difficult and couter intuitive (I’ll speak a work about it later).</p>
-<p>After calling for some help, when I say Bazaar is much simpler to learn, some people answer me that Git:</p>
-<blockquote>
-<p>— <em>SO-MUCH-EASY my 12 year old daughter uses it to version its school documents. She has no difficulties at all, creating branches, blah, blah, blah…</em></p>
-</blockquote>
-<p>If a 12 years old girl has no problem with Git and I (with my Computer Science Ph.D.) have difficulties to uses it like I want, it is frustrating and humiliating. But what makes Git natural for some people and confusing for me?</p>
-<p>I finally understood why reading a document I didn’t read before. It was the <em>untaught</em> part of the conception. The part every developer found so <em>natural</em> it is not necessary to say a word about it. But it was not <em>natural</em> for me.</p>
-<p><small><a name="note1">†</a> - I speak about <em>ClearCase(c)</em>. I know there exists command line tools. But it was not the way my team used it.</small></p>
-<p><small><a name="note2">*</a> - I never really given its chance to Mercurial. The terminology they chosen was too far from the svn one. And I was used to it.</small></p>
-<hr />
 <p>When you see explanation about <em>branches</em> and <abbr title="Decentralized Concurrent Versioning System">DCVS</abbr> we imagine each branch is totally uncorrelated to each other, except when <em>merging</em>. Everything is magic. This is the “<em>Parallel World</em>” explanation. This way of seeing is explained more in depth in the <a href="http://betterexplained.com/articles/a-visual-guide-to-version-control/">real good article about branches</a> on betterexplained.</p>
 <p>Git was designed to manage the Linux Kernel. Git was designed using the concept of <em>Patch</em> instead of <em>Parallel Worlds</em>.</p>
 <p>From one site <em>Parallel World</em> and <em>Patches</em> from the other. There is many equivalent notions in the two point of vue, but also some differences.</p>
@@ -99,22 +73,18 @@
 <div>
 <code class="zsh">bzr revert</code>
 </div>
-
 <p>Is clearer than</p>
 <div>
 <code class="zsh">git reset –hard HEAD</code>
 </div>
-
 <p>We can tell the same thing about</p>
 <div>
 <code class="zsh">bzr revert -r -3</code>
 </div>
-
 <p>which seems preferable to</p>
 <div>
 <code class="zsh">git reset –hard HEAD~3</code>
 </div>
-
 <p>Until now, it is not big business. But now, things will go worse. If we want to revert time on all the tree we use the keyword <code>reset</code>.</p>
 <center>
 OK
@@ -124,7 +94,6 @@ OK
 <div>
 <code class="zsh">git reset –hard FILE</code>
 </div>
-
 <center>
 <strong>OF COURSE NOT!</strong>
 </center>
@@ -133,23 +102,19 @@ OK
 <div>
 <code class="zsh">git checkout FILE</code>
 </div>
-
 <p>What? <strong><code>checkout</code></strong> !? Well, ok. I accept. why not? With Bazaar it is:</p>
 <div>
 <code class="zsh">git revert FILE</code>
 </div>
-
 <p>What I personally found far more natural.</p>
 <p>But the command to change the current <em>cheap branch</em> is really hard to be accepted (from the User Interface point of view). With Bazaar it is:</p>
 <div>
 <code class="zsh">cd ../branch</code>
 </div>
-
 <p>Well yes. With Bazaar you have to change your directory to change your branch. It needs more disk resources but it is really clear. Which is my current branch, is just a <code>pwd</code> away. For Git here is the command:</p>
 <div>
 <code class="zsh">git checkout branch</code>
 </div>
-
 <p><strong>WTF?</strong> I believed <code>checkout</code> was the key to get a file in some state (not the entire tree).</p>
 <p>Then <code>checkout</code> is the same keyword used to get back in time on a file (BUT NOT ON ALL THE TREE where you have to use <code>reset --hard</code>) and to <strong>change current branch</strong>!</p>
 <p>It is totally unnatural. Even if it is theoretically totally justified like you can see in the really good article <a href="http://eagain.net/articles/git-for-computer-scientists/">Git for Computer Scientist</a>. From the user point of vue, it is difficult to do worse than that. It is like somebody made it on purpose to make it the hardest possible to learn and understand.</p>

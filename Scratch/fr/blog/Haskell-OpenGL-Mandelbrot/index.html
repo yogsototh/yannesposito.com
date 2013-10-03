@@ -39,12 +39,9 @@
 					<div>
 <img src="../../../../Scratch/img/blog/Haskell-OpenGL-Mandelbrot/BenoitBMandelbrot.jpg" alt="The B in Benoît B. Mandelbrot stand for Benoît B. Mandelbrot" />
 </div>
-
 <div class="intro">
-
 <p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Un exemple progressif d’utilisation d’Haskell. Vous pourrez voir un ensemble de Mandelbrot étendu à la troisième dimension. De plus le code sera très propre. Les détails de rendu sont séparés dans un module externe. Le code descriptif intéressant est concentré dans un environnement pur et fonctionnel. Vous pouvez vous inspirer de ce code utilisant le paradigme fonctional dans tous les languages.</p>
 </div>
-
 <h2 id="introduction">Introduction</h2>
 <p>In my <a href="../../../../Scratch/en/blog/Haskell-the-Hard-Way/">preceding article</a> I introduced Haskell.</p>
 <p>This article goes further. It will show how to use functional programming with interactive programs. But more than that, it will show how to organize your code in a functional way. This article is more about functional paradigm than functional language. The code organization can be used in most imperative language.</p>
@@ -83,7 +80,6 @@ Another detail of the Mandelbulb
 <div>
 <img src="../../../../Scratch/img/blog/Haskell-OpenGL-Mandelbrot/HGL_Plan.png" alt="The parts of the article" />
 </div>
-
 <p>From the 2nd section to the 4th it will be <em>dirtier</em> and <em>dirtier</em>. We start cleaning the code at the 5th section.</p>
 <hr />
 <p><a href="code/01_Introduction/hglmandel.lhs" class="cut">Download the source code of this section → 01_Introduction/<strong>hglmandel.lhs</strong></a></p>
@@ -95,12 +91,10 @@ Another detail of the Mandelbulb
 <span class="kw">import</span> Graphics.UI.GLUT
 <span class="kw">import</span> Data.IORef</code></pre>
 </div>
-
 <p>For efficiency reason<sup><a href="#fn3" class="footnoteRef" id="fnref3">3</a></sup>, I will not use the default Haskell <code>Complex</code> data type.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Complex</span> <span class="fu">=</span> <span class="dt">C</span> (<span class="dt">Float</span>,<span class="dt">Float</span>) <span class="kw">deriving</span> (<span class="dt">Show</span>,<span class="dt">Eq</span>)</code></pre>
 </div>
-
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Num</span> <span class="dt">Complex</span> <span class="kw">where</span>
     fromInteger n <span class="fu">=</span> <span class="dt">C</span> (fromIntegral n,<span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>)
@@ -109,7 +103,6 @@ Another detail of the Mandelbulb
     abs (<span class="dt">C</span> (x,y))     <span class="fu">=</span> <span class="dt">C</span> (sqrt (x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y),<span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>)
     signum (<span class="dt">C</span> (x,y))  <span class="fu">=</span> <span class="dt">C</span> (signum x , <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>)</code></pre>
 </div>
-
 <p>We declare some useful functions for manipulating complex numbers:</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">complex ::</span> <span class="dt">Float</span> <span class="ot">-&gt;</span> <span class="dt">Float</span> <span class="ot">-&gt;</span> <span class="dt">Complex</span>
@@ -124,7 +117,6 @@ im   (<span class="dt">C</span> (x,y))    <span class="fu">=</span> y
 <span class="ot">magnitude ::</span> <span class="dt">Complex</span> <span class="ot">-&gt;</span> <span class="dt">Float</span>
 magnitude <span class="fu">=</span> real<span class="fu">.</span>abs</code></pre>
 </div>
-
 <h3 id="let-us-start">Let us start</h3>
 <p>We start by giving the main architecture of our program:</p>
 <div class="codehighlight">
@@ -142,7 +134,6 @@ main <span class="fu">=</span> <span class="kw">do</span>
   <span class="co">-- We enter the main loop</span>
   mainLoop</code></pre>
 </div>
-
 <p>Mainly, we initialize our OpenGL application. We declared that the function <code>display</code> will be used to render the graphics:</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">display <span class="fu">=</span> <span class="kw">do</span>
@@ -151,7 +142,6 @@ main <span class="fu">=</span> <span class="kw">do</span>
   preservingMatrix drawMandelbrot
   swapBuffers <span class="co">-- refresh screen</span></code></pre>
 </div>
-
 <p>Also here, there is only one interesting line; the draw will occur in the function <code>drawMandelbrot</code>.</p>
 <p>This function will provide a list of draw actions. Remember that OpenGL is imperative by design. Then, one of the consequence is you must write the actions in the right order. No easy parallel drawing here. Here is the function which will render something on the screen:</p>
 <div class="codehighlight">
@@ -166,7 +156,6 @@ main <span class="fu">=</span> <span class="kw">do</span>
           <span class="co">-- remember we're in 3D</span>
           vertex <span class="fu">$</span> <span class="dt">Vertex3</span> x y <span class="dv">0</span> </code></pre>
 </div>
-
 <p>The <code>mapM_</code> function is mainly the same as map but inside a monadic context. More precisely, this can be transformed as a list of actions where the order is important:</p>
 <pre><code>drawMandelbrot = 
   renderPrimitive Points $ do
@@ -180,7 +169,6 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">width <span class="fu">=</span> <span class="dv">320</span><span class="ot"> ::</span> <span class="dt">GLfloat</span>
 height <span class="fu">=</span> <span class="dv">320</span><span class="ot"> ::</span> <span class="dt">GLfloat</span></code></pre>
 </div>
-
 <p>And of course our list of colored points. In OpenGL the default coordinate are from -1 to 1.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">allPoints ::</span> [(<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>,<span class="dt">Color3</span> <span class="dt">GLfloat</span>)]
@@ -188,7 +176,6 @@ allPoints <span class="fu">=</span> [ (x<span class="fu">/</span>width,y<span cl
                   x <span class="ot">&lt;-</span> [<span class="fu">-</span>width<span class="fu">..</span>width], 
                   y <span class="ot">&lt;-</span> [<span class="fu">-</span>height<span class="fu">..</span>height]]</code></pre>
 </div>
-
 <p>We need a function which transform an integer value to some color:</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">colorFromValue n <span class="fu">=</span>
@@ -198,7 +185,6 @@ allPoints <span class="fu">=</span> [ (x<span class="fu">/</span>width,y<span cl
   <span class="kw">in</span>
     <span class="dt">Color3</span> (t n) (t (n<span class="fu">+</span><span class="dv">5</span>)) (t (n<span class="fu">+</span><span class="dv">10</span>))</code></pre>
 </div>
-
 <p>And now the <code>mandel</code> function. Given two coordinates in pixels, it returns some integer value:</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">mandel x y <span class="fu">=</span> 
@@ -207,7 +193,6 @@ allPoints <span class="fu">=</span> [ (x<span class="fu">/</span>width,y<span cl
   <span class="kw">in</span>
       f (complex r i) <span class="dv">0</span> <span class="dv">64</span></code></pre>
 </div>
-
 <p>It uses the main Mandelbrot function for each complex \(c\). The Mandelbrot set is the set of complex number \(c\) such that the following sequence does not escape to infinity.</p>
 <p>Let us define \(f_c:  \)</p>
 <p><br /><span class="math"><em>f</em><sub><em>c</em></sub>(<em>z</em>) = <em>z</em><sup>2</sup> + <em>c</em></span><br /></p>
@@ -221,25 +206,21 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
           <span class="kw">then</span> n
           <span class="kw">else</span> f c ((z<span class="fu">*</span>z)<span class="fu">+</span>c) (n<span class="fu">-</span><span class="dv">1</span>)</code></pre>
 </div>
-
 <p>Well, if you download this file (look at the bottom of this section), compile it and run it this is the result:</p>
 <div>
 <img src="../../../../Scratch/img/blog/Haskell-OpenGL-Mandelbrot/hglmandel_v01.png" alt="The mandelbrot set version 1" />
 </div>
-
 <p>A first very interesting property of this program is that the computation for all the points is done only once. It is a bit long before the first image appears, but if you resize the window, it updates instantaneously. This property is a direct consequence of purity. If you look closely, you see that <code>allPoints</code> is a pure list. Therefore, calling <code>allPoints</code> will always render the same result and Haskell is clever enough to use this property. While Haskell doesn’t garbage collect <code>allPoints</code> the result is reused for free. We did not specified this value should be saved for later use. It is saved for us.</p>
 <p>See what occurs if we make the window bigger:</p>
 <div>
 <img src="../../../../Scratch/img/blog/Haskell-OpenGL-Mandelbrot/hglmandel_v01_too_wide.png" alt="The mandelbrot too wide, black lines and columns" />
 </div>
-
 <p>We see some black lines because we have drawn less point than there is on the surface. We can repair this by drawing little squares instead of just points. But, instead we will do something a bit different and unusual.</p>
 <p><a href="code/01_Introduction/hglmandel.lhs" class="cut">Download the source code of this section → 01_Introduction/<strong>hglmandel.lhs</strong> </a></p>
 <hr />
 <p><a href="code/02_Edges/HGLMandelEdge.lhs" class="cut">Download the source code of this section → 02_Edges/<strong>HGLMandelEdge.lhs</strong></a></p>
 <h2 id="only-the-edges">Only the edges</h2>
 <div style="display:none">
-
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Graphics.Rendering.OpenGL
 <span class="kw">import</span> Graphics.UI.GLUT
@@ -290,9 +271,7 @@ display <span class="fu">=</span> <span class="kw">do</span>
 width <span class="fu">=</span> <span class="dv">320</span><span class="ot"> ::</span> <span class="dt">GLfloat</span>
 height <span class="fu">=</span> <span class="dv">320</span><span class="ot"> ::</span> <span class="dt">GLfloat</span></code></pre>
 </div>
-
 </div>
-
 <p>This time, instead of drawing all points, we will simply draw the edges of the Mandelbrot set. The method I use is a rough approximation. I consider the Mandelbrot set to be almost convex. The result will be good enough for the purpose of this tutorial.</p>
 <p>We change slightly the <code>drawMandelbrot</code> function. We replace the <code>Points</code> by <code>LineLoop</code></p>
 <div class="codehighlight">
@@ -307,13 +286,11 @@ height <span class="fu">=</span> <span class="dv">320</span><span class="ot"> ::
           <span class="co">-- remember we're in 3D</span>
           vertex <span class="fu">$</span> <span class="dt">Vertex3</span> x y <span class="dv">0</span> </code></pre>
 </div>
-
 <p>And now, we should change our list of points. Instead of drawing every point of the visible surface, we will choose only point on the surface.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">allPoints <span class="fu">=</span> positivePoints <span class="fu">++</span> 
       map (\(x,y,c) <span class="ot">-&gt;</span> (x,<span class="fu">-</span>y,c)) (reverse positivePoints)</code></pre>
 </div>
-
 <p>We only need to compute the positive point. The Mandelbrot set is symmetric relatively to the abscisse axis.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">positivePoints ::</span> [(<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>,<span class="dt">Color3</span> <span class="dt">GLfloat</span>)]
@@ -326,7 +303,6 @@ positivePoints <span class="fu">=</span> <span class="kw">do</span>
      <span class="kw">where</span>
          log2 n <span class="fu">=</span> floor ((log n) <span class="fu">/</span> log <span class="dv">2</span>)</code></pre>
 </div>
-
 <p>This function is interesting. For those not used to the list monad here is a natural language version of this function:</p>
 <pre class="no-highlight"><code>positivePoints =
     for all x in the range [-width..width]
@@ -350,14 +326,11 @@ maxZeroIndex func minval maxval n <span class="fu">=</span>
        <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="fu">-</span><span class="dv">1</span>)
   <span class="kw">where</span> medpoint <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span></code></pre>
 </div>
-
 <p>No rocket science here. See the result now:</p>
 <div>
 <img src="../../../../Scratch/img/blog/Haskell-OpenGL-Mandelbrot/HGLMandelEdges.png" alt="The edges of the mandelbrot set" />
 </div>
-
 <div style="display:none">
-
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">colorFromValue n <span class="fu">=</span>
   <span class="kw">let</span> 
@@ -366,7 +339,6 @@ maxZeroIndex func minval maxval n <span class="fu">=</span>
   <span class="kw">in</span>
     <span class="dt">Color3</span> (t n) (t (n<span class="fu">+</span><span class="dv">5</span>)) (t (n<span class="fu">+</span><span class="dv">10</span>))</code></pre>
 </div>
-
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">mandel x y <span class="fu">=</span> 
   <span class="kw">let</span> r <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> x <span class="fu">/</span> width
@@ -374,7 +346,6 @@ maxZeroIndex func minval maxval n <span class="fu">=</span>
   <span class="kw">in</span>
       f (complex r i) <span class="dv">0</span> <span class="dv">64</span></code></pre>
 </div>
-
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">Complex</span> <span class="ot">-&gt;</span> <span class="dt">Complex</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
 f c z <span class="dv">0</span> <span class="fu">=</span> <span class="dv">0</span>
@@ -382,9 +353,7 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
           <span class="kw">then</span> n
           <span class="kw">else</span> f c ((z<span class="fu">*</span>z)<span class="fu">+</span>c) (n<span class="fu">-</span><span class="dv">1</span>)</code></pre>
 </div>
-
 </div>
-
 <p><a href="code/02_Edges/HGLMandelEdge.lhs" class="cut">Download the source code of this section → 02_Edges/<strong>HGLMandelEdge.lhs</strong> </a></p>
 <hr />
 <p><a href="code/03_Mandelbulb/Mandelbulb.lhs" class="cut">Download the source code of this section → 03_Mandelbulb/<strong>Mandelbulb.lhs</strong></a></p>
@@ -406,16 +375,13 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
 <p><sub>~</sub> allPoints :: [ColoredPoint]<br /> allPoints = for all (x,y), -width<x<width, 0<y<height Let z be the minimal depth such that mandel x y z> 0 add the points (x, y, z,color) (x,-y, z,color) (x, y,-z,color) (x,-y,-z,color) + neighbors to make triangles <sub>~</sub></p>
 </blockquote>
 <div style="display:none">
-
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Graphics.Rendering.OpenGL
 <span class="kw">import</span> Graphics.UI.GLUT
 <span class="kw">import</span> Data.IORef
 <span class="kw">type</span> <span class="dt">ColoredPoint</span> <span class="fu">=</span> (<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>,<span class="dt">Color3</span> <span class="dt">GLfloat</span>)</code></pre>
 </div>
-
 </div>
-
 <p>We declare a new type <code>ExtComplex</code> (for extended complex). An extension of complex numbers with a third component:</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">ExtComplex</span> <span class="fu">=</span> <span class="dt">C</span> (<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>) 
@@ -432,14 +398,12 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
     abs (<span class="dt">C</span> (x,y,z))     <span class="fu">=</span> <span class="dt">C</span> (sqrt (x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y <span class="fu">+</span> z<span class="fu">*</span>z), <span class="dv">0</span>, <span class="dv">0</span>)
     signum (<span class="dt">C</span> (x,y,z))  <span class="fu">=</span> <span class="dt">C</span> (signum x, signum y, signum z)</code></pre>
 </div>
-
 <p>The most important part is the new multiplication instance. Modifying this formula will change radically the shape of the result. Here is the formula written in a more mathematical notation. I called the third component of these extended complex <em>strange</em>.</p>
 <p><br /><span class="math">real((<em>x</em>, <em>y</em>, <em>z</em>) * (<em>x</em>ʹ, <em>y</em>ʹ, <em>z</em>ʹ)) = <em>x</em><em>x</em>ʹ − <em>y</em><em>y</em>ʹ − <em>z</em><em>z</em>ʹ</span><br /></p>
 <p><br /><span class="math">im((<em>x</em>, <em>y</em>, <em>z</em>) * (<em>x</em>ʹ, <em>y</em>ʹ, <em>z</em>ʹ)) = <em>x</em><em>y</em>ʹ − <em>y</em><em>x</em>ʹ + <em>z</em><em>z</em>ʹ</span><br /></p>
 <p><br /><span class="math">strange((<em>x</em>, <em>y</em>, <em>z</em>) * (<em>x</em>ʹ, <em>y</em>ʹ, <em>z</em>ʹ)) = <em>x</em><em>z</em>ʹ + <em>z</em><em>x</em>ʹ</span><br /></p>
 <p>Note how if <code>z=z'=0</code> then the multiplication is the same to the complex one.</p>
 <div style="display:none">
-
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">extcomplex ::</span> <span class="dt">GLfloat</span> <span class="ot">-&gt;</span> <span class="dt">GLfloat</span> <span class="ot">-&gt;</span> <span class="dt">GLfloat</span> <span class="ot">-&gt;</span> <span class="dt">ExtComplex</span>
 extcomplex x y z <span class="fu">=</span> <span class="dt">C</span> (x,y,z)
@@ -456,9 +420,7 @@ strange (<span class="dt">C</span> (x,y,z)) <span class="fu">=</span> z
 <span class="ot">magnitude ::</span> <span class="dt">ExtComplex</span> <span class="ot">-&gt;</span> <span class="dt">GLfloat</span>
 magnitude <span class="fu">=</span> real<span class="fu">.</span>abs</code></pre>
 </div>
-
 </div>
-
 <h3 id="from-2d-to-3d">From 2D to 3D</h3>
 <p>As we will use some 3D, we add some new directive in the boilerplate. But mainly, we simply state that will use some depth buffer. And also we will listen the keyboard.</p>
 <div class="codehighlight">
@@ -491,12 +453,10 @@ main <span class="fu">=</span> <span class="kw">do</span>
   <span class="co">-- We enter the main loop</span>
   mainLoop</code></pre>
 </div>
-
 <p>The <code>idle</code> is here to change the states. There should never be any modification done in the <code>display</code> function.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">idle <span class="fu">=</span> postRedisplay <span class="dt">Nothing</span></code></pre>
 </div>
-
 <p>We introduce some helper function to manipulate standard <code>IORef</code>. Mainly <code>modVar x f</code> is equivalent to the imperative <code>x:=f(x)</code>, <code>modFst (x,y) (+1)</code> is equivalent to <code>(x,y) := (x+1,y)</code> and <code>modSnd (x,y) (+1)</code> is equivalent to <code>(x,y) := (x,y+1)</code></p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">modVar v f <span class="fu">=</span> <span class="kw">do</span>
@@ -505,7 +465,6 @@ main <span class="fu">=</span> <span class="kw">do</span>
 mapFst f (x,y) <span class="fu">=</span> (f x,  y)
 mapSnd f (x,y) <span class="fu">=</span> (  x,f y)</code></pre>
 </div>
-
 <p>And we use them to code the function handling keyboard. We will use the keys <code>hjkl</code> to rotate, <code>oi</code> to zoom and <code>sedf</code> to move. Also, hitting space will reset the view. Remember that <code>angle</code> and <code>campos</code> are pairs and <code>zoom</code> is a scalar. Also note <code>(+0.5)</code> is the function <code>\x-&gt;x+0.5</code> and <code>(-0.5)</code> is the number <code>-0.5</code> (yes I share your pain).</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">keyboardMouse angle zoom campos key state modifiers position <span class="fu">=</span>
@@ -533,7 +492,6 @@ mapSnd f (x,y) <span class="fu">=</span> (  x,f y)</code></pre>
     <span class="co">-- any other keys does nothing</span>
     kact _ _ _ _ _ <span class="fu">=</span> return ()</code></pre>
 </div>
-
 <p>Note <code>display</code> takes some parameters this time. This function if full of boilerplate:</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">display angle zoom position <span class="fu">=</span> <span class="kw">do</span>
@@ -559,7 +517,6 @@ mapSnd f (x,y) <span class="fu">=</span> (  x,f y)</code></pre>
 
   swapBuffers <span class="co">-- refresh screen</span></code></pre>
 </div>
-
 <p>Not much to say about this function. Mainly there are two parts: apply some transformations, draw the object.</p>
 <h3 id="the-3d-mandelbrot">The 3D Mandelbrot</h3>
 <p>We have finished with the OpenGL section, let’s talk about how we generate the 3D points and colors. First, we will set the number of details to 200 pixels in the three dimensions.</p>
@@ -569,7 +526,6 @@ width  <span class="fu">=</span> nbDetails
 height <span class="fu">=</span> nbDetails
 deep   <span class="fu">=</span> nbDetails</code></pre>
 </div>
-
 <p>This time, instead of just drawing some line or some group of points, we will show triangles. The function <code>allPoints</code> will provide a multiple of three points. Each three successive point representing the coordinate of each vertex of a triangle.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">drawMandelbrot <span class="fu">=</span> <span class="kw">do</span>
@@ -581,12 +537,10 @@ deep   <span class="fu">=</span> nbDetails</code></pre>
           color c
           vertex <span class="fu">$</span> <span class="dt">Vertex3</span> x y z</code></pre>
 </div>
-
 <p>In fact, we will provide six ordered points. These points will be used to draw two triangles.</p>
 <div>
 <img src="../../../../Scratch/img/blog/Haskell-OpenGL-Mandelbrot/triangles.png" alt="Explain triangles" />
 </div>
-
 <p>The next function is a bit long. Here is an approximative English version:</p>
 <pre><code>forall x from -width to width
   forall y from -height to height
@@ -640,7 +594,6 @@ depthPoints <span class="fu">=</span> <span class="kw">do</span>
   <span class="co">-- Draw two triangles</span>
   <span class="kw">else</span> [ps<span class="fu">!!</span><span class="dv">0</span>,ps<span class="fu">!!</span><span class="dv">1</span>,ps<span class="fu">!!</span><span class="dv">2</span>,ps<span class="fu">!!</span><span class="dv">0</span>,ps<span class="fu">!!</span><span class="dv">2</span>,ps<span class="fu">!!</span><span class="dv">3</span>]</code></pre>
 </div>
-
 <p>If you prefer the first version, then just imagine how hard it will be to change the enumeration of the point from (x,y) to (x,z) for example.</p>
 <p>Also, we didn’t searched for negative values. This modified Mandelbrot is no more symmetric relatively to the plan <code>y=0</code>. But it is symmetric relatively to the plan <code>z=0</code>. Then I mirror these values.</p>
 <div class="codehighlight">
@@ -650,10 +603,8 @@ allPoints <span class="fu">=</span> planPoints <span class="fu">++</span> map in
       planPoints <span class="fu">=</span> depthPoints
       inverseDepth (x,y,z,c) <span class="fu">=</span> (x,y,<span class="fu">-</span>z<span class="fu">+</span><span class="dv">1</span><span class="fu">/</span>deep,c)</code></pre>
 </div>
-
 <p>The rest of the program is very close to the preceding one.</p>
 <div style="display:none">
-
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- given f min max nbtest,</span>
 <span class="co">-- considering </span>
@@ -672,7 +623,6 @@ maxZeroIndex func minval maxval n <span class="fu">=</span>
        <span class="kw">else</span> maxZeroIndex func medpoint maxval (n<span class="fu">-</span><span class="dv">1</span>)
   <span class="kw">where</span> medpoint <span class="fu">=</span> (minval<span class="fu">+</span>maxval)<span class="fu">/</span><span class="dv">2</span></code></pre>
 </div>
-
 <p>I made the color slightly brighter</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">colorFromValue n <span class="fu">=</span>
@@ -682,7 +632,6 @@ maxZeroIndex func minval maxval n <span class="fu">=</span>
   <span class="kw">in</span>
     <span class="dt">Color3</span> (t n) (t (n<span class="fu">+</span><span class="dv">5</span>)) (t (n<span class="fu">+</span><span class="dv">10</span>))</code></pre>
 </div>
-
 <p>We only changed from <code>Complex</code> to <code>ExtComplex</code> of the main <code>f</code> function.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">ExtComplex</span> <span class="ot">-&gt;</span> <span class="dt">ExtComplex</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
@@ -691,9 +640,7 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
           <span class="kw">then</span> n
           <span class="kw">else</span> f c ((z<span class="fu">*</span>z)<span class="fu">+</span>c) (n<span class="fu">-</span><span class="dv">1</span>)</code></pre>
 </div>
-
 </div>
-
 <p>We simply add a new dimension to the <code>mandel</code> function and change the type signature of <code>f</code> from <code>Complex</code> to <code>ExtComplex</code>.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">mandel x y z <span class="fu">=</span> 
@@ -703,12 +650,10 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
   <span class="kw">in</span>
       f (extcomplex r i s) <span class="dv">0</span> <span class="dv">64</span></code></pre>
 </div>
-
 <p>Here is the result:</p>
 <div>
 <img src="../../../../Scratch/img/blog/Haskell-OpenGL-Mandelbrot/mandelbrot_3D.png" alt="A 3D mandelbrot like" />
 </div>
-
 <p><a href="code/03_Mandelbulb/Mandelbulb.lhs" class="cut">Download the source code of this section → 03_Mandelbulb/<strong>Mandelbulb.lhs</strong> </a></p>
 <hr />
 <p><a href="code/04_Mandelbulb/Mandelbulb.lhs" class="cut">Download the source code of this section → 04_Mandelbulb/<strong>Mandelbulb.lhs</strong></a></p>
@@ -723,13 +668,11 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> YBoiler -- Most the OpenGL Boilerplate
 <span class="kw">import</span> Mandel -- The 3D Mandelbrot maths</code></pre>
 </div>
-
 <p>The <code>yMainLoop</code> takes two arguments: the title of the window and a function from time to triangles</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">IO</span> ()
 main <span class="fu">=</span> yMainLoop <span class="st">&quot;3D Mandelbrot&quot;</span> (\_ <span class="ot">-&gt;</span> allPoints)</code></pre>
 </div>
-
 <p>We set some global constant (this is generally bad).</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">nbDetails <span class="fu">=</span> <span class="dv">200</span><span class="ot"> ::</span> <span class="dt">GLfloat</span>
@@ -737,7 +680,6 @@ width  <span class="fu">=</span> nbDetails
 height <span class="fu">=</span> nbDetails
 deep   <span class="fu">=</span> nbDetails</code></pre>
 </div>
-
 <p>We then generate colored points from our function. This is similar to the preceding section.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">allPoints ::</span> [<span class="dt">ColoredPoint</span>]
@@ -747,7 +689,6 @@ allPoints <span class="fu">=</span> planPoints <span class="fu">++</span> map in
       inverseHeight (x,y,z,c) <span class="fu">=</span> (x,<span class="fu">-</span>y,z,c)
       inverseDepth (x,y,z,c) <span class="fu">=</span> (x,y,<span class="fu">-</span>z<span class="fu">+</span><span class="dv">1</span><span class="fu">/</span>deep,c)</code></pre>
 </div>
-
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">depthPoints ::</span> [<span class="dt">ColoredPoint</span>]
 depthPoints <span class="fu">=</span> <span class="kw">do</span>
@@ -793,7 +734,6 @@ colorFromValue n <span class="fu">=</span>
 
 ymandel x y z <span class="fu">=</span> mandel (<span class="dv">2</span><span class="fu">*</span>x<span class="fu">/</span>width) (<span class="dv">2</span><span class="fu">*</span>y<span class="fu">/</span>height) (<span class="dv">2</span><span class="fu">*</span>z<span class="fu">/</span>deep) <span class="dv">64</span></code></pre>
 </div>
-
 <p>This code is cleaner but many things doesn’t feel right. First, all the user interaction code is outside our main file. I feel it is okay to hide the detail for the rendering. But I would have preferred to control the user actions.</p>
 <p>On the other hand, we continue to handle a lot rendering details. For example, we provide ordered vertices.</p>
 <p><a href="code/04_Mandelbulb/Mandelbulb.lhs" class="cut">Download the source code of this section → 04_Mandelbulb/<strong>Mandelbulb.lhs</strong> </a></p>
@@ -826,7 +766,6 @@ ymandel x y z <span class="fu">=</span> mandel (<span class="dv">2</span><span c
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> YGL -- Most the OpenGL Boilerplate
 <span class="kw">import</span> Mandel -- The 3D Mandelbrot maths</code></pre>
 </div>
-
 <p>We first set the mapping between user input and actions. The type of each couple should be of the form <code>(user input, f)</code> where (in a first time) <code>f:World -&gt; World</code>. It means, the user input will transform the world state.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Centralize all user input interaction</span>
@@ -850,7 +789,6 @@ inputActionMap <span class="fu">=</span> inputMapFromList [
     ,(<span class="dt">Press</span> <span class="ch">'g'</span> , resize (<span class="dv">1</span><span class="fu">/</span><span class="dv">1</span><span class="fu">.</span><span class="dv">2</span>))
     ]</code></pre>
 </div>
-
 <p>And of course a type design the World State. The important part is that it is our World State type. We could have used any kind of data type.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- I prefer to set my own name for these types</span>
@@ -863,7 +801,6 @@ inputActionMap <span class="fu">=</span> inputMapFromList [
     ,<span class="ot"> told        ::</span> <span class="dt">Time</span> <span class="co">-- last frame time</span>
     } </code></pre>
 </div>
-
 <p>The important part to glue our own type to the framework is to make our type an instance of the type class <code>DisplayableWorld</code>. We simply have to provide the definition of some functions.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">DisplayableWorld</span> <span class="dt">World</span> <span class="kw">where</span>
@@ -885,7 +822,6 @@ inputActionMap <span class="fu">=</span> inputMapFromList [
                   res <span class="fu">=</span> resolution <span class="fu">$</span> box w
                   defbox <span class="fu">=</span> box w</code></pre>
 </div>
-
 <p>The <code>camera</code> function will retrieve an object of type <code>Camera</code> which contains most necessary information to set our camera. The <code>objects</code> function will returns a list of objects. Their type is <code>YObject</code>. Note the generation of triangles is no more in this file. Until here we only used declarative pattern.</p>
 <p>We also need to set all our transformation functions. These function are used to update the world state.</p>
 <div class="codehighlight">
@@ -896,7 +832,6 @@ ydir <span class="fu">=</span> makePoint3D (<span class="dv">0</span>,<span clas
 <span class="ot">zdir ::</span> <span class="dt">Point3D</span>
 zdir <span class="fu">=</span> makePoint3D (<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>)</code></pre>
 </div>
-
 <p>Note <code>(-*&lt;)</code> is the scalar product (<code>α -*&lt; (x,y,z) = (αx,αy,αz)</code>). Also note we could add two Point3D.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">rotate ::</span> <span class="dt">Point3D</span> <span class="ot">-&gt;</span> <span class="dt">Scalar</span> <span class="ot">-&gt;</span> <span class="dt">World</span> <span class="ot">-&gt;</span> <span class="dt">World</span>
@@ -918,7 +853,6 @@ resize r world <span class="fu">=</span> world {
     box <span class="fu">=</span> (box world) {
      resolution <span class="fu">=</span> sqrt ((resolution (box world))<span class="fu">**</span><span class="dv">2</span> <span class="fu">*</span> r) }}</code></pre>
 </div>
-
 <p>The resize is used to generate the 3D function. As I wanted the time spent to generate a more detailed view to grow linearly I use this not so straightforward formula.</p>
 <p>The <code>yMainLoop</code> takes three arguments.</p>
 <ul>
@@ -930,7 +864,6 @@ resize r world <span class="fu">=</span> world {
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">IO</span> ()
 main <span class="fu">=</span> yMainLoop inputActionMap idleAction initialWorld</code></pre>
 </div>
-
 <p>Here is our initial world state.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- We initialize the world state</span>
@@ -948,7 +881,6 @@ initialWorld <span class="fu">=</span> <span class="dt">World</span> {
  , told <span class="fu">=</span> <span class="dv">0</span>
  }</code></pre>
 </div>
-
 <p>We will define <code>shapeFunc</code> later. Here is the function which transform the world even without user action. Mainly it makes some rotation.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">idleAction ::</span> <span class="dt">Time</span> <span class="ot">-&gt;</span> <span class="dt">World</span> <span class="ot">-&gt;</span> <span class="dt">World</span>
@@ -961,7 +893,6 @@ idleAction tnew world <span class="fu">=</span> world {
       delta <span class="fu">=</span> anglePerSec <span class="fu">*</span> elapsed <span class="fu">/</span> <span class="dv">1000</span><span class="fu">.</span><span class="dv">0</span>
       elapsed <span class="fu">=</span> fromIntegral (tnew <span class="fu">-</span> (told world))</code></pre>
 </div>
-
 <p>Now the function which will generate points in 3D. The first parameter (<code>res</code>) is the resolution of the vertex generation. More precisely, <code>res</code> is distance between two points on one direction. We need it to “close” our shape.</p>
 <p>The type <code>Function3D</code> is <code>Point -&gt; Point -&gt; Maybe Point</code>. Because we consider partial functions (for some <code>(x,y)</code> our function can be undefined).</p>
 <div class="codehighlight">
@@ -975,7 +906,6 @@ shapeFunc res x y <span class="fu">=</span>
       <span class="kw">then</span> <span class="dt">Nothing</span> 
       <span class="kw">else</span> <span class="dt">Just</span> (z,colorFromValue ((ymandel x y z) <span class="fu">*</span> <span class="dv">64</span>))</code></pre>
 </div>
-
 <p>With the color function.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">colorFromValue ::</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Color</span>
@@ -986,7 +916,6 @@ colorFromValue n <span class="fu">=</span>
   <span class="kw">in</span>
     makeColor (t n) (t (n<span class="fu">+</span><span class="dv">5</span>)) (t (n<span class="fu">+</span><span class="dv">10</span>))</code></pre>
 </div>
-
 <p>The rest is similar to the preceding sections.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- given f min max nbtest,</span>
@@ -1009,7 +938,6 @@ maxZeroIndex func minval maxval n <span class="fu">=</span>
 <span class="ot">ymandel ::</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span>
 ymandel x y z <span class="fu">=</span> fromIntegral (mandel x y z <span class="dv">64</span>) <span class="fu">/</span> <span class="dv">64</span></code></pre>
 </div>
-
 <p>I won’t explain how the magic occurs here. If you are interested, just read the file <a href="code/05_Mandelbulb/YGL.hs"><code>YGL.hs</code></a>. It is commented a lot.</p>
 <ul>
 <li><a href="code/05_Mandelbulb/YGL.hs"><code>YGL.hs</code></a>, the 3D rendering framework</li>
@@ -1028,7 +956,6 @@ ymandel x y z <span class="fu">=</span> fromIntegral (mandel x y z <span class="
 <p>The World state could change. The compiler can no more optimize the computation for us. We have to manually explain when to redraw the shape.</p>
 <p>To optimize we must do some things in a lower level. Mostly the program remains the same, but it will provide the list of atoms directly.</p>
 <div style="display:none">
-
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> YGL -- Most the OpenGL Boilerplate
 <span class="kw">import</span> Mandel -- The 3D Mandelbrot maths
@@ -1055,9 +982,7 @@ inputActionMap <span class="fu">=</span> inputMapFromList [
     ,(<span class="dt">Press</span> <span class="ch">'g'</span> , resize (<span class="dv">1</span><span class="fu">/</span><span class="dv">2</span><span class="fu">.</span><span class="dv">0</span>))
     ]</code></pre>
 </div>
-
 </div>
-
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">World</span> <span class="fu">=</span> <span class="dt">World</span> {
 <span class="ot">      angle       ::</span> <span class="dt">Point3D</span>
@@ -1070,7 +995,6 @@ inputActionMap <span class="fu">=</span> inputMapFromList [
     ,<span class="ot"> cache       ::</span> [<span class="dt">YObject</span>]
     } </code></pre>
 </div>
-
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">DisplayableWorld</span> <span class="dt">World</span> <span class="kw">where</span>
   winTitle _ <span class="fu">=</span> <span class="st">&quot;The YGL Mandelbulb&quot;</span>
@@ -1081,9 +1005,7 @@ inputActionMap <span class="fu">=</span> inputMapFromList [
   <span class="co">-- We update our objects instanciation</span>
   objects <span class="fu">=</span> cache</code></pre>
 </div>
-
 <div style="display:none">
-
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">xdir ::</span> <span class="dt">Point3D</span>
 xdir <span class="fu">=</span> makePoint3D (<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>)
@@ -1111,14 +1033,11 @@ translate dir len world <span class="fu">=</span>
 zoom z world <span class="fu">=</span> world {
     scale <span class="fu">=</span> z <span class="fu">*</span> scale world }</code></pre>
 </div>
-
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">IO</span> ()
 main <span class="fu">=</span> yMainLoop inputActionMap idleAction initialWorld</code></pre>
 </div>
-
 </div>
-
 <p>Our initial world state is slightly changed:</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- We initialize the world state</span>
@@ -1139,7 +1058,6 @@ initialWorld <span class="fu">=</span> <span class="dt">World</span> {
  }
  <span class="kw">where</span> eps<span class="fu">=</span><span class="dv">2</span></code></pre>
 </div>
-
 <p>The use of <code>eps</code> is a hint to make a better zoom by computing with the right bounds.</p>
 <p>We use the <code>YGL.getObject3DFromShapeFunction</code> function directly. This way instead of providing <code>XYFunc</code>, we provide directly a list of Atoms.</p>
 <div class="codehighlight">
@@ -1154,7 +1072,6 @@ objectFunctionFromWorld w <span class="fu">=</span> [<span class="dt">Atoms</spa
               <span class="dt">ColoredTriangle</span> (negz p1,negz p3,negz p2,c)
               <span class="kw">where</span> negz (<span class="dt">P</span> (x,y,z)) <span class="fu">=</span> <span class="dt">P</span> (x,y,<span class="fu">-</span>z)</code></pre>
 </div>
-
 <p>We know that resize is the only world change that necessitate to recompute the list of atoms (triangles). Then we update our world state accordingly.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">resize ::</span> <span class="dt">Scalar</span> <span class="ot">-&gt;</span> <span class="dt">World</span> <span class="ot">-&gt;</span> <span class="dt">World</span>
@@ -1164,10 +1081,8 @@ resize r world <span class="fu">=</span>
       tmpWorld <span class="fu">=</span> world { box <span class="fu">=</span> (box world) {
               resolution <span class="fu">=</span> sqrt ((resolution (box world))<span class="fu">**</span><span class="dv">2</span> <span class="fu">*</span> r) }}</code></pre>
 </div>
-
 <p>All the rest is exactly the same.</p>
 <div style="display:none">
-
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">idleAction ::</span> <span class="dt">Time</span> <span class="ot">-&gt;</span> <span class="dt">World</span> <span class="ot">-&gt;</span> <span class="dt">World</span>
 idleAction tnew world <span class="fu">=</span> 
@@ -1217,9 +1132,7 @@ maxZeroIndex func minval maxval n <span class="fu">=</span>
 <span class="ot">ymandel ::</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Point</span>
 ymandel x y z <span class="fu">=</span> fromIntegral (mandel x y z <span class="dv">64</span>) <span class="fu">/</span> <span class="dv">64</span></code></pre>
 </div>
-
 </div>
-
 <p>And you can also consider minor changes in the <code>YGL.hs</code> source file.</p>
 <ul>
 <li><a href="code/06_Mandelbulb/YGL.hs"><code>YGL.hs</code></a>, the 3D rendering framework</li>

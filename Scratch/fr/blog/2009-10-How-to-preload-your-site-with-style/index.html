@@ -39,30 +39,25 @@
 					<h2 id="exemple">Exemple</h2>
 <p>Voici comment apparaissent mes pages pendant leur chargement.</p>
 <div id="demo" style="width:45%; position: relative; height: 8em; background: #333; background-position: 50% 50%; color: #fff; text-align: center; padding-top: 1em; margin-left: auto; margin-right: auto; border: solid 10px rgba(255,255,255,0.7); -webkit-border-radius: 1em; -moz-border-radius: 1em; border-radius: 1em; cursor: pointer; ">
-    <p>
-Voilà ! Je suis chargée !
-</p>
-    <p>
-Cliquez-moi dessus pour recommencer.
-</p>
-    <div id="todisapear" style="color: #000; position:absolute;top:0;left:0;text-align: center; padding-top: 1em; width: 100%; background-color: #eee; height: 8em;">
-    
-Loading… <img style="border: none; background-color: none; background: none" src="../../../../Scratch/img/loading.gif" alt="loading logo" />
+<pre><code>&lt;p&gt;Voilà ! Je suis chargée !&lt;/p&gt;
+&lt;p&gt;Cliquez-moi dessus pour recommencer.&lt;/p&gt;
+&lt;div id=&quot;todisapear&quot; style=&quot;color: #000; position:absolute;top:0;left:0;text-align: center; padding-top: 1em; width: 100%; background-color: #eee; height: 8em;&quot;&gt;
+Loading...
+&lt;img style=&quot;border: none; background-color: none; background: none&quot; src=&quot;/Scratch/img/loading.gif&quot; alt=&quot;loading logo&quot;/&gt;
+&lt;/div&gt;
+&lt;script&gt;
+function Rabbit(){
+    $('#todisapear')
+        .show()
+        .animate({opacity: 1.0},3000)
+        .fadeOut();
+}
+$(document).ready(function(){
+    $('#todisapear').animate({opacity: 1.0},3000).fadeOut();
+    $('#demo').click(Rabbit);
+});
+&lt;/script&gt;</code></pre>
 </div>
-    <script>
-    function Rabbit(){
-        $('#todisapear')
-            .show()
-            .animate({opacity: 1.0},3000)
-            .fadeOut();
-    }
-    $(document).ready(function(){
-        $('#todisapear').animate({opacity: 1.0},3000).fadeOut();
-        $('#demo').click(Rabbit);
-    });
-    </script>
-</div>
-
 <p>J’ai d’abord essayé d’intégrer <a href="http://www.gayadesign.com/diy/queryloader-preload-your-website-in-style/">queryLoader</a>, mais il ne comblait pas mes besoins.</p>
 <p>Ce plugin ajoutait un ‘div’ noir pour cacher le contenu du site. Cependant, comme le script doit être lancé à la fin du code source. Pendant un petit moment, on peut voir mon site en train de se mettre à jour.</p>
 <p>Pour cacher ce petit ‘artefact’, voici comment je m’y suis pris.</p>
@@ -76,7 +71,6 @@ Loading… <img style="border: none; background-color: none; background: none" s
 <span class="kw">&lt;/div&gt;</span>
 ...</code></pre>
 </div>
-
 <p>et le CSS correspondant au div <code>#blackpage</code> :</p>
 <div>
 <pre class="sourceCode css"><code class="sourceCode css"><span class="fl">#blackpage</span>
@@ -95,14 +89,12 @@ Loading… <img style="border: none; background-color: none; background: none" s
   background-color<span class="dv">:</span> <span class="fl">#eee</span>
   z-index<span class="dv">:</span> 9000</code></pre>
 </div>
-
 <p>ainsi que le code jQuery associé :</p>
 <div>
 <pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="fu">$</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>(){
     <span class="fu">$</span>(<span class="st">'#blackpage'</span>).<span class="fu">fadeOut</span>();
 });</code></pre>
 </div>
-
 <p>Oui, c’est aussi simple que ça. Maintenant ajouter le <code>#blackpage</code> tout en haut de ma page me permet d’être certain de tout cacher pendant le chargement de la page.</p>
 <p>J’espère que ça a pu vous être utile !</p>
 				</div>

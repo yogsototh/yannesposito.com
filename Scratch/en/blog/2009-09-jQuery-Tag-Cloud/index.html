@@ -39,12 +39,6 @@
 					<p>Here is how I done the tag cloud of my blog. It is done mostly in jQuery. All my site is static and pages are generated with <a href="http://nanoc.stoneship.org">nanoc</a>. It is (in my humble opinion) the modern geek way to make a website. The tagcloud should work for machine with and without javascript.</p>
 <p>This is why I’ll give only a Ruby Generator, not a full javascript generator. But you can easily translate from Ruby to Javascript.</p>
 <p>Here is what you should obtain:</p>
-<hr />
-<div>
-&lt;%= tagCloud %&gt;
-</div>
-
-<hr />
 <h1 id="jquery">jQuery</h1>
 <p>Here is the simple jQuery code:</p>
 <div>
@@ -56,7 +50,6 @@
         <span class="fu">$</span>(<span class="st">'#tag_'</span>+id).<span class="fu">addClass</span>(<span class="st">'selected'</span>);
     }</code></pre>
 </div>
-
 <p>This code will hide all the div containing links to articles containing the tag. And create a function do show the div containing the tag.</p>
 <p>For each tag I create a span element:</p>
 <div>
@@ -67,7 +60,6 @@
         [TAG]
     <span class="kw">&lt;/span&gt;</span></code></pre>
 </div>
-
 <p>and a div containing links associtated to this tag:</p>
 <div>
 <pre class="sourceCode html"><code class="sourceCode html">    <span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;[TAG]&quot;</span><span class="kw">&gt;</span>
@@ -78,7 +70,6 @@
         <span class="kw">&lt;/ul&gt;</span>
     <span class="kw">&lt;/div&gt;</span></code></pre>
 </div>
-
 <hr />
 <h1 id="nanoc">nanoc</h1>
 <p>Here is how I generate this using nanoc 2.</p>
@@ -89,7 +80,6 @@
     <span class="kw">return</span> <span class="ot">@items</span>.tags.join(<span class="st">', '</span>)
 <span class="kw">end</span></code></pre>
 </div>
-
 <p>A function to create a data structure associating to each tag its occurence.</p>
 <div>
 <pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># generate an hash tag =&gt; number of occurence of tag</span>
@@ -110,7 +100,6 @@
     <span class="kw">return</span> tags
 <span class="kw">end</span></code></pre>
 </div>
-
 <p>I also need a data structure who associate to each tag a list of pages (at least url and title).</p>
 <div>
 <pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># generate an hash tag =&gt; [ page1, page2 ... ]</span>
@@ -131,7 +120,6 @@
     <span class="kw">return</span> tagLinks
 <span class="kw">end</span></code></pre>
 </div>
-
 <p>Calculate the real size of each tag to be displayed.</p>
 <p>I choosen not to use the full range of size for all the tag. Because if no tag has more than <code>n</code> (here 10) occurences, then it doesn’t deserve to be of the maximal size.</p>
 <div>
@@ -159,7 +147,6 @@
     <span class="kw">return</span> tagSize
 <span class="kw">end</span></code></pre>
 </div>
-
 <p>Finaly a function to generate the XHTML/jQuery code</p>
 <div>
 <pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># generate an XHTML/jQuery code for tag cloud</span>
@@ -208,7 +195,6 @@
     <span class="kw">return</span> tagCloud <span class="co"># yeah I know it is not necessary</span>
 <span class="kw">end</span></code></pre>
 </div>
-
 <p>You can <a href="../../../../Scratch/en/blog/2009-09-jQuery-Tag-Cloud/code/tag.rb">download the complete file</a> to put in your ‘lib’ directory.</p>
 <p>Of course to be nice you need the associated CSS</p>
 <div>
@@ -227,7 +213,6 @@
   <span class="kw">margin-left:</span> <span class="dt">.5em</span><span class="kw">;</span>
   <span class="kw">margin-right:</span> <span class="dt">.5em</span><span class="kw">;</span> <span class="kw">}</span></code></pre>
 </div>
-
 <p>That’s all folks.</p>
 				</div>
 

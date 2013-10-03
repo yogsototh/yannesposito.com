@@ -38,32 +38,6 @@
 				<div class="corps">
 					<p><small> <em>Je décris pourquoi j’ai eu tant de mal à me faire à Git. Il y a en effet une partie “non dite” qui m’a bloqué pendant un bon moment. Jusqu’à ce que je découvre le bon document. </em></small></p>
 <p><small> <em> Le fait est que les <em>branches légères</em> ne sont pas destinée à être des branches isolées. Ainsi, il y a un </em>“workflow standard”<em> qui s’il n’est pas suivi rend l’utilisation de Git inappropriée. </em> </small></p>
-<hr />
-<h1 id="la-décentralisation-en-action">La décentralisation en action</h1>
-<h3 id="de-svn-à-bazaar">De SVN à Bazaar</h3>
-<p>J’étais un fervent utilisateur de <a href="http://subversion.tigris.org">subversion (svn)</a>. Lorsqu’un jour, comme beaucoup de gens je découvris ce qu’en pensais <a href="http://www.youtube.com/watch?v=4XpnKHJAok8">Linus Torvald sur une vidéo</a>. Ventant les mérites d’un <em>système de versions concurrentes décentralisé</em>.</p>
-<p>En effet une fois qu’on s’y intéresse un peu, on voit tous les avantages pratiques qu’apporteraient en théorie un tel système.</p>
-<p>J’ai alors eu besoin d’un système de version dans mon équipe. Ils n’étaient pas familier avec les systèmes de versions. À par ceux possédant une <abbr title="Interface Utilisateur">GUI</abbr>, qui sont lourds et administrés par un responsable<sup><a href="#note1">†</a></sup>.</p>
-<p>Après quelques recherches trois choix se dessinent :</p>
-<ul>
-<li><a href="http://git-scm.com">Git</a></li>
-<li><a href="http://bazaar-vcs.org">Bazaar</a></li>
-<li><a href="http://selenic.com/mercurial">Mercurial</a></li>
-</ul>
-<p>En me renseignant un peu sur les forums et en essayant les trois, je me suis vite rendu compte que celui possédant l’interface utilisateur la plus simple était Bazaar<sup><a href="#note2">*</a></sup>. Mon choix était fait.</p>
-<h3 id="de-bazaar-à-git">De bazaar à Git</h3>
-<p>Je me suis alors familiarisé avec Bazaar. Et je dois dire que c’était vraiment naturel en venant de subversion. La commande <code>pull</code> correspond au <code>update</code>, la commande <code>push</code> correspond au <code>commit</code>. Puis les commandes <code>commit</code> et <code>update</code> existent toujours si on en a besoin et qu’on veut utiliser un <em>workflow</em> identique à celui de subversion.</p>
-<p>Mais plus le temps passe et plus de partout sur les blog, c’est surtout Git qui a le vent en poupe.</p>
-<p>Je décide alors d’utiliser Git en particulier pour <em>versionner</em> le site que vous êtes en train de lire. Sauf que je le trouve vraiment difficile d’utilisation et surtout complètement contre intuitif (j’y reviendrai plus tard).</p>
-<p>Alors que j’essaye de trouver de l’aide et que je dis qu’il est plus difficile à utiliser que Bazaar, beaucoup me répliquent que c’est :</p>
-<blockquote>
-<p>— <em>Super-tellement-trop-simple que même ma fille de 12 ans qui n’y comprend rien en informatique l’utilise pour versionner ses documents. Elle s’en sert très facilement en créant des branches et tout et tout…</em></p>
-</blockquote>
-<p>Bon alors si une gamine 12 ans trouve ça très naturel et que moi (avec mon Doctorat en informatique) j’ai du mal à faire ce que je veux, c’est un peu frustrant et humiliant. Mais qu’est-ce qui fait que Git est naturel aux uns (comme pour <a href="http://cocoasamurai.blogspot.com">CocoaSamurai</a> ) et très confus pour moi ?</p>
-<p>C’est en lisant un article j’ai enfin compris ce qu’il me manquait. C’est la partie <strong>non dite</strong> de la conception. Celle que tous les développeurs et les concepteurs trouvaient comme <em>aller de soi</em>. Sauf que pour moi, ce n’était pas du tout le cas.</p>
-<p><small><a name="note1">†</a> - Je parle de <em>ClearCase(c)</em>. Et oui, je sais qu’il existe des commandes en lignes pour ClearCase(c), mais ce n’est pas comme ça qu’ils étaient habitués à travailler avec des systèmes de “versionning”.</small></p>
-<p><small><a name="note2">*</a> - Je n’ai pas vraiment donné sa chance à Mercurial, la terminologie qu’ils utilisaient était trop éloignée de celle de svn à laquelle je m’étais habituée.</small></p>
-<hr />
 <p>Lorsqu’on voit les présentations autour de la notion de <em>branche</em> et de <abbr title="Système de Version Concurentes Décentralisé"><sc>dcvs</sc></abbr>, on s’imagine dans un monde où chaque branche est totalement isolée des autres sauf au moment de “merger” les différences les unes des autres. Tout est magique. C’est la façon de voir “<em>Mondes Parallèles</em>”. Cette façon de voir est expliquée dans le <a href="http://betterexplained.com/articles/a-visual-guide-to-version-control/">très bon article sur les branches</a> sur betterexplained.</p>
 <p>Sauf que les concepteurs de Git (conçu pour le noyau Linux) ont plutôt imaginé un système basé non pas autour des mondes parallèles, mais sur la notion de <em>Patch</em>.</p>
 <p>D’un côté <em>Mondes Parallèles</em>, de l’autre <em>Patchs</em>. Il y a beaucoup de notions équivalentes dans les deux cas, mais aussi quelques différences.</p>
@@ -99,22 +73,18 @@
 <div>
 <code class="zsh">bzr revert</code>
 </div>
-
 <p>est quand même plus clair que</p>
 <div>
 <code class="zsh">git reset –hard HEAD</code>
 </div>
-
 <p>De la même façon</p>
 <div>
 <code class="zsh">bzr revert -r -3</code>
 </div>
-
 <p>je trouve ça mieux que</p>
 <div>
 <code class="zsh">git reset –hard HEAD~3</code>
 </div>
-
 <p>Là ça va commencer à se compliquer. Si on veut revenir dans le temps sur toute l’arborescence, avec Git on utilise <code>reset</code>.</p>
 <center>
 OK
@@ -124,7 +94,6 @@ OK
 <div>
 <code class="zsh">git reset –hard FILE</code>
 </div>
-
 <center>
 <strong>ET BIEN NON !</strong>
 </center>
@@ -133,23 +102,19 @@ OK
 <div>
 <code class="zsh">git checkout FILE</code>
 </div>
-
 <p>Quoi ? <strong><code>checkout</code></strong> !? Bon, d’accord, j’accepte, pourquoi pas après tout ? En plus quand on est habitué à Bazaar c’est :</p>
 <div>
 <code class="zsh">git revert FILE</code>
 </div>
-
 <p>Ce que je trouve quand même bien plus naturel.</p>
 <p>Mais là où ça devient vraiment difficile de s’y faire c’est pour changer de branche.<br />Avec Bazaar ça donne :</p>
 <div>
 <code class="zsh">cd ../branch</code>
 </div>
-
 <p>Bon ok, il faut changer de répertoire, un répertoire par branche. Ça consomme de l’espace disque mais au moins on voit où on est. Avec Git voilà comment on change de branche (<em>branche légère</em>) :</p>
 <div>
 <code class="zsh">git checkout branch</code>
 </div>
-
 <p>Alors là, on se dit “<abbr title="What the Fuck?">WTF?</abbr>” ; en français : mais qu’est-ce que c’est que ça ? Je croyais que <code>checkout</code> c’était pour récupérer l’état d’un fichier ?</p>
 <p>En fait le mot <code>checkout</code> sert à la fois à revenir en arrière sur un fichier (MAIS PAS TOUTE UNE ARBORESCENCE où là ça sera <code>reset --hard</code>) et à <strong>changer de branche</strong> !</p>
 <p>Je trouve ça carrément contre nature. Même si c’est totalement justifié du point de vue théorique voir le très bon article (en anglais) <a href="http://eagain.net/articles/git-for-computer-scientists/">Git for Computer Scientist</a>. Du point de vue interface utilisateur, on peut difficilement faire pire. On dirait que les mots clés sont utilisés pour piéger l’utilisateur.</p>

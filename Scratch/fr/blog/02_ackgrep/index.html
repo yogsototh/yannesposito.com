@@ -43,17 +43,16 @@
 <h1 id="mieux-que-grep">Mieux que grep</h1>
 <p>Un des mes usages principaux de <code>grep</code> est</p>
 <div>
-    
-<code class="zsh"> grep ‘pattern’ *<em>/</em>(.)</code>
+<pre><code>&lt;code class=&quot;zsh&quot;&gt;</code></pre>
+grep ‘pattern’ **/*(.)</code>
 </div>
-
 <p>La plupart du temps c’est suffisant, mais ajouter de la coloration améliore beaucoup l’utilité de cette commande. Il existe déjà un outil pour ça : il s’appelle <code>ack-grep</code> sous Ubuntu. Comme je ne peux pas l’installer sur le serveur de mon entreprise, j’en ai créé un moi-même en quelques lignes :</p>
 <div>
-    
-<p><code class="zsh" file="ack"> #!/usr/bin/env zsh (($#&lt;1)) &amp;&amp; { print ‘usage: ack “regexp”’ &gt;&amp;2; exit 1 }</p>
-listeFic=( <em><em>/</em>(.) ) autoload zargs zargs – $listeFic – grep $1 | perl -ne ‘use Term::ANSIColor; if (m/([^:]<em>)(:.</em>)(’$1’)(.</em>)/) { print color(“green”).$1; print color(“reset”).$2; print color(“black”,“on_yellow”).$3; print color(“reset”).$4.“”; } ’ </code>
+<pre><code>&lt;code class=&quot;zsh&quot; file=&quot;ack&quot;&gt;</code></pre>
+<h1>!/usr/bin/env zsh</h1>
+<p>(($#&lt;1)) &amp;&amp; { print ‘usage: ack “regexp”’ &gt;&amp;2; exit 1 }</p>
+listeFic=( **/<em>(.) ) autoload zargs zargs – $listeFic – grep $1 | perl -ne ‘use Term::ANSIColor; if (m/([^:]<em>)(:.</em>)(’$1’)(.</em>)/) { print color(“green”).$1; print color(“reset”).$2; print color(“black”,“on_yellow”).$3; print color(“reset”).$4.“”; } ’ </code>
 </div>
-
 <p>Pour mon utilisation personnelle et celle de mon équipe c’est suffisant. J’espère que ça pourra vous aider.</p>
 				</div>
 

@@ -39,12 +39,9 @@
 					<div>
 <img src="../../../../Scratch/img/blog/Hakyll-setup/main.png" alt="Main image" />
 </div>
-
 <div class="intro">
-
 <p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span> How I use <a href="http://jaspervdj.be/hakyll">hakyll</a>. Abbreviations, typography corrections, multi-language, use <code>index.html</code>, etc…</p>
 </div>
-
 <p>This website is done with <a href="http://jaspervdj.be/hakyll">Hakyll</a>.</p>
 <p><a href="http://jaspervdj.be/hakyll">Hakyll</a> can be considered as a minimal <span class="sc"><abbr title="Content Management System">cms</abbr></span>. But more generally it is a library helping file generation. We can view it as an advanced build system (like <code>make</code>).</p>
 <p>From the user perspective I blog this way:</p>
@@ -92,7 +89,6 @@ Ask me the questions, bridgekeeper. I am not afraid.
 <div>
 <img src="../../../../Scratch/img/blog/Hakyll-setup/overview.png" alt="Overview" />
 </div>
-
 <p>For each file you create, you have to provide:</p>
 <ul>
 <li>a destination path</li>
@@ -240,7 +236,7 @@ niceRoute <span class="fu">=</span> customRoute createIndexRoute
         takeDirectory p <span class="fu">&lt;/&gt;</span> takeBaseName p <span class="fu">&lt;/&gt;</span> <span class="st">&quot;index.html&quot;</span>
     <span class="kw">where</span> p<span class="fu">=</span>toFilePath ident</code></pre>
 <p>Not too difficult. But! There might be a problem. What if there is a <code>foo/index.html</code> link instead of a clean <code>foo/</code> in some content?</p>
-<p>Very simple, we simply remove all ‘/index.html’ to all our links.</p>
+<p>Very simple, we simply remove all <code>/index.html</code> to all our links.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- replace url of the form foo/bar/index.html by foo/bar</span>
 <span class="ot">removeIndexHtml ::</span> <span class="dt">Item</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Compiler</span> (<span class="dt">Item</span> <span class="dt">String</span>)
 removeIndexHtml item <span class="fu">=</span> return <span class="fu">$</span> fmap (withUrls removeIndexStr) item

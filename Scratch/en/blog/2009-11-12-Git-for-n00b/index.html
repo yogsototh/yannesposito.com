@@ -37,10 +37,8 @@
 			<div id="afterheader" class="article">
 				<div class="corps">
 					<div class="intro">
-
 <p>A detailed tutorial of <a href="http://git-scm.org">Git</a> for people knowing very few about versions systems. You’ll understand utility of such program and how we use modern version control system. I try to stay as pragmatic as possible.</p>
 </div>
-
 <hr />
 <h1 id="begin-with-conclusion">Begin with conclusion</h1>
 <p>Here is the list of sufficient and necessary command to use <a href="http://git-scm.org" title="Git">Git</a>. There is very few. It is normal not to understand immediately but it is to gives you an idea. Even if this article is long, 95% of <a href="http://git-scm.org" title="Git">Git</a> usage is in these 7 commands:</p>
@@ -71,10 +69,8 @@ git push</code></pre>
 <p>This article is written for people knowing very few about versionning systems. It is also written for those who had didn’t followed progress since CVS or subversion (SVN). This is why, in a first time I’ll explain quickly which are the goal of such systems. Secondly, I’ll explain how to install and configure <a href="http://git-scm.org" title="Git">Git</a>. Then, I give the command for each feature a <abbr title="Decentralized Concurent Versions System">DCVS</abbr> must have.</p>
 <h1 id="gitgit-for-what"><a href="http://git-scm.org" title="Git">Git</a> for what?</h1>
 <div class="intro">
-
 <p>If you just want to use <a href="http://git-scm.org" title="Git">Git</a> <strong>immediately</strong>, just read dark part. You read this part later to understand correctly foundations of version systems and not doing strange things.</p>
 </div>
-
 <p><a href="http://git-scm.org" title="Git">Git</a> is a <abbr title="Decentralized Concurent Versions System">DCVS</abbr>, which means a Decentralized Concurrent Versions System. Let’s analyze each part of this long term:</p>
 <h3 id="versions-system">Versions System</h3>
 <p>Firstly, versions system manage files. When somebody work with files without a versions system, the following happens frequently:</p>
@@ -90,14 +86,12 @@ fichier_important.c.2009.11.14
 fichier_important.c.12112009
 old.fichier_important.c</code></pre>
 </div>
-
 <p>If you want to make it works correctly, you’ll have to use naming convention. Files take many place even if you modify most of time only some lines.</p>
 <p><em>Fortunately, versions system are here to help.</em></p>
 <p>You only have to signal you want a new version of a file and the versions system will do the job for you. It will record the backup where it could be easily recovered. Generally, systems version do it better than you, making the backup only of the modified lines and not the total file.</p>
 <p>Once upon a time versions were managed for each file separately. I think about CVS. Then it naturally appears projects are a coherent set of files. Recover each file separately was a tedious work. This is why versions number passed from files to the entire project.</p>
 <p>It is therefore possible to say, “I want to get back three days earlier”.</p>
 <div class="black">
-
 <p><em>What gives versions system?</em> (I didn’t mention everything at all)</p>
 <ul>
 <li>automatic backups: <em>back in time</em>,</li>
@@ -106,7 +100,6 @@ old.fichier_important.c</code></pre>
 <li>gives the ability to see an historic of all modifications. Generally the user must add a comment for each new version.</li>
 </ul>
 </div>
-
 <h3 id="concurrent">concurrent:</h3>
 <p>Version Systems are already useful to manage its own projects. They help to organize and resolve partially backup problems. I say partially because you have to backup your repository on a decent file system. But versions system are really interesting is on projects done by many people.</p>
 <p>Let’s begin by an example, a two person project ; Alex and Beatrice. On a file containing a <em>Lovecraft</em>’s gods list:</p>
@@ -115,7 +108,6 @@ old.fichier_important.c</code></pre>
 Shubniggurath
 Yogsototh</code></pre>
 </div>
-
 Say Alex is home and modify the file:
 <div style="width: 10em; margin-left: auto; margin-right: auto">
 <pre class="twilight">
@@ -152,7 +144,6 @@ Yogsototh
 
 <p>In real life, at the moment Beatrice want to send her modifications, the versions system alert her a modification had occurred on the server. Then she uses a command which pull the modification from the server to her local computer. And this command update her file. After that, Beatrice send again the new file on the server.</p>
 <div class="black">
-
 <p><strong>In what Concurrent Versions System help?</strong></p>
 <ul>
 <li>get without any problem others modifications,</li>
@@ -161,7 +152,6 @@ Yogsototh
 <li>help to know who done what and when.</li>
 </ul>
 </div>
-
 <h3 id="decentralized">decentralized</h3>
 <p>This word became popular only recently about CVS. And it mainly means two things:</p>
 <p>First, until really recently (SVN), you’ll have to be connected to the distant server to get informations about a project. Like get the history. New decentralized systems work with a local <em>REPOSITORY</em> (directory containing backups and many informations linked to the versions system functionalities). Hence, one can view the history of a project without the need of being connected.</p>
@@ -176,7 +166,6 @@ Yogsototh
 <p>In a not decentralized version system, doing such a thing is possible but not natural. Decentralization means it become natural to use a branch for each separable work.</p>
 </blockquote>
 <div class="black">
-
 <p><strong>Advantages given by DCVS:</strong></p>
 <ul>
 <li>Ability to work offline,</li>
@@ -184,7 +173,6 @@ Yogsototh
 <li>Help the maintenance of many different versions of the same application.</li>
 </ul>
 </div>
-
 <h2 id="to-resume">To resume</h2>
 <p>Let’s resume what we can easily do with DCVS:</p>
 <p><strong>Versions Systems</strong></p>
@@ -302,7 +290,6 @@ $ git clone --bare . ssh://server/path/to/project</code></pre>
 <div style="width: 18em; margin-left: auto; margin-right: auto">
 <pre class="zsh"><code>Zoot </code></pre>
 </div>
-
 <p>and you modify one line</p>
 <div style="width: 18em; margin-left: auto; margin-right: auto">
 <pre class="twilight">
@@ -329,7 +316,6 @@ Auto-merging foo
 CONFLICT (content): Merge conflict in foo
 Automatic merge failed; fix conflicts and then commit the result.</code></pre>
 </div>
-
 <p>Our file <code>foo</code> now contains:</p>
 <div>
 <pre class="twilight">
@@ -353,7 +339,6 @@ Zoot <span class="Constant"><strong>the not so pure</strong></span>
 <div>
 <pre class="zsh"><code>git commit -a -m &quot;conflict resolved&quot;</code></pre>
 </div>
-
 <p>Now you’re ready to use <a href="http://git-scm.org" title="Git">Git</a>. <a href="http://git-scm.org" title="Git">Git</a> provide many other functionnalities. Now we’ll see some <a href="http://git-scm.org" title="Git">Git</a> usages older CVS couldn’t handle.</p>
 <h1 id="why-git-is-cool">Why Git is cool?</h1>
 <p>Because with <a href="http://git-scm.org" title="Git">Git</a> you can work on many part of some project totally independently. This is the true efficiency of decentralisation.</p>
