@@ -8,8 +8,604 @@
         <name>Yann Esposito</name>
         <email>yann.esposito@gmail.com</email>
     </author>
-    <updated>2013-08-06T00:00:00Z</updated>
+    <updated>2013-10-09T00:00:00Z</updated>
     <entry>
+    <title>Parsec Presentation</title>
+    <link href="http://yannesposito.com/Scratch/fr/blog/Parsec-Presentation/index.html" />
+    <id>http://yannesposito.com/Scratch/fr/blog/Parsec-Presentation/index.html</id>
+    <published>2013-10-09T00:00:00Z</published>
+    <updated>2013-10-09T00:00:00Z</updated>
+    <summary type="html"><![CDATA[<div class="intro">
+<p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Une introduction rapide à Parsec. Un parser en Haskell.</p>
+</div>
+<ul>
+<li>The <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> presentation is <a href="https://yogsototh.github.io/parsec-presentation/parsec.html">here</a>.</li>
+</ul>
+<div style="display:none">
+() () () () () ([1]{(#1)}) ([1]{(#1)}) () () () () () () () () ()
+</div>
+<!-- Begin slides. Just make elements with a class of slide. -->
+
+<section class="slide">
+<div style="text-align:center; font-size: .9em; width: 100%; line-height: 1.2em">
+<h1 style="position: relative;">
+Parsec
+</h1>
+<author><em class="base1">by</em> Yann Esposito</author>
+<div style="font-size:.5em; margin: 0 1em;">
+<twitter> <a href="http://twitter.com/yogsototh"><span class="citation">@yogsototh</span></a>, </twitter> <googleplus> <a href="https://plus.google.com/117858550730178181663">+yogsototh</a> </googleplus>
+</div>
+<div style="font-size:.8em">
+<em class="base1">for</em> <a href="http://www.meetup.com/riviera-scala-clojure"> Riviera Scala Clojure Meetup (Haskell) </a><br/> <em class="base1">the</em> <ti style="font-size: .8em">8 Oct 2013</ti>
+</div>
+</div>
+</section>
+<section class="slide">
+<h2 id="parsing">
+Parsing
+</h2>
+<p>
+Latin pars (ōrātiōnis), meaning part (of speech).
+</p>
+<ul>
+<li>
+<strong>analysing a string of symbols</strong>
+</li>
+<li>
+<strong>formal grammar</strong>.
+</li>
+</ul>
+</section>
+<section class="slide">
+<h2 id="parsing-in-programming-languages">
+Parsing in Programming Languages
+</h2>
+<p>
+Complexity:
+</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">
+Method
+</th>
+<th align="left">
+Typical Example
+</th>
+<th align="left">
+Output Data Structure
+</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">
+Splitting
+</td>
+<td align="left">
+CSV
+</td>
+<td align="left">
+Array, Map
+</td>
+</tr>
+<tr class="even">
+<td align="left">
+Regexp
+</td>
+<td align="left">
+email
+</td>
+<td align="left">
+<ul>
+<li>Fixed Layout Tree
+</td>
+</tr>
+<tr class="odd">
+<td align="left">
+Parser
+</td>
+<td align="left">
+Programming language
+</td>
+<td align="left">
+<ul>
+<li>Most Data Structure
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section class="slide">
+<h2 id="parser-culture">
+Parser <span class="and">&amp;</span> culture
+</h2>
+<p>
+In Haskell Parser are really easy to use.
+</p>
+<p>
+Generally:
+</p>
+<ul>
+<li>
+In most languages: <strong>split</strong> then <strong>regexp</strong> then <strong>parse</strong>
+</li>
+<li>
+In Haskell: <strong>split</strong> then <strong>parse</strong>
+</li>
+</ul>
+</section>
+<section class="slide">
+<h2 id="parsing-example">
+Parsing Example
+</h2>
+<p>
+From String:
+</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">(<span class="dv">1</span><span class="fu">+</span><span class="dv">3</span>)<span class="fu">*</span>(<span class="dv">1</span><span class="fu">+</span><span class="dv">5</span><span class="fu">+</span><span class="dv">9</span>)</code></pre>
+<p>
+To data structure:
+</p>
+<p>
+<img src="parsec/img/mp/AST.png" alt="AST" /><br />
+</p>
+</section>
+<section class="slide">
+<h2 id="parsec">
+Parsec
+</h2>
+<blockquote>
+<p>
+Parsec lets you construct parsers by combining high-order Combinators to create larger expressions.
+</p>
+<p>
+Combinator parsers are written and used within the same programming language as the rest of the program.
+</p>
+<p>
+The parsers are first-class citizens of the languages […]“
+</p>
+<p>
+<em><a href="http://www.haskell.org/haskellwiki/Parsec">Haskell Wiki</a></em>
+</p>
+</blockquote>
+</section>
+<section class="slide">
+<h2 id="parser-libraries">
+Parser Libraries
+</h2>
+<p>
+In reality there are many choices:
+</p>
+<table>
+<tbody>
+<tr class="odd">
+<td align="left">
+attoparsec
+</td>
+<td align="left">
+fast
+</td>
+</tr>
+<tr class="even">
+<td align="left">
+Bytestring-lexing
+</td>
+<td align="left">
+fast
+</td>
+</tr>
+<tr class="odd">
+<td align="left">
+Parsec 3
+</td>
+<td align="left">
+powerful, nice error reporting
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section class="slide">
+<h2 id="haskell-remarks-1">
+Haskell Remarks (1)
+</h2>
+<p>
+spaces are meaningful
+</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">f x   <span class="co">-- ⇔ f(x) in C-like languages</span>
+f x y <span class="co">-- ⇔ f(x,y)</span></code></pre>
+</section>
+<section class="slide">
+<h2 id="haskell-remarks-2">
+Haskell Remarks (2)
+</h2>
+<p>
+Don’t mind strange operators (<code>&lt;*&gt;</code>, <code>&lt;<span class="math">$&amp;gt;&lt;/code&gt;).&lt;br /&gt;Consider them like separators, typically commas.&lt;br /&gt;They are just here to deal with types.&lt;/p&gt; &lt;p&gt;Informally:&lt;/p&gt; &lt;pre class=&quot;sourceCode haskell&quot;&gt;&lt;code class=&quot;sourceCode haskell&quot;&gt;toto &lt;span class=&quot;fu&quot;&gt;&amp;lt;$</span>&gt;</span> x <span class="fu">&lt;<em>&gt;</span> y <span class="fu">&lt;</em>&gt;</span> z <span class="co">– ⇔ toto x y z</span> <span class="co">– ⇔ toto(x,y,z) in C-like languages</span></code>
+</pre>
+</section>
+<section class="slide">
+<h2 id="minimal-parsec-examples">
+Minimal Parsec Examples
+</h2>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">whitespaces <span class="fu">=</span> many (oneOf <span class="st">&quot;\t &quot;</span>)
+number <span class="fu">=</span> many1 digit
+symbol <span class="fu">=</span> oneOf <span class="st">&quot;!#$%<span class="and">&amp;</span>|*+-/:&lt;=&gt;?@^_~&quot;</span></code></pre>
+<pre class="sourceCode haskell">
+<code class="sourceCode haskell"><span class="st">&quot; “</span> <span class="co">– whitespaces on” “</span> <span class="st">“”</span> <span class="co">– whitespaces on “32”</span> <span class="st">“32”</span> <span class="co">– number on “32”</span></li>
+</ul></li>
+</ul>
+<span class="co">– number on &quot; 32 “</span> <span class="st">“number”</span> (line <span class="dv">1</span>, column <span class="dv">1</span>)<span class="fu">:</span> unexpected <span class="st">” “</span> expecting digit</code>
+</pre>
+</section>
+<section class="slide">
+<h2 id="comparison-with-regexp-parsec">
+Comparison with Regexp (Parsec)
+</h2>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">IP</span> <span class="fu">=</span> <span class="dt">IP</span> <span class="dt">Word8</span> <span class="dt">Word8</span> <span class="dt">Word8</span> <span class="dt">Word8</span>
+ip <span class="fu">=</span> <span class="dt">IP</span> <span class="fu">&lt;$&gt;</span>                             <span class="co">-- number.number.number.number</span>
+       number <span class="fu">&lt;*</span>  char <span class="ch">&#39;.&#39;</span> <span class="fu">&lt;*&gt;</span>          <span class="co">-- put that in an IP data type</span>
+       number <span class="fu">&lt;*</span>  char <span class="ch">&#39;.&#39;</span> <span class="fu">&lt;*&gt;</span>
+       number <span class="fu">&lt;*</span>  char <span class="ch">&#39;.&#39;</span> <span class="fu">&lt;*&gt;</span>
+       number
+number <span class="fu">=</span> <span class="kw">do</span>
+    x <span class="ot">&lt;-</span> <span class="fu">read</span> <span class="fu">&lt;$&gt;</span> many1 digit <span class="co">-- read the number</span>
+    guard (<span class="dv">0</span> <span class="fu">&lt;=</span> x <span class="fu"><span class="and">&amp;</span><span class="and">&amp;</span></span> x <span class="fu">&lt;</span> <span class="dv">256</span>) <span class="co">-- ensure it is 0 &lt;= x &lt; 256</span>
+    <span class="fu">return</span> (<span class="fu">fromIntegral</span> x)   <span class="co">-- returns a Word8</span></code></pre>
+</section>
+<section class="slide">
+<h2 id="comparison-with-regexp-perl-regexp">
+Comparison with Regexp (Perl Regexp)
+</h2>
+<pre class="sourceCode perl"><code class="sourceCode perl"><span class="co"># remark: 888.999.999.999 is accepted</span>
+\b\d{<span class="dv">1</span>,<span class="dv">3</span>}\.\d{<span class="dv">1</span>,<span class="dv">3</span>}\.\d{<span class="dv">1</span>,<span class="dv">3</span>}\.\d{<span class="dv">1</span>,<span class="dv">3</span>}\b
+
+<span class="co"># exact but difficult to read</span>
+\b(?:(?:<span class="dv">25</span>[<span class="dv">0-5</span>]|<span class="dv">2</span>[<span class="dv">0-4</span>][<span class="dv">0-9</span>]|[<span class="dv">01</span>]?[<span class="dv">0-9</span>][<span class="dv">0-9</span>]?)\.){<span class="dv">3</span>}
+  (?:<span class="dv">25</span>[<span class="dv">0-5</span>]|<span class="dv">2</span>[<span class="dv">0-4</span>][<span class="dv">0-9</span>]|[<span class="dv">01</span>]?[<span class="dv">0-9</span>][<span class="dv">0-9</span>]?)\b</code></pre>
+<p>
+Also, regexp are <em>unityped</em> by nature.
+</p>
+</section>
+<section class="slide">
+<h2 id="monadic-style">
+Monadic style
+</h2>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">number ::</span> <span class="dt">Parser</span> <span class="dt">String</span>
+number <span class="fu">=</span> many1 digit
+
+<span class="ot">number&#39; ::</span> <span class="dt">Parser</span> <span class="dt">Int</span>
+number&#39; <span class="fu">=</span> <span class="kw">do</span>
+    <span class="co">-- digitString :: String</span>
+    digitString <span class="ot">&lt;-</span> many1 digit
+    <span class="fu">return</span> (<span class="fu">read</span> digitString)</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="st">&quot;32&quot;</span><span class="ot"> ::</span> [<span class="dt">Char</span>]  <span class="co">-- number on &quot;32&quot;</span>
+<span class="dv">32</span><span class="ot">   ::</span> <span class="dt">Int</span>     <span class="co">-- number&#39; on &quot;32&quot;</span></code></pre>
+</section>
+<section class="slide">
+<h2 id="combining-monadic-style-s-asb-ε">
+Combining Monadic style (S = aSb | ε)
+</h2>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">s <span class="fu">=</span> <span class="kw">do</span>
+        a <span class="ot">&lt;-</span> string <span class="st">&quot;a&quot;</span>
+        mid <span class="ot">&lt;-</span> s
+        b <span class="ot">&lt;-</span> string <span class="st">&quot;b&quot;</span>
+        <span class="fu">return</span> (a <span class="fu">++</span> mid <span class="fu">++</span> b)
+    <span class="fu">&lt;|&gt;</span> string <span class="st">&quot;&quot;</span></code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="st">&quot;&quot;</span>          <span class="co">-- s on &quot;&quot;</span>
+<span class="st">&quot;aaabbb&quot;</span>    <span class="co">-- s on &quot;aaabbb&quot;</span>
+<span class="st">&quot;aabb&quot;</span>      <span class="co">-- s on &quot;aabbb&quot;</span>
+<span class="co">-- s on &quot;aaabb&quot;</span>
+<span class="dt">S</span> (line1 <span class="dv">1</span>, column <span class="dv">4</span>)<span class="fu">:</span>
+unexpected end <span class="kw">of</span> input
+expecting <span class="st">&quot;b&quot;</span></code></pre>
+</section>
+<section class="slide">
+<h2 id="combining-applicative-style-s-asb-ε">
+Combining Applicative style (S = aSb | ε)
+</h2>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">s <span class="fu">=</span> concat3 <span class="fu">&lt;$&gt;</span> string <span class="st">&quot;a&quot;</span> <span class="fu">&lt;*&gt;</span> s <span class="fu">&lt;*&gt;</span> char <span class="st">&quot;b&quot;</span>
+    <span class="fu">&lt;|&gt;</span> string <span class="st">&quot;&quot;</span>
+    <span class="kw">where</span>
+        concat3 x y z <span class="fu">=</span> x <span class="fu">++</span> y <span class="fu">++</span> z</code></pre>
+</section>
+<section class="slide">
+<h2 id="applicative-style-usefull-with-data-types">
+Applicative Style usefull with Data types
+</h2>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">IP</span> <span class="fu">=</span> <span class="dt">IP</span> <span class="dt">Word8</span> <span class="dt">Word8</span> <span class="dt">Word8</span> <span class="dt">Word8</span>
+
+parseIP <span class="fu">=</span> <span class="dt">IP</span> <span class="fu">&lt;$&gt;</span>
+            number <span class="fu">&lt;*</span>  char <span class="ch">&#39;.&#39;</span> <span class="fu">&lt;*&gt;</span>
+            number <span class="fu">&lt;*</span>  char <span class="ch">&#39;.&#39;</span> <span class="fu">&lt;*&gt;</span>
+            number <span class="fu">&lt;*</span>  char <span class="ch">&#39;.&#39;</span> <span class="fu">&lt;*&gt;</span>
+            number
+
+monadicParseIP <span class="fu">=</span> <span class="kw">do</span>
+    d1 <span class="ot">&lt;-</span> number
+    char <span class="ch">&#39;.&#39;</span>
+    d2 <span class="ot">&lt;-</span> number
+    char <span class="ch">&#39;.&#39;</span>
+    d3 <span class="ot">&lt;-</span> number
+    char <span class="ch">&#39;.&#39;</span>
+    d4 <span class="ot">&lt;-</span> number
+    <span class="fu">return</span> (<span class="dt">IP</span> d1 d2 d3 d4)</code></pre>
+</section>
+<section class="slide">
+<h2 id="write-number-correctly">
+Write number correctly
+</h2>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">number ::</span> <span class="dt">Parser</span> <span class="dt">Word8</span>
+number <span class="fu">=</span> <span class="kw">do</span>
+    x <span class="ot">&lt;-</span> <span class="fu">read</span> <span class="fu">&lt;$&gt;</span> many1 digit
+    guard (<span class="dv">0</span> <span class="fu">&lt;=</span> x <span class="fu"><span class="and">&amp;</span><span class="and">&amp;</span></span> x <span class="fu">&lt;</span> <span class="dv">256</span>) <span class="fu">&lt;?&gt;</span>
+        <span class="st">&quot;Number between 0 and 255 (here &quot;</span> <span class="fu">++</span> <span class="fu">show</span> x <span class="fu">++</span> <span class="st">&quot;)&quot;</span>
+    <span class="fu">return</span> (<span class="fu">fromIntegral</span> x)</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;&gt;&gt;</span> test parseIP <span class="st">&quot;parseIP&quot;</span> <span class="st">&quot;823.32.80.113&quot;</span>
+<span class="st">&quot;parseIP&quot;</span> (line <span class="dv">1</span>, column <span class="dv">4</span>)<span class="fu">:</span>
+unexpected <span class="st">&quot;.&quot;</span>
+expecting digit <span class="fu">or</span> <span class="dt">Number</span> between <span class="dv">0</span> <span class="fu">and</span> <span class="dv">255</span> (here <span class="dv">823</span>)</code></pre>
+</section>
+<section class="slide">
+<h2 id="so">
+So
+</h2>
+<ul>
+<li>
+combination of simple parsers
+</li>
+<li>
+error messages with <code>(&lt;?&gt;)</code>
+</li>
+<li>
+embed result in data type using Applicative style
+</li>
+<li>
+Not shown, use another monad with the parser
+</li>
+</ul>
+<p>
+Time to do something cool
+</p>
+</section>
+<section class="slide">
+<h2 id="useful-definition">
+Useful definition
+</h2>
+<p>
+<code>try</code> tries to parse and backtracks if it fails.
+</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">(<span class="fu">&lt;||&gt;</span>) parser1 parser2 <span class="fu">=</span> try parser1 <span class="fu">&lt;|&gt;</span> parser2</code></pre>
+</section>
+<section class="slide">
+<h2 id="scheme">
+Scheme
+</h2>
+<p>
+<a href="https://en.wikibooks.org/wiki/Write_Yourself_a_Scheme_in_48_Hours">Write Yourself a Scheme in 48 hours</a>
+</p>
+<p>
+Remember from text to data structure. Our data structure:
+</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">LispVal</span> <span class="fu">=</span>    <span class="dt">Atom</span> <span class="dt">String</span>     <span class="co">-- print or val-3 ...</span>
+                <span class="fu">|</span> <span class="dt">Number</span> <span class="dt">Integer</span>  <span class="co">-- 32</span>
+                <span class="fu">|</span> <span class="dt">String</span> <span class="dt">String</span>   <span class="co">-- &quot;foo&quot;</span>
+                <span class="fu">|</span> <span class="dt">Bool</span> <span class="dt">Bool</span>       <span class="co">-- #t or #f</span>
+                <span class="fu">|</span> <span class="dt">List</span> [<span class="dt">LispVal</span>]  <span class="co">-- (print &quot;foo&quot; &quot;bar&quot;)</span></code></pre>
+<p>
+Next will parse String, Atom, Integer
+</p>
+</section>
+<section class="slide">
+<h2 id="parse-string">
+Parse String
+</h2>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">parseString ::</span> <span class="dt">Parser</span> <span class="dt">LispVal</span>
+parseString <span class="fu">=</span> <span class="kw">do</span>
+    char <span class="ch">&#39;&quot;&#39;</span>
+    x <span class="ot">&lt;-</span> many (noneOf <span class="st">&quot;\&quot;&quot;</span>)
+    char <span class="ch">&#39;&quot;&#39;</span>
+    <span class="fu">return</span> (<span class="dt">String</span> x)</code></pre>
+<pre><code>-- parseString on &#39;&quot;toto&quot;&#39;
+String &quot;toto&quot; :: LispVal
+-- parseString on &#39;&quot; hello&quot;&#39;
+String &quot; hello&quot; :: LispVal</code></pre>
+</section>
+<section class="slide">
+<h2 id="parse-atom">
+Parse Atom
+</h2>
+<p>
+In Scheme true is <code>#t</code> and false <code>#f</code>. Which are also valid Atoms.
+</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">symbol ::</span> <span class="dt">Parser</span> <span class="dt">Char</span>
+symbol <span class="fu">=</span> oneOf <span class="st">&quot;!#$%<span class="and">&amp;</span>|*+-/:&lt;=&gt;?@^_~&quot;</span>
+
+<span class="ot">parseAtom ::</span> <span class="dt">Parser</span> <span class="dt">LispVal</span>
+parseAtom <span class="fu">=</span> <span class="kw">do</span>
+    first <span class="ot">&lt;-</span> letter <span class="fu">&lt;|&gt;</span> symbol
+    rest <span class="ot">&lt;-</span> many (letter <span class="fu">&lt;|&gt;</span> digit <span class="fu">&lt;|&gt;</span> symbol)
+    <span class="kw">let</span> atom <span class="fu">=</span> first<span class="fu">:</span>rest
+    <span class="fu">return</span> <span class="fu">$</span> <span class="kw">case</span> atom <span class="kw">of</span>
+                <span class="st">&quot;#t&quot;</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span> <span class="kw">True</span>
+                <span class="st">&quot;#f&quot;</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span> <span class="kw">False</span>
+                _    <span class="ot">-&gt;</span> <span class="dt">Atom</span> atom</code></pre>
+</section>
+<section class="slide">
+<h2 id="test-parseatom">
+Test <code>parseAtom</code>
+</h2>
+<pre><code>-- parseAtom on &#39;#t&#39;
+Bool True :: LispVal
+-- parseAtom on &#39;#f&#39;
+Bool False :: LispVal
+-- parseAtom on &#39;some-atom&#39;
+Atom &quot;some-atom&quot; :: LispVal</code></pre>
+</section>
+<section class="slide">
+<h2 id="parse-number">
+Parse Number
+</h2>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">parseNumber ::</span> <span class="dt">Parser</span> <span class="dt">LispVal</span>
+parseNumber <span class="fu">=</span> <span class="dt">Number</span> <span class="fu">.</span> <span class="fu">read</span> <span class="fu">&lt;$&gt;</span> many1 digit</code></pre>
+<pre><code>-- parseNumber on &#39;18&#39;
+Number 18 :: LispVal
+-- parseNumber on &#39;188930992344321234&#39;
+Number 188930992344321234 :: LispVal</code></pre>
+</section>
+<section class="slide">
+<h2 id="compose-all-parsers">
+Compose all parsers
+</h2>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">parseExpr ::</span> <span class="dt">Parser</span> <span class="dt">LispVal</span>
+parseExpr <span class="fu">=</span> parseAtom
+            <span class="fu">&lt;||&gt;</span> parseString
+            <span class="fu">&lt;||&gt;</span> parseNumber</code></pre>
+</section>
+<section class="slide">
+<h2 id="test-the-parser">
+Test the parser
+</h2>
+<pre><code>-- parseExpr on &#39;188930992344321234&#39;
+Number 188930992344321234 :: LispVal
+-- parseExpr on &#39;#t&#39;
+Bool True :: LispVal
+-- parseExpr on &#39;just-some-word&#39;
+Atom &quot;just-some-word&quot; :: LispVal
+-- parseExpr on &#39;%-symbol-start&#39;
+Atom &quot;%-symbol-start&quot; :: LispVal
+-- parseExpr on &#39;&quot;a String&quot;&#39;
+String &quot;a String&quot; :: LispVal</code></pre>
+</section>
+<section class="slide">
+<h2 id="recursive-parsers">
+Recursive Parsers
+</h2>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">parseList ::</span> <span class="dt">Parser</span> <span class="dt">LispVal</span>
+parseList <span class="fu">=</span> <span class="dt">List</span> <span class="fu">&lt;$&gt;</span>
+    (char <span class="ch">&#39;(&#39;</span> <span class="fu">*&gt;</span> sepBy parseExpr&#39; spaces <span class="fu">&lt;*</span> char <span class="ch">&#39;)&#39;</span> )
+
+<span class="ot">parseExpr&#39; ::</span> <span class="dt">Parser</span> <span class="dt">LispVal</span>
+parseExpr&#39; <span class="fu">=</span> parseAtom
+             <span class="fu">&lt;||&gt;</span> parseString
+             <span class="fu">&lt;||&gt;</span> parseNumber
+             <span class="fu">&lt;||&gt;</span> parseList</code></pre>
+</section>
+<section class="slide">
+<h2 id="test-parse-list">
+Test Parse List
+</h2>
+<pre><code>-- parseExpr&#39; on &#39;(foo (bar baz))&#39;
+List [Atom &quot;foo&quot;,List [Atom &quot;bar&quot;,Atom &quot;baz&quot;]] :: LispVal
+
+-- parseExpr&#39; on &#39;(foo (bar)&#39;
+&quot;parseExpr&#39;&quot; (line 1, column 11):
+unexpected end of input
+expecting white space, letter, &quot;\&quot;&quot;, digit, &quot;(&quot; or &quot;)&quot;
+
+-- parseExpr&#39; on &#39;(((foo)) bar)&#39;
+List [List [List [Atom &quot;foo&quot;]],Atom &quot;bar&quot;] :: LispVal</code></pre>
+</section>
+<section class="slide">
+<h2 id="remark">
+Remark
+</h2>
+<p>
+Why Haskell?
+</p>
+<p>
+Close relation between parser and data types.
+</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Product</span> a b <span class="fu">=</span> <span class="dt">Product</span> a b
+<span class="kw">data</span> <span class="dt">Sum</span> a b <span class="fu">=</span> <span class="dt">A</span> a <span class="fu">|</span> <span class="dt">B</span> b</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">productParser <span class="fu">=</span> <span class="kw">do</span>
+                  parser1
+                  parser2
+sumParser <span class="fu">=</span> parser1 <span class="fu">&lt;||&gt;</span> parser2</code></pre>
+</section>
+<section class="slide">
+<h2 id="remark-2">
+Remark (2)
+</h2>
+<p>
+Similar structure:
+</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">MyType</span> <span class="fu">=</span> <span class="dt">X</span> <span class="dt">Int</span> <span class="dt">Char</span> <span class="fu">|</span> <span class="dt">Y</span> <span class="dt">String</span>
+
+parseMyType <span class="fu">=</span>      (<span class="dt">X</span> <span class="fu">&lt;$&gt;</span> parseInt <span class="fu">&lt;*&gt;</span> parseChar) 
+              <span class="fu">&lt;||&gt;</span> (<span class="dt">Y</span> <span class="fu">&lt;$&gt;</span> parseString)</code></pre>
+</section>
+<section class="slide">
+<h2 id="remark-3">
+Remark (3)
+</h2>
+<p>
+Similar structure:
+</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Answer</span> <span class="fu">=</span> <span class="dt">YES</span> <span class="fu">|</span> <span class="dt">NO</span> <span class="fu">|</span> <span class="dt">MAYBE</span>
+<span class="kw">data</span> <span class="dt">MyType</span> <span class="fu">=</span> <span class="dt">X</span> <span class="dt">Int</span> <span class="dt">Answer</span> <span class="fu">|</span> <span class="dt">Y</span> <span class="dt">String</span>
+
+parseAnswer <span class="fu">=</span> parseYES <span class="fu">&lt;||&gt;</span> parseNO <span class="fu">&lt;||&gt;</span> parseMAYBE
+parseMyType <span class="fu">=</span>      (<span class="dt">X</span> <span class="fu">&lt;$&gt;</span> parseInt <span class="fu">&lt;*&gt;</span> parseAnswer) 
+              <span class="fu">&lt;||&gt;</span> (<span class="dt">Y</span> <span class="fu">&lt;$&gt;</span> parseString)</code></pre>
+</section>
+<section class="slide">
+<h2 id="conclusion">
+Conclusion
+</h2>
+<p>
+So Parser are more powerful than regular expression.<br />Parsec make it very easy to use.<br />Easy to read and to manipulate.
+</p>
+<p>
+Notice how you could use parser as any other object in Haskell.<br />You could <code>mapM</code> them for example.
+</p>
+<p>
+Any question?
+</p>
+</section>
+<section class="slide">
+<h2 id="appendice-do-it-yourself">
+Appendice (Do it yourself)
+</h2>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE DeriveDataTypeable #-}</span>
+<span class="kw">import</span> Control.Applicative <span class="kw">hiding</span> (many, (&lt;|&gt;))
+<span class="kw">import</span> Text.Parsec
+<span class="kw">import</span> Data.Typeable
+<span class="kw">type</span> <span class="dt">Parser</span> a <span class="fu">=</span> <span class="dt">Parsec</span> <span class="dt">String</span> () a
+
+myparser <span class="fu">=</span> many1 letter
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> test myparser <span class="st">&quot;myparser&quot;</span> <span class="st">&quot;(my (string to) parse)&quot;</span>
+
+<span class="ot">test ::</span> (<span class="dt">Typeable</span> a, <span class="kw">Show</span> a) <span class="ot">=&gt;</span> <span class="dt">Parser</span> a <span class="ot">-&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
+test parser description string <span class="fu">=</span> <span class="kw">do</span>
+    <span class="fu">putStrLn</span> <span class="fu">$</span> <span class="st">&quot;-- &quot;</span> <span class="fu">++</span> description <span class="fu">++</span> <span class="st">&quot; on \&quot;&quot;</span> <span class="fu">++</span> string <span class="fu">++</span> <span class="st">&quot;\&quot;&quot;</span>
+    <span class="kw">let</span> res <span class="fu">=</span> parse parser description string
+    <span class="kw">case</span> res <span class="kw">of</span>
+        <span class="kw">Left</span>  err   <span class="ot">-&gt;</span> <span class="fu">print</span> err
+        <span class="kw">Right</span> value <span class="ot">-&gt;</span> <span class="fu">putStrLn</span> <span class="fu">$</span> <span class="fu">show</span> value <span class="fu">++</span> <span class="st">&quot; :: &quot;</span> <span class="fu">++</span> <span class="fu">show</span> (typeOf value)</code></pre>
+</section>
+<section class="slide">
+<h2 id="appendice-2">
+Appendice (2)
+</h2>
+<p>
+Links to example code:
+</p>
+<ul>
+<li>
+<a href="parsec/examples/01.hs">examples1.hs</a>
+</li>
+<li>
+<a href="parsec/examples/scheme.hs">scheme.hs</a>
+</li>
+</ul>
+</section>
+<!-- End slides. -->
+
+]]></summary>
+</entry>
+<entry>
     <title>Rational Web Framework Choice</title>
     <link href="http://yannesposito.com/Scratch/fr/blog/Rational-Web-Framework-Choice/index.html" />
     <id>http://yannesposito.com/Scratch/fr/blog/Rational-Web-Framework-Choice/index.html</id>
@@ -7808,85 +8404,6 @@ SQL injection: &quot;); DROP TABLE ARTICLE;;</code></pre>
 <p>L’avantage principal c’est que je pouvais visualiser le résultat final facilement. Sans ce système de macro, pour faire une preview il m’aurait fallu faire des copier/coller + quelques modifications à chaque essai.</p>
 <h2 id="conclusion">Conclusion</h2>
 <p>Ce fut très amusant de faire une fractale en <sc>svg</sc>, mais la partie la plus intéressante était d’augmenter la puissance d’expressivité du langage en utilise un préprocesseur. J’ai utilisé cette méthode avec <sc>xslt</sc> pour une vrai application par exemple. On peut aussi utiliser m4 pour faire des includes d’autres fichiers. Typiquement je l’ai utiliser pour les includes dans un format obscur. Mais vous pouvez aussi le considérer pour des includes dans du HTML. Par exemple pour fabriquer un site statique rapidement, m4 peut se révéler utile pour inclure un footer ou un menu sur toutes les pages par exemple. J’ai aussi pensé que l’on pouvait utiliser m4 pour structurer des programmes comme brainfuck.</p>]]></summary>
-</entry>
-<entry>
-    <title>Les idées de yesod</title>
-    <link href="http://yannesposito.com/Scratch/fr/blog/Yesod-excellent-ideas/index.html" />
-    <id>http://yannesposito.com/Scratch/fr/blog/Yesod-excellent-ideas/index.html</id>
-    <published>2011-10-04T00:00:00Z</published>
-    <updated>2011-10-04T00:00:00Z</updated>
-    <summary type="html"><![CDATA[<div>
-<img src="/Scratch/img/blog/Yesod-excellent-ideas/main.png" alt="Title image"/>
-</div>
-<div class="intro">
-<p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span></p>
-<p>Cela fait un moment que je suis la progression du <a href="http://www.yesodweb.com">framework yesod</a>. À mon humble avis on peut commencer à l’utiliser pour des applications sérieuses (comprendre en prod). Avant de vous dire pourquoi vous devriez aussi le considérer, je préfère vous parler de bonnes idées (parmi d’autres) introduites par yesod que je n’avais jamais vu ailleurs.</p>
-</div>
-<h2 id="types-saufs">Types saufs</h2>
-<p>Commençons par une BD d’<a href="http://xkcd.com">xkcd</a>&nbsp;:</p>
-<div class="figure">
-<img src="http://imgs.xkcd.com/comics/exploits_of_a_mom.png" alt="SQL injection by a mom" /><p class="caption">SQL injection by a mom</p>
-</div>
-<p>Lorsque vous créez une application web, beaucoup de temps est passé à s’occuper de chaînes de caractères. Des chaînes de caractère pour les URL, le HTML, le Javascript, les CSS, les requêtes SQL, etc… Pour éviter des utilisation malicieuses vous devez protéger chaque chaîne de caractère entre chaque étape. Par exemple supposons que vous entriez comme nom&nbsp;:</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript">Newton&lt;script&gt;<span class="fu">alert</span>(<span class="st">&quot;An apple fall&quot;</span>)&lt;<span class="ot">/script&gt;</span></code></pre>
-<p>Sans une protection correcte, le message “An apple fall” sera affiché à chaque fois que quelqu’un essayera d’accéder au nom de cet utilisateur. Les “types saufs” sont le <a href="https://www.youtube.com/watch?v=1IWF3IsEPBE">tonyglandil du web</a>. A chaque chaine de caractère, on lui associe un “type”. A quoi sert cette chaîne de caractère ? Est-ce une URL ? Du javascript ? De l’HTML ? Entre chaque passage d’une représentation à une autre, un transformation is faite par défaut.</p>
-<p>Yesod fait de son mieux pour typer les objets manipulés et ainsi il fera ce qu’il faut pour ne pas mettre du script dans une URL par exemple.</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">@[AnotherPageR]</span><span class="kw">&gt;</span>Go to the other page</code></pre>
-<p>Comme <code>AnotherPageR</code> est une URL elle ne pourra contiendra pas (par défaut) de caractère dangereux comme par exemple&nbsp;:</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="er">falselink&quot;&gt;&lt;script&gt; bad_code(); &lt;/script&gt;&lt;a href=&quot;pipo</span></code></pre>
-<h2 id="les-widgets">Les widgets</h2>
-<p>Les widgets de yesod sont différents des widgets Javascripts (ou java). Pour yesod un widget est un ensemble de morceaux d’appli web. Et si dans une page on veut utiliser plusieurs widgets, alors yesod s’occupe de tout. Des exemples de widgets (au sens yesod) sont&nbsp;:</p>
-<ul>
-<li>Le «footer» d’une page web,</li>
-<li>Le «header» d’une page web,</li>
-<li>un bouton qui apparaît lorsque l’on «scrolle» vers le bas,</li>
-<li>etc…</li>
-</ul>
-<p>Pour chacun de ces widgets vous pourriez avoir besoin d’</p>
-<ul>
-<li>un peu d’HTML,</li>
-<li>un peu de CSS et</li>
-<li>un peu de javascript.</li>
-</ul>
-<p>Certain morceau doivent être placés dans le «header» de la page et d’autre dans le «body».</p>
-<p>Vous pouvez déclarer un widget comme suit (je n’utilise pas la vrai syntaxe)&nbsp;:</p>
-<pre><code>htmlheader = ...
-cssheader = ...
-javascriptheader = ...
-htmlbody = ...</code></pre>
-<p>La vraie syntaxe est&nbsp;:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">toWidgetHeader cassiusFile <span class="st">&quot;button.cassius&quot;</span>
-toWidgetHeader juliusFile <span class="st">&quot;button.julius&quot;</span>
-toWidget       hamletFile <span class="st">&quot;buttonTemplate.hamlet&quot;</span></code></pre>
-<p>Veuillez aussi noté la convention Shakespearienne des noms. Encore une bonne raison d’utiliser yesod.</p>
-<ul>
-<li>Cassius <em>&amp;</em> Lucius pour le CSS (très similaire à SASS et SCSS)</li>
-<li>Julius pour le javascript (notons qu’il existe aussi un CoffeeScript qui traîne dans les sources de yesod)</li>
-<li>Hamlet pour l’HTML (similaire à haml)</li>
-</ul>
-<p>Lorsque vous générez votre page, yesod se débrouille pour que tout fonctionne ensemble:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">myBigWidget <span class="fu">=</span>  menuWidget <span class="fu">&gt;&gt;</span> contentWidget <span class="fu">&gt;&gt;</span> footerWidget</code></pre>
-<p>De plus, si vous utilisez 10 widgets avec un peu de CSS, yesod fabriquera un unique fichier CSS pour vous. Bien entendu si vous préférez avoir une dizaine de fichier CSS vous pouvez aussi le faire.</p>
-<p>C’est juste génial !</p>
-<h2 id="routage-optimisé">Routage optimisé</h2>
-<p>Dans un système de routage standard (à la ruby on rails par exemple) vous avez pour chaque entrée un couple: regexp → handler</p>
-<p>La seule façon de découvrir la bonne règle est d’essayer de matcher l’url demandée à chaque expression régulière.</p>
-<p>Au lieu d’essayer chaque expression régulière, yesod regroupe et compile les routes pour les optimiser. Bien entendu pour pouvoir profiter de cet avantage au mieux, il ne faut pas que deux routes interfèrent entres elles.</p>
-<pre class="sourceCode html"><code class="sourceCode html">/blog/2003  Date2003R
-/blog/$DATE DateR</code></pre>
-<p>Cette définition de route est invalide par défaut dans yesod. Si vous voulez vraiment vous pouvez le faire foncionner quand même, mais il me semble que ça doit être quasiment toujours une mauvaise idée.</p>
-<p>Il vaut mieux faire&nbsp;:</p>
-<pre class="sourceCode html"><code class="sourceCode html">/blog/$DATE DateR</code></pre>
-<p>et faire le test “est-ce que date = 2003 ?” dans le «handler».</p>
-<h2 id="pourquoi-yesod">Pourquoi yesod?</h2>
-<ol style="list-style-type: decimal">
-<li><em>La vitesse</em>. Simplement incroyable, je ne pense pas qu’il existe quelque chose de plus rapide aujourd’hui. Regardez d’abord cet <a href="http://snapframework.com/blog/2010/11/17/snap-0.3-benchmarks">article</a> puis <a href="http://www.yesodweb.com/blog/2011/02/warp-speed-ahead">celui-ci</a>.</li>
-<li><em>Haskell</em>. C’est certainement le langage de programmation le plus difficile à apprendre que j’ai jamais rencontré. Mais aussi l’un des plus incroyables. Si vous voulez rencontrer tout un tas de notions que vous n’avez jamais croisées avant et faire exploser votre cerveau avec de nouvelles idées, alors apprenez Haskell.</li>
-<li><em>Bonnes idées et communauté excellente</em>. Cela fait quelques mois que je suis la progression de yesod. Et la vitesse à laquelle tout s’est déroulé est simplement incroyable. De plus les développeurs sont intelligents et super sympa.</li>
-</ol>
-<p>Si vous êtes un “haskeller”, je pense que vous ne devriez pas avoir peur de la syntaxe particulière imposée par la façon standard de faire les choses avec yesod. Il faut essayer un peu plus loin que les premiers tutoriaux du livre.</p>
-<p>Je pense que yesod va dans la bonne direction d’un web plus sûr et plus rapide. Même si je pense que l’avenir sera que les serveurs devront être limités à faire serveur d’API (JSON ou XML ou n’importe quel autre mode de représentation d’objets).</p>
-<p>Yesod est juste incroyable. Dépassez les difficultés liées à l’apprentissage d’haskell et essayez le !</p>]]></summary>
 </entry>
 
 </feed>
