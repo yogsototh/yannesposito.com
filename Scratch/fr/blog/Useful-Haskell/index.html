@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>YBlog - Useful Haskell</title>
+        <title>YBlog - Haskell Utile</title>
         <meta name="keywords" content="programming" />
 
         <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
@@ -31,7 +31,7 @@
 			</div>
 
 			<div id="titre">
-				<h1>Useful Haskell</h1>
+				<h1>Haskell Utile</h1>
 			</div>
 			<div class="flush"></div>
 			<div id="afterheader" class="article">
@@ -58,13 +58,11 @@
 <ol style="list-style-type: lower-alpha">
 <li>bad prelude!</li>
 </ol></li>
-<li><ol style="list-style-type: lower-alpha">
-<li>Minimal syntax</li>
-</ol></li>
 </ol>
+<h2 id="i-learn-haskell-in-5-minutes">I learn Haskell in 5 minutes</h2>
 <p>☞ Just a warning. Haskell is full of syntactical sugar. In order to talk only about principle I removed most of them. Be assured most of the syntax horror you will encounter in this section could be done using a far nicer syntax.</p>
 <h3 id="definitions">Definitions</h3>
-<p>Assign a value to some symbol. Each value has some type.</p>
+<p>Assign a value to some symbol.</p>
 <pre><code>b = True
 c = 'a'</code></pre>
 <p>Associated to each expression/symbol there is a type. The <code>::</code> means “is of type”.</p>
@@ -76,39 +74,80 @@ x = NullConstr :: Null</code></pre>
 <p>On the first line I declared a data type. On the second line I instanced a variable to a value of the type. There are the following basic type you can use:</p>
 <pre><code>Bool, Char, Int, Float, Double, Integer</code></pre>
 <p>And you can compose them to create more complex types.</p>
-<pre><code>data Str = StrConstr [Char]
-hello = StrConstr ['H','e','l','l','o'] :: Str
+<pre><code>data AndType = Product String Int
+hello = Product &quot;Hello&quot; 3 :: ProductType
 
-data CharOrInt = C Char | I Int
-letter_x = C 'x'    :: CharOrInt
-integer_5 = I '5'   :: CharOrInt</code></pre>
+data OrType = C Char | I Int
+letter_x = C 'x'    :: OrType
+integer_5 = I '5'   :: OrType
+
+data Tree = Node Int [Tree]
+data RecordTree = Node { Value :: Int
+                       , Sons :: [RecordTree] }</code></pre>
+<p>Up until here this is classic data structure (same as in C/C++/Javascript…). Game changer, a type can take another type as parameter!</p>
+<pre><code>data GeneralTree a = Node { Value :: a, Sons :: [GeneralTree] }</code></pre>
+<p>What does that mean? That mean a Haskell type is more than a classical data structure.</p>
+<p>Lists:</p>
+<pre><code>[]      ⇒ empty list
+[1,2,3] ⇔ 1:2:3:[] ⇔ 1:[2,3]
+[1..]   ⇒ 1:2:3:... infinite list (YES)</code></pre>
 <p>Function declaration:</p>
-<pre><code>f x = x^2 + 1</code></pre>
-<p>basic keywords:</p>
-<pre><code>f x = if x &lt; 0 then -x else x
+<pre><code> fact x = if x&lt;2 then 1 else x * fact (x-1)</code></pre>
+<p>Which could be invoked like this:</p>
+<pre><code> &gt;&gt;&gt; fact 32
+ 263130836933693530167218012160000000</code></pre>
+<p>There is no “fact(32)” but “fact 32”. This is a very important syntax design.</p>
+<p>The computation is all about reduction rules.</p>
+<pre><code>fact 3
+let x = 3 in if x&lt;2 then 1 else x * fact (x-1)
+3 * fact (3-1)
+3 * (let x = 3-1 in if x&lt;2 then 1 else x * fact (x-1))
+3 * (if 2&lt;1 then 1 else 2 * fact (2-1))
+3 * (2*(let x = 2-1 in if x&lt;2 then 1 else x * fact (x-1)))
+3 * (2*(if 1&lt;2 then 1 else x*fact(x-1)))
+3 * (2*1)
+3 * 2
+6</code></pre>
+<p>Many things are to note. First the reduction was non-strict. The evaluation is lazy. For example:</p>
+<pre><code>fact (3-1)
 
-g x = case x of
-        0 -&gt; &quot;zero&quot;
-        1 -&gt; &quot;one&quot;
-        otherwise -&gt; &quot;many&quot;
+-- reduced to
+(let x = 3-1 in if x&lt;2 then 1 else x*fact (x-1))
 
-no for!
-To replace for you have to chose the _right_ for.
-
--- imperative: modify a table element by element
--- for i = 1 to 10; t[i] = 2*t[i]
-map (2*) t
-
--- imperative: accumulation
--- for (x=0; x&lt;length(t); x++) { sum += x }
-foldl' (+) 0 t
-
--- imperative: many times the same thing
--- for (x=0;x&lt;10;x++) { something }
-repeat 10 something
-
--- use the tab indice
-map f (zip t [0..])</code></pre>
+<span class="highlight">-- did not reduced to</span>
+fact 2</code></pre>
+<p>Explication with the AST (Abstract Syntax Tree)</p>
+<blockquote>
+<p><strong>Lazy evaluation</strong><br />Start reduction by the higher non evaluated node.</p>
+<div>
+<img src="../../../../Scratch/img/blog/Useful-Haskell/AST-lazy.png" alt="AST" />
+</div>
+<p>reduces to</p>
+<div>
+<img src="../../../../Scratch/img/blog/Useful-Haskell/AST-lazy-reduced.png" alt="AST reduced non strictly" />
+</div>
+</blockquote>
+<blockquote>
+<p><strong>Strict</strong><br />Start reduction ky the deepest non fully evaluated node.</p>
+<div>
+<img src="../../../../Scratch/img/blog/Useful-Haskell/AST-strict.png" alt="AST" />
+</div>
+<p>reduces to</p>
+<div>
+<img src="../../../../Scratch/img/blog/Useful-Haskell/AST-strict-reduced.png" alt="AST reduced strictly" />
+</div>
+</blockquote>
+<p>Lazy evaluation make it easier not to reach ⊥ (I mean infinite loop).</p>
+<p>Typically <code>head [1..1000000000]</code> returns <code>1</code> almost instantaneously in Haskell. While if strictly evaluated would take a <em>lot</em> of memory and time. Also we could do <code>head [1..]</code> and it returns <code>1</code>.</p>
+<p>So in Haskell you define functions and they are reduced to produce computation. There are a <em>lot</em> of syntactical sugar in Haskell to help you write less code. But in the end, it will be translated that way.</p>
+<p>That was the functions part. But there is the other at least as important part. The types.</p>
+<h3 id="types">Types</h3>
+<p>In Haskell, types are extremely important. And also hard to figure out.</p>
+<pre><code>&gt;&gt;&gt; :t fact
+fact :: (Num a, Ord a) =&gt; a -&gt; a</code></pre>
+<p>The heck does this mean? Before the <code>=&gt;</code>, it means that the type <code>a</code> belongs to the <em>type classes</em> <code>Num</code> and <code>Ord</code>. The <code>a -&gt; a</code> part means <code>fact</code> is a function from <code>a</code> to <code>a</code>.</p>
+<p>Every types in the type class <code>Ord</code> could be used with <code>(&lt;)</code>. And Every types in the type class <code>Num</code> could be used with <code>(*)</code> and <code>(-)</code>.</p>
+<p>The type classes are a kind of interface declaration for types. For example there is an <em>instance</em> of <code>Num</code> for <code>Int</code>, <code>Integer</code>, <code>Float</code>…</p>
 				</div>
 
                 <div id="social">
