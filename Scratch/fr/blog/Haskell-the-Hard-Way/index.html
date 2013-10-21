@@ -906,7 +906,7 @@ squareEvenSum'' <span class="fu">=</span> sum' <span class="fu">.</span> (map (<
 <p>The <code>map</code> function simply applies a function to all the elements of a list.</p>
 <p>We didn’t have to modify anything <em>inside</em> the function definition. This makes the code more modular. But in addition you can think more mathematically about your function. You can also use your function interchangably with others, as needed. That is, you can compose, map, fold, filter using your new function.</p>
 <p>Modifying version 1 is left as an exercise to the reader ☺.</p>
-<p>If you believe we have reached the end of generalization, then know you are very wrong. For example, there is a way to not only use this function on lists but on any recursive type. If you want to know how, I suggest you to read this quite fun article: <a href="http://eprints.eemcs.utwente.nl/7281/01/db-utwente-40501F46.pdf">Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire by Meijer, Fokkinga and Paterson</a>.</p>
+<p>If you believe we have reached the end of generalization, then know you are very wrong. For example, there is a way to not only use this function on lists but on any recursive type. If you want to know how, I suggest you to read this quite fun article: <a href="http://eprints.eemcs.utwente.nl/7281/0%201/db-utwente-40501F46.pdf">Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire by Meijer, Fokkinga and Paterson</a>.</p>
 <p>This example should show you how great pure functional programming is. Unfortunately, using pure functional programming isn’t well suited to all usages. Or at least such a language hasn’t been found yet.</p>
 <p>One of the great powers of Haskell is the ability to create DSLs (Domain Specific Language) making it easy to change the programming paradigm.</p>
 <p>In fact, Haskell is also great when you want to write imperative style programming. Understanding this was really hard for me to grasp when first learning Haskell. A lot of effort tends to go into explaining the superiority of the functional approach. Then when you start using an imperative style with Haskell, it can be hard to understand when and how to use it.</p>
@@ -971,9 +971,27 @@ complex complex_square (complex z) {
 complex x,y;
 y = complex_square(x);</code></pre>
 <p>For each type, you need to write a new function. The only way to work around this problem is to use some meta-programming trick, for example using the pre-processor. In C++ there is a better way, C++ templates:</p>
-<p><sub><sub>~</sub></sub>~ {.c++} #include <iostream> #include <complex> using namespace std;</p>
-<p>template<typename T> T square(T x) { return x*x; }</p>
-<p>int main() { // int int sqr_of_five = square(5); cout &lt;&lt; sqr_of_five &lt;&lt; endl; // double cout &lt;&lt; (double)square(5.3) &lt;&lt; endl; // complex cout &lt;&lt; square( complex<double>(5,3) ) &lt;&lt; endl; return 0; } <sub><sub>~</sub></sub>~</p>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;complex&gt;
+using namespace std;
+
+template&lt;typename T&gt;
+T square(T x)
+{
+    return x*x;
+}
+
+int main() {
+    // int
+    int sqr_of_five = square(5);
+    cout &lt;&lt; sqr_of_five &lt;&lt; endl;
+    // double
+    cout &lt;&lt; (double)square(5.3) &lt;&lt; endl;
+    // complex
+    cout &lt;&lt; square( complex&lt;double&gt;(5,3) )
+         &lt;&lt; endl;
+    return 0;
+}</code></pre>
 <p>C++ does a far better job than C in this regard. But for more complex functions the syntax can be hard to follow: see <a href="http://bartoszmilewski.com/2009/10/21/what-does-haskell-have-to-do-with-c/">this article</a> for example.</p>
 <p>In C++ you must declare that a function can work with different types. In Haskell, the opposite is the case. The function will be as general as possible by default.</p>
 <p>Type inference gives Haskell the feeling of freedom that dynamically typed languages provide. But unlike dynamically typed languages, most errors are caught before run time. Generally, in Haskell:</p>
