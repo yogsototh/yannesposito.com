@@ -43,7 +43,7 @@
 </div>
 <p>I recently read this excellent article: <a href="http://jabberwocky.eu/2013/10/24/how-to-start-a-new-haskell-project/">How to Start a New Haskell Project</a>.</p>
 <p>While the article is very good, I lacked some minor informations<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup>. Inspired by it, I created a simple script to initialize a new Haskell project. During the process I improved some things a bit.</p>
-<p>If want to use this script, the steps are:</p>
+<p>If you want to use this script, the steps are:</p>
 <ol style="list-style-type: decimal">
 <li><a href="http://wwW.haskell.org/platform">Install Haskell</a></li>
 <li>Make sure you have the latest <code>cabal-install</code> (at least 1.18)</li>
@@ -159,7 +159,7 @@ Sir Bedevere: How do you know so much about swallows?
 <li>use the github API which returns JSON to get the default github user name.</li>
 </ul>
 <p>So, apparently nothing too difficult to achieve.</p>
-<p>We should now have an initialized Haskell environment for us to work. The first thing you should do, is to go into this new directory and launch ‘./auto-update’ in some terminal. I personally use <code>tmux</code> on Linux or the splits in `iTerm 2 ̀ on Mac OS X. Now, any modification of a source file will relaunch a compilation and a test.</p>
+<p>We should now have an initialized Haskell environment for us to work. The first thing you should do, is to go into this new directory and launch ‘./auto-update’ in some terminal. I personally use <code>tmux</code> on Linux or the splits in <code>iTerm 2</code> on Mac OS X. Now, any modification of a source file will relaunch a compilation and a test.</p>
 <h3 id="the-dialogs">The dialogs</h3>
 <div>
 <img src="/Scratch/img/blog/Holy-Haskell-Starter/bridge-of-death.jpg" alt="Bridge of Death"/>
@@ -388,17 +388,18 @@ fil<span class="kw">e</span> <span class="kw">content</span> here.
 We can use <span class="ot">$variables</span> here
 END</code></pre>
 <p>In Haskell, while possible, we shouldn’t put the file content in the source code. We have a relatively easy way to include external file in a cabal package. This is what we will be using.</p>
-<p>Furthermore, we need a templating system to replace small part of the static file by computed values. For this task, I choose to use <a href="http://hackage.haskell.org/package/hastache"><code>hastache</code></a>, an haskell implementation of Mustache templates<sup><a href="#fn3" class="footnoteRef" id="fnref3">3</a></sup>.</p>
+<p>Furthermore, we need a templating system to replace small part of the static file by computed values. For this task, I choose to use <a href="http://hackage.haskell.org/package/hastache"><code>hastache</code></a>, a Haskell implementation of Mustache templates<sup><a href="#fn3" class="footnoteRef" id="fnref3">3</a></sup>.</p>
 <h3 id="add-external-files-in-a-cabal-project">Add external files in a cabal project</h3>
 <p>Cabal provides a way to add files which are not source files to a package. You simply have to add a <code>Data-Files:</code> entry in the header of the cabal file:</p>
 <pre><code>data-files: scaffold/LICENSE
+            , scaffold/Setup.hs
+            , scaffold/auto-update
             , scaffold/gitignore
             , scaffold/interact
             , scaffold/project.cabal
-            , scaffold/Setup.hs
             , scaffold/src/Main.hs
-            , scaffold/src/ModuleName/Coconut.hs
             , scaffold/src/ModuleName.hs
+            , scaffold/src/ModuleName/Coconut.hs
             , scaffold/src/ModuleName/Swallow.hs
             , scaffold/test/ModuleName/Coconut/Test.hs
             , scaffold/test/ModuleName/Swallow/Test.hs
@@ -598,13 +599,13 @@ getValueForKey _ _ <span class="fu">=</span> <span class="dt">Nothing</span></co
 <div>
 <img src="/Scratch/img/blog/Holy-Haskell-Starter/coconut.jpg" alt="Coconut and Swallow"/>
 </div>
-<p>The task seem relatively easy, but we’ll see there will be some complexity hidden. Make a request on <code>https://api.github.com/search/users?q=&lt;email&gt;</code>. Parse the JSON and get the <code>login</code> field of the first item.</p>
+<p>The task seems relatively easy, but we’ll see there will be some complexity hidden. Make a request on <code>https://api.github.com/search/users?q=&lt;email&gt;</code>. Parse the JSON and get the <code>login</code> field of the first item.</p>
 <p>So the first problem to handle is to connect an URL. For this we will use the <code>http-conduit</code> package.</p>
 <p>Generally, for simple request, we should use:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">do</span>
     body <span class="ot">&lt;-</span> simpleHTTP <span class="st">&quot;https://api.github.com/search/users?q=&quot;</span><span class="fu">++</span>email
     <span class="fu">...</span></code></pre>
-<p>But, after some research, I discovered we must declare a User-Agent in the HTTP header to be accepted by the github API. So we have to change the HTTP Header, and our code became slightly more complex:</p>
+<p>But, after some research, I discovered we must declare an User-Agent in the HTTP header to be accepted by the github API. So we have to change the HTTP Header, and our code became slightly more complex:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span>
 <span class="fu">...</span>
 <span class="ot">simpleHTTPWithUserAgent ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">LZ.ByteString</span>
@@ -674,7 +675,7 @@ main = do
     end</code></pre>
 <p>While it might feel a bit confusing, it is in fact quite simple.</p>
 <ol style="list-style-type: decimal">
-<li>declare an <a href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/Control-Concurrent-MVar.html"><code>MVar</code></a>. Mainly a variable which is empty or contain something.</li>
+<li>declare an <a href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/Control-Concurrent-MVar.html"><code>MVar</code></a>. Mainly a variable which either is empty or contains something.</li>
 <li>If we didn’t found any email hint, put Nothing in the <code>MVar</code>.</li>
 <li>If we have an email hint, ask on the github API in a new process and once finished put the result in the <code>MVar</code>.</li>
 <li>If the user enter an email different from the hint email, then just request the github api now.</li>
@@ -785,7 +786,7 @@ githubAPISuite <span class="fu">=</span> testGroup <span class="st">&quot;Github
 <span class="co">-- | Test if some IO action returns some expected value</span>
 <span class="ot">ioTestEq ::</span> (<span class="dt">Eq</span> a, <span class="dt">Show</span> a) <span class="ot">=&gt;</span> <span class="dt">IO</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Assertion</span>
 ioTestEq action expected <span class="fu">=</span> action <span class="fu">&gt;&gt;=</span> assertEqual <span class="st">&quot;&quot;</span> expected</code></pre>
-<p>You have to modify your cabal file. More precisely, you have to add <code>HolyProject.GithubAPI</code> in the exposed modules of the library secion). You also have to update the  ̀test/Test.hs<code>file to use</code>GithubAPI<code>instead of</code>Swallow`.</p>
+<p>You have to modify your cabal file. More precisely, you have to add <code>HolyProject.GithubAPI</code> in the exposed modules of the library secion). You also have to update the <code>test/Test.hs</code> file to use <code>GithubAPI</code> instead of <code>Swallow</code>.</p>
 <p>So we have our example of unit testing using IO. We search the github nickname for some people I know and we verify github continue to give the same answer as expected.</p>
 <h4 id="property-testing-with-smallcheck-and-quickcheck">Property Testing with SmallCheck and QuickCheck</h4>
 <div>
@@ -838,7 +839,7 @@ All Tests
 <span class="red">1 out of 5 tests failed</span>
 </pre>
 
-<p>The test fail, but this is not an error. Our <code>capitalize</code> function shouldn’t be idempotent. I simply added this test to show how to goes when a test fail. If you want to look more closely to the error you could do this:</p>
+<p>The test fail, but this is not an error. Our <code>capitalize</code> function shouldn’t be idempotent. I simply added this test to show what occurs when a test fail. If you want to look more closely to the error you could do this:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">./interact</span>
 <span class="kw">GHCi</span>, version 7.6.2: http://www.haskell.org/ghc/   :? for help
 <span class="kw">Loading</span> package ghc-prim ... linking ... done.
