@@ -245,7 +245,7 @@ bk str <span class="fu">=</span> <span class="highlight">colorPutStr <span class
 <span class="ot">bkn ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
 bkn str <span class="fu">=</span> <span class="highlight">colorPutStr <span class="dt">Green</span></span> (<span class="st">&quot;Bridgekeeper: &quot;</span> <span class="fu">++</span> str)
 <span class="ot">you ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
-you str <span class="fu">=</span> <span class="highlight">colorPutStr <span class="dt">Yellow</span></span> (<span class="st">&quot;Bridgekeeper: &quot;</span> <span class="fu">++</span> str <span class="fu">++</span> <span class="st">&quot;\n&quot;</span>)
+you str <span class="fu">=</span> <span class="highlight">colorPutStr <span class="dt">Yellow</span></span> (<span class="st">&quot;You: &quot;</span> <span class="fu">++</span> str <span class="fu">++</span> <span class="st">&quot;\n&quot;</span>)
 
 <span class="ot">intro ::</span> <span class="dt">IO</span> ()
 intro <span class="fu">=</span> <span class="kw">do</span>
@@ -318,7 +318,8 @@ ask info <span class="fu">=</span> <span class="kw">do</span>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># replace all spaces by dashes then lowercase the string</span>
 <span class="ot">project=</span>${<span class="ot">${project:gs</span><span class="er">/ /-/</span><span class="ot">}</span>:<span class="kw">l</span>}</code></pre>
 <p>In order to achieve the same result in Haskell (don’t forget to add the <code>split</code> package):</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Data.List        (instercalate)
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Data.Char        (toLower)
+<span class="kw">import</span> Data.List        (intercalate)
 <span class="kw">import</span> Data.List.Split  (splitOneOf)
 <span class="fu">...</span>
 <span class="ot">projectNameFromString ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span>
