@@ -56,7 +56,7 @@
 <li>Fractal lovers and in particular 3D fractal.</li>
 <li>People interested in user interaction in a functional paradigm.</li>
 </ul>
-<p>I had in mind for some time now to make a Mandelbrot set explorer. I had already written a <a href="http://github.com/yogsototh/mandelbrot.git">command line Mandelbrot set generator in Haskell</a>. This utility is highly parallel; it uses the <code>repa</code> package<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup>.</p>
+<p>I had in mind for some time now to make a Mandelbrot set explorer. I had already written a <a href="http://github.com/yogsototh/mandelbrot.git">command line Mandelbrot set generator in Haskell</a>. This utility is highly parallel; it uses the <code>repa</code> package<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>.</p>
 <p>This time, we will not parallelize the computation. Instead, we will display the Mandelbrot set extended in 3D using OpenGL and Haskell. You will be able to move it using your keyboard. This object is a Mandelbrot set in the plan (z=0), and something nice to see in 3D.</p>
 <p>Here are some screenshots of the result:</p>
 <figure>
@@ -86,14 +86,14 @@ Another detail of the Mandelbulb
 <hr />
 <p><a href="code/01_Introduction/hglmandel.lhs" class="cut">Download the source code of this section → 01_Introduction/<strong>hglmandel.lhs</strong></a></p>
 <h2 id="first-version">First version</h2>
-<p>We can consider two parts. The first being mostly some boilerplate<sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup>. And the second part more focused on OpenGL and content.</p>
+<p>We can consider two parts. The first being mostly some boilerplate<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>. And the second part more focused on OpenGL and content.</p>
 <h3 id="lets-play-the-song-of-our-people">Let’s play the song of our people</h3>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Graphics.Rendering.OpenGL
-<span class="kw">import</span> Graphics.UI.GLUT
-<span class="kw">import</span> Data.IORef</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Graphics.Rendering.OpenGL</span>
+<span class="kw">import </span><span class="dt">Graphics.UI.GLUT</span>
+<span class="kw">import </span><span class="dt">Data.IORef</span></code></pre>
 </div>
-<p>For efficiency reason<sup><a href="#fn3" class="footnoteRef" id="fnref3">3</a></sup>, I will not use the default Haskell <code>Complex</code> data type.</p>
+<p>For efficiency reason<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a>, I will not use the default Haskell <code>Complex</code> data type.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Complex</span> <span class="fu">=</span> <span class="dt">C</span> <span class="dt">Float</span> <span class="dt">Float</span> <span class="kw">deriving</span> (<span class="dt">Show</span>,<span class="dt">Eq</span>)</code></pre>
 </div>
@@ -224,9 +224,9 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
 <h2 id="only-the-edges">Only the edges</h2>
 <div style="display:none">
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Graphics.Rendering.OpenGL
-<span class="kw">import</span> Graphics.UI.GLUT
-<span class="kw">import</span> Data.IORef
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Graphics.Rendering.OpenGL</span>
+<span class="kw">import </span><span class="dt">Graphics.UI.GLUT</span>
+<span class="kw">import </span><span class="dt">Data.IORef</span>
 <span class="co">-- Use UNPACK data because it is faster</span>
 <span class="co">-- The ! is for strict instead of lazy</span>
 <span class="kw">data</span> <span class="dt">Complex</span> <span class="fu">=</span> <span class="dt">C</span>  <span class="ot">{-# UNPACK #-}</span> <span class="fu">!</span><span class="dt">Float</span>
@@ -393,9 +393,9 @@ allPoints <span class="fu">=</span>
 </blockquote>
 <div style="display:none">
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Graphics.Rendering.OpenGL
-<span class="kw">import</span> Graphics.UI.GLUT
-<span class="kw">import</span> Data.IORef
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Graphics.Rendering.OpenGL</span>
+<span class="kw">import </span><span class="dt">Graphics.UI.GLUT</span>
+<span class="kw">import </span><span class="dt">Data.IORef</span>
 <span class="kw">type</span> <span class="dt">ColoredPoint</span> <span class="fu">=</span> (<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>,<span class="dt">Color3</span> <span class="dt">GLfloat</span>)</code></pre>
 </div>
 </div>
@@ -682,8 +682,8 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
 <li><a href="code/04_Mandelbulb/ExtComplex.hs"><code>ExtComplex</code></a>, the extended complexes</li>
 </ul>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> YBoiler -- Most the OpenGL Boilerplate
-<span class="kw">import</span> Mandel -- The 3D Mandelbrot maths</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">YBoiler</span> <span class="co">-- Most the OpenGL Boilerplate</span>
+<span class="kw">import </span><span class="dt">Mandel</span> <span class="co">-- The 3D Mandelbrot maths</span></code></pre>
 </div>
 <p>The <code>yMainLoop</code> takes two arguments: the title of the window and a function from time to triangles</p>
 <div class="codehighlight">
@@ -780,8 +780,8 @@ ymandel x y z <span class="fu">=</span> mandel (<span class="dv">2</span><span c
 </ul>
 <p>Here is a real working code, I’ve hidden most display functions. The YGL, is a kind of framework to display 3D functions. But it can easily be extended to many kind of representation.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> YGL -- Most the OpenGL Boilerplate
-<span class="kw">import</span> Mandel -- The 3D Mandelbrot maths</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">YGL</span> <span class="co">-- Most the OpenGL Boilerplate</span>
+<span class="kw">import </span><span class="dt">Mandel</span> <span class="co">-- The 3D Mandelbrot maths</span></code></pre>
 </div>
 <p>We first set the mapping between user input and actions. The type of each couple should be of the form <code>(user input, f)</code> where (in a first time) <code>f:World -&gt; World</code>. It means, the user input will transform the world state.</p>
 <div class="codehighlight">
@@ -974,8 +974,8 @@ ymandel x y z <span class="fu">=</span> fromIntegral (mandel x y z <span class="
 <p>To optimize we must do some things in a lower level. Mostly the program remains the same, but it will provide the list of atoms directly.</p>
 <div style="display:none">
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> YGL -- Most the OpenGL Boilerplate
-<span class="kw">import</span> Mandel -- The 3D Mandelbrot maths
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">YGL</span> <span class="co">-- Most the OpenGL Boilerplate</span>
+<span class="kw">import </span><span class="dt">Mandel</span> <span class="co">-- The 3D Mandelbrot maths</span>
 
 <span class="co">-- Centralize all user input interaction</span>
 <span class="ot">inputActionMap ::</span> <span class="dt">InputMap</span> <span class="dt">World</span>
@@ -1237,7 +1237,7 @@ ymandel x y z <span class="fu">=</span> fromIntegral (mandel x y z <span class="
 
         </div>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.0/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="../../../../Scratch/js/vendor/jquery-1.10.0.min.js"><\/script>')</script>
+        <script>window.jQuery || document.write('<script src="/Scratch/js/vendor/jquery-1.10.0.min.js"><\/script>')</script>
         <script src="../../../../Scratch/js/jquery.scrolldepth.min.js"></script>
         <script src="../../../../Scratch/js/jquery.cookie.js"></script>
         <script src="../../../../Scratch/js/index.js"></script>

@@ -49,7 +49,7 @@
 <ol style="list-style-type: decimal">
 <li>I open an editor (vim in my case) and edit a markdown file. It looks like this</li>
 </ol>
-<pre class="markdown"><code>A First Level Header
+<pre class="sourceCode markdown"><code class="sourceCode markdown">A First Level Header
 ====================
 
 A Second Level Header
@@ -61,13 +61,13 @@ This is just a regular paragraph.
 
 Ask me the questions, bridgekeeper. I am not afraid.
 
-### Header 3
+<span class="fu">### Header 3</span>
 
-&gt; This is a blockquote.
+&gt;<span class="dt"> This is a blockquote.</span>
 &gt;
-&gt; This is the second paragraph in the blockquote.
+&gt;<span class="dt"> This is the second paragraph in the blockquote.</span>
 &gt;
-&gt; ## This is an H2 in a blockquote</code></pre>
+&gt;<span class="dt"> ## This is an H2 in a blockquote</span></code></pre>
 <ol start="2" style="list-style-type: decimal">
 <li>I open a browser and reload time to time to see the change.</li>
 <li>Once I finished I’ve written a very minimal script which mainly do a <code>git push</code>. My blog is hosted on <a href="http://github.com">github</a>.</li>
@@ -112,7 +112,7 @@ match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
   compile <span class="fu">$</span> pandocCompiler</code></pre>
 <p>If you create a file <code>posts/foo.md</code>, it will create a file <code>_site/posts/foo.html</code>.</p>
 <p>If the file <code>posts/foo.md</code> contains</p>
-<pre class="markdown"><code># Cthulhu
+<pre class="sourceCode markdown"><code class="sourceCode markdown"><span class="fu"># Cthulhu</span>
 
 ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn</code></pre>
 <p>the file <code>_site/posts/foo.html</code>, will contain</p>
@@ -144,11 +144,11 @@ ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn</code></pre>
   <span class="kw">&lt;/body&gt;</span>
 <span class="kw">&lt;/html&gt;</span></code></pre>
 <p>See, it’s easy But we have a problem. How could we change the title or add keywords?</p>
-<p>The solution is to use <code>Context</code>s. For this, we first need to add some <em>metadatas</em> to our markdown<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup>.</p>
-<pre class="markdown"><code><span class="highlight">--- </span>
+<p>The solution is to use <code>Context</code>s. For this, we first need to add some <em>metadatas</em> to our markdown<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>.</p>
+<pre class="sourceCode markdown"><code class="sourceCode markdown"><span class="highlight">--- </span>
 <span class="highlight">title: Cthulhu</span>
 <span class="highlight">--- </span>
-# Cthulhu
+<span class="fu"># Cthulhu</span>
 
 ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn</code></pre>
 <p>And modify slightly our template:</p>
@@ -215,13 +215,13 @@ metaKeywordContext <span class="fu">=</span> field <span class="st">&quot;metaKe
 <blockquote>
 <p>☞ Here are the imports I use for this tutorial.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span>
-<span class="kw">import</span>           Control.Monad          (forM,forM_)
-<span class="kw">import</span>           Data.List              (sortBy,isInfixOf)
-<span class="kw">import</span>           Data.Monoid            ((&lt;&gt;),mconcat)
-<span class="kw">import</span>           Data.Ord               (comparing)
-<span class="kw">import</span>           Hakyll
-<span class="kw">import</span>           System.Locale          (defaultTimeLocale)
-<span class="kw">import</span>           System.FilePath.Posix  (takeBaseName,takeDirectory
+<span class="kw">import           </span><span class="dt">Control.Monad</span>          (forM,forM_)
+<span class="kw">import           </span><span class="dt">Data.List</span>              (sortBy,isInfixOf)
+<span class="kw">import           </span><span class="dt">Data.Monoid</span>            ((&lt;&gt;),mconcat)
+<span class="kw">import           </span><span class="dt">Data.Ord</span>               (comparing)
+<span class="kw">import           </span><span class="dt">Hakyll</span>
+<span class="kw">import           </span><span class="dt">System.Locale</span>          (defaultTimeLocale)
+<span class="kw">import           </span><span class="dt">System.FilePath.Posix</span>  (takeBaseName,takeDirectory
                                          ,(<span class="fu">&lt;/&gt;</span>),splitFileName)</code></pre>
 </blockquote>
 <h3 id="simplify-url">Simplify <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span></h3>
@@ -442,7 +442,7 @@ tradsContext <span class="fu">=</span> functionField <span class="st">&quot;trad
 <p>So far I am very happy with the switch. A complete build is about 4x faster. I didn’t broke the dependency system this time. As soon as I modify and save the markdown source, I can reload the page in the browser.</p>
 <p>I removed a lot of feature thought. Some of them will be difficult to achieve with Hakyll. A typical example:</p>
 <p>In nanoc I could take a file like this as source:</p>
-<pre class="markdown"><code># Title
+<pre class="sourceCode markdown"><code class="sourceCode markdown"><span class="fu"># Title</span>
 
 content
 
@@ -527,7 +527,7 @@ main = putStrLn &quot;Cthulhu!&quot;
 
         </div>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.0/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="../../../../Scratch/js/vendor/jquery-1.10.0.min.js"><\/script>')</script>
+        <script>window.jQuery || document.write('<script src="/Scratch/js/vendor/jquery-1.10.0.min.js"><\/script>')</script>
         <script src="../../../../Scratch/js/jquery.scrolldepth.min.js"></script>
         <script src="../../../../Scratch/js/jquery.cookie.js"></script>
         <script src="../../../../Scratch/js/index.js"></script>
