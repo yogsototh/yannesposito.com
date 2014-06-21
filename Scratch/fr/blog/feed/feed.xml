@@ -1089,8 +1089,8 @@ Don’t mind strange operators (<code>&lt;*&gt;</code>, <code>&lt;$&gt;</code>).
 Informally:
 </p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">toto <span class="fu">&lt;$&gt;</span> x <span class="fu">&lt;*&gt;</span> y <span class="fu">&lt;*&gt;</span> z
-    <span class="co">-- ⇔ toto x y z</span>
-    <span class="co">-- ⇔ toto(x,y,z) in C-like languages</span></code></pre>
+<span class="co">-- ⇔ toto x y z</span>
+<span class="co">-- ⇔ toto(x,y,z) in C-like languages</span></code></pre>
 </section>
 <section class="slide">
 <h2 id="minimal-parsec-examples">
@@ -3372,14 +3372,15 @@ Robustness
 <div id="compute" class="button">
 <span>Click to force refresh</span>
 </div>
-<div id="result"></div>
+<div id="result">
 
-<script>// <![CDATA[ // <![CDATA[
+</div>
+<script>
     function lt(x,y){return (x < y);}
     function bal(balname,str){return '<'+balname+'>'+str+'</'+balname+'>';}
     function ret(){return '<br/>';}
-// ]]> // ]]></script>
-<script>// <![CDATA[
+</script>
+<script>
     String.prototype.repeat = function(num){return new Array(num+1).join(this);};
     (function(){function run(){if (window.$){
 
@@ -3652,7 +3653,7 @@ robustnessClusters=[[ "elli" , "cowboy" , "snap" , "yesod"
         }
         run();
     })();
-// ]]></script>
+</script>
 
 <p>I didn’t had the courage in explaining in what the scoring system is good. Mostly, if you use product instead of sum for the score you could use power of <span class="math"><em>e</em></span> for the values in the matrix. And you could see the matrix as a probability matrix (each line sum to 1). Which provide a slighly better intuition on whats going on.</p>
 <p>Remember only that values are exponential. Do not double an already big value for example the effect would be extreme.</p>
@@ -4120,7 +4121,7 @@ main = putStrLn &quot;Cthulhu!&quot;
                       .<span class="fu">getElementsByTagName</span>(<span class="st">&#39;a&#39;</span>);
     <span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>;i!=<span class="ot">links</span>.<span class="fu">length</span>;i++){
         links[i].<span class="fu">setAttribute</span>(<span class="st">&quot;href&quot;</span>,
-<span class="er">            links[i].href.replace(&#39;$url$&#39;,url));}})})();</span>
+            links[i].<span class="ot">href</span>.<span class="fu">replace</span>(<span class="st">&#39;$url$&#39;</span>,url));}})})();
 &lt;<span class="ot">/script&gt;</span></code></pre>
 </div>
 <h2 id="the-problem">The problem</h2>
@@ -4189,7 +4190,7 @@ main = putStrLn &quot;Cthulhu!&quot;
                       .<span class="fu">getElementsByTagName</span>(<span class="st">&#39;a&#39;</span>);
     <span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>;i!=<span class="ot">links</span>.<span class="fu">length</span>;i++){
         links[i].<span class="fu">setAttribute</span>(<span class="st">&quot;href&quot;</span>,
-<span class="er">            links[i].href.replace(&#39;$url$&#39;,url));}})})();</span>
+            links[i].<span class="ot">href</span>.<span class="fu">replace</span>(<span class="st">&#39;$url$&#39;</span>,url));}})})();
 &lt;<span class="ot">/script&gt;</span></code></pre>
 <p>Here is the result:</p>
 <div class="nostar" style="text-align:center">
@@ -4210,8 +4211,7 @@ main = putStrLn &quot;Cthulhu!&quot;
 </script>
 
 </div>
-
-<h2>Good looking solutions</h2>
+<h2 id="good-looking-solutions">Good looking solutions</h2>
 <p>If you don’t want just text but nice icons. You have many choices:</p>
 <ul>
 <li>Use images <code>&lt;img src=&quot;...&quot;/&gt;</code> in the links.</li>
@@ -4264,10 +4264,10 @@ main = putStrLn &quot;Cthulhu!&quot;
                       .<span class="fu">getElementsByTagName</span>(<span class="st">&#39;a&#39;</span>);
     <span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>;i!=<span class="ot">links</span>.<span class="fu">length</span>;i++){
         links[i].<span class="fu">setAttribute</span>(<span class="st">&quot;href&quot;</span>,
-<span class="er">            links[i].href.replace(&#39;$url$&#39;,url));}})})();</span>
+            links[i].<span class="ot">href</span>.<span class="fu">replace</span>(<span class="st">&#39;$url$&#39;</span>,url));}})})();
 &lt;<span class="ot">/script&gt;</span></code></pre>
 <p>Here is the result:</p>
-<div style="font-size: 2em; text-align: center;" class="nostar">
+<div class="nostar" style="font-size: 2em; text-align: center;">
 <div id="sociallinksunicode">
 <a href="https://twitter.com/home?status=$url$"
     target="_blank"
@@ -4287,7 +4287,6 @@ main = putStrLn &quot;Cthulhu!&quot;
             links[i].href.replace('$url$',url));}})})();
 </script>
 </div>
-
 <h2 id="conclusion">Conclusion</h2>
 <ol style="list-style-type: decimal">
 <li>You get your design back,</li>
@@ -6417,7 +6416,6 @@ ymandel x y z <span class="fu">=</span> fromIntegral (mandel x y z <span class="
 <hr style="width:30%;float:right;border-color:#CCCCD0;margin-top:1em"/></center>
 
 <div class="toc">
-
 <ul>
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#install">Install</a></li>
@@ -6464,7 +6462,6 @@ ymandel x y z <span class="fu">=</span> fromIntegral (mandel x y z <span class="
 <li><a href="#more-on-infinite-tree">More on Infinite Tree</a></li>
 </ul>
 </div>
-
 </blockquote>
 </div>
 <div class="intro2">
@@ -6525,7 +6522,6 @@ Install
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/Haskell-logo.png" alt=""/>
 </div>
-
 <ul>
 <li><a href="http://www.haskell.org/platform">Haskell Platform</a> is the standard way to install Haskell.</li>
 </ul>
@@ -6542,7 +6538,6 @@ Don’t be afraid
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/munch_TheScream.jpg" alt="The Scream"/>
 </div>
-
 <p>Many books/articles about Haskell start by introducing some esoteric formula (quick sort, Fibonacci, etc…). I will do the exact opposite. At first I won’t show you any Haskell super power. I will start with similarities between Haskell and other programming languages. Let’s jump to the mandatory “Hello World”.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> putStrLn <span class="st">&quot;Hello World!&quot;</span></code></pre>
@@ -6595,7 +6590,6 @@ Very basic Haskell
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/picasso_owl.jpg" alt="Picasso minimal owl"/>
 </div>
-
 <p>Before continuing you need to be warned about some essential properties of Haskell.</p>
 <p><em>Functional</em></p>
 <p>Haskell is a functional language. If you have an imperative language background, you’ll have to learn a lot of new things. Hopefully many of these new concepts will help you to program even in imperative languages.</p>
@@ -6698,8 +6692,10 @@ Prelude></code></span> let f x y = x*x + y*y
 <pre><code>Num a =&gt; a -&gt; a -&gt; a</code></pre>
 <p>First, let’s focus on the right part <code>a -&gt; a -&gt; a</code>. To understand it, just look at a list of progressive examples:</p>
 <table>
+<colgroup>
 <col width="27%" />
 <col width="72%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">The written type</th>
@@ -6788,7 +6784,6 @@ Essential Haskell
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/kandinsky_gugg.jpg" alt="Kandinsky Gugg"/>
 </div>
-
 <p>I suggest that you skim this part. Think of it as a reference. Haskell has a lot of features. A lot of information is missing here. Come back here if the notation feels strange.</p>
 <p>I use the <code>⇔</code> symbol to state that two expression are equivalent. It is a meta notation, <code>⇔</code> does not exists in Haskell. I will also use <code>⇒</code> to show what the return value of an expression is.</p>
 <h3 id="notations">
@@ -6959,7 +6954,6 @@ Functional style
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/hr_giger_biomechanicallandscape_500.jpg" alt="Biomechanical Landscape by H.R. Giger"/>
 </div>
-
 <p>In this section, I will give a short example of the impressive refactoring ability provided by Haskell. We will select a problem and solve it in a standard imperative way. Then I will make the code evolve. The end result will be both more elegant and easier to adapt.</p>
 <p>Let’s solve the following problem:</p>
 <blockquote>
@@ -7168,7 +7162,6 @@ Higher Order Functions
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/escher_polygon.png" alt="Escher"/>
 </div>
-
 <p>To make things even better we should use higher order functions. What are these beasts? Higher order functions are functions taking functions as parameters.</p>
 <p>Here are some examples:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">filter<span class="ot"> ::</span> (a <span class="ot">-&gt;</span> <span class="dt">Bool</span>) <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [a]
@@ -7293,7 +7286,6 @@ Types
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/salvador-dali-the-madonna-of-port-lligat.jpg" alt="Dali, the madonna of port Lligat"/>
 </div>
-
 <blockquote>
 <p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span></p>
 <ul>
@@ -7472,7 +7464,6 @@ Trees
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/magritte-l-arbre.jpg" alt="Magritte, l"/>
 </div>
-
 <p>We’ll just give another standard example: binary trees.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.List</span>
@@ -7669,7 +7660,6 @@ Infinite Structures
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/escher_infinite_lizards.jpg" alt="Escher"/>
 </div>
-
 <p>It is often said that Haskell is <em>lazy</em>.</p>
 <p>In fact, if you are a bit pedantic, you should say that <a href="http://www.haskell.org/haskellwiki/Lazy_vs._non-strict">Haskell is <em>non-strict</em></a>. Laziness is just a common implementation for non-strict languages.</p>
 <p>Then what does “not-strict” mean? From the Haskell wiki:</p>
@@ -7850,7 +7840,6 @@ Deal With IO
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/magritte_carte_blanche.jpg" alt="Magritte, Carte blanche"/>
 </div>
-
 <blockquote>
 <p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span></p>
 <p>A typical function doing <code>IO</code> looks a lot like an imperative program:</p>
@@ -8017,7 +8006,6 @@ IO trick explained
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/magritte_pipe.jpg" alt="Magritte, ceci n"/>
 </div>
-
 <blockquote>
 <p>Here is a <span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span> for this section.</p>
 <p>To separate pure and impure parts, <code>main</code> is defined as a function which modifies the state of the world</p>
@@ -8266,7 +8254,6 @@ Monads
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/dali_reve.jpg" alt="Dali, reve. It represents a weapon out of the mouth of a tiger, itself out of the mouth of another tiger, itself out of the mouth of a fish itself out of a grenade. I could have choosen a picture of the Human centipede as it is a very good representation of what a monad really is. But just to think about it, I find this disgusting and that wasn"/>
 </div>
-
 <p>Now the secret can be revealed: <code>IO</code> is a <em>monad</em>. Being a monad means you have access to some syntactical sugar with the <code>do</code> notation. But mainly, you have access to a coding pattern which will ease the flow of your code.</p>
 <blockquote>
 <p><strong>Important remarks</strong>:</p>
@@ -8409,7 +8396,6 @@ The list monad
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/golconde.jpg" alt="Golconde de Magritte"/>
 </div>
-
 <p>The list monad helps us to simulate non-deterministic computations. Here we go:</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Control.Monad</span> (guard)
@@ -8687,8 +8673,8 @@ safefilter f l <span class="fu">=</span> safefilter&#39; f l nbTry
 <li>I first tried to implement <code>safefilter</code> as follow:
 <pre>
   safefilter' f l = if filter f (take 10000 l) == []
-                    then []
-                    else filter f l
+                then []
+                else filter f l
   </pre>
   
 Explain why it doesn’t work and can enter into an infinite loop.</li>
@@ -9128,9 +9114,9 @@ getArticleR articleId <span class="fu">=</span> <span class="kw">do</span>
 <span class="kw">&lt;article&gt;</span> #{articleContent article}</code></pre>
 <p>The blog system is finished. Just for fun, you can try to create an article with the following content:</p>
 <pre class="sourceCode html"><code class="sourceCode html">Cross Script:
-<span class="er">   &lt;script&gt;alert(&quot;You loose&quot;);&lt;/script&gt;</span>
+   <span class="kw">&lt;script&gt;</span><span class="fu">alert</span>(<span class="st">&quot;You loose&quot;</span>);&lt;<span class="ot">/script&gt;</span>
 
-SQL injection: &quot;); DROP TABLE ARTICLE;;</code></pre>
+<span class="ot">SQL injection: &quot;</span><span class="fl">)</span><span class="ot">; DROP TABLE ARTICLE;;</span></code></pre>
 <h2 id="conclusion">Conclusion</h2>
 <p>This is the end of this tutorial. I made it very minimal.</p>
 <p>If you already know Haskell and you want to go further, you should take a look at the recent <a href="http://yesodweb.com/blog/2012/01/blog-example">i18n blog tutorial</a>. It will be obvious I inspired my own tutorial on it. You’ll learn in a very straightforward way how easy it is to use authorizations, Time and internationalization.</p>
