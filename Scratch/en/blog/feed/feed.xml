@@ -8835,23 +8835,31 @@ treeFromList&#39; (x<span class="fu">:</span>xs) n <span class="fu">=</span> <sp
 <h2 id="before-the-real-start">Before the real start</h2>
 <h3 id="install">Install</h3>
 <p>The recommended way to install <a href="http://www.haskell.org">Haskell</a> is to download the <a href="http://www.haskell.org/platform">Haskell Platform</a>.</p>
-<p>Once done, you need to install Yesod. Open a terminal session and do:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">~</span> <span class="kw">cabal</span> update
-<span class="kw">~</span> <span class="kw">cabal</span> install yesod yesod-bin cabal-dev</code></pre>
+<p>If you want optimal performances I suggest you to download and compile the latest <a href="http://ghc.haskell.org">GHC Release</a> (at least 7.8). It is generally very easy to install from source. If you go this way, you’ll need to install <a href="http://www.haskell.org/cabal/download.html">cabal</a>. You should use at least cabal 1.18. Don’t forget to add cabal binaries to your PATH. Generally:</p>
+<pre><code>echo &#39;export PATH=$HOME/.cabal/bin:$PATH&#39; &gt;&gt; ~/.profile</code></pre>
+<p>And to be sure you have the latest cabal release:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cabal</span> update
+<span class="kw">cabal</span> install cabal-install</code></pre>
+<p>Once done, you need to install Yesod.</p>
+<p>Then open a terminal session and do:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cabal</span> install yesod-bin</code></pre>
 <p>There are few steps but it should take some time to finish.</p>
 <h3 id="initialize">Initialize</h3>
 <p>You are now ready to initialize your first Yesod project. Open a terminal and type:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">~</span> <span class="kw">yesod</span> init</code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">yesod</span> init</code></pre>
 <p>Enter your name, choose <code>yosog</code> for the project name and enter <code>Yosog</code> for the name of the Foundation. Finally choose <code>sqlite</code>. Now, start the development cycle:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">~</span> <span class="kw">cd</span> yosog
-<span class="kw">~</span> <span class="kw">cabal-dev</span> install <span class="kw">&amp;&amp;</span> <span class="kw">yesod</span> --dev devel</code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cd</span> yosog
+<span class="kw">cabal</span> sandbox init
+<span class="kw">cabal</span> install --enable-tests . yesod-platform yesod-bin --max-backjumps=-1 --reorder-goals
+<span class="kw">yesod</span> devel</code></pre>
 <p>This will compile the entire project. Be patient, since it will take a while the first time. Once finished a server is launched and you can visit it by clicking this link:</p>
 <p><a href="http://localhost:3000"><code>http://localhost:3000</code></a></p>
 <p>Congratulation! Yesod works!</p>
 <blockquote>
 
 <p>Note: if something is messed up use the following command at the command line inside the project directory.</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">\<span class="kw">rm</span> -rf dist/* <span class="kw">;</span> <span class="kw">cabal-dev</span> install <span class="kw">&amp;&amp;</span> <span class="kw">yesod</span> --dev devel</code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash">\<span class="kw">rm</span> -rf .cabal-sandbox cabal.sandbox.config
+<span class="kw">cabal</span> sandbox init <span class="kw">&amp;&amp;</span> <span class="kw">cabal</span> install --enable-tests . yesod-platform yesod-bin --max-backjumps=-1 --reorder-goals <span class="kw">&amp;&amp;</span> <span class="kw">yesod</span> devel</code></pre>
 </blockquote>
 
 <p>For the rest of the tutorial, use another terminal and keep this one open in a corner to see what happens.</p>
@@ -8860,9 +8868,9 @@ treeFromList&#39; (x<span class="fu">:</span>xs) n <span class="fu">=</span> <sp
 <p>Of course this step is not mandatory for the tutorial but it is a good practice.</p>
 </blockquote>
 <p>Fortunately, there is already a <code>.gitignore</code> file into the <code>yosog</code> folder. You just have to initialize your git repository:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">~</span> <span class="kw">git</span> init .
-<span class="kw">~</span> <span class="kw">git</span> add .
-<span class="kw">~</span> <span class="kw">git</span> commit -a -m <span class="st">&quot;Initial yesod commit&quot;</span></code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">git</span> init .
+<span class="kw">git</span> add .
+<span class="kw">git</span> commit -a -m <span class="st">&quot;Initial yesod commit&quot;</span></code></pre>
 <p>We are almost ready to start.</p>
 <h3 id="a-few-words-before-we-start">A few words before we start</h3>
 <p>Up until here, we have a directory containing a bunch of files and a local web server listening the port 3000. If we modify a file inside this directory, Yesod should try to recompile as fast as possible the site. Instead of explaining the role of every file, let’s focus only on the important files/directories for this tutorial:</p>
