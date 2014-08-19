@@ -51,7 +51,7 @@ sudo ./install-haskell.sh</code></pre>
 <p>I’ll certainly update the script once <a href="http://www.stackage.org">stackage</a> goes from beta to production. I’ll try to update the script every 6 month or so. That way I’ll minimize the number of time bug could occurs. And in the same time, library will continue to improve. A bit like the Haskell platform. What this script brings to the table Haskell platform don’t is just the use of <a href="http://www.stackage.org">stackage</a>.</p>
 <p>It is very easy to use, if you prefer you could also go that way. Use Haskell Platform and then edit manually your <code>.cabal/config</code>.</p>
 <p>While it comes to cabal hell, some solutions are sandboxes and <code>nix</code>. Unfortunately, sandboxes didn’t worked good enough for me after some time. Furthermore, sandboxes forces you to re-compile everything by project. If you have three yesod projects for example it means a lot of time and CPU. Also, <code>nix</code> didn’t worked as expected on OS X. So fixing the list of package to a stable list of them seems to me the best pragmatic way to handle the problem today.</p>
-<p>From my point of view, <a href="http://www.stackage.org">stackage</a> is the best step in the right direction. The actual cabal hell problem is more a human problem than a tool problem. This is a bias in most programmer to prefer resolve human issue using tools. There is nothing wrong with hackage and cabal. But for a package manager to work in a static typing language as Haskell, packages much work all together. This is a great strength of static typed languages that they ensure that a big part of the API between package is compatible. But this make the job of package managing far more difficult than in dynamic languages.</p>
+<p>From my point of view, <a href="http://www.stackage.org">stackage</a> is the best step in the right direction. The actual cabal hell problem is more a human problem than a tool problem. This is a bias in most programmer to prefer resolve social issues using tools. There is nothing wrong with hackage and cabal. But for a package manager to work in a static typing language as Haskell, packages much work all together. This is a great strength of static typed languages that they ensure that a big part of the API between package is compatible. But this make the job of package managing far more difficult than in dynamic languages.</p>
 <p>People tend not to respect the rules in package numbering. They break their API all the time. So we need a way to organize all of that. And this is precisely what <a href="http://www.stackage.org">stackage</a> provide. A set of stable packages working all together. So if a developer break its API, it won’t work anymore in stackage. And whether the developer fix its package or all other packages upgrade their usage. During this time, <a href="http://www.stackage.org">stackage</a> end-users will be able to develop without dependency issues.</p>
 <hr />
 <p class="small">
@@ -6539,7 +6539,7 @@ ymandel x y z <span class="fu">=</span> fromIntegral (mandel x y z <span class="
 </div>
 </blockquote>
 </div>
-<div class="intro2">
+<div class="intro">
 <p>I really believe all developers should learn Haskell. I don’t think everyone needs to be super Haskell ninjas, but they should at least discover what Haskell has to offer. Learning Haskell opens your mind.</p>
 <p>Mainstream languages share the same foundations:</p>
 <ul>
@@ -6677,7 +6677,7 @@ Very basic Haskell
 </blockquote>
 <p><em>Laziness</em></p>
 <p>Laziness by default is a very uncommon language design. By default, Haskell evaluates something only when it is needed. In consequence, it provides a very elegant way to manipulate infinite structures, for example.</p>
-<p>A last warning about how you should read Haskell code. For me, it is like reading scientific papers. Some parts are very clear, but when you see a formula, just focus and read slower. Also, while learning Haskell, it <em>really</em> doesn’t matter much if you don’t understand syntax details. If you meet a <code>&gt;&gt;=</code>, <code>&lt;$&gt;</code>, <code>&lt;-</code> or any other weird symbol, just ignore them and follow the flow of the code.</p>
+<p>A last warning about how you should read Haskell code. For me, it is like reading scientific papers. Some parts are very clear, but when you see a formula, just focus and read slower. Also, while learning Haskell, it <em>really</em> doesn’t matter much if you don’t understand syntax details. If you meet a <code>&gt;&gt;=</code>, <code>&lt;$&gt;</code>, <code>&lt;-</code> or any other weird symbol, just ignore them and follows the flow of the code.</p>
 <h4 id="function-declaration">
 Function declaration
 </h4>
@@ -6984,7 +6984,7 @@ square&#39;&#39; x <span class="fu">=</span> (<span class="fu">^</span><span cla
 </div>
 <p>Note we can declare functions with <code>'</code> in their name. Here:</p>
 <blockquote>
-<p><code>square</code> ⇔ <code>square'</code> ⇔ <code>square''</code> ⇔ <code>square'''</code></p>
+<p><code>square</code> ⇔ <code>square'</code> ⇔ <code>square''</code> ⇔ <code>square '''</code></p>
 </blockquote>
 <p><em>Tests</em></p>
 <p>An implementation of the absolute function.</p>
@@ -7334,15 +7334,14 @@ evenSum <span class="fu">=</span> sum&#39; <span class="fu">.</span> (filter eve
 <p>Updating version 10 is extremely easy:</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">squareEvenSum <span class="fu">=</span> sum&#39; <span class="fu">.</span> (filter even) <span class="fu">.</span> (map (<span class="fu">^</span><span class="dv">2</span>))
-squareEvenSum&#39; <span class="fu">=</span> evenSum <span class="fu">.</span> (map (<span class="fu">^</span><span class="dv">2</span>))
-squareEvenSum&#39;&#39; <span class="fu">=</span> sum&#39; <span class="fu">.</span> (map (<span class="fu">^</span><span class="dv">2</span>)) <span class="fu">.</span> (filter even)</code></pre>
+squareEvenSum&#39; <span class="fu">=</span> evenSum <span class="fu">.</span> (map (<span class="fu">^</span><span class="dv">2</span>))</code></pre>
 </div>
-<p>We just had to add another “transformation function”<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a>.</p>
+<p>We just had to add another “transformation function”.</p>
 <pre><code>map (^2) [1,2,3,4] ⇔ [1,4,9,16]</code></pre>
 <p>The <code>map</code> function simply applies a function to all the elements of a list.</p>
 <p>We didn’t have to modify anything <em>inside</em> the function definition. This makes the code more modular. But in addition you can think more mathematically about your function. You can also use your function interchangably with others, as needed. That is, you can compose, map, fold, filter using your new function.</p>
 <p>Modifying version 1 is left as an exercise to the reader ☺.</p>
-<p>If you believe we have reached the end of generalization, then know you are very wrong. For example, there is a way to not only use this function on lists but on any recursive type. If you want to know how, I suggest you to read this quite fun article: <a href="http://eprints.eemcs.utwente.nl/7281/01/db-utwente-40501F46.pdf">Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire by Meijer, Fokkinga and Paterson</a>.</p>
+<p>If you believe we have reached the end of generalization, then know you are very wrong. For example, there is a way to not only use this function on lists but on any recursive type. If you want to know how, I suggest you to read this quite fun article: <a href="http://eprints.eemcs.utwente.nl/7281/0%201/db-utwente-40501F46.pdf">Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire by Meijer, Fokkinga and Paterson</a>.</p>
 <p>This example should show you how great pure functional programming is. Unfortunately, using pure functional programming isn’t well suited to all usages. Or at least such a language hasn’t been found yet.</p>
 <p>One of the great powers of Haskell is the ability to create DSLs (Domain Specific Language) making it easy to change the programming paradigm.</p>
 <p>In fact, Haskell is also great when you want to write imperative style programming. Understanding this was really hard for me to grasp when first learning Haskell. A lot of effort tends to go into explaining the superiority of the functional approach. Then when you start using an imperative style with Haskell, it can be hard to understand when and how to use it.</p>
@@ -7391,7 +7390,7 @@ Prelude&gt; -- load the Data.Complex module
 Prelude&gt; :m Data.Complex
 Prelude Data.Complex&gt; square (2 :+ 1)
 3.0 :+ 4.0</code></pre>
-<p><code>x :+ y</code> is the notation for the complex (<i>x + iy</i>).</p>
+<p><code>x :+ y</code> is the notation for the complex (<i>x + ib</i>).</p>
 <p>Now compare with the amount of code necessary in C:</p>
 <pre class="sourceCode c"><code class="sourceCode c"><span class="dt">int</span>     int_square(<span class="dt">int</span> x) { <span class="kw">return</span> x*x; }
 
@@ -7970,7 +7969,7 @@ main = do
                     -- in this case, generally a = ()</code></pre>
 <p>or</p>
 <pre><code>value &lt;- action2    -- where
-                    -- action2 :: IO b
+                    -- bar z t :: IO b
                     -- value   :: b</code></pre>
 <p>These two kinds of line will correspond to two different ways of sequencing actions. The meaning of this sentence should be clearer by the end of the next section.</p>
 <p><a href="code/03_Hell/01_IO/01_progressive_io_example.lhs" class="cut">03_Hell/01_IO/<strong>01_progressive_io_example.lhs</strong> </a></p>
@@ -7988,7 +7987,7 @@ main = do
 </div>
 <p>What is this thing? <code>Maybe</code> is a type which takes one parameter. Its definition is:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Maybe</span> a <span class="fu">=</span> <span class="dt">Nothing</span> <span class="fu">|</span> <span class="dt">Just</span> a</code></pre>
-<p>This is a nice way to tell there was an error while trying to create/compute a value. The <code>maybeRead</code> function is a great example of this. This is a function similar to the function <code>read</code><a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a>, but if something goes wrong the returned value is <code>Nothing</code>. If the value is right, it returns <code>Just &lt;the value&gt;</code>. Don’t try to understand too much of this function. I use a lower level function than <code>read</code>; <code>reads</code>.</p>
+<p>This is a nice way to tell there was an error while trying to create/compute a value. The <code>maybeRead</code> function is a great example of this. This is a function similar to the function <code>read</code><a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a>, but if something goes wrong the returned value is <code>Nothing</code>. If the value is right, it returns <code>Just &lt;the value&gt;</code>. Don’t try to understand too much of this function. I use a lower level function than <code>read</code>; <code>reads</code>.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">maybeRead ::</span> <span class="dt">Read</span> a <span class="ot">=&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
 maybeRead s <span class="fu">=</span> <span class="kw">case</span> reads s <span class="kw">of</span>
@@ -8061,7 +8060,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 </div>
 <p>We have finished with our introduction to <code>IO</code>. This was quite fast. Here are the main things to remember:</p>
 <ul>
-<li>in the <code>do</code> block, each expression must have the type <code>IO a</code>. You are then limited in the number of expressions available. For example, <code>getLine</code>, <code>print</code>, <code>putStrLn</code>, etc…</li>
+<li>in the <code>do</code> bloc, each expression must have the type <code>IO a</code>. You are then limited in the number of expressions available. For example, <code>getLine</code>, <code>print</code>, <code>putStrLn</code>, etc…</li>
 <li>Try to externalize the pure functions as much as possible.</li>
 <li>the <code>IO a</code> type means: an IO <em>action</em> which returns an element of type <code>a</code>. <code>IO</code> represents actions; under the hood, <code>IO a</code> is the type of a function. Read the next section if you are curious.</li>
 </ul>
@@ -8121,8 +8120,8 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <p>In an impure language, the state of the world can be seen as a huge hidden global variable. This hidden variable is accessible by all functions of your language. For example, you can read and write a file in any function. Whether a file exists or not is a difference in the possible states that the world can take.</p>
 <p>In Haskell this state is not hidden. Rather, it is <em>explicitly</em> said that <code>main</code> is a function that <em>potentially</em> changes the state of the world. Its type is then something like:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">World</span> <span class="ot">-&gt;</span> <span class="dt">World</span></code></pre>
-<p>Not all functions may have access to this variable. Those which have access to this variable are impure. Functions to which the world variable isn’t provided are pure<a href="#fn6" class="footnoteRef" id="fnref6"><sup>6</sup></a>.</p>
-<p>Haskell considers the state of the world as an input variable to <code>main</code>. But the real type of main is closer to this one<a href="#fn7" class="footnoteRef" id="fnref7"><sup>7</sup></a>:</p>
+<p>Not all functions may have access to this variable. Those which have access to this variable are impure. Functions to which the world variable isn’t provided are pure<a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a>.</p>
+<p>Haskell considers the state of the world as an input variable to <code>main</code>. But the real type of main is closer to this one<a href="#fn6" class="footnoteRef" id="fnref6"><sup>6</sup></a>:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">World</span> <span class="ot">-&gt;</span> ((),<span class="dt">World</span>)</code></pre>
 <p>The <code>()</code> type is the unit type. Nothing to see here.</p>
 <p>Now let’s rewrite our main function with this in mind:</p>
@@ -8505,7 +8504,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <li>writing state,</li>
 <li>…</li>
 </ul>
-<p>If you have followed me until here, then you’ve done it! You know monads<a href="#fn8" class="footnoteRef" id="fnref8"><sup>8</sup></a>!</p>
+<p>If you have followed me until here, then you’ve done it! You know monads<a href="#fn7" class="footnoteRef" id="fnref7"><sup>7</sup></a>!</p>
 <p><a href="code/03_Hell/02_Monads/13_Monads.lhs" class="cut">03_Hell/02_Monads/<strong>13_Monads.lhs</strong> </a></p>
 <h2 id="appendix">
 Appendix
@@ -8770,11 +8769,10 @@ treeFromList&#39; (x<span class="fu">:</span>xs) n <span class="fu">=</span> <sp
 <li id="fn1"><p>Even if most recent languages try to hide them, they are present.<a href="#fnref1">↩</a></p></li>
 <li id="fn2"><p>I know I’m cheating. But I will talk about non-strictness later.<a href="#fnref2">↩</a></p></li>
 <li id="fn3"><p>For the brave, a more complete explanation of pattern matching can be found <a href="http://www.cs.auckland.ac.nz/references/haskell/haskell-intro-html/patterns.html">here</a>.<a href="#fnref3">↩</a></p></li>
-<li id="fn4"><p>Notice that <code>squareEvenSum''</code> is more efficient that the two other versions. The order of <code>(.)</code> is important.<a href="#fnref4">↩</a></p></li>
-<li id="fn5"><p>Which itself is very similar to the javascript <code>eval</code> on a string containing JSON).<a href="#fnref5">↩</a></p></li>
-<li id="fn6"><p>There are some <em>unsafe</em> exceptions to this rule. But you shouldn’t see such use in a real application except maybe for debugging purposes.<a href="#fnref6">↩</a></p></li>
-<li id="fn7"><p>For the curious the real type is <code>data IO a = IO {unIO :: State# RealWorld -&gt; (# State# RealWorld, a #)}</code>. All the <code>#</code> has to do with optimisation and I swapped the fields in my example. But this is the basic idea.<a href="#fnref7">↩</a></p></li>
-<li id="fn8"><p>Well, you’ll certainly need to practice a bit to get used to them and to understand when you can use them and create your own. But you already made a big step in this direction.<a href="#fnref8">↩</a></p></li>
+<li id="fn4"><p>Which itself is very similar to the javascript <code>eval</code> on a string containing JSON).<a href="#fnref4">↩</a></p></li>
+<li id="fn5"><p>There are some <em>unsafe</em> exceptions to this rule. But you shouldn’t see such use in a real application except maybe for debugging purposes.<a href="#fnref5">↩</a></p></li>
+<li id="fn6"><p>For the curious the real type is <code>data IO a = IO {unIO :: State# RealWorld -&gt; (# State# RealWorld, a #)}</code>. All the <code>#</code> has to do with optimisation and I swapped the fields in my example. But this is the basic idea.<a href="#fnref6">↩</a></p></li>
+<li id="fn7"><p>Well, you’ll certainly need to practice a bit to get used to them and to understand when you can use them and create your own. But you already made a big step in this direction.<a href="#fnref7">↩</a></p></li>
 </ol>
 </div>]]></summary>
 </entry>
