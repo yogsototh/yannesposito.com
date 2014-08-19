@@ -10,7 +10,6 @@
         <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/solarized.css" />
 		<!-- Font -->
         <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css" />
-        <link href="http://fonts.googleapis.com/css?family=Lato:100,300,700,300italic,700italic" rel="stylesheet" type="text/css">
         <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomfr" />
         <!--[if lt IE 9]>
         <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
@@ -98,7 +97,7 @@
 </div>
 </blockquote>
 </div>
-<div class="intro">
+<div class="intro2">
 <p>Je pense vraiment que tous les développeurs devraient apprendre Haskell. Peut-être pas devenir des ninjas d’Haskell, mais au moins savoir ce que ce langage a de particulier. Son apprentissage ouvre énormément l’esprit.</p>
 <p>La plupart des langages partagent les mêmes fondamentaux :</p>
 <ul>
@@ -544,7 +543,7 @@ square'' x <span class="fu">=</span> (<span class="fu">^</span><span class="dv">
 </div>
 <p>Note we can declare functions with <code>'</code> in their name. Here:</p>
 <blockquote>
-<p><code>square</code> ⇔ <code>square'</code> ⇔ <code>square''</code> ⇔ <code>square '''</code></p>
+<p><code>square</code> ⇔ <code>square'</code> ⇔ <code>square''</code> ⇔ <code>square'''</code></p>
 </blockquote>
 <p><em>Tests</em></p>
 <p>An implementation of the absolute function.</p>
@@ -894,14 +893,15 @@ evenSum <span class="fu">=</span> sum' <span class="fu">.</span> (filter even)
 <p>Updating version 10 is extremely easy:</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">squareEvenSum <span class="fu">=</span> sum' <span class="fu">.</span> (filter even) <span class="fu">.</span> (map (<span class="fu">^</span><span class="dv">2</span>))
-squareEvenSum' <span class="fu">=</span> evenSum <span class="fu">.</span> (map (<span class="fu">^</span><span class="dv">2</span>))</code></pre>
+squareEvenSum' <span class="fu">=</span> evenSum <span class="fu">.</span> (map (<span class="fu">^</span><span class="dv">2</span>))
+squareEvenSum'' <span class="fu">=</span> sum' <span class="fu">.</span> (map (<span class="fu">^</span><span class="dv">2</span>)) <span class="fu">.</span> (filter even)</code></pre>
 </div>
 <p>We just had to add another “transformation function”<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a>.</p>
 <pre><code>map (^2) [1,2,3,4] ⇔ [1,4,9,16]</code></pre>
 <p>The <code>map</code> function simply applies a function to all the elements of a list.</p>
 <p>We didn’t have to modify anything <em>inside</em> the function definition. This makes the code more modular. But in addition you can think more mathematically about your function. You can also use your function interchangably with others, as needed. That is, you can compose, map, fold, filter using your new function.</p>
 <p>Modifying version 1 is left as an exercise to the reader ☺.</p>
-<p>If you believe we have reached the end of generalization, then know you are very wrong. For example, there is a way to not only use this function on lists but on any recursive type. If you want to know how, I suggest you to read this quite fun article: <a href="http://eprints.eemcs.utwente.nl/7281/0%201/db-utwente-40501F46.pdf">Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire by Meijer, Fokkinga and Paterson</a>.</p>
+<p>If you believe we have reached the end of generalization, then know you are very wrong. For example, there is a way to not only use this function on lists but on any recursive type. If you want to know how, I suggest you to read this quite fun article: <a href="http://eprints.eemcs.utwente.nl/7281/01/db-utwente-40501F46.pdf">Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire by Meijer, Fokkinga and Paterson</a>.</p>
 <p>This example should show you how great pure functional programming is. Unfortunately, using pure functional programming isn’t well suited to all usages. Or at least such a language hasn’t been found yet.</p>
 <p>One of the great powers of Haskell is the ability to create DSLs (Domain Specific Language) making it easy to change the programming paradigm.</p>
 <p>In fact, Haskell is also great when you want to write imperative style programming. Understanding this was really hard for me to grasp when first learning Haskell. A lot of effort tends to go into explaining the superiority of the functional approach. Then when you start using an imperative style with Haskell, it can be hard to understand when and how to use it.</p>
@@ -950,7 +950,7 @@ Prelude&gt; -- load the Data.Complex module
 Prelude&gt; :m Data.Complex
 Prelude Data.Complex&gt; square (2 :+ 1)
 3.0 :+ 4.0</code></pre>
-<p><code>x :+ y</code> is the notation for the complex (<i>x + ib</i>).</p>
+<p><code>x :+ y</code> is the notation for the complex (<i>x + iy</i>).</p>
 <p>Now compare with the amount of code necessary in C:</p>
 <pre class="sourceCode c"><code class="sourceCode c"><span class="dt">int</span>     int_square(<span class="dt">int</span> x) { <span class="kw">return</span> x*x; }
 
@@ -1529,7 +1529,7 @@ main = do
                     -- in this case, generally a = ()</code></pre>
 <p>or</p>
 <pre><code>value &lt;- action2    -- where
-                    -- bar z t :: IO b
+                    -- action2 :: IO b
                     -- value   :: b</code></pre>
 <p>These two kinds of line will correspond to two different ways of sequencing actions. The meaning of this sentence should be clearer by the end of the next section.</p>
 <p><a href="code/03_Hell/01_IO/01_progressive_io_example.lhs" class="cut">03_Hell/01_IO/<strong>01_progressive_io_example.lhs</strong> </a></p>
@@ -1620,7 +1620,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 </div>
 <p>We have finished with our introduction to <code>IO</code>. This was quite fast. Here are the main things to remember:</p>
 <ul>
-<li>in the <code>do</code> bloc, each expression must have the type <code>IO a</code>. You are then limited in the number of expressions available. For example, <code>getLine</code>, <code>print</code>, <code>putStrLn</code>, etc…</li>
+<li>in the <code>do</code> block, each expression must have the type <code>IO a</code>. You are then limited in the number of expressions available. For example, <code>getLine</code>, <code>print</code>, <code>putStrLn</code>, etc…</li>
 <li>Try to externalize the pure functions as much as possible.</li>
 <li>the <code>IO a</code> type means: an IO <em>action</em> which returns an element of type <code>a</code>. <code>IO</code> represents actions; under the hood, <code>IO a</code> is the type of a function. Read the next section if you are curious.</li>
 </ul>
