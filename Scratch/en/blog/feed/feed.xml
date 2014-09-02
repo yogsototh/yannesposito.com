@@ -6653,7 +6653,7 @@ puts <span class="st">&quot;Hello </span><span class="ot">#{</span>name<span cla
     <span class="kw">return</span> <span class="dv">0</span>;
 }</code></pre>
 <p>The structure is the same, but there are some syntax differences. The main part of this tutorial will be dedicated to explaining why.</p>
-<p>In Haskell there is a <code>main</code> function and every object has a type. The type of <code>main</code> is <code>IO ()</code>. This means <code>main</code> will cause side effects.</p>
+<p>In Haskell there is a <code>main</code> function and every object has a type. The type of <code>main</code> is <code>IO ()</code>. This means <code>main</code> will cause side effects. expliquer cela.</p>
 <p>Just remember that Haskell can look a lot like mainstream imperative languages.</p>
 <p><a href="code/01_basic/10_Introduction/10_hello_you.lhs" class="cut">01_basic/10_Introduction/<strong>10_hello_you.lhs</strong> </a></p>
 <hr/>
@@ -6711,13 +6711,12 @@ A Type Example
 </h4>
 
 <p>Although it is not mandatory, type information for functions is usually made explicit. It’s not mandatory because the compiler is smart enough to discover it for you. It’s a good idea because it indicates intent and understanding.</p>
-<p>Let’s play a little.</p>
+<p>Let’s play a little. We declare the type using <code>::</code></p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- We declare the type using ::</span>
-<span class="ot">f ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
-f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot"> f ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
+ f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
 
-main <span class="fu">=</span> print (f <span class="dv">2</span> <span class="dv">3</span>)</code></pre>
+ main <span class="fu">=</span> print (f <span class="dv">2</span> <span class="dv">3</span>)</code></pre>
 </div>
 <pre><code>~ runhaskell 20_very_basic.lhs
 13</code></pre>
@@ -6846,8 +6845,11 @@ f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</
 <span class="ot">x ::</span> <span class="dt">Int</span>
 x <span class="fu">=</span> <span class="dv">3</span>
 <span class="ot">y ::</span> <span class="dt">Float</span>
-y <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">4</span>
-main <span class="fu">=</span> print (f x y) <span class="co">-- won&#39;t work because type x ≠ type y</span></code></pre>
+y <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">4</span></code></pre>
+</div>
+en: &gt; – won’t work because type x ≠ type y
+<div class="codehighlight">
+<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print (f x y)</code></pre>
 </div>
 <p>The compiler complains. The two parameters must have the same type.</p>
 <p>If you believe that this is a bad idea, and that the compiler should make the transformation from one type to another for you, you should really watch this great (and funny) video: <a href="https://www.destroyallsoftware.com/talks/wat">WAT</a></p>
@@ -6883,7 +6885,9 @@ Powers
 </h5>
 
 <pre><code>x^n     for n an integral (understand Int or Integer)
-x**y    for y any kind of number (Float for example)</code></pre>
+x**y    for y any kind of number (Float for example)
+x^n     pour n un entier (comprenez Int ou Integer)
+x**y    pour y tout type de nombre (Float par exemple)</code></pre>
 <p><code>Integer</code> has no limit except the capacity of your machine:</p>
 <pre><code>4^103
 102844034832575377634685573909834406561420991602098741459288064</code></pre>
@@ -6985,7 +6989,7 @@ square&#39;&#39; x <span class="fu">=</span> (<span class="fu">^</span><span cla
 </div>
 <p>Note we can declare functions with <code>'</code> in their name. Here:</p>
 <blockquote>
-<p><code>square</code> ⇔ <code>square'</code> ⇔ <code>square''</code> ⇔ <code>square '''</code></p>
+<p><code>square</code> ⇔ <code>square'</code> ⇔ <code>square''</code> ⇔ <code>square'''</code></p>
 </blockquote>
 <p><em>Tests</em></p>
 <p>An implementation of the absolute function.</p>
@@ -7342,7 +7346,7 @@ squareEvenSum&#39; <span class="fu">=</span> evenSum <span class="fu">.</span> (
 <p>The <code>map</code> function simply applies a function to all the elements of a list.</p>
 <p>We didn’t have to modify anything <em>inside</em> the function definition. This makes the code more modular. But in addition you can think more mathematically about your function. You can also use your function interchangably with others, as needed. That is, you can compose, map, fold, filter using your new function.</p>
 <p>Modifying version 1 is left as an exercise to the reader ☺.</p>
-<p>If you believe we have reached the end of generalization, then know you are very wrong. For example, there is a way to not only use this function on lists but on any recursive type. If you want to know how, I suggest you to read this quite fun article: <a href="http://eprints.eemcs.utwente.nl/7281/0%201/db-utwente-40501F46.pdf">Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire by Meijer, Fokkinga and Paterson</a>.</p>
+<p>If you believe we have reached the end of generalization, then know you are very wrong. For example, there is a way to not only use this function on lists but on any recursive type. If you want to know how, I suggest you to read this quite fun article: <a href="http://eprints.eemcs.utwente.nl/7281/01/db-utwente-40501F46.pdf">Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire by Meijer, Fokkinga and Paterson</a>.</p>
 <p>This example should show you how great pure functional programming is. Unfortunately, using pure functional programming isn’t well suited to all usages. Or at least such a language hasn’t been found yet.</p>
 <p>One of the great powers of Haskell is the ability to create DSLs (Domain Specific Language) making it easy to change the programming paradigm.</p>
 <p>In fact, Haskell is also great when you want to write imperative style programming. Understanding this was really hard for me to grasp when first learning Haskell. A lot of effort tends to go into explaining the superiority of the functional approach. Then when you start using an imperative style with Haskell, it can be hard to understand when and how to use it.</p>
@@ -7406,27 +7410,9 @@ complex complex_square (complex z) {
 complex x,y;
 y = complex_square(x);</code></pre>
 <p>For each type, you need to write a new function. The only way to work around this problem is to use some meta-programming trick, for example using the pre-processor. In C++ there is a better way, C++ templates:</p>
-<pre><code>#include &lt;iostream&gt;
-#include &lt;complex&gt;
-using namespace std;
-
-template&lt;typename T&gt;
-T square(T x)
-{
-    return x*x;
-}
-
-int main() {
-    // int
-    int sqr_of_five = square(5);
-    cout &lt;&lt; sqr_of_five &lt;&lt; endl;
-    // double
-    cout &lt;&lt; (double)square(5.3) &lt;&lt; endl;
-    // complex
-    cout &lt;&lt; square( complex&lt;double&gt;(5,3) )
-         &lt;&lt; endl;
-    return 0;
-}</code></pre>
+<p><sub><sub>~</sub></sub>~ {.c++} #include <iostream> #include <complex> using namespace std;</p>
+<p>template<typename T> T square(T x) { return x*x; }</p>
+<p>int main() { // int int sqr_of_five = square(5); cout &lt;&lt; sqr_of_five &lt;&lt; endl; // double cout &lt;&lt; (double)square(5.3) &lt;&lt; endl; // complex cout &lt;&lt; square( complex<double>(5,3) ) &lt;&lt; endl; return 0; } <sub><sub>~</sub></sub>~</p>
 <p>C++ does a far better job than C in this regard. But for more complex functions the syntax can be hard to follow: see <a href="http://bartoszmilewski.com/2009/10/21/what-does-haskell-have-to-do-with-c/">this article</a> for example.</p>
 <p>In C++ you must declare that a function can work with different types. In Haskell, the opposite is the case. The function will be as general as possible by default.</p>
 <p>Type inference gives Haskell the feeling of freedom that dynamically typed languages provide. But unlike dynamically typed languages, most errors are caught before run time. Generally, in Haskell:</p>
@@ -7970,7 +7956,7 @@ main = do
                     -- in this case, generally a = ()</code></pre>
 <p>or</p>
 <pre><code>value &lt;- action2    -- where
-                    -- bar z t :: IO b
+                    -- action2 :: IO b
                     -- value   :: b</code></pre>
 <p>These two kinds of line will correspond to two different ways of sequencing actions. The meaning of this sentence should be clearer by the end of the next section.</p>
 <p><a href="code/03_Hell/01_IO/01_progressive_io_example.lhs" class="cut">03_Hell/01_IO/<strong>01_progressive_io_example.lhs</strong> </a></p>
@@ -8061,7 +8047,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 </div>
 <p>We have finished with our introduction to <code>IO</code>. This was quite fast. Here are the main things to remember:</p>
 <ul>
-<li>in the <code>do</code> bloc, each expression must have the type <code>IO a</code>. You are then limited in the number of expressions available. For example, <code>getLine</code>, <code>print</code>, <code>putStrLn</code>, etc…</li>
+<li>in the <code>do</code> block, each expression must have the type <code>IO a</code>. You are then limited in the number of expressions available. For example, <code>getLine</code>, <code>print</code>, <code>putStrLn</code>, etc…</li>
 <li>Try to externalize the pure functions as much as possible.</li>
 <li>the <code>IO a</code> type means: an IO <em>action</em> which returns an element of type <code>a</code>. <code>IO</code> represents actions; under the hood, <code>IO a</code> is the type of a function. Read the next section if you are curious.</li>
 </ul>

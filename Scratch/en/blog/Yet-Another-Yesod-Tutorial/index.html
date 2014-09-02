@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>YBlog - Yet Another Yesod Tutorial</title>
+        <meta name="keywords" content="programming" />
+
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/modern.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/solarized.css" />
+		<!-- Font -->
+        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomen" />
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+
+    </head>
+    <body lang="en" class="article">
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	        <div id="choixlang">
+                        <a href="../../../../Scratch/fr/blog/Yet-Another-Yesod-Tutorial/">French</a> 
+        	        </div>
+					<div id="switchcss"><a href="#">Change Theme</a></div>
+                    <div class="tomenu"><a href="#navigation">↓ Menu ↓</a></div>
+        	        <div class="flush"></div>
+        	    </div>
+			</div>
+
+			<div id="titre">
+				<h1>Yet Another Yesod Tutorial</h1>
+				
+			</div>
+			<div class="flush"></div>
+			<div id="afterheader" class="article">
+				<div class="corps">
+					<div>
+<img src="../../../../Scratch/img/blog/Yet-Another-Yesod-Tutorial/main.png" alt="Main image" />
+</div>
+<div class="intro">
+<p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span></p>
+</div>
+<p>You heard many good things about Haskell. You wonder how to use it? What the fuss is all about?</p>
+<p>You are in the right place. Start using Haskell for Web Programming in not time.</p>
+<p>Since my <a href="Scratch/en/blog/Yesod-tutorial-for-newbies">previous tutorial</a> I learned many things in Haskell and Yesod.</p>
+<p>What changed since?</p>
+<p>Installation should be quite straightforward.</p>
+<p>If you don’t know Haskell, I made my best to help you follow this tutorial. I you are not used to read Haskell, just try to follow the flow. Generally, if you encounter a special character or a strange syntax, don’t be afraid. Try not to search what this particular syntax is doing.</p>
+<p>Nonetheless, if you find yourself stuck by reading this tutorial, you should at least read the firsts parts of my <a href="https://www.fpcomplete.com/school/to-infinity-and-beyond/pick-of-the-week/haskell-fast-hard">“Haskell Fast &amp; Hard”</a> tutorial<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> and come here again after.</p>
+<h2 id="starting">Starting</h2>
+<ol style="list-style-type: decimal">
+<li>Install Haskell</li>
+</ol>
+<p>If you are on Linux don’t forget to install <code>zsh</code> and the <code>gmp</code> library. If you are on windows, download the Haskell Platform.</p>
+<pre><code>curl -O https://raw.githubusercontent.com/yogsototh/install-haskell/master/install-haskell.sh
+chmod ugo+x install-haskell.sh
+sudo ./install-haskell.sh $USER</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Install Yesod</li>
+</ol>
+<pre><code>cabal install yesod-bin</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Create your first project</li>
+</ol>
+<pre><code>yesod init</code></pre>
+<ul>
+<li>Use the name soggoth</li>
+<li>Select SQLite version (option <code>s</code>)</li>
+</ul>
+<p>At the end of the process you have a nice message. Do not follow the advice (do not use cabal sandbox).</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Install libraries</li>
+</ol>
+<pre><code>cd soggoth
+cabal install -j --only-dependencies --enable-tests .</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>Develop</li>
+</ol>
+<pre><code>yesod devel</code></pre>
+<p>Now visit <a href="http://localhost:3000">http://localhost:3000</a>.</p>
+<p>Congratulations! Your first yesod application works. Keep this terminal open and continue in another terminal.</p>
+<h2 id="firsts-steps">Firsts steps</h2>
+<p>The <code>yesod init</code> command created a lot of files. In this tutorial we will focus only on few of them.</p>
+<pre><code>Foundation.hs      ← Some configuration/init code here
+Handler/           ← Most of your code here
+    Home.hs        ← A dummy route handler
+config/            ← Routes, Models, etc...
+    models         ← Model definition
+    routes         ← Route definition
+static/            ← Static assets
+templates/         ← Templates (HTML/CSS/JS)</code></pre>
+<p>We should start by reading the latest line of <code>config/routes</code>:</p>
+<pre><code>/ HomeR GET POST</code></pre>
+<p>This line declare the route <code>/</code> should be served by the Haskell function <code>getHomeR</code> and <code>postHomeR</code>.</p>
+<p>These functions are declared in <code>Handler/Home.hs</code>. We won’t read them for now. Instead we will create a new route. But before all this. Let’s start by using git.</p>
+<pre><code>echo '*.sqlite3' &gt;&gt; .gitignore
+git init .
+git add .
+git commit -m &quot;fresh new yesod application&quot;</code></pre>
+<pre><code>~/S/soggoth git:master ❯❯❯ yesod add-handler
+Name of route (without trailing R): Cats
+Enter route pattern (ex: /entry/#EntryId): /cats
+Enter space-separated list of methods (ex: GET POST): GET</code></pre>
+<p>And now let’s take a look at <a href="http://localhost:3000/cats">http://localhost:3000/cats</a>.</p>
+<p>You should get an <code>Internal Server Error</code> with the clear message <code>Not yet implemented: getCatsR</code>.</p>
+<p>The last command created a new file. Open it:</p>
+<pre><code>Handler/Cats.hs</code></pre>
+<p>It contains:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Cats</span> <span class="kw">where</span>
+
+<span class="kw">import </span><span class="dt">Import</span>
+
+<span class="ot">getCatsR ::</span> <span class="dt">Handler</span> <span class="dt">Html</span>
+getCatsR <span class="fu">=</span> error <span class="st">&quot;Not yet implemented: getCatsR&quot;</span></code></pre>
+<p>At first, we write a simple minimal page.</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Cats</span> <span class="kw">where</span>
+
+<span class="kw">import </span><span class="dt">Import</span>
+
+<span class="ot">getCatsR ::</span> <span class="dt">Handler</span> <span class="dt">Html</span>
+getCatsR <span class="fu">=</span> <span class="kw">do</span>
+    defaultLayout <span class="fu">$</span> [whamlet<span class="fu">|</span>
+        <span class="fu">&lt;</span>div <span class="fu">.</span>hero<span class="fu">-</span>unit<span class="fu">&gt;</span>
+          <span class="fu">&lt;</span>h1<span class="fu">&gt;</span><span class="dt">Some</span> <span class="dt">Cats</span>
+        <span class="fu">&lt;</span>div <span class="fu">.</span>container<span class="fu">&gt;</span>
+          <span class="fu">&lt;</span>div <span class="fu">.</span>row<span class="fu">&gt;</span>
+            <span class="fu">&lt;</span>div <span class="fu">.</span>span4<span class="fu">&gt;</span>
+              <span class="fu">&lt;</span>h2<span class="fu">&gt;</span><span class="dt">Persian</span>
+              <span class="fu">&lt;</span>p<span class="fu">&gt;</span><span class="dt">The</span> <span class="dt">Persian</span> cat
+            <span class="fu">&lt;</span>div <span class="fu">.</span>span4<span class="fu">&gt;</span>
+              <span class="fu">&lt;</span>h2<span class="fu">&gt;</span><span class="dt">Savannah</span>
+              <span class="fu">&lt;</span>p<span class="fu">&gt;</span><span class="dt">The</span> <span class="dt">Savannah</span> cat
+            <span class="fu">&lt;</span>div <span class="fu">.</span>span4<span class="fu">&gt;</span>
+              <span class="fu">&lt;</span>h2<span class="fu">&gt;</span><span class="dt">Siamese</span>
+              <span class="fu">&lt;</span>p<span class="fu">&gt;</span><span class="dt">The</span> <span class="dt">Siamese</span> cat
+            <span class="fu">|</span>]</code></pre>
+<p>Now take a look at <a href="http://localhost:3000/cats">http://localhost:3000/cats</a></p>
+<p>The syntax inside the <code>[whamlet| ... |]</code> is hamlet syntax.</p>
+<p>At first you could look at it as a tabbed <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> without closing tags. The <code>&lt;div .row&gt;...</code> is translated to <code>&lt;div class=&quot;row&quot;&gt;...&lt;/div&gt;</code>.</p>
+<p>But to make things a bit cleaner. We will put the HTML code in an external template.</p>
+<p>Create a file <code>templates/cats.hamlet</code> containing:</p>
+<pre><code>&lt;div .hero-unit&gt;
+  &lt;h1&gt;Some Cats
+&lt;div .container&gt;
+  &lt;div .row&gt;
+    &lt;div .span4&gt;
+      &lt;h2&gt;Persian
+      &lt;p&gt;The Persian cat
+    &lt;div .span4&gt;
+      &lt;h2&gt;Savannah
+      &lt;p&gt;The Savannah cat
+    &lt;div .span4&gt;
+      &lt;h2&gt;Siamese
+      &lt;p&gt;The Siamese cat</code></pre>
+<p>And replace the code in <code>Handler/Cats.hs</code> by:</p>
+<pre><code>module Handler.Cats where
+
+import Import
+
+getCatsR :: Handler Html
+getCatsR = do
+    defaultLayout <span class="highlight">$(widgetFile &quot;cats&quot;)</span></code></pre>
+<p>Now things are quite cleaner.</p>
+<p>The <code>defaultLayout</code> function is defined in <code>Foundation.hs</code>. It takes a widget as input and return a <code>Handler Html</code>.</p>
+<p>But there are many things to improve.</p>
+<h4 id="add-a-title">Add a Title</h4>
+<p>The title at the top of your web browser is not set. To set it, use the directive <code>setTitle</code>:</p>
+<pre><code>module Handler.Cats where
+
+import Import
+
+getCatsR :: Handler Html
+getCatsR = do
+    defaultLayout <span class="highlight">$ do</span>
+        <span class="highlight">setTitle &quot;Some Cats&quot;</span>
+        $(widgetFile &quot;cats&quot;)</code></pre>
+<p>That is better. One important thing to remark is that:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">do</span>
+  setTitle <span class="st">&quot;Some Cats&quot;</span>
+  <span class="fu">$</span>(widgetFile <span class="st">&quot;cats&quot;</span>)</code></pre>
+<p>is still a widget. It is the widget generated by the file <code>cats.hamlet</code> but slightly modified by changing its title. There are some other operations you can do to widgets. For example you can add <span class="sc">css</span> or include some javascript.</p>
+<p>For now we didn’t made much. We installed yesod and created a boring handler to handle requests on the <code>/cats</code> route.</p>
+<p>While very basic, we already have a wrapper around our <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span>. So we only need to write the content. But it is now time to do some real stuff.</p>
+<h2 id="multiple-representations-restful-cats">Multiple Representations RESTful Cats!</h2>
+<p>So to be RESTful, here are the operations:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">HTTP Verb</th>
+<th align="left">Route</th>
+<th align="left">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>GET</code></td>
+<td align="left"><code>/cats</code></td>
+<td align="left">Read a list of all cats</td>
+</tr>
+<tr class="even">
+<td align="left"><code>PUT</code></td>
+<td align="left"><code>/cats</code></td>
+<td align="left"><strong>C</strong>reate a new cat and returns its id</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>GET</code></td>
+<td align="left"><code>/cats/#CatUID</code></td>
+<td align="left"><strong>R</strong>ead the cat</td>
+</tr>
+<tr class="even">
+<td align="left"><code>PUT</code></td>
+<td align="left"><code>/cats/#CatUID</code></td>
+<td align="left"><strong>U</strong>pdate the cat</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>DELETE</code></td>
+<td align="left"><code>/cats/#CatUID</code></td>
+<td align="left"><strong>D</strong>elete the cat</td>
+</tr>
+</tbody>
+</table>
+<p>I don’t want to give the user the ability to provide directly an unique id for cat creation. This is why I use only <code>PUT</code> on <code>/cats</code> instead of <code>POST</code> on <code>/cat/#CatUID</code>.</p>
+<h3 id="declaration">Declaration</h3>
+<p>We should declare another route and update our handler.</p>
+<p>Modify <code>/config/routes</code>:</p>
+<pre><code>/cats        CatsR   GET PUT
+/cats/#Text  CatR    GET PUT DELETE</code></pre>
+<p>I tend not to use two different handler for the same resource. So let us start by creating some dummy handlers. Update the <code>Handler/Cats.hs</code> file as follow:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Cats</span> <span class="kw">where</span>
+
+<span class="kw">import </span><span class="dt">Import</span>
+
+<span class="ot">getCatsR ::</span> <span class="dt">Handler</span> <span class="dt">Html</span>
+getCatsR <span class="fu">=</span> <span class="kw">do</span>
+  defaultLayout <span class="fu">$</span> <span class="kw">do</span>
+    setTitle <span class="st">&quot;Some Cats&quot;</span>
+    <span class="fu">$</span>(widgetFile <span class="st">&quot;cats&quot;</span>)
+
+<span class="ot">putCatsR ::</span> <span class="dt">Handler</span> <span class="dt">Html</span>
+putCatsR <span class="fu">=</span> error <span class="st">&quot;putCatsR not yet defined&quot;</span>
+
+<span class="ot">getCatR ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">Html</span>
+getCatR _ <span class="fu">=</span> error <span class="st">&quot;getCatR not yet defined&quot;</span>
+
+<span class="ot">putCatR ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">Html</span>
+putCatR _ <span class="fu">=</span> error <span class="st">&quot;getCatR not yet defined&quot;</span>
+
+<span class="ot">deleteCatR ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">Html</span>
+deleteCatR _ <span class="fu">=</span> error <span class="st">&quot;getCatR not yet defined&quot;</span></code></pre>
+<p>Until here there are still some yesod errors. We need to define a cat model. So open <code>config/models</code> and add the following block:</p>
+<pre><code>Cat json
+    name        Text
+    age         Int  Maybe
+    UniqueCat name</code></pre>
+<p>There is a lot to say in the very small block of text. We declared a <code>Cat</code> model.</p>
+<p>The <code>json</code> close to <code>Cat</code> means that Haskell will generate a json instance of <code>Cat</code> for us. Mainly it signify we will be able to generate the representation of a cat in json with no need of writing any code manually.</p>
+<p>Then we declare each field of a cat. The field named <code>name</code> which is of type <code>Text</code> (mandatory). The field <code>age</code>; the <code>Maybe</code> means its type will be <code>Maybe Int</code> meaning <code>age</code> isn’t a mandatory field for a <code>Cat</code>. The last line <code>UniqueCat name</code> declare that each <code>Cat</code>’s <code>name</code> is unique. So <code>name</code> can be considered as an index.</p>
+<p>There are two fixes to make:</p>
+<ul>
+<li>declare the datatype <code>Text</code> in <code>Foundation.hs</code>. So add the following import:</li>
+</ul>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Text</span> (<span class="dt">Text</span>)</code></pre>
+<ul>
+<li>Add <code>FlexibleInstances</code> ghc extension to <code>Model.hs</code>. So add the following line at the top of <code>Model.hs</code>:</li>
+</ul>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE FlexibleInstances #-}</span></code></pre>
+<p>If you want to see all modifications more precisely. Look at this <a href="https://github.com/yogsototh/soggoth/commit/167d320e4b7300b333fb892fec5675fb7392b951">commit on github</a>.</p>
+<h3 id="cat-creation">Cat Creation</h3>
+<div>
+<img src="../../../../Scratch/img/blog/Yet-Another-Yesod-Tutorial/cute_kitten.jpg" alt="A cute kitten by [skylertrinityrapture][kittenimage]" />
+</div>
+<p>So here are the steps to take.</p>
+<ol style="list-style-type: decimal">
+<li>We need to declare the list of HTTP parameter we need to create a cat.</li>
+<li>We need to parse them</li>
+<li>We need to create a Cat data structure from the parsing result</li>
+<li>We need to put this Cat data structure in DB somehow</li>
+<li>We need to provide a nice answer to our user or a nice error message.</li>
+</ol>
+<p>Be prepared. Yesod handle a lot of these step automagically. But that might not be evident first. I’ll try to explain how yesod handle all of this quite slowly. But don’t worry. Even if you don’t understand everything at first. Understanding how it works in details is not necessary to understand how to use it.</p>
+<p>When we have written the model file, yesod created a Data structure Record for us:</p>
+<pre><code>data Cat = Cat {catName :: Text, catAge :: Maybe Int }</code></pre>
+<p>So in our <code>import</code> we have this data structure declared for us. You can create a cat instance like this for example:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">cat <span class="fu">=</span> <span class="dt">Cat</span> <span class="st">&quot;happy&quot;</span> (<span class="dt">Just</span> <span class="dv">3</span>)
+<span class="co">-- or its equivalent</span>
+cat <span class="fu">=</span> <span class="dt">Cat</span> { catName <span class="fu">=</span> <span class="st">&quot;happy&quot;</span>, catAge <span class="fu">=</span> <span class="dt">Just</span> <span class="dv">3</span> }</code></pre>
+<p>So we need to fill this record structure somehow with the parameter provided by the HTTP Request. The way of doing this is by using <code>runInputPost</code>.</p>
+<p>A first method is this one:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">putCatsR <span class="fu">=</span> <span class="kw">do</span>
+    name <span class="ot">&lt;-</span> runInputPost <span class="fu">$</span> ireq textField <span class="st">&quot;name&quot;</span>
+    age <span class="ot">&lt;-</span> runInputPost <span class="fu">$</span> ireq textField <span class="st">&quot;age&quot;</span>
+    <span class="kw">let</span> cat <span class="fu">=</span> <span class="dt">Cat</span> name age
+    <span class="fu">...</span></code></pre>
+<p>But the equivalent and easiest way for doing so is like this:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">putCatsR <span class="fu">=</span> <span class="kw">do</span>
+  cat <span class="ot">&lt;-</span> runInputPost <span class="fu">$</span> <span class="dt">Cat</span>
+                <span class="fu">&lt;$&gt;</span> ireq textField <span class="st">&quot;name&quot;</span>
+                <span class="fu">&lt;*&gt;</span> iopt intField <span class="st">&quot;age&quot;</span>
+  <span class="fu">...</span></code></pre>
+<p>That is a strange syntax we have here. What does it means and how does that work?</p>
+<p>The <code>&lt;$&gt;</code> and <code>&lt;*&gt;</code> operators are Applicative ones. If you don’t know what applicative functor are, don’t worry. Simply read it as:</p>
+<pre><code>cat = Cat (get-required-param &quot;name&quot;)
+          (get-optional-param &quot;age&quot;)
+
+-- or its equivalent
+
+cat = Cat { catName = (get-required-param &quot;name&quot;)
+          , catAge  = (get-optional-param &quot;age&quot;) }</code></pre>
+<p>But the problem for Haskell is that the <code>get-required-param &quot;name&quot;</code> Doesn’t return a <code>Text</code> but a <code>FormInput m Text</code>. So the applicative operators simply extract the <code>Text</code> result from the <code>FormInput m Text</code>.</p>
+<p>Don’t worry if this is unclear. Understanding how it works precisely is not necessary to use it.</p>
+<p>So now we have a cat object constructed using the content of the <code>name</code> and <code>age</code> HTTP parameters. Now we need to put them inside the database.</p>
+<p>And here is the magic:</p>
+<pre><code>putCatsR = do
+  cat &lt;- runInputPost $ Cat
+                &lt;$&gt; ireq textField &quot;name&quot;
+                &lt;*&gt; iopt intField &quot;age&quot;
+  <span class="highlight">runDB $ insert cat</span>
+  defaultLayout [whamlet|New Cat Created|]</code></pre>
+<p>How the hell such a command can work? If you take the time to think of it. This is quite mind-blowing. We simply ask to insert the object cat. And yesod is able, to determine:</p>
+<ul>
+<li>that the <code>cat</code> variable is a <code>Cat</code> object</li>
+<li>how to insert a <code>Cat</code> in DB</li>
+</ul>
+<p>And for this, we only had to declare 4 lines in <code>config/models</code>. What I find really mind-blowing is not only that the code is quite terse. It is the high degree of control we could achieve with yesod while being so terse. Just follow me a bit more and you’ll see what I mean by that.</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">curl</span> -XPUT -d<span class="st">'name=happy'</span> localhost:3000/cats</code></pre>
+<h3 id="json">JSON</h3>
+<p>Next, we want to provide a json API. Being RESTful, the right way to achieve this is by providing the type of content we want in the HTTP Header.</p>
+<p>So to achieve this we simply modify slightly our <code>putCatsR</code> definition:</p>
+<pre><code>putCatsR :: Handler <span class="highlight">TypedContent</span>
+putCatsR = do
+  -- Get the POST Parameters and Put them in a Cat Data structure
+  cat &lt;- runInputPost $ Cat
+                &lt;$&gt; ireq textField &quot;name&quot;
+                &lt;*&gt; iopt intField  &quot;age&quot;
+  -- Insert the new cat in the DB
+  runDB $ insert cat
+  <span class="highlight">selectRep $ do</span>
+    <span class="highlight">provideRep $</span> defaultLayout [whamlet|New Cat Created|]
+    <span class="highlight">provideRep $ return $ toJSON cat</span></code></pre>
+<p>Another mind-blowing ability. It is more an Haskell one than a yesod one. The <code>toJSON</code> function works flawlessly on <code>cat</code>.</p>
+<p>Now try this:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">&gt;</span> <span class="kw">curl</span> -XPUT -H <span class="st">&quot;Accept: application/json&quot;</span> -d<span class="st">'name=epice'</span> localhost:3000/cats
+<span class="dt">{&quot;age&quot;:null,&quot;name&quot;:&quot;epice&quot;}</span></code></pre>
+<p>If we try it again:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">&gt;</span> <span class="kw">curl</span> -XPUT -H <span class="st">&quot;Accept: application/json&quot;</span> -d<span class="st">'name=epice'</span> localhost:3000/cats
+{<span class="st">&quot;error&quot;</span>:<span class="st">&quot;user error (SQLite3 returned ErrorConstraint while attempting to perform step.)&quot;</span>,<span class="st">&quot;message&quot;</span>:<span class="st">&quot;Internal Server Error&quot;</span>}</code></pre>
+<p>Great, we couldn’t insert a cat with the same name twice as specified. But we shouldn’t let the user deal with such low level messages.</p>
+<h3 id="more-control">More Control</h3>
+<p>To handle insertion error we can use <code>insertBy</code> instead of just <code>insert</code>.</p>
+<pre><code>putCatsR :: Handler TypedContent
+putCatsR = do
+  -- Get the POST Parameters and Put them in a Cat Data structure
+  cat &lt;- runInputPost $ Cat
+                &lt;$&gt; ireq textField &quot;name&quot;
+                &lt;*&gt; iopt intField  &quot;age&quot;
+  -- Insert the new cat in the DB
+  <span class="highlight">result</span> &lt;- runDB $ <span class="highlight">insertBy</span> cat
+  case result of
+    -- Everything went fine
+    Right uid -&gt; selectRep $ do
+      provideRep $ defaultLayout [whamlet|New Cat Created|]
+      provideRep $ return $ toJSON cat
+    -- Insertion Error but provide the old cat uid
+    Left (Entity uid _) -&gt; selectRep $ do
+      provideRep $ defaultLayout [whamlet|This Cat Already Exist!|]
+      provideRep $ return $ object [&quot;error&quot; .= (&quot;This Cat Already Exists!&quot; :: Text)]</code></pre>
+<p>And now:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">&gt;</span> <span class="kw">curl</span> -XPUT -H <span class="st">&quot;Accept: application/json&quot;</span> -d<span class="st">'name=epice'</span> localhost:3000/cats
+{<span class="st">&quot;error&quot;</span>:<span class="st">&quot;This Cat Already Exists!&quot;</span>}</code></pre>
+<h3 id="refactoring">Refactoring</h3>
+<p>So this is nice, but I repeated a bit myself. Let’s create an helper function to make things more readable.</p>
+<pre><code>answer :: ToJSON a =&gt; a -&gt; Text -&gt; Either l r -&gt; Handler TypedContent
+answer obj msg result = do
+ case result of
+    Right _ -&gt; selectRep $ do
+        provideRep $ defaultLayout [whamlet|Done|]
+        provideRep $ return $ toJSON obj
+    Left _ -&gt; selectRep $ do
+        provideRep $ defaultLayout [whamlet|#{msg}|]
+        provideRep $ return $ object [&quot;error&quot; .= (msg :: Text)]
+
+putCatsR :: Handler TypedContent
+putCatsR = do
+  -- Get the POST Parameters and Put them in a Cat Data structure
+  cat &lt;- runInputPost $ Cat
+                &lt;$&gt; ireq textField &quot;name&quot;
+                &lt;*&gt; iopt intField  &quot;age&quot;
+  -- Insert the new cat in the DB
+  result &lt;- runDB $ insertBy cat
+  <span class="highlight">answer cat &quot;This Cat Already Exists!&quot; result</span></code></pre>
+<p>Now our handler code will be hopefully cleaner.</p>
+<h3 id="seeing-cats">Seeing Cats</h3>
+<p>We inserted cats, but how about seeing them now. It is time to display them. Let us update the <code>getCatR</code> function:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">getCatR ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">TypedContent</span>
+getCatR catUniqueName <span class="fu">=</span> <span class="kw">do</span>
+  maybeCat <span class="ot">&lt;-</span> runDB <span class="fu">$</span> getBy <span class="fu">$</span> <span class="dt">UniqueCat</span> catUniqueName
+  <span class="kw">case</span> maybeCat <span class="kw">of</span>
+    <span class="dt">Nothing</span> <span class="ot">-&gt;</span> notFound
+    <span class="dt">Just</span> (<span class="dt">Entity</span> _ cat) <span class="ot">-&gt;</span> selectRep <span class="fu">$</span> <span class="kw">do</span>
+        provideRep <span class="fu">$</span> defaultLayout [whamlet<span class="fu">|&lt;</span>h2<span class="fu">&gt;</span><span class="dt">I</span> am <span class="st">#{catName cat}|]</span>
+        provideRep <span class="fu">$</span> return <span class="fu">$</span> toJSON cat</code></pre>
+<p>It works! Try to ask for epice: <a href="http://localhost:3000/cat/epice">http://localhost:3000/cat/epice</a>.</p>
+<p>Here too the code might be improved. As asking for a resource and going to 404 if there is an error is quite a common pattern.</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">askDB objuid <span class="fu">=</span> <span class="kw">do</span>
+  maybeCat <span class="ot">&lt;-</span> runDB <span class="fu">$</span> getBy <span class="fu">$</span> objuid
+  <span class="kw">case</span> maybeCat <span class="kw">of</span>
+    <span class="dt">Nothing</span> <span class="ot">-&gt;</span> notFound
+    <span class="dt">Just</span> (<span class="dt">Entity</span> _ obj) <span class="ot">-&gt;</span> return obj
+
+<span class="ot">getCatR ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">TypedContent</span>
+getCatR catUniqueName <span class="fu">=</span> <span class="kw">do</span>
+  cat <span class="ot">&lt;-</span> askDB (<span class="dt">UniqueCat</span> catUniqueName)
+  selectRep <span class="fu">$</span> <span class="kw">do</span>
+      provideRep <span class="fu">$</span> defaultLayout [whamlet<span class="fu">|&lt;</span>h2<span class="fu">&gt;</span><span class="dt">I</span> am <span class="st">#{catName cat}|]</span>
+      provideRep <span class="fu">$</span> return <span class="fu">$</span> toJSON cat</code></pre>
+<p>The code look better in my eye now. If you look at the output of the server you get a warning.</p>
+<pre><code>Handler/Cats.hs:32:1: Warning:
+    Top-level binding with no type signature:
+      askDB :: forall b site.
+               (YesodPersist site,
+                PersistUnique (YesodPersistBackend site (HandlerT site IO)),
+                PersistEntity b,
+                PersistMonadBackend (YesodPersistBackend site (HandlerT site IO))
+                ~ PersistEntityBackend b) =&gt;
+               Unique b -&gt; HandlerT site IO b</code></pre>
+<p>The warning is quite intimidating. But don’t worry. In order to fix it, you simply have to copy/paste the type signature. You must omit the <code>forall</code> part thought unless you add the <code>ExplicitForAll</code> GHC Extension.</p>
+<p>Now our <code>askDB</code> function becomes:</p>
+<pre><code>askDB :: (YesodPersist site,
+          PersistUnique (YesodPersistBackend site (HandlerT site IO)),
+          PersistEntity b,
+          PersistMonadBackend (YesodPersistBackend site (HandlerT site IO))
+          ~ PersistEntityBackend b) =&gt;
+         <span class="highlight">Unique b -&gt; HandlerT site IO b</span>
+askDB objuid = do
+  maybeCat &lt;- runDB $ getBy $ objuid
+  case maybeCat of
+    Nothing -&gt; notFound
+    Just (Entity _ obj) -&gt; return obj</code></pre>
+<p>The most important part is the one occuring after the <code>=&gt;</code>. Everything before the <code>=&gt;</code> symbol simply indicate that some types should be in some type class. Mainly you can kind of ignore all the details and consider <code>askDB</code> to be <em>mostly</em> of type: <code>Unique a -&gt; Handler a</code>.</p>
+<p>If you start to think about how all of this is going it is quite crazy. The compiler knowing the type of the object you pass know exactly how to handle each persistent object in DB.</p>
+<h3 id="finishing-the-rest">Finishing the REST</h3>
+<p>Now we can do a bit better.</p>
+<p>First, we externalize the hamlet template in the file <code>templates/cat.hamlet</code>:</p>
+<pre><code>&lt;h2&gt;#{catName cat}
+
+$maybe age &lt;- catAge cat
+  She is #{age} years old.
+$nothing
+  I don't know how old she is.</code></pre>
+<h4 id="deleting-the-cat">deleting the cat</h4>
+<p>Let us start by the delete operation:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">deleteCatR ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">TypedContent</span>
+deleteCatR catUniqueName <span class="fu">=</span> <span class="kw">do</span>
+    _ <span class="ot">&lt;-</span> runDB <span class="fu">$</span> <span class="kw">do</span>
+        mCatEntity <span class="ot">&lt;-</span> getBy (<span class="dt">UniqueCat</span> catUniqueName)
+        <span class="kw">case</span> mCatEntity <span class="kw">of</span>
+            <span class="dt">Nothing</span> <span class="ot">-&gt;</span> notFound
+            <span class="dt">Just</span> (<span class="dt">Entity</span> catId _) <span class="ot">-&gt;</span> delete catId
+    selectRep <span class="fu">$</span> <span class="kw">do</span>
+        provideRep <span class="fu">$</span> defaultLayout [whamlet<span class="fu">|#</span>{catUniqueName} has been deleted<span class="fu">.|</span>]
+        provideRep <span class="fu">$</span> return <span class="fu">$</span>
+            object [<span class="st">&quot;msg&quot;</span> <span class="fu">.=</span> (catUniqueName <span class="fu">&lt;&gt;</span> <span class="st">&quot; has been deleted&quot;</span>)]</code></pre>
+<p>Many things occurs in this simple handler. The first thing we remark is that we can run complex operation in the <code>runDB</code> parameter.</p>
+<p>Actually, the operations are:</p>
+<ol style="list-style-type: decimal">
+<li>Search for the cat in the DB</li>
+<li>If not found get out of there</li>
+<li>If found delete it</li>
+</ol>
+<p>Then we returns a nice output. The <code>&lt;&gt;</code> is the concatenation for <code>Text</code><a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>.</p>
+<h4 id="updating-the-cat">updating the cat</h4>
+<p>Here is a version of <code>putCatR</code>. This version can be quite cleaned out. But I prefer to be basic. Step by step:</p>
+<ol style="list-style-type: decimal">
+<li>We construct a <code>Cat</code> using <span class="sc"><abbr title="HyperText Transfer Protocol">http</abbr></span> parameters:</li>
+</ol>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">cat <span class="ot">&lt;-</span> runInputPost <span class="fu">$</span> <span class="dt">Cat</span>
+              <span class="fu">&lt;$&gt;</span> ireq textField <span class="st">&quot;name&quot;</span>
+              <span class="fu">&lt;*&gt;</span> iopt intField  <span class="st">&quot;age&quot;</span></code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>We check if such a cat is already in the DB</li>
+</ol>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">mCatEntity <span class="ot">&lt;-</span> runDB <span class="fu">$</span> getBy (<span class="dt">UniqueCat</span> catUniqueName)
+<span class="kw">case</span> mCatEntity <span class="kw">of</span>
+    <span class="co">-- if not then get out of here</span>
+    <span class="dt">Nothing</span> <span class="ot">-&gt;</span> notFound
+    <span class="co">-- if such a cat already exists</span>
+    <span class="dt">Just</span> (<span class="dt">Entity</span> catId _) <span class="ot">-&gt;</span> <span class="kw">do</span></code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Check if the parameter <code>name</code> match the name in the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span></li>
+</ol>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="highlight"><span class="kw">import </span><span class="dt">Control.Monad</span> (when)</span>
+<span class="fu">...</span>
+    <span class="dt">Just</span> (<span class="dt">Entity</span> catId _) <span class="ot">-&gt;</span> <span class="kw">do</span>
+        <span class="highlight">when (catName cat <span class="fu">/=</span> catUniqueName) notFound</span></code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>Update the age of the cat</li>
+</ol>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">...</span>
+    <span class="dt">Just</span> (<span class="dt">Entity</span> catId _) <span class="ot">-&gt;</span> <span class="kw">do</span>
+        when (catName cat <span class="fu">/=</span> catUniqueName) notFound
+        <span class="highlight">_ <span class="ot">&lt;-</span> runDB <span class="fu">$</span> update catId [<span class="dt">CatAge</span> <span class="fu">=.</span> catAge cat]</span></code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>Answer nicely</li>
+</ol>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">...</span>
+    <span class="dt">Just</span> (<span class="dt">Entity</span> catId _) <span class="ot">-&gt;</span> <span class="kw">do</span>
+        when (catName cat <span class="fu">/=</span> catUniqueName) notFound
+        _ <span class="ot">&lt;-</span> runDB <span class="fu">$</span> update catId [<span class="dt">CatAge</span> <span class="fu">=.</span> catAge cat]
+        <span class="highlight">selectRep <span class="fu">$</span> <span class="kw">do</span></span>
+            <span class="highlight">provideRep <span class="fu">$</span> defaultLayout <span class="fu">$</span>(widgetFile <span class="st">&quot;cat&quot;</span>)</span>
+            <span class="highlight">provideRep <span class="fu">$</span> return <span class="fu">$</span> toJSON cat</span></code></pre>
+<p>The complete commented code is here:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Control.Monad</span> (when)
+
+<span class="fu">...</span>
+
+<span class="ot">putCatR ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">TypedContent</span>
+putCatR catUniqueName <span class="fu">=</span> <span class="kw">do</span>
+  <span class="co">-- get the parameters</span>
+  cat <span class="ot">&lt;-</span> runInputPost <span class="fu">$</span> <span class="dt">Cat</span>
+                <span class="fu">&lt;$&gt;</span> ireq textField <span class="st">&quot;name&quot;</span>
+                <span class="fu">&lt;*&gt;</span> iopt intField  <span class="st">&quot;age&quot;</span>
+  <span class="co">-- ask the DB if such a cat already exists</span>
+  mCatEntity <span class="ot">&lt;-</span> runDB <span class="fu">$</span> getBy (<span class="dt">UniqueCat</span> catUniqueName)
+  <span class="kw">case</span> mCatEntity <span class="kw">of</span>
+    <span class="co">-- if not then get out of here</span>
+    <span class="dt">Nothing</span> <span class="ot">-&gt;</span> notFound
+    <span class="co">-- if such a cat already exists</span>
+    <span class="dt">Just</span> (<span class="dt">Entity</span> catId _) <span class="ot">-&gt;</span> <span class="kw">do</span>
+        <span class="co">-- check the parameter name match the url one</span>
+        when (catName cat <span class="fu">/=</span> catUniqueName) notFound
+        <span class="co">-- update its ages</span>
+        _ <span class="ot">&lt;-</span> runDB <span class="fu">$</span> update catId [<span class="dt">CatAge</span> <span class="fu">=.</span> catAge cat]
+        <span class="co">-- Answer nicely the new cat state</span>
+        selectRep <span class="fu">$</span> <span class="kw">do</span>
+            provideRep <span class="fu">$</span> defaultLayout <span class="fu">$</span>(widgetFile <span class="st">&quot;cat&quot;</span>)
+            provideRep <span class="fu">$</span> return <span class="fu">$</span> toJSON cat</code></pre>
+<hr />
+<div class="credits">
+<h2>Credits</h2>
+<ul>
+<li>The <a href="http://skylertrinityrapture.deviantart.com/art/Surprise-Attack-375583938">kitten image</a> by skylertrinityrapture.</li>
+</ul>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>It is short enough to give you a first idea on how to use Haskell. You can find it on <a href="../../../../Scratch/en/blog/Haskell-the-Hard-Way/">this blog</a> but also on <a href="https://www.fpcomplete.com/school/to-infinity-and-beyond/pick-of-the-week/haskell-fast-hard">FPComplete</a>. Note the FPComplete version contains exercises you can run in the browser.<a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p><code>Text</code> is a <em>monoid</em> as well as all String-like types.<a href="#fnref2">↩</a></p></li>
+</ol>
+</div>
+				</div>
+                <div id="afterarticle">
+                    <div id="social">
+                        <a target="_blank" href="http://feeds.feedburner.com/yannespositocomen" class="social">r</a>
+                        ·
+                         <a target="_blank" href="https://twitter.com/home?status=http://yannesposito.com/Scratch/en/blog/Yet-Another-Yesod-Tutorial/%20via%20@yogsototh" class="social">t</a>
+                        ·
+                        <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=/Scratch/en/blog/Yet-Another-Yesod-Tutorial/" class="social">`</a>
+                        ·
+                         <a target="_blank" href="https://plus.google.com/share?url=http://yannesposito.com/Scratch/en/blog/Yet-Another-Yesod-Tutorial/" class="social">g</a>
+                        <br />
+                        <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
+                    </div>
+        	        <div id="navigation">
+                        <a href="../../../../">Home</a>
+                        <span class="sep">¦</span>
+        	            <a href="../../../../Scratch/en/blog">Blog</a>
+                        <span class="sep">¦</span>
+                        <a href="../../../../Scratch/en/softwares">Softwares</a>
+                        <span class="sep">¦</span>
+                        <a href="../../../../Scratch/en/about">About</a>
+        	        </div>
+                    <div id="totop"><a href="#header">↑ Top ↑</a></div>
+				    <div class="corps" id="comment">
+            	        <h2 class="first">Comments</h2>
+				    	<div id="disqus_thread"></div>
+        		    	<script type="text/javascript">
+        		    	    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        		    	    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
+                            var disqus_identifier = '/Scratch/en/blog/Yet-Another-Yesod-Tutorial/index.html';
+                            var disqus_title = 'Yet Another Yesod Tutorial';
+                            var disqus_url = 'http://yannesposito.com/Scratch/en/blog/Yet-Another-Yesod-Tutorial/index.html';
+
+        		    	    /* * * DON'T EDIT BELOW THIS LINE * * */
+        		    	    (function() {
+        		    	        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        		    	        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        		    	        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        		    	    })();
+        		    	</script>
+        		    	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        		    	<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+				    </div>
+                    <div class="tomenu"><a>↑ Menu ↑</a></div>
+				    <div id="bottom">
+            	        <div>
+            	            Published on 2014-08-23
+            	        </div>
+            	        <div>
+            	            <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+            	        </div>
+            	        <div>
+                            <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+            	        </div>
+            	        <div>
+            	            Done with
+            	            <a href="http://www.vim.org" target="_blank">Vim</a>
+				    		<span class="pala">&amp;</span>
+                            <a href="http://nanoc.ws" target="_blank"><span class="strike">nanoc</span></a>
+				    		<a href="http://jaspervdj.be/hakyll" target="_blank">Hakyll</a>
+            	        </div>
+            	    </div>
+                </div>
+			</div>
+
+        </div>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.0/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="/Scratch/js/vendor/jquery-1.10.0.min.js"><\/script>')</script>
+        <script src="../../../../Scratch/js/jquery.scrolldepth.min.js"></script>
+        <script src="../../../../Scratch/js/jquery.cookie.js"></script>
+        <script src="../../../../Scratch/js/index.js"></script>
+        <script src="../../../../Scratch/js/highlight/highlight.pack.js"></script>
+        <script src="../../../../Scratch/js/article.js"></script>
+        <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>
