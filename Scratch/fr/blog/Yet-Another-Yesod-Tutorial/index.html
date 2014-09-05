@@ -263,7 +263,7 @@ deleteCatR _ <span class="fu">=</span> error <span class="st">&quot;getCatR not 
 </ul>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Text</span> (<span class="dt">Text</span>)</code></pre>
 <ul>
-<li>Add <code>FlexibleInstances</code> ghc extension to <code>Model.hs</code>. So add the following line at the top of <code>Model.hs</code>:</li>
+<li>Add <code>FlexibleInstances</code> ghc extension to <code>Model.hs</code>. This will make the <code>json</code> keyword to work as expected. So add the following line at the top of <code>Model.hs</code>:</li>
 </ul>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE FlexibleInstances #-}</span></code></pre>
 <p>If you want to see all modifications more precisely. Look at this <a href="https://github.com/yogsototh/soggoth/commit/167d320e4b7300b333fb892fec5675fb7392b951">commit on github</a>.</p>
@@ -273,7 +273,7 @@ deleteCatR _ <span class="fu">=</span> error <span class="st">&quot;getCatR not 
 </div>
 <p>So here are the steps to take.</p>
 <ol style="list-style-type: decimal">
-<li>We need to declare the list of HTTP parameter we need to create a cat.</li>
+<li>We need to declare the list of HTTP parameter needed to create a cat.</li>
 <li>We need to parse them</li>
 <li>We need to create a Cat data structure from the parsing result</li>
 <li>We need to put this Cat data structure in DB somehow</li>
@@ -281,7 +281,7 @@ deleteCatR _ <span class="fu">=</span> error <span class="st">&quot;getCatR not 
 </ol>
 <p>Be prepared. Yesod handle a lot of these step automagically. But that might not be evident first. I’ll try to explain how yesod handle all of this quite slowly. But don’t worry. Even if you don’t understand everything at first. Understanding how it works in details is not necessary to understand how to use it.</p>
 <p>When we have written the model file, yesod created a Data structure Record for us:</p>
-<pre><code>data Cat = Cat {catName :: Text, catAge :: Maybe Int }</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Cat</span> <span class="fu">=</span> <span class="dt">Cat</span> {<span class="ot">catName ::</span> <span class="dt">Text</span>,<span class="ot"> catAge ::</span> <span class="dt">Maybe</span> <span class="dt">Int</span> }</code></pre>
 <p>So in our <code>import</code> we have this data structure declared for us. You can create a cat instance like this for example:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">cat <span class="fu">=</span> <span class="dt">Cat</span> <span class="st">&quot;happy&quot;</span> (<span class="dt">Just</span> <span class="dv">3</span>)
 <span class="co">-- or its equivalent</span>
@@ -301,13 +301,13 @@ cat <span class="fu">=</span> <span class="dt">Cat</span> { catName <span class=
   <span class="fu">...</span></code></pre>
 <p>That is a strange syntax we have here. What does it means and how does that work?</p>
 <p>The <code>&lt;$&gt;</code> and <code>&lt;*&gt;</code> operators are Applicative ones. If you don’t know what applicative functor are, don’t worry. Simply read it as:</p>
-<pre><code>cat = Cat (get-required-param &quot;name&quot;)
-          (get-optional-param &quot;age&quot;)
+<pre class="sourceCode haskell"><code class="sourceCode haskell">cat <span class="fu">=</span> <span class="dt">Cat</span> (get<span class="fu">-</span>required<span class="fu">-</span>param <span class="st">&quot;name&quot;</span>)
+          (get<span class="fu">-</span>optional<span class="fu">-</span>param <span class="st">&quot;age&quot;</span>)
 
--- or its equivalent
+<span class="co">-- or its equivalent</span>
 
-cat = Cat { catName = (get-required-param &quot;name&quot;)
-          , catAge  = (get-optional-param &quot;age&quot;) }</code></pre>
+cat <span class="fu">=</span> <span class="dt">Cat</span> { catName <span class="fu">=</span> (get<span class="fu">-</span>required<span class="fu">-</span>param <span class="st">&quot;name&quot;</span>)
+          , catAge  <span class="fu">=</span> (get<span class="fu">-</span>optional<span class="fu">-</span>param <span class="st">&quot;age&quot;</span>) }</code></pre>
 <p>But the problem for Haskell is that the <code>get-required-param &quot;name&quot;</code> Doesn’t return a <code>Text</code> but a <code>FormInput m Text</code>. So the applicative operators simply extract the <code>Text</code> result from the <code>FormInput m Text</code>.</p>
 <p>Don’t worry if this is unclear. Understanding how it works precisely is not necessary to use it.</p>
 <p>So now we have a cat object constructed using the content of the <code>name</code> and <code>age</code> HTTP parameters. Now we need to put them inside the database.</p>
@@ -321,7 +321,8 @@ cat = Cat { catName = (get-required-param &quot;name&quot;)
 <p>How the hell such a command can work? If you take the time to think of it. This is quite mind-blowing. We simply ask to insert the object cat. And yesod is able, to determine:</p>
 <ul>
 <li>that the <code>cat</code> variable is a <code>Cat</code> object</li>
-<li>how to insert a <code>Cat</code> in DB</li>
+<li>which DB table to insert this Object in</li>
+<li>how to insert a <code>Cat</code> object in DB</li>
 </ul>
 <p>And for this, we only had to declare 4 lines in <code>config/models</code>. What I find really mind-blowing is not only that the code is quite terse. It is the high degree of control we could achieve with yesod while being so terse. Just follow me a bit more and you’ll see what I mean by that.</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">curl</span> -XPUT -d<span class="st">'name=happy'</span> localhost:3000/cats</code></pre>
@@ -538,6 +539,51 @@ putCatR catUniqueName <span class="fu">=</span> <span class="kw">do</span>
             provideRep <span class="fu">$</span> defaultLayout <span class="fu">$</span>(widgetFile <span class="st">&quot;cat&quot;</span>)
             provideRep <span class="fu">$</span> return <span class="fu">$</span> toJSON cat</code></pre>
 <hr />
+<h3 id="listing-the-cats">Listing the cats</h3>
+<p>As we can add cats, we should list them. To this end we must update slightly or <code>getCatsR</code> handler:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">getCatsR ::</span> <span class="dt">Handler</span> <span class="dt">Html</span>
+getCatsR <span class="fu">=</span> <span class="kw">do</span>
+  <span class="highlight">cats <span class="ot">&lt;-</span> runDB <span class="fu">$</span> selectList [][<span class="dt">LimitTo</span> <span class="dv">100</span>]</span>
+  defaultLayout <span class="fu">$</span> <span class="kw">do</span>
+    setTitle <span class="st">&quot;Some Cats&quot;</span>
+    <span class="fu">$</span>(widgetFile <span class="st">&quot;cats&quot;</span>)</code></pre>
+<p>and edit <code>templates/cats.hamlet</code>:</p>
+<pre><code>&lt;div .hero-unit&gt;
+  &lt;h1&gt;Some Cats
+&lt;div .container&gt;
+  $if null cats
+    &lt;p&gt;No cat here.
+  $else
+    &lt;div .row&gt;
+      $forall Entity _ cat &lt;- cats
+        &lt;div .span4&gt;
+          &lt;h2&gt;#{catName cat} 
+            $maybe age &lt;- catAge cat
+              &lt;small&gt;#{age}yo</code></pre>
+<p>The attentive reader should note that no reference to <code>Cat</code> was made in the following line:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">  cats <span class="ot">&lt;-</span> runDB <span class="fu">$</span> selectList [][<span class="dt">LimitTo</span> <span class="dv">100</span>]</code></pre>
+<p>So how does this line know that the variable cats should contains a list of cat (in fact a list of <code>Entity CatId Cat</code>)? The <code>LimitTo 100</code> is just an option not to retrieve all lines from the DB. How does that works? Isn’t it magic?</p>
+<p>To explain it, I’ll need to go very deep in Haskell knowledge.</p>
+<p>First while Haskell compile the code a big part of Haskell runtime library is dedicated to the <code>hiddenOracle</code> subprocess. This <code>hiddenOracle</code> consume very few resources and is mostly undetectable. It is generally installed, hidden in your kernel module the first time you execute any Haskell command with root privileges. It then track all your habits. It connects to many computers. During compilation when faced to some difficulty, GHC ask (if present) the <code>hiddenOracle</code>. It uses the complete knowledge it had accumulated from all computers over the world. It is generally able to detect your thoughts before you have them. That is some crazy science we’re talking about here. Apparently, the <code>hiddenOracle</code> had infected a lot of scientific computers. And it uses some device to communicate somehow in space. I was told by some that it uses some alien knowledge. Of course, I am certain that was a joke. This is complete non sense when you thing about it! The outer space communication must simply be some unpredictable side effects.</p>
+<p>And, this is how Haskell know that <code>selectList [][]</code> should returns cats.</p>
+<p>In that, case we could argue that it would also be able to detect it by using the call to the function <code>catName :: Cat -&gt; Text</code> in the template. That might explain how it also work with computer where the <code>hiddenOracle</code> wasn’t installed. Or at least, this is the best explanation I can give.</p>
+<p>We lack on last thing thought. The <code>JSON</code> output.</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">getCatsR ::</span> <span class="dt">Handler</span> <span class="highlight"><span class="dt">TypedContent</span></span>
+getCatsR <span class="fu">=</span> <span class="kw">do</span>
+  cats <span class="ot">&lt;-</span> runDB <span class="fu">$</span> selectList [][<span class="dt">LimitTo</span> <span class="dv">100</span>]
+  <span class="highlight">selectRep <span class="fu">$</span> <span class="kw">do</span> </span>
+    <span class="highlight">provideRep <span class="fu">$</span></span> defaultLayout <span class="fu">$</span> <span class="kw">do</span>
+      setTitle <span class="st">&quot;Some Cats&quot;</span>
+      <span class="fu">$</span>(widgetFile <span class="st">&quot;cats&quot;</span>)
+    <span class="highlight">provideRep <span class="fu">$</span> <span class="kw">do</span></span>
+      <span class="highlight"><span class="kw">let</span> catList <span class="fu">=</span> map (\ (<span class="dt">Entity</span> _ cat) <span class="ot">-&gt;</span> cat) cats</span>
+      <span class="highlight">return <span class="fu">$</span> object <span class="fu">$</span> [<span class="st">&quot;cats&quot;</span> <span class="fu">.=</span>  catList]</span></code></pre>
+<p>And now:</p>
+<pre><code>curl -XGET -H &quot;Accept: application/json&quot; localhost:3000/cats
+{&quot;cats&quot;:[{&quot;age&quot;:null,&quot;name&quot;:&quot;happy&quot;},{&quot;age&quot;:3,&quot;name&quot;:&quot;epice&quot;},{&quot;age&quot;:null,&quot;name&quot;:&quot;isis&quot;},{&quot;age&quot;:3,&quot;name&quot;:&quot;conan&quot;}]}</code></pre>
+<p>We now have a complete <code>CRUD</code> resource for <code>Cat</code>s. It is REST JSON/Html API. Great!</p>
+<p>You are now certainly able to make your own CRUD resource. But more importantly, it is time to think about identification and access rights.</p>
+<h2 id="identification-access-rights">Identification &amp; Access Rights</h2>
 <div class="credits">
 <h2>Credits</h2>
 <ul>
