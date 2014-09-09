@@ -326,8 +326,8 @@ cat <span class="fu">=</span> <span class="dt">Cat</span> { catName <span class=
 </ul>
 <p>And for this, we only had to declare 4 lines in <code>config/models</code>. What I find really mind-blowing is not only that the code is quite terse. It is the high degree of control we could achieve with yesod while being so terse. Just follow me a bit more and you’ll see what I mean by that.</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">curl</span> -XPUT -d<span class="st">'name=happy'</span> localhost:3000/cats</code></pre>
-<h3 id="json">JSON</h3>
-<p>Next, we want to provide a json API. Being RESTful, the right way to achieve this is by providing the type of content we want in the HTTP Header.</p>
+<h3 id="json"><span class="sc"><abbr title="JavaScript Object Notation">json</abbr></span></h3>
+<p>Next, we want to provide a json <span class="sc"><abbr title="Application Programming Interface">api</abbr></span>. Being RESTful, the right way to achieve this is by providing the type of content we want in the HTTP Header.</p>
 <p>So to achieve this we simply modify slightly our <code>putCatsR</code> definition:</p>
 <pre><code>putCatsR :: Handler <span class="highlight">TypedContent</span>
 putCatsR = do
@@ -441,7 +441,7 @@ askDB objuid = do
     Just (Entity _ obj) -&gt; return obj</code></pre>
 <p>The most important part is the one occuring after the <code>=&gt;</code>. Everything before the <code>=&gt;</code> symbol simply indicate that some types should be in some type class. Mainly you can kind of ignore all the details and consider <code>askDB</code> to be <em>mostly</em> of type: <code>Unique a -&gt; Handler a</code>.</p>
 <p>If you start to think about how all of this is going it is quite crazy. The compiler knowing the type of the object you pass know exactly how to handle each persistent object in DB.</p>
-<h3 id="finishing-the-rest">Finishing the REST</h3>
+<h3 id="finishing-the-rest">Finishing the <span class="sc"><abbr title="REpresentational State Transfer">rest</abbr></span></h3>
 <p>Now we can do a bit better.</p>
 <p>First, we externalize the hamlet template in the file <code>templates/cat.hamlet</code>:</p>
 <pre><code>&lt;h2&gt;#{catName cat}
@@ -562,12 +562,12 @@ getCatsR <span class="fu">=</span> <span class="kw">do</span>
               &lt;small&gt;#{age}yo</code></pre>
 <p>The attentive reader should note that no reference to <code>Cat</code> was made in the following line:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">  cats <span class="ot">&lt;-</span> runDB <span class="fu">$</span> selectList [][<span class="dt">LimitTo</span> <span class="dv">100</span>]</code></pre>
-<p>So how does this line know that the variable cats should contains a list of cat (in fact a list of <code>Entity CatId Cat</code>)? The <code>LimitTo 100</code> is just an option not to retrieve all lines from the DB. How does that works? Isn’t it magic?</p>
+<p>So how does this line know that the variable <code>cats</code> should contains a list of cat (in fact a list of <code>Entity CatId Cat</code>)? The <code>LimitTo 100</code> is just an option not to retrieve all lines from the DB. How does that works? Isn’t it magic?</p>
 <p>To explain it, I’ll need to go very deep in Haskell knowledge.</p>
 <p>First while Haskell compile the code a big part of Haskell runtime library is dedicated to the <code>hiddenOracle</code> subprocess. This <code>hiddenOracle</code> consume very few resources and is mostly undetectable. It is generally installed, hidden in your kernel module the first time you execute any Haskell command with root privileges. It then track all your habits. It connects to many computers. During compilation when faced to some difficulty, GHC ask (if present) the <code>hiddenOracle</code>. It uses the complete knowledge it had accumulated from all computers over the world. It is generally able to detect your thoughts before you have them. That is some crazy science we’re talking about here. Apparently, the <code>hiddenOracle</code> had infected a lot of scientific computers. And it uses some device to communicate somehow in space. I was told by some that it uses some alien knowledge. Of course, I am certain that was a joke. This is complete non sense when you thing about it! The outer space communication must simply be some unpredictable side effects.</p>
 <p>And, this is how Haskell know that <code>selectList [][]</code> should returns cats.</p>
-<p>In that, case we could argue that it would also be able to detect it by using the call to the function <code>catName :: Cat -&gt; Text</code> in the template. That might explain how it also work with computer where the <code>hiddenOracle</code> wasn’t installed. Or at least, this is the best explanation I can give.</p>
-<p>We lack on last thing thought. The <code>JSON</code> output.</p>
+<p>In that specific case, we could argue that it would also be able to detect it by using the call to the function <code>catName :: Cat -&gt; Text</code> in the template. That might explain how it also works with computer where the <code>hiddenOracle</code> wasn’t installed.</p>
+<p>We lack one last thing thought. The <span class="sc"><abbr title="JavaScript Object Notation">json</abbr></span> output.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">getCatsR ::</span> <span class="dt">Handler</span> <span class="highlight"><span class="dt">TypedContent</span></span>
 getCatsR <span class="fu">=</span> <span class="kw">do</span>
   cats <span class="ot">&lt;-</span> runDB <span class="fu">$</span> selectList [][<span class="dt">LimitTo</span> <span class="dv">100</span>]
@@ -581,8 +581,8 @@ getCatsR <span class="fu">=</span> <span class="kw">do</span>
 <p>And now:</p>
 <pre><code>curl -XGET -H &quot;Accept: application/json&quot; localhost:3000/cats
 {&quot;cats&quot;:[{&quot;age&quot;:null,&quot;name&quot;:&quot;happy&quot;},{&quot;age&quot;:3,&quot;name&quot;:&quot;epice&quot;},{&quot;age&quot;:null,&quot;name&quot;:&quot;isis&quot;},{&quot;age&quot;:3,&quot;name&quot;:&quot;conan&quot;}]}</code></pre>
-<p>We now have a complete <code>CRUD</code> resource for <code>Cat</code>s. It is REST JSON/Html API. Great!</p>
-<p>You are now certainly able to make your own CRUD resource. But more importantly, it is time to think about identification and access rights.</p>
+<p>We now have a complete <span class="sc"><abbr title="Create Read Update Delete">crud</abbr></span> resource for <code>Cat</code>s. It is <span class="sc"><abbr title="REpresentational State Transfer">rest</abbr></span> <span class="sc"><abbr title="JavaScript Object Notation">json</abbr></span>/<span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> <span class="sc"><abbr title="Application Programming Interface">api</abbr></span>. Great!</p>
+<p>You are now certainly able to make your own <span class="sc"><abbr title="Create Read Update Delete">crud</abbr></span> resource. But more importantly, it is time to think about identification and access rights.</p>
 <h2 id="identification-access-rights">Identification &amp; Access Rights</h2>
 <div class="credits">
 <h2>Credits</h2>
