@@ -8,8 +8,243 @@
         <name>Yann Esposito</name>
         <email>yann.esposito@gmail.com</email>
     </author>
-    <updated>2014-08-16T00:00:00Z</updated>
+    <updated>2014-12-07T00:00:00Z</updated>
     <entry>
+    <title>Vim as IDE</title>
+    <link href="http://yannesposito.com/Scratch/fr/blog/Vim-as-IDE/index.html" />
+    <id>http://yannesposito.com/Scratch/fr/blog/Vim-as-IDE/index.html</id>
+    <published>2014-12-07T00:00:00Z</published>
+    <updated>2014-12-07T00:00:00Z</updated>
+    <summary type="html"><![CDATA[<div>
+<img src="/Scratch/img/blog/Vim-as-IDE/vim_spock.jpg" alt="Main image"/>
+</div>
+<div class="intro">
+<p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Comment utiliser vim comme une IDE très efficace</p>
+<p>In <a href="/Scratch/en/blog/Learn-Vim-Progressively/">Learn Vim Progressively</a> I’ve show how Vim is great for editing text, and navigating in the same file (buffer). In this short article you’ll see how I use Vim as an IDE. Mainly by using some great plugins.</p>
+</div>
+<h2 id="vim-plugin-manager">Vim Plugin Manager</h2>
+<p>There are a <em>lot</em> of Vim plugins. To manage them I use <a href="https://github.com/junegunn/vim-plug"><code>vim-plug</code></a>.</p>
+<p>To install it:</p>
+<pre class="zsh"><code>mkdir -p ~/.vim/autoload
+curl -fLo ~/.vim/autoload/plug.vim \
+             https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim</code></pre>
+<div class="small">
+<p>☞ Note I have two parts in my <code>.vimrc</code>. The first part contains the list of all my plugins. The second part contains the personal preferences I setted for each plugin. I’ll separate each part by <code>...</code> in the code.</p>
+</div>
+<h2 id="survival">Survival</h2>
+<h3 id="colorscheme">Colorscheme</h3>
+<div>
+<img src="/Scratch/img/blog/Vim-as-IDE/solarized.png" alt="Solarized theme"/>
+</div>
+<p>Before anything, you should protect your eyes using a readable and low contrast colorscheme.</p>
+<p>For this I use <a href="http://ethanschoonover.com/solarized">solarized dark</a>. To add it, you only have to write this in your <code>~/.vimrc</code> file:</p>
+<pre class="vim"><code>call plug#begin(&#39;~/.vim/plugged&#39;)
+
+Plug &#39;altercation/vim-colors-solarized&#39;
+
+call plug#end()
+
+&quot; -- solarized personal conf
+set background=dark
+try
+    colorscheme solarized
+catch
+endtry</code></pre>
+<h3 id="minimal-hygiene">Minimal hygiene</h3>
+<p>You should be able to see and destroy trailing whitespaces.</p>
+<div>
+<img src="/Scratch/img/blog/Vim-as-IDE/trim.gif" alt="Trim whitespaces"/>
+</div>
+<pre class="vim"><code>Plug &#39;bronson/vim-trailing-whitespace&#39;</code></pre>
+<p>You can clean trailing whitespace with <code>:FixWhitespace</code>.</p>
+<p>And also you should see your 80th column.</p>
+<pre class="vim"><code>if (exists(&#39;+colorcolumn&#39;))
+    set colorcolumn=80
+    highlight ColorColumn ctermbg=9
+endif</code></pre>
+<div>
+<img src="/Scratch/img/blog/Vim-as-IDE/80thcolumn.png" alt="80th column"/>
+</div>
+<h2 id="file-management">File Management</h2>
+<p>One of the most important hidden skills in programming is the ability to search and find files in your projects.</p>
+<p>The majority of people use something like <code>NERDTree</code>. This is the classical left column with a tree of files of your project. <em>I stopped to use this</em>. And you should probably too.</p>
+<p>I switched to <em>unite</em>. No left column lost. Faster to find files. Mainly it works like Spotlight on OS X.</p>
+<p>First install <a href="https://github.com/ggreer/the_silver_searcher"><code>ag</code> (the silver search)</a>. If you don’t know <code>ack</code> or <code>ag</code> your life is going to be upgraded. This is a simple but essential tool. It is mostly a <code>grep</code> on steroids.</p>
+<pre class="vim"><code>&quot; Unite
+&quot;   depend on vimproc
+&quot;   ------------- VERY IMPORTANT ------------
+&quot;   you have to go to .vim/plugin/vimproc.vim and do a ./make
+&quot;   -----------------------------------------
+Plug &#39;Shougo/vimproc.vim&#39;
+Plug &#39;Shougo/unite.vim&#39;
+
+...
+
+let g:unite_source_history_yank_enable = 1
+try
+  let g:unite_source_rec_async_command=&#39;ag --nocolor --nogroup -g &quot;&quot;&#39;
+  call unite#filters#matcher_default#use([&#39;matcher_fuzzy&#39;])
+catch
+endtry
+&quot; search a file in the filetree
+nnoremap &lt;space&gt;&lt;space&gt; :split&lt;cr&gt; :&lt;C-u&gt;Unite -start-insert file_rec/async&lt;cr&gt;
+&quot; reset not it is &lt;C-l&gt; normally
+:nnoremap &lt;space&gt;r &lt;Plug&gt;(unite_restart)</code></pre>
+<p>Now type space twice. A list of files appears. Start to type some letters of the file you are searching for. Select it, type return and bingo the file opens in a new horizontal split.</p>
+<div>
+<img src="/Scratch/img/blog/Vim-as-IDE/unite.gif" alt="Unite example"/>
+</div>
+<p>If something goes wrong just type <code>&lt;space&gt;r</code> to reset the unite cache.</p>
+<p>Now you are able to search file by name easily and efficiently.</p>
+<p>Now search text in many files. For this you use <a href="https://github.com/ggreer/the_silver_searcher"><code>ag</code></a>:</p>
+<pre class="vim"><code>Plug &#39;rking/ag.vim&#39;
+...
+&quot; --- type ° to search the word in all files in the current dir
+nmap ° :Ag &lt;c-r&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;cr&gt;&lt;cr&gt;
+nnoremap &lt;space&gt;/ :Ag</code></pre>
+<p>Don’t forget to add a space after the <code>:Ag</code>.</p>
+<p>These are two of the most powerful shortcut for working in a project. using <code>°</code> which is nicely positioned on my <code>azerty</code> keyboard. You should use a key close to <code>*</code>.</p>
+<p>So what <code>°</code> is doing? It reads the string under the cursor and search for it in all files. Really useful to search where a function is used.</p>
+<p>If you type <code>&lt;space&gt;/</code> followed by a string, it will search for all occurrences of this string in the project files.</p>
+<p>So with this you should already be able to navigate between files very easily.</p>
+<h2 id="language-agnostic-plugins">Language Agnostic Plugins</h2>
+<h3 id="git">Git</h3>
+<div>
+<img src="/Scratch/img/blog/Vim-as-IDE/git-gutter.png" alt="Show modified lines"/>
+</div>
+<p>Show which line changed since your last commit.</p>
+<pre class="vim"><code>Plug &#39;airblade/vim-gitgutter&#39;</code></pre>
+<p>And the “defacto” git plugin:</p>
+<pre class="vim"><code>Plug &#39;tpope/vim-fugitive&#39;</code></pre>
+<p>You can reset your changes from the latest git commit with <code>:Gread</code>. You can stage your changes with <code>:Gwrite</code>.</p>
+<div>
+<img src="/Scratch/img/blog/Vim-as-IDE/Gread.gif" alt="Reset changes"/>
+</div>
+<h3 id="align-things">Align things</h3>
+<pre class="vim"><code>Plug &#39;junegunn/vim-easy-align&#39;
+
+...
+
+&quot; Easy align interactive
+vnoremap &lt;silent&gt; &lt;Enter&gt; :EasyAlign&lt;cr&gt;</code></pre>
+<p>Just select and type <code>Return</code> then <code>space</code>. Type <code>Return</code> many type to change the alignments.</p>
+<p>If you want to align the second column, <code>Return</code> then <code>2</code> then <code>space</code>.</p>
+<div>
+<img src="/Scratch/img/blog/Vim-as-IDE/easy-align.gif" alt="Easy align example"/>
+</div>
+<h3 id="basic-auto-completion-c-n-c-p">Basic auto completion: <code>C-n</code> &amp; <code>C-p</code></h3>
+<p>Vim has a basic auto completion system. The shortcuts are <code>C-n</code> and <code>C-p</code> while you are in insert mode. This is generally good enough in most cases. For example when I open a file not in my configured languages.</p>
+<h2 id="haskell">Haskell</h2>
+<p>My current Haskell programming environment is great!</p>
+<p>Each time I save a file, I get a comment pointing to my errors or proposing me how to improve my code.</p>
+<p>So here we go:</p>
+<blockquote>
+<p>☞ Don’t forget to install <code>ghc-mod</code> with: <code>cabal install ghc-mod</code></p>
+</blockquote>
+<pre class="vim"><code>&quot; ---------- VERY IMPORTANT -----------
+&quot; Don&#39;t forget to install ghc-mod with:
+&quot; cabal install ghc-mod
+&quot; -------------------------------------
+
+Plug &#39;scrooloose/syntastic&#39;             &quot; syntax checker
+&quot; --- Haskell
+Plug &#39;yogsototh/haskell-vim&#39;            &quot; syntax indentation / highlight
+Plug &#39;enomsg/vim-haskellConcealPlus&#39;    &quot; unicode for haskell operators
+Plug &#39;eagletmt/ghcmod-vim&#39;
+Plug &#39;eagletmt/neco-ghc&#39;
+Plug &#39;Twinside/vim-hoogle&#39;
+Plug &#39;pbrisbin/html-template-syntax&#39;    &quot; Yesod templates
+
+...
+
+&quot; -------------------
+&quot;       Haskell
+&quot; -------------------
+let mapleader=&quot;-&quot;
+let g:mapleader=&quot;-&quot;
+set tm=2000
+nmap &lt;silent&gt; &lt;leader&gt;ht :GhcModType&lt;CR&gt;
+nmap &lt;silent&gt; &lt;leader&gt;hh :GhcModTypeClear&lt;CR&gt;
+nmap &lt;silent&gt; &lt;leader&gt;hT :GhcModTypeInsert&lt;CR&gt;
+nmap &lt;silent&gt; &lt;leader&gt;hc :SyntasticCheck ghc_mod&lt;CR&gt;:lopen&lt;CR&gt;
+let g:syntastic_mode_map={&#39;mode&#39;: &#39;active&#39;, &#39;passive_filetypes&#39;: [&#39;haskell&#39;]}
+let g:syntastic_always_populate_loc_list = 1
+nmap &lt;silent&gt; &lt;leader&gt;hl :SyntasticCheck hlint&lt;CR&gt;:lopen&lt;CR&gt;
+
+&quot; Auto-checking on writing
+autocmd BufWritePost *.hs,*.lhs GhcModCheckAndLintAsync
+
+&quot;  neocomplcache (advanced completion)
+autocmd BufEnter *.hs,*.lhs let g:neocomplcache_enable_at_startup = 1
+function! SetToCabalBuild()
+    if glob(&quot;*.cabal&quot;) != &#39;&#39;
+        set makeprg=cabal\ build
+    endif
+endfunction
+autocmd BufEnter *.hs,*.lhs :call SetToCabalBuild()
+
+&quot; -- neco-ghc
+let $PATH=$PATH.&#39;:&#39;.expand(&quot;~/.cabal/bin&quot;)</code></pre>
+<p>Just enjoy!</p>
+<div>
+<img src="/Scratch/img/blog/Vim-as-IDE/vim-lint.gif" alt="hlint on save"/>
+</div>
+<p>I use <code>-</code> for my leader because I use <code>,</code> a lot for its native usage.</p>
+<ul>
+<li><code>-ht</code> will highlight and show the type of the block under the cursor.</li>
+<li><code>-hT</code> will insert the type of the current block.</li>
+<li><code>-hh</code> will unhighlight the selection.</li>
+</ul>
+<div>
+<img src="/Scratch/img/blog/Vim-as-IDE/auto-typing.gif" alt="Auto typing on save"/>
+</div>
+<h2 id="clojure">Clojure</h2>
+<div>
+<img src="/Scratch/img/blog/Vim-as-IDE/clojure.gif" alt="Rainbow parenthesis"/>
+</div>
+<p>My main language at work is Clojure. And my current vim environment is quite good. I lack the automatic integration to <code>lein-kibit</code> thought. If I have the courage I might do it myself one day. But due to the very long startup time of clojure, I doubt I’ll be able to make a useful vim plugin.</p>
+<p>So mainly you’ll have real rainbow-parenthesis (the default values are broken for solarized).</p>
+<p>I used the vim <code>paredit</code> plugin before. But it is too restrictive. Now I use <code>sexp</code> which feel more coherent with the spirit of vim.</p>
+<pre class="vim"><code>&quot; &quot; -- Clojure
+Plug &#39;kien/rainbow_parentheses.vim&#39;
+Plug &#39;guns/vim-clojure-static&#39;
+Plug &#39;guns/vim-sexp&#39;
+Plug &#39;tpope/vim-repeat&#39;
+Plug &#39;tpope/vim-fireplace&#39;
+
+...
+
+autocmd BufEnter *.cljs,*.clj,*.cljs.hl RainbowParenthesesActivate
+autocmd BufEnter *.cljs,*.clj,*.cljs.hl RainbowParenthesesLoadRound
+autocmd BufEnter *.cljs,*.clj,*.cljs.hl RainbowParenthesesLoadSquare
+autocmd BufEnter *.cljs,*.clj,*.cljs.hl RainbowParenthesesLoadBraces
+autocmd BufEnter *.cljs,*.clj,*.cljs.hl setlocal iskeyword+=?,-,*,!,+,/,=,&lt;,&gt;,.,:
+&quot; -- Rainbow parenthesis options
+let g:rbpt_colorpairs = [
+	\ [&#39;darkyellow&#39;,  &#39;RoyalBlue3&#39;],
+	\ [&#39;darkgreen&#39;,   &#39;SeaGreen3&#39;],
+	\ [&#39;darkcyan&#39;,    &#39;DarkOrchid3&#39;],
+	\ [&#39;Darkblue&#39;,    &#39;firebrick3&#39;],
+	\ [&#39;DarkMagenta&#39;, &#39;RoyalBlue3&#39;],
+	\ [&#39;darkred&#39;,     &#39;SeaGreen3&#39;],
+	\ [&#39;darkyellow&#39;,  &#39;DarkOrchid3&#39;],
+	\ [&#39;darkgreen&#39;,   &#39;firebrick3&#39;],
+	\ [&#39;darkcyan&#39;,    &#39;RoyalBlue3&#39;],
+	\ [&#39;Darkblue&#39;,    &#39;SeaGreen3&#39;],
+	\ [&#39;DarkMagenta&#39;, &#39;DarkOrchid3&#39;],
+	\ [&#39;Darkblue&#39;,    &#39;firebrick3&#39;],
+	\ [&#39;darkcyan&#39;,    &#39;SeaGreen3&#39;],
+	\ [&#39;darkgreen&#39;,   &#39;RoyalBlue3&#39;],
+	\ [&#39;darkyellow&#39;,  &#39;DarkOrchid3&#39;],
+	\ [&#39;darkred&#39;,     &#39;firebrick3&#39;],
+	\ ]</code></pre>
+<p>Working with Clojure will becomre quite smoother. You can eval any part of your code, you must launch a Clojure REPL manually in another terminal thought.</p>
+<h2 id="last-words">Last words</h2>
+<p>I hope it will be useful.</p>
+<p>Last but not least, if you want to use my vim configuration you can get it here:</p>
+<p><a href="http://github.com/yogsototh/vimrc"><code>github.com/yogsototh/vimrc</code></a></p>]]></summary>
+</entry>
+<entry>
     <title>Installer Haskell</title>
     <link href="http://yannesposito.com/Scratch/fr/blog/Safer-Haskell-Install/index.html" />
     <id>http://yannesposito.com/Scratch/fr/blog/Safer-Haskell-Install/index.html</id>
@@ -4189,7 +4424,7 @@ main = putStrLn &quot;Cthulhu!&quot;
 <p>In plain English, the “+1” button will inform Google you are visiting the website, <strong>even if you don’t click on “+1”</strong>. The same is true for the “like” button for facebook and the “tweet this” button for twitter.</p>
 <p>The problem is not only a privacy issue. In fact (sadly <span class="sc"><abbr title="In my Humble Opinion">imho</abbr></span>) this isn’t an issue for most people. These button consume computer ressources. Far more than a simple link. It thus slow down a bit the computer and consume energy. These button could also slow down the rendering of your web page.</p>
 <p>Another aspect is their design. Their look and feel is mostly imposed by the provider.</p>
-<p>The most problematic aspect in my opinion is to use a third party js on your website. What if tomorrow twitter update their tweet button? If the upgrade broke something for only a minority of people, they won’t fix it. This could occur anytime without any notification. They just have to add a <code>document.write</code> in their <code>js</code> you call asynchronously and BAM! Your website is just an empty blank page. And as you call many external ressources, it can be very difficult to find the origin of the problem.</p>
+<p>The most problematic aspect in my opinion is to use a third party js on your website. What if tomorrow twitter update their tweet button? If the upgrade break something for only a minority of people, they won’t fix it. This could occur anytime without any notification. They just have to add a <code>document.write</code> in their <code>js</code> you call asynchronously and <strong>BAM!</strong> Your website is just an empty blank page. And as you call many external ressources, it can be very difficult to find the origin of the problem.</p>
 <p><strong>Using social network buttons:</strong></p>
 <ul>
 <li>Pros:
@@ -8741,77 +8976,6 @@ treeFromList&#39; (x<span class="fu">:</span>xs) n <span class="fu">=</span> <sp
 <li id="fn5"><p>There are some <em>unsafe</em> exceptions to this rule. But you shouldn’t see such use in a real application except maybe for debugging purposes.<a href="#fnref5">↩</a></p></li>
 <li id="fn6"><p>For the curious the real type is <code>data IO a = IO {unIO :: State# RealWorld -&gt; (# State# RealWorld, a #)}</code>. All the <code>#</code> has to do with optimisation and I swapped the fields in my example. But this is the basic idea.<a href="#fnref6">↩</a></p></li>
 <li id="fn7"><p>Well, you’ll certainly need to practice a bit to get used to them and to understand when you can use them and create your own. But you already made a big step in this direction.<a href="#fnref7">↩</a></p></li>
-</ol>
-</div>]]></summary>
-</entry>
-<entry>
-    <title>La typography et le Web</title>
-    <link href="http://yannesposito.com/Scratch/fr/blog/Typography-and-the-Web/index.html" />
-    <id>http://yannesposito.com/Scratch/fr/blog/Typography-and-the-Web/index.html</id>
-    <published>2012-02-02T00:00:00Z</published>
-    <updated>2012-02-02T00:00:00Z</updated>
-    <summary type="html"><![CDATA[<div>
-<img src="/Scratch/img/blog/Typography-and-the-Web/first_sc_screenshot.png" alt=""/>
-</div>
-<div class="intro">
-<p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> La typography sur le web est pourrie et nous ne somme pas près de voir ce problème réparé.</p>
-</div>
-<p>Je suis tombé sur ce site: <a href="http://opentypography.org/">open typography</a>. Leur message principal est&nbsp;:</p>
-<blockquote>
-<p>«There is no reason to wait for browser development to catch up. We can all create better web typography ourselves, today.»</p>
-</blockquote>
-<p>ou en français&nbsp;:</p>
-<blockquote>
-<p>«Nous ne somme pas obligé d’attendre le développement des navigateurs. Nous pouvons créer un web avec une meilleure typographie aujourd’hui.»</p>
-</blockquote>
-<p>Comme quelqu’un qui a déjà essayé d’améliorer la typographie de son site web, et en particulier des <em>ligatures</em>, je crois que c’est faux.</p>
-<p>J’ai déjà écrit un système automatique qui détecte et ajoute des ligatures en utilisant des caractères unicode. Cependant je n’ai jamais publié cette amélioration sur le web et voilà pourquoi&nbsp;:</p>
-<p>Tout d’abord, qu’est-ce qu’un ligature ?</p>
-<div>
-<img src="/Scratch/img/blog/Typography-and-the-Web/ligatures.png" alt=""/>
-</div>
-<p>Quel est le problème des ligatures sur le web ? Le premier c’est que vous ne pouvez pas chercher les mots qui contiennent ces ligatures. Par exemple essayez de chercher le mot “first”.</p>
-<ul>
-<li>first ← Pas de ligature, pas de problème<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>.</li>
-<li><span class="red">ﬁ</span>r<span class="red">ﬆ </span> ← Une jolie ligature, mais introuvable avec une recherche (<code>C-f</code>).</li>
-</ul>
-<p>Le second problème est le rendu. Par exemple, essayer d’utiliser un charactère de ligature en petites capitales&nbsp;:</p>
-<ul>
-<li><sc>first</sc></li>
-<li><sc><span class="red">ﬁ</span>r<span class="red">ﬆ</span></sc></li>
-</ul>
-<p>Voici une capture d’écran pour que vous voyez ce que je vois&nbsp;:</p>
-<div>
-<img src="/Scratch/img/blog/Typography-and-the-Web/first_sc_screenshot.png" alt=""/>
-</div>
-<p>Le navigateur est incapable de comprendre que le caractère de ligature “<span class="red">ﬁ</span>” doit être rendu comme <sc>fi</sc> lorsqu’il est en petites capitales. Et une part du problème est que l’on peut décider d’écrire en petite majuscule dans le <span class="sc">css</span>.</p>
-<p>Comment par exemple utiliser un charactère de ligature unicode sur un site qui possède différents rendus via différentes <span class="sc">css</span> ?</p>
-<p>Comparons à <span style="text-transform: uppercase">L<sup style="vertical-align: 0.15em; margin-left: -0.36em; margin-right: -0.15em; font-size: .85em">a</sup>T<sub style="vertical-align: -0.5ex; margin-left: -0.1667em; margin-right: -0.125em; font-size: 1em">e</sub>X</span></p>
-<div>
-<img src="/Scratch/img/blog/Typography-and-the-Web/first_latex_screenshot.png" alt=""/>
-</div>
-<p>Si vous faites attention au détail, vous constaterez que le premier “first” contient une ligature. Bien entendu la deuxième ligne est affichée correctement. Le code que j’ai utilisé pour avoir ce rendu est simplement&nbsp;:</p>
-<pre class="sourceCode latex"><code class="sourceCode latex">\item first
-\item {\sc first}</code></pre>
-<p><span style="text-transform: uppercase">L<sup style="vertical-align: 0.15em; margin-left: -0.36em; margin-right: -0.15em; font-size: .85em">a</sup>T<sub style="vertical-align: -0.5ex; margin-left: -0.1667em; margin-right: -0.125em; font-size: 1em">e</sub>X</span> a été suffisamment intelligent pour créer les ligatures si nécessaire.</p>
-<p>La ligature “<span class="red">ﬆ</span>” est rare et n’est pas rendu par défaut par <span style="text-transform: uppercase">L<sup style="vertical-align: 0.15em; margin-left: -0.36em; margin-right: -0.15em; font-size: .85em">a</sup>T<sub style="vertical-align: -0.5ex; margin-left: -0.1667em; margin-right: -0.125em; font-size: 1em">e</sub>X</span>. Si vous voulez voir des ligatures rares, vous pouvez utiliser <span style="text-transform: uppercase">X<sub style="vertical-align: -0.5ex; margin-left: -0.1667em; margin-right: -0.125em; font-size: 1em">Ǝ</sub>L<sup style="vertical-align: 0.15em; margin-left: -0.36em; margin-right: -0.15em; font-size: .85em">a</sup>T<sub style="vertical-align: -0.5ex; margin-left: -0.1667em; margin-right: -0.125em; font-size: 1em">e</sub>X</span>:</p>
-<div>
-<img src="/Scratch/img/blog/Typography-and-the-Web/xelatex_ligatures.jpg" alt="XeLaTeX ligatures"/>
-</div>
-<p>J’ai copié cette image de l’excellent article de <a href="http://nitens.org/taraborelli/latex#rare">Dario Taraborelli</a>.</p>
-<p>Clairement il sera difficile aux navigateurs de corriger ces problèmes. Imaginez le nombre de petites exceptions.</p>
-<ul>
-<li>Le texte est en petites capitales, je ne dois pas utiliser de ligatures.</li>
-<li>Le mot courant contient un caractère de ligature, je ne dois pas chercher d’autre ligature dans ce mot.</li>
-<li>La fonte n’a pas défini de caractère unicode pour la ligature, je ne dois pas l’utiliser.</li>
-<li>Une commande javascript a modifé le CSS, je dois vérifier si je dois remplacer les ligatures par les deux caractères.</li>
-<li>etc…</li>
-</ul>
-<p>Dans tous les cas, si quelqu’un possède une solution je suis preneur !</p>
-<div class="footnotes">
-<hr />
-<ol>
-<li id="fn1"><p>En réalité, vous devriez pouvoir voir une ligature. Maintenant j’utilise : <code>text-rendering: optimizelegibility</code>. Le rendu est correct parce que j’utilise une fonte correct, à savoir Computer Modern de Donald Knuth.<a href="#fnref1">↩</a></p></li>
 </ol>
 </div>]]></summary>
 </entry>
