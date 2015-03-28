@@ -205,7 +205,7 @@ puts <span class="st">&quot;Hello </span><span class="ot">#{</span>name<span cla
 <span class="dt">int</span> main (<span class="dt">int</span> argc, <span class="dt">char</span> **argv) {
     <span class="dt">char</span> name[<span class="dv">666</span>]; <span class="co">// &lt;- An Evil Number!</span>
     <span class="co">// What if my name is more than 665 character long?</span>
-    printf(<span class="st">&quot;What is your name?</span><span class="ch">\n</span><span class="st">&quot;</span>); 
+    printf(<span class="st">&quot;What is your name?</span><span class="ch">\n</span><span class="st">&quot;</span>);
     scanf(<span class="st">&quot;%s&quot;</span>, name);
     printf(<span class="st">&quot;Hello %s!</span><span class="ch">\n</span><span class="st">&quot;</span>, name);
     <span class="kw">return</span> <span class="dv">0</span>;
@@ -403,11 +403,9 @@ f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</
 <span class="ot">x ::</span> <span class="dt">Int</span>
 x <span class="fu">=</span> <span class="dv">3</span>
 <span class="ot">y ::</span> <span class="dt">Float</span>
-y <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">4</span></code></pre>
-</div>
-en: &gt; – won’t work because type x ≠ type y
-<div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print (f x y)</code></pre>
+y <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">4</span>
+<span class="co">-- won't work because type x ≠ type y</span>
+main <span class="fu">=</span> print (f x y)</code></pre>
 </div>
 <p>The compiler complains. The two parameters must have the same type.</p>
 <p>If you believe that this is a bad idea, and that the compiler should make the transformation from one type to another for you, you should really watch this great (and funny) video: <a href="https://www.destroyallsoftware.com/talks/wat">WAT</a></p>
@@ -443,9 +441,7 @@ Powers
 </h5>
 
 <pre><code>x^n     for n an integral (understand Int or Integer)
-x**y    for y any kind of number (Float for example)
-x^n     pour n un entier (comprenez Int ou Integer)
-x**y    pour y tout type de nombre (Float par exemple)</code></pre>
+x**y    for y any kind of number (Float for example)</code></pre>
 <p><code>Integer</code> has no limit except the capacity of your machine:</p>
 <pre><code>4^103
 102844034832575377634685573909834406561420991602098741459288064</code></pre>
@@ -532,7 +528,7 @@ f :: (a -&gt; b) -&gt; c  ⇔ f is a function from (a→b) to c</code></pre>
 <p>Remember that defining the type of a function before its declaration isn’t mandatory. Haskell infers the most general type for you. But it is considered a good practice to do so.</p>
 <p><em>Infix notation</em></p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">square ::</span> <span class="dt">Num</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a  
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">square ::</span> <span class="dt">Num</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a
 square x <span class="fu">=</span> x<span class="fu">^</span><span class="dv">2</span></code></pre>
 </div>
 <p>Note <code>^</code> uses infix notation. For each infix operator there its associated prefix notation. You just have to put it inside parenthesis.</p>
@@ -660,8 +656,8 @@ evenSum l <span class="fu">=</span> accumSum <span class="dv">0</span> l
 
 accumSum n l <span class="fu">=</span> <span class="kw">if</span> l <span class="fu">==</span> []
                   <span class="kw">then</span> n
-                  <span class="kw">else</span> <span class="kw">let</span> x <span class="fu">=</span> head l 
-                           xs <span class="fu">=</span> tail l 
+                  <span class="kw">else</span> <span class="kw">let</span> x <span class="fu">=</span> head l
+                           xs <span class="fu">=</span> tail l
                        <span class="kw">in</span> <span class="kw">if</span> even x
                               <span class="kw">then</span> accumSum (n<span class="fu">+</span>x) xs
                               <span class="kw">else</span> accumSum n xs</code></pre>
@@ -673,7 +669,7 @@ accumSum n l <span class="fu">=</span> <span class="kw">if</span> l <span class=
 Loading package ghc-prim ... linking ... done.
 Loading package integer-gmp ... linking ... done.
 Loading package base ... linking ... done.
-Prelude&gt;</span> :load 11_Functions.lhs 
+Prelude&gt;</span> :load 11_Functions.lhs
 <span class="low">[1 of 1] Compiling Main             ( 11_Functions.lhs, interpreted )
 Ok, modules loaded: Main.
 *Main&gt;</span> evenSum [1..5]
@@ -690,7 +686,7 @@ accumSum 0 [2,3,4,5]
 accumSum (0+2) [3,4,5]
 <span class="yellow">3 is odd</span>
 accumSum (0+2) [4,5]
-<span class="yellow">4 is even</span>
+<span class="yellow">2 is even</span>
 accumSum (0+2+4) [5]
 <span class="yellow">5 is odd</span>
 accumSum (0+2+4) []
@@ -716,11 +712,11 @@ accumSum (0+2+4) []
 <span class="ot">evenSum ::</span> <span class="dt">Integral</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a
 
 evenSum l <span class="fu">=</span> accumSum <span class="dv">0</span> l
-    <span class="kw">where</span> accumSum n l <span class="fu">=</span> 
+    <span class="kw">where</span> accumSum n l <span class="fu">=</span>
             <span class="kw">if</span> l <span class="fu">==</span> []
                 <span class="kw">then</span> n
-                <span class="kw">else</span> <span class="kw">let</span> x <span class="fu">=</span> head l 
-                         xs <span class="fu">=</span> tail l 
+                <span class="kw">else</span> <span class="kw">let</span> x <span class="fu">=</span> head l
+                         xs <span class="fu">=</span> tail l
                      <span class="kw">in</span> <span class="kw">if</span> even x
                             <span class="kw">then</span> accumSum (n<span class="fu">+</span>x) xs
                             <span class="kw">else</span> accumSum n xs</code></pre>
@@ -737,9 +733,9 @@ evenSum l <span class="fu">=</span> accumSum <span class="dv">0</span> l
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 3</span>
 evenSum l <span class="fu">=</span> accumSum <span class="dv">0</span> l
-    <span class="kw">where</span> 
+    <span class="kw">where</span>
         accumSum n [] <span class="fu">=</span> n
-        accumSum n (x<span class="fu">:</span>xs) <span class="fu">=</span> 
+        accumSum n (x<span class="fu">:</span>xs) <span class="fu">=</span>
              <span class="kw">if</span> even x
                 <span class="kw">then</span> accumSum (n<span class="fu">+</span>x) xs
                 <span class="kw">else</span> accumSum n xs</code></pre>
@@ -749,13 +745,13 @@ evenSum l <span class="fu">=</span> accumSum <span class="dv">0</span> l
 <pre class="sourceCode haskell"><code class="sourceCode haskell">foo [] <span class="fu">=</span>  <span class="fu">&lt;</span>x<span class="fu">&gt;</span>
 foo l  <span class="fu">=</span>  <span class="fu">&lt;</span>y<span class="fu">&gt;</span></code></pre>
 <p>But pattern matching goes even further. It is also able to inspect the inner data of a complex value. We can replace</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">foo l <span class="fu">=</span>  <span class="kw">let</span> x  <span class="fu">=</span> head l 
+<pre class="sourceCode haskell"><code class="sourceCode haskell">foo l <span class="fu">=</span>  <span class="kw">let</span> x  <span class="fu">=</span> head l
              xs <span class="fu">=</span> tail l
-         <span class="kw">in</span> <span class="kw">if</span> even x 
+         <span class="kw">in</span> <span class="kw">if</span> even x
              <span class="kw">then</span> foo (n<span class="fu">+</span>x) xs
              <span class="kw">else</span> foo n xs</code></pre>
 <p>with</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">foo (x<span class="fu">:</span>xs) <span class="fu">=</span> <span class="kw">if</span> even x 
+<pre class="sourceCode haskell"><code class="sourceCode haskell">foo (x<span class="fu">:</span>xs) <span class="fu">=</span> <span class="kw">if</span> even x
                  <span class="kw">then</span> foo (n<span class="fu">+</span>x) xs
                  <span class="kw">else</span> foo n xs</code></pre>
 <p>This is a very useful feature. It makes our code both terser and easier to read.</p>
@@ -777,9 +773,9 @@ foo l  <span class="fu">=</span>  <span class="fu">&lt;</span>y<span class="fu">
 <span class="ot">evenSum ::</span> <span class="dt">Integral</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a
 
 evenSum <span class="fu">=</span> accumSum <span class="dv">0</span>
-    <span class="kw">where</span> 
+    <span class="kw">where</span>
         accumSum n [] <span class="fu">=</span> n
-        accumSum n (x<span class="fu">:</span>xs) <span class="fu">=</span> 
+        accumSum n (x<span class="fu">:</span>xs) <span class="fu">=</span>
              <span class="kw">if</span> even x
                 <span class="kw">then</span> accumSum (n<span class="fu">+</span>x) xs
                 <span class="kw">else</span> accumSum n xs</code></pre>
@@ -815,7 +811,7 @@ evenSum l <span class="fu">=</span> mysum <span class="dv">0</span> (filter even
 <p>The function <code>filter</code> takes a function of type (<code>a -&gt; Bool</code>) and a list of type <code>[a]</code>. It returns a list containing only elements for which the function returned <code>true</code>.</p>
 <p>Our next step is to use another technique to accomplish the same thing as a loop. We will use the <code>foldl</code> function to accumulate a value as we pass through the list. The function <code>foldl</code> captures a general coding pattern:</p>
 <pre>
-myfunc list = foo <span class="blue">initialValue</span> <span class="green">list</span>
+    myfunc list = foo <span class="blue">initialValue</span> <span class="green">list</span>
     foo accumulated []     = accumulated
     foo tmpValue    (x:xs) = foo (<span class="yellow">bar</span> tmpValue x) xs
 </pre>
@@ -867,7 +863,7 @@ evenSum l <span class="fu">=</span> foldl' (<span class="fu">+</span>) <span cla
   <span class="yellow">evenSum [1,2,3,4]</span>
 ⇒ foldl' (+) 0 (<span class="yellow">filter even [1,2,3,4]</span>)
 ⇒ <span class="yellow">foldl' (+) 0 <span class="blue">[2,4]</span></span>
-⇒ <span class="blue">foldl' (+) (<span class="yellow">0+2</span>) [4]</span> 
+⇒ <span class="blue">foldl' (+) (<span class="yellow">0+2</span>) [4]</span>
 ⇒ <span class="yellow">foldl' (+) <span class="blue">2</span> [4]</span>
 ⇒ <span class="blue">foldl' (+) (<span class="yellow">2+4</span>) []</span>
 ⇒ <span class="yellow">foldl' (+) <span class="blue">6</span> []</span>
@@ -883,13 +879,12 @@ evenSum l <span class="fu">=</span> foldl' (<span class="fu">+</span>) <span cla
 evenSum <span class="fu">=</span> (foldl' (<span class="fu">+</span>) <span class="dv">0</span>) <span class="fu">.</span> (filter even)</code></pre>
 <p>Also, we could rename some parts to make it clearer:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 10 </span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 10</span>
 <span class="kw">import </span><span class="dt">Data.List</span> (foldl')
 <span class="ot">sum' ::</span> (<span class="dt">Num</span> a) <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a
 sum' <span class="fu">=</span> foldl' (<span class="fu">+</span>) <span class="dv">0</span>
 <span class="ot">evenSum ::</span> <span class="dt">Integral</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a
-evenSum <span class="fu">=</span> sum' <span class="fu">.</span> (filter even)
- </code></pre>
+evenSum <span class="fu">=</span> sum' <span class="fu">.</span> (filter even)</code></pre>
 </div>
 <p>It is time to discuss the direction our code has moved as we introduced more functional idioms. What did we gain by using higher order functions?</p>
 <p>At first, you might think the main difference is terseness. But in fact, it has more to do with better thinking. Suppose we want to modify our function slightly, for example, to get the sum of all even squares of elements of the list.</p>
@@ -899,7 +894,7 @@ evenSum <span class="fu">=</span> sum' <span class="fu">.</span> (filter even)
 <pre class="sourceCode haskell"><code class="sourceCode haskell">squareEvenSum <span class="fu">=</span> sum' <span class="fu">.</span> (filter even) <span class="fu">.</span> (map (<span class="fu">^</span><span class="dv">2</span>))
 squareEvenSum' <span class="fu">=</span> evenSum <span class="fu">.</span> (map (<span class="fu">^</span><span class="dv">2</span>))</code></pre>
 </div>
-<p>We just had to add another “transformation function”.</p>
+<p>We just had to add another “transformation function”[^0216].</p>
 <pre><code>map (^2) [1,2,3,4] ⇔ [1,4,9,16]</code></pre>
 <p>The <code>map</code> function simply applies a function to all the elements of a list.</p>
 <p>We didn’t have to modify anything <em>inside</em> the function definition. This makes the code more modular. But in addition you can think more mathematically about your function. You can also use your function interchangably with others, as needed. That is, you can compose, map, fold, filter using your new function.</p>
@@ -953,7 +948,7 @@ Prelude&gt; -- load the Data.Complex module
 Prelude&gt; :m Data.Complex
 Prelude Data.Complex&gt; square (2 :+ 1)
 3.0 :+ 4.0</code></pre>
-<p><code>x :+ y</code> is the notation for the complex (<i>x + ib</i>).</p>
+<p><code>x :+ y</code> is the notation for the complex (<i>x + iy</i>).</p>
 <p>Now compare with the amount of code necessary in C:</p>
 <pre class="sourceCode c"><code class="sourceCode c"><span class="dt">int</span>     int_square(<span class="dt">int</span> x) { <span class="kw">return</span> x*x; }
 
@@ -1056,7 +1051,7 @@ Recursive type
 <p>If you want to be able to print (<code>Show</code>), read (<code>Read</code>), test equality (<code>Eq</code>) and compare (<code>Ord</code>) your new data structure you can tell Haskell to derive the appropriate functions for you.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">infixr</span> <span class="dv">5</span> <span class="ot">::</span><span class="fu">:</span>
-<span class="kw">data</span> <span class="dt">List</span> a <span class="fu">=</span> <span class="dt">Nil</span> <span class="fu">|</span> a <span class="ot">::</span><span class="fu">:</span> (<span class="dt">List</span> a) 
+<span class="kw">data</span> <span class="dt">List</span> a <span class="fu">=</span> <span class="dt">Nil</span> <span class="fu">|</span> a <span class="ot">::</span><span class="fu">:</span> (<span class="dt">List</span> a)
               <span class="kw">deriving</span> (<span class="dt">Show</span>,<span class="dt">Read</span>,<span class="dt">Eq</span>,<span class="dt">Ord</span>)</code></pre>
 </div>
 <p>When you add <code>deriving (Show)</code> to your data declaration, Haskell creates a <code>show</code> function for you. We’ll see soon how you can use your own <code>show</code> function.</p>
@@ -1267,7 +1262,7 @@ treeFromList (x<span class="fu">:</span>xs) <span class="fu">=</span> <span clas
 :    :       :    |--'E'
 :    :       :    `--'S'</code></pre>
 <p>Notice how duplicate trees aren’t inserted; there is only one tree corresponding to <code>&quot;I&quot;,&quot;HEARD&quot;</code>. We have this for (almost) free, because we have declared Tree to be an instance of <code>Eq</code>.</p>
-<p>See how awesome this structure is: We can make trees containing not only integers, strings and chars, but also other trees. And we can even make a tree containing a tree of trees!</p>
+<p>See how awesome this structure is: We can make trees containing not only integers, strings and chars, but also other trees. And we can even make a tree containing a tree of trees! fr:Voyez à quel point cette structure est formidable:</p>
 <p><a href="code/02_Hard_Part/31_Trees.lhs" class="cut">02_Hard_Part/<strong>31_Trees.lhs</strong> </a></p>
 <hr />
 <p><a href="code/02_Hard_Part/40_Infinites_Structures.lhs" class="cut">02_Hard_Part/<strong>40_Infinites_Structures.lhs</strong></a></p>
@@ -1312,8 +1307,8 @@ main <span class="fu">=</span> print <span class="fu">$</span> take' <span class
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Debug.Trace</span> (trace)
 <span class="kw">import </span><span class="dt">Data.List</span>
-<span class="kw">data</span> <span class="dt">BinTree</span> a <span class="fu">=</span> <span class="dt">Empty</span> 
-                 <span class="fu">|</span> <span class="dt">Node</span> a (<span class="dt">BinTree</span> a) (<span class="dt">BinTree</span> a) 
+<span class="kw">data</span> <span class="dt">BinTree</span> a <span class="fu">=</span> <span class="dt">Empty</span>
+                 <span class="fu">|</span> <span class="dt">Node</span> a (<span class="dt">BinTree</span> a) (<span class="dt">BinTree</span> a)
                   <span class="kw">deriving</span> (<span class="dt">Eq</span>,<span class="dt">Ord</span>)</code></pre>
 </div>
 <div class="codehighlight">
@@ -1324,24 +1319,24 @@ main <span class="fu">=</span> print <span class="fu">$</span> take' <span class
   show t <span class="fu">=</span> <span class="st">&quot;&lt; &quot;</span> <span class="fu">++</span> replace <span class="ch">'\n'</span> <span class="st">&quot;\n: &quot;</span> (treeshow <span class="st">&quot;&quot;</span> t)
     <span class="kw">where</span>
     treeshow pref <span class="dt">Empty</span> <span class="fu">=</span> <span class="st">&quot;&quot;</span>
-    treeshow pref (<span class="dt">Node</span> x <span class="dt">Empty</span> <span class="dt">Empty</span>) <span class="fu">=</span> 
+    treeshow pref (<span class="dt">Node</span> x <span class="dt">Empty</span> <span class="dt">Empty</span>) <span class="fu">=</span>
                   (pshow pref x)
 
-    treeshow pref (<span class="dt">Node</span> x left <span class="dt">Empty</span>) <span class="fu">=</span> 
+    treeshow pref (<span class="dt">Node</span> x left <span class="dt">Empty</span>) <span class="fu">=</span>
                   (pshow pref x) <span class="fu">++</span> <span class="st">&quot;\n&quot;</span> <span class="fu">++</span>
                   (showSon pref <span class="st">&quot;`--&quot;</span> <span class="st">&quot;   &quot;</span> left)
 
-    treeshow pref (<span class="dt">Node</span> x <span class="dt">Empty</span> right) <span class="fu">=</span> 
+    treeshow pref (<span class="dt">Node</span> x <span class="dt">Empty</span> right) <span class="fu">=</span>
                   (pshow pref x) <span class="fu">++</span> <span class="st">&quot;\n&quot;</span> <span class="fu">++</span>
                   (showSon pref <span class="st">&quot;`--&quot;</span> <span class="st">&quot;   &quot;</span> right)
 
-    treeshow pref (<span class="dt">Node</span> x left right) <span class="fu">=</span> 
+    treeshow pref (<span class="dt">Node</span> x left right) <span class="fu">=</span>
                   (pshow pref x) <span class="fu">++</span> <span class="st">&quot;\n&quot;</span> <span class="fu">++</span>
                   (showSon pref <span class="st">&quot;|--&quot;</span> <span class="st">&quot;|  &quot;</span> left) <span class="fu">++</span> <span class="st">&quot;\n&quot;</span> <span class="fu">++</span>
                   (showSon pref <span class="st">&quot;`--&quot;</span> <span class="st">&quot;   &quot;</span> right)
 
     <span class="co">-- show a tree using some prefixes to make it nice</span>
-    showSon pref before next t <span class="fu">=</span> 
+    showSon pref before next t <span class="fu">=</span>
                   pref <span class="fu">++</span> before <span class="fu">++</span> treeshow (pref <span class="fu">++</span> next) t
 
     <span class="co">-- pshow replace &quot;\n&quot; by &quot;\n&quot;++pref</span>
@@ -1351,7 +1346,7 @@ main <span class="fu">=</span> print <span class="fu">$</span> take' <span class
     replace c new string <span class="fu">=</span>
       concatMap (change c new) string
       <span class="kw">where</span>
-          change c new x 
+          change c new x
               <span class="fu">|</span> x <span class="fu">==</span> c <span class="fu">=</span> new
               <span class="fu">|</span> otherwise <span class="fu">=</span> x<span class="fu">:</span>[] <span class="co">-- &quot;x&quot;</span></code></pre>
 </div>
@@ -1362,7 +1357,7 @@ main <span class="fu">=</span> print <span class="fu">$</span> take' <span class
 </div>
 <p>A complete binary tree where each node is equal to 0. Now I will prove you can manipulate this object using the following function:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- take all element of a BinTree </span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- take all element of a BinTree</span>
 <span class="co">-- up to some depth</span>
 treeTakeDepth _ <span class="dt">Empty</span> <span class="fu">=</span> <span class="dt">Empty</span>
 treeTakeDepth <span class="dv">0</span> _     <span class="fu">=</span> <span class="dt">Empty</span>
@@ -1394,24 +1389,24 @@ treeTakeDepth n (<span class="dt">Node</span> x left right) <span class="fu">=</
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">iTree <span class="fu">=</span> <span class="dt">Node</span> <span class="dv">0</span> (dec iTree) (inc iTree)
         <span class="kw">where</span>
-           dec (<span class="dt">Node</span> x l r) <span class="fu">=</span> <span class="dt">Node</span> (x<span class="fu">-</span><span class="dv">1</span>) (dec l) (dec r) 
-           inc (<span class="dt">Node</span> x l r) <span class="fu">=</span> <span class="dt">Node</span> (x<span class="fu">+</span><span class="dv">1</span>) (inc l) (inc r) </code></pre>
+           dec (<span class="dt">Node</span> x l r) <span class="fu">=</span> <span class="dt">Node</span> (x<span class="fu">-</span><span class="dv">1</span>) (dec l) (dec r)
+           inc (<span class="dt">Node</span> x l r) <span class="fu">=</span> <span class="dt">Node</span> (x<span class="fu">+</span><span class="dv">1</span>) (inc l) (inc r)</code></pre>
 </div>
 <p>Another way to create this tree is to use a higher order function. This function should be similar to <code>map</code>, but should work on <code>BinTree</code> instead of list. Here is such a function:</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- apply a function to each node of Tree</span>
 <span class="ot">treeMap ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> <span class="dt">BinTree</span> a <span class="ot">-&gt;</span> <span class="dt">BinTree</span> b
 treeMap f <span class="dt">Empty</span> <span class="fu">=</span> <span class="dt">Empty</span>
-treeMap f (<span class="dt">Node</span> x left right) <span class="fu">=</span> <span class="dt">Node</span> (f x) 
-                                     (treeMap f left) 
+treeMap f (<span class="dt">Node</span> x left right) <span class="fu">=</span> <span class="dt">Node</span> (f x)
+                                     (treeMap f left)
                                      (treeMap f right)</code></pre>
 </div>
 <p><em>Hint</em>: I won’t talk more about this here. If you are interested in the generalization of <code>map</code> to other data structures, search for functor and <code>fmap</code>.</p>
 <p>Our definition is now:</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">infTreeTwo ::</span> <span class="dt">BinTree</span> <span class="dt">Int</span>
-infTreeTwo <span class="fu">=</span> <span class="dt">Node</span> <span class="dv">0</span> (treeMap (\x <span class="ot">-&gt;</span> x<span class="fu">-</span><span class="dv">1</span>) infTreeTwo) 
-                    (treeMap (\x <span class="ot">-&gt;</span> x<span class="fu">+</span><span class="dv">1</span>) infTreeTwo) </code></pre>
+infTreeTwo <span class="fu">=</span> <span class="dt">Node</span> <span class="dv">0</span> (treeMap (\x <span class="ot">-&gt;</span> x<span class="fu">-</span><span class="dv">1</span>) infTreeTwo)
+                    (treeMap (\x <span class="ot">-&gt;</span> x<span class="fu">+</span><span class="dv">1</span>) infTreeTwo)</code></pre>
 </div>
 <p>Look at the result for</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print <span class="fu">$</span> treeTakeDepth <span class="dv">4</span> infTreeTwo</code></pre>
@@ -1512,7 +1507,7 @@ main = do
 <p>Another important note about using <code>IO</code>: All lines in a do block must be of one of the two forms:</p>
 <pre><code>action1             :: IO a
                     -- in this case, generally a = ()</code></pre>
-<p>or</p>
+<p>ou</p>
 <pre><code>value &lt;- action2    -- where
                     -- action2 :: IO b
                     -- value   :: b</code></pre>
@@ -1556,7 +1551,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
           <span class="dt">Nothing</span> <span class="ot">-&gt;</span> error <span class="st">&quot;Bad format. Good Bye.&quot;</span></code></pre>
 </div>
 <p>In case of error, we display a nice error message.</p>
-<p>Note that the type of each expression in the main’s do block remains of the form <code>IO a</code>. The only strange construction is <code>error</code>. I’ll just say here that <code>error msg</code> takes the needed type (here <code>IO ()</code>).</p>
+<p>Note that the type of each expression in the main’s <code>do</code> block remains of the form <code>IO a</code>. The only strange construction is <code>error</code>. I’ll just say here that <code>error msg</code> takes the needed type (here <code>IO ()</code>).</p>
 <p>One very important thing to note is the type of all the functions defined so far. There is only one function which contains <code>IO</code> in its type: <code>main</code>. This means main is impure. But main uses <code>getListFromString</code> which is pure. So it’s clear just by looking at declared types which functions are pure and which are impure.</p>
 <p>Why does purity matter? Among the many advantages, here are three:</p>
 <ul>
@@ -1629,7 +1624,8 @@ IO trick explained
 <p>To separate pure and impure parts, <code>main</code> is defined as a function which modifies the state of the world</p>
 <pre><code>main :: World -&gt; World</code></pre>
 <p>A function is guaranteed to have side effects only if it has this type. But look at a typical main function:</p>
-<pre><code>main w0 =
+<pre><code>
+main w0 =
     let (v1,w1) = action1 w0 in
     let (v2,w2) = action2 v1 w1 in
     let (v3,w3) = action3 v2 w2 in
@@ -1789,7 +1785,7 @@ print<span class="ot"> ::</span> <span class="dt">Show</span> a <span class="ot"
 <pre class="sourceCode haskell"><code class="sourceCode haskell">(res,w3) <span class="fu">=</span> (getLine <span class="fu">&gt;&gt;=</span>
            (\line1 <span class="ot">-&gt;</span> getLine <span class="fu">&gt;&gt;=</span>
            (\line2 <span class="ot">-&gt;</span> print (line1 <span class="fu">++</span> line2)))) w0</code></pre>
-<p>Ho Ho Ho! Merry Christmas Everyone! Haskell has made syntactical sugar for us:</p>
+<p>fr; HAskell a un sucre syntaxique pour nous: Ho Ho Ho! Merry Christmas Everyone! Haskell has made syntactical sugar for us:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">do</span>
   x <span class="ot">&lt;-</span> action1
   y <span class="ot">&lt;-</span> action2
@@ -2296,7 +2292,7 @@ safefilter f l <span class="fu">=</span> safefilter' f l nbTry
   </pre>
   
 Explain why it doesn’t work and can enter into an infinite loop.</li>
-<li>Suppose that <code>shuffle</code> is real random list with growing bounds. If you study a bit this structure, you’ll discover that with probability 1, this structure is finite. Using the following code (suppose we could use <code>safefilter'</code> directly as if was not in the where of safefilter) find a definition of <code>f</code> such that with probability <code>1</code>, treeFromList’ shuffle is infinite. And prove it. Disclaimer, this is only a conjecture.</li>
+<li>Suppose that <code>shuffle</code> is real random list with growing bounds. If you study a bit this structure, you’ll discover that with probability 1, this structure is finite. Using the following code (suppose we could use <code>safefilter'</code> directly as if was not in the where of safefilter) find a definition of <code>f</code> such that with probability <code>1</code>, <code>treeFromList' shuffle</code> is infinite. And prove it. Disclaimer, this is only a conjecture.</li>
 </ul>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">treeFromList' []  n <span class="fu">=</span> <span class="dt">Empty</span>
 treeFromList' (x<span class="fu">:</span>xs) n <span class="fu">=</span> <span class="dt">Node</span> x left right
