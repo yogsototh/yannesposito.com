@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>YBlog - Absorb Github Events</title>
+        <meta name="keywords" content="programming" />
+
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/js/highlight/styles/solarized_dark.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/solarized.css" />
+		<!-- Font -->
+        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomen" />
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+
+    </head>
+    <body lang="en" class="article">
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	        <div id="choixlang">
+                        <a href="../../../../Scratch/fr/blog/Absorb-Github-Events/">French</a> 
+        	        </div>
+					<div id="switchcss"><a href="#">Change Theme</a></div>
+                    <div class="tomenu"><a href="#navigation">↓ Menu ↓</a></div>
+        	        <div class="flush"></div>
+        	    </div>
+			</div>
+
+			<div id="titre">
+				<h1>Absorb Github Events</h1>
+				
+			</div>
+			<div class="flush"></div>
+			<div id="afterheader" class="article">
+				<div class="corps">
+					<div>
+<img src="../../../../Scratch/img/blog/Absorb-Github-Events/main.png" alt="Main image" />
+</div>
+<div class="intro">
+<p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span> How to absorb octopussies events in real time.</p>
+<p>This article should be the first of a series of articles. The goal of this series of articles is to display event in real time. For this you’ll need many different parts:</p>
+<ul>
+<li>You should first absorbs the events</li>
+<li>then you might need to enrich them,</li>
+<li>afterward, you’ll need to aggregate,</li>
+<li>you also need to give a way to question the aggregates via an <span class="sc"><abbr title="Application Program Interface">api</abbr></span>,</li>
+<li>and finally you’ll need to provide a nice dashboard using the <span class="sc"><abbr title="Application Program Interface">api</abbr></span></li>
+</ul>
+<p>So let’s start by a way to get all github events in realtime.</p>
+<p>For this series we’ll use the events provided by <a href="http://github.com">github</a>. The Eel (“Muraine” in French) is one of the few octopussy predator. Which is the github mascot.</p>
+</div>
+<h2 id="the-concepts">The concepts</h2>
+<p>Actually all events are accessible via the <a href="https://api.github.com/events"><code>https://api.github.com/events</code></a> <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span>. During standard time and if you are logged you can call this <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> about 5000 times per hour. Which is more than one times by second.</p>
+<p>During some events, github might lower this max number of calls. So this information is provided in the header of the <span class="sc"><abbr title="HyperText Transfer Protocol">http</abbr></span> response.</p>
+<p>Mainly the algorithm will be:</p>
+<blockquote>
+<p>Forever:</p>
+<ol style="list-style-type: decimal">
+<li>call <code>/events</code></li>
+<li>analyze the three Headers: How many call can we use? At which time the number of calls reset? Compute how much time to wait before our next call.</li>
+<li>Analyze the data and put them somewhere safe where they’ll could be processed next.</li>
+</ol>
+</blockquote>
+<p>Apparently it seems easy. Let’s try it.</p>
+<p>One of the goal of this series being not only to handle events in real time but to be able to handle a tremendous number of events in real time. The actual amount of data provided by github is quite reasonable. But in general you’ll want to optimize things to be able to absorb a full firehose of informations.</p>
+<p>For example, twitter can provide more than 20000 events per seconds. The twitter firehose forces you to use a single entry point. More than that, you have to deal with a single core to download the data and parse them. To be able to absorb such amount of data you generally don’t parse completely the data.</p>
+<p>Another provider is facebook. Their approach is much nicer. You declare an <span class="sc"><abbr title="Secure HyperText Transfer Protocol">https</abbr></span> entry point and they send you the data by making <code>POST</code> calls. It is then much easier to dispatch the packet between multiple host using <code>haproxy</code> for example.</p>
+<p>Concerning github, I am not fond of their method to retrieve their data. It is kind of the worse of facebook and twitter. You have to ask yourself for data. But if you want to receive more data you’ll have to find a way to synchronize the ETAG.</p>
+<p>TODO: explain why Haskell, why conduit and apparently difficult path.</p>
+<h2 id="initialize-your-environment.">Initialize your environment.</h2>
+<p>…</p>
+<h2 id="first-step-http-requests">First step: <span class="sc"><abbr title="HyperText Transfer Protocol">http</abbr></span> requests</h2>
+<p>The first thing to do is to add all the needed dependencies. In a first time, we’ll only need to make <span class="sc"><abbr title="HyperText Transfer Protocol">http</abbr></span> requests and work with the responses.</p>
+<p>Update your <code>muraine.cabal</code> file as follow:</p>
+<pre><code>  ...
+  build-depends:       base &gt;=4.7 &amp;&amp; &lt;4.8<span class="highlight">,</span>
+                       <span class="highlight">http-conduit,</span>
+                       <span class="highlight">bytestring</span>
+  ...</code></pre>
+<p>Then edit the <code>Main.hs</code> file such that it contains this:</p>
+<blockquote>
+<p>☞ Haskell can be quite a strange programming language. It is <em>very</em> explicit about a <em>lot</em> of things. So yes. One of the cost to pay to have better confidence in the correctness of your program is to be slightly more verbose than some other very terse language (Haskell is quite very good at terseness thought) and be used to some strange magic notations and sometimes strange <span class="sc"><abbr title="Application Program Interface">api</abbr></span>.</p>
+<p>If you are not familiar with Haskell. Try not be focused on details and just try to read the flow. Once you have to do things yourself, the Haskell compiler will be here to help you in your journey.</p>
+<p>The worst case scenario with Haskell is discovering a new library lacking some documentation and playing the <em>type tetris</em> game.</p>
+</blockquote>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span>
+
+<span class="kw">import           </span><span class="dt">Network.HTTP.Conduit</span> (simpleHttp)
+<span class="kw">import qualified</span> <span class="dt">Data.ByteString.Lazy.Char8</span> <span class="kw">as</span> <span class="dt">L</span>
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+    response <span class="ot">&lt;-</span> simpleHttp <span class="st">&quot;http://www.google.com&quot;</span>
+    L.putStrLn response</code></pre>
+<p>And now to run this code simply launch this command:</p>
+<pre><code>cabal run</code></pre>
+<p>Now you should receive some <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span>. It is now time to receive some github events. Simply udpate the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span>:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span>
+
+<span class="kw">import           </span><span class="dt">Network.HTTP.Conduit</span> (simpleHttp)
+<span class="kw">import qualified</span> <span class="dt">Data.ByteString.Lazy.Char8</span> <span class="kw">as</span> <span class="dt">L</span>
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+    response <span class="ot">&lt;-</span> simpleHttp <span class="st">&quot;https://api.github.com/events&quot;</span>
+    L.putStrLn response</code></pre>
+<p>Unfortunately you should receive an error (line wrapping added for readability):</p>
+<pre><code>StatusCodeException (Status {statusCode = 403, statusMessage
+ = &quot;Forbidden&quot;}) [(&quot;Cache-Control&quot;,&quot;no-cache&quot;),(&quot;Connection&quot;
+,&quot;close&quot;),(&quot;Content-Type&quot;,&quot;text/html&quot;),(&quot;X-Response-Body-Sta
+rt&quot;,&quot;Request forbidden by administrative rules. Please make 
+sure your request has a User-Agent header (http://developer.
+github.com/v3/#user-agent-required). Check https://developer
+.github.com for other possible causes.&quot;),(&quot;X-Request-URL&quot;,&quot;G
+ET https://api.github.com:443/events&quot;)] (CJ {expose = []})</code></pre>
+<p>It is a bit hard to read, but in the mess you can read:</p>
+<pre><code>Request forbidden by administrative rules.
+Please make sure your request has a User-Agent header
+(http://developer.github.com/v3/#user-agent-required).
+Check https://developer.github.com for other possible causes.</code></pre>
+<p>Damn, github want us to add a <code>User-Agent</code> header. But the library we use doesn’t add one by default. We should add it manually.</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span>
+<span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span>
+
+<span class="kw">import           </span><span class="dt">Network.HTTP.Conduit</span>
+<span class="kw">import qualified</span> <span class="dt">Data.ByteString.Lazy.Char8</span> <span class="kw">as</span> <span class="dt">LZ</span>
+
+<span class="ot">simpleHTTPWithUserAgent ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> (<span class="dt">Response</span> <span class="dt">LZ.ByteString</span>)
+simpleHTTPWithUserAgent url <span class="fu">=</span> <span class="kw">do</span>
+    r <span class="ot">&lt;-</span> parseUrl url
+    <span class="kw">let</span> request <span class="fu">=</span> r {requestHeaders <span class="fu">=</span> [(<span class="st">&quot;User-Agent&quot;</span>,<span class="st">&quot;HTTP-Conduit&quot;</span>)]}
+    withManager (httpLbs request)
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+    response <span class="ot">&lt;-</span> simpleHTTPWithUserAgent <span class="st">&quot;https://api.github.com/events&quot;</span>
+    LZ.putStrLn (responseBody response)</code></pre>
+<p>Now, that is better. But, to start really working with the github <span class="sc"><abbr title="Application Program Interface">api</abbr></span>, we need to manage the headers.</p>
+<p>Here is how we display them:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import qualified</span> <span class="dt">Data.ByteString.Char8</span> <span class="kw">as</span> <span class="dt">B</span> <span class="co">-- strict bytestrings</span>
+<span class="kw">import </span><span class="dt">Data.Monoid</span> ((&lt;&gt;)) <span class="co">-- for concatenating bytestrings</span>
+
+<span class="fu">...</span>
+
+<span class="highlight"><span class="ot">showHeader ::</span> <span class="dt">Header</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</span>
+<span class="highlight">showHeader (name, value) <span class="fu">=</span></span>
+  <span class="highlight">B.putStrLn (original name <span class="fu">&lt;&gt;</span> <span class="st">&quot;: &quot;</span> <span class="fu">&lt;&gt;</span> value)</span>
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+    response <span class="ot">&lt;-</span> simpleHTTPWithUserAgent <span class="st">&quot;https://api.github.com/events&quot;</span>
+    LZ.putStrLn (responseBody response)
+    <span class="highlight">mapM_ showHeader (responseHeaders response)</span></code></pre>
+<p>The <code>responseHeaders response</code> will return a list of <code>Header</code> and a <code>Header</code> is a couple <code>(header_name,value)</code>.</p>
+<p>So <code>mapM_</code> will execute a function over a list, here the list of <code>Headers</code>. For each header we execute <code>showHeader</code>.</p>
+<p><code>showHeader</code> take a <code>Header</code> and print it on screen.</p>
+<p>There should be three headers beginning by <code>X-RateLimit</code>. The number of authorized access should be quite low:</p>
+<pre><code>X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 57
+X-RateLimit-Reset: 1427738616</code></pre>
+<p>So you have the right to connect to the github <span class="sc"><abbr title="Application Program Interface">api</abbr></span> only 60 times by hour. It will be far from real time high volume events. Fortunately, the limit can be greatly improved by being connected. So you can provide a username and password.</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">...</span>
+<span class="highlight"><span class="kw">import </span><span class="dt">System.Environment</span> (getArgs)</span>
+<span class="highlight"><span class="kw">import </span><span class="dt">System.Exit</span> (exitFailure)</span>
+<span class="fu">...</span>
+
+
+<span class="ot">simpleHTTPWithUserAgent ::</span> <span class="dt">String</span> <span class="highlight"><span class="ot">-&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span></span>
+                           <span class="ot">-&gt;</span> <span class="dt">IO</span> (<span class="dt">Response</span> <span class="dt">LZ.ByteString</span>)
+simpleHTTPWithUserAgent url <span class="highlight">user pass</span> <span class="fu">=</span> <span class="kw">do</span>
+    r <span class="ot">&lt;-</span> parseUrl url
+    <span class="kw">let</span> request <span class="fu">=</span> r {requestHeaders <span class="fu">=</span> [(<span class="st">&quot;User-Agent&quot;</span>,<span class="st">&quot;HTTP-Conduit&quot;</span>)]}
+        <span class="highlight">requestWithAuth <span class="fu">=</span> applyBasicAuth (B.pack user)</span>
+                                         <span class="highlight">(B.pack pass)</span>
+                                         <span class="highlight">request</span>
+    withManager (httpLbs <span class="highlight">requestWithAuth</span>)
+
+
+<span class="ot">showHelpAndExit ::</span> <span class="dt">IO</span> ()
+showHelpAndExit <span class="fu">=</span> <span class="kw">do</span>
+    putStrLn <span class="st">&quot;provide your github username and password please&quot;</span>
+    exitFailure
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+    args <span class="ot">&lt;-</span> getArgs
+    <span class="kw">case</span> args <span class="kw">of</span>
+         [user,pass] <span class="ot">-&gt;</span> continueWithUserAndPass user pass
+         _ <span class="ot">-&gt;</span> showHelpAndExit
+
+<span class="ot">continueWithUserAndPass ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
+continueWithUserAndPass user pass <span class="fu">=</span> <span class="kw">do</span>
+    response <span class="ot">&lt;-</span> simpleHTTPWithUserAgent <span class="st">&quot;https://api.github.com/events&quot;</span> user pass
+    LZ.putStrLn (responseBody response)
+    mapM_ showHeader (responseHeaders response)</code></pre>
+<p>Now if you run:</p>
+<pre><code>cabal run [nickname] [password]</code></pre>
+<p>Your <code>X-RateLimit-Limit</code> should have raised to <code>5000</code>! Note it is not over <code>9000</code> thought.</p>
+<h2 id="waiting-the-right-amount-of-time">Waiting the right amount of time</h2>
+<p>To optimize the number of call we can make to the githup <span class="sc"><abbr title="Application Program Interface">api</abbr></span>, we’ll have to manage <span class="sc"><abbr title="HyperText Transfer Protocol">http</abbr></span> headers. What are the useful headers:</p>
+<pre><code>X-RateLimit-Remaining: 4999
+X-RateLimit-Reset: 1428149482
+Date: Sat, 04 Apr 2015 11:14:38 GMT
+ETag: 05502a61685deb37109b648ea2107135</code></pre>
+<p>So, to optimize the number of call we can make we should use the following number:</p>
+<pre><code>time to wait before next call in seconds:
+    t = (X-RateLimit-Reset - Date in epoch) / X-RateLimit-Remaining
+    max (t - time taken by last request, 0)</code></pre>
+<p>If we could make request instantaneously we should wait only for <code>t</code>. But as our request has taken time, it means we already waited this time. So if the request was longer than the time to wait, we should make the request as soon as possible.</p>
+<p>So most of informations we need are provided by the <span class="sc"><abbr title="HyperText Transfer Protocol">http</abbr></span> headers. We also need to measure how much time our request took.</p>
+<h3 id="date-time-are-programmers-hell">Date &amp; Time are Programmers Hell</h3>
+<p>To make things harder to use github maliciously used different format for the header <code>Date</code> and <code>X-RateLimit-Reset</code>.</p>
+<p>But this shouldn’t be a problem. We should use the <a href="https://hackage.haskell.org/package/time">time</a> package. And here we enter in the great world of date type translations. From string or int to Time, etc…</p>
+<pre><code>...
+import Data.Time.Format (readTime)
+import Data.Time.Clock.POSIX (getPOSIXTime,utcTimeToPOSIXSeconds)
+...
+rfc822DateFormat :: String
+rfc822DateFormat = &quot;%a, %_d %b %Y %H:%M:%S %Z&quot;
+
+epochFromString :: String -&gt; Int
+epochFromString = floor . utcTimeToPOSIXSeconds . readTime defaultTimeLocale rfc822DateFormat</code></pre>
+<p>Now we can pass from a String representation to an epoch one. We also need to measure how much time our requests took.</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">System.CPUTime</span> (getCPUTime)
+<span class="fu">...</span>
+<span class="ot">time ::</span> <span class="dt">IO</span> a <span class="ot">-&gt;</span> <span class="dt">IO</span> (<span class="dt">Double</span>, a)
+time action <span class="fu">=</span> <span class="kw">do</span>
+    startTime <span class="ot">&lt;-</span> getCPUTime
+    res <span class="ot">&lt;-</span> action
+    endTime <span class="ot">&lt;-</span> getCPUTime
+    return (fromIntegral (endTime <span class="fu">-</span> startTime)<span class="fu">/</span><span class="dv">1000000000</span>,res)
+<span class="fu">...</span>
+getEvents user pass <span class="fu">=</span> <span class="kw">do</span>
+    (req_time, response) <span class="ot">&lt;-</span> time (simpleHTTPWithUserAgent <span class="st">&quot;https://api.github.com/events&quot;</span> user pass)
+    <span class="fu">...</span></code></pre>
+<p>Another important aspect is to pass the ETag each of each preceding request. For this it is time to refactor our code a bit to make it more readable.</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">authHttpCall ::</span> <span class="dt">String</span> <span class="co">-- ^ URL</span>
+                <span class="ot">-&gt;</span> <span class="dt">String</span> <span class="co">-- ^ User</span>
+                <span class="ot">-&gt;</span> <span class="dt">String</span> <span class="co">-- ^ Password</span>
+                <span class="ot">-&gt;</span> <span class="dt">RequestHeaders</span> <span class="co">-- ^ Headers</span>
+                <span class="ot">-&gt;</span> <span class="dt">IO</span> (<span class="dt">Response</span> <span class="dt">LZ.ByteString</span>)
+authHttpCall url user pass headers <span class="fu">=</span> <span class="kw">do</span>
+    r <span class="ot">&lt;-</span> parseUrl url
+    <span class="kw">let</span> request <span class="fu">=</span> r {requestHeaders <span class="fu">=</span> headers }
+        requestWithAuth <span class="fu">=</span> applyBasicAuth (B.pack user) (B.pack pass) request
+    withManager (httpLbs requestWithAuth)
+
+<span class="ot">httpGHEvents ::</span> <span class="dt">String</span> <span class="co">-- ^ User</span>
+                <span class="ot">-&gt;</span> <span class="dt">String</span> <span class="co">-- ^ Password</span>
+                <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">B.ByteString</span> <span class="co">-- ^ ETag if one</span>
+                <span class="ot">-&gt;</span> <span class="dt">IO</span> (<span class="dt">Response</span> <span class="dt">LZ.ByteString</span>)
+httpGHEvents user pass etag <span class="fu">=</span>
+    authHttpCall  <span class="st">&quot;https://api.github.com/events&quot;</span> user pass headers
+    <span class="kw">where</span>
+        headers <span class="fu">=</span> (<span class="st">&quot;User-Agent&quot;</span>,<span class="st">&quot;HTTP-Conduit&quot;</span>)<span class="fu">:</span>
+            maybe [] (\e <span class="ot">-&gt;</span> [(<span class="st">&quot;If-None-Match&quot;</span>,B.tail (B.tail e))]) etag</code></pre>
+<p>And then</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">getEvents ::</span> <span class="dt">String</span>             <span class="co">-- ^ Github username</span>
+          <span class="ot">-&gt;</span> <span class="dt">String</span>             <span class="co">-- ^ Github password</span>
+          <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">B.ByteString</span> <span class="co">-- ^ ETag</span>
+          <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
+getEvents user pass etag <span class="fu">=</span> <span class="kw">do</span>
+    <span class="co">-- Call /events on github</span>
+    (req_time, response) <span class="ot">&lt;-</span> time (httpGHEvents user pass etag)
+    <span class="kw">if</span> statusIsSuccessful (responseStatus response)
+        <span class="kw">then</span> <span class="kw">do</span>
+            <span class="kw">let</span> headers <span class="fu">=</span> responseHeaders response
+            <span class="co">-- If the server returned a date we use it</span>
+            <span class="co">-- otherwise we use the local current time</span>
+            serverDateEpoch <span class="ot">&lt;-</span> <span class="kw">case</span> lookup <span class="st">&quot;Date&quot;</span> headers <span class="kw">of</span>
+                                <span class="dt">Nothing</span> <span class="ot">-&gt;</span> fmap round getPOSIXTime
+                                <span class="dt">Just</span> d <span class="ot">-&gt;</span> return (epochFromString (B.unpack d))
+            <span class="kw">let</span> etagResponded <span class="fu">=</span> lookup <span class="st">&quot;ETag&quot;</span> headers
+                remainingHeader <span class="fu">=</span> lookup <span class="st">&quot;X-RateLimit-Remaining&quot;</span> headers
+                remaining <span class="fu">=</span> maybe <span class="dv">1</span> (read <span class="fu">.</span> B.unpack) remainingHeader
+                resetHeader <span class="fu">=</span> lookup <span class="st">&quot;X-RateLimit-Reset&quot;</span> headers
+                reset <span class="fu">=</span> maybe <span class="dv">1</span> (read <span class="fu">.</span> B.unpack) resetHeader
+                timeBeforeReset <span class="fu">=</span> reset <span class="fu">-</span> serverDateEpoch
+                t <span class="fu">=</span> <span class="dv">1000000</span> <span class="fu">*</span> timeBeforeReset <span class="ot">`div`</span> remaining
+                timeToWaitIn_us <span class="fu">=</span> max <span class="dv">0</span> (t <span class="fu">-</span> floor (<span class="dv">1000000</span> <span class="fu">*</span> req_time))
+            publish (responseBody response)
+            threadDelay timeToWaitIn_us
+            getEvents user pass etagResponded
+        <span class="kw">else</span> <span class="kw">do</span>
+            putStrLn <span class="st">&quot;Something went wrong&quot;</span>
+            threadDelay <span class="dv">100000</span> <span class="co">-- 100ms</span>
+            getEvents user pass etag</code></pre>
+				</div>
+                <div id="afterarticle">
+                    <div id="social">
+                        <a target="_blank" href="http://feeds.feedburner.com/yannespositocomen" class="social">r</a>
+                        ·
+                         <a target="_blank" href="https://twitter.com/home?status=http://yannesposito.com/Scratch/en/blog/Absorb-Github-Events/%20via%20@yogsototh" class="social">t</a>
+                        ·
+                        <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=/Scratch/en/blog/Absorb-Github-Events/" class="social">`</a>
+                        ·
+                         <a target="_blank" href="https://plus.google.com/share?url=http://yannesposito.com/Scratch/en/blog/Absorb-Github-Events/" class="social">g</a>
+                        <br />
+                        <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
+                    </div>
+        	        <div id="navigation">
+                        <a href="../../../../">Home</a>
+                        <span class="sep">¦</span>
+        	            <a href="../../../../Scratch/en/blog">Blog</a>
+                        <span class="sep">¦</span>
+                        <a href="../../../../Scratch/en/softwares">Softwares</a>
+                        <span class="sep">¦</span>
+                        <a href="../../../../Scratch/en/about">About</a>
+        	        </div>
+                    <div id="totop"><a href="#header">↑ Top ↑</a></div>
+				    <div class="corps" id="comment">
+            	        <h2 class="first">Comments</h2>
+				    	<div id="disqus_thread"></div>
+        		    	<script type="text/javascript">
+        		    	    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        		    	    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
+                            var disqus_identifier = '/Scratch/en/blog/Absorb-Github-Events/index.html';
+
+        		    	    /* * * DON'T EDIT BELOW THIS LINE * * */
+        		    	    (function() {
+        		    	        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        		    	        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        		    	        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        		    	    })();
+        		    	</script>
+        		    	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        		    	<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+				    </div>
+                    <div class="tomenu"><a>↑ Menu ↑</a></div>
+				    <div id="bottom">
+            	        <div>
+            	            Published on 2015-03-27
+            	        </div>
+            	        <div>
+            	            <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+            	        </div>
+            	        <div>
+                            <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+            	        </div>
+            	        <div>
+            	            Done with
+            	            <a href="http://www.vim.org" target="_blank">Vim</a>
+				    		<span class="pala">&amp;</span>
+                            <a href="http://nanoc.ws" target="_blank"><span class="strike">nanoc</span></a>
+				    		<a href="http://jaspervdj.be/hakyll" target="_blank">Hakyll</a>
+            	        </div>
+            	    </div>
+                </div>
+			</div>
+
+        </div>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.0/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="/Scratch/js/vendor/jquery-1.10.0.min.js"><\/script>')</script>
+        <script src="../../../../Scratch/js/jquery.scrolldepth.min.js"></script>
+        <script src="../../../../Scratch/js/jquery.cookie.js"></script>
+        <script src="../../../../Scratch/js/index.js"></script>
+        <script src="../../../../Scratch/js/highlight/highlight.pack.js"></script>
+        <script src="../../../../Scratch/js/article.js"></script>
+        <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>
