@@ -43,7 +43,7 @@
 </div>
 <p>J’ai eu besoin de calculer la somme des valeurs absolue des données d’un fichier <code>wav</code>. Pour des raison d’efficacité (et aussi de fun), j’ai fait le programme en <code>C</code>.</p>
 <p>Celà faisait longtemps que je n’avais pas programmé en <code>C</code>. De mémoire il était peu aisé de manipuler des fichiers. Mais je dois concéder que j’ai été étonné de la clarté du code que j’ai obtenu.</p>
-<p>Tout d’abord, un fichier <code>wav</code> se compose d’un entête qui contient pas mal de meta données. Cet entête a été optimisé pour prendre peu de place. Donc on discute de l’entête avec des nombres d’octets :</p>
+<p>Tout d’abord, un fichier <code>wav</code> se compose d’un entête qui contient pas mal de meta données. Cet entête a été optimisé pour prendre peu de place. Donc on discute de l’entête avec des nombres d’octets&nbsp;:</p>
 <ul>
 <li>Les 4 premiers octets doivent contenir <code>RIFF</code> en ASCII ;</li>
 <li>les 4 octects suivant correspondent à un entier codé sur 32 bits qui donne la taille du fichier moins 8 octets. etc..</li>
@@ -67,12 +67,12 @@
 <p>Si j’avais eu à faire ça en Ruby, je pense qu’il m’aurait fallu pour chaque bloc de l’entête écrire un bout de code de lecture du bon nombre d’octets. Alors qu’en <code>C</code> il m’a suffit d’écrire:</p>
 <pre class="sourceCode c"><code class="sourceCode c">fread(&amp;header,<span class="kw">sizeof</span>(header),<span class="dv">1</span>,wav)</code></pre>
 <p>Et en une seule étape ma structure de donnée a été remplie avec les valeurs souhaitées. Magique !</p>
-<p>Ensuite, récupérer un entier à partir de deux octets n’est pas non plus une opération naturelle dans les nouveaux langages de programmation. Alors qu’en <code>C</code>. Pour récupérer un entier codé sur 16 bits il suffit d’écrire :</p>
+<p>Ensuite, récupérer un entier à partir de deux octets n’est pas non plus une opération naturelle dans les nouveaux langages de programmation. Alors qu’en <code>C</code>. Pour récupérer un entier codé sur 16 bits il suffit d’écrire&nbsp;:</p>
 <pre class="sourceCode c"><code class="sourceCode c"><span class="dt">short</span> value=<span class="dv">0</span>;
 <span class="kw">while</span>( fread(&amp;value,<span class="kw">sizeof</span>(value),<span class="dv">1</span>,wav) ) {
     <span class="co">// do something with value</span>
 }</code></pre>
-<p>Finallement je suis arrivé au code suivant, sachant que le format de wav était connu, avec notamment échantillonage sur 16 bits en 48000Hz :</p>
+<p>Finallement je suis arrivé au code suivant, sachant que le format de wav était connu, avec notamment échantillonage sur 16 bits en 48000Hz&nbsp;:</p>
 <pre class="sourceCode c"><code class="sourceCode c"><span class="ot">#include &lt;stdio.h&gt;</span>
 <span class="ot">#include &lt;stdlib.h&gt;</span>
 <span class="ot">#include &lt;stdint.h&gt;</span>
@@ -134,9 +134,9 @@
 <p>_màj : pour des raisons de compatibilité (machines 64 bits) j’ai utilisé <code>int16_t</code> au lieu de <code>short</code> et <code>int</code> au lieu de <code>int</code>.</p>
 <p>Je serai curieux de savoir s’il existe un manière plus propre en Ruby que je ne connais pas. Certainement qu’en Python ça doit être la cas.</p>
 <div class="intro">
-<p>Màj (2) : après toutes les remarques concernant la portabilité. J’ai fait une nouvelle version qui devrait être plus portable. Elle fait aussi plus de test pour vérifier le fichier. Cependant j’utilise une assertion spécifique à <code>gcc</code> pour être certain que la structure de donnée n’ai pas de “trou” :</p>
+<p>Màj (2) : après toutes les remarques concernant la portabilité. J’ai fait une nouvelle version qui devrait être plus portable. Elle fait aussi plus de test pour vérifier le fichier. Cependant j’utilise une assertion spécifique à <code>gcc</code> pour être certain que la structure de donnée n’ai pas de “trou”&nbsp;:</p>
 <pre class="sourceCode c"><code class="sourceCode c">__attribute__((__packed__))</code></pre>
-<p>Le nouveau code n’utilise pas mmap et devrait être plus compatible.<br />Voici le dernier résultat :</p>
+<p>Le nouveau code n’utilise pas mmap et devrait être plus compatible.<br />Voici le dernier résultat&nbsp;:</p>
 </div>
 <pre class="sourceCode c"><code class="sourceCode c"><span class="ot">#include &lt;stdio.h&gt;</span>
 <span class="ot">#include &lt;stdlib.h&gt;</span>
@@ -243,7 +243,7 @@
     printf(<span class="st">&quot;%lld</span><span class="ch">\n</span><span class="st">&quot;</span>,sum);
     exit(<span class="dv">0</span>);
 }</code></pre>
-<p>Màj(3) : Sur <a href="http://reddit.com">reddit</a> <a href="http://www.reddit.com/user/Bogdanp">Bogdanp</a> a proposé une version en Python :</p>
+<p>Màj(3) : Sur <a href="http://reddit.com">reddit</a> <a href="http://www.reddit.com/user/Bogdanp">Bogdanp</a> a proposé une version en Python&nbsp;:</p>
 <pre class="sourceCode python"><code class="sourceCode python"><span class="co">#!/usr/bin/env python</span>
 <span class="ch">from</span> struct <span class="ch">import</span> calcsize, unpack
 <span class="ch">from</span> sys <span class="ch">import</span> argv, exit
@@ -271,7 +271,7 @@
 <span class="kw">except</span> <span class="ot">IOError</span>:
     <span class="dt">print</span> <span class="st">&quot;error: can't open input file '</span><span class="ot">%s</span><span class="st">'.&quot;</span> % argv[<span class="dv">1</span>]
     exit(<span class="dv">1</span>)</code></pre>
-<p>et <a href="http://www.reddit.com/user/luikore">luikore</a> a proposé une version Ruby assez impressionnante :</p>
+<p>et <a href="http://www.reddit.com/user/luikore">luikore</a> a proposé une version Ruby assez impressionnante&nbsp;:</p>
 <pre class="sourceCode ruby"><code class="sourceCode ruby">data = <span class="dt">ARGF</span>.read
  keys =<span class="ot"> %w[</span><span class="st">id totallength wavefmt format</span>
 <span class="st">       pcm channels frequency bytes_per_second</span>

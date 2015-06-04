@@ -37,62 +37,61 @@
 			<div class="flush"></div>
 			<div id="afterheader" class="article">
 				<div class="corps">
-					<p>Voici le code “obfusqué” :</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">a<span class="fu">=</span><span class="dv">27</span>;b<span class="fu">=</span><span class="dv">79</span>;c<span class="fu">=</span><span class="dt">C</span>(<span class="fu">-</span><span class="dv">2</span><span class="fu">.</span><span class="dv">0</span>,<span class="fu">-</span><span class="dv">1</span><span class="fu">.</span><span class="dv">0</span>);d<span class="fu">=</span><span class="dt">C</span>(<span class="dv">1</span><span class="fu">.</span><span class="dv">0</span>,<span class="dv">1</span><span class="fu">.</span><span class="dv">0</span>);e<span class="fu">=</span><span class="dt">C</span>(<span class="fu">-</span><span class="dv">2</span><span class="fu">.</span><span class="dv">501</span>,<span class="fu">-</span><span class="dv">1</span><span class="fu">.</span><span class="dv">003</span>)
+					<p>Voici le code “obfusqué”&nbsp;:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">a<span class="fu">=</span><span class="dv">27</span>;b<span class="fu">=</span><span class="dv">79</span>;c<span class="fu">=</span><span class="dt">C</span>(<span class="fu">-</span><span class="fl">2.0</span>,<span class="fu">-</span><span class="fl">1.0</span>);d<span class="fu">=</span><span class="dt">C</span>(<span class="fl">1.0</span>,<span class="fl">1.0</span>);e<span class="fu">=</span><span class="dt">C</span>(<span class="fu">-</span><span class="fl">2.501</span>,<span class="fu">-</span><span class="fl">1.003</span>)
 <span class="kw">newtype</span> <span class="dt">C</span> <span class="fu">=</span> <span class="dt">C</span> (<span class="dt">Double</span>,<span class="dt">Double</span>) <span class="kw">deriving</span> (<span class="dt">Show</span>,<span class="dt">Eq</span>)
-<span class="kw">instance</span> <span class="dt">Num</span> <span class="dt">C</span> <span class="kw">where</span> <span class="dt">C</span>(x,y)<span class="fu">*</span><span class="dt">C</span>(z,t)<span class="fu">=</span><span class="dt">C</span>(z<span class="fu">*</span>x<span class="fu">-</span>y<span class="fu">*</span>t,y<span class="fu">*</span>z<span class="fu">+</span>x<span class="fu">*</span>t);<span class="dt">C</span>(x,y)<span class="fu">+</span><span class="dt">C</span>(z,t)<span class="fu">=</span><span class="dt">C</span>(x<span class="fu">+</span>z,y<span class="fu">+</span>t);abs(<span class="dt">C</span>(x,y))<span class="fu">=</span><span class="dt">C</span>(sqrt(x<span class="fu">*</span>x<span class="fu">+</span>y<span class="fu">*</span>y),<span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>)
+<span class="kw">instance</span> <span class="dt">Num</span> <span class="dt">C</span> <span class="kw">where</span> <span class="dt">C</span>(x,y)<span class="fu">*</span><span class="dt">C</span>(z,t)<span class="fu">=</span><span class="dt">C</span>(z<span class="fu">*</span>x<span class="fu">-</span>y<span class="fu">*</span>t,y<span class="fu">*</span>z<span class="fu">+</span>x<span class="fu">*</span>t);<span class="dt">C</span>(x,y)<span class="fu">+</span><span class="dt">C</span>(z,t)<span class="fu">=</span><span class="dt">C</span>(x<span class="fu">+</span>z,y<span class="fu">+</span>t);abs(<span class="dt">C</span>(x,y))<span class="fu">=</span><span class="dt">C</span>(sqrt(x<span class="fu">*</span>x<span class="fu">+</span>y<span class="fu">*</span>y),<span class="fl">0.0</span>)
 r(<span class="dt">C</span>(x,y))<span class="fu">=</span>x;i(<span class="dt">C</span>(x,y))<span class="fu">=</span>y
 f c z <span class="dv">0</span><span class="fu">=</span><span class="dv">0</span>;f c z n<span class="fu">=</span><span class="kw">if</span>(r(abs(z))<span class="fu">&gt;</span><span class="dv">2</span>)<span class="kw">then</span> n <span class="kw">else</span> f c ((z<span class="fu">*</span>z)<span class="fu">+</span>c) (n<span class="fu">-</span><span class="dv">1</span>)
 h j k <span class="fu">=</span> map (\z<span class="ot">-&gt;</span>(f (<span class="dt">C</span> z) (<span class="dt">C</span>(<span class="dv">0</span>,<span class="dv">0</span>)) <span class="dv">32</span>,(fst z<span class="fu">&gt;</span>l <span class="fu">-</span> q<span class="fu">/</span><span class="dv">2</span>))) [(x,y)<span class="fu">|</span>y<span class="ot">&lt;-</span>[p,(p<span class="fu">+</span>((o<span class="fu">-</span>p)<span class="fu">/</span>a))<span class="fu">..</span>o],x<span class="ot">&lt;-</span>[m,(m <span class="fu">+</span> q)<span class="fu">..</span>l]] <span class="kw">where</span> o<span class="fu">=</span>i k;p<span class="fu">=</span>i j;m<span class="fu">=</span>r j;l<span class="fu">=</span>r k;q<span class="fu">=</span>(l<span class="fu">-</span>m)<span class="fu">/</span>b
 u j k <span class="fu">=</span> concat <span class="fu">$</span> map v <span class="fu">$</span> h j k <span class="kw">where</span> v (i,p)<span class="fu">=</span>(<span class="st">&quot; .,`'°\&quot;:;-+oO0123456789=!%*§&amp;$@#&quot;</span><span class="fu">!!</span>i)<span class="fu">:</span>rst p;rst <span class="dt">True</span><span class="fu">=</span><span class="st">&quot;\n&quot;</span>;rst <span class="dt">False</span><span class="fu">=</span><span class="st">&quot;&quot;</span>
-main <span class="fu">=</span> putStrLn <span class="fu">$</span> im <span class="dv">0</span> <span class="kw">where</span> cl n (<span class="dt">C</span> (x,y))<span class="fu">=</span><span class="kw">let</span> cs<span class="fu">=</span>(<span class="dv">1</span><span class="fu">.</span><span class="dv">1</span><span class="fu">**</span>n<span class="fu">-</span><span class="dv">1</span>) <span class="kw">in</span> <span class="dt">C</span> ((x<span class="fu">+</span>cs<span class="fu">*</span>(r e))<span class="fu">/</span>cs<span class="fu">+</span><span class="dv">1</span>,(y<span class="fu">+</span>cs<span class="fu">*</span>(i e))<span class="fu">/</span>cs<span class="fu">+</span><span class="dv">1</span>);bl n<span class="fu">=</span>cl n c;tr n<span class="fu">=</span>cl n d;im n<span class="fu">=</span>u (bl n) (tr n)<span class="fu">++</span><span class="st">&quot;\x1b[H\x1b[25A&quot;</span><span class="fu">++</span>im (n<span class="fu">+</span><span class="dv">1</span>)</code></pre>
-<p>Pour le lancer, <a href="http://haskell.org">haskell</a> doit être installé. Puis vous devez écrire dans un terminal :</p>
+main <span class="fu">=</span> putStrLn <span class="fu">$</span> im <span class="dv">0</span> <span class="kw">where</span> cl n (<span class="dt">C</span> (x,y))<span class="fu">=</span><span class="kw">let</span> cs<span class="fu">=</span>(<span class="fl">1.1</span><span class="fu">**</span>n<span class="fu">-</span><span class="dv">1</span>) <span class="kw">in</span> <span class="dt">C</span> ((x<span class="fu">+</span>cs<span class="fu">*</span>(r e))<span class="fu">/</span>cs<span class="fu">+</span><span class="dv">1</span>,(y<span class="fu">+</span>cs<span class="fu">*</span>(i e))<span class="fu">/</span>cs<span class="fu">+</span><span class="dv">1</span>);bl n<span class="fu">=</span>cl n c;tr n<span class="fu">=</span>cl n d;im n<span class="fu">=</span>u (bl n) (tr n)<span class="fu">++</span><span class="st">&quot;\x1b[H\x1b[25A&quot;</span><span class="fu">++</span>im (n<span class="fu">+</span><span class="dv">1</span>)</code></pre>
+<p>Pour le lancer, <a href="http://haskell.org">haskell</a> doit être installé. Puis vous devez écrire dans un terminal&nbsp;:</p>
 <p><code class="zsh">ghc –make animandel.hs &amp;&amp; animandel</code></p>
 <p>Voici le résultat après 50 itérations.</p>
 <pre>
-###@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&amp;&amp;&amp;&amp;&amp;WWOOClbUOWW&amp;&amp;$$$$$$$$$$$$$$
-##@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&amp;&amp;&amp;&amp;&amp;WWUCUb; ,jUOWW&amp;&amp;&amp;$$$$$$$$$$$$
-#@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&amp;&amp;&amp;WWWWWUb       ooCWW&amp;&amp;&amp;&amp;&amp;&amp;$$$$$$$$
-@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&amp;&amp;WWWWWWWWOU         uUOWWWW&amp;&amp;&amp;&amp;&amp;&amp;$$$$$
-@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&amp;&amp;&amp;WOUObUOOOUUUCbi      rbCUUUOWWWWWOUW&amp;$$$
-@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&amp;&amp;&amp;&amp;&amp;&amp;WWWUcr,iiCb                o wUUUUUC;OW&amp;$$
-$$$$$$$$$$$$$$$$$$$$$$$$$$&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;WWWWOUC,                         j    llW&amp;&amp;$
-$$$$$$$$$$$$$$$$$$$$$&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;WWWWWWOCCbi                              bWWW&amp;&amp;
-$$$$$$$$$$$$$$$$$&amp;&amp;WWWWWWW&amp;&amp;&amp;WWWWWWWWOUo                                 jUOWW&amp;&amp;
-$$$$$$$$$$$$$$&amp;&amp;&amp;WWOwOOWWWOUUOWWWWWOOUbw                                  j.blW&amp;
-$$$$$$$$$$$&amp;&amp;&amp;&amp;&amp;WWWObiijbUCl bCiUUUUUCj,                                    bOW&amp;
-$$$$$$$$$&amp;&amp;&amp;&amp;&amp;&amp;&amp;WWWOUbw  ;      oobCbl                                     jUWW&amp;
-$$$$$$$&amp;&amp;&amp;&amp;&amp;&amp;&amp;WWWWOcbi             ij                                      jUW&amp;&amp;
-$$$$$&amp;&amp;WWWWWWWOwUUCbw                                                       WW&amp;&amp;
-WWWOWWWWWWWWWUUbo                                                         UWWW&amp;&amp;
-:                                                                      wbUOWW&amp;&amp;&amp;
-WWWOWWWWWWWWWUUbo                                                         UWWW&amp;&amp;
-$$$$$&amp;&amp;WWWWWWWOwUUCbw                                                       WW&amp;&amp;
-$$$$$$$&amp;&amp;&amp;&amp;&amp;&amp;&amp;WWWWOcbi             ij                                      jUW&amp;&amp;
-$$$$$$$$$&amp;&amp;&amp;&amp;&amp;&amp;&amp;WWWOUbw  ;      oobCbl                                     jUWW&amp;
-$$$$$$$$$$$&amp;&amp;&amp;&amp;&amp;WWWObiijbUCl bCiUUUUUCj,                                    bOW&amp;
-$$$$$$$$$$$$$$&amp;&amp;&amp;WWOwOOWWWOUUOWWWWWOOUbw                                  j.blW&amp;
-$$$$$$$$$$$$$$$$$&amp;&amp;WWWWWWW&amp;&amp;&amp;WWWWWWWWOUo                                 jUOWW&amp;&amp;
-$$$$$$$$$$$$$$$$$$$$$&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;WWWWWWOCCbi                              bWWW&amp;&amp;
-$$$$$$$$$$$$$$$$$$$$$$$$$$&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;WWWWOUC,                         j    llW&amp;&amp;$
-@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&amp;&amp;&amp;&amp;&amp;&amp;WWWUcr,iiCb                o wUUUUUC;OW&amp;$$
+###@@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&&&&&WWOOClbUOWW&&$$$$$$$$$$$$$$
+##@@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&&&&&WWUCUb; ,jUOWW&&&$$$$$$$$$$$$
+#@@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&&&WWWWWUb       ooCWW&&&&&&$$$$$$$$
+@@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&&WWWWWWWWOU         uUOWWWW&&&&&&$$$$$
+@@@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&&&WOUObUOOOUUUCbi      rbCUUUOWWWWWOUW&$$$
+@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&&&&&&WWWUcr,iiCb                o wUUUUUC;OW&$$
+$$$$$$$$$$$$$$$$$$$$$$$$$$&&&&&&&&&&WWWWOUC,                         j    llW&&$
+$$$$$$$$$$$$$$$$$$$$$&&&&&&&&&&&&WWWWWWOCCbi                              bWWW&&
+$$$$$$$$$$$$$$$$$&&WWWWWWW&&&WWWWWWWWOUo                                 jUOWW&&
+$$$$$$$$$$$$$$&&&WWOwOOWWWOUUOWWWWWOOUbw                                  j.blW&
+$$$$$$$$$$$&&&&&WWWObiijbUCl bCiUUUUUCj,                                    bOW&
+$$$$$$$$$&&&&&&&WWWOUbw  ;      oobCbl                                     jUWW&
+$$$$$$$&&&&&&&WWWWOcbi             ij                                      jUW&&
+$$$$$&&WWWWWWWOwUUCbw                                                       WW&&
+WWWOWWWWWWWWWUUbo                                                         UWWW&&
+:                                                                      wbUOWW&&&
+WWWOWWWWWWWWWUUbo                                                         UWWW&&
+$$$$$&&WWWWWWWOwUUCbw                                                       WW&&
+$$$$$$$&&&&&&&WWWWOcbi             ij                                      jUW&&
+$$$$$$$$$&&&&&&&WWWOUbw  ;      oobCbl                                     jUWW&
+$$$$$$$$$$$&&&&&WWWObiijbUCl bCiUUUUUCj,                                    bOW&
+$$$$$$$$$$$$$$&&&WWOwOOWWWOUUOWWWWWOOUbw                                  j.blW&
+$$$$$$$$$$$$$$$$$&&WWWWWWW&&&WWWWWWWWOUo                                 jUOWW&&
+$$$$$$$$$$$$$$$$$$$$$&&&&&&&&&&&&WWWWWWOCCbi                              bWWW&&
+$$$$$$$$$$$$$$$$$$$$$$$$$$&&&&&&&&&&WWWWOUC,                         j    llW&&$
+@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&&&&&&WWWUcr,iiCb                o wUUUUUC;OW&$$
 </pre>
-
 <p>Here is the more readable version. I believe with this far more readable version, no more explanation is needed.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">nbvert <span class="fu">=</span> <span class="dv">30</span>
 nbhor <span class="fu">=</span> <span class="dv">79</span>
-zoomfactor <span class="fu">=</span> <span class="dv">1</span><span class="fu">.</span><span class="dv">01</span>
-init_bottom_left <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">-</span><span class="dv">2</span><span class="fu">.</span><span class="dv">0</span>,<span class="fu">-</span><span class="dv">2</span><span class="fu">.</span><span class="dv">0</span>)
-init_top_right   <span class="fu">=</span> <span class="dt">C</span> (<span class="dv">3</span><span class="fu">.</span><span class="dv">0</span>,<span class="dv">2</span><span class="fu">.</span><span class="dv">0</span>)
-interrest        <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">-</span><span class="dv">1</span><span class="fu">.</span><span class="dv">713</span>,<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">000</span>)
+zoomfactor <span class="fu">=</span> <span class="fl">1.01</span>
+init_bottom_left <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">-</span><span class="fl">2.0</span>,<span class="fu">-</span><span class="fl">2.0</span>)
+init_top_right   <span class="fu">=</span> <span class="dt">C</span> (<span class="fl">3.0</span>,<span class="fl">2.0</span>)
+interrest        <span class="fu">=</span> <span class="dt">C</span> (<span class="fu">-</span><span class="fl">1.713</span>,<span class="fu">-</span><span class="fl">0.000</span>)
 
 <span class="kw">newtype</span> <span class="dt">Complex</span> <span class="fu">=</span> <span class="dt">C</span> (<span class="dt">Float</span>,<span class="dt">Float</span>) <span class="kw">deriving</span> (<span class="dt">Show</span>,<span class="dt">Eq</span>)
 <span class="kw">instance</span> <span class="dt">Num</span> <span class="dt">Complex</span> <span class="kw">where</span>
-    fromInteger n     <span class="fu">=</span> <span class="dt">C</span> (fromIntegral n,<span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>)
+    fromInteger n     <span class="fu">=</span> <span class="dt">C</span> (fromIntegral n,<span class="fl">0.0</span>)
     <span class="dt">C</span> (x,y) <span class="fu">*</span> <span class="dt">C</span> (z,t) <span class="fu">=</span> <span class="dt">C</span> (z<span class="fu">*</span>x <span class="fu">-</span> y<span class="fu">*</span>t, y<span class="fu">*</span>z <span class="fu">+</span> x<span class="fu">*</span>t)
     <span class="dt">C</span> (x,y) <span class="fu">+</span> <span class="dt">C</span> (z,t) <span class="fu">=</span> <span class="dt">C</span> (x<span class="fu">+</span>z, y<span class="fu">+</span>t)
-    abs (<span class="dt">C</span> (x,y))     <span class="fu">=</span> <span class="dt">C</span> (sqrt (x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y),<span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>)
-    signum (<span class="dt">C</span> (x,y))  <span class="fu">=</span> <span class="dt">C</span> (signum x , <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>)
+    abs (<span class="dt">C</span> (x,y))     <span class="fu">=</span> <span class="dt">C</span> (sqrt (x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y),<span class="fl">0.0</span>)
+    signum (<span class="dt">C</span> (x,y))  <span class="fu">=</span> <span class="dt">C</span> (signum x , <span class="fl">0.0</span>)
 
 <span class="ot">real ::</span> <span class="dt">Complex</span> <span class="ot">-&gt;</span> <span class="dt">Float</span>
 real (<span class="dt">C</span> (x,y))    <span class="fu">=</span> x

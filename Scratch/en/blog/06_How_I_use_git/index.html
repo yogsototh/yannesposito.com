@@ -46,7 +46,7 @@
 <h2 id="initialisation">Initialisation</h2>
 <p>Suppose I’ve got a directory on my local computer containing a project I want to manage via Git. Here what to do:</p>
 <div>
-<pre class="zsh"><code>cd to/project/directory/
+<pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="kw">cd</span> to/project/directory/
 git init
 git add
 git commit</code></pre>
@@ -54,7 +54,7 @@ git commit</code></pre>
 <p>Now all files in the <code>to/project/directory/</code> are versionned. If you want not to follow some just edit the file <code>.gitignore</code></p>
 <p>for example mine is:</p>
 <div>
-<pre class="zsh"><code>*.swp
+<pre class="sourceCode zsh"><code class="sourceCode zsh">*.swp
 .DS_Store
 ikog.py.bak
 output/Scratch/assets
@@ -64,42 +64,42 @@ output/Scratch/multi</code></pre>
 </div>
 <p>Next, you want to put your project on a directory accessible from the web:</p>
 <div>
-<pre class="zsh"><code>git clone --bare . /path/to/repository</code></pre>
+<pre class="sourceCode zsh"><code class="sourceCode zsh">git <span class="kw">clone</span> --bare <span class="kw">.</span> /path/to/repository</code></pre>
 </div>
 <p>Now on any computer you can do:</p>
 <div>
-<pre class="zsh"><code>git clone protocol://path/to/repository local_directory</code></pre>
+<pre class="sourceCode zsh"><code class="sourceCode zsh">git <span class="kw">clone</span> protocol://path/to/repository local_directory</code></pre>
 </div>
 <p>and <code>local_directory</code> will contain an up-to-date project.</p>
 <div class="encadre">
 <p><em> You should make this operation also on the computer used to create the repository. Just to verify all will be okay.</p>
-</em>
+<p></em></p>
 </div>
 <hr />
 <h2 id="the-workflow">The workflow</h2>
 <p>To resume you now have one repository on the Internet, and one or many computer associated with it. Now, what you want is to synchronize everything.</p>
 <p>Before begining your work, the first thing to do is to get all modification from the Internet to your local host:</p>
 <div>
-<pre class="zsh"><code>git pull</code></pre>
+<pre class="sourceCode zsh"><code class="sourceCode zsh">git pull</code></pre>
 </div>
 <p>After that you can do (many times):</p>
 <div>
-<pre class="zsh"><code>hack, hack, hack...
+<pre class="sourceCode zsh"><code class="sourceCode zsh">hack, hack, hack...
 git add some files
 git commit</code></pre>
 </div>
 <p>When you want your local modification to be on the Internet just do a simple:</p>
 <div>
-<pre class="zsh"><code>git push</code></pre>
+<pre class="sourceCode zsh"><code class="sourceCode zsh">git push</code></pre>
 </div>
 <p>All should be ok.</p>
 <p>If you have some trouble with the <code>push</code> and <code>pull</code> verify your <code>.git/config</code> file ; it should contain the following lines:</p>
 <div>
-<pre class="zsh"><code>...
-[remote &quot;origin&quot;]
+<pre class="sourceCode zsh"><code class="sourceCode zsh">...
+[remote <span class="st">&quot;origin&quot;</span>]
 	url = protocol://url/of/the/repository
 	fetch = +refs/heads/*:refs/remotes/origin/*
-[branch &quot;master&quot;]
+[branch <span class="st">&quot;master&quot;</span>]
 	remote = origin
 	merge = refs/heads/master
 ...</code></pre>
@@ -117,33 +117,33 @@ git commit</code></pre>
 </div>
 <p>Here are the code of theese two scripts:</p>
 <div>
-<pre class="zsh"><code>#!/usr/bin/env zsh
+<pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="co">#!/usr/bin/env zsh</span>
 
-if (($#&lt;1)); then
-    print -- &quot;usage: $0:t branch_name&quot; &gt;&amp;2
-    exit 1
-fi
+<span class="kw">if</span> <span class="kw">((</span><span class="ot">$#</span>&lt;1<span class="kw">))</span>; <span class="kw">then</span>
+    <span class="kw">print</span> -- <span class="st">&quot;usage: </span><span class="ot">$0</span><span class="st">:t branch_name&quot;</span> <span class="kw">&gt;&amp;2</span>
+    <span class="kw">exit</span> 1
+<span class="kw">fi</span>
 
-branch=$1
-git br ${branch}
-git co ${branch}
-git config branch.${branch}.remote origin
-git config branch.${branch}.merge refs/heads/${branch}</code></pre>
+<span class="ot">branch=$1</span>
+git br <span class="ot">${branch}</span>
+git <span class="kw">co</span> <span class="ot">${branch}</span>
+git config branch.<span class="ot">${branch}</span>.remote origin
+git config branch.<span class="ot">${branch}</span>.merge refs/heads/<span class="ot">${branch}</span></code></pre>
 </div>
 <div>
-<pre class="zsh"><code>#!/usr/bin/env zsh
+<pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="co">#!/usr/bin/env zsh</span>
 
-# recup branches not on local
-localbranches=( $(git br | sed 's/\*/ /') )
-remoteMissingBranches=( $(git br -r | \
-    egrep -v &quot;origin/HEAD|(${(j:|:)localbranches})&quot; ) )
-for br in $remoteMissingBranches; do
-  branch=${br#origin/}
-  print &quot;get remote branch $branch&quot;
-  git br ${branch}
-  git config branch.${branch}.remote origin
-  git config branch.${branch}.merge refs/heads/${branch}
-done</code></pre>
+<span class="co"># recup branches not on local</span>
+<span class="ot">localbranches=(</span> <span class="ot">$(</span>git br <span class="kw">|</span> <span class="kw">sed</span> <span class="st">'s/\*/ /'</span><span class="ot">)</span> <span class="ot">)</span>
+<span class="ot">remoteMissingBranches=(</span> <span class="ot">$(</span>git br -r <span class="kw">|</span> <span class="kw">\</span>
+    <span class="kw">egrep</span> -v <span class="st">&quot;origin/HEAD|(${(j:|:)localbranches})&quot;</span> <span class="ot">)</span> <span class="ot">)</span>
+<span class="kw">for</span> br <span class="kw">in</span> <span class="ot">$remoteMissingBranches</span>; <span class="kw">do</span>
+  <span class="ot">branch=${br#</span>origin/<span class="ot">}</span>
+  <span class="kw">print</span> <span class="st">&quot;get remote branch </span><span class="ot">$branch</span><span class="st">&quot;</span>
+  git br <span class="ot">${branch}</span>
+  git config branch.<span class="ot">${branch}</span>.remote origin
+  git config branch.<span class="ot">${branch}</span>.merge refs/heads/<span class="ot">${branch}</span>
+<span class="kw">done</span></code></pre>
 </div>
 				</div>
                 <div id="afterarticle">

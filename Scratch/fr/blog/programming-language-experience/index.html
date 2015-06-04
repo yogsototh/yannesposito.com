@@ -41,7 +41,7 @@
 <img src="../../../../Scratch/img/blog/programming-language-experience/dragon.jpg" alt="Title image" />
 </div>
 <div class="intro">
-<span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Mon avis succinct et hautement subjectif concernant les différents languages de programmation que j’ai utilisé.
+<p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Mon avis succinct et hautement subjectif concernant les différents languages de programmation que j’ai utilisé.</p>
 </div>
 <h3 id="basic"><code>BASIC</code></h3>
 <div>
@@ -49,12 +49,12 @@
 </div>
 <p>Ah ! Le language de mes premiers programmes ! Je devais avoir 10-11 ans. Sous <code>MO5</code>, <code>Amstrad CPC 6128</code> et même <code>Atari STe</code>. Le langage des <code>GOTO</code>s. Je suis empleint de nostalgie rien que d’y penser. C’est à peu prêt le seul intérêt de ce langage.</p>
 <p>Aujourd’hui ce langage est tombé en désuétude. Ce n’est ni un bon langage pour apprendre, ni un bon langage pour faire de vrai programmes. Même si quelques années plus tard, je me remettais à programmer dans un basic avec un compilateur qui pourrait lui redonner vie. Je m’en était servi pour faire un livre dont vous êtes le héro :-).</p>
-<pre class="zsh"><code>READY
-10 PRINT &quot;HELLO WORLD!&quot;
+<pre class="sourceCode zsh"><code class="sourceCode zsh">READY
+10 PRINT <span class="st">&quot;HELLO WORLD!&quot;</span>
 20 GOTO 10
 RUN</code></pre>
 <p>Je m’en souviens aussi pour avoir copier des codes de jeux vidéo à partir de magasines. La plupart des lignes ressemblaient à</p>
-<pre class="zsh"><code>3110 DATA FA,01,FF,FF,FF,FF,00,23,22,43,DA,DE,EE,FF,FF,FF,00,03,4A,F2</code></pre>
+<pre class="sourceCode zsh"><code class="sourceCode zsh">3110 DATA FA,01,FF,FF,FF,FF,00,23,22,43,DA,DE,EE,FF,FF,FF,00,03,4A,F2</code></pre>
 <p>Quel plaisir c’était !</p>
 <h3 id="logo">Logo</h3>
 <div>
@@ -65,7 +65,7 @@ RUN</code></pre>
 <p>Oui, il fallait charger le programme en mémoire avec une cassette. Et elle ne faisait pas les ‘Krrrkrr csssss krrrr’.</p>
 <p>Je l’avais utilisé sans les boucles. Des années plus tard, je le réutiliser pour faire de l’initiation à l’informatique à mes étudiants de DEUG MIAS première année. Il s’est en fait révélé très utile. Grace à lui, faire des fractales se révèle être un jeu d’enfant, au sens litéral. Je ne peux que conseiller ce langage pour apprendre à programmer et aussi pour le fun.</p>
 <p>Voici un exemple de code et le résultat est la jolie fractale ‘dragon’.</p>
-<pre class="zsh"><code>HIDETURTLE
+<pre class="sourceCode zsh"><code class="sourceCode zsh">HIDETURTLE
 
 PENUP
 SETXY -200 0
@@ -74,18 +74,18 @@ PENDOWN
 
 to dragon :degree :size
     setpensize 1
-    if :size&gt;5  [setpensize 2]
-    if :size&gt;10 [setpensize 3]
-    if :size&gt;20 [setpensize 4]
-    if :size&gt;40 [setpensize 5]
-    ifelse :degree=0 [
+    <span class="kw">if</span> :size<span class="kw">&gt;</span>5  [setpensize 2]
+    <span class="kw">if</span> :size<span class="kw">&gt;</span>10 [setpensize 3]
+    <span class="kw">if</span> :size<span class="kw">&gt;</span>20 [setpensize 4]
+    <span class="kw">if</span> :size<span class="kw">&gt;</span>40 [setpensize 5]
+    ifelse :<span class="ot">degree=</span>0<span class="kw"> [</span>
         fd :size
     ][
         left  45 dragon (:degree-1) (size/4)
         right 90 dragon (:degree-1) (size/2)
         left  90 dragon (:degree-1) (size/4)
         right 45
-    ]
+   <span class="kw"> ]</span>
 end
 
 dragon 6 3000</code></pre>
@@ -162,7 +162,7 @@ dragon 6 3000</code></pre>
 <h3 id="awk">Awk</h3>
 <p>Des filtres de fichiers à faire. Si ce n’est pas trop compliqué, c’est le langage idéal. Vous avez un fichier et vous voulez savoir quels sont les mots les plus utilisés. Savoir combien de fois un mot est utilisé. Filtrer sous des condition un peu plus compliquées qu’un grep. Super outils. Je l’ai utilisé pour modifier en masse des centaines de fichier XML plus facilement qu’avec du XSLT.</p>
 <h3 id="perl">Perl</h3>
-<p>Perl c’est assez magique, mais la syntaxe est tellement désagréable à lire que personne ne peut vraiment aimer programmer dans un environnement de plusieurs personnes en Perl. A moins que tous les autres soient des cadors du Perl. Mais la feature qui tue, les expressions régulières :</p>
+<p>Perl c’est assez magique, mais la syntaxe est tellement désagréable à lire que personne ne peut vraiment aimer programmer dans un environnement de plusieurs personnes en Perl. A moins que tous les autres soient des cadors du Perl. Mais la feature qui tue, les expressions régulières&nbsp;:</p>
 <pre class="sourceCode perl"><code class="sourceCode perl"><span class="dt">$var</span> =~ <span class="kw">s/</span><span class="ot">toto</span><span class="kw">/</span><span class="st">titi</span><span class="kw">/g</span></code></pre>
 <p>Va remplacer toto par titi dans la valeur de la variable <code>$var</code>. Et oui, les expressions régulière y sont intégrées directement comme avec <code>sed</code> et <code>awk</code>. Et ça rend le code beacoup plus compact (et parfois illisible). Mais c’est vraiment pas mal. C’est une sorte de <code>awk</code> sous stéroides.</p>
 <h3 id="ruby">Ruby</h3>
@@ -185,7 +185,7 @@ dragon 6 3000</code></pre>
 <p>Je suis en train d’apprendre ce langage. Et je dois dire que c’est un vrai plaisir. En général les concepts derrière tous les langages de programmation sont assez limités. Chaque langage y va de son petit lot de nouveau concepts, et en général en une après-midi, c’est appris. Pour haskell, c’est très différent. Je sens bien qu’il va me falloir plusieurs semaines pour maîtriser la bête. Ça doit faire quatre semaines que j’apprend haskell un peut tous les jours et je sais qu’il y a des notions que j’ai juste survollées et qui sont assez incroyables. Les Monades par exemple, est un concept que je n’avais jamais rencontré ailleurs. C’est un super concept. De plus le design du langage en fait un parfait système pour paralléliser les calculs naturellement. haskell sépare la partie “pure” de la partie “impure” de la programmation. À ma connaissance, c’est le seul langage de programmation qui fait ça. Enfin, je prend beaucoup de plaisir à apprendre ce langage. La communauté est aussi très acceuillante. Pas de “L0L! URAN00B!”. Et aussi pas de concession du langage pour devenir populaire. Le langage est bon, voilà tout. Alors qu’en Java et C++, typiquement certain choix ont été fait en dépis du bon sens pour “faire plaisir”.</p>
 <h2 id="langages-originaux">Langages originaux</h2>
 <h3 id="metapost">Metapost</h3>
-<p>Metapost est un langage qui permet de programmer des dessins. Le gros plus de metapost, c’est sa capacité de résoudre automatiquement les systèmes d’équations linéaires. Par exemple, si vous écrivez :</p>
+<p>Metapost est un langage qui permet de programmer des dessins. Le gros plus de metapost, c’est sa capacité de résoudre automatiquement les systèmes d’équations linéaires. Par exemple, si vous écrivez&nbsp;:</p>
 <pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="dt">AA</span>=<span class="dv">1</span>/<span class="dv">3</span>[A,B]</code></pre>
 <p>Il va position le point <code>AA</code> entre <code>A</code> et <code>B</code>. Plus précisément, au barycentre <code>(2A + B)/3</code>.</p>
 <pre class="sourceCode ruby"><code class="sourceCode ruby">X=whatever[A,B]

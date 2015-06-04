@@ -49,7 +49,7 @@
 <h2 id="initialisation">Initialisation</h2>
 <p>Disons que j’ai déjà un projet et que je veuille en créer un nouveau.</p>
 <div>
-<pre class="zsh"><code>cd to/project/directory/
+<pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="kw">cd</span> to/project/directory/
 git init
 git add
 git commit</code></pre>
@@ -57,7 +57,7 @@ git commit</code></pre>
 <p>Maintenant tous les fichiers du répertoire <code>to/project/directory/</code> sont <em>versionnés</em>. Si vous voulez ignorer certains fichiers il suffit de modifier le fichier <code>.gitignore</code>.</p>
 Par exemple voici le mien :
 <div>
-<pre class="zsh"><code>*.swp
+<pre class="sourceCode zsh"><code class="sourceCode zsh">*.swp
 .DS_Store
 ikog.py.bak
 output/Scratch/assets
@@ -67,45 +67,45 @@ output/Scratch/multi</code></pre>
 </div>
 <p>Ensuite, il faut placer ce projet dans un répertoire accessible via Internet.</p>
 <div>
-<pre class="zsh"><code>git clone --bare . /path/to/repository</code></pre>
+<pre class="sourceCode zsh"><code class="sourceCode zsh">git <span class="kw">clone</span> --bare <span class="kw">.</span> /path/to/repository</code></pre>
 </div>
 <div class="encadre">
-<em> Màj: La meilleure solution est d’installer <a href="https://github.com/sitaramc/gitolite">gitolite</a> pour installer un serveur git sur sa machine. Gitolite permet de gérer la gestion des droits d’utilisateurs, ceux-ci n’ayant pas accès à un shell sur la machine. </em>
+<p><em> Màj: La meilleure solution est d’installer <a href="https://github.com/sitaramc/gitolite">gitolite</a> pour installer un serveur git sur sa machine. Gitolite permet de gérer la gestion des droits d’utilisateurs, ceux-ci n’ayant pas accès à un shell sur la machine. </em></p>
 </div>
-<p>Maintenant à partir de n’importe quel ordinateur, voici ce que vous pouvez faire :</p>
+<p>Maintenant à partir de n’importe quel ordinateur, voici ce que vous pouvez faire&nbsp;:</p>
 <div>
-<pre class="zsh"><code>git clone protocol://path/to/repository local_directory</code></pre>
+<pre class="sourceCode zsh"><code class="sourceCode zsh">git <span class="kw">clone</span> protocol://path/to/repository local_directory</code></pre>
 </div>
 <p>et <code>local_directory</code> contiendra un projet à jour.</p>
 <div class="encadre">
 <p><em></p>
-Je vous conseille de faire la même opération sur l’ordinateur qui à servi à créer le projet de façon à vérifier que tout fonctionne correctement. </em>
+<p>Je vous conseille de faire la même opération sur l’ordinateur qui à servi à créer le projet de façon à vérifier que tout fonctionne correctement. </em></p>
 </div>
 <hr />
 <h2 id="lutilisation-courante">L’utilisation courante</h2>
 <p>Pour résumer vous avez maintenant un repository sur Internet et un ou plusieurs ordinateurs lui sont associés. Maintenant il faut que tout soit toujours synchronisé.</p>
-<p>Avant de commencer à travailler, la première chose à faire est de récupérer les modification à partir d’Internet vers votre poste local :</p>
+<p>Avant de commencer à travailler, la première chose à faire est de récupérer les modification à partir d’Internet vers votre poste local&nbsp;:</p>
 <div>
-<pre class="zsh"><code>git pull</code></pre>
+<pre class="sourceCode zsh"><code class="sourceCode zsh">git pull</code></pre>
 </div>
-<p>Ensuit vous pouvez travailler en faisant (plusieurs fois) :</p>
+<p>Ensuit vous pouvez travailler en faisant (plusieurs fois)&nbsp;:</p>
 <div>
-<pre class="zsh"><code>hack, hack, hack...
+<pre class="sourceCode zsh"><code class="sourceCode zsh">hack, hack, hack...
 git add some files
 git commit</code></pre>
 </div>
-<p>Quang vous voulez envoyez les modifications locales sur Internet, il suffit de faire :</p>
+<p>Quang vous voulez envoyez les modifications locales sur Internet, il suffit de faire&nbsp;:</p>
 <div>
-<pre class="zsh"><code>git push</code></pre>
+<pre class="sourceCode zsh"><code class="sourceCode zsh">git push</code></pre>
 </div>
 <p>Tout devrait être bon.</p>
-<p>Si vous avez des problèmes avec le <code>push</code> et le <code>pull</code> ; vérifiez votre fichier <code>.git/config</code>. Il devrait contenir les lignes suivantes :</p>
+<p>Si vous avez des problèmes avec le <code>push</code> et le <code>pull</code> ; vérifiez votre fichier <code>.git/config</code>. Il devrait contenir les lignes suivantes&nbsp;:</p>
 <div>
-<pre class="zsh"><code>...
-[remote &quot;origin&quot;]
+<pre class="sourceCode zsh"><code class="sourceCode zsh">...
+[remote <span class="st">&quot;origin&quot;</span>]
 	url = protocol://url/of/the/repository
 	fetch = +refs/heads/*:refs/remotes/origin/*
-[branch &quot;master&quot;]
+[branch <span class="st">&quot;master&quot;</span>]
 	remote = origin
 	merge = refs/heads/master
 ...</code></pre>
@@ -113,43 +113,43 @@ git commit</code></pre>
 <h2 id="synchronisation-des-branches">Synchronisation des branches</h2>
 <p>Bien, maintenant que tout semble bon, il faut encore s’occuper de quelques petites choses (sinon, SVN suffirait). Git est complètement orienté sur la décentralisation et la création de nouvelles branches sur le même poste. Synchroniser des branches sur plusieurs serveurs différent n’est pas une opération naturelle.</p>
 <p>C’est pourquoi j’ai créé deux simples scripts pour automatiser cette opération. Un script pour créer un branche localement et en ligne. Un autre script pour récupérer les branches en lignes qui ne sont pas présente localement.</p>
-<p>Ainsi, lorsque je veux créer une nouvelle branche (localement et ligne) ; je lance le script :</p>
+<p>Ainsi, lorsque je veux créer une nouvelle branche (localement et ligne) ; je lance le script&nbsp;:</p>
 <div>
 <code class="zsh">git-create-new-branch branch_name</code>
 </div>
-<p>et quand je suis sur un autre ordinateur et que je veux récupérer les branches crées sur un autre poste, j’exécute :</p>
+<p>et quand je suis sur un autre ordinateur et que je veux récupérer les branches crées sur un autre poste, j’exécute&nbsp;:</p>
 <div>
 <code class="zsh">git-get-remote-branches</code>
 </div>
-<p>Voici le code des deux script (en zsh) :</p>
+<p>Voici le code des deux script (en zsh)&nbsp;:</p>
 <div>
-<pre class="zsh"><code>#!/usr/bin/env zsh
+<pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="co">#!/usr/bin/env zsh</span>
 
-if (($#&lt;1)); then
-    print -- &quot;usage: $0:t branch_name&quot; &gt;&amp;2
-    exit 1
-fi
+<span class="kw">if</span> <span class="kw">((</span><span class="ot">$#</span>&lt;1<span class="kw">))</span>; <span class="kw">then</span>
+    <span class="kw">print</span> -- <span class="st">&quot;usage: </span><span class="ot">$0</span><span class="st">:t branch_name&quot;</span> <span class="kw">&gt;&amp;2</span>
+    <span class="kw">exit</span> 1
+<span class="kw">fi</span>
 
-branch=$1
-git br ${branch}
-git co ${branch}
-git config branch.${branch}.remote origin
-git config branch.${branch}.merge refs/heads/${branch}</code></pre>
+<span class="ot">branch=$1</span>
+git br <span class="ot">${branch}</span>
+git <span class="kw">co</span> <span class="ot">${branch}</span>
+git config branch.<span class="ot">${branch}</span>.remote origin
+git config branch.<span class="ot">${branch}</span>.merge refs/heads/<span class="ot">${branch}</span></code></pre>
 </div>
 <div>
-<pre class="zsh"><code>#!/usr/bin/env zsh
+<pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="co">#!/usr/bin/env zsh</span>
 
-# recup branches not on local
-localbranches=( $(git br | sed 's/\*/ /') )
-remoteMissingBranches=( $(git br -r | \
-    egrep -v &quot;origin/HEAD|(${(j:|:)localbranches})&quot; ) )
-for br in $remoteMissingBranches; do
-  branch=${br#origin/}
-  print &quot;get remote branch $branch&quot;
-  git br ${branch}
-  git config branch.${branch}.remote origin
-  git config branch.${branch}.merge refs/heads/${branch}
-done</code></pre>
+<span class="co"># recup branches not on local</span>
+<span class="ot">localbranches=(</span> <span class="ot">$(</span>git br <span class="kw">|</span> <span class="kw">sed</span> <span class="st">'s/\*/ /'</span><span class="ot">)</span> <span class="ot">)</span>
+<span class="ot">remoteMissingBranches=(</span> <span class="ot">$(</span>git br -r <span class="kw">|</span> <span class="kw">\</span>
+    <span class="kw">egrep</span> -v <span class="st">&quot;origin/HEAD|(${(j:|:)localbranches})&quot;</span> <span class="ot">)</span> <span class="ot">)</span>
+<span class="kw">for</span> br <span class="kw">in</span> <span class="ot">$remoteMissingBranches</span>; <span class="kw">do</span>
+  <span class="ot">branch=${br#</span>origin/<span class="ot">}</span>
+  <span class="kw">print</span> <span class="st">&quot;get remote branch </span><span class="ot">$branch</span><span class="st">&quot;</span>
+  git br <span class="ot">${branch}</span>
+  git config branch.<span class="ot">${branch}</span>.remote origin
+  git config branch.<span class="ot">${branch}</span>.merge refs/heads/<span class="ot">${branch}</span>
+<span class="kw">done</span></code></pre>
 </div>
 				</div>
                 <div id="afterarticle">

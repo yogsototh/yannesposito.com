@@ -45,7 +45,7 @@
 <p>J’étais un fervent utilisateur de <a href="http://subversion.tigris.org">subversion (svn)</a>. Lorsqu’un jour, comme beaucoup de gens je découvris ce qu’en pensais <a href="http://www.youtube.com/watch?v=4XpnKHJAok8">Linus Torvald sur une vidéo</a>. Ventant les mérites d’un <em>système de versions concurrentes décentralisé</em>.</p>
 <p>En effet une fois qu’on s’y intéresse un peu, on voit tous les avantages pratiques qu’apporteraient en théorie un tel système.</p>
 <p>J’ai alors eu besoin d’un système de version dans mon équipe. Ils n’étaient pas familier avec les systèmes de versions. À par ceux possédant une <abbr title="Interface Utilisateur">GUI</abbr>, qui sont lourds et administrés par un responsable<sup><a href="#note1">†</a></sup>.</p>
-<p>Après quelques recherches trois choix se dessinent :</p>
+<p>Après quelques recherches trois choix se dessinent&nbsp;:</p>
 <ul>
 <li><a href="http://git-scm.com">Git</a></li>
 <li><a href="http://bazaar-vcs.org">Bazaar</a></li>
@@ -56,7 +56,7 @@
 <p>Je me suis alors familiarisé avec Bazaar. Et je dois dire que c’était vraiment naturel en venant de subversion. La commande <code>pull</code> correspond au <code>update</code>, la commande <code>push</code> correspond au <code>commit</code>. Puis les commandes <code>commit</code> et <code>update</code> existent toujours si on en a besoin et qu’on veut utiliser un <em>workflow</em> identique à celui de subversion.</p>
 <p>Mais plus le temps passe et plus de partout sur les blog, c’est surtout Git qui a le vent en poupe.</p>
 <p>Je décide alors d’utiliser Git en particulier pour <em>versionner</em> le site que vous êtes en train de lire. Sauf que je le trouve vraiment difficile d’utilisation et surtout complètement contre intuitif (j’y reviendrai plus tard).</p>
-<p>Alors que j’essaye de trouver de l’aide et que je dis qu’il est plus difficile à utiliser que Bazaar, beaucoup me répliquent que c’est :</p>
+<p>Alors que j’essaye de trouver de l’aide et que je dis qu’il est plus difficile à utiliser que Bazaar, beaucoup me répliquent que c’est&nbsp;:</p>
 <blockquote>
 <p>— <em>Super-tellement-trop-simple que même ma fille de 12 ans qui n’y comprend rien en informatique l’utilise pour versionner ses documents. Elle s’en sert très facilement en créant des branches et tout et tout…</em></p>
 </blockquote>
@@ -80,12 +80,12 @@
 <p>En théorie, les <em>branches légères</em> sont des branches tout comme avec bazaar. D’ailleurs le mot utilisé n’est pas <em>branche légère</em> mais <em>branche</em> tout court.</p>
 <p>Sauf que contrairement à une branche standard résidant dans son propre répertoire, une branche légère est destinée à n’être qu’un <strong>patch</strong> de la branche principale du répertoire dans lequel elle réside.</p>
 <p>Bien entendu on pourra m’objecter que l’on peut tout à fait utiliser ces branches légères comme des branches normales. Mais elles n’ont pas été conçues pour ça. Et donc, en pratique, c’est gênant de les utiliser de la sorte.</p>
-<p>Voici comment Git est censé être utilisé (pour plus de détails vous pouvez lire <a href="http://hoth.entp.com/output/git_for_designers.html">Git for Designers</a> en anglais) :</p>
+<p>Voici comment Git est censé être utilisé (pour plus de détails vous pouvez lire <a href="http://hoth.entp.com/output/git_for_designers.html">Git for Designers</a> en anglais)&nbsp;:</p>
 <ul>
 <li>récupération ou création d’un “repository” central <strong><sc>Le Grand Repository</sc></strong></li>
 <li>Création d’un <em>branche légère</em> locale qui contient les différences qui vont devoir être “patché” dans <strong><sc>LE GRAND REPOSITORY</sc></strong>.</li>
 </ul>
-<p>Voici comment n’est <strong><sc>pas</sc></strong> censé être utilisé Git :</p>
+<p>Voici comment n’est <strong><sc>pas</sc></strong> censé être utilisé Git&nbsp;:</p>
 <ul>
 <li>Récupération ou création d’un “repository” quelconque</li>
 <li>Création d’un <em>branche légère</em> locale qui n’a pas pour vocation de mettre à jour le “repository” d’origine, mais de vivre sa vie de façon autonome et de récupérer les mises à jour des autres du “repository” d’origine.</li>
@@ -116,29 +116,27 @@
 <center>
 OK
 </center>
-
-<p>Maintenant si je veux revenir dans le temps sur un seul fichier. Naturellement on se dit :</p>
+<p>Maintenant si je veux revenir dans le temps sur un seul fichier. Naturellement on se dit&nbsp;:</p>
 <div>
 <code class="zsh">git reset –hard FILE</code>
 </div>
 <center>
 <strong>ET BIEN NON !</strong>
 </center>
-
-<p>La solution c’est :</p>
+<p>La solution c’est&nbsp;:</p>
 <div>
 <code class="zsh">git checkout FILE</code>
 </div>
-<p>Quoi ? <strong><code>checkout</code></strong> !? Bon, d’accord, j’accepte, pourquoi pas après tout ? En plus quand on est habitué à Bazaar c’est :</p>
+<p>Quoi ? <strong><code>checkout</code></strong> !? Bon, d’accord, j’accepte, pourquoi pas après tout ? En plus quand on est habitué à Bazaar c’est&nbsp;:</p>
 <div>
 <code class="zsh">git revert FILE</code>
 </div>
 <p>Ce que je trouve quand même bien plus naturel.</p>
-<p>Mais là où ça devient vraiment difficile de s’y faire c’est pour changer de branche.<br />Avec Bazaar ça donne :</p>
+<p>Mais là où ça devient vraiment difficile de s’y faire c’est pour changer de branche.<br />Avec Bazaar ça donne&nbsp;:</p>
 <div>
 <code class="zsh">cd ../branch</code>
 </div>
-<p>Bon ok, il faut changer de répertoire, un répertoire par branche. Ça consomme de l’espace disque mais au moins on voit où on est. Avec Git voilà comment on change de branche (<em>branche légère</em>) :</p>
+<p>Bon ok, il faut changer de répertoire, un répertoire par branche. Ça consomme de l’espace disque mais au moins on voit où on est. Avec Git voilà comment on change de branche (<em>branche légère</em>)&nbsp;:</p>
 <div>
 <code class="zsh">git checkout branch</code>
 </div>

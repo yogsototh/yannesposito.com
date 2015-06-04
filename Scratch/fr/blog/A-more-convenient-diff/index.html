@@ -40,28 +40,28 @@
 					<p><code>diff</code> est un utilitaire très pratique, mais il n’est pas facile à lire pour nous, les Hommes.</p>
 <p>C’est pourquoi, lorsque vous utilisez <code>git</code>, il vous montre un formatage plus agréable avec des couleurs.</p>
 <p>Voici le script que j’utilise lorsque je veux avoir un <code>diff</code> à la git.</p>
-<pre class="zsh"><code>#!/usr/bin/env zsh
+<pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="co">#!/usr/bin/env zsh</span>
 
-# Load colors helpers
-autoload -U colors &amp;&amp; colors
+<span class="co"># Load colors helpers</span>
+<span class="kw">autoload</span> -U colors <span class="kw">&amp;&amp;</span> colors
 
-function colorize_diff {
-    while read line; do
-    case ${line[0]} in
-    +) print -n $fg[green];;
-    -) print -n $fg[red];;
-    @) # Display in cyan the @@ positions @@
-       if [[ ${line[1]} = '@' ]]; then
-           line=$(print $line | perl -pe 's#(\@\@[^\@]*\@\@)(.*)$#'$fg[cyan]'$1'$reset_color'$2#')
-       fi;;
+<span class="kw">function</span><span class="fu"> colorize_diff</span> <span class="kw">{</span>
+    <span class="kw">while</span> <span class="kw">read</span> <span class="ot">line</span>; <span class="kw">do</span>
+    <span class="kw">case</span> <span class="ot">${line[0]}</span><span class="kw"> in</span>
+    +<span class="kw">)</span> <span class="kw">print</span> -n <span class="ot">$fg[green]</span><span class="kw">;;</span>
+    -<span class="kw">)</span> <span class="kw">print</span> -n <span class="ot">$fg[red]</span><span class="kw">;;</span>
+    @<span class="kw">)</span> <span class="co"># Display in cyan the @@ positions @@</span>
+       <span class="kw">if [[</span> <span class="ot">${line[1]}</span> <span class="ot">=</span> <span class="st">'@'</span><span class="kw"> ]]</span>; <span class="kw">then</span>
+           <span class="ot">line=$(</span><span class="kw">print</span> <span class="ot">$line</span> <span class="kw">|</span> <span class="kw">perl</span> -pe <span class="st">'s#(\@\@[^\@]*\@\@)(.*)$#'</span><span class="ot">$fg[cyan]</span><span class="st">'$1'</span><span class="ot">$reset_color</span><span class="st">'$2#'</span><span class="ot">)</span>
+       <span class="kw">fi;;</span>
 
-    esac
-        print -- $line
-        print -n $reset_color
-        done
-}
+    <span class="kw">esac</span>
+        <span class="kw">print</span> -- <span class="ot">$line</span>
+        <span class="kw">print</span> -n <span class="ot">$reset_color</span>
+        <span class="kw">done</span>
+<span class="kw">}</span>
 
-diff -u $* | colorize_diff</code></pre>
+<span class="kw">diff</span> -u <span class="ot">$*</span> <span class="kw">|</span> colorize_diff</code></pre>
 				</div>
                 <div id="afterarticle">
                     <div id="social">

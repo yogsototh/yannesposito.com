@@ -45,19 +45,20 @@
 <p>Cela fait un moment que je suis la progression du <a href="http://www.yesodweb.com">framework yesod</a>. À mon humble avis on peut commencer à l’utiliser pour des applications sérieuses (comprendre en prod). Avant de vous dire pourquoi vous devriez aussi le considérer, je préfère vous parler de bonnes idées (parmi d’autres) introduites par yesod que je n’avais jamais vu ailleurs.</p>
 </div>
 <h2 id="types-saufs">Types saufs</h2>
-<p>Commençons par une BD d’<a href="http://xkcd.com">xkcd</a> :</p>
+<p>Commençons par une BD d’<a href="http://xkcd.com">xkcd</a>&nbsp;:</p>
 <div class="figure">
-<img src="http://imgs.xkcd.com/comics/exploits_of_a_mom.png" alt="SQL injection by a mom" /><p class="caption">SQL injection by a mom</p>
+<img src="http://imgs.xkcd.com/comics/exploits_of_a_mom.png" alt="SQL injection by a mom" />
+<p class="caption">SQL injection by a mom</p>
 </div>
-<p>Lorsque vous créez une application web, beaucoup de temps est passé à s’occuper de chaînes de caractères. Des chaînes de caractère pour les URL, le HTML, le Javascript, les CSS, les requêtes SQL, etc… Pour éviter des utilisation malicieuses vous devez protéger chaque chaîne de caractère entre chaque étape. Par exemple supposons que vous entriez comme nom :</p>
+<p>Lorsque vous créez une application web, beaucoup de temps est passé à s’occuper de chaînes de caractères. Des chaînes de caractère pour les URL, le HTML, le Javascript, les CSS, les requêtes SQL, etc… Pour éviter des utilisation malicieuses vous devez protéger chaque chaîne de caractère entre chaque étape. Par exemple supposons que vous entriez comme nom&nbsp;:</p>
 <pre class="sourceCode javascript"><code class="sourceCode javascript">Newton&lt;script&gt;<span class="fu">alert</span>(<span class="st">&quot;An apple fall&quot;</span>)&lt;<span class="ot">/script&gt;</span></code></pre>
 <p>Sans une protection correcte, le message “An apple fall” sera affiché à chaque fois que quelqu’un essayera d’accéder au nom de cet utilisateur. Les “types saufs” sont le <a href="https://www.youtube.com/watch?v=1IWF3IsEPBE">tonyglandil du web</a>. A chaque chaine de caractère, on lui associe un “type”. A quoi sert cette chaîne de caractère ? Est-ce une URL ? Du javascript ? De l’HTML ? Entre chaque passage d’une représentation à une autre, un transformation is faite par défaut.</p>
 <p>Yesod fait de son mieux pour typer les objets manipulés et ainsi il fera ce qu’il faut pour ne pas mettre du script dans une URL par exemple.</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">@[AnotherPageR]</span><span class="kw">&gt;</span>Go to the other page</code></pre>
-<p>Comme <code>AnotherPageR</code> est une URL elle ne pourra contiendra pas (par défaut) de caractère dangereux comme par exemple :</p>
+<p>Comme <code>AnotherPageR</code> est une URL elle ne pourra contiendra pas (par défaut) de caractère dangereux comme par exemple&nbsp;:</p>
 <pre class="sourceCode html"><code class="sourceCode html">falselink&quot;&gt;<span class="kw">&lt;script&gt;</span> <span class="fu">bad_code</span>(); &lt;<span class="ot">/script&gt;&lt;a href=&quot;pipo</span></code></pre>
 <h2 id="les-widgets">Les widgets</h2>
-<p>Les widgets de yesod sont différents des widgets Javascripts (ou java). Pour yesod un widget est un ensemble de morceaux d’appli web. Et si dans une page on veut utiliser plusieurs widgets, alors yesod s’occupe de tout. Des exemples de widgets (au sens yesod) sont :</p>
+<p>Les widgets de yesod sont différents des widgets Javascripts (ou java). Pour yesod un widget est un ensemble de morceaux d’appli web. Et si dans une page on veut utiliser plusieurs widgets, alors yesod s’occupe de tout. Des exemples de widgets (au sens yesod) sont&nbsp;:</p>
 <ul>
 <li>Le «footer» d’une page web,</li>
 <li>Le «header» d’une page web,</li>
@@ -71,12 +72,12 @@
 <li>un peu de javascript.</li>
 </ul>
 <p>Certain morceau doivent être placés dans le «header» de la page et d’autre dans le «body».</p>
-<p>Vous pouvez déclarer un widget comme suit (je n’utilise pas la vrai syntaxe) :</p>
+<p>Vous pouvez déclarer un widget comme suit (je n’utilise pas la vrai syntaxe)&nbsp;:</p>
 <pre><code>htmlheader = ...
 cssheader = ...
 javascriptheader = ...
 htmlbody = ...</code></pre>
-<p>La vraie syntaxe est :</p>
+<p>La vraie syntaxe est&nbsp;:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">toWidgetHeader cassiusFile <span class="st">&quot;button.cassius&quot;</span>
 toWidgetHeader juliusFile <span class="st">&quot;button.julius&quot;</span>
 toWidget       hamletFile <span class="st">&quot;buttonTemplate.hamlet&quot;</span></code></pre>
@@ -97,7 +98,7 @@ toWidget       hamletFile <span class="st">&quot;buttonTemplate.hamlet&quot;</sp
 <pre class="sourceCode html"><code class="sourceCode html">/blog/2003  Date2003R
 /blog/$DATE DateR</code></pre>
 <p>Cette définition de route est invalide par défaut dans yesod. Si vous voulez vraiment vous pouvez le faire foncionner quand même, mais il me semble que ça doit être quasiment toujours une mauvaise idée.</p>
-<p>Il vaut mieux faire :</p>
+<p>Il vaut mieux faire&nbsp;:</p>
 <pre class="sourceCode html"><code class="sourceCode html">/blog/$DATE DateR</code></pre>
 <p>et faire le test “est-ce que date = 2003 ?” dans le «handler».</p>
 <h2 id="pourquoi-yesod">Pourquoi yesod?</h2>

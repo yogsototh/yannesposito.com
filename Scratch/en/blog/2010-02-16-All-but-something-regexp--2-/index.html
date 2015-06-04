@@ -41,25 +41,21 @@
 <pre>
 a.....<strong class="blue">a......b</strong>..b..a....<strong class="blue">a....b</strong>...
 </pre>
-
 <p>Here are two common errors and a solution:</p>
 <pre>
 /a.*b/
 <strong class="red">a.....a......b..b..a....a....b</strong>...
 </pre>
-
 <p>The first error is to use the <em>evil</em> <code>.*</code>. Because you will match from the first to the last.</p>
 <pre>
 /a.*?b/
 <strong class="red">a.....a......b</strong>..b..<strong class="red">a....a....b</strong>...
 </pre>
-
 <p>The next natural way, is to change the <em>greediness</em>. But it is not enough as you will match from the first <code>a</code> to the first <code>b</code>. Then a simple constatation is that our matching string shouldn’t contain any <code>a</code> nor <code>b</code>. Which lead to the last elegant solution.</p>
 <pre>
 /a[^ab]*b/
 a.....<strong class="blue">a......b</strong>..b..a....<strong class="blue">a....b</strong>...
 </pre>
-
 <p>Until now, that was, easy. Now, just pass at the case you need to match not between <code>a</code> and <code>b</code>, but between strings. For example:</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;li&gt;</span>...<span class="kw">&lt;li&gt;</span></code></pre>
 <p>This is a bit difficult. You need to match</p>

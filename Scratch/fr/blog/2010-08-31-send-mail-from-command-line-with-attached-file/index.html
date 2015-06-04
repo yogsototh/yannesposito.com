@@ -38,71 +38,67 @@
 			<div id="afterheader" class="article">
 				<div class="corps">
 					<p>J’ai dû envoyer un mail en ligne de commande récemment. Quelle ne fût pas ma surprise lorsque je constatais que ce n’était vraiment pas évident. Je n’avais ni <code>pine</code> ni <code>mutt</code>. Seulement <code>mail</code> et <code>mailx</code>.</p>
-<p>Ce qu’on trouve sur internet pour envoyer un mail avec fichier attaché c’est ça :</p>
-<pre class="zsh"><code>uuencode fic.jpg fic.jpg | mail -s 'Subject'</code></pre>
-<p>Bon, alors, bête et discipliné j’ai essayé. Et bien, ça marche <em>presque</em> tout le temps. Pour mon fichier ça n’a pas marché du tout. Je l’ai compressé au format <code>.gz</code>, <code>.bz2</code> et <code>.zip</code>. Avec le format <code>.bz2</code> le mail reçu avait bien un fichier attaché. Mais avec les formats <code>.gz</code> et <code>.zip</code>, ça ne fonctionnait pas. Au lieu d’avoir un fichier attaché j’avais un message qui contenait quelque chose comme :</p>
+<p>Ce qu’on trouve sur internet pour envoyer un mail avec fichier attaché c’est ça&nbsp;:</p>
+<pre class="sourceCode zsh"><code class="sourceCode zsh">uuencode fic.jpg fic.jpg <span class="kw">|</span> mail -s <span class="st">'Subject'</span></code></pre>
+<p>Bon, alors, bête et discipliné j’ai essayé. Et bien, ça marche <em>presque</em> tout le temps. Pour mon fichier ça n’a pas marché du tout. Je l’ai compressé au format <code>.gz</code>, <code>.bz2</code> et <code>.zip</code>. Avec le format <code>.bz2</code> le mail reçu avait bien un fichier attaché. Mais avec les formats <code>.gz</code> et <code>.zip</code>, ça ne fonctionnait pas. Au lieu d’avoir un fichier attaché j’avais un message qui contenait quelque chose comme&nbsp;:</p>
 <pre>
 begin 664 fic.jpg
-M(R$O=7-R+V)I;B]E;G8@&gt;G-H&quot;GAL<STD,0H*9F]R(&QI;F4@:6X@)"@\("1X M;',@*0H@("`@9&-R 20H96-H;R`D;&EN92!\(&%W:R`M1EP[("="[&lt;')I;G0@" ... M93U<(FUO="-&lt;(CX\=F%L=64^/&amp;ET96T@;F%M93U&lt;(F-T&gt;%]M8UPB/BD\=F%L
-M=64O/B@\+VET96T^*2-&lt;)#$\=F%L=64^)&amp;ME&gt;7=O&lt;F1S/&quot;]V86QU93Y&lt;)#(C
-end
-&lt;/pre&gt;
-
-&lt;p&gt;Pas très lisible. Après pas mal de recherche j’ai trouvé la solution. Le problème c’est &lt;code&gt;uuencode&lt;/code&gt; qui est une méthode qui devrait devenir obsolète pour envoyer les fichiers. Il vaut mieux utiliser le format MIME pour envoyer des fichiers attachés.&lt;/p&gt;
-&lt;p&gt;Donc finalement le mieux est de faire ça “à la main” avec &lt;code&gt;sendmail&lt;/code&gt;. Je n’ai quand même pas utilisé &lt;code&gt;telnet&lt;/code&gt;. La commande à lancer est :&lt;/p&gt;
-&lt;pre class=&quot;zsh&quot;&gt;&lt;code&gt;sendmail -t -oi &lt; mailcontent.txt&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Bien entendu il faut créer le fichier &lt;code&gt;mailcontent.txt&lt;/code&gt; qui contient :&lt;/p&gt;
-&lt;pre&gt;
+M(R$O=7-R+V)I;B]E;G8@>G-H"GAL<STD,0H*9F]R(&QI;F4@:6X@)"@\("1X M;',@*0H@("`@9&-R 20H96-H;R`D;&EN92!\(&%W:R`M1EP[("="[<')I;G0@" ... M93U<(FUO="-<(CX\=F%L=64^/&ET96T@;F%M93U<(F-T>%]M8UPB/BD\=F%L
+M=64O/B@\+VET96T^*2-<)#$\=F%L=64^)&ME>7=O<F1S/" ]V86QU93Y<)#(C end < pre>
+<p>Pas très lisible. Après pas mal de recherche j’ai trouvé la solution. Le problème c’est <code>uuencode</code> qui est une méthode qui devrait devenir obsolète pour envoyer les fichiers. Il vaut mieux utiliser le format MIME pour envoyer des fichiers attachés.</p>
+<p>Donc finalement le mieux est de faire ça “à la main” avec <code>sendmail</code>. Je n’ai quand même pas utilisé <code>telnet</code>. La commande à lancer est&nbsp;:</p>
+<pre class="sourceCode zsh"><code class="sourceCode zsh">sendmail -t -oi <span class="kw">&lt;</span> mailcontent.txt</code></pre>
+<p>Bien entendu il faut créer le fichier <code>mailcontent.txt</code> qui contient&nbsp;:</p>
+<pre>
 From: from@mail.com
 To: to@mail.com
 Subject: View the attached file
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=&quot;-&quot;
+Content-Type: multipart/mixed; boundary="-"
 
-This is a MIME encoded message. Decode it with &quot;Decoder&quot;
+This is a MIME encoded message. Decode it with "Decoder"
 or any other MIME reading software. Decoder is available
-at &lt;http://www.etresoft.com&gt;.
+at <http: www.etresoft.com>.
 ---
-Content-Type: image/jpeg; name=&quot;fic.jpg&quot;
+Content-Type: image/jpeg; name="fic.jpg"
 Content-Transfer-Encoding: base64
-Content-Disposition: inline; filename=&quot;fic.jpg&quot;
+Content-Disposition: inline; filename="fic.jpg"
 
 H4sICB6Ke0wAA2Rjcl93aXRob3V0X2tleXdvcmQuY3N2ANSdW5ubOJPH7/e7
 7Brw+dmrTk8yk7yTSTaZeWd2b/TIIGy6MRAE7ng+/VaJgwF3g522SsxN2+3T
 /4eOJamqmARP+yibvI8ykUYim+x5EE2euBfIyd3byZ+fvvzr7svbu8ndTx/f
 ...
-&lt;/pre&gt;
-
-&lt;p&gt;Et pour avoir le code il suffit de lancer la commande :&lt;/p&gt;
-&lt;p&gt;&lt;code classs=&quot;zsh&quot;&gt; uuencode -m fic.jpg fic.jpg &lt;sub&gt;&lt;sub&gt;~&lt;/sub&gt;&lt;/sub&gt;~&lt;/p&gt;
-&lt;p&gt;Et voilà. Parfois la technique c’est tellement simple. Si j’en ai besoin encore quelques fois, je pense que j’écrirai un émetteur de mail en shell.&lt;/p&gt;
-				&lt;/div&gt;
-                &lt;div id=&quot;afterarticle&quot;&gt;
-                    &lt;div id=&quot;social&quot;&gt;
-                        &lt;a target=&quot;_blank&quot; href=&quot;http://feeds.feedburner.com/yannespositocomfr&quot; class=&quot;social&quot;&gt;r&lt;/a&gt;
+</pre>
+<p>Et pour avoir le code il suffit de lancer la commande&nbsp;:</p>
+<p><code classs="zsh"> uuencode -m fic.jpg fic.jpg <sub><sub>~</sub></sub>~</p>
+<p>Et voilà. Parfois la technique c’est tellement simple. Si j’en ai besoin encore quelques fois, je pense que j’écrirai un émetteur de mail en shell.</p>
+				</div>
+                <div id="afterarticle">
+                    <div id="social">
+                        <a target="_blank" href="http://feeds.feedburner.com/yannespositocomfr" class="social">r</a>
                         ·
-                         &lt;a target=&quot;_blank&quot; href=&quot;https://twitter.com/home?status=http://yannesposito.com/Scratch/fr/blog/2010-08-31-send-mail-from-command-line-with-attached-file/%20via%20@yogsototh&quot; class=&quot;social&quot;&gt;t&lt;/a&gt;
+                         <a target="_blank" href="https://twitter.com/home?status=http://yannesposito.com/Scratch/fr/blog/2010-08-31-send-mail-from-command-line-with-attached-file/%20via%20@yogsototh" class="social">t</a>
                         ·
-                        &lt;a target=&quot;_blank&quot; href=&quot;http://www.facebook.com/sharer/sharer.php?u=/Scratch/fr/blog/2010-08-31-send-mail-from-command-line-with-attached-file/&quot; class=&quot;social&quot;&gt;`&lt;/a&gt;
+                        <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=/Scratch/fr/blog/2010-08-31-send-mail-from-command-line-with-attached-file/" class="social">`</a>
                         ·
-                         &lt;a target=&quot;_blank&quot; href=&quot;https://plus.google.com/share?url=http://yannesposito.com/Scratch/fr/blog/2010-08-31-send-mail-from-command-line-with-attached-file/&quot; class=&quot;social&quot;&gt;g&lt;/a&gt;
-                        &lt;br/&gt;
-                        &lt;a class=&quot;message&quot; href=&quot;/Scratch/fr/blog/Social-link-the-right-way/&quot;&gt;Ces liens sociaux préservent votre vie privée&lt;/a&gt;
-                    &lt;/div&gt;
-        	        &lt;div id=&quot;navigation&quot;&gt;
-                        &lt;a href=&quot;/&quot;&gt;Accueil&lt;/a&gt;
-                        &lt;span class=&quot;sep&quot;&gt;¦&lt;/span&gt;
-        	            &lt;a href=&quot;/Scratch/fr/blog&quot;&gt;Blog&lt;/a&gt;
-                        &lt;span class=&quot;sep&quot;&gt;¦&lt;/span&gt;
-                        &lt;a href=&quot;/Scratch/fr/softwares&quot;&gt;Logiciels&lt;/a&gt;
-                        &lt;span class=&quot;sep&quot;&gt;¦&lt;/span&gt;
-                        &lt;a href=&quot;/Scratch/fr/about&quot;&gt;Auteur&lt;/a&gt;
-        	        &lt;/div&gt;
-                    &lt;div id=&quot;totop&quot;&gt;&lt;a href=&quot;#header&quot;&gt;↑ Top ↑&lt;/a&gt;&lt;/div&gt;
-				    &lt;div class=&quot;corps&quot; id=&quot;comment&quot;&gt;
-            	        &lt;h2 class=&quot;first&quot;&gt;Comments&lt;/h2&gt;
-				    	&lt;div id=&quot;disqus_thread&quot;&gt;&lt;/div&gt;
-        		    	&lt;script type=&quot;text/javascript&quot;&gt;
+                         <a target="_blank" href="https://plus.google.com/share?url=http://yannesposito.com/Scratch/fr/blog/2010-08-31-send-mail-from-command-line-with-attached-file/" class="social">g</a>
+                        <br />
+                        <a class="message" href="/Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
+                    </div>
+        	        <div id="navigation">
+                        <a href="/">Accueil</a>
+                        <span class="sep">¦</span>
+        	            <a href="/Scratch/fr/blog">Blog</a>
+                        <span class="sep">¦</span>
+                        <a href="/Scratch/fr/softwares">Logiciels</a>
+                        <span class="sep">¦</span>
+                        <a href="/Scratch/fr/about">Auteur</a>
+        	        </div>
+                    <div id="totop"><a href="#header">↑ Top ↑</a></div>
+				    <div class="corps" id="comment">
+            	        <h2 class="first">Comments</h2>
+				    	<div id="disqus_thread"></div>
+        		    	<script type="text/javascript">
         		    	    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
         		    	    var disqus_shortname = " yannesposito'; required: replace example with your forum shortname var disqus_identifier="/Scratch/fr/blog/2010-08-31-send-mail-from-command-line-with-attached-file/index.html" ; * * * DON'T EDIT BELOW THIS LINE * * * (function() { var dsq="document.createElement('script');" dsq.type="text/javascript" ; dsq.async="true;" dsq.src="http://" + disqus_shortname + '.disqus.com embed.js'; (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); })(); < script>
         		    	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>

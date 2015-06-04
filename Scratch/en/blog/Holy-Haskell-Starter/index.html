@@ -100,7 +100,7 @@
 <h3 id="patricide">Patricide</h3>
 <p>In a first time, we initialize a new Haskell project with <code>holy-haskell.sh</code>:</p>
 <pre>
-&gt; ./holy-haskell.sh
+> ./holy-haskell.sh
 <span class="green">Bridgekeeper: Stop!
 Bridgekeeper: Who would cross the Bridge of Death
 Bridgekeeper: must answer me these questions three,
@@ -108,15 +108,15 @@ Bridgekeeper: ere the other side he see.</span>
 <span class="yellow">You: Ask me the questions, bridgekeeper, I am not afraid.</span>
 
 <span class="green">Bridgekeeper: What is the name of your project?</span>
-&gt; Holy project
+> Holy project
 <span class="green">Bridgekeeper: What is your name?</span> (Yann Esposito (Yogsototh))
-&gt;
+>
 <span class="green">Bridgekeeper: What is your email?</span> (Yann.Esposito@gmail.com)
-&gt;
+>
 <span class="green">Bridgekeeper: What is your github user name?</span> (yogsototh)
-&gt;
+>
 <span class="green">Bridgekeeper: What is your project in less than ten words?</span>
-&gt; Start your Haskell project with cabal, git and tests.
+> Start your Haskell project with cabal, git and tests.
 Initialize git
 Initialized empty Git repository in .../holy-project/.git/
 Create files
@@ -160,7 +160,6 @@ All Tests
 Sir Bedevere: How do you know so much about swallows?
 <span class="yellow">You: Well, you have to know these things when you're a king, you know.</span>
 </pre>
-
 <p>The different steps are:</p>
 <ul>
 <li>small introduction quotes</li>
@@ -392,7 +391,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
   intro
   project <span class="ot">&lt;-</span> ask <span class="st">&quot;project name&quot;</span>
   ioassert (checkProjectName project)
-       <span class="st">&quot;Use only letters, numbers, spaces ans dashes please&quot;</span>
+       <span class="st">&quot;Use only letters, numbers, spaces and dashes please&quot;</span>
   <span class="kw">let</span> projectname <span class="fu">=</span> projectNameFromString project
       modulename <span class="fu">=</span> capitalize project</code></pre>
 <p>Which verify the project name is not empty and use only letter, numbers and dashes:</p>
@@ -484,7 +483,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
     intro
     project <span class="ot">&lt;-</span> ask <span class="st">&quot;project name&quot;</span>
     ioassert (checkProjectName project)
-             <span class="st">&quot;Use only letters, numbers, spaces ans dashes please&quot;</span>
+             <span class="st">&quot;Use only letters, numbers, spaces and dashes please&quot;</span>
     <span class="kw">let</span> projectname <span class="fu">=</span> projectNameFromString project
         modulename  <span class="fu">=</span> capitalize project
     <span class="highlight">in_author</span>       <span class="ot">&lt;-</span> ask <span class="st">&quot;name&quot;</span>
@@ -506,7 +505,7 @@ createProject <span class="highlight">p</span> <span class="fu">=</span> <span c
     genFile <span class="highlight">context</span> <span class="st">&quot;src/Main.hs&quot;</span>)   <span class="fu">$</span> <span class="st">&quot;src&quot;</span> <span class="fu">&lt;/&gt;</span> <span class="st">&quot;Main.hs&quot;</span>
     <span class="fu">...</span>
 
-<span class="ot">genFile ::</span> <span class="dt">MuContext</span> <span class="dt">IO</span> <span class="ot">-&gt;</span> <span class="dt">FilePath</span> <span class="ot">-&gt;</span> <span class="dt">FilePath</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
+<span class="ot">genFile ::</span> <span class="dt">MuContext</span> <span class="dt">IO</span> <span class="ot">-&gt;</span> FilePath <span class="ot">-&gt;</span> FilePath <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
 genFile context filename outputFileName <span class="fu">=</span> <span class="kw">do</span>
     pkgfileName <span class="ot">&lt;-</span> getDataFileName (<span class="st">&quot;scaffold/&quot;</span><span class="fu">++</span>filename)
     template <span class="ot">&lt;-</span> <span class="highlight"><span class="dt">BS</span><span class="fu">.</span></span>readFile pkgfileName
@@ -627,7 +626,7 @@ getValueForKey _ _ <span class="fu">=</span> <span class="dt">Nothing</span></co
 <p>So the first problem to handle is to connect an URL. For this we will use the <code>http-conduit</code> package.</p>
 <p>Generally, for simple request, we should use:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">do</span>
-    body <span class="ot">&lt;-</span> simpleHTTP <span class="st">&quot;https://api.github.com/search/users?q=&quot;</span><span class="fu">++</span>email
+    body <span class="ot">&lt;-</span> simpleHTTP (<span class="st">&quot;https://api.github.com/search/users?q=&quot;</span> <span class="fu">++</span> email)
     <span class="fu">...</span></code></pre>
 <p>But, after some research, I discovered we must declare an User-Agent in the HTTP header to be accepted by the github API. So we have to change the HTTP Header, and our code became slightly more complex:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span>
@@ -683,12 +682,12 @@ main = do
             <span class="highlight">email</span>
     project &lt;- ask &quot;project name&quot; Nothing
     ioassert (checkProjectName project)
-             &quot;Use only letters, numbers, spaces ans dashes please&quot;
+             &quot;Use only letters, numbers, spaces and dashes please&quot;
     let projectname = projectNameFromString project
         modulename  = capitalize project
     in_author       &lt;- ask &quot;name&quot; name
     in_email        &lt;- ask &quot;email&quot; email
-    <span class="highlight">ghUserHint      &lt;- if (maybe &quot;&quot; id email) /= in_email</span>
+    <span class="highlight">ghUserHint      &lt;- if maybe &quot;&quot; id email /= in_email</span>
                             <span class="highlight">then getGHUser in_email</span>
                             <span class="highlight">else takeMVar earlyhint</span>
     in_ghaccount    &lt;- ask &quot;github account&quot; ghUserHint
@@ -854,7 +853,7 @@ All Tests
       1237 tests completed
     QC projectNameFromString idempotent: <span class="red">FAIL</span>
       *** Failed! Falsifiable (after 19 tests and 5 shrinks):
-      &quot;a a&quot;
+      "a a"
       Use --quickcheck-replay '18 913813783 2147483380' to reproduce.
   GithubAPI
     Yann:                                <span class="green">OK</span>
@@ -862,7 +861,6 @@ All Tests
 
 <span class="red">1 out of 5 tests failed</span>
 </pre>
-
 <p>The test fail, but this is not an error. Our <code>capitalize</code> function shouldn’t be idempotent. I simply added this test to show what occurs when a test fail. If you want to look more closely to the error you could do this:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">./interact</span>
 <span class="kw">GHCi</span>, version 7.6.2: http://www.haskell.org/ghc/   :? for help

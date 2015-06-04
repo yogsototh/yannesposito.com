@@ -39,7 +39,7 @@
 			<div id="afterheader" class="article">
 				<div class="corps">
 					<p>Sur ma page d’accueil vous pouvez voir la liste des mes derniers articles avec le début de ceux-ci. Pour arriver à faire ça, j’ai besoin de couper le code XHTML de mes pages en plein milieu. Il m’a donc fallu trouver un moyen de les réparer.</p>
-<p>Prenons un exemple :</p>
+<p>Prenons un exemple&nbsp;:</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;corps&quot;</span><span class="kw">&gt;</span>
     <span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;intro&quot;</span><span class="kw">&gt;</span>
         <span class="kw">&lt;p&gt;</span>Introduction<span class="kw">&lt;/p&gt;</span>
@@ -48,7 +48,7 @@
     <span class="kw">&lt;img</span><span class="ot"> src=</span><span class="st">&quot;/img/img.png&quot;</span><span class="ot"> alt=</span><span class="st">&quot;an image&quot;</span><span class="kw">/&gt;</span>
     <span class="kw">&lt;p&gt;</span>Another long paragraph<span class="kw">&lt;/p&gt;</span>
 <span class="kw">&lt;/div&gt;</span></code></pre>
-<p>Après avoir coupé, j’obtiens :</p>
+<p>Après avoir coupé, j’obtiens&nbsp;:</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;corps&quot;</span><span class="kw">&gt;</span>
     <span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;intro&quot;</span><span class="kw">&gt;</span>
         <span class="kw">&lt;p&gt;</span>Introduction<span class="kw">&lt;/p&gt;</span>
@@ -58,7 +58,7 @@
 <p>En plein milieu d’un tag <code>&lt;img&gt;</code> !</p>
 <p>En réalité, ce n’est pas si difficile que celà peut paraître au premier abord. Le secret réside dans le fait de comprendre que l’on n’a pas besoin de conserver la structure complète de l’arbre pour le réparer, mais seulement la liste des parents non fermés.</p>
 <p>Pour notre exemple, juste après le paragraphe <code>first paragraph</code> nous n’avons qu’à fermer un <code>div</code> pour la classe <code>corps</code> et le XML est réparé. Bien entendu, quand on est dans le cas où un tag est coupé au milieu, on a qu’à remonté juste avant le début de ce tag corrompu.</p>
-<p>Donc, tout ce que nous avons à faire, c’est d’enregistrer la liste des parents dans une pile. Supposons que nous traitions le premier exemple complètement. La pile passera par les états suivants :</p>
+<p>Donc, tout ce que nous avons à faire, c’est d’enregistrer la liste des parents dans une pile. Supposons que nous traitions le premier exemple complètement. La pile passera par les états suivants&nbsp;:</p>
 <pre class="sourceCode html"><code class="sourceCode html">[]           
 [div]           <span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;corps&quot;</span><span class="kw">&gt;</span>
 [div, div]          <span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;intro&quot;</span><span class="kw">&gt;</span>

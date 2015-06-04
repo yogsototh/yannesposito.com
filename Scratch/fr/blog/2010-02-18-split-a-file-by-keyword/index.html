@@ -41,12 +41,11 @@
 <div>
 <code class="perl"> #!/usr/bin/env awk BEGIN{i=0;} /UTC/ { i+=1; FIC=sprintf(“fic.%03d”,i); } {print $0&gt;&gt;FIC} </code>
 </div>
-<p>En réalité, j’avais besoin de cet outils pour avoir un fichier par jour. Chaque ligne contenant UTC ayant le format suivant :</p>
+<p>En réalité, j’avais besoin de cet outils pour avoir un fichier par jour. Chaque ligne contenant UTC ayant le format suivant&nbsp;:</p>
 <pre class="twilight">
 Mon Dec  7 10:32:30 UTC 2009
 </pre>
-
-<p>J’en suis finallement arrivé au code suivant :</p>
+<p>J’en suis finallement arrivé au code suivant&nbsp;:</p>
 <div>
 <code class="perl"> #!/usr/bin/env awk BEGIN{i=0;} /UTC/ { date=$1$2$3; if ( date != olddate ) { olddate=date; i+=1; FIC=sprintf(“fic.%03d”,i); } } {print $0&gt;&gt;FIC} </code>
 </div>

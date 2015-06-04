@@ -38,21 +38,21 @@
 				<div class="corps">
 					<h1 id="mise-à-jour">Mise à jour</h1>
 <p>Comme <a href="http://www.theworkinggeek.com">Andy Lester</a> me l’a fait remarqué. <a href="http://betterthangrep.com"><code>ack</code></a> est un simple fichier perl qu’il suffit de copier dans son répertoire personnel <code>~/bin</code>. Maintenant j’ai <code>ack</code> sur mon serveur professionnel.</p>
-<p>Il suffit d’aller sur <a href="http://betterthangrep.com">http://betterthangrep.com</a> pour le télécharger.</p>
+<p>Il suffit d’aller sur <a href="http://betterthangrep.com" class="uri">http://betterthangrep.com</a> pour le télécharger.</p>
 <p>Sincèrement, je ne comprend pas qu’<code>ack</code> ne soit pas une commande implémentée par défaut sur les systèmes UNIX. Je ne peux vraiment plus m’en passer, il m’est devenu aussi essentiel qu’un <code>which</code> ou un <code>find</code>.</p>
 <hr />
 <h1 id="mieux-que-grep">Mieux que grep</h1>
 <p>Un des mes usages principaux de <code>grep</code> est</p>
 <div>
 <pre><code>&lt;code class=&quot;zsh&quot;&gt;</code></pre>
-grep ‘pattern’ **/*(.)</code>
+<p>grep ‘pattern’ **/*(.)</code></p>
 </div>
-<p>La plupart du temps c’est suffisant, mais ajouter de la coloration améliore beaucoup l’utilité de cette commande. Il existe déjà un outil pour ça : il s’appelle <code>ack-grep</code> sous Ubuntu. Comme je ne peux pas l’installer sur le serveur de mon entreprise, j’en ai créé un moi-même en quelques lignes :</p>
+<p>La plupart du temps c’est suffisant, mais ajouter de la coloration améliore beaucoup l’utilité de cette commande. Il existe déjà un outil pour ça : il s’appelle <code>ack-grep</code> sous Ubuntu. Comme je ne peux pas l’installer sur le serveur de mon entreprise, j’en ai créé un moi-même en quelques lignes&nbsp;:</p>
 <div>
 <pre><code>&lt;code class=&quot;zsh&quot; file=&quot;ack&quot;&gt;</code></pre>
-<h1>!/usr/bin/env zsh</h1>
+<h1 id="usrbinenv-zsh">!/usr/bin/env zsh</h1>
 <p>(($#&lt;1)) &amp;&amp; { print ‘usage: ack “regexp”’ &gt;&amp;2; exit 1 }</p>
-listeFic=( **/<em>(.) ) autoload zargs zargs – $listeFic – grep $1 | perl -ne ‘use Term::ANSIColor; if (m/([^:]<em>)(:.</em>)(’$1’)(.</em>)/) { print color(“green”).$1; print color(“reset”).$2; print color(“black”,“on_yellow”).$3; print color(“reset”).$4.“”; } ’ </code>
+<p>listeFic=( **/<em>(.) ) autoload zargs zargs – $listeFic – grep $1 | perl -ne ‘use Term::ANSIColor; if (m/([^:]<em>)(:.</em>)(’$1’)(.</em>)/) { print color(“green”).$1; print color(“reset”).$2; print color(“black”,“on_yellow”).$3; print color(“reset”).$4.“”; } ’ </code></p>
 </div>
 <p>Pour mon utilisation personnelle et celle de mon équipe c’est suffisant. J’espère que ça pourra vous aider.</p>
 				</div>

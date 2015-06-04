@@ -25,8 +25,8 @@
 <h2 id="vim-plugin-manager">Vim Plugin Manager</h2>
 <p>There are a <em>lot</em> of Vim plugins. To manage them I use <a href="https://github.com/junegunn/vim-plug"><code>vim-plug</code></a>.</p>
 <p>To install it:</p>
-<pre class="zsh"><code>mkdir -p ~/.vim/autoload
-curl -fLo ~/.vim/autoload/plug.vim \
+<pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="kw">mkdir</span> -p ~/.vim/autoload
+curl -fLo ~/.vim/autoload/plug.vim <span class="kw">\</span>
              https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim</code></pre>
 <div class="small">
 <p>☞ Note I have two parts in my <code>.vimrc</code>. The first part contains the list of all my plugins. The second part contains the personal preferences I setted for each plugin. I’ll separate each part by <code>...</code> in the code.</p>
@@ -288,10 +288,6 @@ let g:rbpt_colorpairs = [
 <p class="small">
 <a href="https://www.flickr.com/photos/nesster/4198442186/">The image of the cat about to jump that I slightly edited can found here</a>
 </p>
-
-
-
-
 <div class="footnotes">
 <hr />
 <ol>
@@ -427,7 +423,6 @@ All Tests
 Sir Bedevere: How do you know so much about swallows?
 <span class="yellow">You: Well, you have to know these things when you're a king, you know.</span>
 </pre>
-
 <p>The different steps are:</p>
 <ul>
 <li>small introduction quotes</li>
@@ -659,7 +654,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
   intro
   project <span class="ot">&lt;-</span> ask <span class="st">&quot;project name&quot;</span>
   ioassert (checkProjectName project)
-       <span class="st">&quot;Use only letters, numbers, spaces ans dashes please&quot;</span>
+       <span class="st">&quot;Use only letters, numbers, spaces and dashes please&quot;</span>
   <span class="kw">let</span> projectname <span class="fu">=</span> projectNameFromString project
       modulename <span class="fu">=</span> capitalize project</code></pre>
 <p>Which verify the project name is not empty and use only letter, numbers and dashes:</p>
@@ -751,7 +746,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
     intro
     project <span class="ot">&lt;-</span> ask <span class="st">&quot;project name&quot;</span>
     ioassert (checkProjectName project)
-             <span class="st">&quot;Use only letters, numbers, spaces ans dashes please&quot;</span>
+             <span class="st">&quot;Use only letters, numbers, spaces and dashes please&quot;</span>
     <span class="kw">let</span> projectname <span class="fu">=</span> projectNameFromString project
         modulename  <span class="fu">=</span> capitalize project
     <span class="highlight">in_author</span>       <span class="ot">&lt;-</span> ask <span class="st">&quot;name&quot;</span>
@@ -773,7 +768,7 @@ createProject <span class="highlight">p</span> <span class="fu">=</span> <span c
     genFile <span class="highlight">context</span> <span class="st">&quot;src/Main.hs&quot;</span>)   <span class="fu">$</span> <span class="st">&quot;src&quot;</span> <span class="fu">&lt;/&gt;</span> <span class="st">&quot;Main.hs&quot;</span>
     <span class="fu">...</span>
 
-<span class="ot">genFile ::</span> <span class="dt">MuContext</span> <span class="dt">IO</span> <span class="ot">-&gt;</span> <span class="dt">FilePath</span> <span class="ot">-&gt;</span> <span class="dt">FilePath</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
+<span class="ot">genFile ::</span> <span class="dt">MuContext</span> <span class="dt">IO</span> <span class="ot">-&gt;</span> FilePath <span class="ot">-&gt;</span> FilePath <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
 genFile context filename outputFileName <span class="fu">=</span> <span class="kw">do</span>
     pkgfileName <span class="ot">&lt;-</span> getDataFileName (<span class="st">&quot;scaffold/&quot;</span><span class="fu">++</span>filename)
     template <span class="ot">&lt;-</span> <span class="highlight"><span class="dt">BS</span><span class="fu">.</span></span>readFile pkgfileName
@@ -894,7 +889,7 @@ getValueForKey _ _ <span class="fu">=</span> <span class="dt">Nothing</span></co
 <p>So the first problem to handle is to connect an URL. For this we will use the <code>http-conduit</code> package.</p>
 <p>Generally, for simple request, we should use:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">do</span>
-    body <span class="ot">&lt;-</span> simpleHTTP <span class="st">&quot;https://api.github.com/search/users?q=&quot;</span><span class="fu">++</span>email
+    body <span class="ot">&lt;-</span> simpleHTTP (<span class="st">&quot;https://api.github.com/search/users?q=&quot;</span> <span class="fu">++</span> email)
     <span class="fu">...</span></code></pre>
 <p>But, after some research, I discovered we must declare an User-Agent in the HTTP header to be accepted by the github API. So we have to change the HTTP Header, and our code became slightly more complex:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span>
@@ -950,12 +945,12 @@ main = do
             <span class="highlight">email</span>
     project &lt;- ask &quot;project name&quot; Nothing
     ioassert (checkProjectName project)
-             &quot;Use only letters, numbers, spaces ans dashes please&quot;
+             &quot;Use only letters, numbers, spaces and dashes please&quot;
     let projectname = projectNameFromString project
         modulename  = capitalize project
     in_author       &lt;- ask &quot;name&quot; name
     in_email        &lt;- ask &quot;email&quot; email
-    <span class="highlight">ghUserHint      &lt;- if (maybe &quot;&quot; id email) /= in_email</span>
+    <span class="highlight">ghUserHint      &lt;- if maybe &quot;&quot; id email /= in_email</span>
                             <span class="highlight">then getGHUser in_email</span>
                             <span class="highlight">else takeMVar earlyhint</span>
     in_ghaccount    &lt;- ask &quot;github account&quot; ghUserHint
@@ -1129,7 +1124,6 @@ All Tests
 
 <span class="red">1 out of 5 tests failed</span>
 </pre>
-
 <p>The test fail, but this is not an error. Our <code>capitalize</code> function shouldn’t be idempotent. I simply added this test to show what occurs when a test fail. If you want to look more closely to the error you could do this:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">./interact</span>
 <span class="kw">GHCi</span>, version 7.6.2: http://www.haskell.org/ghc/   :? for help
@@ -1175,10 +1169,9 @@ All Tests
 <li>The <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> presentation is <a href="http://yogsototh.github.io/parsec-presentation/parsec.html">here</a>.</li>
 </ul>
 <div style="display:none">
-() () () () () ([1]{(#1)}) ([1]{(#1)}) () () () () () () () () ()
+<p>() () () () () ([1]{(#1)}) ([1]{(#1)}) () () () () () () () () ()</p>
 </div>
 <!-- Begin slides. Just make elements with a class of slide. -->
-
 <section class="slide">
 <div style="text-align:center; font-size: .9em; width: 100%; line-height: 1.2em">
 <h1 style="position: relative;">
@@ -1186,10 +1179,10 @@ Parsec
 </h1>
 <author><em class="base1">by</em> Yann Esposito</author>
 <div style="font-size:.5em; margin: 0 1em;">
-<twitter> <a href="http://twitter.com/yogsototh"><span class="citation">@yogsototh</span></a>, </twitter> <googleplus> <a href="https://plus.google.com/117858550730178181663">+yogsototh</a> </googleplus>
+<p><twitter> <a href="http://twitter.com/yogsototh"><span class="citation">@yogsototh</span></a>, </twitter> <googleplus> <a href="https://plus.google.com/117858550730178181663">+yogsototh</a> </googleplus></p>
 </div>
 <div style="font-size:.8em">
-<em class="base1">for</em> <a href="http://www.meetup.com/riviera-scala-clojure"> Riviera Scala Clojure Meetup (Haskell) </a><br/> <em class="base1">the</em> <ti style="font-size: .8em">8 Oct 2013</ti>
+<p><em class="base1">for</em> <a href="http://www.meetup.com/riviera-scala-clojure"> Riviera Scala Clojure Meetup (Haskell) </a><br/> <em class="base1">the</em> <ti style="font-size: .8em">8 Oct 2013</ti></p>
 </div>
 </div>
 </section>
@@ -1760,9 +1753,7 @@ Links to example code:
 </li>
 </ul>
 </section>
-<!-- End slides. -->
-
-]]></summary>
+<!-- End slides. -->]]></summary>
 </entry>
 <entry>
     <title>Rational Web Framework Choice</title>
@@ -1784,7 +1775,6 @@ Links to example code:
 <a href="https://en.wikipedia.org/wiki/Analysis_paralysis">Choice Paralysis</a>
 </figcaption>
 </figure>
-
 <p>After your brain stack overflowed, you decide to use a very simple methodology. Answer two questions:</p>
 <p><strong>Which language am I familiar with?<br />What is the most popular web framework for this language?</strong></p>
 <p>Great! This is it.</p>
@@ -1930,7 +1920,6 @@ Links to example code:
 Mainstream Languages Cluster from <a href="http://redmonk.com/sogrady/2013/02/28/language-rankings-1-13/">RedMonk</a>
 </figcaption>
 </figure>
-
 <p>Most developer know at least one of these language.</p>
 <p>The second cluster is quite bigger. It seems to correspond to languages with a solid community behind them.</p>
 <figure>
@@ -1939,7 +1928,6 @@ Mainstream Languages Cluster from <a href="http://redmonk.com/sogrady/2013/02/28
 Second tier languages from <a href="http://redmonk.com/sogrady/2013/02/28/language-rankings-1-13/">RedMonk</a>
 </figcaption>
 </figure>
-
 <p>I don’t get into detail, but you could also see third and fourth tier popular languages.</p>
 <p>So:</p>
 <p><strong>Mainstream</strong>: JavaScript, Java, PHP, Python, Ruby, <code>C#</code>, <code>C++</code>, <code>C</code>, Objective-C, Perl, Shell</p>
@@ -3249,7 +3237,6 @@ Second tier languages from <a href="http://redmonk.com/sogrady/2013/02/28/langua
 Static Type Properties from <a href="http://james-iry.blogspot.fr/2010/05/types-la-chart.html">James IRY Blog</a>
 </figcaption>
 </figure>
-
 <p>From my point of view, robustness is mostly identical to safety.</p>
 <p>Here are the clusters:</p>
 <table>
@@ -3622,43 +3609,36 @@ Static Type Properties from <a href="http://james-iry.blogspot.fr/2010/05/types-
 <p>I just show a top 10 frameworks. In order to give a more understandable measure I provide the log of the score.</p>
 <table id="choice-matrix">
 <tr>
-    <th></th>
-    <th>
-Excellent
-</th>
-    <th>
-Very good
-</th>
-    <th>
-Good
-</th>
-    <th>
-Medium
-</th>
-    <th>
-Bad
-</th>
-    <th>
-Very bad
-</th>
-    <th>
-Importance
+<pre><code>&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;Excellent&lt;/th&gt;
+&lt;th&gt;Very good&lt;/th&gt;
+&lt;th&gt;Good&lt;/th&gt;
+&lt;th&gt;Medium&lt;/th&gt;
+&lt;th&gt;Bad&lt;/th&gt;
+&lt;th&gt;Very bad&lt;/th&gt;
+&lt;th&gt;Importance&lt;/th&gt;</code></pre>
+</tr>
+<tr id="t-expressiveness">
+<th>
+Expressiveness
 </th>
 </tr>
-<tr id="t-expressiveness"><th>
-Expressiveness
-</th></tr>
-<tr id="t-popularity"><th>
+<tr id="t-popularity">
+<th>
 Popularity
-</th></tr>
-<tr id="t-efficiency"><th>
+</th>
+</tr>
+<tr id="t-efficiency">
+<th>
 Efficiency
-</th></tr>
-<tr id="t-robustness"><th>
+</th>
+</tr>
+<tr id="t-robustness">
+<th>
 Robustness
-</th></tr>
+</th>
+</tr>
 </table>
-
 <div id="compute" class="button">
 <span>Click to force refresh</span>
 </div>
@@ -3944,7 +3924,6 @@ robustnessClusters=[[ "elli" , "cowboy" , "snap" , "yesod"
         run();
     })();
 // ]]></script>
-
 <p>I didn’t had the courage in explaining in what the scoring system is good. Mostly, if you use product instead of sum for the score you could use power of <span class="math"><em>e</em></span> for the values in the matrix. And you could see the matrix as a probability matrix (each line sum to 1). Which provide a slighly better intuition on whats going on.</p>
 <p>Remember only that values are exponential. Do not double an already big value for example the effect would be extreme.</p>
 <h2 id="conclusion">Conclusion</h2>
@@ -3987,10 +3966,10 @@ Saint John Perse.
 <span class="fu">### Titre 3</span>
 
 &gt;<span class="dt"> C&#39;est un blockquote.</span>
-&gt;
-&gt;<span class="dt"> C&#39;est un second paragraphe dans le blockquote</span>
-&gt;
-&gt;<span class="dt"> ## C&#39;est un H2 dans un blockquote</span></code></pre>
+<span class="dt">&gt;</span>
+<span class="dt">&gt; C&#39;est un second paragraphe dans le blockquote</span>
+<span class="dt">&gt;</span>
+<span class="dt">&gt; ## C&#39;est un H2 dans un blockquote</span></code></pre>
 <ol start="2" style="list-style-type: decimal">
 <li>J’ouvre mon navigateur et je rafraichis de temps en temps pour voir les changements.</li>
 <li>Une fois satisfait, je lance un script minimal qui fait grosso modo un simple <code>git push</code>. Mon blog est hébergé sur <a href="http://github.com">github</a>.</li>
@@ -4485,10 +4464,10 @@ main = putStrLn &quot;Cthulhu!&quot;
 <p>Here is the result:</p>
 <div class="nostar" style="text-align:center">
 <div id="sociallinks">
-<a href="https://twitter.com/home?status=$url$"
+<p><a href="https://twitter.com/home?status=$url$"
      target="_blank">Tweet this</a> - <a href="http://www.facebook.com/sharer/sharer.php?u=$url$"
      target="_blank">Like this</a> - <a href="https://plus.google.com/share?url=$url$"
-     target="_blank">Share on G+</a>
+     target="_blank">Share on G+</a></p>
 </div>
 <script>
 (function(){window.addEventListener("DOMContentLoaded",function(){
@@ -4499,7 +4478,6 @@ main = putStrLn &quot;Cthulhu!&quot;
         links[i].setAttribute("href",
             links[i].href.replace('$url$',url));}})})();
 </script>
-
 </div>
 <h2 id="good-looking-solutions">Good looking solutions</h2>
 <p>If you don’t want just text but nice icons. You have many choices:</p>
@@ -4559,13 +4537,13 @@ main = putStrLn &quot;Cthulhu!&quot;
 <p>Here is the result:</p>
 <div class="nostar" style="font-size: 2em; text-align: center;">
 <div id="sociallinksunicode">
-<a href="https://twitter.com/home?status=$url$"
+<p><a href="https://twitter.com/home?status=$url$"
     target="_blank"
     class="social">t</a> · <a href="http://www.facebook.com/sharer/sharer.php?u=$url$"
    target="_blank"
    class="social">`</a> · <a href="https://plus.google.com/share?url=$url$"
     target="_blank"
-    class="social">g</a>
+    class="social">g</a></p>
 </div>
 <script>
 (function(){window.addEventListener("DOMContentLoaded",function(){
@@ -5605,7 +5583,6 @@ A Mandelbulb detail
 Another detail of the Mandelbulb
 </figcaption>
 </figure>
-
 <p>And you can see the intermediate steps to reach this goal:</p>
 <div>
 <img src="/Scratch/img/blog/Haskell-OpenGL-Mandelbrot/HGL_Plan.png" alt="The parts of the article"/>
@@ -5627,11 +5604,11 @@ Another detail of the Mandelbulb
 </div>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Num</span> <span class="dt">Complex</span> <span class="kw">where</span>
-    fromInteger n <span class="fu">=</span> <span class="dt">C</span> (fromIntegral n,<span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>)
+    fromInteger n <span class="fu">=</span> <span class="dt">C</span> (fromIntegral n,<span class="fl">0.0</span>)
     <span class="dt">C</span> (x,y) <span class="fu">*</span> <span class="dt">C</span> (z,t) <span class="fu">=</span> <span class="dt">C</span> (z<span class="fu">*</span>x <span class="fu">-</span> y<span class="fu">*</span>t, y<span class="fu">*</span>z <span class="fu">+</span> x<span class="fu">*</span>t)
     <span class="dt">C</span> (x,y) <span class="fu">+</span> <span class="dt">C</span> (z,t) <span class="fu">=</span> <span class="dt">C</span> (x<span class="fu">+</span>z, y<span class="fu">+</span>t)
-    abs (<span class="dt">C</span> (x,y))     <span class="fu">=</span> <span class="dt">C</span> (sqrt (x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y),<span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>)
-    signum (<span class="dt">C</span> (x,y))  <span class="fu">=</span> <span class="dt">C</span> (signum x , <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>)</code></pre>
+    abs (<span class="dt">C</span> (x,y))     <span class="fu">=</span> <span class="dt">C</span> (sqrt (x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y),<span class="fl">0.0</span>)
+    signum (<span class="dt">C</span> (x,y))  <span class="fu">=</span> <span class="dt">C</span> (signum x , <span class="fl">0.0</span>)</code></pre>
 </div>
 <p>We declare some useful functions for manipulating complex numbers:</p>
 <div class="codehighlight">
@@ -5711,15 +5688,15 @@ allPoints <span class="fu">=</span> [ (x<span class="fu">/</span>width,y<span cl
 <pre class="sourceCode haskell"><code class="sourceCode haskell">colorFromValue n <span class="fu">=</span>
   <span class="kw">let</span> 
 <span class="ot">      t ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">GLfloat</span>
-      t i <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">5</span> <span class="fu">+</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">5</span><span class="fu">*</span>cos( fromIntegral i <span class="fu">/</span> <span class="dv">10</span> )
+      t i <span class="fu">=</span> <span class="fl">0.5</span> <span class="fu">+</span> <span class="fl">0.5</span><span class="fu">*</span>cos( fromIntegral i <span class="fu">/</span> <span class="dv">10</span> )
   <span class="kw">in</span>
     <span class="dt">Color3</span> (t n) (t (n<span class="fu">+</span><span class="dv">5</span>)) (t (n<span class="fu">+</span><span class="dv">10</span>))</code></pre>
 </div>
 <p>And now the <code>mandel</code> function. Given two coordinates in pixels, it returns some integer value:</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">mandel x y <span class="fu">=</span> 
-  <span class="kw">let</span> r <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> x <span class="fu">/</span> width
-      i <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> y <span class="fu">/</span> height
+  <span class="kw">let</span> r <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> x <span class="fu">/</span> width
+      i <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> y <span class="fu">/</span> height
   <span class="kw">in</span>
       f (complex r i) <span class="dv">0</span> <span class="dv">64</span></code></pre>
 </div>
@@ -5761,11 +5738,11 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
                   <span class="ot">{-# UNPACK #-}</span> <span class="fu">!</span><span class="dt">Float</span> 
                <span class="kw">deriving</span> (<span class="dt">Show</span>,<span class="dt">Eq</span>)
 <span class="kw">instance</span> <span class="dt">Num</span> <span class="dt">Complex</span> <span class="kw">where</span>
-    fromInteger n <span class="fu">=</span> <span class="dt">C</span> (fromIntegral n) <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>
+    fromInteger n <span class="fu">=</span> <span class="dt">C</span> (fromIntegral n) <span class="fl">0.0</span>
     (<span class="dt">C</span> x y) <span class="fu">*</span> (<span class="dt">C</span> z t) <span class="fu">=</span> <span class="dt">C</span> (z<span class="fu">*</span>x <span class="fu">-</span> y<span class="fu">*</span>t) (y<span class="fu">*</span>z <span class="fu">+</span> x<span class="fu">*</span>t)
     (<span class="dt">C</span> x y) <span class="fu">+</span> (<span class="dt">C</span> z t) <span class="fu">=</span> <span class="dt">C</span> (x<span class="fu">+</span>z) (y<span class="fu">+</span>t)
-    abs (<span class="dt">C</span> x y)     <span class="fu">=</span> <span class="dt">C</span> (sqrt (x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y)) <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>
-    signum (<span class="dt">C</span> x y)  <span class="fu">=</span> <span class="dt">C</span> (signum x) <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span>
+    abs (<span class="dt">C</span> x y)     <span class="fu">=</span> <span class="dt">C</span> (sqrt (x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y)) <span class="fl">0.0</span>
+    signum (<span class="dt">C</span> x y)  <span class="fu">=</span> <span class="dt">C</span> (signum x) <span class="fl">0.0</span>
 <span class="ot">complex ::</span> <span class="dt">Float</span> <span class="ot">-&gt;</span> <span class="dt">Float</span> <span class="ot">-&gt;</span> <span class="dt">Complex</span>
 complex x y <span class="fu">=</span> <span class="dt">C</span> x y
 
@@ -5792,7 +5769,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
   mainLoop
 display <span class="fu">=</span> <span class="kw">do</span>
    <span class="co">-- set the background color (dark solarized theme)</span>
-  clearColor <span class="fu">$=</span> <span class="dt">Color4</span> <span class="dv">0</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">1686</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">2117</span> <span class="dv">1</span>
+  clearColor <span class="fu">$=</span> <span class="dt">Color4</span> <span class="dv">0</span> <span class="fl">0.1686</span> <span class="fl">0.2117</span> <span class="dv">1</span>
   clear [<span class="dt">ColorBuffer</span>] <span class="co">-- make the window black</span>
   loadIdentity <span class="co">-- reset any transformation</span>
   preservingMatrix drawMandelbrot
@@ -5865,14 +5842,14 @@ maxZeroIndex func minval maxval n <span class="fu">=</span>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">colorFromValue n <span class="fu">=</span>
   <span class="kw">let</span> 
 <span class="ot">      t ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">GLfloat</span>
-      t i <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">5</span> <span class="fu">+</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">5</span><span class="fu">*</span>cos( fromIntegral i <span class="fu">/</span> <span class="dv">10</span> )
+      t i <span class="fu">=</span> <span class="fl">0.5</span> <span class="fu">+</span> <span class="fl">0.5</span><span class="fu">*</span>cos( fromIntegral i <span class="fu">/</span> <span class="dv">10</span> )
   <span class="kw">in</span>
     <span class="dt">Color3</span> (t n) (t (n<span class="fu">+</span><span class="dv">5</span>)) (t (n<span class="fu">+</span><span class="dv">10</span>))</code></pre>
 </div>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">mandel x y <span class="fu">=</span> 
-  <span class="kw">let</span> r <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> x <span class="fu">/</span> width
-      i <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> y <span class="fu">/</span> height
+  <span class="kw">let</span> r <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> x <span class="fu">/</span> width
+      i <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> y <span class="fu">/</span> height
   <span class="kw">in</span>
       f (complex r i) <span class="dv">0</span> <span class="dv">64</span></code></pre>
 </div>
@@ -5931,9 +5908,9 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
     signum (<span class="dt">C</span> (x,y,z))  <span class="fu">=</span> <span class="dt">C</span> (signum x, signum y, signum z)</code></pre>
 </div>
 <p>The most important part is the new multiplication instance. Modifying this formula will change radically the shape of the result. Here is the formula written in a more mathematical notation. I called the third component of these extended complex <em>strange</em>.</p>
-<p><br /><span class="math">real((<em>x</em>, <em>y</em>, <em>z</em>) * (<em>x</em>ʹ, <em>y</em>ʹ, <em>z</em>ʹ)) = <em>x</em><em>x</em>ʹ − <em>y</em><em>y</em>ʹ − <em>z</em><em>z</em>ʹ</span><br /></p>
-<p><br /><span class="math">im((<em>x</em>, <em>y</em>, <em>z</em>) * (<em>x</em>ʹ, <em>y</em>ʹ, <em>z</em>ʹ)) = <em>x</em><em>y</em>ʹ − <em>y</em><em>x</em>ʹ + <em>z</em><em>z</em>ʹ</span><br /></p>
-<p><br /><span class="math">strange((<em>x</em>, <em>y</em>, <em>z</em>) * (<em>x</em>ʹ, <em>y</em>ʹ, <em>z</em>ʹ)) = <em>x</em><em>z</em>ʹ + <em>z</em><em>x</em>ʹ</span><br /></p>
+<p><br /><span class="math"><em>r</em><em>e</em><em>a</em><em>l</em>((<em>x</em>, <em>y</em>, <em>z</em>) * (<em>x</em>′, <em>y</em>′, <em>z</em>′)) = <em>x</em><em>x</em>′ − <em>y</em><em>y</em>′ − <em>z</em><em>z</em>′</span><br /></p>
+<p><br /><span class="math"><em>i</em><em>m</em>((<em>x</em>, <em>y</em>, <em>z</em>) * (<em>x</em>′, <em>y</em>′, <em>z</em>′)) = <em>x</em><em>y</em>′ − <em>y</em><em>x</em>′ + <em>z</em><em>z</em>′</span><br /></p>
+<p><br /><span class="math"><em>s</em><em>t</em><em>r</em><em>a</em><em>n</em><em>g</em><em>e</em>((<em>x</em>, <em>y</em>, <em>z</em>) * (<em>x</em>′, <em>y</em>′, <em>z</em>′)) = <em>x</em><em>z</em>′ + <em>z</em><em>x</em>′</span><br /></p>
 <p>Note how if <code>z=z'=0</code> then the multiplication is the same to the complex one.</p>
 <div style="display:none">
 <div class="codehighlight">
@@ -5972,7 +5949,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
   <span class="co">-- Some state variables (I know it feels BAD)</span>
   angle   <span class="ot">&lt;-</span> newIORef ((<span class="dv">35</span>,<span class="dv">0</span>)<span class="ot">::</span>(<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>))
   zoom    <span class="ot">&lt;-</span> newIORef (<span class="dv">2</span><span class="ot">::</span><span class="dt">GLfloat</span>)
-  campos  <span class="ot">&lt;-</span> newIORef ((<span class="dv">0</span><span class="fu">.</span><span class="dv">7</span>,<span class="dv">0</span>)<span class="ot">::</span>(<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>))
+  campos  <span class="ot">&lt;-</span> newIORef ((<span class="fl">0.7</span>,<span class="dv">0</span>)<span class="ot">::</span>(<span class="dt">GLfloat</span>,<span class="dt">GLfloat</span>))
   <span class="co">-- Function to call each frame</span>
   idleCallback <span class="fu">$=</span> <span class="dt">Just</span> idle
   <span class="co">-- Function to call when keyboard or mouse is used</span>
@@ -6009,18 +5986,18 @@ mapSnd f (x,y) <span class="fu">=</span> (  x,f y)</code></pre>
           z <span class="fu">$=</span> <span class="dv">1</span>     <span class="co">-- zoom</span>
           p <span class="fu">$=</span> (<span class="dv">0</span>,<span class="dv">0</span>) <span class="co">-- camera position</span>
     <span class="co">-- use of hjkl to rotate</span>
-    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;h&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapFst (<span class="fu">+</span><span class="dv">0</span><span class="fu">.</span><span class="dv">5</span>))
-    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;l&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapFst (<span class="fu">+</span>(<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">5</span>)))
-    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;j&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapSnd (<span class="fu">+</span><span class="dv">0</span><span class="fu">.</span><span class="dv">5</span>))
-    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;k&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapSnd (<span class="fu">+</span>(<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">5</span>)))
+    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;h&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapFst (<span class="fu">+</span><span class="fl">0.5</span>))
+    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;l&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapFst (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.5</span>)))
+    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;j&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapSnd (<span class="fu">+</span><span class="fl">0.5</span>))
+    kact a _ _ (<span class="dt">Char</span> <span class="ch">&#39;k&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar a (mapSnd (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.5</span>)))
     <span class="co">-- use o and i to zoom</span>
-    kact _ z _ (<span class="dt">Char</span> <span class="ch">&#39;o&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar z (<span class="fu">*</span><span class="dv">1</span><span class="fu">.</span><span class="dv">1</span>)
-    kact _ z _ (<span class="dt">Char</span> <span class="ch">&#39;i&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar z (<span class="fu">*</span><span class="dv">0</span><span class="fu">.</span><span class="dv">9</span>)
+    kact _ z _ (<span class="dt">Char</span> <span class="ch">&#39;o&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar z (<span class="fu">*</span><span class="fl">1.1</span>)
+    kact _ z _ (<span class="dt">Char</span> <span class="ch">&#39;i&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar z (<span class="fu">*</span><span class="fl">0.9</span>)
     <span class="co">-- use sdfe to move the camera</span>
-    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;s&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapFst (<span class="fu">+</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
-    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;f&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapFst (<span class="fu">+</span>(<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)))
-    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;d&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapSnd (<span class="fu">+</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
-    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;e&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapSnd (<span class="fu">+</span>(<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)))
+    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;s&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapFst (<span class="fu">+</span><span class="fl">0.1</span>))
+    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;f&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapFst (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.1</span>)))
+    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;d&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapSnd (<span class="fu">+</span><span class="fl">0.1</span>))
+    kact _ _ p (<span class="dt">Char</span> <span class="ch">&#39;e&#39;</span>) <span class="dt">Down</span> <span class="fu">=</span> modVar p (mapSnd (<span class="fu">+</span>(<span class="fu">-</span><span class="fl">0.1</span>)))
     <span class="co">-- any other keys does nothing</span>
     kact _ _ _ _ _ <span class="fu">=</span> return ()</code></pre>
 </div>
@@ -6028,7 +6005,7 @@ mapSnd f (x,y) <span class="fu">=</span> (  x,f y)</code></pre>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">display angle zoom position <span class="fu">=</span> <span class="kw">do</span>
    <span class="co">-- set the background color (dark solarized theme)</span>
-  clearColor <span class="fu">$=</span> <span class="dt">Color4</span> <span class="dv">0</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">1686</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">2117</span> <span class="dv">1</span>
+  clearColor <span class="fu">$=</span> <span class="dt">Color4</span> <span class="dv">0</span> <span class="fl">0.1686</span> <span class="fl">0.2117</span> <span class="dv">1</span>
   clear [<span class="dt">ColorBuffer</span>,<span class="dt">DepthBuffer</span>]
   <span class="co">-- Transformation to change the view</span>
   loadIdentity <span class="co">-- reset any transformation</span>
@@ -6040,8 +6017,8 @@ mapSnd f (x,y) <span class="fu">=</span> (  x,f y)</code></pre>
   scale z z z
   <span class="co">-- rotate</span>
   (xangle,yangle) <span class="ot">&lt;-</span> get angle
-  rotate xangle <span class="fu">$</span> <span class="dt">Vector3</span> <span class="dv">1</span><span class="fu">.</span><span class="dv">0</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span> (<span class="dv">0</span><span class="fu">.</span><span class="dv">0</span><span class="ot">::</span><span class="dt">GLfloat</span>)
-  rotate yangle <span class="fu">$</span> <span class="dt">Vector3</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span> <span class="dv">1</span><span class="fu">.</span><span class="dv">0</span> (<span class="dv">0</span><span class="fu">.</span><span class="dv">0</span><span class="ot">::</span><span class="dt">GLfloat</span>)
+  rotate xangle <span class="fu">$</span> <span class="dt">Vector3</span> <span class="fl">1.0</span> <span class="fl">0.0</span> (<span class="fl">0.0</span><span class="ot">::</span><span class="dt">GLfloat</span>)
+  rotate yangle <span class="fu">$</span> <span class="dt">Vector3</span> <span class="fl">0.0</span> <span class="fl">1.0</span> (<span class="fl">0.0</span><span class="ot">::</span><span class="dt">GLfloat</span>)
 
   <span class="co">-- Now that all transformation were made</span>
   <span class="co">-- We create the object(s)</span>
@@ -6160,7 +6137,7 @@ maxZeroIndex func minval maxval n <span class="fu">=</span>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">colorFromValue n <span class="fu">=</span>
   <span class="kw">let</span> 
 <span class="ot">      t ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">GLfloat</span>
-      t i <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">7</span> <span class="fu">+</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">3</span><span class="fu">*</span>cos( fromIntegral i <span class="fu">/</span> <span class="dv">10</span> )
+      t i <span class="fu">=</span> <span class="fl">0.7</span> <span class="fu">+</span> <span class="fl">0.3</span><span class="fu">*</span>cos( fromIntegral i <span class="fu">/</span> <span class="dv">10</span> )
   <span class="kw">in</span>
     <span class="dt">Color3</span> (t n) (t (n<span class="fu">+</span><span class="dv">5</span>)) (t (n<span class="fu">+</span><span class="dv">10</span>))</code></pre>
 </div>
@@ -6176,9 +6153,9 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
 <p>We simply add a new dimension to the <code>mandel</code> function and change the type signature of <code>f</code> from <code>Complex</code> to <code>ExtComplex</code>.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">mandel x y z <span class="fu">=</span> 
-  <span class="kw">let</span> r <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> x <span class="fu">/</span> width
-      i <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> y <span class="fu">/</span> height
-      s <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">*</span> z <span class="fu">/</span> deep
+  <span class="kw">let</span> r <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> x <span class="fu">/</span> width
+      i <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> y <span class="fu">/</span> height
+      s <span class="fu">=</span> <span class="fl">2.0</span> <span class="fu">*</span> z <span class="fu">/</span> deep
   <span class="kw">in</span>
       f (extcomplex r i s) <span class="dv">0</span> <span class="dv">64</span></code></pre>
 </div>
@@ -6260,7 +6237,7 @@ maxZeroIndex func minval maxval n <span class="fu">=</span>
 colorFromValue n <span class="fu">=</span>
   <span class="kw">let</span> 
 <span class="ot">      t ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">GLfloat</span>
-      t i <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">7</span> <span class="fu">+</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">3</span><span class="fu">*</span>cos( fromIntegral i <span class="fu">/</span> <span class="dv">10</span> )
+      t i <span class="fu">=</span> <span class="fl">0.7</span> <span class="fu">+</span> <span class="fl">0.3</span><span class="fu">*</span>cos( fromIntegral i <span class="fu">/</span> <span class="dv">10</span> )
   <span class="kw">in</span>
     ((t n),(t (n<span class="fu">+</span><span class="dv">5</span>)),(t (n<span class="fu">+</span><span class="dv">10</span>)))
 
@@ -6309,16 +6286,16 @@ inputActionMap <span class="fu">=</span> inputMapFromList [
     ,(<span class="dt">Press</span> <span class="ch">&#39;l&#39;</span> , rotate ydir (<span class="fu">-</span><span class="dv">5</span>))
     ,(<span class="dt">Press</span> <span class="ch">&#39;o&#39;</span> , rotate zdir   <span class="dv">5</span>)
     ,(<span class="dt">Press</span> <span class="ch">&#39;u&#39;</span> , rotate zdir (<span class="fu">-</span><span class="dv">5</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;f&#39;</span> , translate xdir   <span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;s&#39;</span> , translate xdir (<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;e&#39;</span> , translate ydir   <span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;d&#39;</span> , translate ydir (<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;z&#39;</span> , translate zdir   <span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;r&#39;</span> , translate zdir (<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;+&#39;</span> , zoom    <span class="dv">1</span><span class="fu">.</span><span class="dv">1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;-&#39;</span> , zoom (<span class="dv">1</span><span class="fu">/</span><span class="dv">1</span><span class="fu">.</span><span class="dv">1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;h&#39;</span> , resize    <span class="dv">1</span><span class="fu">.</span><span class="dv">2</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;g&#39;</span> , resize (<span class="dv">1</span><span class="fu">/</span><span class="dv">1</span><span class="fu">.</span><span class="dv">2</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;f&#39;</span> , translate xdir   <span class="fl">0.1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;s&#39;</span> , translate xdir (<span class="fu">-</span><span class="fl">0.1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;e&#39;</span> , translate ydir   <span class="fl">0.1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;d&#39;</span> , translate ydir (<span class="fu">-</span><span class="fl">0.1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;z&#39;</span> , translate zdir   <span class="fl">0.1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;r&#39;</span> , translate zdir (<span class="fu">-</span><span class="fl">0.1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;+&#39;</span> , zoom    <span class="fl">1.1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;-&#39;</span> , zoom (<span class="dv">1</span><span class="fu">/</span><span class="fl">1.1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;h&#39;</span> , resize    <span class="fl">1.2</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;g&#39;</span> , resize (<span class="dv">1</span><span class="fu">/</span><span class="fl">1.2</span>))
     ]</code></pre>
 </div>
 <p>And of course a type design the World State. The important part is that it is our World State type. We could have used any kind of data type.</p>
@@ -6405,11 +6382,11 @@ main <span class="fu">=</span> yMainLoop inputActionMap idleAction initialWorld<
 initialWorld <span class="fu">=</span> <span class="dt">World</span> {
    angle <span class="fu">=</span> makePoint3D (<span class="fu">-</span><span class="dv">30</span>,<span class="fu">-</span><span class="dv">30</span>,<span class="dv">0</span>)
  , position <span class="fu">=</span> makePoint3D (<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)
- , scale <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">8</span>
+ , scale <span class="fu">=</span> <span class="fl">0.8</span>
  , shape <span class="fu">=</span> shapeFunc 
  , box <span class="fu">=</span> <span class="dt">Box3D</span> { minPoint <span class="fu">=</span> makePoint3D (<span class="fu">-</span><span class="dv">2</span>,<span class="fu">-</span><span class="dv">2</span>,<span class="fu">-</span><span class="dv">2</span>)
                , maxPoint <span class="fu">=</span>  makePoint3D (<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">2</span>)
-               , resolution <span class="fu">=</span>  <span class="dv">0</span><span class="fu">.</span><span class="dv">16</span> }
+               , resolution <span class="fu">=</span>  <span class="fl">0.16</span> }
  , told <span class="fu">=</span> <span class="dv">0</span>
  }</code></pre>
 </div>
@@ -6421,8 +6398,8 @@ idleAction tnew world <span class="fu">=</span> world {
   , told <span class="fu">=</span> tnew
   }
   <span class="kw">where</span> 
-      anglePerSec <span class="fu">=</span> <span class="dv">5</span><span class="fu">.</span><span class="dv">0</span>
-      delta <span class="fu">=</span> anglePerSec <span class="fu">*</span> elapsed <span class="fu">/</span> <span class="dv">1000</span><span class="fu">.</span><span class="dv">0</span>
+      anglePerSec <span class="fu">=</span> <span class="fl">5.0</span>
+      delta <span class="fu">=</span> anglePerSec <span class="fu">*</span> elapsed <span class="fu">/</span> <span class="fl">1000.0</span>
       elapsed <span class="fu">=</span> fromIntegral (tnew <span class="fu">-</span> (told world))</code></pre>
 </div>
 <p>Now the function which will generate points in 3D. The first parameter (<code>res</code>) is the resolution of the vertex generation. More precisely, <code>res</code> is distance between two points on one direction. We need it to “close” our shape.</p>
@@ -6433,7 +6410,7 @@ shapeFunc res x y <span class="fu">=</span>
   <span class="kw">let</span> 
       z <span class="fu">=</span> maxZeroIndex (ymandel x y) <span class="dv">0</span> <span class="dv">1</span> <span class="dv">20</span>
   <span class="kw">in</span>
-  <span class="kw">if</span> and [ maxZeroIndex (ymandel (x<span class="fu">+</span>xeps) (y<span class="fu">+</span>yeps)) <span class="dv">0</span> <span class="dv">1</span> <span class="dv">20</span> <span class="fu">&lt;</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">000001</span> <span class="fu">|</span>
+  <span class="kw">if</span> and [ maxZeroIndex (ymandel (x<span class="fu">+</span>xeps) (y<span class="fu">+</span>yeps)) <span class="dv">0</span> <span class="dv">1</span> <span class="dv">20</span> <span class="fu">&lt;</span> <span class="fl">0.000001</span> <span class="fu">|</span>
               val <span class="ot">&lt;-</span> [res], xeps <span class="ot">&lt;-</span> [<span class="fu">-</span>val,val], yeps<span class="ot">&lt;-</span>[<span class="fu">-</span>val,val]]
       <span class="kw">then</span> <span class="dt">Nothing</span> 
       <span class="kw">else</span> <span class="dt">Just</span> (z,colorFromValue ((ymandel x y z) <span class="fu">*</span> <span class="dv">64</span>))</code></pre>
@@ -6444,7 +6421,7 @@ shapeFunc res x y <span class="fu">=</span>
 colorFromValue n <span class="fu">=</span>
   <span class="kw">let</span> 
 <span class="ot">      t ::</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Scalar</span>
-      t i <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">7</span> <span class="fu">+</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">3</span><span class="fu">*</span>cos( i <span class="fu">/</span> <span class="dv">10</span> )
+      t i <span class="fu">=</span> <span class="fl">0.7</span> <span class="fu">+</span> <span class="fl">0.3</span><span class="fu">*</span>cos( i <span class="fu">/</span> <span class="dv">10</span> )
   <span class="kw">in</span>
     makeColor (t n) (t (n<span class="fu">+</span><span class="dv">5</span>)) (t (n<span class="fu">+</span><span class="dv">10</span>))</code></pre>
 </div>
@@ -6502,16 +6479,16 @@ inputActionMap <span class="fu">=</span> inputMapFromList [
     ,(<span class="dt">Press</span> <span class="ch">&#39;l&#39;</span> , rotate ydir (<span class="fu">-</span><span class="dv">5</span>))
     ,(<span class="dt">Press</span> <span class="ch">&#39;o&#39;</span> , rotate zdir <span class="dv">5</span>)
     ,(<span class="dt">Press</span> <span class="ch">&#39;u&#39;</span> , rotate zdir (<span class="fu">-</span><span class="dv">5</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;f&#39;</span> , translate xdir <span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;s&#39;</span> , translate xdir (<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;e&#39;</span> , translate ydir <span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;d&#39;</span> , translate ydir (<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;z&#39;</span> , translate zdir <span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;r&#39;</span> , translate zdir (<span class="fu">-</span><span class="dv">0</span><span class="fu">.</span><span class="dv">1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;+&#39;</span> , zoom <span class="dv">1</span><span class="fu">.</span><span class="dv">1</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;-&#39;</span> , zoom (<span class="dv">1</span><span class="fu">/</span><span class="dv">1</span><span class="fu">.</span><span class="dv">1</span>))
-    ,(<span class="dt">Press</span> <span class="ch">&#39;h&#39;</span> , resize <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span>)
-    ,(<span class="dt">Press</span> <span class="ch">&#39;g&#39;</span> , resize (<span class="dv">1</span><span class="fu">/</span><span class="dv">2</span><span class="fu">.</span><span class="dv">0</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;f&#39;</span> , translate xdir <span class="fl">0.1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;s&#39;</span> , translate xdir (<span class="fu">-</span><span class="fl">0.1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;e&#39;</span> , translate ydir <span class="fl">0.1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;d&#39;</span> , translate ydir (<span class="fu">-</span><span class="fl">0.1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;z&#39;</span> , translate zdir <span class="fl">0.1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;r&#39;</span> , translate zdir (<span class="fu">-</span><span class="fl">0.1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;+&#39;</span> , zoom <span class="fl">1.1</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;-&#39;</span> , zoom (<span class="dv">1</span><span class="fu">/</span><span class="fl">1.1</span>))
+    ,(<span class="dt">Press</span> <span class="ch">&#39;h&#39;</span> , resize <span class="fl">2.0</span>)
+    ,(<span class="dt">Press</span> <span class="ch">&#39;g&#39;</span> , resize (<span class="dv">1</span><span class="fu">/</span><span class="fl">2.0</span>))
     ]</code></pre>
 </div>
 </div>
@@ -6554,7 +6531,7 @@ rotate dir angleValue world <span class="fu">=</span>
 <span class="ot">switchRotation ::</span> <span class="dt">World</span> <span class="ot">-&gt;</span> <span class="dt">World</span>
 switchRotation world <span class="fu">=</span> 
   world {
-     anglePerSec <span class="fu">=</span> <span class="kw">if</span> anglePerSec world <span class="fu">&gt;</span> <span class="dv">0</span> <span class="kw">then</span> <span class="dv">0</span> <span class="kw">else</span> <span class="dv">5</span><span class="fu">.</span><span class="dv">0</span> }
+     anglePerSec <span class="fu">=</span> <span class="kw">if</span> anglePerSec world <span class="fu">&gt;</span> <span class="dv">0</span> <span class="kw">then</span> <span class="dv">0</span> <span class="kw">else</span> <span class="fl">5.0</span> }
 
 <span class="ot">translate ::</span> <span class="dt">Point3D</span> <span class="ot">-&gt;</span> <span class="dt">Scalar</span> <span class="ot">-&gt;</span> <span class="dt">World</span> <span class="ot">-&gt;</span> <span class="dt">World</span>
 translate dir len world <span class="fu">=</span> 
@@ -6578,12 +6555,12 @@ main <span class="fu">=</span> yMainLoop inputActionMap idleAction initialWorld<
 <span class="ot">initialWorld ::</span> <span class="dt">World</span>
 initialWorld <span class="fu">=</span> <span class="dt">World</span> {
    angle <span class="fu">=</span> makePoint3D (<span class="dv">30</span>,<span class="dv">30</span>,<span class="dv">0</span>)
- , anglePerSec <span class="fu">=</span> <span class="dv">5</span><span class="fu">.</span><span class="dv">0</span>
+ , anglePerSec <span class="fu">=</span> <span class="fl">5.0</span>
  , position <span class="fu">=</span> makePoint3D (<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)
- , scale <span class="fu">=</span> <span class="dv">1</span><span class="fu">.</span><span class="dv">0</span>
+ , scale <span class="fu">=</span> <span class="fl">1.0</span>
  , box <span class="fu">=</span> <span class="dt">Box3D</span> { minPoint <span class="fu">=</span> makePoint3D (<span class="dv">0</span><span class="fu">-</span>eps, <span class="dv">0</span><span class="fu">-</span>eps, <span class="dv">0</span><span class="fu">-</span>eps)
                , maxPoint <span class="fu">=</span> makePoint3D (<span class="dv">0</span><span class="fu">+</span>eps, <span class="dv">0</span><span class="fu">+</span>eps, <span class="dv">0</span><span class="fu">+</span>eps)
-               , resolution <span class="fu">=</span>  <span class="dv">0</span><span class="fu">.</span><span class="dv">02</span> }
+               , resolution <span class="fu">=</span>  <span class="fl">0.02</span> }
  , told <span class="fu">=</span> <span class="dv">0</span>
  <span class="co">-- We declare cache directly this time</span>
  , cache <span class="fu">=</span> objectFunctionFromWorld initialWorld
@@ -6623,7 +6600,7 @@ idleAction tnew world <span class="fu">=</span>
       , told <span class="fu">=</span> tnew
       }
   <span class="kw">where</span> 
-      delta <span class="fu">=</span> anglePerSec world <span class="fu">*</span> elapsed <span class="fu">/</span> <span class="dv">1000</span><span class="fu">.</span><span class="dv">0</span>
+      delta <span class="fu">=</span> anglePerSec world <span class="fu">*</span> elapsed <span class="fu">/</span> <span class="fl">1000.0</span>
       elapsed <span class="fu">=</span> fromIntegral (tnew <span class="fu">-</span> (told world))
 
 <span class="ot">shapeFunc ::</span> <span class="dt">Scalar</span> <span class="ot">-&gt;</span> <span class="dt">Function3D</span>
@@ -6631,7 +6608,7 @@ shapeFunc res x y <span class="fu">=</span>
   <span class="kw">let</span> 
       z <span class="fu">=</span> maxZeroIndex (ymandel x y) <span class="dv">0</span> <span class="dv">1</span> <span class="dv">20</span>
   <span class="kw">in</span>
-  <span class="kw">if</span> and [ maxZeroIndex (ymandel (x<span class="fu">+</span>xeps) (y<span class="fu">+</span>yeps)) <span class="dv">0</span> <span class="dv">1</span> <span class="dv">20</span> <span class="fu">&lt;</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">000001</span> <span class="fu">|</span>
+  <span class="kw">if</span> and [ maxZeroIndex (ymandel (x<span class="fu">+</span>xeps) (y<span class="fu">+</span>yeps)) <span class="dv">0</span> <span class="dv">1</span> <span class="dv">20</span> <span class="fu">&lt;</span> <span class="fl">0.000001</span> <span class="fu">|</span>
               val <span class="ot">&lt;-</span> [res], xeps <span class="ot">&lt;-</span> [<span class="fu">-</span>val,val], yeps<span class="ot">&lt;-</span>[<span class="fu">-</span>val,val]]
       <span class="kw">then</span> <span class="dt">Nothing</span> 
       <span class="kw">else</span> <span class="dt">Just</span> (z,colorFromValue <span class="dv">0</span>)
@@ -6640,7 +6617,7 @@ shapeFunc res x y <span class="fu">=</span>
 colorFromValue n <span class="fu">=</span>
   <span class="kw">let</span> 
 <span class="ot">      t ::</span> <span class="dt">Point</span> <span class="ot">-&gt;</span> <span class="dt">Scalar</span>
-      t i <span class="fu">=</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">0</span> <span class="fu">+</span> <span class="dv">0</span><span class="fu">.</span><span class="dv">5</span><span class="fu">*</span>cos( i <span class="fu">/</span><span class="dv">10</span> )
+      t i <span class="fu">=</span> <span class="fl">0.0</span> <span class="fu">+</span> <span class="fl">0.5</span><span class="fu">*</span>cos( i <span class="fu">/</span><span class="dv">10</span> )
   <span class="kw">in</span>
     makeColor (t n) (t (n<span class="fu">+</span><span class="dv">5</span>)) (t (n<span class="fu">+</span><span class="dv">10</span>))
 
@@ -6684,7 +6661,7 @@ ymandel x y z <span class="fu">=</span> fromIntegral (mandel x y z <span class="
 <ol>
 <li id="fn1"><p>Unfortunately, I couldn’t make this program to work on my Mac. More precisely, I couldn’t make the <a href="http://openil.sourceforge.net/">DevIL</a> library work on Mac to output the image. Yes I have done a <code>brew install libdevil</code>. But even a minimal program who simply write some <code>jpg</code> didn’t worked. I tried both with <code>Haskell</code> and <code>C</code>.<a href="#fnref1">↩</a></p></li>
 <li id="fn2"><p>Generally in Haskell you need to declare a lot of import lines. This is something I find annoying. In particular, it should be possible to create a special file, Import.hs which make all the necessary import for you, as you generally need them all. I understand why this is cleaner to force the programmer not to do so, but, each time I do a copy/paste, I feel something is wrong. I believe this concern can be generalized to the lack of namespace in Haskell.<a href="#fnref2">↩</a></p></li>
-<li id="fn3"><p>I tried <code>Complex Double</code>, <code>Complex Float</code>, this current data type with <code>Double</code> and the actual version <code>Float</code>. For rendering a 1024x1024 Mandelbrot set it takes <code>Complex Double</code> about 6.8s, for <code>Complex Float</code> about 5.1s, for the actual version with <code>Double</code> and <code>Float</code> it takes about <code>1.6</code> sec. See these sources for testing yourself: <a href="https://gist.github.com/2945043">https://gist.github.com/2945043</a>. If you really want to things to go faster, use <code>data Complex = C {-# UNPACK #-} !Float {-# UNPACK #-} !Float</code>. It takes only one second instead of 1.6s.<a href="#fnref3">↩</a></p></li>
+<li id="fn3"><p>I tried <code>Complex Double</code>, <code>Complex Float</code>, this current data type with <code>Double</code> and the actual version <code>Float</code>. For rendering a 1024x1024 Mandelbrot set it takes <code>Complex Double</code> about 6.8s, for <code>Complex Float</code> about 5.1s, for the actual version with <code>Double</code> and <code>Float</code> it takes about <code>1.6</code> sec. See these sources for testing yourself: <a href="https://gist.github.com/2945043" class="uri">https://gist.github.com/2945043</a>. If you really want to things to go faster, use <code>data Complex = C {-# UNPACK #-} !Float {-# UNPACK #-} !Float</code>. It takes only one second instead of 1.6s.<a href="#fnref3">↩</a></p></li>
 </ol>
 </div>]]></summary>
 </entry>
@@ -6699,12 +6676,13 @@ ymandel x y z <span class="fu">=</span> fromIntegral (mandel x y z <span class="
 </div>
 <div class="intro">
 <p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Un tutoriel très court mais très dense pour apprendre Haskell.</p>
-<p>Merci à <a href="https://plus.google.com/u/0/113751420744109290534">Oleg Taykalo</a> vous pouvez trouver une traduction russe ici: <a href="http://habrahabr.ru/post/152889/">Partie 1</a> <em>&amp;</em> <a href="http://habrahabr.ru/post/153383/">Partie 2</a> ; Un grand merci à <a href="https://github.com/lepereceval">lepereceval</a> pour sa traduction française que je n’ai pas eu le courage de faire moi-même ! (<em>NDT: Si vous trouvez une erreurs ou même plusieurs dans la traduction française, vous pouvez m’en faire part à le</em>point_pere_point_ceval_arobase_gmail_point_com_. N’hésitez pas!_)</p>
+<p>Merci à <a href="https://plus.google.com/u/0/113751420744109290534">Oleg Taykalo</a> vous pouvez trouver une traduction russe ici: <a href="http://habrahabr.ru/post/152889/">Partie 1</a> <em>&amp;</em> <a href="http://habrahabr.ru/post/153383/">Partie 2</a> ; Un grand merci à <a href="https://github.com/lepereceval">lepereceval</a> pour sa traduction française que je n’ai pas eu le courage de faire moi-même ! (<em>NDT: Si vous trouvez une erreurs ou même plusieurs dans la traduction française, vous pouvez m’en faire part à le_point_pere_point_ceval_arobase_gmail_point_com</em>. N’hésitez pas!_)</p>
 <blockquote>
-<center><hr style="width:30%;float:left;border-color:#CCCCD0;margin-top:1em"/>
+<center>
+<hr style="width:30%;float:left;border-color:#CCCCD0;margin-top:1em"/>
 <span class="sc"><b>Table of Content</b></span>
-<hr style="width:30%;float:right;border-color:#CCCCD0;margin-top:1em"/></center>
-
+<hr style="width:30%;float:right;border-color:#CCCCD0;margin-top:1em"/>
+</center>
 <div class="toc">
 <ul>
 <li><a href="#introduction">Introduction</a></li>
@@ -6795,7 +6773,6 @@ Note: Chaque fois que vous voyez un séparateur avec un nom de fichier se termin
 <pre>
 runhaskell filename.lhs
 </pre>
-
 <p>Certains ne marcheront pas, mais la majorité vous donneront un résultat. Vous devriez voir un lien juste en dessous.</p>
 </blockquote>
 </div>
@@ -6804,11 +6781,9 @@ runhaskell filename.lhs
 <h2 id="introduction">
 Introduction
 </h2>
-
 <h3 id="install">
 Installation
 </h3>
-
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/Haskell-logo.png" alt=""/>
 </div>
@@ -6824,7 +6799,6 @@ Installation
 <h3 id="don-t-be-afraid">
 Ne soyez pas effrayés!
 </h3>
-
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/munch_TheScream.jpg" alt="The Scream"/>
 </div>
@@ -6833,10 +6807,10 @@ Ne soyez pas effrayés!
 <pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> putStrLn <span class="st">&quot;Hello World!&quot;</span></code></pre>
 </div>
 <p>Pour l’exécuter, vous pouvez enregistrer ce code dans un fichier <code>hell.hs</code> et:</p>
-<pre class="zsh"><code>~ runhaskell ./hello.hs
+<pre class="sourceCode zsh"><code class="sourceCode zsh">~ runhaskell ./hello.hs
 Hello World!</code></pre>
 <p>Vous pouvez également télécharger la source Haskell littérale. Vous devriez voir un lien juste au dessus du titre de l’introduction. Téléchargez ce fichier en tant que <code>00_hello_world.lhs</code> et:</p>
-<pre class="zsh"><code>~ runhaskell 00_hello_world.lhs
+<pre class="sourceCode zsh"><code class="sourceCode zsh">~ runhaskell 00_hello_world.lhs
 Hello World!</code></pre>
 <p><a href="code/01_basic/10_Introduction/00_hello_world.lhs" class="cut">01_basic/10_Introduction/<strong>00_hello_world.lhs</strong> </a></p>
 <hr/>
@@ -6876,7 +6850,6 @@ puts <span class="st">&quot;Hello </span><span class="ot">#{</span>name<span cla
 <h3 id="very-basic-haskell">
 Les bases de Haskell
 </h3>
-
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/picasso_owl.jpg" alt="Picasso minimal owl"/>
 </div>
@@ -6897,7 +6870,6 @@ Les bases de Haskell
 <h4 id="function-declaration">
 Déclaration de fonctions
 </h4>
-
 <p>Vous avez déjà dû déclarer des fonctions comme cela:</p>
 <p>En <code>C</code>:</p>
 <pre class="sourceCode c"><code class="sourceCode c"><span class="dt">int</span> f(<span class="dt">int</span> x, <span class="dt">int</span> y) {
@@ -6924,7 +6896,6 @@ Déclaration de fonctions
 <h4 id="a-type-example">
 Un exemple de type
 </h4>
-
 <p>Même si ce n’est pas obligatoire, les informations de type pour les fonctions sont habituellement déclarées explicitement. Ce n’est pas indispensable car le compilateur est suffisamment intelligent pour le déduire à votre place. Cependant, c’est une bonne idée car cela montre bien l’intention du développeur et facilite la compréhension.</p>
 <p>Jouons un peu. On déclare le type en utilisant <code>::</code></p>
 <div class="codehighlight">
@@ -6943,7 +6914,7 @@ Un exemple de type
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
 f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
 
-main <span class="fu">=</span> print (f <span class="dv">2</span><span class="fu">.</span><span class="dv">3</span> <span class="dv">4</span><span class="fu">.</span><span class="dv">2</span>)</code></pre>
+main <span class="fu">=</span> print (f <span class="fl">2.3</span> <span class="fl">4.2</span>)</code></pre>
 </div>
 <p>Vous devriez avoir cette erreur:</p>
 <pre><code>21_very_basic.lhs:6:23:
@@ -6961,7 +6932,7 @@ main <span class="fu">=</span> print (f <span class="dv">2</span><span class="fu
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
 
-main <span class="fu">=</span> print (f <span class="dv">2</span><span class="fu">.</span><span class="dv">3</span> <span class="dv">4</span><span class="fu">.</span><span class="dv">2</span>)</code></pre>
+main <span class="fu">=</span> print (f <span class="fl">2.3</span> <span class="fl">4.2</span>)</code></pre>
 </div>
 <p>Maintenant, ça marche! Heureursement, nous n’avons pas à déclarer un nouvelle fonction pour chaque type différent. Par exemple, en <code>C</code>, vous auriez dû déclarer un fonction pour <code>int</code>, pour <code>float</code>, pour <code>long</code>, pour <code>double</code>, etc…</p>
 <p>Mais quel type devons nous déclarer? Pour découvrir le type que Haskell a trouvé pour nous, lançons ghci:</p>
@@ -6976,7 +6947,6 @@ Prelude></code></span> let f x y = x*x + y*y
 <span class="low"><code>Prelude></code></span> :type f
 <code>f :: Num a => a -> a -> a</code>
 </pre>
-
 <p>Hein? Quel ce type étrange?</p>
 <pre><code>Num a =&gt; a -&gt; a -&gt; a</code></pre>
 <p>Preumièrement, concentrons-nous sur la partie de droite: <code>a -&gt; a -&gt; a</code>. Pour le comprendre, regardez cette liste d’exemples progressifs:</p>
@@ -7046,7 +7016,7 @@ g y ⇔ 3*3 + y*y</code></pre>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">Num</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> a
 f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
 
-main <span class="fu">=</span> print (f <span class="dv">3</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">4</span>)</code></pre>
+main <span class="fu">=</span> print (f <span class="dv">3</span> <span class="fl">2.4</span>)</code></pre>
 </div>
 <p>Cela fonctionne, car <code>3</code> est une représentation valide autant pour les nombres fractionnaires comme Float que pour les entiers. Comme <code>2.4</code> est un nombre fractionnaire, <code>3</code> est interprété comme une autre nombre fractionnaire</p>
 <p><a href="code/01_basic/10_Introduction/23_very_basic.lhs" class="cut">01_basic/10_Introduction/<strong>23_very_basic.lhs</strong> </a></p>
@@ -7060,7 +7030,7 @@ f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</
 <span class="ot">x ::</span> <span class="dt">Int</span>
 x <span class="fu">=</span> <span class="dv">3</span>
 <span class="ot">y ::</span> <span class="dt">Float</span>
-y <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">4</span>
+y <span class="fu">=</span> <span class="fl">2.4</span>
 <span class="co">-- won&#39;t work because type x ≠ type y</span>
 main <span class="fu">=</span> print (f x y)</code></pre>
 </div>
@@ -7070,7 +7040,6 @@ main <span class="fu">=</span> print (f x y)</code></pre>
 <h2 id="essential-haskell">
 Notions essentielles
 </h2>
-
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/kandinsky_gugg.jpg" alt="Kandinsky Gugg"/>
 </div>
@@ -7079,16 +7048,13 @@ Notions essentielles
 <h3 id="notations">
 Notations
 </h3>
-
 <h5 id="arithmetic">
 Arithmétique
 </h5>
-
 <pre><code>3 + 2 * 6 / 3 ⇔ 3 + ((2*6)/3)</code></pre>
 <h5 id="logic">
 Logique
 </h5>
-
 <pre><code>True || False ⇒ True
 True &amp;&amp; False ⇒ False
 True == False ⇒ False
@@ -7096,7 +7062,6 @@ True /= False ⇒ True  (/=) est l&#39;opérateur pour &quot;différent de&quot;
 <h5 id="powers">
 Puissances
 </h5>
-
 <pre><code>x^n     pour n un entier (comprenez Int ou Integer)
 x**y    pour y tout type de nombre (Float par exemple)</code></pre>
 <p><code>Integer</code> n’a aucune limite à part la capacité de votre machine:</p>
@@ -7111,7 +7076,6 @@ Data.Ratio&gt; (11 % 15) * (5 % 3)
 <h5 id="lists">
 Listes
 </h5>
-
 <pre><code>[]                      ⇔ liste vide
 [1,2,3]                 ⇔ Liste d&#39;entiers
 [&quot;foo&quot;,&quot;bar&quot;,&quot;baz&quot;]     ⇔ Liste de chaînes de caractères
@@ -7126,7 +7090,6 @@ Listes
 <h5 id="strings">
 Chaînes de caractères
 </h5>
-
 <p>En Haskell les chaînes de caractères sont des listes de <code>Char</code>.</p>
 <pre><code>&#39;a&#39; :: Char
 &quot;a&quot; :: [Char]
@@ -7139,7 +7102,6 @@ Chaînes de caractères
 <h5 id="tuples">
 Tuples
 </h5>
-
 <p>Le type d’un couple est <code>(a,b)</code>. Les éléments d’un tuple peuvent avoir des types différents.</p>
 <pre><code>-- tous ces tuples sont valides
 (2,&quot;foo&quot;)
@@ -7154,7 +7116,6 @@ snd (x,y,z)     ⇒  ERROR: snd :: (a,b) -&gt; b</code></pre>
 <h5 id="deal-with-parentheses">
 Traiter avec les parenthèses
 </h5>
-
 <p>Pour enlever des parenthèses vous pouvez utiliser deux fonctions: <code>($)</code> et <code>(.)</code>.</p>
 <pre><code>-- Par défaut:
 f g h x         ⇔  (((f g) h) x)
@@ -7173,7 +7134,6 @@ f $ g $ h x     ⇔  f (g (h x))
 <h3 id="useful-notations-for-functions">
 Notations utiles pour les fonctions
 </h3>
-
 <p>Juste un mémo:</p>
 <pre><code>x :: Int            ⇔ x est de type Int
 x :: a              ⇔ x peut être de n&#39;importe quel type
@@ -7235,12 +7195,10 @@ absolute x <span class="fu">=</span> <span class="kw">if</span> x <span class="f
 <h2 id="hard-part">
 La Partie Difficile
 </h2>
-
 <p>La partie difficile peut maintenant commencer.</p>
 <h3 id="functional-style">
 Le style fonctionnel
 </h3>
-
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/hr_giger_biomechanicallandscape_500.jpg" alt="Biomechanical Landscape by H.R. Giger"/>
 </div>
@@ -7332,7 +7290,6 @@ Ok, modules loaded: Main.
 *Main&gt;</span> evenSum [1..5]
 6
 </pre>
-
 <p>Voici un exemple d’exécution<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>:</p>
 <pre>
 *Main> evenSum [1..5]
@@ -7352,7 +7309,6 @@ accumSum (0+2+4) []
 0+6
 6
 </pre>
-
 <p>En venant d’un langage impératif, tout devrait vous sembler juste. En fait, beaucoup de choses peuvent être améliorées ici. Tout d’abord, nous pouvons généraliser le type.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">evenSum ::</span> <span class="dt">Integral</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a</code></pre>
 <div style="display:none">
@@ -7448,7 +7404,6 @@ evenSum <span class="fu">=</span> accumSum <span class="dv">0</span>
 <h4 id="higher-order-functions">
 Fonctions d’ordre supérieur
 </h4>
-
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/escher_polygon.png" alt="Escher"/>
 </div>
@@ -7472,12 +7427,10 @@ evenSum l <span class="fu">=</span> mysum <span class="dv">0</span> (filter even
     foo accumulated []     = accumulated
     foo tmpValue    (x:xs) = foo (<span class="yellow">bar</span> tmpValue x) xs
 </pre>
-
 <p>Qui peut être remplacé par:</p>
 <pre>
 myfunc list = foldl <span class="yellow">bar</span> <span class="blue">initialValue</span> <span class="green">list</span>
 </pre>
-
 <p>Si vous souhaitez vraiment savoir comment la magie se produit, voici la définition de <code>foldl</code>:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">foldl f z [] <span class="fu">=</span> z
 foldl f z (x<span class="fu">:</span>xs) <span class="fu">=</span> foldl f (f z x) xs</code></pre>
@@ -7526,7 +7479,6 @@ evenSum l <span class="fu">=</span> foldl&#39; (<span class="fu">+</span>) <span
 ⇒ <span class="yellow">foldl' (+) <span class="blue">6</span> []</span>
 ⇒ <span class="blue">6</span>
 </pre>
-
 <p>Une autr fonction d’ordre supérieur utile est <code>(.)</code>. Elle correspond à une composition en mathématiques.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">(f <span class="fu">.</span> g <span class="fu">.</span> h) x ⇔  f ( g (h x))</code></pre>
 <p>Nous pouvons profiter de cet opérateur pour η-réduire notre fonction:</p>
@@ -7570,7 +7522,6 @@ squareEvenSum&#39; <span class="fu">=</span> evenSum <span class="fu">.</span> (
 <h3 id="types">
 Les types
 </h3>
-
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/salvador-dali-the-madonna-of-port-lligat.jpg" alt="Dali, the madonna of port Lligat"/>
 </div>
@@ -7588,7 +7539,6 @@ Les types
 <h4 id="type-inference">
 Inférence de type
 </h4>
-
 <p>Le typage statique est généralement essentiel pour une exécution rapide. Mais la plupart des langages typés statiquement ont du mal à généraliser des concepts. La “grâce salvatrice” de Haskell est qu’il peut <em>inférer</em> des types.</p>
 <p>Voici un exemple simple, la fonction <code>square</code> en Haskell:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">square x <span class="fu">=</span> x <span class="fu">*</span> x</code></pre>
@@ -7620,9 +7570,27 @@ complex complex_square (complex z) {
 complex x,y;
 y = complex_square(x);</code></pre>
 <p>Pour chaque type, vous avfez besoin d’écrire une nouvelle fonction. Le seul moyen de se débarsser de se problème est d’utiliser des trucs de méta-programmation, par exemple via le pré-processeur. en C++ il y a un meilleur moyen, les <em>templates</em>:</p>
-<p><sub><sub>~</sub></sub>~ {.c++} #include <iostream> #include <complex> using namespace std;</p>
-<p>template<typename T> T square(T x) { return x*x; }</p>
-<p>int main() { // int int sqr_of_five = square(5); cout &lt;&lt; sqr_of_five &lt;&lt; endl; // double cout &lt;&lt; (double)square(5.3) &lt;&lt; endl; // complex cout &lt;&lt; square( complex<double>(5,3) ) &lt;&lt; endl; return 0; } <sub><sub>~</sub></sub>~</p>
+<pre class="{.c++}"><code>#include &lt;iostream&gt;
+#include &lt;complex&gt;
+using namespace std;
+
+template&lt;typename T&gt;
+T square(T x)
+{
+    return x*x;
+}
+
+int main() {
+    // int
+    int sqr_of_five = square(5);
+    cout &lt;&lt; sqr_of_five &lt;&lt; endl;
+    // double
+    cout &lt;&lt; (double)square(5.3) &lt;&lt; endl;
+    // complex
+    cout &lt;&lt; square( complex&lt;double&gt;(5,3) )
+         &lt;&lt; endl;
+    return 0;
+}</code></pre>
 <p>C++ fait un bien meilleur travail que C ici. Mais pour des fonctions plus complexes, la syntaxe sera difficile à suivre. Voyez <a href="http://bartoszmilewski.com/2009/10/21/what-does-haskell-have-to-do-with-c/">cet article</a> pour quelques exemples. (_NDT: toujours en anglais)</p>
 <p>En C++ vous devez déclarer qu’un fonction peut marcher avec différents types. En Haskell, c’est le cas contraire. La fonction sera aussi générale que possible par défaut.</p>
 <p>L’inférence de type donne à Haskell le sentiment de liberté que les langages dyumaniquement typés proposent. Mais contrairement aux langages dynamiquement typés, la majorité des erreurs est détectée avant de lancer le programme. Généralement, en Haskell:</p>
@@ -7634,7 +7602,6 @@ y = complex_square(x);</code></pre>
 <h4 id="type-construction">
 Construction de types
 </h4>
-
 <p>Vous pouvez construire vos propres types. D’abord, vous pouvez utiliser des alias ou des synonymes de types.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Name</span>   <span class="fu">=</span> <span class="dt">String</span>
@@ -7688,9 +7655,9 @@ main <span class="fu">=</span> putStrLn <span class="fu">$</span> showInfos name
 <p>Et les accesseurs sont définis automatiquement. En outre, vous pouvez utiliser une autre ordre lorsque vous définissez des valeurs.</p>
 <p>Exemple:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Complex</span> a <span class="fu">=</span> <span class="dt">Num</span> a <span class="ot">=&gt;</span> <span class="dt">Complex</span> {<span class="ot"> real ::</span> a,<span class="ot"> img ::</span> a}
-c <span class="fu">=</span> <span class="dt">Complex</span> <span class="dv">1</span><span class="fu">.</span><span class="dv">0</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span>
+c <span class="fu">=</span> <span class="dt">Complex</span> <span class="fl">1.0</span> <span class="fl">2.0</span>
 z <span class="fu">=</span> <span class="dt">Complex</span> { real <span class="fu">=</span> <span class="dv">3</span>, img <span class="fu">=</span> <span class="dv">4</span> }
-real c <span class="ot">⇒</span> <span class="dv">1</span><span class="fu">.</span><span class="dv">0</span>
+real c <span class="ot">⇒</span> <span class="fl">1.0</span>
 img z <span class="ot">⇒</span> <span class="dv">4</span></code></pre>
 <p><a href="code/02_Hard_Part/22_Types.lhs" class="cut">02_Hard_Part/<strong>22_Types.lhs</strong> </a></p>
 <hr/>
@@ -7698,7 +7665,6 @@ img z <span class="ot">⇒</span> <span class="dv">4</span></code></pre>
 <h4 id="recursive-type">
 Type récursif
 </h4>
-
 <p>Nous avons déjà rencontré un type récursif : les listes. Nous pourrions re-créer les listes, avec une syntaxe plus bavarde:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">List</span> a <span class="fu">=</span> <span class="dt">Empty</span> <span class="fu">|</span> <span class="dt">Cons</span> a (<span class="dt">List</span> a)</code></pre>
 <p>Si vous voulez réellement utiliser une syntxe plus simple, utilisez un nom infixe pour les constructeurs.</p>
@@ -7730,7 +7696,6 @@ convertList (x<span class="fu">:</span>xs) <span class="fu">=</span> x <span cla
 <h4 id="trees">
 Les arbres
 </h4>
-
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/magritte-l-arbre.jpg" alt="Magritte, l"/>
 </div>
@@ -7926,7 +7891,6 @@ treeFromList (x<span class="fu">:</span>xs) <span class="fu">=</span> <span clas
 <h3 id="infinite-structures">
 Structures infinies
 </h3>
-
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/escher_infinite_lizards.jpg" alt="Escher"/>
 </div>
@@ -8093,7 +8057,6 @@ infTreeTwo <span class="fu">=</span> <span class="dt">Node</span> <span class="d
 <h2 id="hell-difficulty-part">
 Partie de difficulté infernale
 </h2>
-
 <p>Félicitations pour être allé si loin! Maitenant, les choses vraiment extrêmes peuvent commencer.</p>
 <p>Si vous êtes comme moi, vous avez déjà acqis le style fonctionnel. Vous devriez également comprendre les avantages de la paresse par défaut. Mais vous ne comprenez pas vraiment par où commencer pour faire un vrai programme. et en particulier:</p>
 <ul>
@@ -8106,7 +8069,6 @@ Partie de difficulté infernale
 <h3 id="deal-with-io">
 S’occuper de l’E/S (IO)
 </h3>
-
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/magritte_carte_blanche.jpg" alt="Magritte, Carte blanche"/>
 </div>
@@ -8156,7 +8118,6 @@ main = do
   getLine               :: <span class="high">IO String</span>
   print Something       :: <span class="high">IO ()</span>
 </pre>
-
 <p>Nous devrions aussi prêter attention à l’effet du symbole <code>&lt;-</code>.</p>
 <pre><code>do
  x &lt;- something</code></pre>
@@ -8272,7 +8233,6 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <h3 id="io-trick-explained">
 Le truc des IO révélé
 </h3>
-
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/magritte_pipe.jpg" alt="Magritte, ceci n"/>
 </div>
@@ -8521,7 +8481,6 @@ main <span class="fu">=</span> askUser <span class="fu">&gt;&gt;=</span>
 <h3 id="monads">
 Les monades
 </h3>
-
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/dali_reve.jpg" alt="Dali, reve. It represents a weapon out of the mouth of a tiger, itself out of the mouth of another tiger, itself out of the mouth of a fish itself out of a grenade. I could have choosen a picture of the Human centipede as it is a very good representation of what a monad really is. But just to think about it, I find this disgusting and that wasn"/>
 </div>
@@ -8557,7 +8516,6 @@ Les monades
 <h4 id="maybe-monad">
 Maybe est une monade
 </h4>
-
 <p>Il y a beaucoup de types différents qui sont des instances de <code>Monad</code>. L’un des plus faciles à décrire est <code>Maybe</code>. Si vous avez une séquence de valeurs <code>Maybe</code>, vous pouvez utiliser les monades pour les manipuler. C’est particulièrement utile pour enlever des constructions <code>if..then..else..</code> trop nombreuses.</p>
 <p>Imaginez une opération bancaire complexe. Vous êtes éligible pour gagner 700€ seulement si vous pouvez effectuer une liste d’opérations sans tomber en dessous de zéro.</p>
 <div class="codehighlight">
@@ -8663,7 +8621,6 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <h4 id="the-list-monad">
 La monade List
 </h4>
-
 <div>
 <img src="/Scratch/img/blog/Haskell-the-Hard-Way/golconde.jpg" alt="Golconde de Magritte"/>
 </div>
@@ -8707,14 +8664,12 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <h2 id="appendix">
 Appendice
 </h2>
-
 <p>Cette section n’est pas vraiment sur l’apprentissage d’Haskell. Elle est ici pour discuter de quelques détails.</p>
 <hr/>
 <p><a href="code/04_Appendice/01_More_on_infinite_trees/10_Infinite_Trees.lhs" class="cut">04_Appendice/01_More_on_infinite_trees/<strong>10_Infinite_Trees.lhs</strong></a></p>
 <h3 id="more-on-infinite-tree">
 Revenons sur les arbres infinis
 </h3>
-
 <p>Dans la section sur <a href="#infinite-structures">les structures infinies</a> nous avons vu quelques constructions simples. Malheureusement, nous avons enlevé deux propriétés de notre arbre:</p>
 <ol style="list-style-type: decimal">
 <li>Pas de valeurs identiques</li>
@@ -8947,7 +8902,6 @@ safefilter f l <span class="fu">=</span> safefilter&#39; f l nbTry
                 then []
                 else filter f l
   </pre>
-  
 Expliquer pourquoi cela ne fonctionne pas et peut entrer dans une boucle infinie.</li>
 <li>Supposez que <code>shuffle</code> est une liste de nombre réellement aléatoires avec de plus en plus de bornes. Si vous étudiez un peu cette structure, vous découvrirez qu’elle a toutes les chances d’être finie. En utilisant le code suivant (supposez que nous pouvons utliser <code>safefilter'</code> directement comme si cela n’était pas dans le <code>where</code> de <code>safefilter</code>. trouvez une définition de <code>f</code> telle que, avec une probabilité de <code>1</code>, <code>treeFromList' shuffle</code> est infinie?. Et prouvez-le. Avertissement, ce n’est qu’une conjecture.</li>
 </ul>

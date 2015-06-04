@@ -37,42 +37,38 @@
 			<div class="flush"></div>
 			<div id="afterheader" class="article">
 				<div class="corps">
-					<p>Dans mon <a href="../../../../Scratch/fr/blog/2010-02-15-All-but-something-regexp">précédent article</a> j’ai donné certaines astuces pour matcher ‘tout sauf quelque chose’. De la même manière, un truc pour matcher la chaine de caractère la plus petite possible. Disons que vous voulez matcher la chaine de caractère entre ‘a’ et ‘b’. Par exemple, vous voulez matcher :</p>
+					<p>Dans mon <a href="../../../../Scratch/fr/blog/2010-02-15-All-but-something-regexp">précédent article</a> j’ai donné certaines astuces pour matcher ‘tout sauf quelque chose’. De la même manière, un truc pour matcher la chaine de caractère la plus petite possible. Disons que vous voulez matcher la chaine de caractère entre ‘a’ et ‘b’. Par exemple, vous voulez matcher&nbsp;:</p>
 <pre class="twilight">
 a.....<strong class="blue">a......b</strong>..b..a....<strong class="blue">a....b</strong>...
 </pre>
-
-<p>Voici les deux erreurs communes et une solution :</p>
+<p>Voici les deux erreurs communes et une solution&nbsp;:</p>
 <pre>
 /a.*b/
 <strong class="red">a.....a......b..b..a....a....b</strong>...
 </pre>
-
 <p>La première erreur vient de l’utilisation du <em>terrible</em> <code>.*</code>. Parce que vous allez matcher la chaîne de caractère la plus longue possible.</p>
 <pre>
 /a.*?b/
 <strong class="red">a.....a......b</strong>..b..<strong class="red">a....a....b</strong>...
 </pre>
-
 <p>L’autre manière naturelle de répondre à ce problème est de changer la <em>greediness</em>. Mais ce n’est pas assez parce que vous allez matcher du premier <code>a</code> au premier <code>b</code> après celui-ci. On peut alors constater que votre chaine de caractère ne devrait comprendre ni la lettre <code>a</code> ni la lettre <code>b</code>. Ce qui emène à la dernière solution élégante.</p>
 <pre>
 /a[^ab]*b/
 a.....<strong class="blue">a......b</strong>..b..a....<strong class="blue">a....b</strong>...
 </pre>
-
 <p>Jusqu’ici, c’était facile. Maintenant comment fait vous quand au lieu de <code>a</code> vous avez une chaine de caractère ?</p>
 <p>Par exemple, vous voulez matcher:</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;li&gt;</span>...<span class="kw">&lt;li&gt;</span></code></pre>
 <p>C’est un peu difficile. Vous devez matcher</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;li&gt;</span>[anything not containing <span class="kw">&lt;li&gt;</span>]<span class="kw">&lt;/li&gt;</span></code></pre>
-<p>La première méthode serait d’utiliser le même rainsonnement que dans mon <a href="../../../../Scratch/fr/blog/2010-02-15-All-but-something-regexp">article précédent</a>. Ici un premier essai :</p>
+<p>La première méthode serait d’utiliser le même rainsonnement que dans mon <a href="../../../../Scratch/fr/blog/2010-02-15-All-but-something-regexp">article précédent</a>. Ici un premier essai&nbsp;:</p>
 <pre class="sourceCode perl"><code class="sourceCode perl">&lt;li&gt;([^&lt;]|&lt;[^l]|&lt;l[^i]|&lt;li[^&gt;])<span class="dt">*&lt;</span><span class="kw">/</span><span class="ot">li&gt;</span></code></pre>
-<p>Mais il y a encore une erreur. Pensez à la chaine de caractère suivante :</p>
+<p>Mais il y a encore une erreur. Pensez à la chaine de caractère suivante&nbsp;:</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;li&gt;</span>...<span class="kw">&lt;li</span><span class="er">&lt;/li</span><span class="kw">&gt;</span></code></pre>
-<p>Cette chaine ne matchera pas. C’est pourquoi si on veut vraiment la matcher correctement<sup><a href="#note1">†</a></sup> nous devons ajouter :</p>
+<p>Cette chaine ne matchera pas. C’est pourquoi si on veut vraiment la matcher correctement<sup><a href="#note1">†</a></sup> nous devons ajouter&nbsp;:</p>
 <pre class="sourceCode perl"><code class="sourceCode perl">&lt;li&gt;([^&lt;]|&lt;[^l]|&lt;l[^i]|&lt;li[^&gt;])*(|&lt;|&lt;l|&lt;li)&lt;/li&gt;</code></pre>
 <p>Oui, c’est un peu compliqué. Mais que se passe t’il lorsque la chaine de caractère que vous voulez matcher est encore plus longue que <code>&lt;li&gt;</code> ?</p>
-<p>Voici un algorithme qui permet de résoudre ce problème aisément. Vous devez réduire ce problème au premier. C’est-à-dire celui avec une seule lettre :</p>
+<p>Voici un algorithme qui permet de résoudre ce problème aisément. Vous devez réduire ce problème au premier. C’est-à-dire celui avec une seule lettre&nbsp;:</p>
 <pre><code># transforme un simple caractère choisi aléatoirement
 # en un identifiant unique
 # (vous devez vérifier que l'identifier est VRAIMENT unique)

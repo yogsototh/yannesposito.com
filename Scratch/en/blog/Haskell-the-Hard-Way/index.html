@@ -45,10 +45,11 @@
 <p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span> A very short and dense tutorial for learning Haskell.</p>
 <p>Thanks to <a href="https://plus.google.com/u/0/113751420744109290534">Oleg Taykalo</a> you can find a Russian translation here: <a href="http://habrahabr.ru/post/152889/">Part 1</a> <em>&amp;</em> <a href="http://habrahabr.ru/post/153383/">Part 2</a> ;</p>
 <blockquote>
-<center><hr style="width:30%;float:left;border-color:#CCCCD0;margin-top:1em" />
+<center>
+<hr style="width:30%;float:left;border-color:#CCCCD0;margin-top:1em" />
 <span class="sc"><b>Table of Content</b></span>
-<hr style="width:30%;float:right;border-color:#CCCCD0;margin-top:1em" /></center>
-
+<hr style="width:30%;float:right;border-color:#CCCCD0;margin-top:1em" />
+</center>
 <div class="toc">
 <ul>
 <li><a href="#introduction">Introduction</a></li>
@@ -138,7 +139,6 @@ Note: Each time you see a separator with a filename ending in <code>.lhs</code> 
 <pre>
 runhaskell filename.lhs
 </pre>
-
 <p>Some might not work, but most will. You should see a link just below.</p>
 </blockquote>
 </div>
@@ -147,11 +147,9 @@ runhaskell filename.lhs
 <h2 id="introduction">
 Introduction
 </h2>
-
 <h3 id="install">
 Install
 </h3>
-
 <div>
 <img src="../../../../Scratch/img/blog/Haskell-the-Hard-Way/Haskell-logo.png" alt />
 </div>
@@ -167,7 +165,6 @@ Install
 <h3 id="don-t-be-afraid">
 Don’t be afraid
 </h3>
-
 <div>
 <img src="../../../../Scratch/img/blog/Haskell-the-Hard-Way/munch_TheScream.jpg" alt="The Scream" />
 </div>
@@ -176,10 +173,10 @@ Don’t be afraid
 <pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> putStrLn <span class="st">&quot;Hello World!&quot;</span></code></pre>
 </div>
 <p>To run it, you can save this code in a <code>hello.hs</code> and:</p>
-<pre class="zsh"><code>~ runhaskell ./hello.hs
+<pre class="sourceCode zsh"><code class="sourceCode zsh">~ runhaskell ./hello.hs
 Hello World!</code></pre>
 <p>You could also download the literate Haskell source. You should see a link just above the introduction title. Download this file as <code>00_hello_world.lhs</code> and:</p>
-<pre class="zsh"><code>~ runhaskell 00_hello_world.lhs
+<pre class="sourceCode zsh"><code class="sourceCode zsh">~ runhaskell 00_hello_world.lhs
 Hello World!</code></pre>
 <p><a href="code/01_basic/10_Introduction/00_hello_world.lhs" class="cut">01_basic/10_Introduction/<strong>00_hello_world.lhs</strong> </a></p>
 <hr />
@@ -219,7 +216,6 @@ puts <span class="st">&quot;Hello </span><span class="ot">#{</span>name<span cla
 <h3 id="very-basic-haskell">
 Very basic Haskell
 </h3>
-
 <div>
 <img src="../../../../Scratch/img/blog/Haskell-the-Hard-Way/picasso_owl.jpg" alt="Picasso minimal owl" />
 </div>
@@ -240,7 +236,6 @@ Very basic Haskell
 <h4 id="function-declaration">
 Function declaration
 </h4>
-
 <p>You might be used to declaring functions like this:</p>
 <p>In <code>C</code>:</p>
 <pre class="sourceCode c"><code class="sourceCode c"><span class="dt">int</span> f(<span class="dt">int</span> x, <span class="dt">int</span> y) {
@@ -267,7 +262,6 @@ Function declaration
 <h4 id="a-type-example">
 A Type Example
 </h4>
-
 <p>Although it is not mandatory, type information for functions is usually made explicit. It’s not mandatory because the compiler is smart enough to discover it for you. It’s a good idea because it indicates intent and understanding.</p>
 <p>Let’s play a little. We declare the type using <code>::</code></p>
 <div class="codehighlight">
@@ -286,7 +280,7 @@ A Type Example
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
 f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
 
-main <span class="fu">=</span> print (f <span class="dv">2</span><span class="fu">.</span><span class="dv">3</span> <span class="dv">4</span><span class="fu">.</span><span class="dv">2</span>)</code></pre>
+main <span class="fu">=</span> print (f <span class="fl">2.3</span> <span class="fl">4.2</span>)</code></pre>
 </div>
 <p>You should get this error:</p>
 <pre><code>21_very_basic.lhs:6:23:
@@ -304,7 +298,7 @@ main <span class="fu">=</span> print (f <span class="dv">2</span><span class="fu
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
 
-main <span class="fu">=</span> print (f <span class="dv">2</span><span class="fu">.</span><span class="dv">3</span> <span class="dv">4</span><span class="fu">.</span><span class="dv">2</span>)</code></pre>
+main <span class="fu">=</span> print (f <span class="fl">2.3</span> <span class="fl">4.2</span>)</code></pre>
 </div>
 <p>It works! Luckily, we don’t have to declare a new function for every single type. For example, in <code>C</code>, you’ll have to declare a function for <code>int</code>, for <code>float</code>, for <code>long</code>, for <code>double</code>, etc…</p>
 <p>But, what type should we declare? To discover the type Haskell has found for us, just launch ghci:</p>
@@ -315,11 +309,10 @@ Loading package ghc-prim ... linking ... done.
 Loading package integer-gmp ... linking ... done.
 Loading package base ... linking ... done.
 Loading package ffi-1.0 ... linking ... done.
-Prelude&gt;</code></span> let f x y = x*x + y*y
-<span class="low"><code>Prelude&gt;</code></span> :type f
-<code>f :: Num a =&gt; a -&gt; a -&gt; a</code>
+Prelude></code></span> let f x y = x*x + y*y
+<span class="low"><code>Prelude></code></span> :type f
+<code>f :: Num a => a -> a -> a</code>
 </pre>
-
 <p>Uh? What is this strange type?</p>
 <pre><code>Num a =&gt; a -&gt; a -&gt; a</code></pre>
 <p>First, let’s focus on the right part <code>a -&gt; a -&gt; a</code>. To understand it, just look at a list of progressive examples:</p>
@@ -389,7 +382,7 @@ g y ⇔ 3*3 + y*y</code></pre>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">Num</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> a
 f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
 
-main <span class="fu">=</span> print (f <span class="dv">3</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">4</span>)</code></pre>
+main <span class="fu">=</span> print (f <span class="dv">3</span> <span class="fl">2.4</span>)</code></pre>
 </div>
 <p>It works, because, <code>3</code> is a valid representation both for Fractional numbers like Float and for Integer. As <code>2.4</code> is a Fractional number, <code>3</code> is then interpreted as being also a Fractional number.</p>
 <p><a href="code/01_basic/10_Introduction/23_very_basic.lhs" class="cut">01_basic/10_Introduction/<strong>23_very_basic.lhs</strong> </a></p>
@@ -403,7 +396,7 @@ f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</
 <span class="ot">x ::</span> <span class="dt">Int</span>
 x <span class="fu">=</span> <span class="dv">3</span>
 <span class="ot">y ::</span> <span class="dt">Float</span>
-y <span class="fu">=</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">4</span>
+y <span class="fu">=</span> <span class="fl">2.4</span>
 <span class="co">-- won't work because type x ≠ type y</span>
 main <span class="fu">=</span> print (f x y)</code></pre>
 </div>
@@ -413,7 +406,6 @@ main <span class="fu">=</span> print (f x y)</code></pre>
 <h2 id="essential-haskell">
 Essential Haskell
 </h2>
-
 <div>
 <img src="../../../../Scratch/img/blog/Haskell-the-Hard-Way/kandinsky_gugg.jpg" alt="Kandinsky Gugg" />
 </div>
@@ -422,16 +414,13 @@ Essential Haskell
 <h3 id="notations">
 Notations
 </h3>
-
 <h5 id="arithmetic">
 Arithmetic
 </h5>
-
 <pre><code>3 + 2 * 6 / 3 ⇔ 3 + ((2*6)/3)</code></pre>
 <h5 id="logic">
 Logic
 </h5>
-
 <pre><code>True || False ⇒ True
 True &amp;&amp; False ⇒ False
 True == False ⇒ False
@@ -439,7 +428,6 @@ True /= False ⇒ True  (/=) is the operator for different</code></pre>
 <h5 id="powers">
 Powers
 </h5>
-
 <pre><code>x^n     for n an integral (understand Int or Integer)
 x**y    for y any kind of number (Float for example)</code></pre>
 <p><code>Integer</code> has no limit except the capacity of your machine:</p>
@@ -454,7 +442,6 @@ Data.Ratio&gt; (11 % 15) * (5 % 3)
 <h5 id="lists">
 Lists
 </h5>
-
 <pre><code>[]                      ⇔ empty list
 [1,2,3]                 ⇔ List of integral
 [&quot;foo&quot;,&quot;bar&quot;,&quot;baz&quot;]     ⇔ List of String
@@ -469,7 +456,6 @@ Lists
 <h5 id="strings">
 Strings
 </h5>
-
 <p>In Haskell strings are list of <code>Char</code>.</p>
 <pre><code>'a' :: Char
 &quot;a&quot; :: [Char]
@@ -482,7 +468,6 @@ Strings
 <h5 id="tuples">
 Tuples
 </h5>
-
 <p>The type of couple is <code>(a,b)</code>. Elements in a tuple can have different types.</p>
 <pre><code>-- All these tuples are valid
 (2,&quot;foo&quot;)
@@ -497,7 +482,6 @@ snd (x,y,z)     ⇒  ERROR: snd :: (a,b) -&gt; b</code></pre>
 <h5 id="deal-with-parentheses">
 Deal with parentheses
 </h5>
-
 <p>To remove some parentheses you can use two functions: <code>($)</code> and <code>(.)</code>.</p>
 <pre><code>-- By default:
 f g h x         ⇔  (((f g) h) x)
@@ -516,7 +500,6 @@ f $ g $ h x     ⇔  f (g (h x))
 <h3 id="useful-notations-for-functions">
 Useful notations for functions
 </h3>
-
 <p>Just a reminder:</p>
 <pre><code>x :: Int            ⇔ x is of type Int
 x :: a              ⇔ x can be of any type
@@ -578,12 +561,10 @@ absolute x <span class="fu">=</span> <span class="kw">if</span> x <span class="f
 <h2 id="hard-part">
 Hard Part
 </h2>
-
 <p>The hard part can now begin.</p>
 <h3 id="functional-style">
 Functional style
 </h3>
-
 <div>
 <img src="../../../../Scratch/img/blog/Haskell-the-Hard-Way/hr_giger_biomechanicallandscape_500.jpg" alt="Biomechanical Landscape by H.R. Giger" />
 </div>
@@ -675,10 +656,9 @@ Ok, modules loaded: Main.
 *Main&gt;</span> evenSum [1..5]
 6
 </pre>
-
 <p>Here is an example of execution<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>:</p>
 <pre>
-*Main&gt; evenSum [1..5]
+*Main> evenSum [1..5]
 accumSum 0 [1,2,3,4,5]
 <span class="yellow">1 is odd</span>
 accumSum 0 [2,3,4,5]
@@ -695,7 +675,6 @@ accumSum (0+2+4) []
 0+6
 6
 </pre>
-
 <p>Coming from an imperative language all should seem right. In fact, many things can be improved here. First, we can generalize the type.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">evenSum ::</span> <span class="dt">Integral</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a</code></pre>
 <div style="display:none">
@@ -791,7 +770,6 @@ evenSum <span class="fu">=</span> accumSum <span class="dv">0</span>
 <h4 id="higher-order-functions">
 Higher Order Functions
 </h4>
-
 <div>
 <img src="../../../../Scratch/img/blog/Haskell-the-Hard-Way/escher_polygon.png" alt="Escher" />
 </div>
@@ -815,12 +793,10 @@ evenSum l <span class="fu">=</span> mysum <span class="dv">0</span> (filter even
     foo accumulated []     = accumulated
     foo tmpValue    (x:xs) = foo (<span class="yellow">bar</span> tmpValue x) xs
 </pre>
-
 <p>Which can be replaced by:</p>
 <pre>
 myfunc list = foldl <span class="yellow">bar</span> <span class="blue">initialValue</span> <span class="green">list</span>
 </pre>
-
 <p>If you really want to know how the magic works, here is the definition of <code>foldl</code>:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">foldl f z [] <span class="fu">=</span> z
 foldl f z (x<span class="fu">:</span>xs) <span class="fu">=</span> foldl f (f z x) xs</code></pre>
@@ -869,7 +845,6 @@ evenSum l <span class="fu">=</span> foldl' (<span class="fu">+</span>) <span cla
 ⇒ <span class="yellow">foldl' (+) <span class="blue">6</span> []</span>
 ⇒ <span class="blue">6</span>
 </pre>
-
 <p>Another useful higher order function is <code>(.)</code>. The <code>(.)</code> function corresponds to mathematical composition.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">(f <span class="fu">.</span> g <span class="fu">.</span> h) x ⇔  f ( g (h x))</code></pre>
 <p>We can take advantage of this operator to η-reduce our function:</p>
@@ -913,7 +888,6 @@ squareEvenSum' <span class="fu">=</span> evenSum <span class="fu">.</span> (map 
 <h3 id="types">
 Types
 </h3>
-
 <div>
 <img src="../../../../Scratch/img/blog/Haskell-the-Hard-Way/salvador-dali-the-madonna-of-port-lligat.jpg" alt="Dali, the madonna of port Lligat" />
 </div>
@@ -931,7 +905,6 @@ Types
 <h4 id="type-inference">
 Type inference
 </h4>
-
 <p>Static typing is generally essential for fast execution. But most statically typed languages are bad at generalizing concepts. Haskell’s saving grace is that it can <em>infer</em> types.</p>
 <p>Here is a simple example, the <code>square</code> function in Haskell:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">square x <span class="fu">=</span> x <span class="fu">*</span> x</code></pre>
@@ -963,9 +936,27 @@ complex complex_square (complex z) {
 complex x,y;
 y = complex_square(x);</code></pre>
 <p>For each type, you need to write a new function. The only way to work around this problem is to use some meta-programming trick, for example using the pre-processor. In C++ there is a better way, C++ templates:</p>
-<p><sub><sub>~</sub></sub>~ {.c++} #include <iostream> #include <complex> using namespace std;</p>
-<p>template<typename T> T square(T x) { return x*x; }</p>
-<p>int main() { // int int sqr_of_five = square(5); cout &lt;&lt; sqr_of_five &lt;&lt; endl; // double cout &lt;&lt; (double)square(5.3) &lt;&lt; endl; // complex cout &lt;&lt; square( complex<double>(5,3) ) &lt;&lt; endl; return 0; } <sub><sub>~</sub></sub>~</p>
+<pre class="{.c++}"><code>#include &lt;iostream&gt;
+#include &lt;complex&gt;
+using namespace std;
+
+template&lt;typename T&gt;
+T square(T x)
+{
+    return x*x;
+}
+
+int main() {
+    // int
+    int sqr_of_five = square(5);
+    cout &lt;&lt; sqr_of_five &lt;&lt; endl;
+    // double
+    cout &lt;&lt; (double)square(5.3) &lt;&lt; endl;
+    // complex
+    cout &lt;&lt; square( complex&lt;double&gt;(5,3) )
+         &lt;&lt; endl;
+    return 0;
+}</code></pre>
 <p>C++ does a far better job than C in this regard. But for more complex functions the syntax can be hard to follow: see <a href="http://bartoszmilewski.com/2009/10/21/what-does-haskell-have-to-do-with-c/">this article</a> for example.</p>
 <p>In C++ you must declare that a function can work with different types. In Haskell, the opposite is the case. The function will be as general as possible by default.</p>
 <p>Type inference gives Haskell the feeling of freedom that dynamically typed languages provide. But unlike dynamically typed languages, most errors are caught before run time. Generally, in Haskell:</p>
@@ -977,7 +968,6 @@ y = complex_square(x);</code></pre>
 <h4 id="type-construction">
 Type construction
 </h4>
-
 <p>You can construct your own types. First, you can use aliases or type synonyms.</p>
 <div class="codehighlight">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Name</span>   <span class="fu">=</span> <span class="dt">String</span>
@@ -1031,9 +1021,9 @@ main <span class="fu">=</span> putStrLn <span class="fu">$</span> showInfos name
 <p>And many accessors are made for you. Furthermore you can use another order when setting values.</p>
 <p>Example:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Complex</span> a <span class="fu">=</span> <span class="dt">Num</span> a <span class="ot">=&gt;</span> <span class="dt">Complex</span> {<span class="ot"> real ::</span> a,<span class="ot"> img ::</span> a}
-c <span class="fu">=</span> <span class="dt">Complex</span> <span class="dv">1</span><span class="fu">.</span><span class="dv">0</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">0</span>
+c <span class="fu">=</span> <span class="dt">Complex</span> <span class="fl">1.0</span> <span class="fl">2.0</span>
 z <span class="fu">=</span> <span class="dt">Complex</span> { real <span class="fu">=</span> <span class="dv">3</span>, img <span class="fu">=</span> <span class="dv">4</span> }
-real c <span class="ot">⇒</span> <span class="dv">1</span><span class="fu">.</span><span class="dv">0</span>
+real c <span class="ot">⇒</span> <span class="fl">1.0</span>
 img z <span class="ot">⇒</span> <span class="dv">4</span></code></pre>
 <p><a href="code/02_Hard_Part/22_Types.lhs" class="cut">02_Hard_Part/<strong>22_Types.lhs</strong> </a></p>
 <hr />
@@ -1041,7 +1031,6 @@ img z <span class="ot">⇒</span> <span class="dv">4</span></code></pre>
 <h4 id="recursive-type">
 Recursive type
 </h4>
-
 <p>You already encountered a recursive type: lists. You can re-create lists, but with a more verbose syntax:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">List</span> a <span class="fu">=</span> <span class="dt">Empty</span> <span class="fu">|</span> <span class="dt">Cons</span> a (<span class="dt">List</span> a)</code></pre>
 <p>If you really want to use an easier syntax you can use an infix name for constructors.</p>
@@ -1073,7 +1062,6 @@ convertList (x<span class="fu">:</span>xs) <span class="fu">=</span> x <span cla
 <h4 id="trees">
 Trees
 </h4>
-
 <div>
 <img src="../../../../Scratch/img/blog/Haskell-the-Hard-Way/magritte-l-arbre.jpg" alt="Magritte, l" />
 </div>
@@ -1269,7 +1257,6 @@ treeFromList (x<span class="fu">:</span>xs) <span class="fu">=</span> <span clas
 <h3 id="infinite-structures">
 Infinite Structures
 </h3>
-
 <div>
 <img src="../../../../Scratch/img/blog/Haskell-the-Hard-Way/escher_infinite_lizards.jpg" alt="Escher" />
 </div>
@@ -1436,7 +1423,6 @@ infTreeTwo <span class="fu">=</span> <span class="dt">Node</span> <span class="d
 <h2 id="hell-difficulty-part">
 Hell Difficulty Part
 </h2>
-
 <p>Congratulations for getting so far! Now, some of the really hardcore stuff can start.</p>
 <p>If you are like me, you should get the functional style. You should also understand a bit more the advantages of laziness by default. But you also don’t really understand where to start in order to make a real program. And in particular:</p>
 <ul>
@@ -1449,7 +1435,6 @@ Hell Difficulty Part
 <h3 id="deal-with-io">
 Deal With IO
 </h3>
-
 <div>
 <img src="../../../../Scratch/img/blog/Haskell-the-Hard-Way/magritte_carte_blanche.jpg" alt="Magritte, Carte blanche" />
 </div>
@@ -1495,11 +1480,10 @@ print    :: Show a =&gt; a -&gt; IO ()</code></pre>
 <p>Or more interestingly, we note that each expression in the <code>do</code> block has a type of <code>IO a</code>.</p>
 <pre>
 main = do
-  putStrLn &quot;Enter ... &quot; :: <span class="high">IO ()</span>
+  putStrLn "Enter ... " :: <span class="high">IO ()</span>
   getLine               :: <span class="high">IO String</span>
   print Something       :: <span class="high">IO ()</span>
 </pre>
-
 <p>We should also pay attention to the effect of the <code>&lt;-</code> symbol.</p>
 <pre><code>do
  x &lt;- something</code></pre>
@@ -1615,7 +1599,6 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <h3 id="io-trick-explained">
 IO trick explained
 </h3>
-
 <div>
 <img src="../../../../Scratch/img/blog/Haskell-the-Hard-Way/magritte_pipe.jpg" alt="Magritte, ceci n" />
 </div>
@@ -1864,7 +1847,6 @@ main <span class="fu">=</span> askUser <span class="fu">&gt;&gt;=</span>
 <h3 id="monads">
 Monads
 </h3>
-
 <div>
 <img src="../../../../Scratch/img/blog/Haskell-the-Hard-Way/dali_reve.jpg" alt="Dali, reve. It represents a weapon out of the mouth of a tiger, itself out of the mouth of another tiger, itself out of the mouth of a fish itself out of a grenade. I could have choosen a picture of the Human centipede as it is a very good representation of what a monad really is. But just to think about it, I find this disgusting and that wasn" />
 </div>
@@ -1900,7 +1882,6 @@ Monads
 <h4 id="maybe-monad">
 Maybe is a monad
 </h4>
-
 <p>There are a lot of different types that are instances of <code>Monad</code>. One of the easiest to describe is <code>Maybe</code>. If you have a sequence of <code>Maybe</code> values, you can use monads to manipulate them. It is particularly useful to remove very deep <code>if..then..else..</code> constructions.</p>
 <p>Imagine a complex bank operation. You are eligible to gain about 700€ only if you can afford to follow a list of operations without your balance dipping below zero.</p>
 <div class="codehighlight">
@@ -2006,7 +1987,6 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <h4 id="the-list-monad">
 The list monad
 </h4>
-
 <div>
 <img src="../../../../Scratch/img/blog/Haskell-the-Hard-Way/golconde.jpg" alt="Golconde de Magritte" />
 </div>
@@ -2027,7 +2007,7 @@ resolve <span class="fu">=</span> <span class="kw">do</span>
 main <span class="fu">=</span> <span class="kw">do</span>
   print resolve</code></pre>
 </div>
-<p>MA. GIC. :</p>
+<p>MA. GIC.&nbsp;:</p>
 <pre><code>[(1,1,7),(1,1,8),(1,1,9),(1,1,10),(1,2,9),(1,2,10)]</code></pre>
 <p>For the list monad, there is also this syntactic sugar:</p>
 <div class="codehighlight">
@@ -2050,14 +2030,12 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <h2 id="appendix">
 Appendix
 </h2>
-
 <p>This section is not so much about learning Haskell. It is just here to discuss some details further.</p>
 <hr />
 <p><a href="code/04_Appendice/01_More_on_infinite_trees/10_Infinite_Trees.lhs" class="cut">04_Appendice/01_More_on_infinite_trees/<strong>10_Infinite_Trees.lhs</strong></a></p>
 <h3 id="more-on-infinite-tree">
 More on Infinite Tree
 </h3>
-
 <p>In the section <a href="#infinite-structures">Infinite Structures</a> we saw some simple constructions. Unfortunately we removed two properties from our tree:</p>
 <ol style="list-style-type: decimal">
 <li>no duplicate node value</li>
@@ -2290,7 +2268,6 @@ safefilter f l <span class="fu">=</span> safefilter' f l nbTry
                 then []
                 else filter f l
   </pre>
-  
 Explain why it doesn’t work and can enter into an infinite loop.</li>
 <li>Suppose that <code>shuffle</code> is real random list with growing bounds. If you study a bit this structure, you’ll discover that with probability 1, this structure is finite. Using the following code (suppose we could use <code>safefilter'</code> directly as if was not in the where of safefilter) find a definition of <code>f</code> such that with probability <code>1</code>, <code>treeFromList' shuffle</code> is infinite. And prove it. Disclaimer, this is only a conjecture.</li>
 </ul>
