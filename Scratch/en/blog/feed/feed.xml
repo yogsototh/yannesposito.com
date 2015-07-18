@@ -4313,25 +4313,17 @@ trads <span class="fu">=</span> M.fromList <span class="fu">$</span> map toTrad 
       (key, <span class="dt">Trad</span> { frTrad <span class="fu">=</span> french , enTrad <span class="fu">=</span> english })</code></pre>
 <p>Then I create a context taking an argument:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">tradsContext ::</span> <span class="dt">Context</span> a
-tradsContext <span class="fu">=</span> functionField <span class="st">&quot;trad&quot;</span> <span class="fu">$</span> \args item <span class="ot">-&gt;</span> <span class="kw">do</span>
-  <span class="co">-- get the key</span>
-  k <span class="ot">&lt;-</span> getArgs args
-  <span class="co">-- get its value (a Trad object)</span>
-  v <span class="ot">&lt;-</span> getValue k trads
-  <span class="co">-- get the current item language</span>
-  lang <span class="ot">&lt;-</span> itemLang item
-  <span class="kw">case</span> lang <span class="kw">of</span>
-    <span class="st">&quot;en&quot;</span> <span class="ot">-&gt;</span> return (enTrad v)
-    <span class="st">&quot;fr&quot;</span> <span class="ot">-&gt;</span> return (frTrad v)
-    _    <span class="ot">-&gt;</span> fail <span class="fu">$</span> lang <span class="fu">++</span> <span class="st">&quot; is not a supported language&quot;</span>
+tradsContext <span class="fu">=</span> mconcat (map addTrad (M.keys trads))
   <span class="kw">where</span>
-    getArgs [k] <span class="fu">=</span> return k
-    getArgs _   <span class="fu">=</span> fail <span class="st">&quot;Wrong arg for trad&quot;</span>
-    <span class="co">-- search the Trad associated the key</span>
-    getValue key hmap <span class="fu">=</span>
-        <span class="kw">case</span> M.lookup key hmap <span class="kw">of</span>
-          <span class="dt">Just</span> value <span class="ot">-&gt;</span> return value
-          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> fail <span class="st">&quot;Traduction not found&quot;</span></code></pre>
+<span class="ot">    addTrad ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Context</span> a
+    addTrad name <span class="fu">=</span>
+      field name <span class="fu">$</span> \item <span class="ot">-&gt;</span> <span class="kw">do</span>
+          lang <span class="ot">&lt;-</span> itemLang item
+          <span class="kw">case</span> M.lookup name trads <span class="kw">of</span>
+              <span class="dt">Just</span> (<span class="dt">Trad</span> lmap) <span class="ot">-&gt;</span> <span class="kw">case</span> M.lookup (<span class="dt">L</span> lang) lmap <span class="kw">of</span>
+                          <span class="dt">Just</span> tr <span class="ot">-&gt;</span> return tr
+                          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> return (<span class="st">&quot;NO TRANSLATION FOR &quot;</span> <span class="fu">++</span> name)
+              <span class="dt">Nothing</span> <span class="ot">-&gt;</span> return (<span class="st">&quot;NO TRANSLATION FOR &quot;</span> <span class="fu">++</span> name)</code></pre>
 <p>In the real code source I also need more functions. But I just wanted to show how to pass parameters to a metadata tag.</p>
 <h2 id="conclusion">Conclusion</h2>
 <p>The full code is <a href="http://github.com/yogsototh/yblog.git">here</a>. And except from the main file, I use literate Haskell. This way the code should be easier to understand.</p>
