@@ -4149,15 +4149,15 @@ removeIndexHtml item <span class="fu">=</span> return <span class="fu">$</span> 
 <span class="ot">    removeIndexStr ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span>
     removeIndexStr url <span class="fu">=</span> <span class="kw">case</span> splitFileName url <span class="kw">of</span>
         (dir, <span class="st">&quot;index.html&quot;</span>) <span class="fu">|</span> isLocal dir <span class="ot">-&gt;</span> dir
-        _                                 <span class="ot">-&gt;</span> dir
-        <span class="kw">where</span> islocal uri <span class="fu">=</span> not (isInfixOf <span class="st">&quot;://&quot;</span> uri)</code></pre>
+        _                                 <span class="ot">-&gt;</span> url
+        <span class="kw">where</span> isLocal uri <span class="fu">=</span> not (isInfixOf <span class="st">&quot;://&quot;</span> uri)</code></pre>
 <p>And we apply this filter at the end of our compilation</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
   <span class="highlight">route <span class="fu">$</span> niceRoute</span>
   compile <span class="fu">$</span> pandocCompiler
     <span class="co">-- use the template with the current content</span>
     <span class="fu">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/post.html&quot;</span> defaultContext
-    <span class="highlight"><span class="fu">&gt;&gt;=</span> removeIndexStr</span></code></pre>
+    <span class="highlight"><span class="fu">&gt;&gt;=</span> removeIndexHtml</span></code></pre>
 <h3 id="create-an-archive-page">Create an archive page</h3>
 <p>Creating an archive start to be difficult. There is an example in the default Hakyll example. Unfortunately, it assumes all posts prefix their name with a date like in <code>2013-03-20-My-New-Post.md</code>.</p>
 <p>I migrated from an older blog and didn’t want to change my <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span>. Also I prefer not to use any filename convention. Therefore, I add the date information in the metadata <code>published</code>. And the solution is here:</p>
