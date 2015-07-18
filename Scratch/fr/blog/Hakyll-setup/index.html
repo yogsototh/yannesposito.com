@@ -382,10 +382,9 @@ abbreviations <span class="fu">=</span> M.fromList
 <p>each time I write <span style="text-transform: uppercase">L<sup style="vertical-align: 0.15em; margin-left: -0.36em; margin-right: -0.15em; font-size: .85em">a</sup>T<sub style="vertical-align: -0.5ex; margin-left: -0.1667em; margin-right: -0.125em; font-size: 1em">e</sub>X</span>?</p>
 <h3 id="manage-two-languages">Manage two languages</h3>
 <p>Generally I write my post in English and French. And this is more difficult than it appears. For example, I need to filter the language in order to get the right list of posts. I also use some words in the templates and I want them to be translated.</p>
-<p>A nice tip is to pass arguments to a context and use it in the template. Typically I write:</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;$otherLanguagePath$&quot;</span>
 <span class="ot">	onclick=</span><span class="st">&quot;setLanguage('$otherlanguage$')&quot;</span><span class="kw">&gt;</span>
-	<span class="highlight">$trad changeLanguage$</span> <span class="kw">&lt;/a&gt;</span></code></pre>
+	<span class="highlight">$changeLanguage$</span> <span class="kw">&lt;/a&gt;</span></code></pre>
 <p>First I create a Map containing all translations.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Trad</span> <span class="fu">=</span> <span class="dt">Trad</span> {<span class="ot"> frTrad ::</span> <span class="dt">String</span>,<span class="ot"> enTrad ::</span> <span class="dt">String</span> }
 
@@ -404,7 +403,7 @@ trads <span class="fu">=</span> M.fromList <span class="fu">$</span> map toTrad 
   <span class="kw">where</span>
     toTrad (key,(french,english)) <span class="fu">=</span>
       (key, <span class="dt">Trad</span> { frTrad <span class="fu">=</span> french , enTrad <span class="fu">=</span> english })</code></pre>
-<p>Then I create a context taking an argument:</p>
+<p>Then I create a context for all key:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">tradsContext ::</span> <span class="dt">Context</span> a
 tradsContext <span class="fu">=</span> mconcat (map addTrad (M.keys trads))
   <span class="kw">where</span>
@@ -417,7 +416,6 @@ tradsContext <span class="fu">=</span> mconcat (map addTrad (M.keys trads))
                           <span class="dt">Just</span> tr <span class="ot">-&gt;</span> return tr
                           <span class="dt">Nothing</span> <span class="ot">-&gt;</span> return (<span class="st">&quot;NO TRANSLATION FOR &quot;</span> <span class="fu">++</span> name)
               <span class="dt">Nothing</span> <span class="ot">-&gt;</span> return (<span class="st">&quot;NO TRANSLATION FOR &quot;</span> <span class="fu">++</span> name)</code></pre>
-<p>In the real code source I also need more functions. But I just wanted to show how to pass parameters to a metadata tag.</p>
 <h2 id="conclusion">Conclusion</h2>
 <p>The full code is <a href="http://github.com/yogsototh/yblog.git">here</a>. And except from the main file, I use literate Haskell. This way the code should be easier to understand.</p>
 <p>If you want to know why I switched from nanoc:</p>
