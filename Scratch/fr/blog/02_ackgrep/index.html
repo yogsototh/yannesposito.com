@@ -43,17 +43,20 @@
 <hr />
 <h1 id="mieux-que-grep">Mieux que grep</h1>
 <p>Un des mes usages principaux de <code>grep</code> est</p>
-<div>
-<pre><code>&lt;code class=&quot;zsh&quot;&gt;</code></pre>
-<p>grep ‘pattern’ **/*(.)</code></p>
-</div>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="kw">grep</span> <span class="st">'pattern'</span> **/*<span class="kw">(.)</span></code></pre></div>
 <p>La plupart du temps c’est suffisant, mais ajouter de la coloration améliore beaucoup l’utilité de cette commande. Il existe déjà un outil pour ça : il s’appelle <code>ack-grep</code> sous Ubuntu. Comme je ne peux pas l’installer sur le serveur de mon entreprise, j’en ai créé un moi-même en quelques lignes&nbsp;:</p>
-<div>
-<pre><code>&lt;code class=&quot;zsh&quot; file=&quot;ack&quot;&gt;</code></pre>
-<h1 id="usrbinenv-zsh">!/usr/bin/env zsh</h1>
-<p>(($#&lt;1)) &amp;&amp; { print ‘usage: ack “regexp”’ &gt;&amp;2; exit 1 }</p>
-<p>listeFic=( **/<em>(.) ) autoload zargs zargs – $listeFic – grep $1 | perl -ne ‘use Term::ANSIColor; if (m/([^:]<em>)(:.</em>)(’$1’)(.</em>)/) { print color(“green”).$1; print color(“reset”).$2; print color(“black”,“on_yellow”).$3; print color(“reset”).$4.“”; } ’ </code></p>
-</div>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="co">#!/usr/bin/env zsh</span>
+<span class="kw">((</span><span class="ot">$#</span>&lt;1<span class="kw">))</span> <span class="kw">&amp;&amp;</span> <span class="kw">{</span> <span class="kw">print</span> <span class="st">'usage: ack &quot;regexp&quot;'</span> <span class="kw">&gt;&amp;2</span>; <span class="kw">exit</span> 1 <span class="kw">}</span>
+
+<span class="ot">listeFic=(</span> **/*(.<span class="ot">)</span> )
+<span class="kw">autoload</span> zargs
+zargs -- <span class="ot">$listeFic</span> -- <span class="kw">grep</span> <span class="ot">$1</span> <span class="kw">|</span> <span class="kw">perl</span> -ne <span class="st">'use Term::ANSIColor;</span>
+<span class="st">if (m/([^:]*)(:.*)('</span><span class="ot">$1</span><span class="st">')(.*)/) {</span>
+<span class="st">    print color(&quot;green&quot;).$1;</span>
+<span class="st">    print color(&quot;reset&quot;).$2;</span>
+<span class="st">    print color(&quot;black&quot;,&quot;on_yellow&quot;).$3;</span>
+<span class="st">    print color(&quot;reset&quot;).$4.&quot;\n&quot;;</span>
+<span class="st">} '</span></code></pre></div>
 <p>Pour mon utilisation personnelle et celle de mon équipe c’est suffisant. J’espère que ça pourra vous aider.</p>
 				</div>
                 <div id="afterarticle">

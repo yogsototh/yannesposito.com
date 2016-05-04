@@ -43,17 +43,20 @@
 <hr />
 <h1 id="better-than-grep">Better than grep</h1>
 <p>One of the my main usage of <code>grep</code> is</p>
-<div>
-<pre><code>&lt;code class=&quot;zsh&quot;&gt;</code></pre>
-<p>grep ‘pattern’ **/*(.)</code></p>
-</div>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="kw">grep</span> <span class="st">'pattern'</span> **/*<span class="kw">(.)</span></code></pre></div>
 <p>Most of time it is enough. But it is far better with colored output. <code>ack-grep</code> in Ubuntu does that. As I couldn’t install it on my ‘Evil Company Server’, I had done one myself in very few lines:</p>
-<div>
-<pre><code>&lt;code class=&quot;zsh&quot; file=&quot;ack&quot;&gt;</code></pre>
-<h1 id="usrbinenv-zsh">!/usr/bin/env zsh</h1>
-<p>(($#&lt;1)) &amp;&amp; { print ‘usage: ack “regexp”’ &gt;&amp;2; exit 1 }</p>
-<p>listeFic=( **/<em>(.) ) autoload zargs zargs – $listeFic – grep $1 | perl -ne ‘use Term::ANSIColor; if (m/([^:]<em>)(:.</em>)(’$1’)(.</em>)/) { print color(“green”).$1; print color(“reset”).$2; print color(“black”,“on_yellow”).$3; print color(“reset”).$4.“”; } ’ </code></p>
-</div>
+<pre><code>#!/usr/bin/env zsh
+(($#&lt;1)) &amp;&amp; { print 'usage: ack &quot;regexp&quot;' &gt;&amp;2; exit 1 }
+
+listeFic=( **/*(.) )
+autoload zargs
+zargs -- $listeFic -- grep $1 | perl -ne 'use Term::ANSIColor;
+if (m/([^:]*)(:.*)('$1')(.*)/) {
+    print color(&quot;green&quot;).$1;
+    print color(&quot;reset&quot;).$2;
+    print color(&quot;black&quot;,&quot;on_yellow&quot;).$3;
+    print color(&quot;reset&quot;).$4.&quot;\n&quot;;
+} '</code></pre>
 <p>For my team and I it is usable enough. I hope it could help.</p>
 				</div>
                 <div id="afterarticle">
