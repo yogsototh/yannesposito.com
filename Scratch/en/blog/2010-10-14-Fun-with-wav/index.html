@@ -49,7 +49,7 @@
 <li>the following 4th Bytes is an 32 bits integer giving the size of the file minus 8, etc…</li>
 </ul>
 <p>Surprisingly, I believe that reading this kind of file is easier in <code>C</code> than in most higher level language. Proof: I only have to search on the web the complete header format and write it in a struct.</p>
-<pre class="sourceCode c"><code class="sourceCode c"><span class="kw">struct</span> wavfile
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="kw">struct</span> wavfile
 {
     <span class="dt">char</span>        id[<span class="dv">4</span>];          <span class="co">// should always contain &quot;RIFF&quot;</span>
     <span class="dt">int</span>     totallength;    <span class="co">// total file length minus 8</span>
@@ -63,17 +63,17 @@
     <span class="dt">short</span>     bits_per_sample;
     <span class="dt">char</span>        data[<span class="dv">4</span>];        <span class="co">// should always contain &quot;data&quot;</span>
     <span class="dt">int</span>     bytes_in_data;
-};</code></pre>
+};</code></pre></div>
 <p>To read this kind of data in Ruby, I certainly had to write a block of code for each element in the struct. But in <code>C</code> I simply written:</p>
-<pre class="sourceCode c"><code class="sourceCode c">fread(&amp;header,<span class="kw">sizeof</span>(header),<span class="dv">1</span>,wav)</code></pre>
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c">fread(&amp;header,<span class="kw">sizeof</span>(header),<span class="dv">1</span>,wav)</code></pre></div>
 <p>Only one step to fill my data structure. Magic!</p>
 <p>Then, get an int value coded on two Bytes is also not a natural operation for high level language. In <code>C</code>, to read a sequence of 2 Bytes numbers I only had to write:</p>
-<pre class="sourceCode c"><code class="sourceCode c"><span class="dt">short</span> value=<span class="dv">0</span>;
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="dt">short</span> value=<span class="dv">0</span>;
 <span class="kw">while</span>( fread(&amp;value,<span class="kw">sizeof</span>(value),<span class="dv">1</span>,wav) ) {
     <span class="co">// do something with value</span>
-}</code></pre>
+}</code></pre></div>
 <p>Finally I ended with the following code. Remark I know the wav format (16 bit / 48000Hz):</p>
-<pre class="sourceCode c"><code class="sourceCode c"><span class="ot">#include &lt;stdio.h&gt;</span>
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="ot">#include &lt;stdio.h&gt;</span>
 <span class="ot">#include &lt;stdlib.h&gt;</span>
 <span class="ot">#include &lt;stdint.h&gt;</span>
 
@@ -129,16 +129,16 @@
     }
     printf(<span class="st">&quot;%ld</span><span class="ch">\n</span><span class="st">&quot;</span>,sum);
     exit(<span class="dv">0</span>);
-}</code></pre>
+}</code></pre></div>
 <p>Of course it is only a hack. But we can see how easy and clean it should be to improve. As I say often: the right tool for your need instead of the same tool for all your needs. Because here <code>C</code> is clearly far superior than Ruby to handle this simple tasks.</p>
 <p>I am curious to know if somebody know a nice way to do this with Ruby or Python.</p>
 <p><em>edit: for compatibility reasons (64bit machines) used <code>int16_t</code> instead of <code>short</code> and <code>int</code> instead of <code>int</code>.</em></p>
 <div class="intro">
 <p>Edit (2): after most consideration about portability I made an <em>hopefully</em> more portable version. But I must confess this task was a bit tedious. The code remain as readable as before. But I had to use some compiler specific declaration to force the structure to be packed:</p>
-<pre class="sourceCode c"><code class="sourceCode c">__attribute__((__packed__))</code></pre>
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c">__attribute__((__packed__))</code></pre></div>
 <p>Therefore this implementation should for big and little endian architecture. However, it must be compiled with <code>gcc</code>. The new code make more tests but still don’t use <code>mmap</code>. Here it is:</p>
 </div>
-<pre class="sourceCode c"><code class="sourceCode c"><span class="ot">#include &lt;stdio.h&gt;</span>
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="ot">#include &lt;stdio.h&gt;</span>
 <span class="ot">#include &lt;stdlib.h&gt;</span>
 <span class="ot">#include &lt;string.h&gt; </span><span class="co">// for memcmp</span>
 <span class="ot">#include &lt;stdint.h&gt; </span><span class="co">// for int16_t and int32_t</span>
@@ -242,37 +242,37 @@
     }
     printf(<span class="st">&quot;%lld</span><span class="ch">\n</span><span class="st">&quot;</span>,sum);
     exit(<span class="dv">0</span>);
-}</code></pre>
+}</code></pre></div>
 <p><em>Edit(3)</em>: On <a href="http://reddit.com">reddit</a> <a href="http://www.reddit.com/user/Bogdanp">Bogdanp</a> proposed a Python version:</p>
-<pre class="sourceCode python"><code class="sourceCode python"><span class="co">#!/usr/bin/env python</span>
-<span class="ch">from</span> struct <span class="ch">import</span> calcsize, unpack
-<span class="ch">from</span> sys <span class="ch">import</span> argv, exit
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co">#!/usr/bin/env python</span>
+<span class="im">from</span> struct <span class="im">import</span> calcsize, unpack
+<span class="im">from</span> sys <span class="im">import</span> argv, exit
 
 <span class="kw">def</span> word_iter(f):
-    <span class="kw">while</span> <span class="ot">True</span>:
-        _bytes = f.read(<span class="dv">2</span>)
+    <span class="cf">while</span> <span class="va">True</span>:
+        _bytes <span class="op">=</span> f.read(<span class="dv">2</span>)
 
-    <span class="kw">if</span> <span class="dt">len</span>(_bytes) != <span class="dv">2</span>:
-        <span class="kw">raise</span> <span class="ot">StopIteration</span>
+    <span class="cf">if</span> <span class="bu">len</span>(_bytes) <span class="op">!=</span> <span class="dv">2</span>:
+        <span class="cf">raise</span> <span class="pp">StopIteration</span>
 
-    <span class="kw">yield</span> unpack(<span class="st">&quot;=h&quot;</span>, _bytes)[<span class="dv">0</span>]
+    <span class="cf">yield</span> unpack(<span class="st">&quot;=h&quot;</span>, _bytes)[<span class="dv">0</span>]
 
-<span class="kw">try</span>:
-    <span class="kw">with</span> <span class="dt">open</span>(argv[<span class="dv">1</span>], <span class="st">&quot;rb&quot;</span>) <span class="ch">as</span> f:
-        wav = <span class="st">&quot;=4ci8cihhiihh4ci&quot;</span>
-        wav_size = calcsize(wav)
-        metadata = unpack(wav, f.read(wav_size))
+<span class="cf">try</span>:
+    <span class="cf">with</span> <span class="bu">open</span>(argv[<span class="dv">1</span>], <span class="st">&quot;rb&quot;</span>) <span class="im">as</span> f:
+        wav <span class="op">=</span> <span class="st">&quot;=4ci8cihhiihh4ci&quot;</span>
+        wav_size <span class="op">=</span> calcsize(wav)
+        metadata <span class="op">=</span> unpack(wav, f.read(wav_size))
 
-        <span class="kw">if</span> <span class="st">&quot;&quot;</span>.join(metadata[:<span class="dv">4</span>]) != <span class="st">&quot;RIFF&quot;</span>:
-            <span class="dt">print</span> <span class="st">&quot;error: not wav file.&quot;</span>
+        <span class="cf">if</span> <span class="st">&quot;&quot;</span>.join(metadata[:<span class="dv">4</span>]) <span class="op">!=</span> <span class="st">&quot;RIFF&quot;</span>:
+            <span class="bu">print</span> <span class="st">&quot;error: not wav file.&quot;</span>
             exit(<span class="dv">1</span>)
 
-        <span class="dt">print</span> <span class="dt">sum</span>(<span class="dt">abs</span>(word) <span class="kw">for</span> word in word_iter(f))
-<span class="kw">except</span> <span class="ot">IOError</span>:
-    <span class="dt">print</span> <span class="st">&quot;error: can't open input file '</span><span class="ot">%s</span><span class="st">'.&quot;</span> % argv[<span class="dv">1</span>]
-    exit(<span class="dv">1</span>)</code></pre>
+        <span class="bu">print</span> <span class="bu">sum</span>(<span class="bu">abs</span>(word) <span class="cf">for</span> word <span class="op">in</span> word_iter(f))
+<span class="cf">except</span> <span class="pp">IOError</span>:
+    <span class="bu">print</span> <span class="st">&quot;error: can't open input file '</span><span class="sc">%s</span><span class="st">'.&quot;</span> <span class="op">%</span> argv[<span class="dv">1</span>]
+    exit(<span class="dv">1</span>)</code></pre></div>
 <p>and <a href="http://www.reddit.com/user/luikore">luikore</a> proposed an impressive Ruby version:</p>
-<pre class="sourceCode ruby"><code class="sourceCode ruby">data = <span class="dt">ARGF</span>.read
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby">data = <span class="dt">ARGF</span>.read
  keys =<span class="ot"> %w[</span><span class="st">id totallength wavefmt format</span>
 <span class="st">       pcm channels frequency bytes_per_second</span>
 <span class="st">         bytes_by_capture bits_per_sample</span>
@@ -282,7 +282,7 @@
  sum = values.drop(<span class="dv">12</span>).map(&amp;<span class="st">:abs</span>).inject(:+)
  keys.zip(values.take(<span class="dv">12</span>) &lt;&lt; sum) {|k, v|
        puts <span class="st">&quot;</span><span class="ot">#{</span>k.ljust <span class="dv">17</span><span class="ot">}</span><span class="st">: </span><span class="ot">#{</span>v<span class="ot">}</span><span class="st">&quot;</span>
- }</code></pre>
+ }</code></pre></div>
 				</div>
                 <div id="afterarticle">
                     <div id="social">

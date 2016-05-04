@@ -56,22 +56,22 @@
 <ul>
 <li>Variable, instead of writing the natural <code>myvar = value</code>, here is the <sc>xslt</sc> way of doing this:</li>
 </ul>
-<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;xsl:variable</span><span class="ot"> name=</span><span class="st">&quot;myvar&quot;</span><span class="ot"> select=</span><span class="st">&quot;value&quot;</span><span class="kw">/&gt;</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;xsl:variable</span><span class="ot"> name=</span><span class="st">&quot;myvar&quot;</span><span class="ot"> select=</span><span class="st">&quot;value&quot;</span><span class="kw">/&gt;</span></code></pre></div>
 <ul>
 <li>Printing something. Instead of <code>print &quot;Hello world!&quot;</code> here is the <sc>xslt</sc> equivalent:</li>
 </ul>
-<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;xsl:text</span> 
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;xsl:text</span> 
 <span class="ot">    disable-output-escaping=</span><span class="st">&quot;yes&quot;</span><span class="kw">&gt;</span><span class="bn">&lt;![CDATA[</span>Hello world!
-<span class="bn">]]&gt;</span><span class="kw">&lt;/xsl:text&gt;</span></code></pre>
+<span class="bn">]]&gt;</span><span class="kw">&lt;/xsl:text&gt;</span></code></pre></div>
 <ul>
 <li>printing the value of a variable, instead of <code>print myvar</code> the <sc>xslt</sc> is:</li>
 </ul>
-<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;xslt:value-of</span><span class="ot"> select=</span><span class="st">&quot;myvar&quot;</span><span class="kw">/&gt;</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;xslt:value-of</span><span class="ot"> select=</span><span class="st">&quot;myvar&quot;</span><span class="kw">/&gt;</span></code></pre></div>
 <ul>
 <li>Just try to imagine how verbose it is to declare a function with this language.</li>
 </ul>
 <h2 id="the-cure-m4-to-the-rescue">The cure (m4 to the rescue)</h2>
-<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; standalone=&quot;yes&quot;<span class="kw">?&gt;</span> <span class="co">&lt;!-- YES its &lt;span class=&quot;sc&quot;&gt;xml&lt;/span&gt; --&gt;</span>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; standalone=&quot;yes&quot;<span class="kw">?&gt;</span> <span class="co">&lt;!-- YES its &lt;span class=&quot;sc&quot;&gt;xml&lt;/span&gt; --&gt;</span>
 <span class="co">&lt;!-- ← start a comment, then write some m4 directives:</span>
 
 <span class="co">define(`ydef',`&lt;xsl:variable name=&quot;$1&quot; select=&quot;$2&quot;/&gt;')</span>
@@ -86,9 +86,9 @@
     ydef(myvar,value)
     yprint(Hello world!)
     yshow(myvar)
-<span class="kw">&lt;/xsl:template&gt;</span></code></pre>
+<span class="kw">&lt;/xsl:template&gt;</span></code></pre></div>
 <p>Now just compile this file:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="kw">m4</span> myfile.m4 <span class="kw">&gt;</span> myfile.xslt</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="kw">m4</span> myfile.m4 <span class="kw">&gt;</span> myfile.xslt</code></pre></div>
 <p>Profit! Now <sc>xslt</sc> is more readable and easier to edit!</p>
 <h2 id="the-cool-part-fractals">The cool part: Fractals!</h2>
 <p><span class="sc">svg</span> is an <span class="sc">xml</span> format used to represent vector graphics, it even support animations. At its beginning some people believed it would be the new Flash. Apparently, it will be more canvas + js.</p>
@@ -109,7 +109,7 @@
 </ol>
 <p>If I had to do this for each step, I had make a lot of copy/paste in my <span class="sc">svg</span>, because the transformation is always the same, but I cannot say, use transformation named “titi”. Then instead of manually copying some <span class="sc">xml</span>, I used m4</p>
 <p>and here is the commented code:</p>
-<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;<span class="kw">?&gt;</span>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;<span class="kw">?&gt;</span>
 <span class="co">&lt;!--</span>
 <span class="co">     M4 Macros</span>
 <span class="co">define(`YTRANSFORMONE', `scale(.43) translate(-120,-69) rotate(-10)')</span>
@@ -151,9 +151,9 @@
     YTRANSCOMPLETE(3,2) <span class="co">&lt;!-- deeper --&gt;</span>
     YTRANSCOMPLETE(4,3) <span class="co">&lt;!-- even deeper --&gt;</span>
     YTRANSCOMPLETE(5,4) <span class="co">&lt;!-- Five level seems enough --&gt;</span>
-<span class="kw">&lt;/svg&gt;</span></code></pre>
+<span class="kw">&lt;/svg&gt;</span></code></pre></div>
 <p>and I compiled it to <sc>svg</sc> and then to <sc>png</sc> with:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="kw">m4</span> yesodlogo.m4 <span class="kw">&gt;</span> yesodlogo.svg <span class="kw">&amp;&amp;</span> convert yesodlogo.svg yesodlogo.png</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="kw">m4</span> yesodlogo.m4 <span class="kw">&gt;</span> yesodlogo.svg <span class="kw">&amp;&amp;</span> convert yesodlogo.svg yesodlogo.png</code></pre></div>
 <p>The main λ is duplicated 3 times. Each transformation is named by: <code>YTRANSFORMONE</code>, <code>YTRANSFORMTWO</code> and <code>YTRANSFORMTHREE</code>.</p>
 <p>Each transformation is just a similarity (translate + rotation + scale).</p>
 <p>Once fixed, we should now simply copy and repeat for each new level.</p>

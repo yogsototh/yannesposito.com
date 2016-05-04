@@ -48,33 +48,33 @@
 <h1 id="jquery">jQuery</h1>
 <p>Here is the simple jQuery code:</p>
 <div>
-<pre class="sourceCode javascript"><code class="sourceCode javascript">    <span class="fu">$</span>(document).<span class="fu">ready</span>( <span class="kw">function</span>(){<span class="fu">$</span>(<span class="st">'.list'</span>).<span class="fu">hide</span>();} );
-    <span class="kw">function</span> <span class="fu">tagSelected</span>(id) {
-        <span class="fu">$</span>(<span class="st">'.list'</span>).<span class="fu">hide</span>();
-        <span class="fu">$</span>(<span class="st">'#'</span>+id).<span class="fu">fadeIn</span>();
-        <span class="fu">$</span>(<span class="st">'.tag.selected'</span>).<span class="fu">removeClass</span>(<span class="st">'selected'</span>);
-        <span class="fu">$</span>(<span class="st">'#tag_'</span>+id).<span class="fu">addClass</span>(<span class="st">'selected'</span>);
-    }</code></pre>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript">    <span class="at">$</span>(document).<span class="at">ready</span>( <span class="kw">function</span>()<span class="op">{</span><span class="at">$</span>(<span class="st">'.list'</span>).<span class="at">hide</span>()<span class="op">;}</span> )<span class="op">;</span>
+    <span class="kw">function</span> <span class="at">tagSelected</span>(id) <span class="op">{</span>
+        <span class="at">$</span>(<span class="st">'.list'</span>).<span class="at">hide</span>()<span class="op">;</span>
+        <span class="at">$</span>(<span class="st">'#'</span><span class="op">+</span>id).<span class="at">fadeIn</span>()<span class="op">;</span>
+        <span class="at">$</span>(<span class="st">'.tag.selected'</span>).<span class="at">removeClass</span>(<span class="st">'selected'</span>)<span class="op">;</span>
+        <span class="at">$</span>(<span class="st">'#tag_'</span><span class="op">+</span>id).<span class="at">addClass</span>(<span class="st">'selected'</span>)<span class="op">;</span>
+    <span class="op">}</span></code></pre></div>
 </div>
 <p>This code will hide all the div containing links to articles containing the tag. And create a function do show the div containing the tag.</p>
 <p>For each tag I create a span element:</p>
 <div>
-<pre class="sourceCode html"><code class="sourceCode html">    <span class="kw">&lt;span</span><span class="ot">   style=</span><span class="st">&quot;font-size: 1.0em;&quot;</span>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html">    <span class="kw">&lt;span</span><span class="ot">   style=</span><span class="st">&quot;font-size: 1.0em;&quot;</span>
 <span class="ot">            class=</span><span class="st">&quot;tag&quot;</span>
 <span class="ot">            onClick=</span><span class="st">&quot;tagSelected('[TAG]')&quot;</span>
 <span class="ot">            id=</span><span class="st">&quot;tag_[TAG]&quot;</span><span class="kw">&gt;</span>
         [TAG]
-    <span class="kw">&lt;/span&gt;</span></code></pre>
+    <span class="kw">&lt;/span&gt;</span></code></pre></div>
 </div>
 <p>and a div containing links associtated to this tag:</p>
 <div>
-<pre class="sourceCode html"><code class="sourceCode html">    <span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;[TAG]&quot;</span><span class="kw">&gt;</span>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html">    <span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;[TAG]&quot;</span><span class="kw">&gt;</span>
         <span class="kw">&lt;h4&gt;</span>[TAG]<span class="kw">&lt;/h4&gt;</span>
         <span class="kw">&lt;ul&gt;</span>
             <span class="kw">&lt;li&gt;</span> LINK 1 <span class="kw">&lt;/li&gt;</span>
             <span class="kw">&lt;li&gt;</span> LINK 2 <span class="kw">&lt;/li&gt;</span>
         <span class="kw">&lt;/ul&gt;</span>
-    <span class="kw">&lt;/div&gt;</span></code></pre>
+    <span class="kw">&lt;/div&gt;</span></code></pre></div>
 </div>
 <hr />
 <h1 id="nanoc">nanoc</h1>
@@ -82,13 +82,13 @@
 <p>If you want to make it fully jQuery one, it shouldn’t be too difficult, to use my ruby code and translate it into javascript.</p>
 <p>In a first time <code>tags</code> correpond of the list of all tags.</p>
 <div>
-<pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="kw">def</span> tags
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="kw">def</span> tags
     <span class="kw">return</span> <span class="ot">@items</span>.tags.join(<span class="st">', '</span>)
-<span class="kw">end</span></code></pre>
+<span class="kw">end</span></code></pre></div>
 </div>
 <p>A function to create a data structure associating to each tag its occurence.</p>
 <div>
-<pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># generate an hash tag =&gt; number of occurence of tag</span>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># generate an hash tag =&gt; number of occurence of tag</span>
 <span class="kw">def</span> tagNumber
     tags={}
     <span class="ot">@items</span>.each <span class="kw">do</span> |p|
@@ -104,11 +104,11 @@
         <span class="kw">end</span>
     <span class="kw">end</span>
     <span class="kw">return</span> tags
-<span class="kw">end</span></code></pre>
+<span class="kw">end</span></code></pre></div>
 </div>
 <p>I also need a data structure who associate to each tag a list of pages (at least url and title).</p>
 <div>
-<pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># generate an hash tag =&gt; [ page1, page2 ... ]</span>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># generate an hash tag =&gt; [ page1, page2 ... ]</span>
 <span class="kw">def</span> tagRefs
     tagLinks={}
     <span class="ot">@items</span>.each <span class="kw">do</span> |p|
@@ -124,12 +124,12 @@
         <span class="kw">end</span>
     <span class="kw">end</span>
     <span class="kw">return</span> tagLinks
-<span class="kw">end</span></code></pre>
+<span class="kw">end</span></code></pre></div>
 </div>
 <p>Calculate the real size of each tag to be displayed.</p>
 <p>I choosen not to use the full range of size for all the tag. Because if no tag has more than <code>n</code> (here 10) occurences, then it doesn’t deserve to be of the maximal size.</p>
 <div>
-<pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="kw">def</span> tagRealSize
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="kw">def</span> tagRealSize
     tags=tagNumber
     max=tags.values.max
     min=tags.values.min
@@ -151,11 +151,11 @@
         <span class="kw">end</span>
     <span class="kw">end</span>
     <span class="kw">return</span> tagSize
-<span class="kw">end</span></code></pre>
+<span class="kw">end</span></code></pre></div>
 </div>
 <p>Finaly a function to generate the XHTML/jQuery code</p>
 <div>
-<pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># generate an XHTML/jQuery code for tag cloud</span>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># generate an XHTML/jQuery code for tag cloud</span>
 <span class="kw">def</span> tagCloud
     tagLinks=tagRefs
     tagSize=tagRealSize
@@ -199,12 +199,12 @@
     <span class="kw">end</span>
     tagCloud &lt;&lt;=<span class="ot"> %{</span><span class="st">&lt;/div&gt;</span><span class="ot">}</span>
     <span class="kw">return</span> tagCloud <span class="co"># yeah I know it is not necessary</span>
-<span class="kw">end</span></code></pre>
+<span class="kw">end</span></code></pre></div>
 </div>
 <p>You can <a href="../../../../Scratch/en/blog/2009-09-jQuery-Tag-Cloud/code/tag.rb">download the complete file</a> to put in your ‘lib’ directory.</p>
 <p>Of course to be nice you need the associated CSS</p>
 <div>
-<pre class="sourceCode css"><code class="sourceCode css">
+<div class="sourceCode"><pre class="sourceCode css"><code class="sourceCode css">
 // Change the color when mouse over
 <span class="fl">.tag</span><span class="dv">:hover</span> <span class="kw">{</span>
   <span class="kw">color:</span> <span class="dt">#cc0000</span><span class="kw">;</span> <span class="kw">}</span>
@@ -217,7 +217,7 @@
 <span class="fl">.tag</span> <span class="kw">{</span>
   <span class="kw">cursor:</span> <span class="dt">pointer</span><span class="kw">;</span>
   <span class="kw">margin-left:</span> <span class="dt">.5em</span><span class="kw">;</span>
-  <span class="kw">margin-right:</span> <span class="dt">.5em</span><span class="kw">;</span> <span class="kw">}</span></code></pre>
+  <span class="kw">margin-right:</span> <span class="dt">.5em</span><span class="kw">;</span> <span class="kw">}</span></code></pre></div>
 </div>
 <p>That’s all folks.</p>
 				</div>

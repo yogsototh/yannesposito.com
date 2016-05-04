@@ -40,7 +40,7 @@
 					<p>My problem is simple:</p>
 <p>I want to filter a text except some part of it. I can match easily the part I don’t want to be filtered. For example</p>
 <div>
-<pre class="sourceCode html"><code class="sourceCode html">...
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html">...
 text
 ...
 BEGIN not to filter
@@ -50,11 +50,11 @@ text
 END not to filter
 ...
 text
-...</code></pre>
+...</code></pre></div>
 </div>
 <p>I searched a better way to do that, but the best I can do is using <code>split</code> and <code>scan</code>.</p>
 <div>
-<pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="kw">def</span> allExceptCode( f, content )
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="kw">def</span> allExceptCode( f, content )
     <span class="co"># Beware the behaviour will change if you add</span>
     <span class="co"># parenthesis (groups) to the regexp!</span>
     regexp=<span class="ot">/&lt;code[^&gt;]*&gt;.*?&lt;\/code&gt;|&lt;pre[^&gt;]*&gt;.*?&lt;\/pre&gt;/m</span>
@@ -72,20 +72,20 @@ text
         <span class="kw">end</span>
     <span class="kw">end</span>
     tmp
-<span class="kw">end</span></code></pre>
+<span class="kw">end</span></code></pre></div>
 </div>
 <p>An usage is:</p>
 <div>
-<pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="kw">def</span> filter(content)
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="kw">def</span> filter(content)
     content.gsub(<span class="ot">/e/</span>,<span class="st">'X'</span>)
 <span class="kw">end</span>
 ...
 allExceptCode(<span class="st">:filter</span>, content)
-...</code></pre>
+...</code></pre></div>
 </div>
 <p>A better syntax would be:</p>
 <div>
-<pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># !!!!!!!!!! THIS SYNTAX DOES NOT WORK !!!!!!! #</span>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># !!!!!!!!!! THIS SYNTAX DOES NOT WORK !!!!!!! #</span>
 <span class="kw">def</span> allExceptCode( f, content )
     regexp=<span class="ot">/&lt;code[^&gt;]*&gt;.*?&lt;\/code&gt;/m</span>
     tmp=<span class="st">&quot;&quot;</span>
@@ -97,7 +97,7 @@ allExceptCode(<span class="st">:filter</span>, content)
         <span class="kw">end</span>
     <span class="kw">end</span>
     tmp
-<span class="kw">end</span></code></pre>
+<span class="kw">end</span></code></pre></div>
 </div>
 <p>I would expect the split make a search on a regular expression and then give the matched expression into the <code>$&amp;</code> variable. But it is not the case.</p>
 <p>If someone know a nicer way to do that I will be happy to know how.</p>

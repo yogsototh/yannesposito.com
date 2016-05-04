@@ -44,7 +44,7 @@
 <p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Les boutons des réseaux sociaux traquent vos utilisateurs, ont un design incohérent avec celui de votre site, utilisent des ressources, ralentissent le rendu de vos pages.</p>
 <p>Faite les choses bien. Utilisez des liens statiques.</p>
 <p>Si vous n’avez pas envie de lire, copiez et collez simplement le code suivant dans votre <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span>&nbsp;:</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;sociallinks&quot;</span><span class="kw">&gt;</span>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;sociallinks&quot;</span><span class="kw">&gt;</span>
   <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://twitter.com/home?status=$url$&quot;</span>
 <span class="ot">     target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>Tweet this<span class="kw">&lt;/a&gt;</span> -
   <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;http://www.facebook.com/sharer/sharer.php?u=$url$&quot;</span>
@@ -53,14 +53,14 @@
 <span class="ot">     target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>Share on G+<span class="kw">&lt;/a&gt;</span>
 <span class="kw">&lt;/div&gt;</span>
 <span class="kw">&lt;script&gt;</span>
-(<span class="kw">function</span>(){<span class="ot">window</span>.<span class="fu">addEventListener</span>(<span class="st">&quot;DOMContentLoaded&quot;</span>,<span class="kw">function</span>(){
-    <span class="kw">var</span> url=<span class="ot">document</span>.<span class="fu">location</span>;
-    <span class="kw">var</span> links=<span class="ot">document</span>.<span class="fu">getElementById</span>(<span class="st">&quot;sociallinks&quot;</span>)
-                      .<span class="fu">getElementsByTagName</span>(<span class="st">'a'</span>);
-    <span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>;i!=<span class="ot">links</span>.<span class="fu">length</span>;i++){
-        links[i].<span class="fu">setAttribute</span>(<span class="st">&quot;href&quot;</span>,
-            links[i].<span class="ot">href</span>.<span class="fu">replace</span>(<span class="st">'$url$'</span>,url));}})})();
-&lt;<span class="ot">/script&gt;</span></code></pre>
+(<span class="kw">function</span>()<span class="op">{</span><span class="va">window</span>.<span class="at">addEventListener</span>(<span class="st">&quot;DOMContentLoaded&quot;</span><span class="op">,</span><span class="kw">function</span>()<span class="op">{</span>
+    <span class="kw">var</span> url<span class="op">=</span><span class="va">document</span>.<span class="at">location</span><span class="op">;</span>
+    <span class="kw">var</span> links<span class="op">=</span><span class="va">document</span>.<span class="at">getElementById</span>(<span class="st">&quot;sociallinks&quot;</span>)
+                      .<span class="at">getElementsByTagName</span>(<span class="st">'a'</span>)<span class="op">;</span>
+    <span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span>i<span class="op">!=</span><span class="va">links</span>.<span class="at">length</span><span class="op">;</span>i<span class="op">++</span>)<span class="op">{</span>
+        links[i].<span class="at">setAttribute</span>(<span class="st">&quot;href&quot;</span><span class="op">,</span>
+            links[i].<span class="va">href</span>.<span class="at">replace</span>(<span class="st">'$url$'</span><span class="op">,</span>url))<span class="op">;}}</span>)<span class="op">}</span>)()<span class="op">;</span>
+<span class="op">&lt;</span><span class="ss">/script&gt;</span></code></pre></div>
 </div>
 <h2 id="the-problem">The problem</h2>
 <p>Ever been on a website and want to tweet about it? Fortunately, the website might have a button to help you. But do you really know what this button do?</p>
@@ -102,18 +102,18 @@
 </ul></li>
 </ul>
 <p><strong>Solution 1 (no js):</strong></p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://twitter.com/home?status=$url$&quot;</span>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://twitter.com/home?status=$url$&quot;</span>
 <span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>Tweet this<span class="kw">&lt;/a&gt;</span>
 
 <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;http://www.facebook.com/sharer/sharer.php?u=$url$&quot;</span>
 <span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>Like this<span class="kw">&lt;/a&gt;</span>
 
 <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://plus.google.com/share?url=$url$&quot;</span>
-<span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>Share on G+<span class="kw">&lt;/a&gt;</span></code></pre>
+<span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>Share on G+<span class="kw">&lt;/a&gt;</span></code></pre></div>
 <p>But you have to replace <code>$url$</code> by the current <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span>.</p>
 <p><strong>Solution 2 (Just copy/paste):</strong></p>
 <p>If you don’t want to write the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> yourself, you could use some minimal js:</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;sociallinks&quot;</span><span class="kw">&gt;</span>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;sociallinks&quot;</span><span class="kw">&gt;</span>
   <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://twitter.com/home?status=$url$&quot;</span>
 <span class="ot">     target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>Tweet this<span class="kw">&lt;/a&gt;</span> -
   <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;http://www.facebook.com/sharer/sharer.php?u=$url$&quot;</span>
@@ -122,14 +122,14 @@
 <span class="ot">     target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>Share on G+<span class="kw">&lt;/a&gt;</span>
 <span class="kw">&lt;/div&gt;</span>
 <span class="kw">&lt;script&gt;</span>
-(<span class="kw">function</span>(){<span class="ot">window</span>.<span class="fu">addEventListener</span>(<span class="st">&quot;DOMContentLoaded&quot;</span>,<span class="kw">function</span>(){
-    <span class="kw">var</span> url=<span class="ot">document</span>.<span class="fu">location</span>;
-    <span class="kw">var</span> links=<span class="ot">document</span>.<span class="fu">getElementById</span>(<span class="st">&quot;sociallinks&quot;</span>)
-                      .<span class="fu">getElementsByTagName</span>(<span class="st">'a'</span>);
-    <span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>;i!=<span class="ot">links</span>.<span class="fu">length</span>;i++){
-        links[i].<span class="fu">setAttribute</span>(<span class="st">&quot;href&quot;</span>,
-            links[i].<span class="ot">href</span>.<span class="fu">replace</span>(<span class="st">'$url$'</span>,url));}})})();
-&lt;<span class="ot">/script&gt;</span></code></pre>
+(<span class="kw">function</span>()<span class="op">{</span><span class="va">window</span>.<span class="at">addEventListener</span>(<span class="st">&quot;DOMContentLoaded&quot;</span><span class="op">,</span><span class="kw">function</span>()<span class="op">{</span>
+    <span class="kw">var</span> url<span class="op">=</span><span class="va">document</span>.<span class="at">location</span><span class="op">;</span>
+    <span class="kw">var</span> links<span class="op">=</span><span class="va">document</span>.<span class="at">getElementById</span>(<span class="st">&quot;sociallinks&quot;</span>)
+                      .<span class="at">getElementsByTagName</span>(<span class="st">'a'</span>)<span class="op">;</span>
+    <span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span>i<span class="op">!=</span><span class="va">links</span>.<span class="at">length</span><span class="op">;</span>i<span class="op">++</span>)<span class="op">{</span>
+        links[i].<span class="at">setAttribute</span>(<span class="st">&quot;href&quot;</span><span class="op">,</span>
+            links[i].<span class="va">href</span>.<span class="at">replace</span>(<span class="st">'$url$'</span><span class="op">,</span>url))<span class="op">;}}</span>)<span class="op">}</span>)()<span class="op">;</span>
+<span class="op">&lt;</span><span class="ss">/script&gt;</span></code></pre></div>
 <p>Here is the result:</p>
 <div class="nostar" style="text-align:center">
 <div id="sociallinks">
@@ -157,16 +157,16 @@
 <li>put the font file(s) at some place (here ‘fonts/social_font.ttf’ relatively to your <span class="sc">css</span> file)</li>
 <li>Add this to your <span class="sc">css</span></li>
 </ol>
-<pre class="sourceCode css"><code class="sourceCode css"><span class="dv">@font-face</span>
+<div class="sourceCode"><pre class="sourceCode css"><code class="sourceCode css"><span class="dv">@font-face</span>
   font-family<span class="dv">:</span> <span class="st">'social'</span>
   src<span class="dv">:</span> url(<span class="st">'fonts/social_font.ttf'</span>) format(<span class="st">'truetype'</span>)
   font-weight<span class="dv">:</span> normal
   font-style<span class="dv">:</span> normal
 <span class="fl">.social</span>
-  font-family<span class="dv">:</span> social</code></pre>
+  font-family<span class="dv">:</span> social</code></pre></div>
 <p>Now add this to your <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span>:</p>
 <p><strong>Solution 1 (without js):</strong></p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://twitter.com/home?status=$url$&quot;</span>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://twitter.com/home?status=$url$&quot;</span>
 <span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span>
 <span class="ot">    class=</span><span class="st">&quot;social&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;#116;</span><span class="kw">&lt;/a&gt;</span>
 ·
@@ -176,9 +176,9 @@
 ·
 <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://plus.google.com/share?url=$url$&quot;</span>
 <span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span>
-<span class="ot">    class=</span><span class="st">&quot;social&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;#0103;</span><span class="kw">&lt;/a&gt;</span></code></pre>
+<span class="ot">    class=</span><span class="st">&quot;social&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;#0103;</span><span class="kw">&lt;/a&gt;</span></code></pre></div>
 <p><strong>Solution 2 (same with a bit more js):</strong></p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;sociallinksunicode&quot;</span><span class="kw">&gt;</span>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;sociallinksunicode&quot;</span><span class="kw">&gt;</span>
 <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://twitter.com/home?status=$url$&quot;</span>
 <span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span>
 <span class="ot">    class=</span><span class="st">&quot;social&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;#116;</span><span class="kw">&lt;/a&gt;</span>
@@ -192,14 +192,14 @@
 <span class="ot">    class=</span><span class="st">&quot;social&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;#0103;</span><span class="kw">&lt;/a&gt;</span>
 <span class="kw">&lt;/div&gt;</span>
 <span class="kw">&lt;script&gt;</span>
-(<span class="kw">function</span>(){<span class="ot">window</span>.<span class="fu">addEventListener</span>(<span class="st">&quot;DOMContentLoaded&quot;</span>,<span class="kw">function</span>(){
-    <span class="kw">var</span> url=<span class="ot">document</span>.<span class="fu">location</span>;
-    <span class="kw">var</span> links=<span class="ot">document</span>.<span class="fu">getElementById</span>(<span class="st">&quot;sociallinksunicode&quot;</span>)
-                      .<span class="fu">getElementsByTagName</span>(<span class="st">'a'</span>);
-    <span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>;i!=<span class="ot">links</span>.<span class="fu">length</span>;i++){
-        links[i].<span class="fu">setAttribute</span>(<span class="st">&quot;href&quot;</span>,
-            links[i].<span class="ot">href</span>.<span class="fu">replace</span>(<span class="st">'$url$'</span>,url));}})})();
-&lt;<span class="ot">/script&gt;</span></code></pre>
+(<span class="kw">function</span>()<span class="op">{</span><span class="va">window</span>.<span class="at">addEventListener</span>(<span class="st">&quot;DOMContentLoaded&quot;</span><span class="op">,</span><span class="kw">function</span>()<span class="op">{</span>
+    <span class="kw">var</span> url<span class="op">=</span><span class="va">document</span>.<span class="at">location</span><span class="op">;</span>
+    <span class="kw">var</span> links<span class="op">=</span><span class="va">document</span>.<span class="at">getElementById</span>(<span class="st">&quot;sociallinksunicode&quot;</span>)
+                      .<span class="at">getElementsByTagName</span>(<span class="st">'a'</span>)<span class="op">;</span>
+    <span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span>i<span class="op">!=</span><span class="va">links</span>.<span class="at">length</span><span class="op">;</span>i<span class="op">++</span>)<span class="op">{</span>
+        links[i].<span class="at">setAttribute</span>(<span class="st">&quot;href&quot;</span><span class="op">,</span>
+            links[i].<span class="va">href</span>.<span class="at">replace</span>(<span class="st">'$url$'</span><span class="op">,</span>url))<span class="op">;}}</span>)<span class="op">}</span>)()<span class="op">;</span>
+<span class="op">&lt;</span><span class="ss">/script&gt;</span></code></pre></div>
 <p>Here is the result:</p>
 <div class="nostar" style="font-size: 2em; text-align: center;">
 <div id="sociallinksunicode">

@@ -41,7 +41,7 @@
 <p>Que ce soit pour surfer en toute sécurité depuis un accès <sc>wifi</sc> non sécurisé ou pour contourner les parefeux diaboliques des entreprises. J’ai configuré un serveur ssh écoutant sur le port 443 chez moi.</p>
 <p>Ensuite de mon portable ou de mon ordinateur local, je dois simplement lancé la merveilleuse commande&nbsp;:</p>
 <div>
-<pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="kw">ssh</span> -f -p 443 -ND 9050 username@host</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="kw">ssh</span> -f -p 443 -ND 9050 username@host</code></pre></div>
 </div>
 <p>et un proxy <sc>socks</sc> écoute sur le port 9050. Ce proxy <sc>socks</sc> transférera toutes les requêtes locales via le tunnel ssh. Ainsi je peux surfer en local comme si je naviguais depuis mon ordinateur à la maison. Je peux écrire mon numéro de carte bleu sans avoir peur que le <sc>wifi</sc> local soit <em>sniffé</em>. Je dois simplement configurer mon navigateur web pour utiliser le proxy <sc>socks</sc> sur <code>localhost</code> écoutant le port 9050.</p>
 <p>J’ai eu cette information à partir de <a href="http://dltj.org/article/ssh-as-socks-proxy/">cet article</a>.</p>
@@ -50,7 +50,7 @@
 <p>J’ai posé cette question sur <a href="discussions.apple.com">Apple Discussions</a> dans ce <a href="http://discussions.apple.com/thread.jspa?messageID=10141032">fil de discussion</a>. Merci à tous ceux qui m’ont aidé. Et la solution est&nbsp;:</p>
 <p>Créer un fichier <tt>/Library/LaunchDaemons/ssh-443.plist</tt> contenant&nbsp;:</p>
 <div>
-<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span>
 <span class="dt">&lt;!DOCTYPE </span>plist PUBLIC &quot;-//Apple Computer//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;<span class="dt">&gt;</span>
 <span class="kw">&lt;plist</span><span class="ot"> version=</span><span class="st">&quot;1.0&quot;</span><span class="kw">&gt;</span>
 <span class="kw">&lt;dict&gt;</span>
@@ -83,7 +83,7 @@
         <span class="kw">&lt;key&gt;</span>SHAuthorizationRight<span class="kw">&lt;/key&gt;</span>
         <span class="kw">&lt;string&gt;</span>system.preferences<span class="kw">&lt;/string&gt;</span>
 <span class="kw">&lt;/dict&gt;</span>
-<span class="kw">&lt;/plist&gt;</span></code></pre>
+<span class="kw">&lt;/plist&gt;</span></code></pre></div>
 </div>
 <p>C’est une copie de <code>/System/Library/LaunchDaemons/ssh.plist</code> avec quelques modifications&nbsp;:</p>
 <ul>

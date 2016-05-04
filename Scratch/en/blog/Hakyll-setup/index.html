@@ -49,7 +49,7 @@
 <ol style="list-style-type: decimal">
 <li>I open an editor (vim in my case) and edit a markdown file. It looks like this</li>
 </ol>
-<pre class="sourceCode markdown"><code class="sourceCode markdown">A First Level Header
+<div class="sourceCode"><pre class="sourceCode markdown"><code class="sourceCode markdown">A First Level Header
 ====================
 
 A Second Level Header
@@ -67,7 +67,7 @@ Ask me the questions, bridgekeeper. I am not afraid.
 <span class="dt">&gt;</span>
 <span class="dt">&gt; This is the second paragraph in the blockquote.</span>
 <span class="dt">&gt;</span>
-<span class="dt">&gt; ## This is an H2 in a blockquote</span></code></pre>
+<span class="dt">&gt; ## This is an H2 in a blockquote</span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>I open a browser and reload time to time to see the change.</li>
 <li>Once I finished I’ve written a very minimal script which mainly do a <code>git push</code>. My blog is hosted on <a href="http://github.com">github</a>.</li>
@@ -97,44 +97,44 @@ Ask me the questions, bridgekeeper. I am not afraid.
 </ul>
 <p>First, let’s start with the simplest case: static files (images, fonts, etc…). Generally, you have a source directory (here is the current directory) and a destination directory <code>_site</code>.</p>
 <p>The Hakyll code is:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- for each file in the static directory</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- for each file in the static directory</span>
 match <span class="st">&quot;static/*&quot;</span> <span class="kw">do</span>
   <span class="co">-- don't change its name nor directory</span>
   route   idRoute
   <span class="co">-- don't change its content</span>
-  compile copyFileCompiler</code></pre>
+  compile copyFileCompiler</code></pre></div>
 <p>This program will copy <code>static/foo.jpg</code> to <code>_site/static/foo.jpg</code>. I concede this is a bit overkill for a simple <code>cp</code>. Now how to write a markdown file and generate an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> one?</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- for each file with md extension in the &quot;posts/&quot; directory</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- for each file with md extension in the &quot;posts/&quot; directory</span>
 match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
   <span class="co">-- change its extension to html</span>
   route <span class="fu">$</span> setExtension <span class="st">&quot;html&quot;</span>
   <span class="co">-- use pandoc library to compile the markdown content into html</span>
-  compile <span class="fu">$</span> pandocCompiler</code></pre>
+  compile <span class="fu">$</span> pandocCompiler</code></pre></div>
 <p>If you create a file <code>posts/foo.md</code>, it will create a file <code>_site/posts/foo.html</code>.</p>
 <p>If the file <code>posts/foo.md</code> contains</p>
-<pre class="sourceCode markdown"><code class="sourceCode markdown"><span class="fu"># Cthulhu</span>
+<div class="sourceCode"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span class="fu"># Cthulhu</span>
 
-ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn</code></pre>
+ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn</code></pre></div>
 <p>the file <code>_site/posts/foo.html</code>, will contain</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span>Cthulhu<span class="kw">&lt;/h1&gt;</span>
-<span class="kw">&lt;p&gt;</span>ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn<span class="kw">&lt;/p&gt;</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span>Cthulhu<span class="kw">&lt;/h1&gt;</span>
+<span class="kw">&lt;p&gt;</span>ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn<span class="kw">&lt;/p&gt;</span></code></pre></div>
 <p>But horror! <code>_site/posts/cthulhu.html</code> is not a complete <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> file. It doesn’t have any header nor footer, etc… This is where you use templates. I simply add a new directive in the compile block.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
   route <span class="fu">$</span> setExtension <span class="st">&quot;html&quot;</span>
   compile <span class="fu">$</span> pandocCompiler
     <span class="co">-- use the template with the current content</span>
-    <span class="highlight"><span class="fu">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/post.html&quot;</span> defaultContext</span></code></pre>
+    <span class="highlight"><span class="fu">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/post.html&quot;</span> defaultContext</span></code></pre></div>
 <p>Now if <code>templates/posts.html</code> contains:</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;html&gt;</span>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;html&gt;</span>
   <span class="kw">&lt;head&gt;</span>
     <span class="kw">&lt;title&gt;</span>How could I get the title?<span class="kw">&lt;/title&gt;</span>
   <span class="kw">&lt;/head&gt;</span>
   <span class="kw">&lt;body&gt;</span>
     <span class="highlight">$body$</span>
   <span class="kw">&lt;/body&gt;</span>
-<span class="kw">&lt;/html&gt;</span></code></pre>
+<span class="kw">&lt;/html&gt;</span></code></pre></div>
 <p>our <code>cthulhu.html</code> contains (indentation added for readability):</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;html&gt;</span>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;html&gt;</span>
   <span class="kw">&lt;head&gt;</span>
     <span class="kw">&lt;title&gt;</span>How could I get the title?<span class="kw">&lt;/title&gt;</span>
   <span class="kw">&lt;/head&gt;</span>
@@ -142,24 +142,24 @@ ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn</code></pre>
     <span class="highlight"><span class="kw">&lt;h1&gt;</span>Cthulhu<span class="kw">&lt;/h1&gt;</span></span>
     <span class="highlight"><span class="kw">&lt;p&gt;</span>ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn<span class="kw">&lt;/p&gt;</span></span>
   <span class="kw">&lt;/body&gt;</span>
-<span class="kw">&lt;/html&gt;</span></code></pre>
+<span class="kw">&lt;/html&gt;</span></code></pre></div>
 <p>See, it’s easy But we have a problem. How could we change the title or add keywords?</p>
 <p>The solution is to use <code>Context</code>s. For this, we first need to add some <em>metadatas</em> to our markdown<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>.</p>
-<pre class="sourceCode markdown"><code class="sourceCode markdown"><span class="highlight">--- </span>
+<div class="sourceCode"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span class="highlight">--- </span>
 <span class="highlight">title: Cthulhu</span>
 <span class="highlight">--- </span>
 <span class="fu"># Cthulhu</span>
 
-ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn</code></pre>
+ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn</code></pre></div>
 <p>And modify slightly our template:</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;html&gt;</span>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;html&gt;</span>
   <span class="kw">&lt;head&gt;</span>
     <span class="kw">&lt;title&gt;</span><span class="highlight">$title$</span><span class="kw">&lt;/title&gt;</span>
   <span class="kw">&lt;/head&gt;</span>
   <span class="kw">&lt;body&gt;</span>
     $body$
   <span class="kw">&lt;/body&gt;</span>
-<span class="kw">&lt;/html&gt;</span></code></pre>
+<span class="kw">&lt;/html&gt;</span></code></pre></div>
 <p>As Sir Robin said just before dying before the Bridge of Death:</p>
 <blockquote>
 <p><strong>“That’s EASY!”</strong></p>
@@ -179,18 +179,18 @@ ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn</code></pre>
 </ul>
 <h3 id="use-sass">Use SASS</h3>
 <p>That’s easy. Simply call the executable using <code>unixFilter</code>. Of course you’ll have to install SASS (<code>gem install sass</code>). And we also use compressCss to gain some space.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;css/*&quot;</span> <span class="fu">$</span> <span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;css/*&quot;</span> <span class="fu">$</span> <span class="kw">do</span>
     route   <span class="fu">$</span> setExtension <span class="st">&quot;css&quot;</span>
     compile <span class="fu">$</span> getResourceString <span class="fu">&gt;&gt;=</span>
               withItemBody (unixFilter <span class="st">&quot;sass&quot;</span> [<span class="st">&quot;--trace&quot;</span>]) <span class="fu">&gt;&gt;=</span>
-              return <span class="fu">.</span> fmap compressCss</code></pre>
+              return <span class="fu">.</span> fmap compressCss</code></pre></div>
 <h3 id="add-keywords">Add keywords</h3>
 <p>In order to help to reference your website on the web, it is nice to add some keywords as meta datas to your <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> page.</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;meta</span><span class="ot"> name=</span><span class="st">&quot;keywords&quot;</span>
-<span class="ot">      content=</span><span class="st">&quot;Cthulhu, Yog-Sothoth, Shub-Niggurath&quot;</span><span class="kw">&gt;</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;meta</span><span class="ot"> name=</span><span class="st">&quot;keywords&quot;</span>
+<span class="ot">      content=</span><span class="st">&quot;Cthulhu, Yog-Sothoth, Shub-Niggurath&quot;</span><span class="kw">&gt;</span></code></pre></div>
 <p>In order to add keywords, we could not directly use the markdown metadatas. Because, without any, there should be any meta tag in the <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span>.</p>
 <p>An easy answer is to create a <code>Context</code> that will contains the meta tag.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- metaKeywordContext will return a Context containing a String</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- metaKeywordContext will return a Context containing a String</span>
 <span class="ot">metaKeywordContext ::</span> <span class="dt">Context</span> <span class="dt">String</span>
 <span class="co">-- can be reached using $metaKeywords$ in the templates</span>
 <span class="co">-- Use the current item (markdown file)</span>
@@ -204,17 +204,17 @@ metaKeywordContext <span class="fu">=</span> field <span class="st">&quot;metaKe
   return <span class="fu">$</span> maybe <span class="st">&quot;&quot;</span> showMetaTags tags
     <span class="kw">where</span>
       showMetaTags t <span class="fu">=</span> <span class="st">&quot;&lt;meta name=\&quot;keywords\&quot; content=\&quot;&quot;</span>
-                       <span class="fu">++</span> t <span class="fu">++</span> <span class="st">&quot;\&quot;&gt;\n&quot;</span></code></pre>
+                       <span class="fu">++</span> t <span class="fu">++</span> <span class="st">&quot;\&quot;&gt;\n&quot;</span></code></pre></div>
 <p>Then we pass this <code>Context</code> to the <code>loadAndApplyTemplate</code> function:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
   route <span class="fu">$</span> setExtension <span class="st">&quot;html&quot;</span>
   compile <span class="fu">$</span> pandocCompiler
     <span class="co">-- use the template with the current content</span>
     <span class="fu">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/post.html&quot;</span>
-            (defaultContext <span class="highlight"><span class="fu">&lt;&gt;</span> metaKeywordContext</span>)</code></pre>
+            (defaultContext <span class="highlight"><span class="fu">&lt;&gt;</span> metaKeywordContext</span>)</code></pre></div>
 <blockquote>
 <p>☞ Here are the imports I use for this tutorial.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span>
 <span class="kw">import           </span><span class="dt">Control.Monad</span>          (forM,forM_)
 <span class="kw">import           </span><span class="dt">Data.List</span>              (sortBy,isInfixOf)
 <span class="kw">import           </span><span class="dt">Data.Monoid</span>            ((&lt;&gt;),mconcat)
@@ -222,23 +222,23 @@ metaKeywordContext <span class="fu">=</span> field <span class="st">&quot;metaKe
 <span class="kw">import           </span><span class="dt">Hakyll</span>
 <span class="kw">import           </span><span class="dt">System.Locale</span>          (defaultTimeLocale)
 <span class="kw">import           </span><span class="dt">System.FilePath.Posix</span>  (takeBaseName,takeDirectory
-                                         ,(<span class="fu">&lt;/&gt;</span>),splitFileName)</code></pre>
+                                         ,(<span class="fu">&lt;/&gt;</span>),splitFileName)</code></pre></div>
 </blockquote>
 <h3 id="simplify-url">Simplify <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span></h3>
 <p>What I mean is to use url of the form:</p>
 <pre><code>http://domain.name/post/title-of-the-post/</code></pre>
 <p>I prefer this than having to add file with <code>.html</code> extension. We have to change the default Hakyll route behavior. We create another function <code>niceRoute</code>.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- replace a foo/bar.md by foo/bar/index.html</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- replace a foo/bar.md by foo/bar/index.html</span>
 <span class="co">-- this way the url looks like: foo/bar in most browsers</span>
 <span class="ot">niceRoute ::</span> <span class="dt">Routes</span>
 niceRoute <span class="fu">=</span> customRoute createIndexRoute
   <span class="kw">where</span>
     createIndexRoute ident <span class="fu">=</span>
         takeDirectory p <span class="fu">&lt;/&gt;</span> takeBaseName p <span class="fu">&lt;/&gt;</span> <span class="st">&quot;index.html&quot;</span>
-    <span class="kw">where</span> p<span class="fu">=</span>toFilePath ident</code></pre>
+    <span class="kw">where</span> p<span class="fu">=</span>toFilePath ident</code></pre></div>
 <p>Not too difficult. But! There might be a problem. What if there is a <code>foo/index.html</code> link instead of a clean <code>foo/</code> in some content?</p>
 <p>Very simple, we simply remove all <code>/index.html</code> to all our links.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- replace url of the form foo/bar/index.html by foo/bar</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- replace url of the form foo/bar/index.html by foo/bar</span>
 <span class="ot">removeIndexHtml ::</span> <span class="dt">Item</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Compiler</span> (<span class="dt">Item</span> <span class="dt">String</span>)
 removeIndexHtml item <span class="fu">=</span> return <span class="fu">$</span> fmap (withUrls removeIndexStr) item
   <span class="kw">where</span>
@@ -246,41 +246,41 @@ removeIndexHtml item <span class="fu">=</span> return <span class="fu">$</span> 
     removeIndexStr url <span class="fu">=</span> <span class="kw">case</span> splitFileName url <span class="kw">of</span>
         (dir, <span class="st">&quot;index.html&quot;</span>) <span class="fu">|</span> isLocal dir <span class="ot">-&gt;</span> dir
         _                                 <span class="ot">-&gt;</span> url
-        <span class="kw">where</span> isLocal uri <span class="fu">=</span> not (isInfixOf <span class="st">&quot;://&quot;</span> uri)</code></pre>
+        <span class="kw">where</span> isLocal uri <span class="fu">=</span> not (isInfixOf <span class="st">&quot;://&quot;</span> uri)</code></pre></div>
 <p>And we apply this filter at the end of our compilation</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
   <span class="highlight">route <span class="fu">$</span> niceRoute</span>
   compile <span class="fu">$</span> pandocCompiler
     <span class="co">-- use the template with the current content</span>
     <span class="fu">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/post.html&quot;</span> defaultContext
-    <span class="highlight"><span class="fu">&gt;&gt;=</span> removeIndexHtml</span></code></pre>
+    <span class="highlight"><span class="fu">&gt;&gt;=</span> removeIndexHtml</span></code></pre></div>
 <h3 id="create-an-archive-page">Create an archive page</h3>
 <p>Creating an archive start to be difficult. There is an example in the default Hakyll example. Unfortunately, it assumes all posts prefix their name with a date like in <code>2013-03-20-My-New-Post.md</code>.</p>
 <p>I migrated from an older blog and didn’t want to change my <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span>. Also I prefer not to use any filename convention. Therefore, I add the date information in the metadata <code>published</code>. And the solution is here:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;archive.md&quot;</span> <span class="fu">$</span> <span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;archive.md&quot;</span> <span class="fu">$</span> <span class="kw">do</span>
   route <span class="fu">$</span> niceRoute
   compile <span class="fu">$</span> <span class="kw">do</span>
     body <span class="ot">&lt;-</span> getResourceBody
     return <span class="fu">$</span> renderPandoc body
       <span class="highlight"><span class="fu">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/archive.html&quot;</span> archiveCtx</span>
       <span class="fu">&gt;&gt;=</span> loadAndApplyTemplate <span class="highlight"><span class="st">&quot;templates/base.html&quot;</span></span> defaultContext
-      <span class="fu">&gt;&gt;=</span> removeIndexHtml</code></pre>
+      <span class="fu">&gt;&gt;=</span> removeIndexHtml</code></pre></div>
 <p>Where <code>templates/archive.html</code> contains</p>
-<pre class="sourceCode html"><code class="sourceCode html">$body$
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html">$body$
 
 <span class="kw">&lt;ul&gt;</span>
     $posts$
-<span class="kw">&lt;/ul&gt;</span></code></pre>
+<span class="kw">&lt;/ul&gt;</span></code></pre></div>
 <p>And <code>base.html</code> is a standard template (simpler than <code>post.html</code>).</p>
 <p><code>archiveCtx</code> provide a context containing an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> representation of a list of posts in the metadata named <code>posts</code>. It will be used in the <code>templates/archive.html</code> file with <code>$posts$</code>.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">archiveCtx <span class="fu">=</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">archiveCtx <span class="fu">=</span>
   defaultContext <span class="fu">&lt;&gt;</span>
   metaKeywordContext <span class="fu">&lt;&gt;</span>
-  <span class="highlight">field <span class="st">&quot;posts&quot;</span> (\_ <span class="ot">-&gt;</span> postList createdFirst)</span></code></pre>
+  <span class="highlight">field <span class="st">&quot;posts&quot;</span> (\_ <span class="ot">-&gt;</span> postList createdFirst)</span></code></pre></div>
 <p><code>postList</code> returns an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> representation of a list of posts given an Item sort function. The representation will apply a minimal template on all posts. Then it concatenate all the results. The template is <code>post-item.html</code>:</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;li&gt;&lt;a</span><span class="ot"> href=</span><span class="st">&quot;$url$&quot;</span><span class="kw">&gt;</span>$published$ - $title$<span class="kw">&lt;/a&gt;&lt;/li&gt;</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;li&gt;&lt;a</span><span class="ot"> href=</span><span class="st">&quot;$url$&quot;</span><span class="kw">&gt;</span>$published$ - $title$<span class="kw">&lt;/a&gt;&lt;/li&gt;</span></code></pre></div>
 <p>Here is how it is done:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">postList ::</span> [<span class="dt">Item</span> <span class="dt">String</span>] <span class="ot">-&gt;</span> <span class="dt">Compiler</span> [<span class="dt">Item</span> <span class="dt">String</span>]
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">postList ::</span> [<span class="dt">Item</span> <span class="dt">String</span>] <span class="ot">-&gt;</span> <span class="dt">Compiler</span> [<span class="dt">Item</span> <span class="dt">String</span>]
             <span class="ot">-&gt;</span> <span class="dt">Compiler</span> <span class="dt">String</span>
 postList sortFilter <span class="fu">=</span> <span class="kw">do</span>
     <span class="co">-- sorted posts</span>
@@ -290,9 +290,9 @@ postList sortFilter <span class="fu">=</span> <span class="kw">do</span>
     <span class="co">-- and we concatenate the result.</span>
     <span class="co">-- list is a string</span>
     list    <span class="ot">&lt;-</span> applyTemplateList itemTpl defaultContext posts
-    return list</code></pre>
+    return list</code></pre></div>
 <p><code>createdFirst</code> sort a list of item and put it inside <code>Compiler</code> context. We need to be in the <code>Compiler</code> context to access metadatas.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">createdFirst ::</span> [<span class="dt">Item</span> <span class="dt">String</span>] <span class="ot">-&gt;</span> <span class="dt">Compiler</span> [<span class="dt">Item</span> <span class="dt">String</span>]
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">createdFirst ::</span> [<span class="dt">Item</span> <span class="dt">String</span>] <span class="ot">-&gt;</span> <span class="dt">Compiler</span> [<span class="dt">Item</span> <span class="dt">String</span>]
 createdFirst items <span class="fu">=</span> <span class="kw">do</span>
   <span class="co">-- itemsWithTime is a list of couple (date,item)</span>
   itemsWithTime <span class="ot">&lt;-</span> forM items <span class="fu">$</span> \item <span class="ot">-&gt;</span> <span class="kw">do</span>
@@ -301,7 +301,7 @@ createdFirst items <span class="fu">=</span> <span class="kw">do</span>
     utc <span class="ot">&lt;-</span> getItemUTC defaultTimeLocale <span class="fu">$</span> itemIdentifier item
     return (utc,item)
   <span class="co">-- we return a sorted item list</span>
-  return <span class="fu">$</span> map snd <span class="fu">$</span> reverse <span class="fu">$</span> sortBy (comparing fst) itemsWithTime</code></pre>
+  return <span class="fu">$</span> map snd <span class="fu">$</span> reverse <span class="fu">$</span> sortBy (comparing fst) itemsWithTime</code></pre></div>
 <p>It wasn’t so easy. But it works pretty well.</p>
 <h3 id="create-an-rss-feed">Create an <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span> feed</h3>
 <p>To create an <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span> feed, we have to:</p>
@@ -311,14 +311,14 @@ createdFirst items <span class="fu">=</span> <span class="kw">do</span>
 </ul>
 <p>We could then render the posts twice. One for <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> rendering and another time for <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span>. Remark we need to generate the <span class="sc"><abbr title="Rich Site Summary">rss</abbr></span> version to create the <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> one.</p>
 <p>One of the great feature of Hakyll is to be able to save snapshots. Here is how:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">match <span class="st">&quot;posts/*.md&quot;</span> <span class="kw">do</span>
   route <span class="fu">$</span> setExtension <span class="st">&quot;html&quot;</span>
   compile <span class="fu">$</span> pandocCompiler
     <span class="co">-- save a snapshot to be used later in rss generation</span>
     <span class="highlight"><span class="fu">&gt;&gt;=</span> saveSnapshot <span class="st">&quot;content&quot;</span></span>
-    <span class="fu">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/post.html&quot;</span> defaultContext</code></pre>
+    <span class="fu">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/post.html&quot;</span> defaultContext</code></pre></div>
 <p>Now for each post there is a snapshot named “content” associated. The snapshots are created before applying a template and after applying pandoc. Furthermore feed don’t need a source markdown file. Then we create a new file from no one. Instead of using <code>match</code>, we use <code>create</code>:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">create [<span class="st">&quot;feed.xml&quot;</span>] <span class="fu">$</span> <span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">create [<span class="st">&quot;feed.xml&quot;</span>] <span class="fu">$</span> <span class="kw">do</span>
       route idRoute
       compile <span class="fu">$</span> <span class="kw">do</span>
         <span class="co">-- load all &quot;content&quot; snapshots of all posts</span>
@@ -331,22 +331,22 @@ createdFirst items <span class="fu">=</span> <span class="kw">do</span>
 <span class="ot">        feedCtx ::</span> <span class="dt">Context</span> <span class="dt">String</span>
         feedCtx <span class="fu">=</span>  defaultContext <span class="fu">&lt;&gt;</span>
                    <span class="co">-- $description$ will render as the post body</span>
-                   <span class="highlight">bodyField <span class="st">&quot;description&quot;</span></span></code></pre>
+                   <span class="highlight">bodyField <span class="st">&quot;description&quot;</span></span></code></pre></div>
 <p>The <code>feedConfiguration</code> contains some general informations about the feed.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">feedConfiguration ::</span> <span class="dt">FeedConfiguration</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">feedConfiguration ::</span> <span class="dt">FeedConfiguration</span>
 feedConfiguration <span class="fu">=</span> <span class="dt">FeedConfiguration</span>
   { feedTitle <span class="fu">=</span> <span class="st">&quot;Great Old Ones&quot;</span>
   , feedDescription <span class="fu">=</span> <span class="st">&quot;This feed provide information about Great Old Ones&quot;</span>
   , feedAuthorName <span class="fu">=</span> <span class="st">&quot;Abdul Alhazred&quot;</span>
   , feedAuthorEmail <span class="fu">=</span> <span class="st">&quot;abdul.alhazred@great-old-ones.com&quot;</span>
   , feedRoot <span class="fu">=</span> <span class="st">&quot;http://great-old-ones.com&quot;</span>
-  }</code></pre>
+  }</code></pre></div>
 <p>Great idea certainly steal from <a href="http://nanoc.ws">nanoc</a> (my previous blog engine)!</p>
 <h3 id="filter-the-content">Filter the content</h3>
 <p>As I just said, <a href="http://nanoc.ws">nanoc</a> was my preceding blog engine. It is written in Ruby and as Hakyll, it is quite awesome. And one thing Ruby does more naturally than Haskell is regular expressions. I had a <em>lot</em> of filters in nanoc. I lost some because I don’t use them much. But I wanted to keep some. Generally, filtering the content is just a way to apply to the body a function of type <code>String -&gt; String</code>.</p>
 <p>Also we generally want prefilters (to filter the markdown) and postfilters (to filter the <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> after the pandoc compilation).</p>
 <p>Here is how I do it:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">markdownPostBehavior <span class="fu">=</span> <span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">markdownPostBehavior <span class="fu">=</span> <span class="kw">do</span>
   route <span class="fu">$</span> niceRoute
   compile <span class="fu">$</span> <span class="kw">do</span>
     body <span class="ot">&lt;-</span> getResourceBody
@@ -357,16 +357,16 @@ feedConfiguration <span class="fu">=</span> <span class="dt">FeedConfiguration</
     <span class="fu">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/post.html&quot;</span>    yContext
     <span class="fu">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/boilerplate.html&quot;</span> yContext
     <span class="fu">&gt;&gt;=</span> relativizeUrls
-    <span class="fu">&gt;&gt;=</span> removeIndexHtml</code></pre>
+    <span class="fu">&gt;&gt;=</span> removeIndexHtml</code></pre></div>
 <p>Where</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">applyFilter strfilter str <span class="fu">=</span> return <span class="fu">$</span> (fmap <span class="fu">$</span> strfilter) str
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">applyFilter strfilter str <span class="fu">=</span> return <span class="fu">$</span> (fmap <span class="fu">$</span> strfilter) str
 <span class="ot">preFilters ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span>
-<span class="ot">postFilters ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span></code></pre>
+<span class="ot">postFilters ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span></code></pre></div>
 <p>Now we have a simple way to filter the content. Let’s augment the markdown ability.</p>
 <h3 id="add-abbreviations-support">Add abbreviations support</h3>
 <p>Comparing to <span style="text-transform: uppercase">L<sup style="vertical-align: 0.15em; margin-left: -0.36em; margin-right: -0.15em; font-size: .85em">a</sup>T<sub style="vertical-align: -0.5ex; margin-left: -0.1667em; margin-right: -0.125em; font-size: 1em">e</sub>X</span>, a very annoying markdown limitation is the lack of abbreviations.</p>
 <p>Fortunately we can filter our content. And here is the filter I use:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">abbreviationFilter ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">abbreviationFilter ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span>
 abbreviationFilter <span class="fu">=</span> replaceAll <span class="st">&quot;%[a-zA-Z0-9_]*&quot;</span> newnaming
   <span class="kw">where</span>
     newnaming matched <span class="fu">=</span> <span class="kw">case</span> M.lookup (tail matched) abbreviations <span class="kw">of</span>
@@ -378,18 +378,18 @@ abbreviations <span class="fu">=</span> M.fromList
     , (<span class="st">&quot;css&quot;</span>, <span class="st">&quot;&lt;span class=\&quot;sc\&quot;&gt;css&lt;/span&gt;&quot;</span>)
     , (<span class="st">&quot;svg&quot;</span>, <span class="st">&quot;&lt;span class=\&quot;sc\&quot;&gt;svg&lt;/span&gt;&quot;</span>)
     , (<span class="st">&quot;xml&quot;</span>, <span class="st">&quot;&lt;span class=\&quot;sc\&quot;&gt;xml&lt;/span&gt;&quot;</span>)
-    , (<span class="st">&quot;xslt&quot;</span>, <span class="st">&quot;&lt;span class=\&quot;sc\&quot;&gt;xslt&lt;/span&gt;&quot;</span>) ]</code></pre>
+    , (<span class="st">&quot;xslt&quot;</span>, <span class="st">&quot;&lt;span class=\&quot;sc\&quot;&gt;xslt&lt;/span&gt;&quot;</span>) ]</code></pre></div>
 <p>It will search for all string starting by ‘%’ and it will search in the <code>Map</code> if there is a corresponding abbreviation. If there is one, we replace the content. Otherwise we do nothing.</p>
 <p>Do you really believe I type</p>
-<pre class="sourceCode html wrap"><code class="sourceCode html"><span class="kw">&lt;span</span><span class="ot"> style=</span><span class="st">&quot;text-transform: uppercase&quot;</span><span class="kw">&gt;</span>L<span class="kw">&lt;sup</span><span class="ot"> style=</span><span class="st">&quot;vertical-align: 0.15em; margin-left: -0.36em; margin-right: -0.15em; font-size: .85em&quot;</span><span class="kw">&gt;</span>a<span class="kw">&lt;/sup&gt;</span>T<span class="kw">&lt;sub</span><span class="ot"> style=</span><span class="st">&quot;vertical-align: -0.5ex; margin-left: -0.1667em; margin-right: -0.125em; font-size: 1em&quot;</span><span class="kw">&gt;</span>e<span class="kw">&lt;/sub&gt;</span>X<span class="kw">&lt;/span&gt;</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode html wrap"><code class="sourceCode html"><span class="kw">&lt;span</span><span class="ot"> style=</span><span class="st">&quot;text-transform: uppercase&quot;</span><span class="kw">&gt;</span>L<span class="kw">&lt;sup</span><span class="ot"> style=</span><span class="st">&quot;vertical-align: 0.15em; margin-left: -0.36em; margin-right: -0.15em; font-size: .85em&quot;</span><span class="kw">&gt;</span>a<span class="kw">&lt;/sup&gt;</span>T<span class="kw">&lt;sub</span><span class="ot"> style=</span><span class="st">&quot;vertical-align: -0.5ex; margin-left: -0.1667em; margin-right: -0.125em; font-size: 1em&quot;</span><span class="kw">&gt;</span>e<span class="kw">&lt;/sub&gt;</span>X<span class="kw">&lt;/span&gt;</span></code></pre></div>
 <p>each time I write <span style="text-transform: uppercase">L<sup style="vertical-align: 0.15em; margin-left: -0.36em; margin-right: -0.15em; font-size: .85em">a</sup>T<sub style="vertical-align: -0.5ex; margin-left: -0.1667em; margin-right: -0.125em; font-size: 1em">e</sub>X</span>?</p>
 <h3 id="manage-two-languages">Manage two languages</h3>
 <p>Generally I write my post in English and French. And this is more difficult than it appears. For example, I need to filter the language in order to get the right list of posts. I also use some words in the templates and I want them to be translated.</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;$otherLanguagePath$&quot;</span>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;$otherLanguagePath$&quot;</span>
 <span class="ot">	onclick=</span><span class="st">&quot;setLanguage('$otherlanguage$')&quot;</span><span class="kw">&gt;</span>
-	<span class="highlight">$changeLanguage$</span> <span class="kw">&lt;/a&gt;</span></code></pre>
+	<span class="highlight">$changeLanguage$</span> <span class="kw">&lt;/a&gt;</span></code></pre></div>
 <p>First I create a Map containing all translations.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Trad</span> <span class="fu">=</span> <span class="dt">Trad</span> {<span class="ot"> frTrad ::</span> <span class="dt">String</span>,<span class="ot"> enTrad ::</span> <span class="dt">String</span> }
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Trad</span> <span class="fu">=</span> <span class="dt">Trad</span> {<span class="ot"> frTrad ::</span> <span class="dt">String</span>,<span class="ot"> enTrad ::</span> <span class="dt">String</span> }
 
 <span class="ot">trads ::</span> <span class="dt">Map</span> <span class="dt">String</span> <span class="dt">Trad</span>
 trads <span class="fu">=</span> M.fromList <span class="fu">$</span> map toTrad [
@@ -405,9 +405,9 @@ trads <span class="fu">=</span> M.fromList <span class="fu">$</span> map toTrad 
   ]
   <span class="kw">where</span>
     toTrad (key,(french,english)) <span class="fu">=</span>
-      (key, <span class="dt">Trad</span> { frTrad <span class="fu">=</span> french , enTrad <span class="fu">=</span> english })</code></pre>
+      (key, <span class="dt">Trad</span> { frTrad <span class="fu">=</span> french , enTrad <span class="fu">=</span> english })</code></pre></div>
 <p>Then I create a context for all key:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">tradsContext ::</span> <span class="dt">Context</span> a
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">tradsContext ::</span> <span class="dt">Context</span> a
 tradsContext <span class="fu">=</span> mconcat (map addTrad (M.keys trads))
   <span class="kw">where</span>
 <span class="ot">    addTrad ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Context</span> a
@@ -418,7 +418,7 @@ tradsContext <span class="fu">=</span> mconcat (map addTrad (M.keys trads))
               <span class="dt">Just</span> (<span class="dt">Trad</span> lmap) <span class="ot">-&gt;</span> <span class="kw">case</span> M.lookup (<span class="dt">L</span> lang) lmap <span class="kw">of</span>
                           <span class="dt">Just</span> tr <span class="ot">-&gt;</span> return tr
                           <span class="dt">Nothing</span> <span class="ot">-&gt;</span> return (<span class="st">&quot;NO TRANSLATION FOR &quot;</span> <span class="fu">++</span> name)
-              <span class="dt">Nothing</span> <span class="ot">-&gt;</span> return (<span class="st">&quot;NO TRANSLATION FOR &quot;</span> <span class="fu">++</span> name)</code></pre>
+              <span class="dt">Nothing</span> <span class="ot">-&gt;</span> return (<span class="st">&quot;NO TRANSLATION FOR &quot;</span> <span class="fu">++</span> name)</code></pre></div>
 <h2 id="conclusion">Conclusion</h2>
 <p>The full code is <a href="http://github.com/yogsototh/yblog.git">here</a>. And except from the main file, I use literate Haskell. This way the code should be easier to understand.</p>
 <p>If you want to know why I switched from nanoc:</p>
@@ -432,20 +432,20 @@ tradsContext <span class="fu">=</span> mconcat (map addTrad (M.keys trads))
 <p>So far I am very happy with the switch. A complete build is about 4x faster. I didn’t broke the dependency system this time. As soon as I modify and save the markdown source, I can reload the page in the browser.</p>
 <p>I removed a lot of feature thought. Some of them will be difficult to achieve with Hakyll. A typical example:</p>
 <p>In nanoc I could take a file like this as source:</p>
-<pre class="sourceCode markdown"><code class="sourceCode markdown"><span class="fu"># Title</span>
+<div class="sourceCode"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span class="fu"># Title</span>
 
 content
 
 &lt;code file=&quot;foo.hs&quot;&gt;
 main = putStrLn &quot;Cthulhu!&quot;
-&lt;/code&gt;</code></pre>
+&lt;/code&gt;</code></pre></div>
 <p>And it will create a file <code>foo.hs</code> which could then be downloaded.</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span>Title<span class="kw">&lt;/h1&gt;</span>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span>Title<span class="kw">&lt;/h1&gt;</span>
 
 <span class="kw">&lt;p&gt;</span>content<span class="kw">&lt;/p&gt;</span>
 
 <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;code/foo.hs&quot;</span><span class="kw">&gt;</span>Download foo.hs<span class="kw">&lt;/a&gt;</span>
-<span class="kw">&lt;pre&gt;&lt;code&gt;</span>main = putStrLn &quot;Cthulhu!&quot;<span class="kw">&lt;/code&gt;&lt;/pre&gt;</span></code></pre>
+<span class="kw">&lt;pre&gt;&lt;code&gt;</span>main = putStrLn &quot;Cthulhu!&quot;<span class="kw">&lt;/code&gt;&lt;/pre&gt;</span></code></pre></div>
 <div class="footnotes">
 <hr />
 <ol>

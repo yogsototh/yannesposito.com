@@ -171,34 +171,34 @@ Ne soyez pas effrayés!
 </div>
 <p>Beaucoup de livres/articles sur Haskell commencent par présenter des formules ésotériques (Algorithmes de tri rapide, suite de Fibonacci, etc…). Je ferai l’exact opposé En premier lieu je ne vous montrerai pas les super-pouvoirs d’Haskell. Je vais commencer par les similarités avec les autres langages de programmation. Commençons par l’indispensable “Hello World!”.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> putStrLn <span class="st">&quot;Hello World!&quot;</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> putStrLn <span class="st">&quot;Hello World!&quot;</span></code></pre></div>
 </div>
 <p>Pour l’exécuter, vous pouvez enregistrer ce code dans un fichier <code>hell.hs</code> et:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">~ runhaskell ./hello.hs
-Hello World!</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">~ runhaskell ./hello.hs
+Hello World!</code></pre></div>
 <p>Vous pouvez également télécharger la source Haskell littérale. Vous devriez voir un lien juste au dessus du titre de l’introduction. Téléchargez ce fichier en tant que <code>00_hello_world.lhs</code> et:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">~ runhaskell 00_hello_world.lhs
-Hello World!</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">~ runhaskell 00_hello_world.lhs
+Hello World!</code></pre></div>
 <p><a href="code/01_basic/10_Introduction/00_hello_world.lhs" class="cut">01_basic/10_Introduction/<strong>00_hello_world.lhs</strong> </a></p>
 <hr />
 <p><a href="code/01_basic/10_Introduction/10_hello_you.lhs" class="cut">01_basic/10_Introduction/<strong>10_hello_you.lhs</strong></a></p>
 <p>Maintenant, un programme qui demande votre nom et répond “Hello” suivit du nom que vous avez entré:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span>
     print <span class="st">&quot;What is your name?&quot;</span>
     name <span class="ot">&lt;-</span> getLine
-    print (<span class="st">&quot;Hello &quot;</span> <span class="fu">++</span> name <span class="fu">++</span> <span class="st">&quot;!&quot;</span>)</code></pre>
+    print (<span class="st">&quot;Hello &quot;</span> <span class="fu">++</span> name <span class="fu">++</span> <span class="st">&quot;!&quot;</span>)</code></pre></div>
 </div>
 <p>Premièrement, comparons ce code avec ceux de quelques langages de programmation impératif:</p>
-<pre class="sourceCode python"><code class="sourceCode python"><span class="co"># Python</span>
-<span class="dt">print</span> <span class="st">&quot;What is your name?&quot;</span>
-name = <span class="dt">raw_input</span>()
-<span class="dt">print</span> <span class="st">&quot;Hello </span><span class="ot">%s</span><span class="st">!&quot;</span> % name</code></pre>
-<pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># Ruby</span>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># Python</span>
+<span class="bu">print</span> <span class="st">&quot;What is your name?&quot;</span>
+name <span class="op">=</span> <span class="bu">raw_input</span>()
+<span class="bu">print</span> <span class="st">&quot;Hello </span><span class="sc">%s</span><span class="st">!&quot;</span> <span class="op">%</span> name</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># Ruby</span>
 puts <span class="st">&quot;What is your name?&quot;</span>
 name = gets.chomp
-puts <span class="st">&quot;Hello </span><span class="ot">#{</span>name<span class="ot">}</span><span class="st">!&quot;</span></code></pre>
-<pre class="sourceCode c"><code class="sourceCode c"><span class="co">// In C</span>
+puts <span class="st">&quot;Hello </span><span class="ot">#{</span>name<span class="ot">}</span><span class="st">!&quot;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="co">// In C</span>
 <span class="ot">#include &lt;stdio.h&gt;</span>
 <span class="dt">int</span> main (<span class="dt">int</span> argc, <span class="dt">char</span> **argv) {
     <span class="dt">char</span> name[<span class="dv">666</span>]; <span class="co">// &lt;- An Evil Number!</span>
@@ -207,7 +207,7 @@ puts <span class="st">&quot;Hello </span><span class="ot">#{</span>name<span cla
     scanf(<span class="st">&quot;%s&quot;</span>, name);
     printf(<span class="st">&quot;Hello %s!</span><span class="ch">\n</span><span class="st">&quot;</span>, name);
     <span class="kw">return</span> <span class="dv">0</span>;
-}</code></pre>
+}</code></pre></div>
 <p>La structure est la même, mais il y a quelques différences de syntaxe. La partie principale de ce tutoriel sera consacrée à expliquer cela.</p>
 <p>En Haskell il y a une fonction <code>main</code> tous les objets ont un type. Le type de <code>main</code> est <code>IO ()</code>. Cela veut dire que <code>main</code> causera des effets secondaires.</p>
 <p>Rappelez-vous just que Haskell peut ressembler énormément aux principaux langages impératifs.</p>
@@ -239,25 +239,25 @@ Déclaration de fonctions
 </h4>
 <p>Vous avez déjà dû déclarer des fonctions comme cela:</p>
 <p>En <code>C</code>:</p>
-<pre class="sourceCode c"><code class="sourceCode c"><span class="dt">int</span> f(<span class="dt">int</span> x, <span class="dt">int</span> y) {
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="dt">int</span> f(<span class="dt">int</span> x, <span class="dt">int</span> y) {
     <span class="kw">return</span> x*x + y*y;
-}</code></pre>
+}</code></pre></div>
 <p>En JavaScript:</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="fu">f</span>(x,y) {
-    <span class="kw">return</span> x*x + y*y;
-}</code></pre>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">f</span>(x<span class="op">,</span>y) <span class="op">{</span>
+    <span class="cf">return</span> x<span class="op">*</span>x <span class="op">+</span> y<span class="op">*</span>y<span class="op">;</span>
+<span class="op">}</span></code></pre></div>
 <p>En Python:</p>
-<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> f(x,y):
-    <span class="kw">return</span> x*x + y*y</code></pre>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> f(x,y):
+    <span class="cf">return</span> x<span class="op">*</span>x <span class="op">+</span> y<span class="op">*</span>y</code></pre></div>
 <p>En Ruby:</p>
-<pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="kw">def</span> f(x,y)
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="kw">def</span> f(x,y)
     x*x + y*y
-<span class="kw">end</span></code></pre>
+<span class="kw">end</span></code></pre></div>
 <p>En Scheme:</p>
-<pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">define</span><span class="fu"> </span>(f x y)
-    (<span class="kw">+</span> (* x x) (* y y)))</code></pre>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">define</span><span class="fu"> </span>(f x y)
+    (<span class="kw">+</span> (* x x) (* y y)))</code></pre></div>
 <p>Finalement, la manière de faire de Haskell est:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y</code></pre></div>
 <p>Très propre. Aucune parenthèse, aucun <code>def</code>.</p>
 <p>N’oubliez pas, Haskell utilise beaucoup les fonctions et les types. C’est très facile de les définir. La syntaxe a été particulièrement réfléchie pour ces objets.</p>
 <h4 id="a-type-example">
@@ -266,10 +266,10 @@ Un exemple de type
 <p>Même si ce n’est pas obligatoire, les informations de type pour les fonctions sont habituellement déclarées explicitement. Ce n’est pas indispensable car le compilateur est suffisamment intelligent pour le déduire à votre place. Cependant, c’est une bonne idée car cela montre bien l’intention du développeur et facilite la compréhension.</p>
 <p>Jouons un peu. On déclare le type en utilisant <code>::</code></p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot"> f ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot"> f ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
  f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
 
- main <span class="fu">=</span> print (f <span class="dv">2</span> <span class="dv">3</span>)</code></pre>
+ main <span class="fu">=</span> print (f <span class="dv">2</span> <span class="dv">3</span>)</code></pre></div>
 </div>
 <pre><code>~ runhaskell 20_very_basic.lhs
 13</code></pre>
@@ -278,10 +278,10 @@ Un exemple de type
 <p><a href="code/01_basic/10_Introduction/21_very_basic.lhs" class="cut">01_basic/10_Introduction/<strong>21_very_basic.lhs</strong></a></p>
 <p>Maintenant essayez</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
 f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
 
-main <span class="fu">=</span> print (f <span class="fl">2.3</span> <span class="fl">4.2</span>)</code></pre>
+main <span class="fu">=</span> print (f <span class="fl">2.3</span> <span class="fl">4.2</span>)</code></pre></div>
 </div>
 <p>Vous devriez avoir cette erreur:</p>
 <pre><code>21_very_basic.lhs:6:23:
@@ -297,9 +297,9 @@ main <span class="fu">=</span> print (f <span class="fl">2.3</span> <span class=
 <p><a href="code/01_basic/10_Introduction/22_very_basic.lhs" class="cut">01_basic/10_Introduction/<strong>22_very_basic.lhs</strong></a></p>
 <p>La soulution: ne déclarez pas de type pour <code>f</code> pour le moment et laissez Haskell inférer le type le plus général pour nous:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
 
-main <span class="fu">=</span> print (f <span class="fl">2.3</span> <span class="fl">4.2</span>)</code></pre>
+main <span class="fu">=</span> print (f <span class="fl">2.3</span> <span class="fl">4.2</span>)</code></pre></div>
 </div>
 <p>Maintenant, ça marche! Heureursement, nous n’avons pas à déclarer un nouvelle fonction pour chaque type différent. Par exemple, en <code>C</code>, vous auriez dû déclarer un fonction pour <code>int</code>, pour <code>float</code>, pour <code>long</code>, pour <code>double</code>, etc…</p>
 <p>Mais quel type devons nous déclarer? Pour découvrir le type que Haskell a trouvé pour nous, lançons ghci:</p>
@@ -380,10 +380,10 @@ g y ⇔ 3*3 + y*y</code></pre>
 <p><a href="code/01_basic/10_Introduction/23_very_basic.lhs" class="cut">01_basic/10_Introduction/<strong>23_very_basic.lhs</strong></a></p>
 <p>Mais juste avant cela, nous devrions vérifier que le système de type marche comme nous le supposons:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">Num</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> a
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">Num</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> a
 f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
 
-main <span class="fu">=</span> print (f <span class="dv">3</span> <span class="fl">2.4</span>)</code></pre>
+main <span class="fu">=</span> print (f <span class="dv">3</span> <span class="fl">2.4</span>)</code></pre></div>
 </div>
 <p>Cela fonctionne, car <code>3</code> est une représentation valide autant pour les nombres fractionnaires comme Float que pour les entiers. Comme <code>2.4</code> est un nombre fractionnaire, <code>3</code> est interprété comme une autre nombre fractionnaire</p>
 <p><a href="code/01_basic/10_Introduction/23_very_basic.lhs" class="cut">01_basic/10_Introduction/<strong>23_very_basic.lhs</strong> </a></p>
@@ -391,7 +391,7 @@ main <span class="fu">=</span> print (f <span class="dv">3</span> <span class="f
 <p><a href="code/01_basic/10_Introduction/24_very_basic.lhs" class="cut">01_basic/10_Introduction/<strong>24_very_basic.lhs</strong></a></p>
 <p>Si nous forçons notre fonction à travailler avec des types différents, le test échouera:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">Num</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> a
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">Num</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> a
 f x y <span class="fu">=</span> x<span class="fu">*</span>x <span class="fu">+</span> y<span class="fu">*</span>y
 
 <span class="ot">x ::</span> <span class="dt">Int</span>
@@ -399,7 +399,7 @@ x <span class="fu">=</span> <span class="dv">3</span>
 <span class="ot">y ::</span> <span class="dt">Float</span>
 y <span class="fu">=</span> <span class="fl">2.4</span>
 <span class="co">-- won't work because type x ≠ type y</span>
-main <span class="fu">=</span> print (f x y)</code></pre>
+main <span class="fu">=</span> print (f x y)</code></pre></div>
 </div>
 <p>Le compilateur se plaint. Les deux paramètres doivent avoir le même type.</p>
 <p>Si vous pensez que c’est une mauvaise idée et que le compilateur devrait faire la transformation depuis un type à un autre pour vous, vous devriez vraiment regarder cette vidéo géniale (et amusante): <a href="https://www.destroyallsoftware.com/talks/wat">WAT</a> (<em>NDT: En Anglais</em>)</p>
@@ -512,18 +512,18 @@ f :: (a -&gt; b) -&gt; c  ⇔ f est une fonction qui prend un (a→b) et retourn
 <p>Rappelez-vous que définir le type d’une fonction avant sa déclaration n’est pas obligatoire. Haskell infère le type le plus général pour vous. Mais c’est considéré comme une bonne pratique.</p>
 <p><em>Notation Infixée</em></p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">square ::</span> <span class="dt">Num</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a
-square x <span class="fu">=</span> x<span class="fu">^</span><span class="dv">2</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">square ::</span> <span class="dt">Num</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a
+square x <span class="fu">=</span> x<span class="fu">^</span><span class="dv">2</span></code></pre></div>
 </div>
 <p>Remarquez que <code>^</code> utilise une notation infixée. Pour chaque opérateur infixe il y a une notation préfixée associée. Vous devz juste l’écrire entre parenthèses.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">square' x <span class="fu">=</span> (<span class="fu">^</span>) x <span class="dv">2</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">square' x <span class="fu">=</span> (<span class="fu">^</span>) x <span class="dv">2</span>
 
-square'' x <span class="fu">=</span> (<span class="fu">^</span><span class="dv">2</span>) x</code></pre>
+square'' x <span class="fu">=</span> (<span class="fu">^</span><span class="dv">2</span>) x</code></pre></div>
 </div>
 <p>Nous pouvons enlever le <code>x</code> dans les parties de gauche et de droite! On appelle cela la η-réduction</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">square''' <span class="fu">=</span> (<span class="fu">^</span><span class="dv">2</span>)</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">square''' <span class="fu">=</span> (<span class="fu">^</span><span class="dv">2</span>)</code></pre></div>
 </div>
 <p>Rmarquez qu nous pouvons déclarer des fonctions avec <code>'</code> dans leur nom. Exemples:</p>
 <blockquote>
@@ -532,22 +532,22 @@ square'' x <span class="fu">=</span> (<span class="fu">^</span><span class="dv">
 <p><em>Tests</em></p>
 <p>Une implémentation de la fonction absolue.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">absolute ::</span> (<span class="dt">Ord</span> a, <span class="dt">Num</span> a) <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a
-absolute x <span class="fu">=</span> <span class="kw">if</span> x <span class="fu">&gt;=</span> <span class="dv">0</span> <span class="kw">then</span> x <span class="kw">else</span> <span class="fu">-</span>x</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">absolute ::</span> (<span class="dt">Ord</span> a, <span class="dt">Num</span> a) <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a
+absolute x <span class="fu">=</span> <span class="kw">if</span> x <span class="fu">&gt;=</span> <span class="dv">0</span> <span class="kw">then</span> x <span class="kw">else</span> <span class="fu">-</span>x</code></pre></div>
 </div>
 <p>Remarque: la notation de Haskell pour le <code>if .. then .. else</code> ressemble plus à l’opérateur <code>¤?¤:¤</code> en C. Le <code>else</code> est obligatoire.</p>
 <p>Une version équivalente:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">absolute' x
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">absolute' x
     <span class="fu">|</span> x <span class="fu">&gt;=</span> <span class="dv">0</span> <span class="fu">=</span> x
-    <span class="fu">|</span> otherwise <span class="fu">=</span> <span class="fu">-</span>x</code></pre>
+    <span class="fu">|</span> otherwise <span class="fu">=</span> <span class="fu">-</span>x</code></pre></div>
 </div>
 <blockquote>
 <p>Avertissement: l’indentation est <em>importante</em> en Haskell. Comme en Python, une mauvaise indentation peut détruire votre code!</p>
 </blockquote>
 <div style="display:none">
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span>
       print <span class="fu">$</span> square <span class="dv">10</span>
       print <span class="fu">$</span> square' <span class="dv">10</span>
       print <span class="fu">$</span> square'' <span class="dv">10</span>
@@ -555,7 +555,7 @@ absolute x <span class="fu">=</span> <span class="kw">if</span> x <span class="f
       print <span class="fu">$</span> absolute <span class="dv">10</span>
       print <span class="fu">$</span> absolute (<span class="fu">-</span><span class="dv">10</span>)
       print <span class="fu">$</span> absolute' <span class="dv">10</span>
-      print <span class="fu">$</span> absolute' (<span class="fu">-</span><span class="dv">10</span>)</code></pre>
+      print <span class="fu">$</span> absolute' (<span class="fu">-</span><span class="dv">10</span>)</code></pre></div>
 </div>
 </div>
 <p><a href="code/01_basic/20_Essential_Haskell/10a_Functions.lhs" class="cut">01_basic/20_Essential_Haskell/<strong>10a_Functions.lhs</strong> </a></p>
@@ -576,21 +576,21 @@ Le style fonctionnel
 <p>exemple: <code>[1,2,3,4,5] ⇒  2 + 4 ⇒  6</code></p>
 </blockquote>
 <p>Pour montrer les différences entre les approches fonctionnelle et impérative, je vais commencer par donner la solution impérative (en JavaScript):</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="fu">evenSum</span>(list) {
-    <span class="kw">var</span> result = <span class="dv">0</span>;
-    <span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>; i&lt; <span class="ot">list</span>.<span class="fu">length</span> ; i++) {
-        <span class="kw">if</span> (list[i] % <span class="dv">2</span> ==<span class="dv">0</span>) {
-            result += list[i];
-        }
-    }
-    <span class="kw">return</span> result;
-}</code></pre>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">evenSum</span>(list) <span class="op">{</span>
+    <span class="kw">var</span> result <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>
+    <span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span> i<span class="op">&lt;</span> <span class="va">list</span>.<span class="at">length</span> <span class="op">;</span> i<span class="op">++</span>) <span class="op">{</span>
+        <span class="cf">if</span> (list[i] <span class="op">%</span> <span class="dv">2</span> <span class="op">==</span><span class="dv">0</span>) <span class="op">{</span>
+            result <span class="op">+=</span> list[i]<span class="op">;</span>
+        <span class="op">}</span>
+    <span class="op">}</span>
+    <span class="cf">return</span> result<span class="op">;</span>
+<span class="op">}</span></code></pre></div>
 <p>En Haskell, en revanche, nous n’avons pas de variables ou un boucle <code>for</code>. Une des solutions pour parvenir au même résultat sans boucles est d’utiliser la récursion.</p>
 <blockquote>
 <p><em>Remarque</em>: La récursion est souvent perçue comme lente dans les langages impératifs. Mais ce n’est généralement pas le cas en programmation fonctionnelle. La plupart du temps Haskell gérera les fonctions récursives efficacement.</p>
 </blockquote>
 <p>Voici la version <code>C</code> de la fonction récursive. Remarquez que je suppose que la liste d’int fini avec la première valeur <code>0</code>.</p>
-<pre class="sourceCode c"><code class="sourceCode c"><span class="dt">int</span> evenSum(<span class="dt">int</span> *list) {
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="dt">int</span> evenSum(<span class="dt">int</span> *list) {
     <span class="kw">return</span> accumSum(<span class="dv">0</span>,list);
 }
 
@@ -608,30 +608,30 @@ Le style fonctionnel
             <span class="kw">return</span> accumSum(n, xs);
         }
     }
-}</code></pre>
+}</code></pre></div>
 <p>Gardez ce code à l’esprit. Nous allons le traduire en Haskell. Premièrement,</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">even<span class="ot"> ::</span> <span class="dt">Integral</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Bool</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">even<span class="ot"> ::</span> <span class="dt">Integral</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Bool</span>
 head<span class="ot"> ::</span> [a] <span class="ot">-&gt;</span> a
-tail<span class="ot"> ::</span> [a] <span class="ot">-&gt;</span> [a]</code></pre>
+tail<span class="ot"> ::</span> [a] <span class="ot">-&gt;</span> [a]</code></pre></div>
 <p><code>even</code> vérifie si un nombre est pair.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">even<span class="ot"> ::</span> <span class="dt">Integral</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Bool</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">even<span class="ot"> ::</span> <span class="dt">Integral</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Bool</span>
 even <span class="dv">3</span>  <span class="ot">⇒</span> <span class="dt">False</span>
-even <span class="dv">2</span>  <span class="ot">⇒</span> <span class="dt">True</span></code></pre>
+even <span class="dv">2</span>  <span class="ot">⇒</span> <span class="dt">True</span></code></pre></div>
 <p><code>head</code> retourne le premier élément d’une liste:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">head<span class="ot"> ::</span> [a] <span class="ot">-&gt;</span> a
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">head<span class="ot"> ::</span> [a] <span class="ot">-&gt;</span> a
 head [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>] <span class="ot">⇒</span> <span class="dv">1</span>
-head []      <span class="ot">⇒</span> <span class="dt">ERROR</span></code></pre>
+head []      <span class="ot">⇒</span> <span class="dt">ERROR</span></code></pre></div>
 <p><code>tail</code> retourne tous les éléments d’une liste, sauf le premier:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">tail<span class="ot"> ::</span> [a] <span class="ot">-&gt;</span> [a]
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">tail<span class="ot"> ::</span> [a] <span class="ot">-&gt;</span> [a]
 tail [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>] <span class="ot">⇒</span> [<span class="dv">2</span>,<span class="dv">3</span>]
 tail [<span class="dv">3</span>]     <span class="ot">⇒</span> []
-tail []      <span class="ot">⇒</span> <span class="dt">ERREUR</span></code></pre>
+tail []      <span class="ot">⇒</span> <span class="dt">ERREUR</span></code></pre></div>
 <p>Remarquez que pour toute liste non-vide <code>l</code>, <code>l ⇔ (head l):(tail l)</code></p>
 <hr />
 <p><a href="code/02_Hard_Part/11_Functions.lhs" class="cut">02_Hard_Part/<strong>11_Functions.lhs</strong></a></p>
 <p>La première solution en Haskell. La fonction <code>evenSum</code> retourne la somme de tous les nombres pairs d’une liste:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 1</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 1</span>
 <span class="ot">evenSum ::</span> [<span class="dt">Integer</span>] <span class="ot">-&gt;</span> <span class="dt">Integer</span>
 
 evenSum l <span class="fu">=</span> accumSum <span class="dv">0</span> l
@@ -642,7 +642,7 @@ accumSum n l <span class="fu">=</span> <span class="kw">if</span> l <span class=
                            xs <span class="fu">=</span> tail l
                        <span class="kw">in</span> <span class="kw">if</span> even x
                               <span class="kw">then</span> accumSum (n<span class="fu">+</span>x) xs
-                              <span class="kw">else</span> accumSum n xs</code></pre>
+                              <span class="kw">else</span> accumSum n xs</code></pre></div>
 </div>
 <p>Pour tester une fonction nous pouvons utiliser <code>ghci</code>:</p>
 <pre>
@@ -677,10 +677,10 @@ accumSum (0+2+4) []
 6
 </pre>
 <p>En venant d’un langage impératif, tout devrait vous sembler juste. En fait, beaucoup de choses peuvent être améliorées ici. Tout d’abord, nous pouvons généraliser le type.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">evenSum ::</span> <span class="dt">Integral</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">evenSum ::</span> <span class="dt">Integral</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a</code></pre></div>
 <div style="display:none">
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span> print <span class="fu">$</span> evenSum [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>]</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span> print <span class="fu">$</span> evenSum [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>]</code></pre></div>
 </div>
 </div>
 <p><a href="code/02_Hard_Part/11_Functions.lhs" class="cut">02_Hard_Part/<strong>11_Functions.lhs</strong> </a></p>
@@ -688,7 +688,7 @@ accumSum (0+2+4) []
 <p><a href="code/02_Hard_Part/12_Functions.lhs" class="cut">02_Hard_Part/<strong>12_Functions.lhs</strong></a></p>
 <p>Ensuite, nous pouvons utiliser des sous-fonctions grâce à <code>where</code> et <code>let</code>. Ansi, notre fonction <code>accumSum</code> ne polluera pas le <em>namespace</em> de notre module</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 2</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 2</span>
 <span class="ot">evenSum ::</span> <span class="dt">Integral</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a
 
 evenSum l <span class="fu">=</span> accumSum <span class="dv">0</span> l
@@ -699,11 +699,11 @@ evenSum l <span class="fu">=</span> accumSum <span class="dv">0</span> l
                          xs <span class="fu">=</span> tail l
                      <span class="kw">in</span> <span class="kw">if</span> even x
                             <span class="kw">then</span> accumSum (n<span class="fu">+</span>x) xs
-                            <span class="kw">else</span> accumSum n xs</code></pre>
+                            <span class="kw">else</span> accumSum n xs</code></pre></div>
 </div>
 <div style="display:none">
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print <span class="fu">$</span> evenSum [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>]</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print <span class="fu">$</span> evenSum [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>]</code></pre></div>
 </div>
 </div>
 <p><a href="code/02_Hard_Part/12_Functions.lhs" class="cut">02_Hard_Part/<strong>12_Functions.lhs</strong> </a></p>
@@ -711,45 +711,45 @@ evenSum l <span class="fu">=</span> accumSum <span class="dv">0</span> l
 <p><a href="code/02_Hard_Part/13_Functions.lhs" class="cut">02_Hard_Part/<strong>13_Functions.lhs</strong></a></p>
 <p>Puis on utilise le <em>pattern matching</em></p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 3</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 3</span>
 evenSum l <span class="fu">=</span> accumSum <span class="dv">0</span> l
     <span class="kw">where</span>
         accumSum n [] <span class="fu">=</span> n
         accumSum n (x<span class="fu">:</span>xs) <span class="fu">=</span>
              <span class="kw">if</span> even x
                 <span class="kw">then</span> accumSum (n<span class="fu">+</span>x) xs
-                <span class="kw">else</span> accumSum n xs</code></pre>
+                <span class="kw">else</span> accumSum n xs</code></pre></div>
 </div>
 <p>Qu’est ce que le <em>pattern matching</em> ? Il s’agit d’utiliser des valeurs au lieu de noms de paramètres généraux.</p>
 <p>Au lieu d’écrire: <code>foo l = if l == [] then &lt;x&gt; else &lt;y&gt;</code> Vous écrivez tout simplement&nbsp;:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">foo [] <span class="fu">=</span>  <span class="fu">&lt;</span>x<span class="fu">&gt;</span>
-foo l  <span class="fu">=</span>  <span class="fu">&lt;</span>y<span class="fu">&gt;</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">foo [] <span class="fu">=</span>  <span class="fu">&lt;</span>x<span class="fu">&gt;</span>
+foo l  <span class="fu">=</span>  <span class="fu">&lt;</span>y<span class="fu">&gt;</span></code></pre></div>
 <p>Mais le <em>pattern matching</em> peut aller encore plus loin. Il est également capable d’inspect les données internes d’un valeur complexe. Nous pouvons ainsi remplacer</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">foo l <span class="fu">=</span>  <span class="kw">let</span> x  <span class="fu">=</span> head l
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">foo l <span class="fu">=</span>  <span class="kw">let</span> x  <span class="fu">=</span> head l
              xs <span class="fu">=</span> tail l
          <span class="kw">in</span> <span class="kw">if</span> even x
              <span class="kw">then</span> foo (n<span class="fu">+</span>x) xs
-             <span class="kw">else</span> foo n xs</code></pre>
+             <span class="kw">else</span> foo n xs</code></pre></div>
 <p>par</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">foo (x<span class="fu">:</span>xs) <span class="fu">=</span> <span class="kw">if</span> even x
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">foo (x<span class="fu">:</span>xs) <span class="fu">=</span> <span class="kw">if</span> even x
                  <span class="kw">then</span> foo (n<span class="fu">+</span>x) xs
-                 <span class="kw">else</span> foo n xs</code></pre>
+                 <span class="kw">else</span> foo n xs</code></pre></div>
 <p>C’est une caractéristique très utile. Notre code est ainsi plus concis et plus facile à lire.</p>
 <div style="display:none">
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print <span class="fu">$</span> evenSum [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>]</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print <span class="fu">$</span> evenSum [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>]</code></pre></div>
 </div>
 </div>
 <p><a href="code/02_Hard_Part/13_Functions.lhs" class="cut">02_Hard_Part/<strong>13_Functions.lhs</strong> </a></p>
 <hr />
 <p><a href="code/02_Hard_Part/14_Functions.lhs" class="cut">02_Hard_Part/<strong>14_Functions.lhs</strong></a></p>
 <p>Avec Haskell, nous pouvons simplifier les défitions des fonctions en les <em>η-réduisant</em> . Par exemple, au lieu d’écrire:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">f x <span class="fu">=</span> (expression) x</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">f x <span class="fu">=</span> (expression) x</code></pre></div>
 <p>Nous pouvons écrire</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">f <span class="fu">=</span> expression</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">f <span class="fu">=</span> expression</code></pre></div>
 <p>Utilisons cette méthode pour retirer le <code>l</code>:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 4</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 4</span>
 <span class="ot">evenSum ::</span> <span class="dt">Integral</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a
 
 evenSum <span class="fu">=</span> accumSum <span class="dv">0</span>
@@ -758,11 +758,11 @@ evenSum <span class="fu">=</span> accumSum <span class="dv">0</span>
         accumSum n (x<span class="fu">:</span>xs) <span class="fu">=</span>
              <span class="kw">if</span> even x
                 <span class="kw">then</span> accumSum (n<span class="fu">+</span>x) xs
-                <span class="kw">else</span> accumSum n xs</code></pre>
+                <span class="kw">else</span> accumSum n xs</code></pre></div>
 </div>
 <div style="display:none">
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print <span class="fu">$</span> evenSum [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>]</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print <span class="fu">$</span> evenSum [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>]</code></pre></div>
 </div>
 </div>
 <p><a href="code/02_Hard_Part/14_Functions.lhs" class="cut">02_Hard_Part/<strong>14_Functions.lhs</strong> </a></p>
@@ -776,17 +776,17 @@ Fonctions d’ordre supérieur
 </div>
 <p>Pour rendre les choses plus faciles, nous devrions utiliser des fonctions d’ordre supérieur. Ce sont des fonctions qui prennent des fonctions en paramètres</p>
 <p>Voici quelques exemples:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">filter<span class="ot"> ::</span> (a <span class="ot">-&gt;</span> <span class="dt">Bool</span>) <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [a]
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">filter<span class="ot"> ::</span> (a <span class="ot">-&gt;</span> <span class="dt">Bool</span>) <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [a]
 map<span class="ot"> ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [b]
-foldl<span class="ot"> ::</span> (a <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> [b] <span class="ot">-&gt;</span> a</code></pre>
+foldl<span class="ot"> ::</span> (a <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> [b] <span class="ot">-&gt;</span> a</code></pre></div>
 <p>Procédons par étapes.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 5</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 5</span>
 evenSum l <span class="fu">=</span> mysum <span class="dv">0</span> (filter even l)
     <span class="kw">where</span>
       mysum n [] <span class="fu">=</span> n
-      mysum n (x<span class="fu">:</span>xs) <span class="fu">=</span> mysum (n<span class="fu">+</span>x) xs</code></pre>
+      mysum n (x<span class="fu">:</span>xs) <span class="fu">=</span> mysum (n<span class="fu">+</span>x) xs</code></pre></div>
 <p>où</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">filter even [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>] ⇔  [<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">6</span>,<span class="dv">8</span>,<span class="dv">10</span>]</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">filter even [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>] ⇔  [<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">6</span>,<span class="dv">8</span>,<span class="dv">10</span>]</code></pre></div>
 <p>La fonction <code>filter</code> prend une fonction du type (<code>a -&gt; Bool</code>) et une liste de type <code>[a]</code>. Elle retourne une liste qui contient seulement les élements pour qui la fonction a retourné <code>True</code>.</p>
 <p>La prochaine étape est d’utiliser une autre technique pour accomplir la même chose qu’une boucle. Nous allons utiliser la fonction <code>foldl</code> pour accumuler une valeur au fur et à mesure que l’on parcoure la liste. La fonction <code>foldl</code> capture un modèle de code général:</p>
 <pre>
@@ -799,41 +799,41 @@ evenSum l <span class="fu">=</span> mysum <span class="dv">0</span> (filter even
 myfunc list = foldl <span class="yellow">bar</span> <span class="blue">initialValue</span> <span class="green">list</span>
 </pre>
 <p>Si vous souhaitez vraiment savoir comment la magie se produit, voici la définition de <code>foldl</code>:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">foldl f z [] <span class="fu">=</span> z
-foldl f z (x<span class="fu">:</span>xs) <span class="fu">=</span> foldl f (f z x) xs</code></pre>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">foldl f z [x1,<span class="fu">...</span>xn]
-⇔  f (<span class="fu">...</span> (f (f z x1) x2) <span class="fu">...</span>) xn</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">foldl f z [] <span class="fu">=</span> z
+foldl f z (x<span class="fu">:</span>xs) <span class="fu">=</span> foldl f (f z x) xs</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">foldl f z [x1,<span class="fu">...</span>xn]
+⇔  f (<span class="fu">...</span> (f (f z x1) x2) <span class="fu">...</span>) xn</code></pre></div>
 <p>Mais comme Haskell est paresseux, il n’évalue pas <code>(f z x)</code> et le met simplement dans la pile. C’est pourquoi on utilise généralement <code>foldl'</code>, une version <em>stricte</em> de <code>foldl</code>, Si vous ne comprenez pas encore ce que <em>paresseux</em> ou <em>strict</em> signifie, ne vous inquiétez pas, suivez le code comme si <code>foldl'</code> et <code>foldl</code> étaient identiques</p>
 <p>Maintenant notre version de <code>evenSum</code> devient:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 6</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 6</span>
 <span class="co">-- foldl' n'est pas accessible par défaut</span>
 <span class="co">-- nous devons l'importer depuis le module Data.List</span>
 <span class="kw">import </span><span class="dt">Data.List</span>
 evenSum l <span class="fu">=</span> foldl' mysum <span class="dv">0</span> (filter even l)
-  <span class="kw">where</span> mysum acc value <span class="fu">=</span> acc <span class="fu">+</span> value</code></pre>
+  <span class="kw">where</span> mysum acc value <span class="fu">=</span> acc <span class="fu">+</span> value</code></pre></div>
 <p>Nous pouvons aussi simplifier cela en utilisant une <em>lambda-notation</em>. Ainsi nous n’avons pas besoin de créer le nom temporaire <code>mySum</code>.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 7</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 7</span>
 <span class="co">-- Generally it is considered a good practice</span>
 <span class="co">-- to import only the necessary function(s)</span>
 <span class="kw">import </span><span class="dt">Data.List</span> (foldl')
-evenSum l <span class="fu">=</span> foldl' (\x y <span class="ot">-&gt;</span> x<span class="fu">+</span>y) <span class="dv">0</span> (filter even l)</code></pre>
+evenSum l <span class="fu">=</span> foldl' (\x y <span class="ot">-&gt;</span> x<span class="fu">+</span>y) <span class="dv">0</span> (filter even l)</code></pre></div>
 </div>
 <p>Et bien sûr, nous remarquons que</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">(\x y <span class="ot">-&gt;</span> x<span class="fu">+</span>y) ⇔ (<span class="fu">+</span>)</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">(\x y <span class="ot">-&gt;</span> x<span class="fu">+</span>y) ⇔ (<span class="fu">+</span>)</code></pre></div>
 <div style="display:none">
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print <span class="fu">$</span> evenSum [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>]</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print <span class="fu">$</span> evenSum [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>]</code></pre></div>
 </div>
 </div>
 <p><a href="code/02_Hard_Part/15_Functions.lhs" class="cut">02_Hard_Part/<strong>15_Functions.lhs</strong> </a></p>
 <hr />
 <p><a href="code/02_Hard_Part/16_Functions.lhs" class="cut">02_Hard_Part/<strong>16_Functions.lhs</strong></a></p>
 <p>Finalement</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 8</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 8</span>
 <span class="kw">import </span><span class="dt">Data.List</span> (foldl')
 <span class="ot">evenSum ::</span> <span class="dt">Integral</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a
-evenSum l <span class="fu">=</span> foldl' (<span class="fu">+</span>) <span class="dv">0</span> (filter even l)</code></pre>
+evenSum l <span class="fu">=</span> foldl' (<span class="fu">+</span>) <span class="dv">0</span> (filter even l)</code></pre></div>
 <p><code>foldl'</code> n’est pas la fonction la plus facile à prendre en main. Si vous n’y êtes pas habitué, vous devriez l’étudier un peu.</p>
 <p>Pour mieux comprendre ce qui se passe ici, étudions une évaluation étape par étape:</p>
 <pre>
@@ -847,28 +847,28 @@ evenSum l <span class="fu">=</span> foldl' (<span class="fu">+</span>) <span cla
 ⇒ <span class="blue">6</span>
 </pre>
 <p>Une autr fonction d’ordre supérieur utile est <code>(.)</code>. Elle correspond à une composition en mathématiques.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">(f <span class="fu">.</span> g <span class="fu">.</span> h) x ⇔  f ( g (h x))</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">(f <span class="fu">.</span> g <span class="fu">.</span> h) x ⇔  f ( g (h x))</code></pre></div>
 <p>Nous pouvons profiter de cet opérateur pour η-réduire notre fonction:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 9</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 9</span>
 <span class="kw">import </span><span class="dt">Data.List</span> (foldl')
 <span class="ot">evenSum ::</span> <span class="dt">Integral</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a
-evenSum <span class="fu">=</span> (foldl' (<span class="fu">+</span>) <span class="dv">0</span>) <span class="fu">.</span> (filter even)</code></pre>
+evenSum <span class="fu">=</span> (foldl' (<span class="fu">+</span>) <span class="dv">0</span>) <span class="fu">.</span> (filter even)</code></pre></div>
 <p>Nous pouvons maintenant renommer certaines parties pour rendre le tout plus clair:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 10</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Version 10</span>
 <span class="kw">import </span><span class="dt">Data.List</span> (foldl')
 <span class="ot">sum' ::</span> (<span class="dt">Num</span> a) <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a
 sum' <span class="fu">=</span> foldl' (<span class="fu">+</span>) <span class="dv">0</span>
 <span class="ot">evenSum ::</span> <span class="dt">Integral</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> a
-evenSum <span class="fu">=</span> sum' <span class="fu">.</span> (filter even)</code></pre>
+evenSum <span class="fu">=</span> sum' <span class="fu">.</span> (filter even)</code></pre></div>
 </div>
 <p>Il est temps de discuter de la direction qu’a pris notre code depuis que nous avons introduit plus d’idiomes fonctionnels. Que gagnons-nous à utiliser des fonctions d’ordre supérieur?</p>
 <p>D’abord, vous pourriez penser que la principale différence est la brièveté. Mais en réalité, il s’agit d’une meilleure façon de penser. Supposons que nous voulons modifier légèrement notre fonction, par exemple, pour qu’elle renvoie la somme de tous les carrés pairs des éléments de la liste.</p>
 <pre><code>[1,2,3,4] ▷ [1,4,9,16] ▷ [4,16] ▷ 20</code></pre>
 <p>Mettre la version 10 à jour est très facile:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">squareEvenSum <span class="fu">=</span> sum' <span class="fu">.</span> (filter even) <span class="fu">.</span> (map (<span class="fu">^</span><span class="dv">2</span>))
-squareEvenSum' <span class="fu">=</span> evenSum <span class="fu">.</span> (map (<span class="fu">^</span><span class="dv">2</span>))</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">squareEvenSum <span class="fu">=</span> sum' <span class="fu">.</span> (filter even) <span class="fu">.</span> (map (<span class="fu">^</span><span class="dv">2</span>))
+squareEvenSum' <span class="fu">=</span> evenSum <span class="fu">.</span> (map (<span class="fu">^</span><span class="dv">2</span>))</code></pre></div>
 </div>
 <p>Nous avons juste eu à ajouter une autre “fonction de trabsformation”[^0216].</p>
 <pre><code>map (^2) [1,2,3,4] ⇔ [1,4,9,16]</code></pre>
@@ -882,7 +882,7 @@ squareEvenSum' <span class="fu">=</span> evenSum <span class="fu">.</span> (map 
 <p>Mais avant de parler de ce super-pouvoir de Haskell, nous devons parler d’un autre aspet essentiel: les <em>Types</em>.</p>
 <div style="display:none">
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print <span class="fu">$</span> evenSum [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>]</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print <span class="fu">$</span> evenSum [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>]</code></pre></div>
 </div>
 </div>
 <p><a href="code/02_Hard_Part/16_Functions.lhs" class="cut">02_Hard_Part/<strong>16_Functions.lhs</strong> </a></p>
@@ -908,7 +908,7 @@ Inférence de type
 </h4>
 <p>Le typage statique est généralement essentiel pour une exécution rapide. Mais la plupart des langages typés statiquement ont du mal à généraliser des concepts. La “grâce salvatrice” de Haskell est qu’il peut <em>inférer</em> des types.</p>
 <p>Voici un exemple simple, la fonction <code>square</code> en Haskell:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">square x <span class="fu">=</span> x <span class="fu">*</span> x</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">square x <span class="fu">=</span> x <span class="fu">*</span> x</code></pre></div>
 <p>Cette fonction peut mettre au carré n’importe quel type <code>Numeral</code>. Vous pouvez l’utilser avec un <code>Int</code>, un <code>Integer</code>, un <code>Float</code>, un <code>Fractional</code> ou même un <code>Complex</code>. Preuve par l’exemple:</p>
 <pre><code>% ghci
 GHCi, version 7.0.4:
@@ -924,7 +924,7 @@ Prelude Data.Complex&gt; square (2 :+ 1)
 3.0 :+ 4.0</code></pre>
 <p><code>x :+ y</code> est la notation pour le complex (<i>x + iy</i>)</p>
 <p>Comparons maintenant avec la quantité de code nécessaire pour le faire en C:</p>
-<pre class="sourceCode c"><code class="sourceCode c"><span class="dt">int</span>     int_square(<span class="dt">int</span> x) { <span class="kw">return</span> x*x; }
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="dt">int</span>     int_square(<span class="dt">int</span> x) { <span class="kw">return</span> x*x; }
 
 <span class="dt">float</span>   float_square(<span class="dt">float</span> x) {<span class="kw">return</span> x*x; }
 
@@ -935,7 +935,7 @@ complex complex_square (complex z) {
 }
 
 complex x,y;
-y = complex_square(x);</code></pre>
+y = complex_square(x);</code></pre></div>
 <p>Pour chaque type, vous avfez besoin d’écrire une nouvelle fonction. Le seul moyen de se débarsser de se problème est d’utiliser des trucs de méta-programmation, par exemple via le pré-processeur. en C++ il y a un meilleur moyen, les <em>templates</em>:</p>
 <pre class="{.c++}"><code>#include &lt;iostream&gt;
 #include &lt;complex&gt;
@@ -971,7 +971,7 @@ Construction de types
 </h4>
 <p>Vous pouvez construire vos propres types. D’abord, vous pouvez utiliser des alias ou des synonymes de types.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Name</span>   <span class="fu">=</span> <span class="dt">String</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Name</span>   <span class="fu">=</span> <span class="dt">String</span>
 <span class="kw">type</span> <span class="dt">Color</span>  <span class="fu">=</span> <span class="dt">String</span>
 
 <span class="ot">showInfos ::</span> <span class="dt">Name</span> <span class="ot">-&gt;</span>  <span class="dt">Color</span> <span class="ot">-&gt;</span> <span class="dt">String</span>
@@ -981,17 +981,17 @@ showInfos name color <span class="fu">=</span>  <span class="st">&quot;Name: &qu
 name <span class="fu">=</span> <span class="st">&quot;Robin&quot;</span>
 <span class="ot">color ::</span> <span class="dt">Color</span>
 color <span class="fu">=</span> <span class="st">&quot;Blue&quot;</span>
-main <span class="fu">=</span> putStrLn <span class="fu">$</span> showInfos name color</code></pre>
+main <span class="fu">=</span> putStrLn <span class="fu">$</span> showInfos name color</code></pre></div>
 </div>
 <p><a href="code/02_Hard_Part/21_Types.lhs" class="cut">02_Hard_Part/<strong>21_Types.lhs</strong> </a></p>
 <hr />
 <p><a href="code/02_Hard_Part/22_Types.lhs" class="cut">02_Hard_Part/<strong>22_Types.lhs</strong></a></p>
 <p>Mais cela ne vous protège pas tellement. Essayez d’inverser les deux paramètres de <code>showInfos</code> et lancez le programme:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">    putStrLn <span class="fu">$</span> showInfos color name</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">    putStrLn <span class="fu">$</span> showInfos color name</code></pre></div>
 <p>Le code sera compilé et exécuté. En fait vous pouvez remplace Name, Color et String n’importe où. Le compilateur les traitera comme si ils était complétement identiques.</p>
 <p>Une autre méthode est de créer vos propres type avec le mot-clé <code>data</code>.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Name</span>   <span class="fu">=</span> <span class="dt">NameConstr</span> <span class="dt">String</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Name</span>   <span class="fu">=</span> <span class="dt">NameConstr</span> <span class="dt">String</span>
 <span class="kw">data</span> <span class="dt">Color</span>  <span class="fu">=</span> <span class="dt">ColorConstr</span> <span class="dt">String</span>
 
 <span class="ot">showInfos ::</span> <span class="dt">Name</span> <span class="ot">-&gt;</span>  <span class="dt">Color</span> <span class="ot">-&gt;</span> <span class="dt">String</span>
@@ -1000,32 +1000,32 @@ showInfos (<span class="dt">NameConstr</span> name) (<span class="dt">ColorConst
 
 name  <span class="fu">=</span> <span class="dt">NameConstr</span> <span class="st">&quot;Robin&quot;</span>
 color <span class="fu">=</span> <span class="dt">ColorConstr</span> <span class="st">&quot;Blue&quot;</span>
-main <span class="fu">=</span> putStrLn <span class="fu">$</span> showInfos name color</code></pre>
+main <span class="fu">=</span> putStrLn <span class="fu">$</span> showInfos name color</code></pre></div>
 </div>
 <p>Maintenant, si vous échangez les paramètres de<code>showInfos</code>, le compilateur se plaint! C’est donc une erreur que vous ne refairez jamais, au suel prix d’être plus bavard.</p>
 <p>Remarquez aussi que les constructeurs sont des fonctions:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">NameConstr</span><span class="ot">  ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Name</span>
-<span class="dt">ColorConstr</span><span class="ot"> ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Color</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">NameConstr</span><span class="ot">  ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Name</span>
+<span class="dt">ColorConstr</span><span class="ot"> ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Color</span></code></pre></div>
 <p>La syntaxe de <code>data</code> est principalement:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">TypeName</span> <span class="fu">=</span>   <span class="dt">ConstructorName</span>  [types]
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">TypeName</span> <span class="fu">=</span>   <span class="dt">ConstructorName</span>  [types]
                 <span class="fu">|</span> <span class="dt">ConstructorName2</span> [types]
-                <span class="fu">|</span> <span class="fu">...</span></code></pre>
+                <span class="fu">|</span> <span class="fu">...</span></code></pre></div>
 <p>Généralement on utilise le même nom pour le DatatTypeName et le DataTypeConstructor.</p>
 <p>Exemple:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Complex</span> a <span class="fu">=</span> <span class="dt">Num</span> a <span class="ot">=&gt;</span> <span class="dt">Complex</span> a a</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Complex</span> a <span class="fu">=</span> <span class="dt">Num</span> a <span class="ot">=&gt;</span> <span class="dt">Complex</span> a a</code></pre></div>
 <p>Vous pouvez également utiliser cette syntaxe:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">DataTypeName</span> <span class="fu">=</span> <span class="dt">DataConstructor</span> {
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">DataTypeName</span> <span class="fu">=</span> <span class="dt">DataConstructor</span> {
 <span class="ot">                      field1 ::</span> [<span class="kw">type</span> <span class="kw">of</span> field1]
                     ,<span class="ot"> field2 ::</span> [<span class="kw">type</span> <span class="kw">of</span> field2]
                     <span class="fu">...</span>
-                    ,<span class="ot"> fieldn ::</span> [<span class="kw">type</span> <span class="kw">of</span> fieldn] }</code></pre>
+                    ,<span class="ot"> fieldn ::</span> [<span class="kw">type</span> <span class="kw">of</span> fieldn] }</code></pre></div>
 <p>Et les accesseurs sont définis automatiquement. En outre, vous pouvez utiliser une autre ordre lorsque vous définissez des valeurs.</p>
 <p>Exemple:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Complex</span> a <span class="fu">=</span> <span class="dt">Num</span> a <span class="ot">=&gt;</span> <span class="dt">Complex</span> {<span class="ot"> real ::</span> a,<span class="ot"> img ::</span> a}
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Complex</span> a <span class="fu">=</span> <span class="dt">Num</span> a <span class="ot">=&gt;</span> <span class="dt">Complex</span> {<span class="ot"> real ::</span> a,<span class="ot"> img ::</span> a}
 c <span class="fu">=</span> <span class="dt">Complex</span> <span class="fl">1.0</span> <span class="fl">2.0</span>
 z <span class="fu">=</span> <span class="dt">Complex</span> { real <span class="fu">=</span> <span class="dv">3</span>, img <span class="fu">=</span> <span class="dv">4</span> }
 real c <span class="ot">⇒</span> <span class="fl">1.0</span>
-img z <span class="ot">⇒</span> <span class="dv">4</span></code></pre>
+img z <span class="ot">⇒</span> <span class="dv">4</span></code></pre></div>
 <p><a href="code/02_Hard_Part/22_Types.lhs" class="cut">02_Hard_Part/<strong>22_Types.lhs</strong> </a></p>
 <hr />
 <p><a href="code/02_Hard_Part/23_Types.lhs" class="cut">02_Hard_Part/<strong>23_Types.lhs</strong></a></p>
@@ -1033,26 +1033,26 @@ img z <span class="ot">⇒</span> <span class="dv">4</span></code></pre>
 Type récursif
 </h4>
 <p>Nous avons déjà rencontré un type récursif : les listes. Nous pourrions re-créer les listes, avec une syntaxe plus bavarde:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">List</span> a <span class="fu">=</span> <span class="dt">Empty</span> <span class="fu">|</span> <span class="dt">Cons</span> a (<span class="dt">List</span> a)</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">List</span> a <span class="fu">=</span> <span class="dt">Empty</span> <span class="fu">|</span> <span class="dt">Cons</span> a (<span class="dt">List</span> a)</code></pre></div>
 <p>Si vous voulez réellement utiliser une syntxe plus simple, utilisez un nom infixe pour les constructeurs.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">infixr</span> <span class="dv">5</span> <span class="ot">::</span><span class="fu">:</span>
-<span class="kw">data</span> <span class="dt">List</span> a <span class="fu">=</span> <span class="dt">Nil</span> <span class="fu">|</span> a <span class="ot">::</span><span class="fu">:</span> (<span class="dt">List</span> a)</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">infixr</span> <span class="dv">5</span> <span class="ot">::</span><span class="fu">:</span>
+<span class="kw">data</span> <span class="dt">List</span> a <span class="fu">=</span> <span class="dt">Nil</span> <span class="fu">|</span> a <span class="ot">::</span><span class="fu">:</span> (<span class="dt">List</span> a)</code></pre></div>
 <p>Le nombre après <code>infixr</code> donne la priorité.</p>
 <p>Si vous voulez pouvoir écrire (<code>Show</code>), lire (<code>Read</code>), tester l’égalite (<code>Eq</code>) et comparer (<code>Ord</code>) votre nouvelle structure, vous pouvez demander à Haskell de dériver les fonctions appropriées pour vous.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">infixr</span> <span class="dv">5</span> <span class="ot">::</span><span class="fu">:</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">infixr</span> <span class="dv">5</span> <span class="ot">::</span><span class="fu">:</span>
 <span class="kw">data</span> <span class="dt">List</span> a <span class="fu">=</span> <span class="dt">Nil</span> <span class="fu">|</span> a <span class="ot">::</span><span class="fu">:</span> (<span class="dt">List</span> a)
-              <span class="kw">deriving</span> (<span class="dt">Show</span>,<span class="dt">Read</span>,<span class="dt">Eq</span>,<span class="dt">Ord</span>)</code></pre>
+              <span class="kw">deriving</span> (<span class="dt">Show</span>,<span class="dt">Read</span>,<span class="dt">Eq</span>,<span class="dt">Ord</span>)</code></pre></div>
 </div>
 <p>Quand vous ajoutez <code>deriving (Show)</code> à votre déclaration, Haskell crée une fonction <code>show</code> pour vous. Nous verrons bientôt comment utiliser sa propre fonction <code>show</code>.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">convertList [] <span class="fu">=</span> <span class="dt">Nil</span>
-convertList (x<span class="fu">:</span>xs) <span class="fu">=</span> x <span class="ot">::</span><span class="fu">:</span> convertList xs</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">convertList [] <span class="fu">=</span> <span class="dt">Nil</span>
+convertList (x<span class="fu">:</span>xs) <span class="fu">=</span> x <span class="ot">::</span><span class="fu">:</span> convertList xs</code></pre></div>
 </div>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span>
       print (<span class="dv">0</span> <span class="ot">::</span><span class="fu">:</span> <span class="dv">1</span> <span class="ot">::</span><span class="fu">:</span> <span class="dt">Nil</span>)
-      print (convertList [<span class="dv">0</span>,<span class="dv">1</span>])</code></pre>
+      print (convertList [<span class="dv">0</span>,<span class="dv">1</span>])</code></pre></div>
 </div>
 <p>Ceci écrit:</p>
 <pre><code>0 ::: (1 ::: Nil)
@@ -1068,18 +1068,18 @@ Les arbres
 </div>
 <p>Voici une autre exemple standard : les arbres binaires.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.List</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.List</span>
 
 <span class="kw">data</span> <span class="dt">BinTree</span> a <span class="fu">=</span> <span class="dt">Empty</span>
                  <span class="fu">|</span> <span class="dt">Node</span> a (<span class="dt">BinTree</span> a) (<span class="dt">BinTree</span> a)
-                              <span class="kw">deriving</span> (<span class="dt">Show</span>)</code></pre>
+                              <span class="kw">deriving</span> (<span class="dt">Show</span>)</code></pre></div>
 </div>
 <p>Créons aussi une fonctions qui transforme une liste en un arbre binaire ordonné.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">treeFromList ::</span> (<span class="dt">Ord</span> a) <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> <span class="dt">BinTree</span> a
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">treeFromList ::</span> (<span class="dt">Ord</span> a) <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> <span class="dt">BinTree</span> a
 treeFromList [] <span class="fu">=</span> <span class="dt">Empty</span>
 treeFromList (x<span class="fu">:</span>xs) <span class="fu">=</span> <span class="dt">Node</span> x (treeFromList (filter (<span class="fu">&lt;</span>x) xs))
-                             (treeFromList (filter (<span class="fu">&gt;</span>x) xs))</code></pre>
+                             (treeFromList (filter (<span class="fu">&gt;</span>x) xs))</code></pre></div>
 </div>
 <p>Remarquez à quel point cette fonction est élégante. En français:</p>
 <ul>
@@ -1090,7 +1090,7 @@ treeFromList (x<span class="fu">:</span>xs) <span class="fu">=</span> <span clas
 <li>Le “sous-arbre” de droite est l’arbre créé à partir des membres de la liste <code>xs</code> strictement superieurs à <code>x</code></li>
 </ul>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print <span class="fu">$</span> treeFromList [<span class="dv">7</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">8</span>]</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print <span class="fu">$</span> treeFromList [<span class="dv">7</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">8</span>]</code></pre></div>
 </div>
 <p>Vious devriez obtenir:</p>
 <pre><code>Node 7 (Node 2 Empty (Node 4 Empty Empty)) (Node 8 Empty Empty)</code></pre>
@@ -1101,16 +1101,16 @@ treeFromList (x<span class="fu">:</span>xs) <span class="fu">=</span> <span clas
 <p>Juste pour le plaisir, codons un meilleur affichage pour nos arbres. Je me suis simplement amusé à faire une belle fonction pour afficher les arbres de façon générale. Vous pouvez passer cette partie si vous la trouvez difficile à suivre.</p>
 <p>Nous avons quelques changements à faire. Enlevons le <code>deriving (Show)</code> de la déclaration de notre type <code>BinTree</code>. Il serait aussi utile de faire de BinTree une instance de (<code>Eq</code> et <code>Ord</code>), nous serons ainsi capable de tester l’égalité et de comparer des arbres.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">BinTree</span> a <span class="fu">=</span> <span class="dt">Empty</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">BinTree</span> a <span class="fu">=</span> <span class="dt">Empty</span>
                  <span class="fu">|</span> <span class="dt">Node</span> a (<span class="dt">BinTree</span> a) (<span class="dt">BinTree</span> a)
-                  <span class="kw">deriving</span> (<span class="dt">Eq</span>,<span class="dt">Ord</span>)</code></pre>
+                  <span class="kw">deriving</span> (<span class="dt">Eq</span>,<span class="dt">Ord</span>)</code></pre></div>
 </div>
 <p>Sans le <code>deriving (Show)</code>, Haskell ne crée pas de méthode <code>show</code> pour nous. Nous allons créer notre propre version. Pour accomplir cela, nous devons déclarer que notre type <code>BinTree a</code> est une instance de la classe de type <code>Show</code>. La syntaxe générale est:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Show</span> (<span class="dt">BinTree</span> a) <span class="kw">where</span>
-   show t <span class="fu">=</span> <span class="fu">...</span> <span class="co">-- Déclarez votre fonction ici</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Show</span> (<span class="dt">BinTree</span> a) <span class="kw">where</span>
+   show t <span class="fu">=</span> <span class="fu">...</span> <span class="co">-- Déclarez votre fonction ici</span></code></pre></div>
 <p>Voici ma version pour afficher un arbre binaire. Ne vous inquiétez pas de sa complexité apparente. J’ai fais beaucoup d’améliorations pour afficher même les objets les plus étranges.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- declare BinTree a to be an instance of Show</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- declare BinTree a to be an instance of Show</span>
 <span class="kw">instance</span> (<span class="dt">Show</span> a) <span class="ot">=&gt;</span> <span class="dt">Show</span> (<span class="dt">BinTree</span> a) <span class="kw">where</span>
   <span class="co">-- will start by a '&lt;' before the root</span>
   <span class="co">-- and put a : a begining of line</span>
@@ -1153,20 +1153,20 @@ treeFromList (x<span class="fu">:</span>xs) <span class="fu">=</span> <span clas
       <span class="kw">where</span>
           change c new x
               <span class="fu">|</span> x <span class="fu">==</span> c <span class="fu">=</span> new
-              <span class="fu">|</span> otherwise <span class="fu">=</span> x<span class="fu">:</span>[] <span class="co">-- &quot;x&quot;</span></code></pre>
+              <span class="fu">|</span> otherwise <span class="fu">=</span> x<span class="fu">:</span>[] <span class="co">-- &quot;x&quot;</span></code></pre></div>
 </div>
 <p>La méthode <code>treeFromList</code> reste identique.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">treeFromList ::</span> (<span class="dt">Ord</span> a) <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> <span class="dt">BinTree</span> a
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">treeFromList ::</span> (<span class="dt">Ord</span> a) <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> <span class="dt">BinTree</span> a
 treeFromList [] <span class="fu">=</span> <span class="dt">Empty</span>
 treeFromList (x<span class="fu">:</span>xs) <span class="fu">=</span> <span class="dt">Node</span> x (treeFromList (filter (<span class="fu">&lt;</span>x) xs))
-                             (treeFromList (filter (<span class="fu">&gt;</span>x) xs))</code></pre>
+                             (treeFromList (filter (<span class="fu">&gt;</span>x) xs))</code></pre></div>
 </div>
 <p>Et maintenant, nous pouvons jouer:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span>
   putStrLn <span class="st">&quot;Int binary tree:&quot;</span>
-  print <span class="fu">$</span> treeFromList [<span class="dv">7</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">8</span>,<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">6</span>,<span class="dv">21</span>,<span class="dv">12</span>,<span class="dv">23</span>]</code></pre>
+  print <span class="fu">$</span> treeFromList [<span class="dv">7</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">8</span>,<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">6</span>,<span class="dv">21</span>,<span class="dv">12</span>,<span class="dv">23</span>]</code></pre></div>
 </div>
 <pre><code>Arbre binaire d'Int:
 &lt; 7
@@ -1181,8 +1181,8 @@ treeFromList (x<span class="fu">:</span>xs) <span class="fu">=</span> <span clas
 :       `--23</code></pre>
 <p>Maintenant c’est beaucoup mieux! La racine est montré en commençant la ligne avec le caractère <code>&lt;</code>. Et chaqeue ligne suivante commence avec un <code>:</code>. Mais nous pourrions aussi utiliser un autre type.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">  putStrLn <span class="st">&quot;\nString binary tree:&quot;</span>
-  print <span class="fu">$</span> treeFromList [<span class="st">&quot;foo&quot;</span>,<span class="st">&quot;bar&quot;</span>,<span class="st">&quot;baz&quot;</span>,<span class="st">&quot;gor&quot;</span>,<span class="st">&quot;yog&quot;</span>]</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">  putStrLn <span class="st">&quot;\nString binary tree:&quot;</span>
+  print <span class="fu">$</span> treeFromList [<span class="st">&quot;foo&quot;</span>,<span class="st">&quot;bar&quot;</span>,<span class="st">&quot;baz&quot;</span>,<span class="st">&quot;gor&quot;</span>,<span class="st">&quot;yog&quot;</span>]</code></pre></div>
 </div>
 <pre><code>Arbre binaire de chaïnes de caractères
 &lt; &quot;foo&quot;
@@ -1192,9 +1192,9 @@ treeFromList (x<span class="fu">:</span>xs) <span class="fu">=</span> <span clas
 :    `--&quot;yog&quot;</code></pre>
 <p>Commme nous pouvons tester l’égalité et ordonner des arbres, nous pouvons aussi faire des arbres d’arbres!</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">  putStrLn <span class="st">&quot;\nBinary tree of Char binary trees:&quot;</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">  putStrLn <span class="st">&quot;\nBinary tree of Char binary trees:&quot;</span>
   print ( treeFromList
-           (map treeFromList [<span class="st">&quot;baz&quot;</span>,<span class="st">&quot;zara&quot;</span>,<span class="st">&quot;bar&quot;</span>]))</code></pre>
+           (map treeFromList [<span class="st">&quot;baz&quot;</span>,<span class="st">&quot;zara&quot;</span>,<span class="st">&quot;bar&quot;</span>]))</code></pre></div>
 </div>
 <pre><code>Arbre binaire d'arbres binaires de Char:
 &lt; &lt; 'b'
@@ -1211,20 +1211,20 @@ treeFromList (x<span class="fu">:</span>xs) <span class="fu">=</span> <span clas
 <img src="../../../../Scratch/img/blog/Haskell-the-Hard-Way/yo_dawg_tree.jpg" alt="Yo Dawg Tree" />
 </div>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">  putStrLn <span class="st">&quot;\nTree of Binary trees of Char binary trees:&quot;</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">  putStrLn <span class="st">&quot;\nTree of Binary trees of Char binary trees:&quot;</span>
   print <span class="fu">$</span> (treeFromList <span class="fu">.</span> map (treeFromList <span class="fu">.</span> map treeFromList))
              [ [<span class="st">&quot;YO&quot;</span>,<span class="st">&quot;DAWG&quot;</span>]
              , [<span class="st">&quot;I&quot;</span>,<span class="st">&quot;HEARD&quot;</span>]
              , [<span class="st">&quot;I&quot;</span>,<span class="st">&quot;HEARD&quot;</span>]
-             , [<span class="st">&quot;YOU&quot;</span>,<span class="st">&quot;LIKE&quot;</span>,<span class="st">&quot;TREES&quot;</span>] ]</code></pre>
+             , [<span class="st">&quot;YOU&quot;</span>,<span class="st">&quot;LIKE&quot;</span>,<span class="st">&quot;TREES&quot;</span>] ]</code></pre></div>
 </div>
 <p>Qui est équivalent à</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">print ( treeFromList (
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">print ( treeFromList (
           map treeFromList
              [ map treeFromList [<span class="st">&quot;YO&quot;</span>,<span class="st">&quot;DAWG&quot;</span>]
              , map treeFromList [<span class="st">&quot;I&quot;</span>,<span class="st">&quot;HEARD&quot;</span>]
              , map treeFromList [<span class="st">&quot;I&quot;</span>,<span class="st">&quot;HEARD&quot;</span>]
-             , map treeFromList [<span class="st">&quot;YOU&quot;</span>,<span class="st">&quot;LIKE&quot;</span>,<span class="st">&quot;TREES&quot;</span>] ]))</code></pre>
+             , map treeFromList [<span class="st">&quot;YOU&quot;</span>,<span class="st">&quot;LIKE&quot;</span>,<span class="st">&quot;TREES&quot;</span>] ]))</code></pre></div>
 <p>et donne:</p>
 <pre><code>Arbre d'arbres d'arbres de char:
 &lt; &lt; &lt; 'Y'
@@ -1270,7 +1270,7 @@ Structures infinies
 </blockquote>
 <p>Par exemple en Haskell vous pouvez faire:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- numbers = [1,2,..]</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- numbers = [1,2,..]</span>
 <span class="ot">numbers ::</span> [<span class="dt">Integer</span>]
 numbers <span class="fu">=</span> <span class="dv">0</span><span class="fu">:</span>map (<span class="dv">1</span><span class="fu">+</span>) numbers
 
@@ -1278,7 +1278,7 @@ take' n [] <span class="fu">=</span> []
 take' <span class="dv">0</span> l <span class="fu">=</span> []
 take' n (x<span class="fu">:</span>xs) <span class="fu">=</span> x<span class="fu">:</span>take' (n<span class="fu">-</span><span class="dv">1</span>) xs
 
-main <span class="fu">=</span> print <span class="fu">$</span> take' <span class="dv">10</span> numbers</code></pre>
+main <span class="fu">=</span> print <span class="fu">$</span> take' <span class="dv">10</span> numbers</code></pre></div>
 </div>
 <p>Et ça s’arrête.</p>
 <p>Comment?</p>
@@ -1293,14 +1293,14 @@ main <span class="fu">=</span> print <span class="fu">$</span> take' <span class
 <div style="display:none">
 <p>This code is mostly the same as the previous one.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Debug.Trace</span> (trace)
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Debug.Trace</span> (trace)
 <span class="kw">import </span><span class="dt">Data.List</span>
 <span class="kw">data</span> <span class="dt">BinTree</span> a <span class="fu">=</span> <span class="dt">Empty</span>
                  <span class="fu">|</span> <span class="dt">Node</span> a (<span class="dt">BinTree</span> a) (<span class="dt">BinTree</span> a)
-                  <span class="kw">deriving</span> (<span class="dt">Eq</span>,<span class="dt">Ord</span>)</code></pre>
+                  <span class="kw">deriving</span> (<span class="dt">Eq</span>,<span class="dt">Ord</span>)</code></pre></div>
 </div>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- declare BinTree a to be an instance of Show</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- declare BinTree a to be an instance of Show</span>
 <span class="kw">instance</span> (<span class="dt">Show</span> a) <span class="ot">=&gt;</span> <span class="dt">Show</span> (<span class="dt">BinTree</span> a) <span class="kw">where</span>
   <span class="co">-- will start by a '&lt;' before the root</span>
   <span class="co">-- and put a : a begining of line</span>
@@ -1336,16 +1336,16 @@ main <span class="fu">=</span> print <span class="fu">$</span> take' <span class
       <span class="kw">where</span>
           change c new x
               <span class="fu">|</span> x <span class="fu">==</span> c <span class="fu">=</span> new
-              <span class="fu">|</span> otherwise <span class="fu">=</span> x<span class="fu">:</span>[] <span class="co">-- &quot;x&quot;</span></code></pre>
+              <span class="fu">|</span> otherwise <span class="fu">=</span> x<span class="fu">:</span>[] <span class="co">-- &quot;x&quot;</span></code></pre></div>
 </div>
 </div>
 <p>Supposons que nous ne nous préoccupions pas d’avoir une arbre ordonné. Voici un arbre binaire infini:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">nullTree <span class="fu">=</span> <span class="dt">Node</span> <span class="dv">0</span> nullTree nullTree</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">nullTree <span class="fu">=</span> <span class="dt">Node</span> <span class="dv">0</span> nullTree nullTree</code></pre></div>
 </div>
 <p>Un arbre complet où chaque noeud est égal à 0. Maintenant je vais vous prouver que nous pouvons manipuler cet arbre avec la fonction suivante:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- take all element of a BinTree</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- take all element of a BinTree</span>
 <span class="co">-- up to some depth</span>
 treeTakeDepth _ <span class="dt">Empty</span> <span class="fu">=</span> <span class="dt">Empty</span>
 treeTakeDepth <span class="dv">0</span> _     <span class="fu">=</span> <span class="dt">Empty</span>
@@ -1353,10 +1353,10 @@ treeTakeDepth n (<span class="dt">Node</span> x left right) <span class="fu">=</
           nl <span class="fu">=</span> treeTakeDepth (n<span class="fu">-</span><span class="dv">1</span>) left
           nr <span class="fu">=</span> treeTakeDepth (n<span class="fu">-</span><span class="dv">1</span>) right
           <span class="kw">in</span>
-              <span class="dt">Node</span> x nl nr</code></pre>
+              <span class="dt">Node</span> x nl nr</code></pre></div>
 </div>
 <p>Regardez ce qui se passe avec ce programme:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print <span class="fu">$</span> treeTakeDepth <span class="dv">4</span> nullTree</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print <span class="fu">$</span> treeTakeDepth <span class="dv">4</span> nullTree</code></pre></div>
 <p>Le code compile, se lance et s’arrête en donnant ce résultat:</p>
 <pre><code>&lt;  0
 : |-- 0
@@ -1375,29 +1375,29 @@ treeTakeDepth n (<span class="dt">Node</span> x left right) <span class="fu">=</
 :       `-- 0</code></pre>
 <p>Pour nous chauffer encore un peu les neurones, faisons un arbre plus intéressant:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">iTree <span class="fu">=</span> <span class="dt">Node</span> <span class="dv">0</span> (dec iTree) (inc iTree)
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">iTree <span class="fu">=</span> <span class="dt">Node</span> <span class="dv">0</span> (dec iTree) (inc iTree)
         <span class="kw">where</span>
            dec (<span class="dt">Node</span> x l r) <span class="fu">=</span> <span class="dt">Node</span> (x<span class="fu">-</span><span class="dv">1</span>) (dec l) (dec r)
-           inc (<span class="dt">Node</span> x l r) <span class="fu">=</span> <span class="dt">Node</span> (x<span class="fu">+</span><span class="dv">1</span>) (inc l) (inc r)</code></pre>
+           inc (<span class="dt">Node</span> x l r) <span class="fu">=</span> <span class="dt">Node</span> (x<span class="fu">+</span><span class="dv">1</span>) (inc l) (inc r)</code></pre></div>
 </div>
 <p>Un autre moyen de créer cet arbre est d’utiliser une fonction d’ordre supérieur. Cette fonction devrait être similaire à <code>map</code> n, mais devrais travailler sur un <code>BinTree</code> au lieu d’une liste. Voici cette fonction:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- apply a function to each node of Tree</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- apply a function to each node of Tree</span>
 <span class="ot">treeMap ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> <span class="dt">BinTree</span> a <span class="ot">-&gt;</span> <span class="dt">BinTree</span> b
 treeMap f <span class="dt">Empty</span> <span class="fu">=</span> <span class="dt">Empty</span>
 treeMap f (<span class="dt">Node</span> x left right) <span class="fu">=</span> <span class="dt">Node</span> (f x)
                                      (treeMap f left)
-                                     (treeMap f right)</code></pre>
+                                     (treeMap f right)</code></pre></div>
 </div>
 <p><em>NB</em>: Je ne parlerais pas plus de cette fonction ici. Si vous vous intéressez à la généralisation de <code>map</code>à d’autre structures de données, cherchez des informations sur les foncteurs et <code>fmap</code>.</p>
 <p>Notre définition est maintenant:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">infTreeTwo ::</span> <span class="dt">BinTree</span> <span class="dt">Int</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">infTreeTwo ::</span> <span class="dt">BinTree</span> <span class="dt">Int</span>
 infTreeTwo <span class="fu">=</span> <span class="dt">Node</span> <span class="dv">0</span> (treeMap (\x <span class="ot">-&gt;</span> x<span class="fu">-</span><span class="dv">1</span>) infTreeTwo)
-                    (treeMap (\x <span class="ot">-&gt;</span> x<span class="fu">+</span><span class="dv">1</span>) infTreeTwo)</code></pre>
+                    (treeMap (\x <span class="ot">-&gt;</span> x<span class="fu">+</span><span class="dv">1</span>) infTreeTwo)</code></pre></div>
 </div>
 <p>Regardez le résultat pour</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print <span class="fu">$</span> treeTakeDepth <span class="dv">4</span> infTreeTwo</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print <span class="fu">$</span> treeTakeDepth <span class="dv">4</span> infTreeTwo</code></pre></div>
 <pre><code>&lt;  0
 : |-- -1
 : |  |-- -2
@@ -1415,9 +1415,9 @@ infTreeTwo <span class="fu">=</span> <span class="dt">Node</span> <span class="d
 :       `-- 3</code></pre>
 <div style="display:none">
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span>
   print <span class="fu">$</span> treeTakeDepth <span class="dv">4</span> nullTree
-  print <span class="fu">$</span> treeTakeDepth <span class="dv">4</span> infTreeTwo</code></pre>
+  print <span class="fu">$</span> treeTakeDepth <span class="dv">4</span> infTreeTwo</code></pre></div>
 </div>
 </div>
 <p><a href="code/02_Hard_Part/41_Infinites_Structures.lhs" class="cut">02_Hard_Part/<strong>41_Infinites_Structures.lhs</strong> </a></p>
@@ -1466,13 +1466,13 @@ f = do
 <p>Demander une liste de nombres à l’utilisateur. Afficher la somme de ces nombres.</p>
 </blockquote>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">toList ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> [<span class="dt">Integer</span>]
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">toList ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> [<span class="dt">Integer</span>]
 toList input <span class="fu">=</span> read (<span class="st">&quot;[&quot;</span> <span class="fu">++</span> input <span class="fu">++</span> <span class="st">&quot;]&quot;</span>)
 
 main <span class="fu">=</span> <span class="kw">do</span>
   putStrLn <span class="st">&quot;Enter a list of numbers (separated by comma):&quot;</span>
   input <span class="ot">&lt;-</span> getLine
-  print <span class="fu">$</span> sum (toList input)</code></pre>
+  print <span class="fu">$</span> sum (toList input)</code></pre></div>
 </div>
 <p>Il devrait être simple de comprendre le comportement de ce programme. Analysons les types en détails.</p>
 <pre><code>putStrLn :: String -&gt; IO ()
@@ -1508,32 +1508,32 @@ main = do
 <p>Argh! Un message d’erreur et un crash! Notre première amélioration sera de répondre avec un message plus amical.</p>
 <p>Pour faire cela, nous devons détecter que quelque chose s’est mal passé. Voici un moyen de le faire: utiliser le type <code>Maybe</code>. C’est un type très commun en Haskell.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Maybe</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Maybe</span></code></pre></div>
 </div>
 <p>Quelle est cette chose? <code>Maybe</code> est un type qui prend un paramètre. Sa définition est:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Maybe</span> a <span class="fu">=</span> <span class="dt">Nothing</span> <span class="fu">|</span> <span class="dt">Just</span> a</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Maybe</span> a <span class="fu">=</span> <span class="dt">Nothing</span> <span class="fu">|</span> <span class="dt">Just</span> a</code></pre></div>
 <p>C’est un bon moyen de dire qu’il y a eu une erreur en essayant de créer/évaluer une valeur. La fonction <code>maybeRead</code> est un bon exemple de cela. C’est une fonction similaire à <code>read</code><a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a>, mais si quelque chose ne va pas la valeur retournée est <code>Nothing</code>. Si la valeur est bonne, la valeur retournée est <code>Just &lt;la valeur&gt;</code>. N’essayez pas trop de comprendre cette fonction. J’utilise un fonction de plus bas niveau que <code>read</code>; <code>reads</code>.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">maybeRead ::</span> <span class="dt">Read</span> a <span class="ot">=&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">maybeRead ::</span> <span class="dt">Read</span> a <span class="ot">=&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
 maybeRead s <span class="fu">=</span> <span class="kw">case</span> reads s <span class="kw">of</span>
                   [(x,<span class="st">&quot;&quot;</span>)]    <span class="ot">-&gt;</span> <span class="dt">Just</span> x
-                  _           <span class="ot">-&gt;</span> <span class="dt">Nothing</span></code></pre>
+                  _           <span class="ot">-&gt;</span> <span class="dt">Nothing</span></code></pre></div>
 </div>
 <p>Maintenant, pour être plus lisible, on définie une fonction comme ceci: Si la chaîne a un mauvais format, elle retournera <code>Nothing</code>. Sinon, par exemple pour “1,2,3”, cela retournera <code>Just [1,2,3]</code>.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">getListFromString ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> [<span class="dt">Integer</span>]
-getListFromString str <span class="fu">=</span> maybeRead <span class="fu">$</span> <span class="st">&quot;[&quot;</span> <span class="fu">++</span> str <span class="fu">++</span> <span class="st">&quot;]&quot;</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">getListFromString ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> [<span class="dt">Integer</span>]
+getListFromString str <span class="fu">=</span> maybeRead <span class="fu">$</span> <span class="st">&quot;[&quot;</span> <span class="fu">++</span> str <span class="fu">++</span> <span class="st">&quot;]&quot;</span></code></pre></div>
 </div>
 <p>Nous avons juste à tester la valeur dans notre fonction principale.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">IO</span> ()
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">IO</span> ()
 main <span class="fu">=</span> <span class="kw">do</span>
   putStrLn <span class="st">&quot;Enter a list of numbers (separated by comma):&quot;</span>
   input <span class="ot">&lt;-</span> getLine
   <span class="kw">let</span> maybeList <span class="fu">=</span> getListFromString input <span class="kw">in</span>
       <span class="kw">case</span> maybeList <span class="kw">of</span>
           <span class="dt">Just</span> l  <span class="ot">-&gt;</span> print (sum l)
-          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> error <span class="st">&quot;Bad format. Good Bye.&quot;</span></code></pre>
+          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> error <span class="st">&quot;Bad format. Good Bye.&quot;</span></code></pre></div>
 </div>
 <p>En cas d’erreur, on affiche un joli message.</p>
 <p>Remarquez que le type de chaque expresstion dans le bloc <code>do</code> de <code>main</code> reste de la forme <code>IO a</code>. La seule construction étrange est <code>error</code>. Je dirais juste que <code>error msg</code> prend le type nécessaire (ici, <code>IO ()</code>).</p>
@@ -1551,25 +1551,25 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <p>La prochaine étape sera de demader la liste de nombre à l’utilisateur encore et encore jusqu’à ce qu’il entre une réponse valide</p>
 <p>Nous gardons la première partie:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Maybe</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Maybe</span>
 
 <span class="ot">maybeRead ::</span> <span class="dt">Read</span> a <span class="ot">=&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
 maybeRead s <span class="fu">=</span> <span class="kw">case</span> reads s <span class="kw">of</span>
                   [(x,<span class="st">&quot;&quot;</span>)]    <span class="ot">-&gt;</span> <span class="dt">Just</span> x
                   _           <span class="ot">-&gt;</span> <span class="dt">Nothing</span>
 <span class="ot">getListFromString ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> [<span class="dt">Integer</span>]
-getListFromString str <span class="fu">=</span> maybeRead <span class="fu">$</span> <span class="st">&quot;[&quot;</span> <span class="fu">++</span> str <span class="fu">++</span> <span class="st">&quot;]&quot;</span></code></pre>
+getListFromString str <span class="fu">=</span> maybeRead <span class="fu">$</span> <span class="st">&quot;[&quot;</span> <span class="fu">++</span> str <span class="fu">++</span> <span class="st">&quot;]&quot;</span></code></pre></div>
 </div>
 <p>Maintenant nous créons la fonction qui demandera une liste d’entiers à l’utilisateur jusqu’à ce que l’entrée soit correcte</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">askUser ::</span> <span class="dt">IO</span> [<span class="dt">Integer</span>]
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">askUser ::</span> <span class="dt">IO</span> [<span class="dt">Integer</span>]
 askUser <span class="fu">=</span> <span class="kw">do</span>
   putStrLn <span class="st">&quot;Enter a list of numbers (separated by comma):&quot;</span>
   input <span class="ot">&lt;-</span> getLine
   <span class="kw">let</span> maybeList <span class="fu">=</span> getListFromString input <span class="kw">in</span>
       <span class="kw">case</span> maybeList <span class="kw">of</span>
           <span class="dt">Just</span> l  <span class="ot">-&gt;</span> return l
-          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> askUser</code></pre>
+          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> askUser</code></pre></div>
 </div>
 <p>Cette fonction est de type <code>IO [Integer]</code>. cela signifie que la valeur trouvée est de type <code>[Integer</code>] et est le résultat d’actions d’E/S. Certaines personnes expliqueraient en agitant leurs mains:</p>
 <blockquote>
@@ -1578,10 +1578,10 @@ askUser <span class="fu">=</span> <span class="kw">do</span>
 <p>Si vous voulez comprendre les détails derrière tout cela, vous devrez lire la prochaine section. MAis si vous voulez seulement <em>utiliser</em> l’E/S, pratiquer juste une peu et rappelez-vous de penser aux types.</p>
 <p>Finalement notre fonction <code>main</code>est plus simple:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">IO</span> ()
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">IO</span> ()
 main <span class="fu">=</span> <span class="kw">do</span>
   list <span class="ot">&lt;-</span> askUser
-  print <span class="fu">$</span> sum list</code></pre>
+  print <span class="fu">$</span> sum list</code></pre></div>
 </div>
 <p>Nous avons fini notre introduction à l’<code>IO</code>. C’était rapide. Voici les principales choses à se rappeler:</p>
 <ul>
@@ -1627,7 +1627,7 @@ main w0 =
 </blockquote>
 <p>Pourquoi avons-nous utilisé cette syntaxe étrange, et quel est exactement le type <code>IO</code>? Cela peut sembler un peu magique.</p>
 <p>Pour l’instant, oublions les parties pures de notre programme, et concentrons-nous sur les parties impures:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">askUser ::</span> <span class="dt">IO</span> [<span class="dt">Integer</span>]
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">askUser ::</span> <span class="dt">IO</span> [<span class="dt">Integer</span>]
 askUser <span class="fu">=</span> <span class="kw">do</span>
   putStrLn <span class="st">&quot;Enter a list of numbers (separated by commas):&quot;</span>
   input <span class="ot">&lt;-</span> getLine
@@ -1639,23 +1639,23 @@ askUser <span class="fu">=</span> <span class="kw">do</span>
 <span class="ot">main ::</span> <span class="dt">IO</span> ()
 main <span class="fu">=</span> <span class="kw">do</span>
   list <span class="ot">&lt;-</span> askUser
-  print <span class="fu">$</span> sum list</code></pre>
+  print <span class="fu">$</span> sum list</code></pre></div>
 <p>Première remarque: on dirait de l’impératif. Haskell est assez puissant pour faire sembler impératif du code impur. Par exemple, si vous le vouliez vous pourriez créer <code>while</code> en Haskell. En fait, pour utiliser les <code>IO</code>, le style impératif est généralement plus approprié.</p>
 <p>Mais vous devriez avoir remarqué que la notation est inhabituelle. Voici pourquoi, en détail.</p>
 <p>Dans un langage impur, l’état du monde peut être vu comme une énorme variable globale cachée. Cette variable cachée est accessible par toutes les fonctions du langage/ Par exemple, vous pouvez lire et écrire un fichier dans n’importe quelle fonction. L’existence hypothétique du fichier est une différence dans les états possibles que le monde peut prendre.</p>
 <p>En Haskell cet état n’est pas caché. Au contraire, il est dit <em>explicitement</em> que <code>main</code> est une fonction qui change <em>potentiellement</em> l’état du monde. Son type est donc quelque chose comme:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">World</span> <span class="ot">-&gt;</span> <span class="dt">World</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">World</span> <span class="ot">-&gt;</span> <span class="dt">World</span></code></pre></div>
 <p>Les fonctions n’ont pas toutes accès à cette variable. Celle qui y ont accès sont impures. Les fonctions qui ne peuvent pas agir sur la variable sont pures<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a>.</p>
 <p>Haskell considère l’état u monde comme une variable à passer à <code>main</code>. Mais son type réel est plus proche de celui ci<a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a>:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">World</span> <span class="ot">-&gt;</span> ((),<span class="dt">World</span>)</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">World</span> <span class="ot">-&gt;</span> ((),<span class="dt">World</span>)</code></pre></div>
 <p>Le type <code>()</code> est le type unité. Rien à voir ici.</p>
 <p>Maintenant reécrivons notre fonction <code>main</code> avec cela à l’esprit:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main w0 <span class="fu">=</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main w0 <span class="fu">=</span>
     <span class="kw">let</span> (list,w1) <span class="fu">=</span> askUser w0 <span class="kw">in</span>
     <span class="kw">let</span> (x,w2) <span class="fu">=</span> print (sum list,w1) <span class="kw">in</span>
-    x</code></pre>
+    x</code></pre></div>
 <p>D’abord, on remarque que toutes les fonctions avec des effets collatéraux doivent avoir le type:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">World</span> <span class="ot">-&gt;</span> (a,<span class="dt">World</span>)</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">World</span> <span class="ot">-&gt;</span> (a,<span class="dt">World</span>)</code></pre></div>
 <p>ou <code>a  est le type du résultat. Par exemple, un fonction</code>getChar<code>aura le type</code>World -&gt; (Char, World).</p>
 <p>Une autre chose à noter est le truc pour corriger l’ordre d’évaluation. En Haskell, pour évaluer <code>f a b</code>, vous avez beaucoup de choix:</p>
 <ul>
@@ -1672,42 +1672,42 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <li>renvoyer <code>((), id du nouveau monde)</code>.</li>
 </ul>
 <p>Maintenant, si vous regardez le style de la fonction <code>main</code>, c’est clairement peu maniable. Essayons de fair la même chose avec la fonction <code>askUser</code>:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">askUser ::</span> <span class="dt">World</span> <span class="ot">-&gt;</span> ([<span class="dt">Integer</span>],<span class="dt">World</span>)</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">askUser ::</span> <span class="dt">World</span> <span class="ot">-&gt;</span> ([<span class="dt">Integer</span>],<span class="dt">World</span>)</code></pre></div>
 <p>Avant:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">askUser ::</span> <span class="dt">IO</span> [<span class="dt">Integer</span>]
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">askUser ::</span> <span class="dt">IO</span> [<span class="dt">Integer</span>]
 askUser <span class="fu">=</span> <span class="kw">do</span>
   putStrLn <span class="st">&quot;Enter a list of numbers:&quot;</span>
   input <span class="ot">&lt;-</span> getLine
   <span class="kw">let</span> maybeList <span class="fu">=</span> getListFromString input <span class="kw">in</span>
       <span class="kw">case</span> maybeList <span class="kw">of</span>
           <span class="dt">Just</span> l  <span class="ot">-&gt;</span> return l
-          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> askUser</code></pre>
+          <span class="dt">Nothing</span> <span class="ot">-&gt;</span> askUser</code></pre></div>
 <p>Après:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">askUser w0 <span class="fu">=</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">askUser w0 <span class="fu">=</span>
     <span class="kw">let</span> (_,w1)     <span class="fu">=</span> putStrLn <span class="st">&quot;Enter a list of numbers:&quot;</span> <span class="kw">in</span>
     <span class="kw">let</span> (input,w2) <span class="fu">=</span> getLine w1 <span class="kw">in</span>
     <span class="kw">let</span> (l,w3)     <span class="fu">=</span> <span class="kw">case</span> getListFromString input <span class="kw">of</span>
                       <span class="dt">Just</span> l   <span class="ot">-&gt;</span> (l,w2)
                       <span class="dt">Nothing</span>  <span class="ot">-&gt;</span> askUser w2
     <span class="kw">in</span>
-        (l,w3)</code></pre>
+        (l,w3)</code></pre></div>
 <p>C’est similaire, mais malaisé. Voyez ces noms temporaires <code>w?</code>.</p>
 <p>Voici la leçon: l’implémentation naïve des IO dans les langages fonctionnels purs est maladroite!</p>
 <p>Heureusement, il ya un meilleur moyen de résoudre ce problème. Nous voyons un motif. Chaque ligne est de la forme:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">let</span> (y,w') <span class="fu">=</span> action x w <span class="kw">in</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">let</span> (y,w') <span class="fu">=</span> action x w <span class="kw">in</span></code></pre></div>
 <p>Même si pour quelques lignes l’argument <code>x</code> n’est pas nécessaire. La sortie est un couple, <code>(answer, newWorldValue)</code>. Chaque fonction <code>f</code> doit avoir un type similaire à:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">World</span> <span class="ot">-&gt;</span> (a,<span class="dt">World</span>)</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">World</span> <span class="ot">-&gt;</span> (a,<span class="dt">World</span>)</code></pre></div>
 <p>Il n’y apas seulement ça, nous pouvons aussi remarquer que nous suivaons toujours le même motif:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">let</span> (y,w1) <span class="fu">=</span> action1 w0 <span class="kw">in</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">let</span> (y,w1) <span class="fu">=</span> action1 w0 <span class="kw">in</span>
 <span class="kw">let</span> (z,w2) <span class="fu">=</span> action2 w1 <span class="kw">in</span>
 <span class="kw">let</span> (t,w3) <span class="fu">=</span> action3 w2 <span class="kw">in</span>
-<span class="fu">...</span></code></pre>
+<span class="fu">...</span></code></pre></div>
 <p>Chaque action peut prendre de 0 à n paramètres. Et en particulier, chaque action peut prendre comme paramètre le résultat de la ligne du dessus.</p>
 <p>Par exemple, nous pourrions aussi avoir:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">let</span> (_,w1) <span class="fu">=</span> action1 x w0   <span class="kw">in</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">let</span> (_,w1) <span class="fu">=</span> action1 x w0   <span class="kw">in</span>
 <span class="kw">let</span> (z,w2) <span class="fu">=</span> action2 w1     <span class="kw">in</span>
 <span class="kw">let</span> (_,w3) <span class="fu">=</span> action3 x z w2 <span class="kw">in</span>
-<span class="fu">...</span></code></pre>
+<span class="fu">...</span></code></pre></div>
 <p>Et, bien entendu, <code>actionN w :: (World) -&gt; (a,World)</code>.</p>
 <blockquote>
 <p>IMPORTANT: Il y a seulement 2 patterns importants à considérer:</p>
@@ -1721,89 +1721,89 @@ let (y,w2) = action2 w1 in</code></pre>
 <img src="../../../../Scratch/img/blog/Haskell-the-Hard-Way/jocker_pencil_trick.jpg" alt="Jocker pencil trick" class="left" />
 </div>
 <p>Maintenant nous allons faire un tour de magie. Nous allons faire disparaître le symbole temporaire du monde. Nous allons <code>attacher</code> (<em>NDT: <code>bind</code> en anglais</em>) les deux lignes. Définissons la fonction <code>bind</code>. Son type est intimidant au départ:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">bind ::</span> (<span class="dt">World</span> <span class="ot">-&gt;</span> (a,<span class="dt">World</span>))
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">bind ::</span> (<span class="dt">World</span> <span class="ot">-&gt;</span> (a,<span class="dt">World</span>))
         <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> (<span class="dt">World</span> <span class="ot">-&gt;</span> (b,<span class="dt">World</span>)))
-        <span class="ot">-&gt;</span> (<span class="dt">World</span> <span class="ot">-&gt;</span> (b,<span class="dt">World</span>))</code></pre>
+        <span class="ot">-&gt;</span> (<span class="dt">World</span> <span class="ot">-&gt;</span> (b,<span class="dt">World</span>))</code></pre></div>
 <p>Mais rappelez-vous que <code>(World -&gt; (a,World))</code> est le type d’un action des IO. Renommons-le pour plus de clareté:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">IO</span> a <span class="fu">=</span> <span class="dt">World</span> <span class="ot">-&gt;</span> (a, <span class="dt">World</span>)</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">IO</span> a <span class="fu">=</span> <span class="dt">World</span> <span class="ot">-&gt;</span> (a, <span class="dt">World</span>)</code></pre></div>
 <p>Quelques exemples de fonctions:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">getLine<span class="ot"> ::</span> <span class="dt">IO</span> <span class="dt">String</span>
-print<span class="ot"> ::</span> <span class="dt">Show</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">getLine<span class="ot"> ::</span> <span class="dt">IO</span> <span class="dt">String</span>
+print<span class="ot"> ::</span> <span class="dt">Show</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</code></pre></div>
 <p><code>getLine</code> est une action d’E/S qui prend le monde en paramètre et retourne un couple <code>(String, World)</code>. Cela peut être résumé par: <code>getLine</code> est de type <code>IO String</code>, que nous pouvons voir comme une action ’E/S qui retournera une chaîne de caractères “dans une E/S”.</p>
 <p>La fonction <code>print</code> est elle aussi intéressante. Elle prend un argument qui peut être montré. En réalité elle prend deux arguments. LE premier est la valeur et le deuxième est l’état du monde. Elle retourne un couple de type <code>((), World)</code>. Cela signifie qu’elle change l’état du monde, mais ne produit pas d’autre donnée.</p>
 <p>Ce type nous aide à simplifier le type de <code>bind</code>:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">bind ::</span> <span class="dt">IO</span> a
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">bind ::</span> <span class="dt">IO</span> a
         <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> <span class="dt">IO</span> b)
-        <span class="ot">-&gt;</span> <span class="dt">IO</span> b</code></pre>
+        <span class="ot">-&gt;</span> <span class="dt">IO</span> b</code></pre></div>
 <p>Cela dit que <code>bind</code> prend deux action d’E/S comme paramètres et retourne une autre action d’E/S.</p>
 <p>Maintenant, rappelez-vous des motifs <em>importants</em>. Le premier était:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">let</span> (x,w1) <span class="fu">=</span> action1 w0 <span class="kw">in</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">let</span> (x,w1) <span class="fu">=</span> action1 w0 <span class="kw">in</span>
 <span class="kw">let</span> (y,w2) <span class="fu">=</span> action2 x w1 <span class="kw">in</span>
-(y,w2)</code></pre>
+(y,w2)</code></pre></div>
 <p>Voyez les types:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">action1  ::</span> <span class="dt">IO</span> a
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">action1  ::</span> <span class="dt">IO</span> a
 <span class="ot">action2  ::</span> a <span class="ot">-&gt;</span> <span class="dt">IO</span> b
-(y,w2)<span class="ot">   ::</span> <span class="dt">IO</span> b</code></pre>
+(y,w2)<span class="ot">   ::</span> <span class="dt">IO</span> b</code></pre></div>
 <p>Cela ne vous semble pas familier?</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">(bind action1 action2) w0 <span class="fu">=</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">(bind action1 action2) w0 <span class="fu">=</span>
     <span class="kw">let</span> (x, w1) <span class="fu">=</span> action1 w0
         (y, w2) <span class="fu">=</span> action2 x w1
-    <span class="kw">in</span>  (y, w2)</code></pre>
+    <span class="kw">in</span>  (y, w2)</code></pre></div>
 <p>L’idée est de cacher l’argument <code>World</code> avec cette fonction. Allons-y: Par exemple si nous avions voulu simuler:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">let</span> (line1,w1) <span class="fu">=</span> getLine w0 <span class="kw">in</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">let</span> (line1,w1) <span class="fu">=</span> getLine w0 <span class="kw">in</span>
 <span class="kw">let</span> ((),w2) <span class="fu">=</span> print line1 <span class="kw">in</span>
-((),w2)</code></pre>
+((),w2)</code></pre></div>
 <p>Maintenant, en utilisant la fonction <code>bind</code>:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">(res,w2) <span class="fu">=</span> (bind getLine (\l <span class="ot">-&gt;</span> print l)) w0</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">(res,w2) <span class="fu">=</span> (bind getLine (\l <span class="ot">-&gt;</span> print l)) w0</code></pre></div>
 <p>Comme <code>print</code> est de type <code>(World -&gt; ((),World))</code>, nous savons que <code>res = ()</code> (type nul) Si vous ne voyez pas ce qui est magique ici, essayons avec trois lignes cette fois.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">let</span> (line1,w1) <span class="fu">=</span> getLine w0 <span class="kw">in</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">let</span> (line1,w1) <span class="fu">=</span> getLine w0 <span class="kw">in</span>
 <span class="kw">let</span> (line2,w2) <span class="fu">=</span> getLine w1 <span class="kw">in</span>
 <span class="kw">let</span> ((),w3) <span class="fu">=</span> print (line1 <span class="fu">++</span> line2) <span class="kw">in</span>
-((),w3)</code></pre>
+((),w3)</code></pre></div>
 <p>Qui est équivalent à:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">(res,w3) <span class="fu">=</span> (bind getLine (\line1 <span class="ot">-&gt;</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">(res,w3) <span class="fu">=</span> (bind getLine (\line1 <span class="ot">-&gt;</span>
              (bind getLine (\line2 <span class="ot">-&gt;</span>
-               print (line1 <span class="fu">++</span> line2))))) w0</code></pre>
+               print (line1 <span class="fu">++</span> line2))))) w0</code></pre></div>
 <p>Avez-vous remarqué quelque chose ? Oui, aucune variable <code>World</code> temporaire n’est utilisée! C’est <em>MA</em>.<em>GIQUE</em>.</p>
 <p>Nous pouvons utiliser une meilleure notation. Utilisons <code>(&gt;&gt;=)</code> au lieu de <code>bind</code>. `<code>est une fonction infixe, comme</code>(+)<code>; pour mémoire:</code>3 + 4 ⇔ (+) 3 4`</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">(res,w3) <span class="fu">=</span> (getLine <span class="fu">&gt;&gt;=</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">(res,w3) <span class="fu">=</span> (getLine <span class="fu">&gt;&gt;=</span>
            (\line1 <span class="ot">-&gt;</span> getLine <span class="fu">&gt;&gt;=</span>
-           (\line2 <span class="ot">-&gt;</span> print (line1 <span class="fu">++</span> line2)))) w0</code></pre>
+           (\line2 <span class="ot">-&gt;</span> print (line1 <span class="fu">++</span> line2)))) w0</code></pre></div>
 <p>Ho Ho Ho! Joyeux Noël! fr; HAskell a un sucre syntaxique pour nous:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">do</span>
   x <span class="ot">&lt;-</span> action1
   y <span class="ot">&lt;-</span> action2
   z <span class="ot">&lt;-</span> action3
-  <span class="fu">...</span></code></pre>
+  <span class="fu">...</span></code></pre></div>
 <p>Est remplacé par:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">action1 <span class="fu">&gt;&gt;=</span> (\x <span class="ot">-&gt;</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">action1 <span class="fu">&gt;&gt;=</span> (\x <span class="ot">-&gt;</span>
 action2 <span class="fu">&gt;&gt;=</span> (\y <span class="ot">-&gt;</span>
 action3 <span class="fu">&gt;&gt;=</span> (\z <span class="ot">-&gt;</span>
 <span class="fu">...</span>
-)))</code></pre>
+)))</code></pre></div>
 <p>Remarquez que vous pouvez utliser <code>x</code> dans <code>action2</code> et <code>x</code> et <code>y</code> dans <code>action3</code></p>
 <p>Mais que se passe-t-il pour les lignes qui n’utilisent pas le <code>&lt;-</code>? FAcile, une autre fonction <code>blindBind</code>:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">blindBind ::</span> <span class="dt">IO</span> a <span class="ot">-&gt;</span> <span class="dt">IO</span> b <span class="ot">-&gt;</span> <span class="dt">IO</span> b
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">blindBind ::</span> <span class="dt">IO</span> a <span class="ot">-&gt;</span> <span class="dt">IO</span> b <span class="ot">-&gt;</span> <span class="dt">IO</span> b
 blindBind action1 action2 w0 <span class="fu">=</span>
-    bind action (\_ <span class="ot">-&gt;</span> action2) w0</code></pre>
+    bind action (\_ <span class="ot">-&gt;</span> action2) w0</code></pre></div>
 <p>Je n’ai pas simplifié cette définition pour plus de clareté. Bien sûr, nous pouvons utiliser une meilleure notation avec l’opérateur <code>(&gt;&gt;)</code>.</p>
 <p>Et</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">do</span>
     action1
     action2
-    action3</code></pre>
+    action3</code></pre></div>
 <p>Est transformé en</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">action1 <span class="fu">&gt;&gt;</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">action1 <span class="fu">&gt;&gt;</span>
 action2 <span class="fu">&gt;&gt;</span>
-action3</code></pre>
+action3</code></pre></div>
 <p>Aussi, une autre fonction est réellement utile.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">putInIO ::</span> a <span class="ot">-&gt;</span> <span class="dt">IO</span> a
-putInIO x <span class="fu">=</span> <span class="dt">IO</span> (\w <span class="ot">-&gt;</span> (x,w))</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">putInIO ::</span> a <span class="ot">-&gt;</span> <span class="dt">IO</span> a
+putInIO x <span class="fu">=</span> <span class="dt">IO</span> (\w <span class="ot">-&gt;</span> (x,w))</code></pre></div>
 <p>C’est le moyen énéral de mettre des valeurs pures dans le “contexte d’E/S”. Le nom général pour <code>putInIO</code> est <code>return</code>. C’est un très mauvais nom lorsque vous commencer à programmer en Haskell. <code>return</code> est très différent de ce que vous pourriez être habitué à utliser.</p>
 <hr />
 <p><a href="code/03_Hell/01_IO/21_Detailled_IO.lhs" class="cut">03_Hell/01_IO/<strong>21_Detailled_IO.lhs</strong></a></p>
 <p>Pour finir, traduisons notre exemple:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">
 <span class="ot">askUser ::</span> <span class="dt">IO</span> [<span class="dt">Integer</span>]
 askUser <span class="fu">=</span> <span class="kw">do</span>
   putStrLn <span class="st">&quot;Enter a list of numbers (separated by commas):&quot;</span>
@@ -1816,10 +1816,10 @@ askUser <span class="fu">=</span> <span class="kw">do</span>
 <span class="ot">main ::</span> <span class="dt">IO</span> ()
 main <span class="fu">=</span> <span class="kw">do</span>
   list <span class="ot">&lt;-</span> askUser
-  print <span class="fu">$</span> sum list</code></pre>
+  print <span class="fu">$</span> sum list</code></pre></div>
 <p>Est traduis en:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Maybe</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Maybe</span>
 
 <span class="ot">maybeRead ::</span> <span class="dt">Read</span> a <span class="ot">=&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
 maybeRead s <span class="fu">=</span> <span class="kw">case</span> reads s <span class="kw">of</span>
@@ -1838,7 +1838,7 @@ askUser <span class="fu">=</span>
 
 <span class="ot">main ::</span> <span class="dt">IO</span> ()
 main <span class="fu">=</span> askUser <span class="fu">&gt;&gt;=</span>
-  \list <span class="ot">-&gt;</span> print <span class="fu">$</span> sum list</code></pre>
+  \list <span class="ot">-&gt;</span> print <span class="fu">$</span> sum list</code></pre></div>
 </div>
 <p>vous pouvez compiler ce code pour vérifier qu’il marche.</p>
 <p>Imaginez à quoi il ressemblerait sans le <code>(&gt;&gt;)</code> et <code>(&gt;&gt;=)</code>.</p>
@@ -1860,7 +1860,7 @@ Les monades
 </ul>
 </blockquote>
 <p>En Haskell, <code>Monad</code> est une classe de type. Pour être une instance d’une classe de type, vous devez fournir les fonctions <code>(&gt;&gt;=)</code> et <code>return</code>. La fonction <code>(&gt;&gt;)</code> est dérivée de <code>(&gt;&gt;=)</code>. Voici commment la classe de typr <code>Monad</code> est déclarée (basiquement):</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">Monad</span> m  <span class="kw">where</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">Monad</span> m  <span class="kw">where</span>
 <span class="ot">  (&gt;&gt;=) ::</span> m a <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> m b) <span class="ot">-&gt;</span> m b
 <span class="ot">  return ::</span> a <span class="ot">-&gt;</span> m a
 
@@ -1870,7 +1870,7 @@ Les monades
   <span class="co">-- Vous pouvez ignorer cette fonction généralement,</span>
   <span class="co">-- je crois qu'elle existe pour des raisons historiques</span>
 <span class="ot">  fail ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> m a
-  fail <span class="fu">=</span> error</code></pre>
+  fail <span class="fu">=</span> error</code></pre></div>
 <blockquote>
 <p>Remarques:</p>
 <ul>
@@ -1886,7 +1886,7 @@ Maybe est une monade
 <p>Il y a beaucoup de types différents qui sont des instances de <code>Monad</code>. L’un des plus faciles à décrire est <code>Maybe</code>. Si vous avez une séquence de valeurs <code>Maybe</code>, vous pouvez utiliser les monades pour les manipuler. C’est particulièrement utile pour enlever des constructions <code>if..then..else..</code> trop nombreuses.</p>
 <p>Imaginez une opération bancaire complexe. Vous êtes éligible pour gagner 700€ seulement si vous pouvez effectuer une liste d’opérations sans tomber en dessous de zéro.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">deposit  value account <span class="fu">=</span> account <span class="fu">+</span> value
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">deposit  value account <span class="fu">=</span> account <span class="fu">+</span> value
 withdraw value account <span class="fu">=</span> account <span class="fu">-</span> value
 
 <span class="ot">eligible ::</span> (<span class="dt">Num</span> a,<span class="dt">Ord</span> a) <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Bool</span>
@@ -1915,14 +1915,14 @@ eligible account <span class="fu">=</span>
 
 main <span class="fu">=</span> <span class="kw">do</span>
   print <span class="fu">$</span> eligible <span class="dv">300</span> <span class="co">-- True</span>
-  print <span class="fu">$</span> eligible <span class="dv">299</span> <span class="co">-- False</span></code></pre>
+  print <span class="fu">$</span> eligible <span class="dv">299</span> <span class="co">-- False</span></code></pre></div>
 </div>
 <p><a href="code/03_Hell/02_Monads/10_Monads.lhs" class="cut">03_Hell/02_Monads/<strong>10_Monads.lhs</strong> </a></p>
 <hr />
 <p><a href="code/03_Hell/02_Monads/11_Monads.lhs" class="cut">03_Hell/02_Monads/<strong>11_Monads.lhs</strong></a></p>
 <p>Maintenant, améliorons cela en utilisant le fait que <code>Maybe</code> est une Monade.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">deposit ::</span> (<span class="dt">Num</span> a) <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">deposit ::</span> (<span class="dt">Num</span> a) <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
 deposit value account <span class="fu">=</span> <span class="dt">Just</span> (account <span class="fu">+</span> value)
 
 <span class="ot">withdraw ::</span> (<span class="dt">Num</span> a,<span class="dt">Ord</span> a) <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
@@ -1941,14 +1941,14 @@ eligible account <span class="fu">=</span> <span class="kw">do</span>
 
 main <span class="fu">=</span> <span class="kw">do</span>
   print <span class="fu">$</span> eligible <span class="dv">300</span> <span class="co">-- Just True</span>
-  print <span class="fu">$</span> eligible <span class="dv">299</span> <span class="co">-- Nothing</span></code></pre>
+  print <span class="fu">$</span> eligible <span class="dv">299</span> <span class="co">-- Nothing</span></code></pre></div>
 </div>
 <p><a href="code/03_Hell/02_Monads/11_Monads.lhs" class="cut">03_Hell/02_Monads/<strong>11_Monads.lhs</strong> </a></p>
 <hr />
 <p><a href="code/03_Hell/02_Monads/12_Monads.lhs" class="cut">03_Hell/02_Monads/<strong>12_Monads.lhs</strong></a></p>
 <p>Pas mauvais, mais nous pouvons faire encore mieux:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">deposit ::</span> (<span class="dt">Num</span> a) <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">deposit ::</span> (<span class="dt">Num</span> a) <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
 deposit value account <span class="fu">=</span> <span class="dt">Just</span> (account <span class="fu">+</span> value)
 
 <span class="ot">withdraw ::</span> (<span class="dt">Num</span> a,<span class="dt">Ord</span> a) <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
@@ -1967,7 +1967,7 @@ eligible account <span class="fu">=</span>
 
 main <span class="fu">=</span> <span class="kw">do</span>
   print <span class="fu">$</span> eligible <span class="dv">300</span> <span class="co">-- Just True</span>
-  print <span class="fu">$</span> eligible <span class="dv">299</span> <span class="co">-- Nothing</span></code></pre>
+  print <span class="fu">$</span> eligible <span class="dv">299</span> <span class="co">-- Nothing</span></code></pre></div>
 </div>
 <p>Nous avons prouvé que les monades sont un bon moyen de rendre notre code plus élégant. Remarquez que cette idée d’organisation de code, en particulier pour <code>Maybe</code>, peut être utilisée dans la plupart des langages impératifs. En fait, c’est le type de construction que nous faisons naturellement.</p>
 <blockquote>
@@ -1975,12 +1975,12 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <p>Le premier élement de la séquence qui sera évalué comme <code>Nothing</code> stoppera l’évaluation. Cela signifie que vous n’exécutez pas toutes les lignes. Vous avgfez cela gratuitement, grâce à la paresse.</p>
 </blockquote>
 <p>Vous pourriez aussi revoir ces exemples avec la définition de <code>(&gt;&gt;=)</code> pour <code>Maybe</code> en tête:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Monad</span> <span class="dt">Maybe</span> <span class="kw">where</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Monad</span> <span class="dt">Maybe</span> <span class="kw">where</span>
 <span class="ot">    (&gt;&gt;=) ::</span> <span class="dt">Maybe</span> a <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> b) <span class="ot">-&gt;</span> <span class="dt">Maybe</span> b
     <span class="dt">Nothing</span>  <span class="fu">&gt;&gt;=</span> _  <span class="fu">=</span> <span class="dt">Nothing</span>
     (<span class="dt">Just</span> x) <span class="fu">&gt;&gt;=</span> f  <span class="fu">=</span> f x
 
-    return x <span class="fu">=</span> <span class="dt">Just</span> x</code></pre>
+    return x <span class="fu">=</span> <span class="dt">Just</span> x</code></pre></div>
 <p>La monade <code>Maybe</code> a prouvé par un simple exemple qu’elle est utile. Nous avons vu l’utilité de la monade <code>IO</code>. Mais maintenant, voici un exemple plus cool, les listes.</p>
 <p><a href="code/03_Hell/02_Monads/12_Monads.lhs" class="cut">03_Hell/02_Monads/<strong>12_Monads.lhs</strong> </a></p>
 <hr />
@@ -1993,7 +1993,7 @@ La monade List
 </div>
 <p>La monade List nouis aide à simuler des calculs non-détertiministe. C’est parti:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Control.Monad</span> (guard)
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Control.Monad</span> (guard)
 
 allCases <span class="fu">=</span> [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>]
 
@@ -2006,16 +2006,16 @@ resolve <span class="fu">=</span> <span class="kw">do</span>
               return (x,y,z)
 
 main <span class="fu">=</span> <span class="kw">do</span>
-  print resolve</code></pre>
+  print resolve</code></pre></div>
 </div>
 <p>Ma. GIQUE.&nbsp;:</p>
 <pre><code>[(1,1,7),(1,1,8),(1,1,9),(1,1,10),(1,2,9),(1,2,10)]</code></pre>
 <p>Pour la monade List, il y a aussi un sucre syntaxique:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">  print <span class="fu">$</span> [ (x,y,z) <span class="fu">|</span> x <span class="ot">&lt;-</span> allCases,
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">  print <span class="fu">$</span> [ (x,y,z) <span class="fu">|</span> x <span class="ot">&lt;-</span> allCases,
                       y <span class="ot">&lt;-</span> allCases,
                       z <span class="ot">&lt;-</span> allCases,
-                      <span class="dv">4</span><span class="fu">*</span>x <span class="fu">+</span> <span class="dv">2</span><span class="fu">*</span>y <span class="fu">&lt;</span> z ]</code></pre>
+                      <span class="dv">4</span><span class="fu">*</span>x <span class="fu">+</span> <span class="dv">2</span><span class="fu">*</span>y <span class="fu">&lt;</span> z ]</code></pre></div>
 </div>
 <p>Je ne listerais pas toutes les monades, mais il y en a beaucoup. Utiliser les monades simplifie la manipulations de plusieurs notions dans les langages purs. Les monades sont très utiles, en particulier pour:</p>
 <ul>
@@ -2046,7 +2046,7 @@ Revenons sur les arbres infinis
 <div style="display:none">
 <p>This code is mostly the same as the one in the <a href="#trees">tree section</a>.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.List</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.List</span>
 <span class="kw">data</span> <span class="dt">BinTree</span> a <span class="fu">=</span> <span class="dt">Empty</span> 
                  <span class="fu">|</span> <span class="dt">Node</span> a (<span class="dt">BinTree</span> a) (<span class="dt">BinTree</span> a) 
                   <span class="kw">deriving</span> (<span class="dt">Eq</span>,<span class="dt">Ord</span>)
@@ -2087,37 +2087,37 @@ Revenons sur les arbres infinis
       <span class="kw">where</span>
           change c new x 
               <span class="fu">|</span> x <span class="fu">==</span> c <span class="fu">=</span> new
-              <span class="fu">|</span> otherwise <span class="fu">=</span> x<span class="fu">:</span>[] <span class="co">-- &quot;x&quot;</span></code></pre>
+              <span class="fu">|</span> otherwise <span class="fu">=</span> x<span class="fu">:</span>[] <span class="co">-- &quot;x&quot;</span></code></pre></div>
 </div>
 </div>
 <p>Notre première étape est de créer une liste de nombres pseudo-aléatoires:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">shuffle <span class="fu">=</span> map (\x <span class="ot">-&gt;</span> (x<span class="fu">*</span><span class="dv">3123</span>) <span class="ot">`mod`</span> <span class="dv">4331</span>) [<span class="dv">1</span><span class="fu">..</span>]</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">shuffle <span class="fu">=</span> map (\x <span class="ot">-&gt;</span> (x<span class="fu">*</span><span class="dv">3123</span>) <span class="ot">`mod`</span> <span class="dv">4331</span>) [<span class="dv">1</span><span class="fu">..</span>]</code></pre></div>
 </div>
 <p>Pour mémoire, voici la définition de <code>treeFromList</code></p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">treeFromList ::</span> (<span class="dt">Ord</span> a) <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> <span class="dt">BinTree</span> a
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">treeFromList ::</span> (<span class="dt">Ord</span> a) <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> <span class="dt">BinTree</span> a
 treeFromList []    <span class="fu">=</span> <span class="dt">Empty</span>
 treeFromList (x<span class="fu">:</span>xs) <span class="fu">=</span> <span class="dt">Node</span> x (treeFromList (filter (<span class="fu">&lt;</span>x) xs))
-                             (treeFromList (filter (<span class="fu">&gt;</span>x) xs))</code></pre>
+                             (treeFromList (filter (<span class="fu">&gt;</span>x) xs))</code></pre></div>
 </div>
 <p>et <code>treeTakeDepth</code>:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">treeTakeDepth _ <span class="dt">Empty</span> <span class="fu">=</span> <span class="dt">Empty</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">treeTakeDepth _ <span class="dt">Empty</span> <span class="fu">=</span> <span class="dt">Empty</span>
 treeTakeDepth <span class="dv">0</span> _     <span class="fu">=</span> <span class="dt">Empty</span>
 treeTakeDepth n (<span class="dt">Node</span> x left right) <span class="fu">=</span> <span class="kw">let</span>
           nl <span class="fu">=</span> treeTakeDepth (n<span class="fu">-</span><span class="dv">1</span>) left
           nr <span class="fu">=</span> treeTakeDepth (n<span class="fu">-</span><span class="dv">1</span>) right
           <span class="kw">in</span>
-              <span class="dt">Node</span> x nl nr</code></pre>
+              <span class="dt">Node</span> x nl nr</code></pre></div>
 </div>
 <p>Voyez le résultats de:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span>
       putStrLn <span class="st">&quot;take 10 shuffle&quot;</span>
       print <span class="fu">$</span> take <span class="dv">10</span> shuffle
       putStrLn <span class="st">&quot;\ntreeTakeDepth 4 (treeFromList shuffle)&quot;</span>
-      print <span class="fu">$</span> treeTakeDepth <span class="dv">4</span> (treeFromList shuffle)</code></pre>
+      print <span class="fu">$</span> treeTakeDepth <span class="dv">4</span> (treeFromList shuffle)</code></pre></div>
 </div>
 <pre><code>% runghc 02_Hard_Part/41_Infinites_Structures.lhs
 take 10 shuffle
@@ -2141,7 +2141,7 @@ treeTakeDepth 4 (treeFromList shuffle)
 :       `--4242</code></pre>
 <p>Le code fonctionne! Attention cependant, cela marchere seulement si vous avez toujours quelque chose à mettre dans une branche.</p>
 <p>Par exemple</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">treeTakeDepth <span class="dv">4</span> (treeFromList [<span class="dv">1</span><span class="fu">..</span>]) </code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">treeTakeDepth <span class="dv">4</span> (treeFromList [<span class="dv">1</span><span class="fu">..</span>]) </code></pre></div>
 <p>tournera en boucle pour toujours. Simplement parce que le code essayera d’accéder à première valeur de <code>filter (&lt;1) [2..]</code>. Mais <code>filter</code> n’est pas assez intelligent pour comprendre que le résultat est une liste vide.</p>
 <p>Toutefois, cela reste un exemple sympa de ce qu’un programme non-stricit a à offrir.</p>
 <p>Laissé pour exercice au lecteur:</p>
@@ -2156,14 +2156,14 @@ treeTakeDepth 4 (treeFromList shuffle)
 <div style="display:none">
 <p>This code is mostly the same as the preceding one.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Debug.Trace</span> (trace)
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Debug.Trace</span> (trace)
 <span class="kw">import </span><span class="dt">Data.List</span>
 <span class="kw">data</span> <span class="dt">BinTree</span> a <span class="fu">=</span> <span class="dt">Empty</span> 
                  <span class="fu">|</span> <span class="dt">Node</span> a (<span class="dt">BinTree</span> a) (<span class="dt">BinTree</span> a) 
-                  <span class="kw">deriving</span> (<span class="dt">Eq</span>,<span class="dt">Ord</span>)</code></pre>
+                  <span class="kw">deriving</span> (<span class="dt">Eq</span>,<span class="dt">Ord</span>)</code></pre></div>
 </div>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- declare BinTree a to be an instance of Show</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- declare BinTree a to be an instance of Show</span>
 <span class="kw">instance</span> (<span class="dt">Show</span> a) <span class="ot">=&gt;</span> <span class="dt">Show</span> (<span class="dt">BinTree</span> a) <span class="kw">where</span>
   <span class="co">-- will start by a '&lt;' before the root</span>
   <span class="co">-- and put a : a begining of line</span>
@@ -2207,20 +2207,20 @@ treeTakeDepth n (<span class="dt">Node</span> x left right) <span class="fu">=</
           nl <span class="fu">=</span> treeTakeDepth (n<span class="fu">-</span><span class="dv">1</span>) left
           nr <span class="fu">=</span> treeTakeDepth (n<span class="fu">-</span><span class="dv">1</span>) right
           <span class="kw">in</span>
-              <span class="dt">Node</span> x nl nr</code></pre>
+              <span class="dt">Node</span> x nl nr</code></pre></div>
 </div>
 </div>
 <p>Pour résoudre ces problèmes nous allons modifier légèrement nos fonctions <code>treeFromList</code> et <code>shuffle</code>.</p>
 <p>Un premier problème est le manque de nombres différents dans notre immlémentation de <code>shuffle</code>. Nous avons généré seulement <code>4331</code> nombres différents. Pour résoudre cela nous allons faire un meilleure fonction <code>shuffle</code>.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">shuffle <span class="fu">=</span> map rand [<span class="dv">1</span><span class="fu">..</span>]
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">shuffle <span class="fu">=</span> map rand [<span class="dv">1</span><span class="fu">..</span>]
           <span class="kw">where</span> 
               rand x <span class="fu">=</span> ((p x) <span class="ot">`mod`</span> (x<span class="fu">+</span>c)) <span class="fu">-</span> ((x<span class="fu">+</span>c) <span class="ot">`div`</span> <span class="dv">2</span>)
               p x <span class="fu">=</span> m<span class="fu">*</span>x<span class="fu">^</span><span class="dv">2</span> <span class="fu">+</span> n<span class="fu">*</span>x <span class="fu">+</span> o <span class="co">-- some polynome</span>
               m <span class="fu">=</span> <span class="dv">3123</span>    
               n <span class="fu">=</span> <span class="dv">31</span>
               o <span class="fu">=</span> <span class="dv">7641</span>
-              c <span class="fu">=</span> <span class="dv">1237</span></code></pre>
+              c <span class="fu">=</span> <span class="dv">1237</span></code></pre></div>
 </div>
 <p>Cette fonction à la propriété de ne pas avoir de bornes supérieure ou inférieure. Mais avoir une meilleure list <code>shuffle</code> n’est pas assez pour entrer dans une boucle infinie.</p>
 <p>Généralement, nous ne pouvons pas décider que <code>filter (&lt;x) xs</code> est vide. Donc pour résoudre le problème, je vais autoriser quelques erreurs dans la création de notre arbre binaire. Cette nouvelle version du code peut créer des arbres binaires qui n’ont pas à suivre les propriétés suivantes pour quelque uns de leurs noeuds:</p>
@@ -2230,16 +2230,16 @@ treeTakeDepth n (<span class="dt">Node</span> x left right) <span class="fu">=</
 <p>Remarquez que cela donnera <em>souvent</em> un arbre ordonné. En outre, avec cette construction, chaque noeud est unique dans l’arbre.</p>
 <p>Voici notre nouvelle version de <code>treeFromList</code>. Nous avons simplement remplacé <code>filter</code> par <code>safefilter</code>.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">treeFromList ::</span> (<span class="dt">Ord</span> a, <span class="dt">Show</span> a) <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> <span class="dt">BinTree</span> a
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">treeFromList ::</span> (<span class="dt">Ord</span> a, <span class="dt">Show</span> a) <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> <span class="dt">BinTree</span> a
 treeFromList []    <span class="fu">=</span> <span class="dt">Empty</span>
 treeFromList (x<span class="fu">:</span>xs) <span class="fu">=</span> <span class="dt">Node</span> x left right
           <span class="kw">where</span> 
               left <span class="fu">=</span> treeFromList <span class="fu">$</span> safefilter (<span class="fu">&lt;</span>x) xs
-              right <span class="fu">=</span> treeFromList <span class="fu">$</span> safefilter (<span class="fu">&gt;</span>x) xs</code></pre>
+              right <span class="fu">=</span> treeFromList <span class="fu">$</span> safefilter (<span class="fu">&gt;</span>x) xs</code></pre></div>
 </div>
 <p>Cette nouvelle fonction <code>safefilter</code> est presque équivalente à <code>filter</code> mais n’entre pas dans des boucles infinies si le résultat est une liste finie. Si elle ne peut pas trouver un élément pour lequel le test est vrai après 10000 étapes consécutives, alors elle considère que la recherche est finie.</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">safefilter ::</span> (a <span class="ot">-&gt;</span> <span class="dt">Bool</span>) <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [a]
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">safefilter ::</span> (a <span class="ot">-&gt;</span> <span class="dt">Bool</span>) <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [a]
 safefilter f l <span class="fu">=</span> safefilter' f l nbTry
   <span class="kw">where</span>
       nbTry <span class="fu">=</span> <span class="dv">10000</span>
@@ -2248,15 +2248,15 @@ safefilter f l <span class="fu">=</span> safefilter' f l nbTry
       safefilter' f (x<span class="fu">:</span>xs) n <span class="fu">=</span> 
                   <span class="kw">if</span> f x 
                      <span class="kw">then</span> x <span class="fu">:</span> safefilter' f xs nbTry 
-                     <span class="kw">else</span> safefilter' f xs (n<span class="fu">-</span><span class="dv">1</span>) </code></pre>
+                     <span class="kw">else</span> safefilter' f xs (n<span class="fu">-</span><span class="dv">1</span>) </code></pre></div>
 </div>
 <p>Maintenant faites tourner le programme et soyez heureux:</p>
 <div class="codehighlight">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span>
       putStrLn <span class="st">&quot;take 10 shuffle&quot;</span>
       print <span class="fu">$</span> take <span class="dv">10</span> shuffle
       putStrLn <span class="st">&quot;\ntreeTakeDepth 8 (treeFromList shuffle)&quot;</span>
-      print <span class="fu">$</span> treeTakeDepth <span class="dv">8</span> (treeFromList <span class="fu">$</span> shuffle)</code></pre>
+      print <span class="fu">$</span> treeTakeDepth <span class="dv">8</span> (treeFromList <span class="fu">$</span> shuffle)</code></pre></div>
 </div>
 <p>Vous devriez réaliser que le temps nécessaire pour afficher chaque valeur est différent. C’est parce que Haskell calcule chaque valeur lorsqu’il en a besoin. Et dans ce cas, il est demandé de l’afficher à l’écran.</p>
 <p>Vous pouvez même essayer de remplacer la profondeur de <code>8</code> par <code>100</code>. Cela marchera sans tuer votre RAM! La gestion de la mémoire est faite naturellement par Haskell.</p>
@@ -2272,12 +2272,12 @@ safefilter f l <span class="fu">=</span> safefilter' f l nbTry
 Expliquer pourquoi cela ne fonctionne pas et peut entrer dans une boucle infinie.</li>
 <li>Supposez que <code>shuffle</code> est une liste de nombre réellement aléatoires avec de plus en plus de bornes. Si vous étudiez un peu cette structure, vous découvrirez qu’elle a toutes les chances d’être finie. En utilisant le code suivant (supposez que nous pouvons utliser <code>safefilter'</code> directement comme si cela n’était pas dans le <code>where</code> de <code>safefilter</code>. trouvez une définition de <code>f</code> telle que, avec une probabilité de <code>1</code>, <code>treeFromList' shuffle</code> est infinie?. Et prouvez-le. Avertissement, ce n’est qu’une conjecture.</li>
 </ul>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">treeFromList' []  n <span class="fu">=</span> <span class="dt">Empty</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">treeFromList' []  n <span class="fu">=</span> <span class="dt">Empty</span>
 treeFromList' (x<span class="fu">:</span>xs) n <span class="fu">=</span> <span class="dt">Node</span> x left right
     <span class="kw">where</span>
         left <span class="fu">=</span> treeFromList' (safefilter' (<span class="fu">&lt;</span>x) xs (f n)
         right <span class="fu">=</span> treeFromList' (safefilter' (<span class="fu">&gt;</span>x) xs (f n)
-        f <span class="fu">=</span> <span class="fu">???</span></code></pre>
+        f <span class="fu">=</span> <span class="fu">???</span></code></pre></div>
 <p><a href="code/04_Appendice/01_More_on_infinite_trees/11_Infinite_Trees.lhs" class="cut">04_Appendice/01_More_on_infinite_trees/<strong>11_Infinite_Trees.lhs</strong> </a></p>
 <h2 id="remerciements">Remerciements</h2>
 <p>Merci à <a href="http://reddit.com/r/haskell"><code>/r/haskell</code></a> et <a href="http://reddit.com/r/programming"><code>/r/programming</code></a>. Vos commentaires étaient plus que bienvenus.</p>

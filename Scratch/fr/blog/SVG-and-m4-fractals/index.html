@@ -56,22 +56,22 @@
 <ul>
 <li>Les variables, au lieu d’écrire <code>myvar = value</code>, voici la version <sc>xslt</sc> :</li>
 </ul>
-<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;xsl:variable</span><span class="ot"> name=</span><span class="st">&quot;myvar&quot;</span><span class="ot"> select=</span><span class="st">&quot;value&quot;</span><span class="kw">/&gt;</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;xsl:variable</span><span class="ot"> name=</span><span class="st">&quot;myvar&quot;</span><span class="ot"> select=</span><span class="st">&quot;value&quot;</span><span class="kw">/&gt;</span></code></pre></div>
 <ul>
 <li>Afficher quelquechose. Au lieu de <code>print &quot;Hello world!&quot;</code>, <sc>xslt</sc> nous offre :</li>
 </ul>
-<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;xsl:text</span> 
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;xsl:text</span> 
 <span class="ot">    disable-output-escaping=</span><span class="st">&quot;yes&quot;</span><span class="kw">&gt;</span><span class="bn">&lt;![CDATA[</span>Hello world!
-<span class="bn">]]&gt;</span><span class="kw">&lt;/xsl:text&gt;</span></code></pre>
+<span class="bn">]]&gt;</span><span class="kw">&lt;/xsl:text&gt;</span></code></pre></div>
 <ul>
 <li>afficher la valeur d’une variable, au lieu de <code>print myvar</code>, nous avons droit à :</li>
 </ul>
-<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;xslt:value-of</span><span class="ot"> select=</span><span class="st">&quot;myvar&quot;</span><span class="kw">/&gt;</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;xslt:value-of</span><span class="ot"> select=</span><span class="st">&quot;myvar&quot;</span><span class="kw">/&gt;</span></code></pre></div>
 <ul>
 <li>Essayez d’imaginer à quel point il est verbeux de déclarer une fonction dans ce langage.</li>
 </ul>
 <h2 id="la-solution-m4-à-la-rescousse">La solution (m4 à la rescousse)</h2>
-<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; standalone=&quot;yes&quot;<span class="kw">?&gt;</span> <span class="co">&lt;!-- YES its &lt;span class=&quot;sc&quot;&gt;xml&lt;/span&gt; --&gt;</span>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; standalone=&quot;yes&quot;<span class="kw">?&gt;</span> <span class="co">&lt;!-- YES its &lt;span class=&quot;sc&quot;&gt;xml&lt;/span&gt; --&gt;</span>
 <span class="co">&lt;!-- ← start a comment, then write some m4 directives:</span>
 
 <span class="co">define(`ydef',`&lt;xsl:variable name=&quot;$1&quot; select=&quot;$2&quot;/&gt;')</span>
@@ -86,9 +86,9 @@
     ydef(myvar,value)
     yprint(Hello world!)
     yshow(myvar)
-<span class="kw">&lt;/xsl:template&gt;</span></code></pre>
+<span class="kw">&lt;/xsl:template&gt;</span></code></pre></div>
 <p>Maintenant compilons simplement ce fichier&nbsp;:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="kw">m4</span> myfile.m4 <span class="kw">&gt;</span> myfile.xslt</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="kw">m4</span> myfile.m4 <span class="kw">&gt;</span> myfile.xslt</code></pre></div>
 <p>Et vous pouvez profitez ! Maintenant <sc>xslt</sc> devient plus lisible et plus facile à éditer.</p>
 <h2 id="la-partie-la-plus-cool-les-fractales">La partie la plus cool: les fractales !</h2>
 <p>À ses débuts, beaucoup pensaient que ce serait le nouveau Flash. Apparemment, ce devrait plutôt être <code>canvas</code> avec du javascript qui occupera cette place.</p>
@@ -109,7 +109,7 @@
 </ol>
 <p>Si j’avais dû faire ça manuellement, il m’aurait fallu faire beaucoup de copier/coller dans mon <span class="sc">svg</span>. Simplement parce que la transformation est toujours la même, mais je ne pouvais pas dire, utiliser la transformation appelée “titi”. Plutôt que copier du <span class="sc">xml</span>, j’ai utilisé m4.</p>
 <p>Et voici le code commenté&nbsp;:</p>
-<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;<span class="kw">?&gt;</span>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;<span class="kw">?&gt;</span>
 <span class="co">&lt;!--</span>
 <span class="co">     M4 Macros</span>
 <span class="co">define(`YTRANSFORMONE', `scale(.43) translate(-120,-69) rotate(-10)')</span>
@@ -151,9 +151,9 @@
     YTRANSCOMPLETE(3,2) <span class="co">&lt;!-- deeper --&gt;</span>
     YTRANSCOMPLETE(4,3) <span class="co">&lt;!-- even deeper --&gt;</span>
     YTRANSCOMPLETE(5,4) <span class="co">&lt;!-- Five level seems enough --&gt;</span>
-<span class="kw">&lt;/svg&gt;</span></code></pre>
+<span class="kw">&lt;/svg&gt;</span></code></pre></div>
 <p>et je l’ai compile en <sc>svg</sc> et ensuite en <sc>png</sc> avec&nbsp;:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="kw">m4</span> yesodlogo.m4 <span class="kw">&gt;</span> yesodlogo.svg <span class="kw">&amp;&amp;</span> convert yesodlogo.svg yesodlogo.png</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="kw">m4</span> yesodlogo.m4 <span class="kw">&gt;</span> yesodlogo.svg <span class="kw">&amp;&amp;</span> convert yesodlogo.svg yesodlogo.png</code></pre></div>
 <p>Le λ est dupliqué avec trois “transformations” différentes. Les transformations sont : <code>YTRANSFORMONE</code>, <code>YTRANSFORMTWO</code> et <code>YTRANSFORMTHREE</code>.</p>
 <p>Chaque transformation est une similarité (translation + rotation + zoom, ce qui est équivalent à juste rotation + zoom, mais bon).</p>
 <p>Une fois fixée chaque transformation peut ensuite être réutilisée pour chaque nouveau niveau.</p>

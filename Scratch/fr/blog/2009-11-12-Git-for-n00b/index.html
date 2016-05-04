@@ -45,9 +45,9 @@
 <h1 id="pour-commencer-la-conclusion">Pour commencer, la conclusion</h1>
 <p>Voici la liste des commandes nécessaires et suffisantes pour utiliser <a href="http://git-scm.org" title="Git">Git</a>. Il y en a très peu. Il est normal de ne pas les comprendre tout de suite mais c’est pour vous donner une idée. Malgré la longueur de l’article, 95% de l’utilisation de <a href="http://git-scm.org" title="Git">Git</a> tiens dans les 7 commandes décrites ci-après.</p>
 <p>Récupérer un projet&nbsp;:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">git <span class="kw">clone</span> ssh://server/path/to/project</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">git <span class="kw">clone</span> ssh://server/path/to/project</code></pre></div>
 <p>Utiliser <a href="http://git-scm.org" title="Git">Git</a> tous les jours&nbsp;:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="co"># get modifications from other</span>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="co"># get modifications from other</span>
 git pull
 <span class="co"># read what was done</span>
 git <span class="kw">log</span>
@@ -67,7 +67,7 @@ git add new/file
 git commit -a -m <span class="st">&quot;Fix bug #321&quot;</span>
 
 <span class="co"># send local modifications to other</span>
-git push</code></pre>
+git push</code></pre></div>
 <p>Cet article est écrit pour ceux qui en savent très peu sur les systèmes de version. Il est aussi écrit pour ceux qui n’ont pas suivi les progrès accomplis depuis CVS ou subversion (SVN). C’est pourquoi, dans un premier temps, j’explique rapidement quels sont les buts poursuivis par les systèmes de versions. J’explique ensuite comment installer et configurer <a href="http://git-scm.org" title="Git">Git</a>. Puis, pour chaque action que doivent accomplir les <abbr title="Decentralized Concurent Versions System">DCVS</abbr> je donne les commandes <a href="http://git-scm.org" title="Git">Git</a> qui y correspondent.</p>
 <h1 id="gitgit-pour-quoi-faire"><a href="http://git-scm.org" title="Git">Git</a> pour quoi faire ?</h1>
 <div class="intro">
@@ -77,15 +77,15 @@ git push</code></pre>
 <h3 id="système-de-versions">Système de versions</h3>
 <p>Tout d’abord, les systèmes de versions gèrent des fichiers. Quand on travaille avec des fichiers sans système de version voilà ce qui arrive souvent&nbsp;:</p>
 <p>Lorsqu’on modifie un fichier un peu critique et qu’on a pas envie de perdre, on se retrouve souvent à le recopier sous un autre nom. Par exemple</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ <span class="kw">cp</span> fichier_important.c fichier_important.c.bak</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ <span class="kw">cp</span> fichier_important.c fichier_important.c.bak</code></pre></div>
 <p>Du coups, ce nouveau fichier joue le rôle de <em>backup</em>. Si on casse tout, on peut toujours écraser les modifications que nous avons faites. Évidemment le problème avec cette façon de faire c’est que ce n’est pas très professionnel. Et puis c’est un peu limité. Si on veut faire trois ou quatre modifications on se retrouve avec plein de fichiers. Parfois avec des nom bizarres comme&nbsp;:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">fichier_important.c.bak
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">fichier_important.c.bak
 fichier_important.c.old
 fichier_important.c.Bakcup
 fichier_important.c.BAK.2009-11-14
 fichier_important.c.2009.11.14
 fichier_important.c.12112009
-old.fichier_important.c</code></pre>
+old.fichier_important.c</code></pre></div>
 <p>Bon alors si on veut que ça marche il faut se fixer des conventions de nommage. Les fichiers prennent beaucoup de place alors que souvent il n’y a que quelques lignes différentes entre le fichier et son backup…</p>
 <p><em>Heureusement les systèmes de version viennent à la rescousse.</em></p>
 <p>Il suffit de signaler que l’on va faire une nouvelle version d’un fichier et le système de version se débrouille pour l’enregistrer quelque part où on pourra facilement le retrouver. Et en général, le système de version fait les choses bien. C’est-à-dire qu’il n’utilise que très peu d’espace disque pour faire ces backups.</p>
@@ -103,9 +103,9 @@ old.fichier_important.c</code></pre>
 <h3 id="concurrentes">concurrentes</h3>
 <p>Les systèmes de versions sont déjà intéressants pour gérer ses projets personnels. Car ils permettent de mieux organiser celui-ci. De ne (presque) plus se poser de questions à propos des backups. Je dis presque parce qu’il faut quand même penser à protéger par backup son repository. Mais là où les systèmes de versions deviennent vraiment intéressants, c’est pour la gestion de projets à plusieurs.</p>
 <p>Commençons par un exemple avec un projet fait par deux personnes ; Alex et Béatrice. Sur un fichier contenant une liste de dieux <em>Lovecraftiens</em>&nbsp;:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">Cthulhu
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">Cthulhu
 Shubniggurath
-Yogsototh</code></pre>
+Yogsototh</code></pre></div>
 <p>Disons que Alex est chez lui, il modifie le fichier&nbsp;:</p>
 <div style="width: 10em; margin-left: auto; margin-right: auto">
 <pre class="twilight">
@@ -192,15 +192,15 @@ Yogsototh
 <h1 id="avant-lutilisation-la-configuration">Avant l’utilisation, la configuration</h1>
 <h2 id="installation">installation</h2>
 <p>Sous Linux Ubuntu ou Debian&nbsp;:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ <span class="kw">sudo</span> apt-get <span class="kw">install</span> git</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ <span class="kw">sudo</span> apt-get <span class="kw">install</span> git</code></pre></div>
 <p>Sous Mac OS X&nbsp;:</p>
 <ul>
 <li>installez <a href="http://macports.org/install.php">MacPorts</a></li>
 <li>installez <a href="http://git-scm.org" title="Git">Git</a></li>
 </ul>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ <span class="kw">sudo</span> port selfupdate
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ <span class="kw">sudo</span> port selfupdate
 
-$ <span class="kw">sudo</span> port <span class="kw">install</span> git-core</code></pre>
+$ <span class="kw">sudo</span> port <span class="kw">install</span> git-core</code></pre></div>
 <h2 id="configuration-globale">Configuration globale</h2>
 <p>Enregistrez le fichier suivant comme le fichier <code>~/.gitconfig</code>.</p>
 <pre><code>[color]
@@ -223,43 +223,43 @@ $ <span class="kw">sudo</span> port <span class="kw">install</span> git-core</co
 [branch]
 	autosetupmerge = true</code></pre>
 <p>Vous pouvez obtenir le même résultat en utilisant pour chaque entrée la commande <code>git config --global</code>. Configurez ensuite votre nom et votre email. Par exemple si vous vous appelez John Doe et que votre email est <code>john.doe@email.com</code>. Lancez les commandes suivantes&nbsp;:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ git config --global user.name John Doe
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ git config --global user.name John Doe
 
-$ git config --global user.email john.doe@email.com</code></pre>
+$ git config --global user.email john.doe@email.com</code></pre></div>
 <p>Voilà, la configuration de base est terminée. J’ai créé dans le fichier de configuration global des <em>alias</em> qui vont permettre de taper des commandes un peu plus courtes.</p>
 <h2 id="récupération-dun-projet-déjà-versionné">Récupération d’un projet déjà versionné</h2>
 <p>Si un projet est déjà versionné avec <a href="http://git-scm.org" title="Git">Git</a> vous devez avoir une <code>URL</code> pointant vers les sources du projet. La commande a exécuter est alors très simple.</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ <span class="kw">cd</span> ~/Projets
-$ git <span class="kw">clone</span> git://main.server/path/to/file</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ <span class="kw">cd</span> ~/Projets
+$ git <span class="kw">clone</span> git://main.server/path/to/file</code></pre></div>
 <p>S’il n’y a pas de serveur git sur le serveur distant, mais que vous avez un accès <code>ssh</code>, il suffit de remplacer le <code>git</code> de l’url par <code>ssh</code>. Pour ne pas avoir à entrer votre mot de passe à chaque fois le plus simple est de procéder comme suit&nbsp;:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ <span class="kw">ssh-keygen</span> -t rsa</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ <span class="kw">ssh-keygen</span> -t rsa</code></pre></div>
 <p>Répondez aux question et n’entrez <strong>surtout PAS</strong> de mot de passe. Ensuite copiez les clés sur le serveur distant. Ce n’est pas la façon la plus sûre de procéder. L’idéal étant d’écrire quand même un mot de passe et d’utiliser <code>ssh-agent</code>.</p>
 <p>Ensuite le plus simple, si vous possédez <code>ssh-copy-id</code> (sous Ubuntu par exemple)&nbsp;:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">me@locahost$ ssh-copy-id -i ~/.ssh/id_rsa.pub me@main.server</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">me@locahost$ ssh-copy-id -i ~/.ssh/id_rsa.pub me@main.server</code></pre></div>
 <p>ou manuellement&nbsp;:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">me@locahost$ <span class="kw">scp</span> ~/.ssh/id_rsa.pub me@main.server:
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">me@locahost$ <span class="kw">scp</span> ~/.ssh/id_rsa.pub me@main.server:
 me@locahost$ <span class="kw">ssh</span> me@main.server
 password:
 me@main.server$ <span class="kw">cat</span> id_rsa.pub <span class="kw">&gt;&gt;</span> ~/.ssh/authorized_keys
 me@main.server$ <span class="kw">rm</span> id_rsa.pub
-me@main.server$ <span class="kw">logout</span></code></pre>
+me@main.server$ <span class="kw">logout</span></code></pre></div>
 <p>Maintenant vous n’avez plus besoin de taper votre mot de passe pour accéder à <code>main.server</code>. Et donc aussi pour les commandes <code>git</code>.</p>
 <h2 id="créer-un-nouveau-projet">Créer un nouveau projet</h2>
 <p>Supposons que vous avez déjà un projet avec des fichiers. Alors il est très facile de le versionner.</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ <span class="kw">cd</span> /path/to/project
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ <span class="kw">cd</span> /path/to/project
 $ git init
 $ git add <span class="kw">.</span>
-$ git commit -m <span class="st">&quot;Initial commit&quot;</span></code></pre>
+$ git commit -m <span class="st">&quot;Initial commit&quot;</span></code></pre></div>
 <p>Une petite précision. Si vous ne souhaitez pas <em>versionner</em> tous les fichiers. Par exemple, les fichiers de compilations intermédiaires. Alors il faut les exclure. Pour cela, avant de lancer la commande <code>git add .</code>. Il faut créer un fichier <code>.gitignore</code> qui va contenir les <em>pattern</em> que git doit ignorer. Par exemple&nbsp;:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">*.o
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">*.o
 *.bak
 *.swp
-*~</code></pre>
+*~</code></pre></div>
 <p>Maintenant si vous voulez créer un repository sur un serveur distant, il faut absolument qu’il soit en mode <code>bare</code>. C’est-à-dire que le repository ne contiendra que la partie contenant les informations utile à la gestion de git, mais pas les fichiers du projet. Sans rentrer dans les détails, il suffit de lancer&nbsp;:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ <span class="kw">cd</span> /path/to/local/project
-$ git <span class="kw">clone</span> --bare <span class="kw">.</span> ssh://server/path/to/project</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ <span class="kw">cd</span> /path/to/local/project
+$ git <span class="kw">clone</span> --bare <span class="kw">.</span> ssh://server/path/to/project</code></pre></div>
 <p>Les autres pourront alors récupérer les modifications via la commande vue précédemment&nbsp;:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">git <span class="kw">clone</span> ssh://server/path/to/project</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">git <span class="kw">clone</span> ssh://server/path/to/project</code></pre></div>
 <h2 id="résumé-de-la-seconde-étape">Résumé de la seconde étape</h2>
 <p>Vous avez maintenant un répertoire sur votre ordinateur local. Il est versionné. Vous pouvez vous en rendre compte parcequ’à la racine (et à la racine seulement), il y a un répertoire <code>.git</code>. Ce répertoire contient tous les fichiers nécessaires au bon fonctionnement de <a href="http://git-scm.org" title="Git">Git</a>.</p>
 <p>Il ne reste plus qu’à savoir comment s’en servir maintenant pour obtenir toutes les jolies promesses faites dans la première partie.</p>
@@ -283,7 +283,7 @@ $ git <span class="kw">clone</span> --bare <span class="kw">.</span> ssh://serve
 <h4 id="exemple">exemple</h4>
 <p>Vous partez du fichier suivant&nbsp;:</p>
 <div style="width: 18em; margin-left: auto; margin-right: auto">
-<pre class="sourceCode zsh"><code class="sourceCode zsh">Zoot </code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">Zoot </code></pre></div>
 </div>
 <p>et vous modifiez une ligne</p>
 <div style="width: 18em; margin-left: auto; margin-right: auto">
@@ -299,7 +299,7 @@ Zoot<span class="StringConstant"><strong>, just Zoot</strong></span>
 </div>
 <p>Maintenant quand vous lancez la commande</p>
 <div>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ git pull
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ git pull
 remote: Counting objects: 5, <span class="kw">done</span>.
 remote: Total 3 <span class="kw">(</span>delta 0<span class="kw">)</span>, reused 0 <span class="kw">(</span>delta 0<span class="kw">)</span>
 Unpacking objects: 100% <span class="kw">(</span>3/3<span class="kw">)</span>, <span class="kw">done</span>.
@@ -307,7 +307,7 @@ From /home/yogsototh/tmp/conflictTest
    d3ea395..2dc7ffb  master     <span class="kw">-&gt;</span> origin/master
 Auto-merging foo
 CONFLICT <span class="kw">(</span>content<span class="kw">):</span> Merge conflict <span class="kw">in</span> foo
-Automatic merge failed; fix conflicts and <span class="kw">then</span> commit the result.</code></pre>
+Automatic merge failed; fix conflicts and <span class="kw">then</span> commit the result.</code></pre></div>
 </div>
 <p>Notre fichier <code>foo</code> contient alors&nbsp;:</p>
 <div>
@@ -328,7 +328,7 @@ Zoot <span class="Constant"><strong>the not so pure</strong></span>
 </div>
 <p>et de ‘commiter’ tout simplement&nbsp;:</p>
 <div>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">git commit -a -m <span class="st">&quot;conflict resolved&quot;</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">git commit -a -m <span class="st">&quot;conflict resolved&quot;</span></code></pre></div>
 </div>
 <p>Maintenant vous êtes fin prêt pour utiliser <a href="http://git-scm.org" title="Git">Git</a>. Sauf que <a href="http://git-scm.org" title="Git">Git</a>, c’est un outil qui permet de faire beaucoup plus que juste ça. Nous allons maintenant voir comment utiliser les fonctionnalités de Git qui n’étaient pas disponibles avec CVS et consorts.</p>
 <h1 id="pourquoi-git-est-cool">Pourquoi Git est cool ?</h1>
@@ -354,46 +354,46 @@ Zoot <span class="Constant"><strong>the not so pure</strong></span>
 <li>manipuler facilement des branches.</li>
 </ul>
 <h3 id="récupérer-les-modifications-des-autres">récupérer les modifications des autres</h3>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ git pull</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ git pull</code></pre></div>
 <h3 id="envoyer-ses-modifications-aux-autres">envoyer ses modifications aux autres</h3>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ git push</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ git push</code></pre></div>
 <p>ou plus généralement</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ git pull
-$ git push</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ git pull
+$ git push</code></pre></div>
 <h3 id="revenir-dans-le-temps">revenir dans le temps</h3>
 <h4 id="pour-toute-larborescence">Pour toute l’arborescence</h4>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ git checkout</code></pre>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ git revert</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ git checkout</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ git revert</code></pre></div>
 <p>revenir trois versions en arrière</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ git uncommit 3</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ git uncommit 3</code></pre></div>
 <p>Revenir avant le dernier merge (s’il s’est mal passé).</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ git revertbeforemerge</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ git revertbeforemerge</code></pre></div>
 <h4 id="pour-un-seul-fichier">Pour un seul fichier</h4>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ git checkout <span class="kw">file</span>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ git checkout <span class="kw">file</span>
 $ git checkout VersionHash <span class="kw">file</span>
-$ git checkout HEAD~3 <span class="kw">file</span></code></pre>
+$ git checkout HEAD~3 <span class="kw">file</span></code></pre></div>
 <h3 id="lister-les-différences-entre-chaque-version">lister les différences entre chaque version</h3>
 <p>liste les fichiers en cours de modifications</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ git status</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ git status</code></pre></div>
 <p>différences entre les fichiers de la dernière version et les fichiers locaux.</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ git <span class="kw">diff</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ git <span class="kw">diff</span></code></pre></div>
 <p>liste les différences entre les fichier d’une certaine version et les fichiers locaux.</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ git <span class="kw">diff</span> VersionHash fichier</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ git <span class="kw">diff</span> VersionHash fichier</code></pre></div>
 <h3 id="nommer-certaines-versions-pour-sy-référer-facilement">nommer certaines versions pour s’y référer facilement</h3>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ git tag <span class="st">'toto'</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ git tag <span class="st">'toto'</span></code></pre></div>
 <h3 id="afficher-lhistorique-des-modifications">afficher l’historique des modifications</h3>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ git <span class="kw">log</span>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ git <span class="kw">log</span>
 $ git lg
-$ git logfull</code></pre>
+$ git logfull</code></pre></div>
 <h3 id="savoir-qui-a-fait-quoi-et-quand">savoir qui a fait quoi et quand</h3>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ git blame fichier</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ git blame fichier</code></pre></div>
 <h3 id="gérer-des-conflits">gérer des conflits</h3>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ git conflict</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ git conflict</code></pre></div>
 <h3 id="manipuler-facilement-des-branches">manipuler facilement des branches</h3>
 <p>Pour créer une branche&nbsp;:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ git branch branch_name</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ git branch branch_name</code></pre></div>
 <p>Pour changer de branche courante&nbsp;:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ git checkout branch_name</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ git checkout branch_name</code></pre></div>
 				</div>
                 <div id="afterarticle">
                     <div id="social">

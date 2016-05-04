@@ -46,18 +46,20 @@
 <div>
 <p><code class="ruby"> # match all string containing ‘bull’ (bullshit comprised) /bull/</p>
 <h1 id="match-all-string-containing-bull-except-bullshit">match all string containing ‘bull’ except ‘bullshit’</h1>
-<p>/bull([^s]|<span class="math">)|<em>b</em><em>u</em><em>l</em><em>l</em><em>s</em>([<sup><em>h</em></sup>]|</span>)| bullsh([^i]|<span class="math">)|<em>b</em><em>u</em><em>l</em><em>l</em><em>s</em><em>h</em><em>i</em>([<sup><em>t</em></sup>]|</span>)/</p>
+<p>/bull([^s]|<span class="math inline">)|<em>b</em><em>u</em><em>l</em><em>l</em><em>s</em>([<sup><em>h</em></sup>]|</span>)| bullsh([^i]|<span class="math inline">)|<em>b</em><em>u</em><em>l</em><em>l</em><em>s</em><em>h</em><em>i</em>([<sup><em>t</em></sup>]|</span>)/</p>
 <h1 id="another-way-to-write-it-would-be">another way to write it would be</h1>
-/bull([^s]|<span class="math">|<em>s</em>([<sup><em>h</em></sup>]|</span>)|sh([^i]|<span class="math">)|<em>s</em><em>h</em><em>i</em>([<sup><em>t</em></sup>]|</span>))/ </code>
+/bull([^s]|<span class="math inline">|<em>s</em>([<sup><em>h</em></sup>]|</span>)|sh([^i]|<span class="math inline">)|<em>s</em><em>h</em><em>i</em>([<sup><em>t</em></sup>]|</span>))/ </code>
 </div>
 <p>Let look closer. In the first line the expression is: <code>bull([^s]|$)</code>, why does the <code>$</code> is needed? Because, without it the word <code>bull</code> would be no more matched. This expression means:</p>
 <blockquote>
-<p>The string finish by <code>bull</code><br />or,<br />contains <code>bull</code> followed by a letter different from <code>s</code>.</p>
+<p>The string finish by <code>bull</code><br />
+or,<br />
+contains <code>bull</code> followed by a letter different from <code>s</code>.</p>
 </blockquote>
 <p>And this is it. I hope it could help you.</p>
 Notice this method is not always the best. For example try to write a regular expression equivalent to the following conditional expression:
 <div>
-<code class="ruby"> # Begin with ‘a’: ^a # End with ‘a’: c$ # Contain ‘b’: .<em>b.</em> # But isn’t ‘axbxc’ if str.match(/^a.<em>b.</em>c<span class="math">/)<em>a</em><em>n</em><em>d</em><em>n</em><em>o</em><em>t</em><em>s</em><em>t</em><em>r</em>.<em>m</em><em>a</em><em>t</em><em>c</em><em>h</em>(/<sup><em>a</em></sup><em>x</em><em>b</em><em>x</em><em>c</em></span>/) do_something end </code>
+<code class="ruby"> # Begin with ‘a’: ^a # End with ‘a’: c$ # Contain ‘b’: .<em>b.</em> # But isn’t ‘axbxc’ if str.match(/^a.<em>b.</em>c<span class="math inline">/)<em>a</em><em>n</em><em>d</em><em>n</em><em>o</em><em>t</em><em>s</em><em>t</em><em>r</em>.<em>m</em><em>a</em><em>t</em><em>c</em><em>h</em>(/<sup><em>a</em></sup><em>x</em><em>b</em><em>x</em><em>c</em></span>/) do_something end </code>
 </div>
 <p>A nice solution is:</p>
 <div>

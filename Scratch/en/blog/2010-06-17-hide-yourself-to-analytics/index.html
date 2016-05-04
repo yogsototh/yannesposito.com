@@ -40,14 +40,14 @@
 					<p>This is a way not to count your own visits to your blog. First you should look on how <a href="../../../../Scratch/en/blog/2010-06-17-track-events-with-google-analytics">I handle analytics</a>. All analytics are handled in one javascript file, this make things really convenient.</p>
 <p>Then you need to know my method use the <code>jquery-cookie</code>.</p>
 <p>I check if the key <code>admin</code> is not set in the cookie before adding the visit.</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript">    <span class="kw">var</span> admin = <span class="ot">$</span>.<span class="fu">cookie</span>(<span class="st">'admin'</span>);
-    <span class="kw">if</span> (! admin) {
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript">    <span class="kw">var</span> admin <span class="op">=</span> <span class="va">$</span>.<span class="at">cookie</span>(<span class="st">'admin'</span>)<span class="op">;</span>
+    <span class="cf">if</span> (<span class="op">!</span> admin) <span class="op">{</span>
         <span class="co">// put your analytics code here</span>
-    } <span class="kw">else</span> {
-        <span class="ot">console</span>.<span class="fu">log</span>(<span class="st">&quot;[WARNING] you're HIDDEN to analytics&quot;</span>);
-    }</code></pre>
+    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span>
+        <span class="va">console</span>.<span class="at">log</span>(<span class="st">&quot;[WARNING] you're HIDDEN to analytics&quot;</span>)<span class="op">;</span>
+    <span class="op">}</span></code></pre></div>
 <p>then create two <sc>html</sc> files. One to hide:</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;utf-8&quot;<span class="kw">?&gt;</span>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;utf-8&quot;<span class="kw">?&gt;</span>
 <span class="dt">&lt;!DOCTYPE </span>html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot;
         &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;<span class="dt">&gt;</span>
 <span class="kw">&lt;html</span><span class="ot"> xmlns=</span><span class="st">&quot;http://www.w3.org/1999/xhtml&quot;</span><span class="ot"> lang=</span><span class="st">&quot;fr&quot;</span><span class="ot"> xml:lang=</span><span class="st">&quot;fr&quot;</span><span class="kw">&gt;</span>
@@ -56,19 +56,19 @@
         <span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span><span class="ot"> src=</span><span class="st">&quot;jquery.js&quot;</span><span class="kw">&gt;&lt;/script&gt;</span>
         <span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span><span class="ot"> src=</span><span class="st">&quot;jquery.cookie.js&quot;</span><span class="kw">&gt;&lt;/script&gt;</span>
         <span class="kw">&lt;script&gt;</span>
-            <span class="fu">$</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>(){
-                <span class="ot">$</span>.<span class="fu">cookie</span>(<span class="st">'admin'</span>,<span class="dv">1</span>);
-                <span class="fu">$</span>(<span class="st">'#info'</span>).<span class="fu">html</span>(<span class="st">'Analytics can no more see you.'</span>)
-            });
-        &lt;<span class="ot">/script&gt;</span>
-<span class="ot">        &lt;title&gt;Hide to analytics&lt;/title</span>&gt;
-    &lt;<span class="ot">/head&gt;</span>
-<span class="ot">    &lt;body&gt;</span>
-<span class="ot">        &lt;div id=&quot;info&quot;&gt;&lt;/div</span>&gt; 
-    &lt;<span class="ot">/body&gt;</span>
-<span class="ot">&lt;/html</span>&gt;</code></pre>
+            <span class="at">$</span>(document).<span class="at">ready</span>(<span class="kw">function</span>()<span class="op">{</span>
+                <span class="va">$</span>.<span class="at">cookie</span>(<span class="st">'admin'</span><span class="op">,</span><span class="dv">1</span>)<span class="op">;</span>
+                <span class="at">$</span>(<span class="st">'#info'</span>).<span class="at">html</span>(<span class="st">'Analytics can no more see you.'</span>)
+            <span class="op">}</span>)<span class="op">;</span>
+        <span class="op">&lt;</span><span class="ss">/script&gt;</span>
+<span class="ss">        &lt;title&gt;Hide to analytics&lt;/title</span><span class="op">&gt;</span>
+    <span class="op">&lt;</span><span class="ss">/head&gt;</span>
+<span class="ss">    &lt;body&gt;</span>
+<span class="ss">        &lt;div id=&quot;info&quot;&gt;&lt;/div</span><span class="op">&gt;</span> 
+    <span class="op">&lt;</span><span class="ss">/body&gt;</span>
+<span class="ss">&lt;/html</span><span class="op">&gt;</span></code></pre></div>
 <p>the other to be visible again (it can be useful):</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;utf-8&quot;<span class="kw">?&gt;</span>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;utf-8&quot;<span class="kw">?&gt;</span>
 <span class="dt">&lt;!DOCTYPE </span>html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot;
         &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;<span class="dt">&gt;</span>
 <span class="kw">&lt;html</span><span class="ot"> xmlns=</span><span class="st">&quot;http://www.w3.org/1999/xhtml&quot;</span><span class="ot"> lang=</span><span class="st">&quot;fr&quot;</span><span class="ot"> xml:lang=</span><span class="st">&quot;fr&quot;</span><span class="kw">&gt;</span>
@@ -77,17 +77,17 @@
         <span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span><span class="ot"> src=</span><span class="st">&quot;jquery.js&quot;</span><span class="kw">&gt;&lt;/script&gt;</span>
         <span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span><span class="ot"> src=</span><span class="st">&quot;jquery.cookie.js&quot;</span><span class="kw">&gt;&lt;/script&gt;</span>
         <span class="kw">&lt;script&gt;</span>
-            <span class="fu">$</span>(document).<span class="fu">ready</span>(<span class="kw">function</span>(){
-                <span class="ot">$</span>.<span class="fu">cookie</span>(<span class="st">'admin'</span>,<span class="kw">null</span>);
-                <span class="fu">$</span>(<span class="st">'#info'</span>).<span class="fu">html</span>(<span class="st">'Analytics can see you.'</span>)
-            });
-        &lt;<span class="ot">/script&gt;</span>
-<span class="ot">        &lt;title&gt;Hide to analytics&lt;/title</span>&gt;
-    &lt;<span class="ot">/head&gt;</span>
-<span class="ot">    &lt;body&gt;</span>
-<span class="ot">        &lt;div id=&quot;info&quot;&gt;&lt;/div</span>&gt; 
-    &lt;<span class="ot">/body&gt;</span>
-<span class="ot">&lt;/html</span>&gt;</code></pre>
+            <span class="at">$</span>(document).<span class="at">ready</span>(<span class="kw">function</span>()<span class="op">{</span>
+                <span class="va">$</span>.<span class="at">cookie</span>(<span class="st">'admin'</span><span class="op">,</span><span class="kw">null</span>)<span class="op">;</span>
+                <span class="at">$</span>(<span class="st">'#info'</span>).<span class="at">html</span>(<span class="st">'Analytics can see you.'</span>)
+            <span class="op">}</span>)<span class="op">;</span>
+        <span class="op">&lt;</span><span class="ss">/script&gt;</span>
+<span class="ss">        &lt;title&gt;Hide to analytics&lt;/title</span><span class="op">&gt;</span>
+    <span class="op">&lt;</span><span class="ss">/head&gt;</span>
+<span class="ss">    &lt;body&gt;</span>
+<span class="ss">        &lt;div id=&quot;info&quot;&gt;&lt;/div</span><span class="op">&gt;</span> 
+    <span class="op">&lt;</span><span class="ss">/body&gt;</span>
+<span class="ss">&lt;/html</span><span class="op">&gt;</span></code></pre></div>
 <p>Now accessing these files with you browser you can <em>hide</em> or <em>appear</em> in your statistics. You just have to think to access these file from all you browser.</p>
 				</div>
                 <div id="afterarticle">

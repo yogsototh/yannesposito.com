@@ -45,7 +45,7 @@ NSString *b64_hash = [self b64_sha1:@&quot;some NSString to be sha1'ed&quot;];
 ...
 NSString *hex_hash = [self hex_sha1:@&quot;some NSString to be sha1'ed&quot;];</code></pre>
 <p>L’algorithme pour l’encodage en <code>base64</code> doit être programmé sur iPhone. Il n’y a pas de librairie officielle qui s’occupe de ça.</p>
-<pre class="sourceCode c"><code class="sourceCode c">
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c">
 - (<span class="dt">unsigned</span> <span class="dt">char</span> *)sha1:(NSString *)baseString result:(<span class="dt">unsigned</span> <span class="dt">char</span> *)result {
     <span class="dt">char</span> *c_baseString=(<span class="dt">char</span> *)[baseString UTF8String];
     CC_SHA1(c_baseString, strlen(c_baseString), result);
@@ -86,7 +86,7 @@ NSString *hex_hash = [self hex_sha1:@&quot;some NSString to be sha1'ed&quot;];</
     <span class="dt">unsigned</span> <span class="dt">char</span> result[CC_SHA1_DIGEST_LENGTH<span class="dv">+1</span>];
     [self sha1:inputString result:result];
     <span class="kw">return</span> [self hexadecimalRepresentation:result];
-}</code></pre>
+}</code></pre></div>
 				</div>
                 <div id="afterarticle">
                     <div id="social">

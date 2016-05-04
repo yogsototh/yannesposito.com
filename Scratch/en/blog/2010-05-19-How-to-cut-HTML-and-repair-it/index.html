@@ -40,26 +40,26 @@
 				<div class="corps">
 					<p>For my main page, you can see, a list of my latest blog entry. And you have the first part of each article. To accomplish that, I needed to include the begining of the entry and to cut it somewhere. But now, I had to repair this cutted HTML.</p>
 <p>Here is an example:</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;corps&quot;</span><span class="kw">&gt;</span>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;corps&quot;</span><span class="kw">&gt;</span>
     <span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;intro&quot;</span><span class="kw">&gt;</span>
         <span class="kw">&lt;p&gt;</span>Introduction<span class="kw">&lt;/p&gt;</span>
     <span class="kw">&lt;/div&gt;</span>
     <span class="kw">&lt;p&gt;</span>The first paragraph<span class="kw">&lt;/p&gt;</span>
     <span class="kw">&lt;img</span><span class="ot"> src=</span><span class="st">&quot;/img/img.png&quot;</span><span class="ot"> alt=</span><span class="st">&quot;an image&quot;</span><span class="kw">/&gt;</span>
     <span class="kw">&lt;p&gt;</span>Another long paragraph<span class="kw">&lt;/p&gt;</span>
-<span class="kw">&lt;/div&gt;</span></code></pre>
+<span class="kw">&lt;/div&gt;</span></code></pre></div>
 <p>After the cut, I obtain:</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;corps&quot;</span><span class="kw">&gt;</span>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;corps&quot;</span><span class="kw">&gt;</span>
     <span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;intro&quot;</span><span class="kw">&gt;</span>
         <span class="kw">&lt;p&gt;</span>Introduction<span class="kw">&lt;/p&gt;</span>
     <span class="kw">&lt;/div&gt;</span>
     <span class="kw">&lt;p&gt;</span>The first paragraph<span class="kw">&lt;/p&gt;</span>
-    <span class="kw">&lt;img</span><span class="ot"> src=</span><span class="st">&quot;/img/im</span></code></pre>
+    <span class="kw">&lt;img</span><span class="ot"> src=</span><span class="st">&quot;/img/im</span></code></pre></div>
 <p>Argh! In the middle of an <code>&lt;img&gt;</code> tag.</p>
 <p>In fact, it is not as difficult as it should sound first. The secret is, you don’t need to keep the complete tree structure to repair it, but only the list of not closed parents.</p>
 <p>Given with our example, when we are after the first paragraph. we only have to close the <code>div</code> for class <code>corps</code> and the XML is repaired. Of course, when you cut inside a tag, you sould go back, as if you where just before it. Delete this tag and all is ok.</p>
 <p>Then, all you have to do, is not remember all the XML tree, but only the heap containing your parents. Suppose we treat the complete first example, the stack will pass through the following state, in order:</p>
-<pre class="sourceCode html"><code class="sourceCode html">[]           
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html">[]           
 [div]           <span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;corps&quot;</span><span class="kw">&gt;</span>
 [div, div]          <span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;intro&quot;</span><span class="kw">&gt;</span>
 [div, div, p]           <span class="kw">&lt;p&gt;</span>
@@ -73,13 +73,13 @@
 [div, p]            <span class="kw">&lt;p&gt;</span>
                         Another long paragraph
 [div]               <span class="kw">&lt;/p&gt;</span>
-[]              <span class="kw">&lt;/div&gt;</span></code></pre>
+[]              <span class="kw">&lt;/div&gt;</span></code></pre></div>
 <p>The algorihm, is then really simple: <sub><sub>~</sub></sub>~ {.html} let res be the XML as a string ; read res and each time you encouter a tag: if it is an opening one: push it to the stack else if it is a closing one: pop the stack.</p>
 <p>remove any malformed/cutted tag in the end of res for each tag in the stack, pop it, and write: res = res + closed tag</p>
 <p>return res <sub><sub>~</sub></sub>~</p>
 <p>And <code>res</code> contain the repaired XML.</p>
 <p>Finally, this is the code in ruby I use. The <code>xml</code> variable contain the cutted XML.</p>
-<pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># repair cutted XML code by closing the tags</span>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># repair cutted XML code by closing the tags</span>
 <span class="co"># work even if the XML is cut into a tag.</span>
 <span class="co"># example:</span>
 <span class="co">#    transform '&lt;div&gt; &lt;span&gt; toto &lt;/span&gt; &lt;p&gt; hello &lt;a href=&quot;http://tur'</span>
@@ -102,7 +102,7 @@
     depth-=<span class="dv">1</span>
     depth.downto(<span class="dv">0</span>).each { |x| res&lt;&lt;=<span class="ot"> %{</span><span class="st">&lt;/</span><span class="ot">#{</span>parents[x]<span class="ot">}</span><span class="st">&gt;</span><span class="ot">}</span> }
     res
-<span class="kw">end</span></code></pre>
+<span class="kw">end</span></code></pre></div>
 <p>I don’t know if the code can help you, but the raisonning should definitively be known.</p>
 				</div>
                 <div id="afterarticle">

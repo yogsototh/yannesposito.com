@@ -39,7 +39,7 @@
 				<div class="corps">
 					<p>You can remark at the bottom of each page I provide a last modification date. This label was first calculated using the <code>mtime</code> of the file on the file system. But many times I modify this date just to force some recompilation. Therefore the date wasn’t a date of <em>real</em> modification.</p>
 <p>I use <a href="http://git-scm.org">git</a> to version my website. And fortunately I can know the last date of <em>real</em> change of a file. This is how I do this with <a href="http://nanoc.stoneship.org">nanoc</a>:</p>
-<pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="kw">def</span> gitmtime
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="kw">def</span> gitmtime
     filepath=<span class="ot">@item</span>.path.sub(<span class="st">'/Scratch/'</span>,<span class="st">'content/html/'</span>).sub(<span class="ot">/\/$/</span>,<span class="st">''</span>)
     ext=<span class="ot">%{</span><span class="st">.</span><span class="ot">#{@item</span>[<span class="st">:extension</span>]<span class="ot">}}</span>
     filepath&lt;&lt;=ext
@@ -52,7 +52,7 @@
     <span class="kw">else</span>
         <span class="kw">return</span> <span class="dt">DateTime</span>.parse( str )
     <span class="kw">end</span>
-<span class="kw">end</span></code></pre>
+<span class="kw">end</span></code></pre></div>
 <p>Of course I know it is really slow and absolutely not optimized. But it works as expected. Now the date you see at the bottom is exactly the date I modified the <em>content</em> of the page.</p>
 <p><em>Edit</em>: Thanks to Eric Sunshine and Kris to provide me some hints at cleaning my code.</p>
 				</div>

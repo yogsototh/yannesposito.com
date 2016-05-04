@@ -40,7 +40,7 @@
 					<p>Les expressions régulières sont très utiles. Cependant, elles ne sont pas toujours la meilleure manière d’aborder certain problème autour des chaines de caractères. Et surtout quand les transformations que vous voulez accomplir sont simples.</p>
 <p>Je voulais savoir comment récupérer le plus vite possible l’extension d’un nom de fichier. Il y a trois manière naturelle d’accomplir celà&nbsp;:</p>
 <div>
-<p><code class="ruby"> # regexp str.match(/[^.]*<span class="math">/); <em>e</em><em>x</em><em>t</em> = </span>&amp;</p>
+<p><code class="ruby"> # regexp str.match(/[^.]*<span class="math inline">/);<em>e</em><em>x</em><em>t</em>=</span>&amp;</p>
 <h1 id="split">split</h1>
 <p>ext=str.split(‘.’)[-1]</p>
 <h1 id="file-module">File module</h1>
@@ -50,7 +50,7 @@ ext=File.extname(str) </code>
 <p>Voici le code pour faire un benchmark&nbsp;:</p>
 <div>
 <p><code class="ruby" file="regex_benchmark_ext.rb"> #!/usr/bin/env ruby require ‘benchmark’ n=80000 tab=[ ‘/accounts/user.json’, ‘/accounts/user.xml’, ‘/user/titi/blog/toto.json’, ‘/user/titi/blog/toto.xml’ ]</p>
-puts “Get extname” Benchmark.bm do |x| x.report(“regexp:”) { n.times do str=tab[rand(4)]; str.match(/[^.]*<span class="math">/); <em>e</em><em>x</em><em>t</em> = </span>&amp;; end } x.report(&quot; split:“) { n.times do str=tab[rand(4)]; ext=str.split(‘.’)[-1] ; end } x.report(” File:“) { n.times do str=tab[rand(4)]; ext=File.extname(str); end } end </code>
+puts “Get extname” Benchmark.bm do |x| x.report(“regexp:”) { n.times do str=tab[rand(4)]; str.match(/[^.]*<span class="math inline">/);<em>e</em><em>x</em><em>t</em>=</span>&amp;; end } x.report(&quot; split:“) { n.times do str=tab[rand(4)]; ext=str.split(‘.’)[-1] ; end } x.report(” File:“) { n.times do str=tab[rand(4)]; ext=File.extname(str); end } end </code>
 </div>
 <p>Et voici les résultats&nbsp;:</p>
 <pre class="twilight">

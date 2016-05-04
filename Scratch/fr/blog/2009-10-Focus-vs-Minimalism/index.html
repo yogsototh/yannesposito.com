@@ -44,10 +44,10 @@
 <h2 id="détails-techniques">Détails techniques</h2>
 <p>Pour ceux qui souhaitent connaître les détails techniques derrière le menu apparaissant/disparaissant, voici le code utilisant jQuery.</p>
 <p>L’HTML&nbsp;:</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;menuButton&quot;</span><span class="kw">&gt;&lt;/div&gt;</span>
-<span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;entete&quot;</span><span class="kw">&gt;</span>#content of the menu<span class="kw">&lt;/div&gt;</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;menuButton&quot;</span><span class="kw">&gt;&lt;/div&gt;</span>
+<span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;entete&quot;</span><span class="kw">&gt;</span>#content of the menu<span class="kw">&lt;/div&gt;</span></code></pre></div>
 <p>La CSS&nbsp;:</p>
-<pre class="sourceCode css"><code class="sourceCode css"><span class="fl">#menuButton</span> <span class="kw">{</span>
+<div class="sourceCode"><pre class="sourceCode css"><code class="sourceCode css"><span class="fl">#menuButton</span> <span class="kw">{</span>
   <span class="kw">font-size:</span> <span class="dt">2em</span><span class="kw">;</span>
   <span class="kw">height:</span> <span class="dt">2em</span><span class="kw">;</span>
   <span class="kw">line-height:</span> <span class="dt">1.8em</span><span class="kw">;</span>
@@ -65,23 +65,23 @@
   <span class="kw">left:</span> <span class="dt">0</span><span class="kw">;</span>
   <span class="kw">position:</span> <span class="dt">fixed</span><span class="kw">;</span>
   <span class="kw">width:</span> <span class="dt">10em</span><span class="kw">;</span>
-  <span class="kw">z-index:</span> <span class="dt">9000</span><span class="kw">;</span> <span class="kw">}</span></code></pre>
+  <span class="kw">z-index:</span> <span class="dt">9000</span><span class="kw">;</span> <span class="kw">}</span></code></pre></div>
 <p>Le code javascript (utilisant jQuery)</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="fu">hideMenu</span>() {
-    <span class="fu">$</span>(<span class="st">'#entete'</span>).<span class="fu">animate</span>({<span class="dt">left</span>:<span class="st">&quot;-10em&quot;</span>}, <span class="dv">500</span> );
-    <span class="fu">$</span>(<span class="st">'#menuButton'</span>).<span class="fu">html</span>(<span class="st">'&amp;rarr;'</span>);
-}
-<span class="kw">function</span> <span class="fu">showMenu</span>() {
-    <span class="fu">$</span>(<span class="st">'#entete'</span>).<span class="fu">animate</span>({<span class="dt">left</span>:<span class="st">&quot;0em&quot;</span>}, <span class="dv">500</span> );
-    <span class="fu">$</span>(<span class="st">'#menuButton'</span>).<span class="fu">html</span>(<span class="st">'&amp;larr;'</span>);
-}
-<span class="kw">function</span> <span class="fu">toggleMenu</span>() {
-    <span class="kw">if</span> ( <span class="fu">$</span>(<span class="st">'#entete'</span>).<span class="fu">css</span>(<span class="st">'left'</span>)==<span class="st">'-10em'</span> ) {
-        <span class="fu">showMenu</span>();
-    } <span class="kw">else</span> {
-        <span class="fu">hideMenu</span>();
-    }
-}</code></pre>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">hideMenu</span>() <span class="op">{</span>
+    <span class="at">$</span>(<span class="st">'#entete'</span>).<span class="at">animate</span>(<span class="op">{</span><span class="dt">left</span><span class="op">:</span><span class="st">&quot;-10em&quot;</span><span class="op">},</span> <span class="dv">500</span> )<span class="op">;</span>
+    <span class="at">$</span>(<span class="st">'#menuButton'</span>).<span class="at">html</span>(<span class="st">'&amp;rarr;'</span>)<span class="op">;</span>
+<span class="op">}</span>
+<span class="kw">function</span> <span class="at">showMenu</span>() <span class="op">{</span>
+    <span class="at">$</span>(<span class="st">'#entete'</span>).<span class="at">animate</span>(<span class="op">{</span><span class="dt">left</span><span class="op">:</span><span class="st">&quot;0em&quot;</span><span class="op">},</span> <span class="dv">500</span> )<span class="op">;</span>
+    <span class="at">$</span>(<span class="st">'#menuButton'</span>).<span class="at">html</span>(<span class="st">'&amp;larr;'</span>)<span class="op">;</span>
+<span class="op">}</span>
+<span class="kw">function</span> <span class="at">toggleMenu</span>() <span class="op">{</span>
+    <span class="cf">if</span> ( <span class="at">$</span>(<span class="st">'#entete'</span>).<span class="at">css</span>(<span class="st">'left'</span>)<span class="op">==</span><span class="st">'-10em'</span> ) <span class="op">{</span>
+        <span class="at">showMenu</span>()<span class="op">;</span>
+    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span>
+        <span class="at">hideMenu</span>()<span class="op">;</span>
+    <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
 <p>Le résultat est visible dans le coin en haut à droite de cet article.</p>
 				</div>
                 <div id="afterarticle">

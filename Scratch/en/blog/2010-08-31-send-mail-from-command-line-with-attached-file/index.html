@@ -39,7 +39,7 @@
 				<div class="corps">
 					<p>I had to send a mail using only command line. I was surprised it isn’t straightforward at all. I didn’t had <code>pine</code> nor <code>mutt</code> or anything like that. Just <code>mail</code> and <code>mailx</code>.</p>
 <p>What Internet say (via google) is</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">uuencode fic.jpg fic.jpg <span class="kw">|</span> mail -s <span class="st">'Subject'</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">uuencode fic.jpg fic.jpg <span class="kw">|</span> mail -s <span class="st">'Subject'</span></code></pre></div>
 <p>I tried it. And it works almost each times. But for my file, it didn’t worked. I compressed it to <code>.gz</code>, <code>.bz2</code> and <code>.zip</code>. Using <code>.bz2</code> format it worked nicely, but not with other formats. Instead of having an attached file I saw this in my email.</p>
 <pre>
 begin 664 fic.jpg
@@ -47,7 +47,7 @@ M(R$O=7-R+V)I;B]E;G8@>G-H"GAL<STD,0H*9F]R(&QI;F4@:6X@)"@\("1X M;',@*0H@("`@9&-R 
 M=64O/B@\+VET96T^*2-<)#$\=F%L=64^)&ME>7=O<F1S/" ]V86QU93Y<)#(C end < pre>
 <p>Not really readable. After some research I found the solution. Use MIME instead of <code>uuencode</code>.</p>
 <p>Finally I made it manually using <code>sendmail</code>. I didn’t dare to use <code>telnet</code>. The command to use is:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">sendmail -t -oi <span class="kw">&lt;</span> mailcontent.txt</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">sendmail -t -oi <span class="kw">&lt;</span> mailcontent.txt</code></pre></div>
 <p>Of course you need to create the <code>mailcontent.txt</code> file. It should contains:</p>
 <pre>
 From: from@mail.com

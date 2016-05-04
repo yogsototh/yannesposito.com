@@ -71,18 +71,18 @@
 <li><a href="http://wwW.haskell.org/platform">Install Haskell</a></li>
 <li>Make sure you have the latest <code>cabal-install</code> (at least 1.18)</li>
 </ol>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">&gt;</span> <span class="kw">cabal</span> install cabal-install</code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">&gt;</span> <span class="kw">cabal</span> install cabal-install</code></pre></div>
 <ol start="3" style="list-style-type: decimal">
 <li>Download and run the script</li>
 </ol>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Download the script</span>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Download the script</span>
 <span class="kw">git</span> clone https://github.com/yogsototh/init-haskell-project.git
 <span class="co"># Copy the script in a directory of you PATH variable</span>
 <span class="kw">cp</span> init-haskell-project/holy-haskell.sh ~/bin
 <span class="co"># Go to the directory containing all your projects</span>
 <span class="kw">cd</span> my/projects/directory
 <span class="co"># Launch thcript</span>
-<span class="kw">holy-haskell.sh</span></code></pre>
+<span class="kw">holy-haskell.sh</span></code></pre></div>
 <p>What does this script do that <code>cabal init</code> doesn’t do?</p>
 <ul>
 <li>Use cabal sandbox</li>
@@ -187,7 +187,7 @@ Sir Bedevere: How do you know so much about swallows?
 <img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/bridge-of-death.jpg" alt="Bridge of Death" />
 </div>
 <p>To print the introduction text in <code>zsh</code>:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># init colors</span>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># init colors</span>
 <span class="kw">autoload</span> colors
 <span class="kw">colors</span>
 <span class="kw">for</span> <span class="kw">COLOR</span> in RED GREEN YELLOW BLUE MAGENTA CYAN BLACK WHITE<span class="kw">;</span> <span class="kw">do</span>
@@ -215,9 +215,9 @@ Sir Bedevere: How do you know so much about swallows?
 <span class="kw">log</span> <span class="st">&quot;[the bridgekeeper is thrown over]&quot;</span>
 <span class="kw">bk</span> <span class="st">&quot;Auuuuuuuuuuuugh&quot;</span>
 <span class="kw">log</span> <span class="st">&quot;Sir Bedevere: How do you know so much about swallows?&quot;</span>
-<span class="kw">you</span> <span class="st">&quot;Well, you have to know these things when you're a king, you know.&quot;</span></code></pre>
+<span class="kw">you</span> <span class="st">&quot;Well, you have to know these things when you're a king, you know.&quot;</span></code></pre></div>
 <p>In the first Haskell version I don’t use colors. We see we can almost copy/paste. I just added the types.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">bk ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">bk ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
 bk str <span class="fu">=</span> putStrLn <span class="fu">$</span> <span class="st">&quot;Bridgekeeper: &quot;</span> <span class="fu">++</span> str
 
 <span class="ot">bkn ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
@@ -243,7 +243,7 @@ end <span class="fu">=</span> <span class="kw">do</span>
     putStrLn <span class="st">&quot;[the bridgekeeper is thrown over]&quot;</span>
     bk <span class="st">&quot;Auuuuuuuuuuuugh&quot;</span>
     putStrLn <span class="st">&quot;Sir Bedevere: How do you know so much about swallows?&quot;</span>
-    you <span class="st">&quot;Well, you have to know these things when you're a king, you know.&quot;</span></code></pre>
+    you <span class="st">&quot;Well, you have to know these things when you're a king, you know.&quot;</span></code></pre></div>
 <p>Now let’s just add the colors using the <a href="http://hackage.haskell.org/package/ansi-terminal"><code>ansi-terminal</code></a> package. So we have to add <code>ansi-terminal</code> as a build dependency in our cabal file.</p>
 <p>Edit <code>holy-project.cabal</code> to add it.</p>
 <pre><code>...
@@ -251,7 +251,7 @@ build-depends:  base &gt;=4.6 &amp;&amp; &lt;4.7
                 <span class="highlight">, ansi-terminal</span>
 ...</code></pre>
 <p>Now look at the modified Haskell code:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="highlight"><span class="kw">import </span><span class="dt">System.Console.ANSI</span></span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="highlight"><span class="kw">import </span><span class="dt">System.Console.ANSI</span></span>
 
 <span class="ot">colorPutStr ::</span> <span class="dt">Color</span> <span class="ot">-&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
 colorPutStr color str <span class="fu">=</span> <span class="kw">do</span>
@@ -286,22 +286,22 @@ end <span class="fu">=</span> <span class="kw">do</span>
     putStrLn <span class="st">&quot;[the bridgekeeper is thrown over]&quot;</span>
     bk <span class="st">&quot;Auuuuuuuuuuuugh&quot;</span>
     putStrLn <span class="st">&quot;Sir Bedevere: How do you know so much about swallows?&quot;</span>
-    you <span class="st">&quot;Well, you have to know these things when you're a king, you know.&quot;</span></code></pre>
+    you <span class="st">&quot;Well, you have to know these things when you're a king, you know.&quot;</span></code></pre></div>
 <p>We could put this code in <code>src/Main.hs</code>. Declare a main function:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">IO</span> ()
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">IO</span> ()
 main <span class="fu">=</span> <span class="kw">do</span>
     intro
-    end</code></pre>
+    end</code></pre></div>
 <p>Make <code>cabal install</code> and run <code>cabal run</code> (or <code>./.cabal-sandbox/bin/holy-project</code>). It works!</p>
 <h2 id="five-questions-three-questions-sir">Five Questions – Three questions Sir!</h2>
 <div>
 <img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/bring-out-your-dead.jpg" alt="Bring out your dead!" />
 </div>
 <p>In order to ask questions, here is how we do it in shell script:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">print</span> -- <span class="st">&quot;What is your name?&quot;</span>
-<span class="kw">read</span> <span class="ot">name</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">print</span> -- <span class="st">&quot;What is your name?&quot;</span>
+<span class="kw">read</span> <span class="ot">name</span></code></pre></div>
 <p>If we want to abstract things a bit, the easiest way in shell is to use a global variable<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> which will get the value of the user input like this:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="ot">answer=</span><span class="st">&quot;&quot;</span>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ot">answer=</span><span class="st">&quot;&quot;</span>
 <span class="fu">ask()</span><span class="kw">{</span>
     <span class="kw">local</span> <span class="ot">info=</span><span class="st">&quot;</span><span class="ot">$1</span><span class="st">&quot;</span>
     <span class="kw">bk</span> <span class="st">&quot;What is your </span><span class="ot">$info</span><span class="st">?&quot;</span>
@@ -310,25 +310,25 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <span class="kw">}</span>
 <span class="kw">...</span>
 <span class="kw">ask</span> name
-<span class="ot">name=</span><span class="st">&quot;</span><span class="ot">$answer</span><span class="st">&quot;</span></code></pre>
+<span class="ot">name=</span><span class="st">&quot;</span><span class="ot">$answer</span><span class="st">&quot;</span></code></pre></div>
 <p>In Haskell we won’t need any global variable:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">System.IO</span> (hFlush, stdout)
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">System.IO</span> (hFlush, stdout)
 <span class="fu">...</span>
 <span class="ot">ask ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">String</span>
 ask info <span class="fu">=</span> <span class="kw">do</span>
     bk <span class="fu">$</span> <span class="st">&quot;What is your &quot;</span> <span class="fu">++</span> info <span class="fu">++</span> <span class="st">&quot;?&quot;</span>
     putStr <span class="st">&quot;&gt; &quot;</span>
     hFlush stdout <span class="co">-- Because we want to ask on the same line.</span>
-    getLine</code></pre>
+    getLine</code></pre></div>
 <p>Now our main function might look like:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span>
     intro
     _ <span class="ot">&lt;-</span> ask <span class="st">&quot;project name&quot;</span>
     _ <span class="ot">&lt;-</span> ask <span class="st">&quot;name&quot;</span>
     _ <span class="ot">&lt;-</span> ask <span class="st">&quot;email&quot;</span>
     _ <span class="ot">&lt;-</span> ask <span class="st">&quot;github account&quot;</span>
     _ <span class="ot">&lt;-</span> ask <span class="st">&quot;project in less than a dozen word&quot;</span>
-    end</code></pre>
+    end</code></pre></div>
 <p>You could test it with <code>cabal install</code> and then <code>./.cabal-sandbox/bin/holy-project</code>.</p>
 <p>We will see later how to guess the answer using the <code>.gitconfig</code> file and the github API.</p>
 <h2 id="using-answers">Using answers</h2>
@@ -337,15 +337,15 @@ ask info <span class="fu">=</span> <span class="kw">do</span>
 </div>
 <h3 id="create-the-project-name">Create the project name</h3>
 <p>I don’t really like the ability to use capital letter in a package name. So in shell I transform the project name like this:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># replace all spaces by dashes then lowercase the string</span>
-<span class="ot">project=</span>${<span class="ot">${project:gs</span><span class="er">/ /-/</span><span class="ot">}</span>:<span class="kw">l</span>}</code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># replace all spaces by dashes then lowercase the string</span>
+<span class="ot">project=</span>${<span class="ot">${project:gs</span><span class="er">/ /-/</span><span class="ot">}</span>:<span class="kw">l</span>}</code></pre></div>
 <p>In order to achieve the same result in Haskell (don’t forget to add the <code>split</code> package):</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Char</span>        (toLower)
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Char</span>        (toLower)
 <span class="kw">import </span><span class="dt">Data.List</span>        (intercalate)
 <span class="kw">import </span><span class="dt">Data.List.Split</span>  (splitOneOf)
 <span class="fu">...</span>
 <span class="ot">projectNameFromString ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span>
-projectNameFromString str <span class="fu">=</span> intercalate <span class="st">&quot;-&quot;</span> (splitOneOf <span class="st">&quot; -&quot;</span> (map toLower str))</code></pre>
+projectNameFromString str <span class="fu">=</span> intercalate <span class="st">&quot;-&quot;</span> (splitOneOf <span class="st">&quot; -&quot;</span> (map toLower str))</code></pre></div>
 <p>One important thing to note is that in zsh the transformation occurs on strings but in haskell we use list as intermediate representation:</p>
 <pre><code>zsh:
 &quot;Holy grail&quot; ==( ${project:gs/ /-/} )=&gt; &quot;Holy<span class="highlight">-</span>grail&quot;
@@ -357,18 +357,18 @@ haskell
              ==( intercalate &quot;-&quot; )=&gt; <span class="highlight">&quot;</span>holy<span class="highlight">-</span>grail<span class="highlight">&quot;</span></code></pre>
 <h3 id="create-the-module-name">Create the module name</h3>
 <p>The module name is a capitalized version of the project name where we remove dashes.</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Capitalize a string</span>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Capitalize a string</span>
 <span class="fu">capitalize()</span><span class="kw">{</span>
     <span class="kw">local</span> <span class="ot">str=</span><span class="st">&quot;</span><span class="ot">$(</span><span class="kw">print</span> -- <span class="st">&quot;</span><span class="ot">$*</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="kw">sed</span> <span class="st">'s/-/ /g'</span><span class="ot">)</span><span class="st">&quot;</span>
     <span class="kw">print</span> -- $<span class="dt">{(C)str}</span> <span class="kw">|</span> <span class="kw">sed</span> <span class="st">'s/ //g'</span>
-<span class="kw">}</span></code></pre>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- | transform a chain like &quot;Holy project&quot; in &quot;HolyProject&quot;</span>
+<span class="kw">}</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- | transform a chain like &quot;Holy project&quot; in &quot;HolyProject&quot;</span>
 <span class="ot">capitalize ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span>
 capitalize str <span class="fu">=</span> concatMap capitalizeWord (splitOneOf <span class="st">&quot; -&quot;</span> str)
     <span class="kw">where</span>
 <span class="ot">        capitalizeWord ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span>
         capitalizeWord (x<span class="fu">:</span>xs)   <span class="fu">=</span> toUpper x<span class="fu">:</span>map toLower xs
-        capitalizeWord  _       <span class="fu">=</span> []</code></pre>
+        capitalizeWord  _       <span class="fu">=</span> []</code></pre></div>
 <p>The haskell version is made by hand where zsh already had a capitalize operation on string with many words. Here is the difference between the shell and haskell way (note I splitted the effect of <code>concatMap</code> as <code>map</code> and <code>concat</code>):</p>
 <pre><code>shell:
 &quot;Holy-grail&quot; ==( sed 's/-/ /g' )=&gt; &quot;Holy<span class="highlight"> </span>grail&quot;
@@ -382,7 +382,7 @@ haskell:
 <p>As the preceding example, in shell we work on strings while Haskell use temporary lists representations.</p>
 <h3 id="check-the-project-name">Check the project name</h3>
 <p>Also I want to be quite restrictive on the kind of project name we can give. This is why I added a check function.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">ioassert ::</span> <span class="dt">Bool</span> <span class="ot">-&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">ioassert ::</span> <span class="dt">Bool</span> <span class="ot">-&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
 ioassert <span class="dt">True</span> _ <span class="fu">=</span> return ()
 ioassert <span class="dt">False</span> str <span class="fu">=</span> error str
 
@@ -393,23 +393,23 @@ main <span class="fu">=</span> <span class="kw">do</span>
   ioassert (checkProjectName project)
        <span class="st">&quot;Use only letters, numbers, spaces and dashes please&quot;</span>
   <span class="kw">let</span> projectname <span class="fu">=</span> projectNameFromString project
-      modulename <span class="fu">=</span> capitalize project</code></pre>
+      modulename <span class="fu">=</span> capitalize project</code></pre></div>
 <p>Which verify the project name is not empty and use only letter, numbers and dashes:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- | verify if project name is conform</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- | verify if project name is conform</span>
 <span class="ot">checkProjectName ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span>
 checkProjectName [] <span class="fu">=</span> <span class="dt">False</span>
 checkProjectName str <span class="fu">=</span>
-    all (\c <span class="ot">-&gt;</span> isLetter c <span class="fu">||</span> isNumber c <span class="fu">||</span> c<span class="fu">==</span><span class="ch">'-'</span> <span class="fu">||</span> c<span class="fu">==</span><span class="ch">' '</span>) str</code></pre>
+    all (\c <span class="ot">-&gt;</span> isLetter c <span class="fu">||</span> isNumber c <span class="fu">||</span> c<span class="fu">==</span><span class="ch">'-'</span> <span class="fu">||</span> c<span class="fu">==</span><span class="ch">' '</span>) str</code></pre></div>
 <h2 id="create-the-project">Create the project</h2>
 <div>
 <img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/giant-three-head.jpg" alt="Giant with three heads and mustaches" />
 </div>
 <p>Making a project will consists in creating files and directories whose name and content depends on the answer we had until now.</p>
 <p>In shell, for each file to create, we used something like:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">&gt;</span> <span class="kw">file-to-create</span> cat &lt;&lt;END
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">&gt;</span> <span class="kw">file-to-create</span> cat &lt;&lt;END
 fil<span class="kw">e</span> <span class="kw">content</span> here.
 We can use <span class="ot">$variables</span> here
-END</code></pre>
+END</code></pre></div>
 <p>In Haskell, while possible, we shouldn’t put the file content in the source code. We have a relatively easy way to include external file in a cabal package. This is what we will be using.</p>
 <p>Furthermore, we need a templating system to replace small part of the static file by computed values. For this task, I choose to use <a href="http://hackage.haskell.org/package/hastache"><code>hastache</code></a>, a Haskell implementation of Mustache templates<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a>.</p>
 <h3 id="add-external-files-in-a-cabal-project">Add external files in a cabal project</h3>
@@ -435,14 +435,14 @@ Copyright (c) <span class="highlight">{{year}}</span> <span class="highlight">{{
 Permission is hereby granted, free of charge, to any person obtaining a copy
 ...</code></pre>
 <p>It will be up to our program to replace the <code>{{year}}</code> and <code>{{author}}</code> at runtime. We have to find the files. Cabal will create a module named <code>Paths_holy_project</code>. If we import this module we have the function <code>genDataFileName</code> at our disposal. Now we can read the files at runtime like this:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">  <span class="fu">...</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">  <span class="fu">...</span>
   <span class="kw">do</span>
     pkgFilePath     <span class="ot">&lt;-</span> <span class="highlight">getDataFileName <span class="st">&quot;scaffold/LICENSE&quot;</span></span>
     templateContent <span class="ot">&lt;-</span> readFile pkgFilePath
-    <span class="fu">...</span></code></pre>
+    <span class="fu">...</span></code></pre></div>
 <h3 id="create-files-and-directories">Create files and directories</h3>
 <p>A first remark is for portability purpose we shouldn’t use String for file path. For example on Windows <code>/</code> isn’t considered as a subdirectory character. To resolve this problem we will use <code>FilePath</code>:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">System.Directory</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">System.Directory</span>
 <span class="kw">import </span><span class="dt">System.FilePath.Posix</span>        (takeDirectory,(&lt;/&gt;))
 <span class="fu">...</span>
 createProject <span class="fu">...</span> <span class="fu">=</span> <span class="kw">do</span>
@@ -458,17 +458,17 @@ genFile dataFilename outputFilename <span class="fu">=</span> <span class="kw">d
     template <span class="ot">&lt;-</span> readFile pkgfileName
     transformedFile <span class="ot">&lt;-</span> <span class="fu">???</span> <span class="co">-- hastache magic here</span>
     <span class="highlight">createDirectoryIfMissing</span> <span class="dt">True</span> (takeDirectory outputFileName)
-    <span class="highlight">writeFile</span> outputFileName transformedFile</code></pre>
+    <span class="highlight">writeFile</span> outputFileName transformedFile</code></pre></div>
 <h3 id="use-hastache">Use Hastache</h3>
 <p>In order to use hastache we can either create a context manually or use generics to create a context from a record. This is the last option we will show here. So in a first time, we need to import some modules and declare a record containing all necessary informations to create our project.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE DeriveDataTypeable #-}</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE DeriveDataTypeable #-}</span>
 <span class="fu">...</span>
 <span class="kw">import </span><span class="dt">Data.Data</span>
 <span class="kw">import </span><span class="dt">Text.Hastache</span>
 <span class="kw">import </span><span class="dt">Text.Hastache.Context</span>
 <span class="kw">import qualified</span> <span class="dt">Data.ByteString</span>            <span class="kw">as</span> <span class="dt">BS</span>
-<span class="kw">import qualified</span> <span class="dt">Data.ByteString.Lazy.Char8</span> <span class="kw">as</span> <span class="dt">LZ</span></code></pre>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Project</span> <span class="fu">=</span> <span class="dt">Project</span> {
+<span class="kw">import qualified</span> <span class="dt">Data.ByteString.Lazy.Char8</span> <span class="kw">as</span> <span class="dt">LZ</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Project</span> <span class="fu">=</span> <span class="dt">Project</span> {
 <span class="ot">    projectName   ::</span> <span class="dt">String</span>
     ,<span class="ot"> moduleName    ::</span> <span class="dt">String</span>
     ,<span class="ot"> author        ::</span> <span class="dt">String</span>
@@ -476,9 +476,9 @@ genFile dataFilename outputFilename <span class="fu">=</span> <span class="kw">d
     ,<span class="ot"> ghaccount     ::</span> <span class="dt">String</span>
     ,<span class="ot"> synopsis      ::</span> <span class="dt">String</span>
     ,<span class="ot"> year          ::</span> <span class="dt">String</span>
-    } <span class="kw">deriving</span> (<span class="dt">Data</span>, <span class="dt">Typeable</span>)</code></pre>
+    } <span class="kw">deriving</span> (<span class="dt">Data</span>, <span class="dt">Typeable</span>)</code></pre></div>
 <p>Once we have declared this, we should populate our Project record with the data provided by the user. So our main function should look like:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">IO</span> ()
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">IO</span> ()
 main <span class="fu">=</span> <span class="kw">do</span>
     intro
     project <span class="ot">&lt;-</span> ask <span class="st">&quot;project name&quot;</span>
@@ -493,9 +493,9 @@ main <span class="fu">=</span> <span class="kw">do</span>
     <span class="highlight">current_year</span>    <span class="ot">&lt;-</span> getCurrentYear
     createProject <span class="fu">$</span> <span class="highlight"><span class="dt">Project</span> projectname modulename in_author in_email</span>
                             <span class="highlight">in_ghaccount in_synopsis current_year</span>
-    end</code></pre>
+    end</code></pre></div>
 <p>Finally we could use hastache this way:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">createProject ::</span> <span class="highlight"><span class="dt">Project</span></span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">createProject ::</span> <span class="highlight"><span class="dt">Project</span></span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
 createProject <span class="highlight">p</span> <span class="fu">=</span> <span class="kw">do</span>
     <span class="kw">let</span> <span class="highlight">context</span> <span class="fu">=</span> <span class="highlight">mkGenericContext p</span>
     createDirectory (<span class="highlight">projectName p</span>)
@@ -511,14 +511,14 @@ genFile context filename outputFileName <span class="fu">=</span> <span class="k
     template <span class="ot">&lt;-</span> <span class="highlight"><span class="dt">BS</span><span class="fu">.</span></span>readFile pkgfileName
     transformedFile <span class="ot">&lt;-</span> <span class="highlight">hastacheStr defaultConfig template context</span>
     createDirectoryIfMissing <span class="dt">True</span> (takeDirectory outputFileName)
-    <span class="highlight"><span class="dt">LZ</span><span class="fu">.</span></span>writeFile outputFileName transformedFile</code></pre>
+    <span class="highlight"><span class="dt">LZ</span><span class="fu">.</span></span>writeFile outputFileName transformedFile</code></pre></div>
 <p>We use external files in mustache format. We ask question to our user to fill a data structure. We use this data structure to create a context. Hastache use this context with the external files to create the project files.</p>
 <h2 id="git-and-cabal">Git and Cabal</h2>
 <div>
 <img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/tim.jpg" alt="Tim" />
 </div>
 <p>We need to initialize git and cabal. For this we simply call external command with the <code>system</code> function.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">System.Cmd</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">System.Cmd</span>
 
 <span class="fu">...</span>
 main <span class="fu">=</span> <span class="kw">do</span>
@@ -527,7 +527,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
     _ <span class="ot">&lt;-</span> system <span class="st">&quot;cabal sandbox init&quot;</span>
     _ <span class="ot">&lt;-</span> system <span class="st">&quot;cabal install&quot;</span>
     _ <span class="ot">&lt;-</span> system <span class="st">&quot;cabal test&quot;</span>
-    _ <span class="ot">&lt;-</span> system <span class="fu">$</span> <span class="st">&quot;./.cabal-sandbox/bin/test-&quot;</span> <span class="fu">++</span> projectName</code></pre>
+    _ <span class="ot">&lt;-</span> system <span class="fu">$</span> <span class="st">&quot;./.cabal-sandbox/bin/test-&quot;</span> <span class="fu">++</span> projectName</code></pre></div>
 <h2 id="ameliorations">Ameliorations</h2>
 <p>Our job is almost finished. Now, we only need to add some nice feature to make the application more enjoyable.</p>
 <h3 id="better-error-message">Better error message</h3>
@@ -535,7 +535,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/rabbit.jpg" alt="Rabbit" />
 </div>
 <p>The first one would be to add a better error message.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">System.Random</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">System.Random</span>
 
 <span class="ot">holyError ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
 holyError str <span class="fu">=</span> <span class="kw">do</span>
@@ -554,14 +554,14 @@ holyError str <span class="fu">=</span> <span class="kw">do</span>
                 you <span class="st">&quot;I don't know that!&quot;</span>
                 putStrLn <span class="st">&quot;[You are thrown over the edge into the volcano]&quot;</span>
                 you <span class="st">&quot;Auuuuuuuuuuuugh&quot;</span>
-    error (<span class="ch">'\n'</span><span class="fu">:</span>str)</code></pre>
+    error (<span class="ch">'\n'</span><span class="fu">:</span>str)</code></pre></div>
 <p>And also update where this can be called</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">ioassert ::</span> <span class="dt">Bool</span> <span class="ot">-&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">ioassert ::</span> <span class="dt">Bool</span> <span class="ot">-&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
 ioassert <span class="dt">True</span> _ <span class="fu">=</span> return ()
-ioassert <span class="dt">False</span> str <span class="fu">=</span> holyError str</code></pre>
+ioassert <span class="dt">False</span> str <span class="fu">=</span> holyError str</code></pre></div>
 <h3 id="use-.gitconfig">Use <code>.gitconfig</code></h3>
 <p>We want to retrieve the <code>~/.gitconfig</code> file content and see if it contains a name and email information. We will need to access to the <code>HOME</code> environment variable. Also, as we use bytestring package for hastache, let’s take advantage of this library.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Maybe</span>           (fromJust)
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Maybe</span>           (fromJust)
 <span class="kw">import </span><span class="dt">System.Environment</span>   (getEnv)
 <span class="kw">import </span><span class="dt">Control.Exception</span>
 <span class="kw">import </span><span class="dt">System.IO.Error</span>
@@ -581,14 +581,14 @@ main <span class="fu">=</span> <span class="kw">do</span>
     project <span class="ot">&lt;-</span> ask <span class="st">&quot;project name&quot;</span> <span class="dt">Nothing</span>
     <span class="fu">...</span>
     in_author       <span class="ot">&lt;-</span> ask <span class="st">&quot;name&quot;</span> name
-    <span class="fu">...</span></code></pre>
+    <span class="fu">...</span></code></pre></div>
 <p>We could note I changed the ask function slightly to take a maybe parameter.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">ask ::</span> <span class="dt">String</span> <span class="highlight"><span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">String</span></span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">String</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">ask ::</span> <span class="dt">String</span> <span class="highlight"><span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">String</span></span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">String</span>
 ask info hint <span class="fu">=</span> <span class="kw">do</span>
     bk <span class="fu">$</span> <span class="st">&quot;What is your &quot;</span> <span class="fu">++</span> info <span class="fu">++</span> <span class="st">&quot;?&quot;</span> <span class="fu">++</span> <span class="highlight">(maybe <span class="st">&quot;&quot;</span> (\h <span class="ot">-&gt;</span> <span class="st">&quot; (&quot;</span><span class="fu">++</span>h<span class="fu">++</span><span class="st">&quot;)&quot;</span>) hint)</span>
-    <span class="fu">...</span></code></pre>
+    <span class="fu">...</span></code></pre></div>
 <p>Concerning the parsing of <code>.gitconfig</code>, it is quite minimalist.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">getNameAndMail ::</span> <span class="dt">LZ.ByteString</span> <span class="ot">-&gt;</span> (<span class="dt">Maybe</span> <span class="dt">String</span>,<span class="dt">Maybe</span> <span class="dt">String</span>)
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">getNameAndMail ::</span> <span class="dt">LZ.ByteString</span> <span class="ot">-&gt;</span> (<span class="dt">Maybe</span> <span class="dt">String</span>,<span class="dt">Maybe</span> <span class="dt">String</span>)
 getNameAndMail gitConfigContent <span class="fu">=</span> (getFirstValueFor splitted <span class="st">&quot;name&quot;</span>,
                                    getFirstValueFor splitted <span class="st">&quot;email&quot;</span>)
     <span class="kw">where</span>
@@ -616,7 +616,7 @@ firstJust l <span class="fu">=</span> <span class="kw">case</span> dropWhile (<s
 getValueForKey el (n<span class="fu">:</span>e<span class="fu">:</span>xs) <span class="fu">=</span> <span class="kw">if</span> (n <span class="fu">==</span> (LZ.pack el)) <span class="fu">&amp;&amp;</span> (e <span class="fu">==</span> (LZ.pack <span class="st">&quot;=&quot;</span>))
                         <span class="kw">then</span> <span class="dt">Just</span> (LZ.unpack (LZ.unwords xs))
                         <span class="kw">else</span> <span class="dt">Nothing</span>
-getValueForKey _ _ <span class="fu">=</span> <span class="dt">Nothing</span></code></pre>
+getValueForKey _ _ <span class="fu">=</span> <span class="dt">Nothing</span></code></pre></div>
 <p>We could notice, <code>getNameAndMail</code> doesn’t read the full file and stop at the first occurrence of name and mail.</p>
 <h3 id="use-the-github-api">Use the github API</h3>
 <div>
@@ -625,11 +625,11 @@ getValueForKey _ _ <span class="fu">=</span> <span class="dt">Nothing</span></co
 <p>The task seems relatively easy, but we’ll see there will be some complexity hidden. Make a request on <code>https://api.github.com/search/users?q=&lt;email&gt;</code>. Parse the JSON and get the <code>login</code> field of the first item.</p>
 <p>So the first problem to handle is to connect an URL. For this we will use the <code>http-conduit</code> package.</p>
 <p>Generally, for simple request, we should use:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">do</span>
     body <span class="ot">&lt;-</span> simpleHTTP (<span class="st">&quot;https://api.github.com/search/users?q=&quot;</span> <span class="fu">++</span> email)
-    <span class="fu">...</span></code></pre>
+    <span class="fu">...</span></code></pre></div>
 <p>But, after some research, I discovered we must declare an User-Agent in the HTTP header to be accepted by the github API. So we have to change the HTTP Header, and our code became slightly more complex:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span>
 <span class="fu">...</span>
 <span class="ot">simpleHTTPWithUserAgent ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">LZ.ByteString</span>
 simpleHTTPWithUserAgent url <span class="fu">=</span> <span class="kw">do</span>
@@ -642,10 +642,10 @@ getGHUser <span class="st">&quot;&quot;</span>    <span class="fu">=</span> retu
 getGHUser email <span class="fu">=</span> <span class="kw">do</span>
             <span class="kw">let</span> url <span class="fu">=</span> <span class="st">&quot;https://api.github.com/search/users?q=&quot;</span> <span class="fu">++</span> email
             body <span class="ot">&lt;-</span> simpleHTTPWithUserAgent url
-            <span class="fu">...</span></code></pre>
+            <span class="fu">...</span></code></pre></div>
 <p>So now, we have a String containing a JSON representation. In javascript we would have used <code>login=JSON.parse(body).items[0].login</code>. How does Haskell will handle it (knowing the J in JSON is for Javascript)?</p>
 <p>First we will need to add the <code>lens-aeson</code> package and use it that way:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Control.Lens.Operators</span>           ((^?))
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Control.Lens.Operators</span>           ((^?))
 <span class="kw">import </span><span class="dt">Control.Lens.Aeson</span>
 <span class="kw">import </span><span class="dt">Data.Aeson.Encode</span>                (fromValue)
 <span class="kw">import qualified</span> <span class="dt">Data.Text.Lazy</span>         <span class="kw">as</span> <span class="dt">TLZ</span>
@@ -658,7 +658,7 @@ getGHUser email <span class="fu">=</span> <span class="kw">do</span>
     <span class="kw">let</span> login <span class="fu">=</span> <span class="highlight">body <span class="fu">^?</span> key <span class="st">&quot;items&quot;</span> <span class="fu">.</span> nth <span class="dv">0</span> <span class="fu">.</span> key <span class="st">&quot;login&quot;</span></span>
     return <span class="fu">$</span> fmap jsonValueToString login
     <span class="kw">where</span>
-        jsonValueToString <span class="fu">=</span> TLZ.unpack <span class="fu">.</span> TLB.toLazyText <span class="fu">.</span> fromValue</code></pre>
+        jsonValueToString <span class="fu">=</span> TLZ.unpack <span class="fu">.</span> TLB.toLazyText <span class="fu">.</span> fromValue</code></pre></div>
 <p>It looks ugly, but it’s terse. In fact each function <code>(^?)</code>, <code>key</code> and <code>nth</code> has some great mathematical properties and everything is type safe. Unfortunately I had to make my own <code>jsonValueToString</code>. I hope I simply missed a simpler existing function.</p>
 <p>You can read <a href="https://www.fpcomplete.com/user/tel/lens-aeson-traversals-prisms">this article on <code>lens-aeson</code> and prisms</a> to know more.</p>
 <h4 id="concurrency">Concurrency</h4>
@@ -724,10 +724,10 @@ main = do
 </div>
 <p>For short programs it is not obvious to split them into different modules. But my personal preference is to split it anyway.</p>
 <p>First we put all content of <code>src/Main.hs</code> in <code>src/HolyProject.hs</code>. We rename the <code>main</code> function by <code>holyStarter</code>. And our <code>src/Main.hs</code> should contains:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span>
 <span class="kw">import </span><span class="dt">HolyProject</span>
 <span class="ot">main ::</span> <span class="dt">IO</span> ()
-main <span class="fu">=</span> holyStarter</code></pre>
+main <span class="fu">=</span> holyStarter</code></pre></div>
 <p>Of course you have to remember to rename the module of <code>src/HolyProject.hs</code>. I separated all functions in different submodules:</p>
 <ul>
 <li><code>HolyProject.GitConfig</code>
@@ -758,12 +758,12 @@ main <span class="fu">=</span> holyStarter</code></pre>
 <img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/holy-grenade.jpg" alt="The Holy Grenade" />
 </div>
 <p>We didn’t take much advantage of the project structure yet. A first thing is to generate some documentation. Before most function I added comment starting with <code>-- |</code>. These comment will be used by haddock to create a documentation. First, you need to install <code>haddock</code> manually.</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cabal</span> install haddock</code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cabal</span> install haddock</code></pre></div>
 <p>Be sure to have <code>haddock</code> in your <code>PATH</code>. You could for example add it like this:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># You might want to add this line in your .profile</span>
-<span class="kw">export</span> <span class="ot">PATH=$PATH</span>:./.cabal-sandbox/bin</code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># You might want to add this line in your .profile</span>
+<span class="kw">export</span> <span class="ot">PATH=$PATH</span>:./.cabal-sandbox/bin</code></pre></div>
 <p>And if you are at the root of your project you’ll get it. And now just launch:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cabal</span> haddock</code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cabal</span> haddock</code></pre></div>
 <p>And magically, you’ll have a documentation in <code>dist/doc/html/holy-project/index.html</code>.</p>
 <h3 id="tests">Tests</h3>
 <p>While the Haskell static typing is quite efficient to prevent entire classes of bugs, Haskell doesn’t discard the need to test to minimize the number of bugs.</p>
@@ -773,7 +773,7 @@ main <span class="fu">=</span> holyStarter</code></pre>
 </div>
 <p>It is generally said to test we should use unit testing for code in IO and QuickCheck or SmallCheck for pure code.</p>
 <p>A unit test example on pure code is in the file <code>test/HolyProject/Swallow/Test.hs</code>:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">HolyProject.Swallow.Test</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">HolyProject.Swallow.Test</span>
     (swallowSuite)
 <span class="kw">where</span>
 <span class="kw">import </span><span class="dt">Test.Tasty</span> (testGroup, <span class="dt">TestTree</span>)
@@ -786,10 +786,10 @@ swallowSuite <span class="fu">=</span> testGroup <span class="st">&quot;Swallow&
 
 <span class="co">-- in Swallow: swallow = (++)</span>
 <span class="ot">testSwallow ::</span> <span class="dt">Assertion</span>
-testSwallow <span class="fu">=</span> <span class="st">&quot;something&quot;</span> <span class="fu">@=?</span> <span class="highlight">swallow</span> <span class="st">&quot;some&quot;</span> <span class="st">&quot;thing&quot;</span></code></pre>
+testSwallow <span class="fu">=</span> <span class="st">&quot;something&quot;</span> <span class="fu">@=?</span> <span class="highlight">swallow</span> <span class="st">&quot;some&quot;</span> <span class="st">&quot;thing&quot;</span></code></pre></div>
 <p>Note <code>swallow</code> is <code>(++)</code>. We group tests by group. Each group can contain some test suite. Here we have a test suite with only one test. The <code>(@=?)</code> verify the equality between its two parameters.</p>
 <p>So now, we could safely delete the directory <code>test/HolyProject/Swallow</code> and the file <code>src/HolyProject/Swallow.hs</code>. And we are ready to make our own real world unit test. We will first test the module <code>HolyProject.GithubAPI</code>. Let’s create a file <code>test/HolyProject/GithubAPI/Test.hs</code> with the following content:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">HolyProject.GithubAPI.Test</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">HolyProject.GithubAPI.Test</span>
 ( githubAPISuite
 ) <span class="kw">where</span>
 <span class="kw">import </span><span class="dt">Test.Tasty</span> (testGroup, <span class="dt">TestTree</span>)
@@ -808,7 +808,7 @@ githubAPISuite <span class="fu">=</span> testGroup <span class="st">&quot;Github
 
 <span class="co">-- | Test if some IO action returns some expected value</span>
 <span class="ot">ioTestEq ::</span> (<span class="dt">Eq</span> a, <span class="dt">Show</span> a) <span class="ot">=&gt;</span> <span class="dt">IO</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Assertion</span>
-ioTestEq action expected <span class="fu">=</span> action <span class="fu">&gt;&gt;=</span> assertEqual <span class="st">&quot;&quot;</span> expected</code></pre>
+ioTestEq action expected <span class="fu">=</span> action <span class="fu">&gt;&gt;=</span> assertEqual <span class="st">&quot;&quot;</span> expected</code></pre></div>
 <p>You have to modify your cabal file. More precisely, you have to add <code>HolyProject.GithubAPI</code> in the exposed modules of the library secion). You also have to update the <code>test/Test.hs</code> file to use <code>GithubAPI</code> instead of <code>Swallow</code>.</p>
 <p>So we have our example of unit testing using IO. We search the github nickname for some people I know and we verify github continue to give the same answer as expected.</p>
 <h4 id="property-testing-with-smallcheck-and-quickcheck">Property Testing with SmallCheck and QuickCheck</h4>
@@ -819,7 +819,7 @@ ioTestEq action expected <span class="fu">=</span> action <span class="fu">&gt;&
 <p>As this kind of verification of property is mostly doable on pure code, we will test the <code>StringUtils</code> module.</p>
 <p>So don’t forget to declare <code>HolyProject.StringUtils</code> in the exposed modules in the library section of your cabal file. Remove all references to the <code>Coconut</code> module.</p>
 <p>Modify the <code>test/Test.hs</code> to remove all references about <code>Coconut</code>. Create a <code>test/HolyProject/StringUtils/Test.hs</code> file containing:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">HolyProject.StringUtils.Test</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">HolyProject.StringUtils.Test</span>
 ( stringUtilsSuite
 ) <span class="kw">where</span>
 <span class="kw">import              </span><span class="dt">Test.Tasty</span>                      (testGroup, <span class="dt">TestTree</span>)
@@ -842,7 +842,7 @@ stringUtilsSuite <span class="fu">=</span> testGroup <span class="st">&quot;Stri
 idempotent f <span class="fu">=</span> \s <span class="ot">-&gt;</span> f s <span class="fu">==</span> f (f s)
 
 <span class="ot">deeperIdempotent ::</span> (<span class="dt">Eq</span> a, <span class="dt">Show</span> a, <span class="dt">Serial</span> m a) <span class="ot">=&gt;</span> (a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">SC.Property</span> m
-deeperIdempotent f <span class="fu">=</span> forAll <span class="fu">$</span> SC.changeDepth1 (<span class="fu">+</span><span class="dv">1</span>) <span class="fu">$</span> \s <span class="ot">-&gt;</span> f s <span class="fu">==</span> f (f s)</code></pre>
+deeperIdempotent f <span class="fu">=</span> forAll <span class="fu">$</span> SC.changeDepth1 (<span class="fu">+</span><span class="dv">1</span>) <span class="fu">$</span> \s <span class="ot">-&gt;</span> f s <span class="fu">==</span> f (f s)</code></pre></div>
 <p>The result is here:</p>
 <pre>
 All Tests
@@ -862,7 +862,7 @@ All Tests
 <span class="red">1 out of 5 tests failed</span>
 </pre>
 <p>The test fail, but this is not an error. Our <code>capitalize</code> function shouldn’t be idempotent. I simply added this test to show what occurs when a test fail. If you want to look more closely to the error you could do this:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">./interact</span>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">./interact</span>
 <span class="kw">GHCi</span>, version 7.6.2: http://www.haskell.org/ghc/   :? for help
 <span class="kw">Loading</span> package ghc-prim ... linking ... done.
 <span class="kw">Loading</span> package integer-gmp ... linking ... done.
@@ -874,7 +874,7 @@ All Tests
 <span class="dt"><span class="highlight">&quot;AA&quot;</span></span>
 <span class="kw">*HolyProject.StringUtils&gt;</span> capitalize (capitalize <span class="st">&quot;a a&quot;</span>)
 <span class="dt"><span class="highlight">&quot;Aa&quot;</span></span>
-<span class="kw">*HolyProject.StringUtils&gt;</span></code></pre>
+<span class="kw">*HolyProject.StringUtils&gt;</span></code></pre></div>
 <p>It is important to use <code>./interact</code> instead of <code>ghci</code>. Because we need to tell <code>ghci</code> how to found the package installed.</p>
 <p>Apparently, SmallCheck didn’t found any counter example. I don’t know how it generates Strings and using deeper search is really long.</p>
 <h2 id="conclusion">Conclusion</h2>

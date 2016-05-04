@@ -41,7 +41,7 @@
 <p>In order to bypass <em>evil</em> company firewall and to surf safely on unsafe <sc>wifi</sc>. I keep an ssh server listening on the port 443.</p>
 <p>Then from my laptop or my local computer I just have to launch the marvelous</p>
 <div>
-<pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="kw">ssh</span> -f -p 443 -ND 9050 username@host</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="kw">ssh</span> -f -p 443 -ND 9050 username@host</code></pre></div>
 </div>
 <p>and a local <sc>socks</sc> proxy listening on port 9050 is launched. The <sc>socks</sc> proxy will transfer local requests via the ssh tunnel. Therefore I can surf locally as if I was on my own computer. I can put password and card number without fear the local <sc>wifi</sc> network to be <em>sniffed</em>. I simply need to configure my web browser to user the <sc>socks</sc> proxy on localhost and port 9050.</p>
 <p>I get this information from <a href="http://dltj.org/article/ssh-as-socks-proxy/">this post</a>.</p>
@@ -51,7 +51,7 @@
 <p>I posted the question on <a href="http://discussions.apple.com">Apple Discussions</a> in this <a href="http://discussions.apple.com/thread.jspa?messageID=10141032">discussion thread</a>. Thanks to all guys who helped me. And the solution is:</p>
 <p>Create the file <tt>/Library/LaunchDaemons/ssh-443.plist</tt> containing:</p>
 <div>
-<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span>
 <span class="dt">&lt;!DOCTYPE </span>plist PUBLIC &quot;-//Apple Computer//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;<span class="dt">&gt;</span>
 <span class="kw">&lt;plist</span><span class="ot"> version=</span><span class="st">&quot;1.0&quot;</span><span class="kw">&gt;</span>
 <span class="kw">&lt;dict&gt;</span>
@@ -84,7 +84,7 @@
         <span class="kw">&lt;key&gt;</span>SHAuthorizationRight<span class="kw">&lt;/key&gt;</span>
         <span class="kw">&lt;string&gt;</span>system.preferences<span class="kw">&lt;/string&gt;</span>
 <span class="kw">&lt;/dict&gt;</span>
-<span class="kw">&lt;/plist&gt;</span></code></pre>
+<span class="kw">&lt;/plist&gt;</span></code></pre></div>
 </div>
 <p>It is a copy of <code>/System/Library/LaunchDaemons/ssh.plist</code> with some modifications:</p>
 <ul>

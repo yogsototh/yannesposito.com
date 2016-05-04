@@ -51,12 +51,12 @@
 <p class="caption">SQL injection by a mom</p>
 </div>
 <p>Lorsque vous créez une application web, beaucoup de temps est passé à s’occuper de chaînes de caractères. Des chaînes de caractère pour les URL, le HTML, le Javascript, les CSS, les requêtes SQL, etc… Pour éviter des utilisation malicieuses vous devez protéger chaque chaîne de caractère entre chaque étape. Par exemple supposons que vous entriez comme nom&nbsp;:</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript">Newton&lt;script&gt;<span class="fu">alert</span>(<span class="st">&quot;An apple fall&quot;</span>)&lt;<span class="ot">/script&gt;</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript">Newton<span class="op">&lt;</span>script<span class="op">&gt;</span><span class="at">alert</span>(<span class="st">&quot;An apple fall&quot;</span>)<span class="op">&lt;</span><span class="ss">/script&gt;</span></code></pre></div>
 <p>Sans une protection correcte, le message “An apple fall” sera affiché à chaque fois que quelqu’un essayera d’accéder au nom de cet utilisateur. Les “types saufs” sont le <a href="https://www.youtube.com/watch?v=1IWF3IsEPBE">tonyglandil du web</a>. A chaque chaine de caractère, on lui associe un “type”. A quoi sert cette chaîne de caractère ? Est-ce une URL ? Du javascript ? De l’HTML ? Entre chaque passage d’une représentation à une autre, un transformation is faite par défaut.</p>
 <p>Yesod fait de son mieux pour typer les objets manipulés et ainsi il fera ce qu’il faut pour ne pas mettre du script dans une URL par exemple.</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">@[AnotherPageR]</span><span class="kw">&gt;</span>Go to the other page</code></pre>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">@[AnotherPageR]</span><span class="kw">&gt;</span>Go to the other page</code></pre></div>
 <p>Comme <code>AnotherPageR</code> est une URL elle ne pourra contiendra pas (par défaut) de caractère dangereux comme par exemple&nbsp;:</p>
-<pre class="sourceCode html"><code class="sourceCode html">falselink&quot;&gt;<span class="kw">&lt;script&gt;</span> <span class="fu">bad_code</span>(); &lt;<span class="ot">/script&gt;&lt;a href=&quot;pipo</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html">falselink&quot;&gt;<span class="kw">&lt;script&gt;</span> <span class="at">bad_code</span>()<span class="op">;</span> <span class="op">&lt;</span><span class="ss">/script&gt;&lt;a href=&quot;pipo</span></code></pre></div>
 <h2 id="les-widgets">Les widgets</h2>
 <p>Les widgets de yesod sont différents des widgets Javascripts (ou java). Pour yesod un widget est un ensemble de morceaux d’appli web. Et si dans une page on veut utiliser plusieurs widgets, alors yesod s’occupe de tout. Des exemples de widgets (au sens yesod) sont&nbsp;:</p>
 <ul>
@@ -78,9 +78,9 @@ cssheader = ...
 javascriptheader = ...
 htmlbody = ...</code></pre>
 <p>La vraie syntaxe est&nbsp;:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">toWidgetHeader cassiusFile <span class="st">&quot;button.cassius&quot;</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">toWidgetHeader cassiusFile <span class="st">&quot;button.cassius&quot;</span>
 toWidgetHeader juliusFile <span class="st">&quot;button.julius&quot;</span>
-toWidget       hamletFile <span class="st">&quot;buttonTemplate.hamlet&quot;</span></code></pre>
+toWidget       hamletFile <span class="st">&quot;buttonTemplate.hamlet&quot;</span></code></pre></div>
 <p>Veuillez aussi noté la convention Shakespearienne des noms. Encore une bonne raison d’utiliser yesod.</p>
 <ul>
 <li>Cassius <em>&amp;</em> Lucius pour le CSS (très similaire à SASS et SCSS)</li>
@@ -88,18 +88,18 @@ toWidget       hamletFile <span class="st">&quot;buttonTemplate.hamlet&quot;</sp
 <li>Hamlet pour l’HTML (similaire à haml)</li>
 </ul>
 <p>Lorsque vous générez votre page, yesod se débrouille pour que tout fonctionne ensemble:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">myBigWidget <span class="fu">=</span>  menuWidget <span class="fu">&gt;&gt;</span> contentWidget <span class="fu">&gt;&gt;</span> footerWidget</code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">myBigWidget <span class="fu">=</span>  menuWidget <span class="fu">&gt;&gt;</span> contentWidget <span class="fu">&gt;&gt;</span> footerWidget</code></pre></div>
 <p>De plus, si vous utilisez 10 widgets avec un peu de CSS, yesod fabriquera un unique fichier CSS pour vous. Bien entendu si vous préférez avoir une dizaine de fichier CSS vous pouvez aussi le faire.</p>
 <p>C’est juste génial !</p>
 <h2 id="routage-optimisé">Routage optimisé</h2>
 <p>Dans un système de routage standard (à la ruby on rails par exemple) vous avez pour chaque entrée un couple: regexp → handler</p>
 <p>La seule façon de découvrir la bonne règle est d’essayer de matcher l’url demandée à chaque expression régulière.</p>
 <p>Au lieu d’essayer chaque expression régulière, yesod regroupe et compile les routes pour les optimiser. Bien entendu pour pouvoir profiter de cet avantage au mieux, il ne faut pas que deux routes interfèrent entres elles.</p>
-<pre class="sourceCode html"><code class="sourceCode html">/blog/2003  Date2003R
-/blog/$DATE DateR</code></pre>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html">/blog/2003  Date2003R
+/blog/$DATE DateR</code></pre></div>
 <p>Cette définition de route est invalide par défaut dans yesod. Si vous voulez vraiment vous pouvez le faire foncionner quand même, mais il me semble que ça doit être quasiment toujours une mauvaise idée.</p>
 <p>Il vaut mieux faire&nbsp;:</p>
-<pre class="sourceCode html"><code class="sourceCode html">/blog/$DATE DateR</code></pre>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html">/blog/$DATE DateR</code></pre></div>
 <p>et faire le test “est-ce que date = 2003 ?” dans le «handler».</p>
 <h2 id="pourquoi-yesod">Pourquoi yesod?</h2>
 <ol style="list-style-type: decimal">

@@ -44,7 +44,7 @@
 <p>UPDATE: <a href="http://nicholassterling.wordpress.com/2012/03/30/a-zsh-map-function/">Nicholas Sterling had discovered a way to implement anonymous functions</a> Thanks!</p>
 <p>With this last version you should use <code>map</code> if you use external function. <code>mapl</code> to use lambda function. And <code>mapa</code> for arithmetic operations.</p>
 <p>Example:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">$ filterl <span class="st">'echo $1|grep a &gt;/dev/null'</span> ab <span class="kw">cd</span> ef ada
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">$ filterl <span class="st">'echo $1|grep a &gt;/dev/null'</span> ab <span class="kw">cd</span> ef ada
 ab
 ada
 
@@ -68,14 +68,14 @@ $ mapa <span class="st">'$1*2'</span> <span class="dt">{1..3}</span>
 $ mapl <span class="st">'echo result $1'</span> <span class="ot">$(</span>mapa <span class="st">'$1+5'</span> <span class="ot">$(</span>mapa <span class="st">'$1*2'</span> <span class="dt">{1..3}</span><span class="ot">))</span>
 result 7
 result 9
-result 11</code></pre>
+result 11</code></pre></div>
 <p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span> some simple implementation of higher order function for zsh.</p>
 </div>
 <p>Why is it important to have these functions? Simply because, the more I programmed with zsh the more I tended to work using functional programming style.</p>
 <p>The minimal to have better code are the functions <code>map</code>, <code>filter</code> and <code>fold</code>.</p>
 <p>Let’s compare. First a program which convert all gif to png in many different directories of different projects.</p>
 <p>Before ⇒</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="co"># for each directory in projects dir</span>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="co"># for each directory in projects dir</span>
 <span class="kw">for</span> toProject <span class="kw">in</span> /path/to/projects/*<span class="kw">(</span>/N<span class="kw">)</span>; <span class="kw">do</span>
     <span class="co"># toProject is /path/to/projects/foo</span>
     <span class="co"># project become foo (:t for tail)</span>
@@ -84,23 +84,23 @@ result 11</code></pre>
         convert <span class="ot">$toResource</span> <span class="ot">${toResource:r}</span>.png <span class="kw">&amp;&amp;</span> <span class="kw">\</span>
         \<span class="kw">rm</span> -f <span class="ot">$toResource</span>
     <span class="kw">done</span>
-<span class="kw">done</span></code></pre>
+<span class="kw">done</span></code></pre></div>
 <ul>
 <li>The <code>(/N)</code> means to select only directory and not to crash if there isn’t any.</li>
 <li>The <code>(.N)</code> means to select only files and not to crash if there isn’t any.</li>
 <li>The <code>:t</code> means tail; if <code>toto=/path/to/file.ext</code> then <code>${toto:t}=file.ext</code>.</li>
 </ul>
 <p>After ⇒</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">gif_to_png()</span> <span class="kw">{</span> <span class="kw">convert</span> <span class="ot">$1</span> <span class="ot">${1:r}</span>.png <span class="kw">&amp;&amp;</span> \<span class="kw">rm</span> -f <span class="ot">$1</span> <span class="kw">}</span>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">gif_to_png()</span> <span class="kw">{</span> <span class="kw">convert</span> <span class="ot">$1</span> <span class="ot">${1:r}</span>.png <span class="kw">&amp;&amp;</span> \<span class="kw">rm</span> -f <span class="ot">$1</span> <span class="kw">}</span>
 
 <span class="fu">handle_resources()</span> <span class="kw">{</span> <span class="kw">map</span> gif_to_png <span class="ot">$1</span>/resources/*.gif(.N) <span class="kw">}</span>
 
-<span class="kw">map</span> handle_resources /path/to/projects/*(/N)</code></pre>
+<span class="kw">map</span> handle_resources /path/to/projects/*(/N)</code></pre></div>
 <p>No more bloc! It might be a little bit harder to read if you’re not used to functional programming notation. But it is more concise and robusts.</p>
 <p>Another example with some tests.</p>
 <p>Find all files in project not containing an <code>s</code> which their name contains their project name:</p>
 <p>Before ⇒</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="kw">for</span> toProject <span class="kw">in</span> Projects/*; <span class="kw">do</span>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="kw">for</span> toProject <span class="kw">in</span> Projects/*; <span class="kw">do</span>
     <span class="ot">project=$toProject</span>:t
     <span class="kw">if</span> <span class="kw">print</span> -- project <span class="kw">|</span> <span class="kw">grep</span> -v s <span class="kw">&gt;</span>/dev/null
     <span class="kw">then</span>
@@ -111,9 +111,9 @@ result 11</code></pre>
             <span class="kw">fi</span>
         <span class="kw">done</span>
     <span class="kw">fi</span>
-<span class="kw">done</span></code></pre>
+<span class="kw">done</span></code></pre></div>
 <p>After ⇒</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="fu">contain_no_s()</span> <span class="kw">{</span> <span class="kw">print</span> <span class="ot">$1</span> <span class="kw">|</span> <span class="kw">grep</span> -v s <span class="kw">}</span>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="fu">contain_no_s()</span> <span class="kw">{</span> <span class="kw">print</span> <span class="ot">$1</span> <span class="kw">|</span> <span class="kw">grep</span> -v s <span class="kw">}</span>
 
 <span class="kw">function</span><span class="fu"> verify_file_name</span> <span class="kw">{</span>                               
     <span class="kw">local</span> <span class="ot">project=$1</span>:t
@@ -121,10 +121,10 @@ result 11</code></pre>
     map <span class="st">&quot;print -- X&quot;</span> <span class="ot">$(</span>filter contains_project_name <span class="ot">$1</span>/*<span class="kw">(</span>.N<span class="kw">)</span><span class="ot">)</span>
 <span class="kw">}</span>
 
-map verify_file_name <span class="ot">$(</span> filter contain_no_s Projects/* <span class="ot">)</span></code></pre>
+map verify_file_name <span class="ot">$(</span> filter contain_no_s Projects/* <span class="ot">)</span></code></pre></div>
 <p>Also, the first verstion is a bit easier to read. But the second one is clearly far superior in architecture. I don’t want to argue why here. Just believe me that the functional programming approach is superior.</p>
 <p>You can find an <a href="https://github.com/Tarrasch/zsh-functional">updated version of the code (thanks to Arash Rouhani)</a>. An older version is <a href="https://github.com/yogsototh/zsh_functional">here thought</a>. Here is the (first version) source code:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="co">#!/usr/bin/env zsh</span>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="co">#!/usr/bin/env zsh</span>
 
 <span class="co"># Provide higer-order functions </span>
 
@@ -185,7 +185,7 @@ map verify_file_name <span class="ot">$(</span> filter contain_no_s Projects/* <
         <span class="kw">fi</span>
     <span class="kw">done</span>
     <span class="kw">print</span> <span class="ot">$result</span>
-<span class="kw">}</span></code></pre>
+<span class="kw">}</span></code></pre></div>
 				</div>
                 <div id="afterarticle">
                     <div id="social">

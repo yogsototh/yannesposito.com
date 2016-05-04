@@ -84,27 +84,27 @@
 <p>If you want optimal performances I suggest you to download and compile the latest <a href="http://ghc.haskell.org">GHC Release</a> (at least 7.8). It is generally very easy to install from source. If you go this way, you’ll need to install <a href="http://www.haskell.org/cabal/download.html">cabal</a>. You should use at least cabal 1.18. Don’t forget to add cabal binaries to your PATH. Generally:</p>
 <pre><code>echo 'export PATH=$HOME/.cabal/bin:$PATH' &gt;&gt; ~/.profile</code></pre>
 <p>And to be sure you have the latest cabal release:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cabal</span> update
-<span class="kw">cabal</span> install cabal-install</code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cabal</span> update
+<span class="kw">cabal</span> install cabal-install</code></pre></div>
 <p>Once done, you need to install Yesod.</p>
 <p>Then open a terminal session and do:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cabal</span> install yesod-bin</code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cabal</span> install yesod-bin</code></pre></div>
 <p>There are few steps but it should take some time to finish.</p>
 <h3 id="initialize">Initialize</h3>
 <p>You are now ready to initialize your first Yesod project. Open a terminal and type:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">yesod</span> init</code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">yesod</span> init</code></pre></div>
 <p>Enter your name, choose <code>yosog</code> for the project name and enter <code>Yosog</code> for the name of the Foundation. Finally choose <code>sqlite</code>. Now, start the development cycle:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cd</span> yosog
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cd</span> yosog
 <span class="kw">cabal</span> sandbox init
 <span class="kw">cabal</span> install --enable-tests . yesod-platform yesod-bin --max-backjumps=-1 --reorder-goals
-<span class="kw">yesod</span> devel</code></pre>
+<span class="kw">yesod</span> devel</code></pre></div>
 <p>This will compile the entire project. Be patient, since it will take a while the first time. Once finished a server is launched and you can visit it by clicking this link:</p>
 <p><a href="http://localhost:3000"><code>http://localhost:3000</code></a></p>
 <p>Congratulation! Yesod works!</p>
 <blockquote>
 <p>Note: if something is messed up use the following command at the command line inside the project directory.</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">\<span class="kw">rm</span> -rf .cabal-sandbox cabal.sandbox.config
-<span class="kw">cabal</span> sandbox init <span class="kw">&amp;&amp;</span> <span class="kw">cabal</span> install --enable-tests . yesod-platform yesod-bin --max-backjumps=-1 --reorder-goals <span class="kw">&amp;&amp;</span> <span class="kw">yesod</span> devel</code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">\<span class="kw">rm</span> -rf .cabal-sandbox cabal.sandbox.config
+<span class="kw">cabal</span> sandbox init <span class="kw">&amp;&amp;</span> <span class="kw">cabal</span> install --enable-tests . yesod-platform yesod-bin --max-backjumps=-1 --reorder-goals <span class="kw">&amp;&amp;</span> <span class="kw">yesod</span> devel</code></pre></div>
 </blockquote>
 <p>For the rest of the tutorial, use another terminal and keep this one open in a corner to see what happens.</p>
 <h3 id="configure-git">Configure git</h3>
@@ -112,9 +112,9 @@
 <p>Of course this step is not mandatory for the tutorial but it is a good practice.</p>
 </blockquote>
 <p>Fortunately, there is already a <code>.gitignore</code> file into the <code>yosog</code> folder. You just have to initialize your git repository:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">git</span> init .
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">git</span> init .
 <span class="kw">git</span> add .
-<span class="kw">git</span> commit -a -m <span class="st">&quot;Initial yesod commit&quot;</span></code></pre>
+<span class="kw">git</span> commit -a -m <span class="st">&quot;Initial yesod commit&quot;</span></code></pre></div>
 <p>We are almost ready to start.</p>
 <h3 id="a-few-words-before-we-start">A few words before we start</h3>
 <p>Up until here, we have a directory containing a bunch of files and a local web server listening the port 3000. If we modify a file inside this directory, Yesod should try to recompile as fast as possible the site. Instead of explaining the role of every file, let’s focus only on the important files/directories for this tutorial:</p>
@@ -183,19 +183,19 @@ Enter space-separated list of methods (ex: GET POST): <span class="highlight">GE
 </ul>
 <p>Now try to go to <a href="http://localhost:3000/echo/foo"><code>localhost:3000/echo/foo</code></a>. You should get a message explaining that <code>getEchoR</code> is not yet implemented.</p>
 <p>So let’s take a look at <code>Handler/Echo.hs</code>:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
 <span class="kw">import </span><span class="dt">Import</span>
 
 <span class="ot">getEchoR ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">Html</span>
-getEchoR <span class="fu">=</span> error <span class="st">&quot;Not yet implemented: getEchoR&quot;</span></code></pre>
+getEchoR <span class="fu">=</span> error <span class="st">&quot;Not yet implemented: getEchoR&quot;</span></code></pre></div>
 <p>This should be straightforward. Now we can replace it with this:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
 <span class="kw">import </span><span class="dt">Import</span>
 
 <span class="ot">getEchoR ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">Html</span>
-getEchoR theText <span class="fu">=</span> defaultLayout [whamlet<span class="fu">|&lt;</span>h1<span class="fu">&gt;#</span>{theText}<span class="fu">|</span>]</code></pre>
+getEchoR theText <span class="fu">=</span> defaultLayout [whamlet<span class="fu">|&lt;</span>h1<span class="fu">&gt;#</span>{theText}<span class="fu">|</span>]</code></pre></div>
 <p>Don’t worry if you find all of this a bit cryptic. In short it just declares a function named <code>getEchoR</code> with one argument (<code>theText</code>) of type <code>String</code>. When this function is called, it returns a <code>Handler Html</code> whatever it is. But mainly this will encapsulate our expected result inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> text.</p>
 <p>After saving the file, you should see Yesod recompile the application. When the compilation is finished you’ll see the message: <code>Starting devel application</code>.</p>
 <p>Now you can visit: <a href="http://localhost:3000/echo/Yesod%20rocks!"><code>http://localhost:3000/echo/Yesod%20rocks!</code></a></p>
@@ -210,12 +210,12 @@ getEchoR theText <span class="fu">=</span> defaultLayout [whamlet<span class="fu
 </div>
 <p>You can click on it to test it.</p>
 <p>The special characters are protected for us, preventing a malicious user from hiding a bad script within the url.</p>
-<p>This behavior is a direct consequence of <em>type safety</em>. The <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> string is put inside a <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type. Then the interesting part in the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> is put inside a String type. To pass from <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type to String type some transformations are made. For example, all instances of “<code>%20</code>” are replaced by space characters. Then to show the String inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> document, the string is put inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> type. Some transformations occurs like replace “<code>&lt;</code>” by “<code>&amp;lt;</code>”. Thanks to Yesod, this tedious job is done for us.</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="st">&quot;http://localhost:3000/echo/some%20text%3Ca%3E&quot;</span> :: <span class="kw">URL</span>
+<p>This behavior is a direct consequence of <em>type safety</em>. The <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> string is put inside a <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type. Then the interesting part in the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> is put inside a String type. To pass from <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> type to String type some transformations are made. For example, all instances of “<code>%20</code>” are replaced by space characters. Then to show the String inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> document, the string is put inside an <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> type. Some transformations occurs like replace “&lt;code&gt;&lt;</code>” by “<code>&amp;lt;</code>”. Thanks to Yesod, this tedious job is done for us.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="st">&quot;http://localhost:3000/echo/some%20text%3Ca%3E&quot;</span> :: <span class="kw">URL</span>
                     ↓
               <span class="st">&quot;some text&lt;a&gt;&quot;</span>                    :: <span class="kw">String</span>
                     ↓
-          <span class="st">&quot;some text &amp;amp;lt;a&amp;amp;gt;&quot;</span>         :: <span class="kw">Html</span></code></pre>
+          <span class="st">&quot;some text &amp;amp;lt;a&amp;amp;gt;&quot;</span>         :: <span class="kw">Html</span></code></pre></div>
 <p>Yesod is not only fast, it helps us to remain secure. It protects us from many common errors in other paradigms. Yes, I am looking at you, PHP!</p>
 <h3 id="cleaning-up">Cleaning up</h3>
 <p>Even this very minimal example should be enhanced. We will clean up many details:</p>
@@ -226,28 +226,28 @@ getEchoR theText <span class="fu">=</span> defaultLayout [whamlet<span class="fu
 <h4 id="data.text"><code>Data.Text</code></h4>
 <p>It is a good practice to use <code>Data.Text</code> instead of <code>String</code>.</p>
 <p>To declare it, add this import directive to <code>Foundation.hs</code> (just after the last one):</p>
-<pre class="sourceCode diff"><code class="sourceCode diff">import Data.Text</code></pre>
+<div class="sourceCode"><pre class="sourceCode diff"><code class="sourceCode diff">import Data.Text</code></pre></div>
 <p>We have to modify <code>config/routes</code> and our handler accordingly. Replace <code>#String</code> by <code>#Text</code> in <code>config/routes</code>:</p>
 <pre>
 /echo/<span class="highlight">#Text</span> EchoR GET
 </pre>
 <p>And do the same in <code>Handler/Echo.hs</code>:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
 <span class="kw">import </span><span class="dt">Import</span>
 
 <span class="ot">getEchoR ::</span> <span class="highlight"><span class="dt">Text</span></span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">Html</span>
-getEchoR theText <span class="fu">=</span> defaultLayout [whamlet<span class="fu">|&lt;</span>h1<span class="fu">&gt;#</span>{theText}<span class="fu">|</span>]</code></pre>
+getEchoR theText <span class="fu">=</span> defaultLayout [whamlet<span class="fu">|&lt;</span>h1<span class="fu">&gt;#</span>{theText}<span class="fu">|</span>]</code></pre></div>
 <h4 id="use-templates">Use templates</h4>
 <p>Some <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> (more precisely hamlet) is written directly inside our handler. We should put this part inside another file. Create the new file <code>templates/echo.hamlet</code> containing:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&lt;</span>h1<span class="fu">&gt;</span> <span class="st">#{theText}</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&lt;</span>h1<span class="fu">&gt;</span> <span class="fu">#</span>{theText}</code></pre></div>
 <p>and modify the handler <code>Handler/Echo.hs</code>:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Echo</span> <span class="kw">where</span>
 
 <span class="kw">import </span><span class="dt">Import</span>
 
 <span class="ot">getEchoR ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">Html</span>
-getEchoR theText <span class="fu">=</span> defaultLayout <span class="highlight"><span class="fu">$</span>(widgetFile <span class="st">&quot;echo&quot;</span>)</span></code></pre>
+getEchoR theText <span class="fu">=</span> defaultLayout <span class="highlight"><span class="fu">$</span>(widgetFile <span class="st">&quot;echo&quot;</span>)</span></code></pre></div>
 <p>At this point, our web application is nicely structured. We use <code>Data.Text</code> and our views are in templates. It is the time to make a slightly more complex example.</p>
 <h2 id="mirror">Mirror</h2>
 <div>
@@ -260,7 +260,7 @@ Name of route (without trailing R): <span class="highlight">Mirror</span>
 Enter route pattern (ex: /entry/#EntryId): <span class="highlight">/mirror</span>
 Enter space-separated list of methods (ex: GET POST): <span class="highlight">GET POST</span></code></pre>
 <p>This time the path <code>/mirror</code> will accept GET and POST requests. Update the corresponding new Handler file (<code>Handler/Mirror.hs</code>):</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Mirror</span> <span class="kw">where</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Mirror</span> <span class="kw">where</span>
 
 <span class="kw">import </span><span class="dt">Import</span>
 <span class="kw">import qualified</span> <span class="dt">Data.Text</span> <span class="kw">as</span> <span class="dt">T</span>
@@ -271,18 +271,18 @@ getMirrorR <span class="fu">=</span> defaultLayout <span class="fu">$</span>(wid
 <span class="ot">postMirrorR ::</span> <span class="dt">Handler</span> <span class="dt">Html</span>
 postMirrorR <span class="fu">=</span>  <span class="kw">do</span>
         postedText <span class="ot">&lt;-</span> runInputPost <span class="fu">$</span> ireq textField <span class="st">&quot;content&quot;</span>
-        defaultLayout <span class="fu">$</span>(widgetFile <span class="st">&quot;posted&quot;</span>)</code></pre>
+        defaultLayout <span class="fu">$</span>(widgetFile <span class="st">&quot;posted&quot;</span>)</code></pre></div>
 <p>We will need to use the <code>reverse</code> function provided by <code>Data.Text</code> which explains the additional import.</p>
 <p>The only new thing here is the line that gets the POST parameter named “content”. If you want to know more detail about it and forms in general you can take a look at <a href="http://www.yesodweb.com/book/forms">the Yesod book</a>.</p>
 <p>Create the two corresponding templates (<code>templates/mirror.hamlet</code> and <code>templates/posted.hamlet</code>):</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span> Enter your text
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span> Enter your text
 <span class="kw">&lt;form</span><span class="ot"> method=</span><span class="st">post</span><span class="ot"> action=</span><span class="st">@{MirrorR}</span><span class="kw">&gt;</span>
     <span class="kw">&lt;input</span><span class="ot"> type=</span><span class="st">text</span><span class="ot"> name=</span><span class="st">content</span><span class="kw">&gt;</span>
-    <span class="kw">&lt;input</span><span class="ot"> type=</span><span class="st">submit</span><span class="kw">&gt;</span></code></pre>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span>You've just posted
+    <span class="kw">&lt;input</span><span class="ot"> type=</span><span class="st">submit</span><span class="kw">&gt;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span>You've just posted
 <span class="kw">&lt;p&gt;</span>#{postedText}#{T.reverse postedText}
 <span class="kw">&lt;hr&gt;</span>
-<span class="kw">&lt;p&gt;&lt;a</span><span class="ot"> href=</span><span class="st">@{MirrorR}</span><span class="kw">&gt;</span>Get back</code></pre>
+<span class="kw">&lt;p&gt;&lt;a</span><span class="ot"> href=</span><span class="st">@{MirrorR}</span><span class="kw">&gt;</span>Get back</code></pre></div>
 <p>And that is all. This time, we won’t need to clean up. We might have generated the form a different way, but we’ll see how to do this in the next section.</p>
 <p>Just try it by <a href="http://localhost:3000/mirror">clicking here</a>.</p>
 <p>Also you can try to enter strange values (like <code>&lt;script&gt;alert('Bad');&lt;/script&gt;</code>). As before, your application is quite secure.</p>
@@ -311,7 +311,7 @@ Enter space-separated list of methods (ex: GET POST): GET</code></pre>
     deriving</code></pre>
 <p>As <code>Html</code> is not an instance of <code>Read</code>, <code>Show</code> and <code>Eq</code>, we had to add the <code>deriving</code> line. If you forget it, there will be an error.</p>
 <p>After the route and the model, we write the handler. Let’s write the content of <code>Handler/Blog.hs</code>. We start by declaring the module and by importing some block necessary to handle Html in forms.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Blog</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Handler.Blog</span>
     ( getBlogR
     , postBlogR
     )
@@ -321,15 +321,15 @@ Enter space-separated list of methods (ex: GET POST): GET</code></pre>
 
 <span class="co">-- to use Html into forms</span>
 <span class="kw">import </span><span class="dt">Yesod.Form.Nic</span> (<span class="dt">YesodNic</span>, nicHtmlField)
-<span class="kw">instance</span> <span class="dt">YesodNic</span> <span class="dt">App</span></code></pre>
+<span class="kw">instance</span> <span class="dt">YesodNic</span> <span class="dt">App</span></code></pre></div>
 <p><em>Remark</em>: it is a best practice to add the YesodNic instance inside <code>Foundation.hs</code>. I put this definition here to make things easier but you should see a warning about this orphan instance. To put the include inside Foundation.hs is left as an exercice to the reader.</p>
 <p><em>Hint</em>: Do not forget to put <code>YesodNic</code> and <code>nicHtmlField</code> inside the exported objects of the module.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">entryForm ::</span> <span class="dt">Form</span> <span class="dt">Article</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">entryForm ::</span> <span class="dt">Form</span> <span class="dt">Article</span>
 entryForm <span class="fu">=</span> renderDivs <span class="fu">$</span> <span class="dt">Article</span>
     <span class="fu">&lt;$&gt;</span> areq   textField <span class="st">&quot;Title&quot;</span> <span class="dt">Nothing</span>
-    <span class="fu">&lt;*&gt;</span> areq   nicHtmlField <span class="st">&quot;Content&quot;</span> <span class="dt">Nothing</span></code></pre>
+    <span class="fu">&lt;*&gt;</span> areq   nicHtmlField <span class="st">&quot;Content&quot;</span> <span class="dt">Nothing</span></code></pre></div>
 <p>This function defines a form for adding a new article. Don’t pay attention to all the syntax. If you are curious you can take a look at Applicative Functor. You just have to remember <code>areq</code> is for required form input. Its arguments being: <code>areq type label default_value</code>.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- The view showing the list of articles</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- The view showing the list of articles</span>
 <span class="ot">getBlogR ::</span> <span class="dt">Handler</span> <span class="dt">Html</span>
 getBlogR <span class="fu">=</span> <span class="kw">do</span>
     <span class="co">-- Get the list of articles inside the database.</span>
@@ -338,9 +338,9 @@ getBlogR <span class="fu">=</span> <span class="kw">do</span>
     <span class="co">-- to construct the form (see templates/articles.hamlet).</span>
     (articleWidget, enctype) <span class="ot">&lt;-</span> generateFormPost entryForm
     defaultLayout <span class="fu">$</span> <span class="kw">do</span>
-        <span class="fu">$</span>(widgetFile <span class="st">&quot;articles&quot;</span>)</code></pre>
+        <span class="fu">$</span>(widgetFile <span class="st">&quot;articles&quot;</span>)</code></pre></div>
 <p>This handler should display a list of articles. We get the list from the DB and we construct the form. Just take a look at the corresponding template:</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span> Articles
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span> Articles
 $if null articles
     <span class="kw">&lt;p&gt;</span> There are no articles in the blog
 $else
@@ -352,12 +352,12 @@ $else
   <span class="kw">&lt;form</span><span class="ot"> method=</span><span class="st">post</span><span class="ot"> enctype=</span><span class="st">#{enctype}</span><span class="kw">&gt;</span>
     ^{articleWidget}
     <span class="kw">&lt;div&gt;</span>
-        <span class="kw">&lt;input</span><span class="ot"> type=</span><span class="st">submit</span><span class="ot"> value=</span><span class="st">&quot;Post New Article&quot;</span><span class="kw">&gt;</span></code></pre>
+        <span class="kw">&lt;input</span><span class="ot"> type=</span><span class="st">submit</span><span class="ot"> value=</span><span class="st">&quot;Post New Article&quot;</span><span class="kw">&gt;</span></code></pre></div>
 <p>Notice we added some logic inside the template. There is a test and a “loop”.</p>
 <p>Another very interesting part is the creation of the form. The <code>articleWidget</code> was created by Yesod. We have given it the right parameters (input required or optional, labels, default values), and now we have a protected form made for us. But now we have to create the submit button.</p>
 <p>You can take a first look by <a href="localhost:3000/blog">clicking here</a>. Of course, you can’t post something yet.</p>
 <p>Get back to <code>Handler/Blog.hs</code>.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">postBlogR ::</span> <span class="dt">Handler</span> <span class="dt">Html</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">postBlogR ::</span> <span class="dt">Handler</span> <span class="dt">Html</span>
 postBlogR <span class="fu">=</span> <span class="kw">do</span>
     ((res,articleWidget),enctype) <span class="ot">&lt;-</span> runFormPost entryForm
     <span class="kw">case</span> res <span class="kw">of</span>
@@ -367,7 +367,7 @@ postBlogR <span class="fu">=</span> <span class="kw">do</span>
             redirect <span class="fu">$</span> <span class="dt">ArticleR</span> articleId
          _ <span class="ot">-&gt;</span> defaultLayout <span class="fu">$</span> <span class="kw">do</span>
                 setTitle <span class="st">&quot;Please correct your entry form&quot;</span>
-                <span class="fu">$</span>(widgetFile <span class="st">&quot;articleAddError&quot;</span>)</code></pre>
+                <span class="fu">$</span>(widgetFile <span class="st">&quot;articleAddError&quot;</span>)</code></pre></div>
 <p>This function should be used to create a new article. We handle the form response. If there is an error we display an error page, for example if we left some required value blank. If things go well:</p>
 <ul>
 <li>we add the new article inside the DB (<code>runDB $ insert article</code>)</li>
@@ -375,29 +375,29 @@ postBlogR <span class="fu">=</span> <span class="kw">do</span>
 <li>we are redirected to the article web page.</li>
 </ul>
 <p>Here is the content of the error Page:</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&lt;</span>form method<span class="fu">=</span>post enctype<span class="fu">=#</span>{enctype}<span class="fu">&gt;</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&lt;</span>form method<span class="fu">=</span>post enctype<span class="fu">=#</span>{enctype}<span class="fu">&gt;</span>
     <span class="fu">^</span>{articleWidget}
     <span class="fu">&lt;</span>div<span class="fu">&gt;</span>
-        <span class="fu">&lt;</span>input <span class="kw">type</span><span class="fu">=</span>submit value<span class="fu">=</span><span class="st">&quot;Post New Article&quot;</span><span class="fu">&gt;</span></code></pre>
+        <span class="fu">&lt;</span>input <span class="kw">type</span><span class="fu">=</span>submit value<span class="fu">=</span><span class="st">&quot;Post New Article&quot;</span><span class="fu">&gt;</span></code></pre></div>
 <p>Finally we need to display an article. For this we will modify <code>Handler/Article.hs</code></p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">getArticleR ::</span> <span class="dt">ArticleId</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">Html</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">getArticleR ::</span> <span class="dt">ArticleId</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">Html</span>
 getArticleR articleId <span class="fu">=</span> <span class="kw">do</span>
     article <span class="ot">&lt;-</span> runDB <span class="fu">$</span> get404 articleId
     defaultLayout <span class="fu">$</span> <span class="kw">do</span>
         setTitle <span class="fu">$</span> toHtml <span class="fu">$</span> articleTitle article
-        <span class="fu">$</span>(widgetFile <span class="st">&quot;article&quot;</span>)</code></pre>
+        <span class="fu">$</span>(widgetFile <span class="st">&quot;article&quot;</span>)</code></pre></div>
 <p>The <code>get404</code> function tries to do a get on the DB. If it fails, it returns a 404 page. The rest should be clear. Here is the content of <code>templates/article.hamlet</code>:</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span> #{articleTitle article}
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;h1&gt;</span> #{articleTitle article}
 <span class="kw">&lt;article&gt;</span> #{articleContent article}
 <span class="kw">&lt;hr&gt;</span>
 <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">@{BlogR}</span><span class="kw">&gt;</span>
-    Go to article list.</code></pre>
+    Go to article list.</code></pre></div>
 <p>The blog system is finished. You can jump to it by clicking <a href="http://localhost:3000/blog">here</a>.</p>
 <p>Just for fun, you can try to create an article with the following content:</p>
-<pre class="sourceCode html"><code class="sourceCode html">Cross Script:
-   <span class="kw">&lt;script&gt;</span><span class="fu">alert</span>(<span class="st">&quot;You loose&quot;</span>);&lt;<span class="ot">/script&gt;</span>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html">Cross Script:
+   <span class="kw">&lt;script&gt;</span><span class="at">alert</span>(<span class="st">&quot;You loose&quot;</span>)<span class="op">;&lt;</span><span class="ss">/script&gt;</span>
 
-<span class="ot">SQL injection: &quot;</span><span class="fl">)</span><span class="ot">; DROP TABLE ARTICLE;;</span></code></pre>
+<span class="ss">SQL injection: &quot;</span><span class="sc">)</span><span class="ss">; DROP TABLE ARTICLE;;</span></code></pre></div>
 <h2 id="conclusion">Conclusion</h2>
 <p>This is the end of this tutorial. I made it very minimal.</p>
 <p>If you already know Haskell and you want to go further, you should take a look at the recent <a href="http://yesodweb.com/blog/2012/01/blog-example">i18n blog tutorial</a>. It will be obvious I based my own tutorial on it. You’ll learn in a very straightforward way how easy it is to use authorization, Time and internationalization.</p>

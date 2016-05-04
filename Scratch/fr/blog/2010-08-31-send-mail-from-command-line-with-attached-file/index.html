@@ -39,7 +39,7 @@
 				<div class="corps">
 					<p>J’ai dû envoyer un mail en ligne de commande récemment. Quelle ne fût pas ma surprise lorsque je constatais que ce n’était vraiment pas évident. Je n’avais ni <code>pine</code> ni <code>mutt</code>. Seulement <code>mail</code> et <code>mailx</code>.</p>
 <p>Ce qu’on trouve sur internet pour envoyer un mail avec fichier attaché c’est ça&nbsp;:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">uuencode fic.jpg fic.jpg <span class="kw">|</span> mail -s <span class="st">'Subject'</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">uuencode fic.jpg fic.jpg <span class="kw">|</span> mail -s <span class="st">'Subject'</span></code></pre></div>
 <p>Bon, alors, bête et discipliné j’ai essayé. Et bien, ça marche <em>presque</em> tout le temps. Pour mon fichier ça n’a pas marché du tout. Je l’ai compressé au format <code>.gz</code>, <code>.bz2</code> et <code>.zip</code>. Avec le format <code>.bz2</code> le mail reçu avait bien un fichier attaché. Mais avec les formats <code>.gz</code> et <code>.zip</code>, ça ne fonctionnait pas. Au lieu d’avoir un fichier attaché j’avais un message qui contenait quelque chose comme&nbsp;:</p>
 <pre>
 begin 664 fic.jpg
@@ -47,7 +47,7 @@ M(R$O=7-R+V)I;B]E;G8@>G-H"GAL<STD,0H*9F]R(&QI;F4@:6X@)"@\("1X M;',@*0H@("`@9&-R 
 M=64O/B@\+VET96T^*2-<)#$\=F%L=64^)&ME>7=O<F1S/" ]V86QU93Y<)#(C end < pre>
 <p>Pas très lisible. Après pas mal de recherche j’ai trouvé la solution. Le problème c’est <code>uuencode</code> qui est une méthode qui devrait devenir obsolète pour envoyer les fichiers. Il vaut mieux utiliser le format MIME pour envoyer des fichiers attachés.</p>
 <p>Donc finalement le mieux est de faire ça “à la main” avec <code>sendmail</code>. Je n’ai quand même pas utilisé <code>telnet</code>. La commande à lancer est&nbsp;:</p>
-<pre class="sourceCode zsh"><code class="sourceCode zsh">sendmail -t -oi <span class="kw">&lt;</span> mailcontent.txt</code></pre>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh">sendmail -t -oi <span class="kw">&lt;</span> mailcontent.txt</code></pre></div>
 <p>Bien entendu il faut créer le fichier <code>mailcontent.txt</code> qui contient&nbsp;:</p>
 <pre>
 From: from@mail.com

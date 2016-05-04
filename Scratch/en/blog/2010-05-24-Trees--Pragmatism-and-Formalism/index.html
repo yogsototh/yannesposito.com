@@ -53,7 +53,11 @@
 <h2 id="abstract-longer-than-tldr">Abstract (longer than <span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span>)</h2>
 <p>For my job, I needed to resolve a problem. It first seems not too hard. Then I started working directly on my program. I entered in the <em>infernal</em>: <em>try &amp; repair loop</em>. Each step was like:</p>
 <blockquote>
-<p>– Just this thing to repair and that should be done.<br /> – OK, now that should just work.<br /> – Yeah!!!<br /> – Oops! I forgotten that…<br /> <code>repeat until death</code></p>
+<p>– Just this thing to repair and that should be done.<br />
+– OK, now that should just work.<br />
+– Yeah!!!<br />
+– Oops! I forgotten that…<br />
+<code>repeat until death</code></p>
 </blockquote>
 <p>After two days of this <a href="http://fr.wikipedia.org/wiki/Sisyphe">Sisyphus</a> work, I finally just stopped to rethink the problem. I took a pen, a sheet of paper. I simplified the problem, reminded what I learned during my Ph.D. about trees. Finally, the problem was crushed in less than 20 minutes.</p>
 <p>I believe the important lesson is to remember that the most efficient methodology to resolve this <em>pragmatic</em> problem was the <em>theoretical</em> one. And therefore, argues opposing science, theory to pragmatism and efficiency are fallacies.</p>
@@ -61,7 +65,7 @@
 <h1 id="first-my-experience">First: my experience</h1>
 <p>Apparently 90% of programmer are unable to program a binary search without bug. The algorithm is well known and easy to understand. However it is difficult to program it without any flaw. I participated to <a href="http://reprog.wordpress.com/2010/04/19/are-you-one-of-the-10-percent/">this contest</a>. And you can see the <a href="http://reprog.wordpress.com/2010/04/21/binary-search-redux-part-1/">results here</a><a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>. I had to face a problem of the same kind at my job. The problem was simple to the start. Simply transform an <sc>xml</sc> from one format to another.</p>
 <p>The source <sc>xml</sc> was in the following general format:</p>
-<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;rubrique&gt;</span>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;rubrique&gt;</span>
     <span class="kw">&lt;contenu&gt;</span>
         <span class="kw">&lt;tag1&gt;</span>value1<span class="kw">&lt;/tag1&gt;</span>
         <span class="kw">&lt;tag2&gt;</span>value2<span class="kw">&lt;/tag2&gt;</span>
@@ -76,9 +80,9 @@
             ...
         <span class="kw">&lt;/rubrique&gt;</span>
     <span class="kw">&lt;/enfant&gt;</span>
-<span class="kw">&lt;/menu&gt;</span></code></pre>
+<span class="kw">&lt;/menu&gt;</span></code></pre></div>
 <p>and the destination format was in the following general format:</p>
-<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;item</span><span class="ot"> name=</span><span class="st">&quot;Menu0&quot;</span><span class="kw">&gt;</span>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;item</span><span class="ot"> name=</span><span class="st">&quot;Menu0&quot;</span><span class="kw">&gt;</span>
     <span class="kw">&lt;value&gt;</span>
         <span class="kw">&lt;item</span><span class="ot"> name=</span><span class="st">&quot;menu&quot;</span><span class="kw">&gt;</span>
             <span class="kw">&lt;value&gt;</span>
@@ -100,7 +104,7 @@
             <span class="kw">&lt;/value&gt;</span>
         <span class="kw">&lt;/item&gt;</span>
     <span class="kw">&lt;/value&gt;</span>
-<span class="kw">&lt;/item&gt;</span></code></pre>
+<span class="kw">&lt;/item&gt;</span></code></pre></div>
 <p>At first sight I believed it will be easy. I was so certain it will be easy that I fixed to myself the following rules:</p>
 <ol style="list-style-type: decimal">
 <li>do not use <sc>xslt</sc></li>
@@ -121,7 +125,8 @@
 </ol>
 <p>This was a <em>standard</em> workflow for computer engineer. The flaw came from the first step. I thought about how to resolve the problem but with the eyes of a <em>pragmatic engineer</em>. I was saying:</p>
 <blockquote>
-<p>That should be a simple perl search and replace program.<br />Let’s begin to write code</p>
+<p>That should be a simple perl search and replace program.<br />
+Let’s begin to write code</p>
 </blockquote>
 <p>This is the second sentence that was plainly wrong. I started in the wrong direction. And the workflow did not work from this entry point.</p>
 <h2 id="think">Think</h2>
@@ -154,7 +159,7 @@ r - b
     y - c   
 </pre>
 <p>And look at what it implies when you write it in <sc>xml</sc>:</p>
-<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;r&gt;</span>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;r&gt;</span>
   <span class="kw">&lt;x&gt;</span>
     <span class="kw">&lt;a&gt;</span>value for a<span class="kw">&lt;/a&gt;</span>
     <span class="kw">&lt;b&gt;</span>value for b<span class="kw">&lt;/b&gt;</span>
@@ -162,9 +167,9 @@ r - b
   <span class="kw">&lt;y&gt;</span>
     <span class="kw">&lt;c&gt;</span>value for c<span class="kw">&lt;/c&gt;</span>
   <span class="kw">&lt;/y&gt;</span>
-<span class="kw">&lt;/r&gt;</span></code></pre>
+<span class="kw">&lt;/r&gt;</span></code></pre></div>
 <p>Then deleting all <code>x</code> nodes is equivalent to pass the <sc>xml</sc> via the following search and replace script:</p>
-<pre class="sourceCode perl"><code class="sourceCode perl"><span class="kw">s/</span><span class="ot">&lt;\/</span><span class="ch">?</span><span class="ot">x&gt;</span><span class="kw">//g</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode perl"><code class="sourceCode perl"><span class="kw">s/</span><span class="ot">&lt;\/</span><span class="ch">?</span><span class="ot">x&gt;</span><span class="kw">//g</span></code></pre></div>
 <p>Therefore, if there exists a one state deterministic transducer which transform my trees ; I can transform the <sc>xml</sc> from one format to another with just a simple list of search and replace directives.</p>
 <h1 id="solution">Solution</h1>
 <p>Transform this tree:</p>
@@ -198,18 +203,20 @@ M - V - M - V - tag2      tag1
 </pre>
 <p>can be done using the following one state deterministic tree transducer:</p>
 <blockquote>
-<p>C -&gt; ε<br /> E -&gt; M<br /> R -&gt; V</p>
+<p>C -&gt; ε<br />
+E -&gt; M<br />
+R -&gt; V</p>
 </blockquote>
 <p>Wich can be traduced by the following simple search and replace directives:</p>
-<pre class="sourceCode perl"><code class="sourceCode perl"><span class="kw">s/</span><span class="ot">C</span><span class="kw">//g</span>
+<div class="sourceCode"><pre class="sourceCode perl"><code class="sourceCode perl"><span class="kw">s/</span><span class="ot">C</span><span class="kw">//g</span>
 <span class="kw">s/</span><span class="ot">E</span><span class="kw">/</span><span class="st">M</span><span class="kw">/g</span>
-<span class="kw">s/</span><span class="ot">R</span><span class="kw">/</span><span class="st">V</span><span class="kw">/g</span></code></pre>
+<span class="kw">s/</span><span class="ot">R</span><span class="kw">/</span><span class="st">V</span><span class="kw">/g</span></code></pre></div>
 <p>Once adapted to <sc>xml</sc> it becomes:</p>
-<pre class="sourceCode perl"><code class="sourceCode perl"><span class="kw">s%</span><span class="ot">&lt;/</span><span class="ch">?</span><span class="ot">contenu&gt;</span><span class="kw">%%g</span>
+<div class="sourceCode"><pre class="sourceCode perl"><code class="sourceCode perl"><span class="kw">s%</span><span class="ot">&lt;/</span><span class="ch">?</span><span class="ot">contenu&gt;</span><span class="kw">%%g</span>
 <span class="kw">s%</span><span class="ot">&lt;enfant&gt;</span><span class="kw">%</span><span class="st">&lt;item name=&quot;menu&quot;&gt;</span><span class="kw">%g</span>
 <span class="kw">s%</span><span class="ot">&lt;/enfant&gt;</span><span class="kw">%</span><span class="st">&lt;/item&gt;</span><span class="kw">%g</span>
 <span class="kw">s%</span><span class="ot">&lt;rubrique&gt;</span><span class="kw">%</span><span class="st">&lt;value&gt;</span><span class="kw">%g</span>
-<span class="kw">s%</span><span class="ot">&lt;/rubrique&gt;</span><span class="kw">%</span><span class="st">&lt;/value&gt;</span><span class="kw">%g</span></code></pre>
+<span class="kw">s%</span><span class="ot">&lt;/rubrique&gt;</span><span class="kw">%</span><span class="st">&lt;/value&gt;</span><span class="kw">%g</span></code></pre></div>
 <p>That is all.</p>
 <h1 id="conclusion">Conclusion</h1>
 <p>It should seems a bit paradoxal, but sometimes the most efficient approach to a pragmatic problem is to use the theoretical methodology.</p>
