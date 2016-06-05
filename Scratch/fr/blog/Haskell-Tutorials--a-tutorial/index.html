@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>YBlog - Haskell Tutorials, a tutorial</title>
+        <meta name="keywords" content="programming, tutorial, haskell, documentation" />
+
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/scientific.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/js/highlight/styles/solarized_dark.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/solarized.css" />
+		<!-- Font -->
+        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomfr" />
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+
+    </head>
+    <body lang="fr" class="article">
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	        <div id="choixlang">
+                        <a href="../../../../Scratch/en/blog/Haskell-Tutorials--a-tutorial/">Anglais</a> 
+        	        </div>
+					<div id="switchcss"><a href="#">Changer de theme</a></div>
+                    <div class="tomenu"><a href="#navigation">↓ Menu ↓</a></div>
+        	        <div class="flush"></div>
+        	    </div>
+			</div>
+
+			<div id="titre">
+				<h1>Haskell Tutorials, a tutorial</h1>
+				
+			</div>
+			<div class="flush"></div>
+			<div id="afterheader" class="article">
+				<div class="corps">
+					<div>
+<img src="../../../../Scratch/img/blog/Haskell-Tutorials--a-tutorial/main.jpg" alt="Main image" />
+</div>
+<div class="intro">
+<p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span> Some hints on how to make great documentation for Haskell libraries.</p>
+<ol style="list-style-type: decimal">
+<li>Create a <code>Tutorial</code> module containing nothing except documentation.</li>
+<li>Mention the <code>Tutorial</code> module in your <code>cabal</code> description</li>
+<li>Use <code>doctest</code> to check your documentation is up to date</li>
+<li>For more complex real world examples, link to the source of some test.</li>
+</ol>
+</div>
+<p>Great documentation make a big difference. A bad documentation could simply make people not using your lib.</p>
+<p>My friend was learning Haskell. To start he tried a Haskell library to make a small application. The documentation was deprecated to the point he wasn’t able to make a basic example work. How do you believe he felt? What does he thought about Haskell in general?</p>
+<p>So here are my hint on how to make a great documentation in Haskell.</p>
+<p>Documentation can take many different form.</p>
+<ol style="list-style-type: decimal">
+<li><strong>Tutorials/Guides</strong> – write some prose which friendly take a user by hand and help him</li>
+<li><strong>Examples</strong> – how to use each function</li>
+<li><strong>Generated API Documentation</strong> – haddock</li>
+</ol>
+<h2 id="hints">Hints</h2>
+<h3 id="tutorialsguides">Tutorials/Guides</h3>
+<ol style="list-style-type: decimal">
+<li>Create a new module named <code>Tutorial</code> (or <code>Guide.GuideTopic</code>)</li>
+<li>Create a link to the tutorial in the cabal description</li>
+<li>Create a link to the tutorial in your README</li>
+<li>Here is an example some <code>Tutorial</code> module content:</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# OPTIONS_GHC -fno-warn-unused-imports #-}</span>
+<span class="co">{-|</span>
+<span class="co"> Use @my-package@ if you want to ...</span>
+<span class="co">-}</span>
+<span class="kw">module</span> <span class="dt">Data.Duration.Tutorial</span> (
+
+  <span class="co">-- * Introduction</span>
+  <span class="co">-- $introduction</span>
+
+  <span class="co">-- ** Subsection</span>
+  <span class="co">-- $subsection</span>
+
+  ) <span class="kw">where</span>
+
+<span class="kw">import </span><span class="dt">Data.Duration</span>
+
+<span class="co">{- $introduction</span>
+
+<span class="co">So here how you use it:</span>
+
+<span class="co"> &gt;&gt;&gt; humanReadableDuration 1002012.002</span>
+<span class="co"> &quot;11 days 14 hours 20 min 12s 2ms&quot;</span>
+
+<span class="co">The function is 'humanReadableDuration' and</span>
+<span class="co">the you'll be able to click on it to go</span>
+<span class="co">to its definition.</span>
+
+<span class="co">You can add images: &lt;&lt;path-to-image.png title&gt;&gt;</span>
+<span class="co">and links: &lt;http://haskell-lang.org haskell&gt;.</span>
+<span class="co"> </span>
+<span class="co">-}</span>
+
+<span class="co">{- $subsection</span>
+
+<span class="co">This is a chuck of documentation</span>
+<span class="co">not attached to any particular Haskell</span>
+<span class="co">declaration with an untested code block:</span>
+
+<span class="co">&gt; answer = 42</span>
+
+<span class="co">-}</span></code></pre></div>
+<p>To prevent obsolescence of your tutorial, use <code>doctest</code>.</p>
+<p>That way when you’ll do a <code>stack test</code> or <code>cabal test</code> you’ll get errors if some example doesn’t work anymore.</p>
+<h3 id="examples-doctest">Examples (doctest)</h3>
+<p><code>doctest</code> is a great way to provide examples in your code documentation. These example will then be used as tests. Apparently it comes from Python community.</p>
+<p>To use <code>doctest</code>, this is very simple:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- | My function description</span>
+<span class="co">-- </span>
+<span class="co">-- &gt;&gt;&gt; myFunction 3 4</span>
+<span class="co">-- 7</span>
+<span class="ot">myFunction ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
+myFunction <span class="fu">=</span> (<span class="fu">+</span>)</code></pre></div>
+<p>And to make it works simply verify you have a <code>test</code> bloc in your <code>.cabal</code> file looking like this:</p>
+<pre><code>test-suite doctest
+  type: exitcode-stdio-1.0
+  hs-source-dirs: test
+  main-is: DocTest.hs
+  build-depend: base &gt;= 4.7 &amp;&amp; &lt; 5
+              , &lt;YOUR_LIBRARY&gt; 
+              , Glob &gt;= 0.7
+              , doctest &gt;= 0.9.12</code></pre>
+<p>and in <code>test/DocTest.hs</code> simply use</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span>
+
+<span class="kw">import </span><span class="dt">DocTest</span>
+<span class="kw">import </span><span class="dt">System.FilePath.Glob</span> (glob)
+
+main <span class="fu">=</span> glob <span class="st">&quot;src/**/*.hs&quot;</span> <span class="fu">&gt;&gt;=</span> docTest</code></pre></div>
+<p>Now <code>stack test</code> or <code>cabal test</code> will check the validity of your documentation.</p>
+<h2 id="bonuses">Bonuses</h2>
+<h3 id="verifying-documentation-coverage">Verifying documentation coverage</h3>
+<ol style="list-style-type: decimal">
+<li>Install haddock <code>stack install haddock</code> or <code>cabal install haddock</code></li>
+<li>Launch haddock without output format:</li>
+</ol>
+<pre><code>&gt; haddock src/**/*.hs
+Haddock coverage:
+ 100% ( 15 / 15) in 'Data.Duration'
+ 100% (  3 /  3) in 'Data.Duration.Tutorial'</code></pre>
+<h3 id="continuous-integration">Continuous Integration</h3>
+<p>There are plenty of alternative solution. I provide the one I believe would be used by most people. So if you use <code>github</code> simply create an account on <a href="http://travis-ci.org"><code>travis</code></a>.</p>
+<p>Add a <code>.travis.yml</code> file in your repo containing:</p>
+<pre class=".yaml"><code>language: haskell</code></pre>
+<p>If you want to use <code>stack</code> instead of just <code>cabal</code>:</p>
+<pre class=".yaml"><code>sudo: false
+
+addons:
+  apt:
+    packages:
+      - libgmp-dev
+
+# Caching so the next build will be fast too.
+cache:
+  directories:
+  - $HOME/.stack
+
+before_install:
+# Download and unpack the stack executable
+- mkdir -p ~/.local/bin
+- export PATH=$HOME/.local/bin:$PATH
+- travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+
+script:
+  - stack setup &amp;&amp; stack --no-terminal --skip-ghc-check test</code></pre>
+<p>Don’t forget to activate your repo in travis.</p>
+<p>For some bonus points add the build status badge in your <code>README.md</code> file:</p>
+<pre class=".markdown"><code>[![Build Status](https://travis-ci.org/user-name/project-name.svg?branch=master)](https://travis-ci.org/user-name/project-name)</code></pre>
+<p>Congratulation! Now if you break your documentation examples, you’ll get notified.</p>
+<h3 id="badges">Badges</h3>
+<p>You could add badges to your <code>README.md</code> file.</p>
+<p>Here is a list of some: <a href="http://shields.io"><code>shields.io</code></a></p>
+<h4 id="hackage">Hackage</h4>
+<pre class=".markdown"><code>[![Hackage](https://img.shields.io/hackage/v/packagename)](https://hackage.haskell.org/package/packagename)</code></pre>
+<h4 id="stackage">Stackage</h4>
+<p>If you didn’t declared your package to <code>stackage</code>, please do it. It isn’t much work. Just edit a file to add your package. And you’ll could be able to add another badge:</p>
+<pre class=".markdown"><code>[![packagename on Stackage LTS](http://stackage.org/package/packagename/badge/lts-3)](http://stackage.org/lts/package/packagename)</code></pre>
+<p>See <a href="https://www.fpcomplete.com/blog/2015/10/stackage-badges">Stackage Badges</a> for more informations.</p>
+<h3 id="creating-a-new-project-with-stack">Creating a new project with <code>stack</code></h3>
+<p>If you use <code>stack</code> I suggest you to use the <code>tasty-travis</code> template. It will include the boilerplate for:</p>
+<ul>
+<li>tests</li>
+<li>doctest</li>
+<li>benchmark</li>
+<li>travis CI</li>
+<li>a README file to help you start</li>
+</ul>
+<p>So edit your <code>~/.stack/config.yaml</code> like this:</p>
+<pre><code>templates:
+  params:
+      author-name: Your Name
+      author-email: your@mail.com
+      copyright: 'Copyright: (c) 2016 Your Name'
+      github-username: yourusername
+      category: Development</code></pre>
+<p>And then you can create a new projec with:</p>
+<pre><code>stack new my-project tasty-travis</code></pre>
+<h2 id="generated-documentation">Generated Documentation</h2>
+<p>Even not doing anything, if you submit your library to hackage, haddock should generate some API documentation for free.</p>
+<p>But to make <em>real</em> documentation you <em>need</em> to add some manual annotations.</p>
+<p><strong>Functions</strong>:</p>
+<pre><code><span class="highlight">-- | My function description</span>
+myFunction :: Type of function
+myFunction arg1 <span class="highlight">-- ^ arg1 description</span>
+           arg2 <span class="highlight">-- ^ arg2 description</span>
+           = ...</code></pre>
+<p><strong>Data</strong>:</p>
+<pre><code>data MyData a b
+  = C1 a b -- ^ doc for constructor C1
+  | C2 a b -- ^ doc for constructor C2
+
+data MyData a b
+  = C { a :: TypeA <span class="highlight">-- ^ field a description</span>
+      , b :: TypeB <span class="highlight">-- ^ field b description</span>
+      }</code></pre>
+<p><strong>Module</strong>:</p>
+<pre><code>{-|
+Module    : MyModule
+Description: Short description
+Copyright : (c)
+License : MIT
+
+Here is a longer description of this module.
+With some code symbol @MyType@.
+And also a block of code:
+
+@
+data MyData = C Int Int
+
+myFunction :: MyData -&gt; Int
+@
+
+-}</code></pre>
+<p><strong>Documentation Structure</strong>:</p>
+<pre><code>module MyModule (
+  -- * Classes
+  C(..),
+  -- * Types
+  -- ** A data type
+  T,
+  -- ** A record
+  R,
+  -- * Some functions
+  f, g
+  ) where</code></pre>
+<p>That will generate headings.</p>
+<h2 id="other-random-ideas">Other Random Ideas</h2>
+<p>In Haskell we have great tools like <a href="http://hayoo.fh-wedel.de"><code>hayoo!</code></a> and <a href="https://www.haskell.org/hoogle/"><code>hoogle</code></a>.</p>
+<p>And <code>hackage</code> and <code>stackage</code> provide also a lot of informations.</p>
+<p>But generally we lack a lot of Tutorials and Guides. This post was an attempt to help people making more of them.</p>
+<p>But there are other good ideas to help improve the situation.</p>
+<h3 id="create-a-doc-with-link-to-best-practices">Create a doc with link to best practices</h3>
+<p>In clojure when you create a new project using <code>lein new my-project</code> a directory <code>doc</code> is created for you. It contains a file with a link to this blog post:</p>
+<ul>
+<li><a href="https://jacobian.org/writing/what-to-write/">What to write</a></li>
+</ul>
+<h3 id="having-a-page-by-functionsymbol-with-comments">Having a page by function/symbol with comments</h3>
+<p>If you try to search for some clojure function on a search engine there is a big chance the first result will link to:</p>
+<ul>
+<li><a href="http://clojuredocs.org"><code>clojuredocs.org</code></a>: try to search for <code>reduce</code>, <code>update-in</code> or <code>index</code> for example</li>
+</ul>
+<p>For each symbol necessiting a documentation. You don’t only have the details and standard documentation. You’ll also get:</p>
+<ul>
+<li>Responsive Design (sometime you want to look at documentation on a mobile)</li>
+<li>Contributed Examples</li>
+<li>Contributed See Also section</li>
+<li>Contributed notes/comments</li>
+</ul>
+<p><a href="http://clojuredocs.org"><code>clojuredocs.org</code></a> is an independant website from the official Clojure website.</p>
+<p>Most of the time, if you google the function you search you end up on <a href="http://clojuredocs.org">clojuredocs</a> for wich there are many contributions.</p>
+<p>Currently stackage is closer to these feature than hackage. Because on stackage you have access to the README and also some comments by package.</p>
+<p>I believe it would be more efficient to have at least a page by module and why not a page by <em>symbol</em> (data, functions, typeclasses…).</p>
+<p>For example, we could provide details about <code>foldl</code> for example. Also as there would be less information to display, it will make the design cleaner.</p>
+<p>Today, if you want to help documenting, you need to make a PR to the source of some library. While if we had an equivalent to clojuredocs for Haskell, adding documentation would simply be a few clicks away:</p>
+<ol style="list-style-type: decimal">
+<li>login</li>
+<li>add/edit some example, comments, see-also section</li>
+</ol>
+<p>There are more than 23k people on <code>/r/haskell</code>. If only 1% of them would take 10 minutes adding a bit of documentation it will certainly change a lot of things in the percieved documentation quality.</p>
+<p>And last but not least,</p>
+<h2 id="design-is-important"><strong>Design is important</strong></h2>
+<div>
+<img src="../../../../Scratch/img/blog/Haskell-Tutorials--a-tutorial/design_is_important.jpg" alt="Design is Important" />
+</div>
+<p>Design is a vague word. A good design should care not only about how something look, but also how users will interact with it. For example by removing things to focus on the essential.</p>
+<p>When I stumble upon some random blog post or random specification in the Haskell community, I had too much a feeling of old fashioned design.</p>
+<p>If you look at node.js community lot of their web page look cleaner, easier to read and in the end, more user friendly.</p>
+<p>Haskell is very different from node, I wouldn’t like to replace all long and precise documentation with short human unprecise concepts. I don’t want to transform scientific papers by tweets.</p>
+<p>But like the scientific community has upgraded with the use of LaTeX, I believe we could find something similar that would make, very clean environment for most of us. A kind of look and feel that will be</p>
+<ul>
+<li>modern</li>
+<li>device friendly (either on computer, mobile, tablet)</li>
+<li>efficient, focus on what is most important and is helpful</li>
+</ul>
+				</div>
+                <div id="afterarticle">
+                    <div id="social">
+                        <a target="_blank" href="http://feeds.feedburner.com/yannespositocomfr" class="social">r</a>
+                        ·
+                         <a target="_blank" href="https://twitter.com/home?status=http://yannesposito.com/Scratch/fr/blog/Haskell-Tutorials--a-tutorial/%20via%20@yogsototh" class="social">t</a>
+                        ·
+                        <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=/Scratch/fr/blog/Haskell-Tutorials--a-tutorial/" class="social">`</a>
+                        ·
+                         <a target="_blank" href="https://plus.google.com/share?url=http://yannesposito.com/Scratch/fr/blog/Haskell-Tutorials--a-tutorial/" class="social">g</a>
+                        <br />
+                        <a class="message" href="../../../../Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
+                    </div>
+        	        <div id="navigation">
+                        <a href="../../../../">Accueil</a>
+                        <span class="sep">¦</span>
+        	            <a href="../../../../Scratch/fr/blog">Blog</a>
+                        <span class="sep">¦</span>
+                        <a href="../../../../Scratch/fr/softwares">Logiciels</a>
+                        <span class="sep">¦</span>
+                        <a href="../../../../Scratch/fr/about">Auteur</a>
+        	        </div>
+                    <div id="totop"><a href="#header">↑ Top ↑</a></div>
+				    <div class="corps" id="comment">
+            	        <h2 class="first">Comments</h2>
+				    	<div id="disqus_thread"></div>
+        		    	<script type="text/javascript">
+        		    	    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        		    	    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
+                            var disqus_identifier = '/Scratch/fr/blog/Haskell-Tutorials--a-tutorial/index.html';
+
+        		    	    /* * * DON'T EDIT BELOW THIS LINE * * */
+        		    	    (function() {
+        		    	        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        		    	        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        		    	        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        		    	    })();
+        		    	</script>
+        		    	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        		    	<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+				    </div>
+                    <div class="tomenu"><a>↑ Menu ↑</a></div>
+				    <div id="bottom">
+            	        <div>
+            	            Published on 2016-05-06
+            	        </div>
+            	        <div>
+            	            <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+            	        </div>
+            	        <div>
+                            <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+            	        </div>
+            	        <div>
+            	            Done with
+            	            <a href="http://www.vim.org" target="_blank">Vim</a>
+				    		<span class="pala">&amp;</span>
+                            <a href="http://nanoc.ws" target="_blank"><span class="strike">nanoc</span></a>
+				    		<a href="http://jaspervdj.be/hakyll" target="_blank">Hakyll</a>
+            	        </div>
+            	    </div>
+                </div>
+			</div>
+
+        </div>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.0/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="/Scratch/js/vendor/jquery-1.10.0.min.js"><\/script>')</script>
+        <script src="../../../../Scratch/js/jquery.scrolldepth.min.js"></script>
+        <script src="../../../../Scratch/js/jquery.cookie.js"></script>
+        <script src="../../../../Scratch/js/index.js"></script>
+        <script src="../../../../Scratch/js/highlight/highlight.pack.js"></script>
+        <script src="../../../../Scratch/js/article.js"></script>
+        <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>
