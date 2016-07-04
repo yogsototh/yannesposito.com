@@ -125,9 +125,8 @@ Haddock coverage:
  100% (  3 /  3) in &#39;Data.Duration.Tutorial&#39;</code></pre>
 <h3 id="continuous-integration">Continuous Integration</h3>
 <p>There are plenty of alternative solution. I provide the one I believe would be used by most people. So if you use <code>github</code> simply create an account on <a href="http://travis-ci.org"><code>travis</code></a>.</p>
-<p>Add a <code>.travis.yml</code> file in your repo containing:</p>
-<pre class=".yaml"><code>language: haskell</code></pre>
-<p>If you want to use <code>stack</code> instead of just <code>cabal</code>:</p>
+<p>Add a <code>.travis.yml</code> file in your repo containing the content of the file <a href="http://docs.haskellstack.org/en/stable/GUIDE/#travis-with-caching">here</a> and remove the builds you don’t need. It will build your project using a lot of different GHC versions and environemnts.</p>
+<p>If you are afraid by such its complexity you might just want to use this one:</p>
 <pre class=".yaml"><code>sudo: false
 
 addons:
@@ -185,10 +184,9 @@ script:
 <p>But to make <em>real</em> documentation you <em>need</em> to add some manual annotations.</p>
 <p><strong>Functions</strong>:</p>
 <pre><code><span class="highlight">-- | My function description</span>
-myFunction :: Type of function
-myFunction arg1 <span class="highlight">-- ^ arg1 description</span>
-           arg2 <span class="highlight">-- ^ arg2 description</span>
-           = ...</code></pre>
+myFunction :: T1 <span class="highlight">-- ^ arg1 description</span>
+           -&gt; T2 <span class="highlight">-- ^ arg2 description</span>
+myFunction arg1 arg2 = ...</code></pre>
 <p><strong>Data</strong>:</p>
 <pre><code>data MyData a b
   = C1 a b -- ^ doc for constructor C1
