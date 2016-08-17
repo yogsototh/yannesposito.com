@@ -127,38 +127,38 @@ Haddock coverage:
 <p>There are plenty of alternative solution. I provide the one I believe would be used by most people. So if you use <code>github</code> simply create an account on <a href="http://travis-ci.org"><code>travis</code></a>.</p>
 <p>Add a <code>.travis.yml</code> file in your repo containing the content of the file <a href="http://docs.haskellstack.org/en/stable/GUIDE/#travis-with-caching">here</a> and remove the builds you don’t need. It will build your project using a lot of different GHC versions and environemnts.</p>
 <p>If you are afraid by such its complexity you might just want to use this one:</p>
-<pre class=".yaml"><code>sudo: false
+<div class="sourceCode"><pre class="sourceCode .yaml"><code class="sourceCode yaml"><span class="fu">sudo:</span> false
 
-addons:
-  apt:
-    packages:
-      - libgmp-dev
+<span class="fu">addons:</span>
+  <span class="fu">apt:</span>
+    <span class="fu">packages:</span>
+      <span class="kw">-</span> libgmp-dev
 
-# Caching so the next build will be fast too.
-cache:
-  directories:
-  - $HOME/.stack
+<span class="co"># Caching so the next build will be fast too.</span>
+<span class="fu">cache:</span>
+  <span class="fu">directories:</span>
+  <span class="kw">-</span> $HOME/.stack
 
-before_install:
-# Download and unpack the stack executable
-- mkdir -p ~/.local/bin
-- export PATH=$HOME/.local/bin:$PATH
-- travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin &#39;*/stack&#39;
+<span class="fu">before_install:</span>
+<span class="co"># Download and unpack the stack executable</span>
+<span class="kw">-</span> mkdir -p ~/.local/bin
+<span class="kw">-</span> <span class="fu">export PATH=$HOME/.local/bin:</span>$PATH
+<span class="kw">-</span> <span class="fu">travis_retry curl -L https:</span>//www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin &#39;*/stack&#39;
 
-script:
-  - stack setup &amp;&amp; stack --no-terminal --skip-ghc-check test</code></pre>
+<span class="fu">script:</span>
+  <span class="kw">-</span> stack setup &amp;&amp; stack --no-terminal --skip-ghc-check test</code></pre></div>
 <p>Don’t forget to activate your repo in travis.</p>
 <p>For some bonus points add the build status badge in your <code>README.md</code> file:</p>
-<pre class=".markdown"><code>[![Build Status](https://travis-ci.org/user-name/project-name.svg?branch=master)](https://travis-ci.org/user-name/project-name)</code></pre>
+<div class="sourceCode"><pre class="sourceCode .markdown"><code class="sourceCode markdown"><span class="ot">[![Build Status](https://travis-ci.org/user-name/project-name.svg?branch=master)</span>](https://travis-ci.org/user-name/project-name)</code></pre></div>
 <p>Congratulation! Now if you break your documentation examples, you’ll get notified.</p>
 <h3 id="badges">Badges</h3>
 <p>You could add badges to your <code>README.md</code> file.</p>
 <p>Here is a list of some: <a href="http://shields.io"><code>shields.io</code></a></p>
 <h4 id="hackage">Hackage</h4>
-<pre class=".markdown"><code>[![Hackage](https://img.shields.io/hackage/v/packagename)](https://hackage.haskell.org/package/packagename)</code></pre>
+<div class="sourceCode"><pre class="sourceCode .markdown"><code class="sourceCode markdown"><span class="ot">[![Hackage](https://img.shields.io/hackage/v/packagename)</span>](https://hackage.haskell.org/package/packagename)</code></pre></div>
 <h4 id="stackage">Stackage</h4>
 <p>If you didn’t declared your package to <code>stackage</code>, please do it. It isn’t much work. Just edit a file to add your package. And you’ll could be able to add another badge:</p>
-<pre class=".markdown"><code>[![packagename on Stackage LTS](http://stackage.org/package/packagename/badge/lts-3)](http://stackage.org/lts/package/packagename)</code></pre>
+<div class="sourceCode"><pre class="sourceCode .markdown"><code class="sourceCode markdown"><span class="ot">[![packagename on Stackage LTS](http://stackage.org/package/packagename/badge/lts-3)</span>](http://stackage.org/lts/package/packagename)</code></pre></div>
 <p>See <a href="https://www.fpcomplete.com/blog/2015/10/stackage-badges">Stackage Badges</a> for more informations.</p>
 <h3 id="creating-a-new-project-with-stack">Creating a new project with <code>stack</code></h3>
 <p>If you use <code>stack</code> I suggest you to use the <code>tasty-travis</code> template. It will include the boilerplate for:</p>
@@ -2111,7 +2111,7 @@ I am far from happy to the actual result. There are a lot of biases, for example
 <table>
 <tbody>
 <tr class="odd">
-<td align="left">Expressiveness</td>
+<td>Expressiveness</td>
 <td align="right">10</td>
 <td align="right">7</td>
 <td align="right">1</td>
@@ -2120,7 +2120,7 @@ I am far from happy to the actual result. There are a lot of biases, for example
 <td align="right">-∞</td>
 </tr>
 <tr class="even">
-<td align="left">Popularity</td>
+<td>Popularity</td>
 <td align="right">5</td>
 <td align="right">5</td>
 <td align="right">4</td>
@@ -2129,7 +2129,7 @@ I am far from happy to the actual result. There are a lot of biases, for example
 <td align="right">1</td>
 </tr>
 <tr class="odd">
-<td align="left">Efficiency</td>
+<td>Efficiency</td>
 <td align="right">10</td>
 <td align="right">8</td>
 <td align="right">6</td>
@@ -2138,7 +2138,7 @@ I am far from happy to the actual result. There are a lot of biases, for example
 <td align="right">1</td>
 </tr>
 <tr class="even">
-<td align="left">Robustness</td>
+<td>Robustness</td>
 <td align="right">10</td>
 <td align="right">8</td>
 <td align="right">6</td>
@@ -2159,20 +2159,20 @@ I am far from happy to the actual result. There are a lot of biases, for example
 <table>
 <thead>
 <tr class="header">
-<th align="left"></th>
-<th align="left">Expressiveness</th>
-<th align="left">Popularity</th>
-<th align="left">Efficiency</th>
-<th align="left">Robustness</th>
+<th></th>
+<th>Expressiveness</th>
+<th>Popularity</th>
+<th>Efficiency</th>
+<th>Robustness</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">yog</td>
-<td align="left">Excellent</td>
-<td align="left">Very Bad</td>
-<td align="left">Medium</td>
-<td align="left">Very Good</td>
+<td>yog</td>
+<td>Excellent</td>
+<td>Very Bad</td>
+<td>Medium</td>
+<td>Very Good</td>
 </tr>
 </tbody>
 </table>
@@ -3516,19 +3516,19 @@ Static Type Properties from <a href="http://james-iry.blogspot.fr/2010/05/types-
 <tbody>
 <tr class="odd">
 <td align="left">Excellent</td>
-<td align="left">Haskell, Scheme, Erlang</td>
+<td>Haskell, Scheme, Erlang</td>
 </tr>
 <tr class="even">
 <td align="left">Very Good</td>
-<td align="left">Scala, Java, Clojure</td>
+<td>Scala, Java, Clojure</td>
 </tr>
 <tr class="odd">
 <td align="left">Good</td>
-<td align="left">Ruby, Python, Groovy, javascript, PHP</td>
+<td>Ruby, Python, Groovy, javascript, PHP</td>
 </tr>
 <tr class="even">
 <td align="left">Medium</td>
-<td align="left">C++, C#, Perl, Objective-C, Go, C</td>
+<td>C++, C#, Perl, Objective-C, Go, C</td>
 </tr>
 </tbody>
 </table>
@@ -3922,7 +3922,7 @@ Robustness
     function lt(x,y){return (x < y);}
     function bal(balname,str){return '<'+balname+'>'+str+'</'+balname+'>';}
     function ret(){return '<br/>';}
-// ]]> // ]]></script>
+// ]]&gt; // ]]&gt;</script>
 <script>// <![CDATA[
     String.prototype.repeat = function(num){return new Array(num+1).join(this);};
     (function(){function run(){if (window.$){
@@ -4196,7 +4196,7 @@ robustnessClusters=[[ "elli" , "cowboy" , "snap" , "yesod"
         }
         run();
     })();
-// ]]></script>
+// ]]&gt;</script>
 <p>I didn’t had the courage in explaining in what the scoring system is good. Mostly, if you use product instead of sum for the score you could use power of <span class="math inline"><em>e</em></span> for the values in the matrix. And you could see the matrix as a probability matrix (each line sum to 1). Which provide a slighly better intuition on whats going on.</p>
 <p>Remember only that values are exponential. Do not double an already big value for example the effect would be extreme.</p>
 <h2 id="conclusion">Conclusion</h2>
@@ -6144,7 +6144,7 @@ f c z n <span class="fu">=</span> <span class="kw">if</span> (magnitude z <span 
 <li><p>Generate 3D Object</p></li>
 </ul>
 <p><sub>~</sub> allPoints :: [ColoredPoint]<br />
-allPoints = for all (x,y), -width&lt;x&lt;width, 0<y<height
+allPoints = for all (x,y), -width<x<width, 0<y<height
       Let z be the minimal depth such that
           mandel x y z > 0 add the points (x, y, z,color) (x,-y, z,color) (x, y,-z,color) (x,-y,-z,color) + neighbors to make triangles <sub>~</sub></p>
 </blockquote>

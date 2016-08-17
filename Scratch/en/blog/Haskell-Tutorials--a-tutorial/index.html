@@ -149,38 +149,38 @@ Haddock coverage:
 <p>There are plenty of alternative solution. I provide the one I believe would be used by most people. So if you use <code>github</code> simply create an account on <a href="http://travis-ci.org"><code>travis</code></a>.</p>
 <p>Add a <code>.travis.yml</code> file in your repo containing the content of the file <a href="http://docs.haskellstack.org/en/stable/GUIDE/#travis-with-caching">here</a> and remove the builds you don’t need. It will build your project using a lot of different GHC versions and environemnts.</p>
 <p>If you are afraid by such its complexity you might just want to use this one:</p>
-<pre class=".yaml"><code>sudo: false
+<div class="sourceCode"><pre class="sourceCode .yaml"><code class="sourceCode yaml"><span class="fu">sudo:</span> false
 
-addons:
-  apt:
-    packages:
-      - libgmp-dev
+<span class="fu">addons:</span>
+  <span class="fu">apt:</span>
+    <span class="fu">packages:</span>
+      <span class="kw">-</span> libgmp-dev
 
-# Caching so the next build will be fast too.
-cache:
-  directories:
-  - $HOME/.stack
+<span class="co"># Caching so the next build will be fast too.</span>
+<span class="fu">cache:</span>
+  <span class="fu">directories:</span>
+  <span class="kw">-</span> $HOME/.stack
 
-before_install:
-# Download and unpack the stack executable
-- mkdir -p ~/.local/bin
-- export PATH=$HOME/.local/bin:$PATH
-- travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+<span class="fu">before_install:</span>
+<span class="co"># Download and unpack the stack executable</span>
+<span class="kw">-</span> mkdir -p ~/.local/bin
+<span class="kw">-</span> <span class="fu">export PATH=$HOME/.local/bin:</span>$PATH
+<span class="kw">-</span> <span class="fu">travis_retry curl -L https:</span>//www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
 
-script:
-  - stack setup &amp;&amp; stack --no-terminal --skip-ghc-check test</code></pre>
+<span class="fu">script:</span>
+  <span class="kw">-</span> stack setup &amp;&amp; stack --no-terminal --skip-ghc-check test</code></pre></div>
 <p>Don’t forget to activate your repo in travis.</p>
 <p>For some bonus points add the build status badge in your <code>README.md</code> file:</p>
-<pre class=".markdown"><code>[![Build Status](https://travis-ci.org/user-name/project-name.svg?branch=master)](https://travis-ci.org/user-name/project-name)</code></pre>
+<div class="sourceCode"><pre class="sourceCode .markdown"><code class="sourceCode markdown"><span class="ot">[![Build Status](https://travis-ci.org/user-name/project-name.svg?branch=master)</span>](https://travis-ci.org/user-name/project-name)</code></pre></div>
 <p>Congratulation! Now if you break your documentation examples, you’ll get notified.</p>
 <h3 id="badges">Badges</h3>
 <p>You could add badges to your <code>README.md</code> file.</p>
 <p>Here is a list of some: <a href="http://shields.io"><code>shields.io</code></a></p>
 <h4 id="hackage">Hackage</h4>
-<pre class=".markdown"><code>[![Hackage](https://img.shields.io/hackage/v/packagename)](https://hackage.haskell.org/package/packagename)</code></pre>
+<div class="sourceCode"><pre class="sourceCode .markdown"><code class="sourceCode markdown"><span class="ot">[![Hackage](https://img.shields.io/hackage/v/packagename)</span>](https://hackage.haskell.org/package/packagename)</code></pre></div>
 <h4 id="stackage">Stackage</h4>
 <p>If you didn’t declared your package to <code>stackage</code>, please do it. It isn’t much work. Just edit a file to add your package. And you’ll could be able to add another badge:</p>
-<pre class=".markdown"><code>[![packagename on Stackage LTS](http://stackage.org/package/packagename/badge/lts-3)](http://stackage.org/lts/package/packagename)</code></pre>
+<div class="sourceCode"><pre class="sourceCode .markdown"><code class="sourceCode markdown"><span class="ot">[![packagename on Stackage LTS](http://stackage.org/package/packagename/badge/lts-3)</span>](http://stackage.org/lts/package/packagename)</code></pre></div>
 <p>See <a href="https://www.fpcomplete.com/blog/2015/10/stackage-badges">Stackage Badges</a> for more informations.</p>
 <h3 id="creating-a-new-project-with-stack">Creating a new project with <code>stack</code></h3>
 <p>If you use <code>stack</code> I suggest you to use the <code>tasty-travis</code> template. It will include the boilerplate for:</p>
