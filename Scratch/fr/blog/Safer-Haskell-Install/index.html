@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <title>YBlog - Installer Haskell</title>
+        <meta name="keywords" content="programming" />
+
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/fr/blog/feed/feed.xml" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+        <!-- IndieAuth -->
+        <link href="https://twitter.com/yogsototh" rel="me">
+        <link href="https://github.com/yogsototh" rel="me">
+        <link href="mailto:yann.esposito@gmail.com" rel="me">
+        <link rel="pgpkey" href="../../../../pubkey.txt">
+    </head>
+    <body lang="fr" class="article">
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	    <span id="choixlang">
+                  <a href="../../../../Scratch/en/blog/Safer-Haskell-Install/">Anglais</a> 
+        	    </span>
+              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
+        	    <span class="flush"></span>
+        	</div>
+			</div>
+
+			<div id="titre">
+				<h1>Installer Haskell</h1>
+				
+			</div>
+			<div class="flush"></div>
+      <div id="afterheader" class="article">
+          <div class="corps">
+              <div>
+<img src="../../../../Scratch/img/blog/Safer-Haskell-Install/main.jpg" alt="to Haskell and Beyond!!!" />
+</div>
+<div class="intro">
+<p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Pour installer Haskell (OS X et Linux) copiez/collez les lignes suivante dans un terminal&nbsp;:</p>
+<pre><code>curl https://raw.githubusercontent.com/yogsototh/install-haskell/master/install-haskell.sh | sudo zsh</code></pre>
+<p>Si vous êtes sous windows, téléchargez Haskell Platform et suivez les instructions pour utiliser <a href="http://www.stackage.org/lts">Haskell LTS</a>.</p>
+<p>Si vous voulez savoir le pourquoi et le comment ; lisez le reste de l’article.</p>
+</div>
+<h2 id="pourquoi">Pourquoi ?</h2>
+<p>La plus grande faiblesse d’Haskell n’a rien à voir avec le langage en lui-même mais avec son écosystème.</p>
+<p>The main problem I’ll try to address is the one known as <em>cabal hell</em>. The community is really active in fixing the issue. I am very confident that in less than a year this problem will be one of the past. But to work today, I provide an install method that should reduce greatly two effects of cabal hell:</p>
+<ul>
+<li>dependency error</li>
+<li>lost time in compilation (poor polar bears)</li>
+</ul>
+<p>With my actual installation method, you should minimize your headache and almost never hit a dependency error. But there could exists some. If you encounter any dependency error, ask gently to the package manager to port its package to <a href="http://www.stackage.org">stackage</a>.</p>
+<p>So to install copy/paste the following three lines in your terminal:</p>
+<pre><code>curl https://raw.githubusercontent.com/yogsototh/install-haskell/master/install-haskell.sh | sudo zsh</code></pre>
+<h2 id="how">How?</h2>
+<p>You can read the script and you will see that this is quite straightforward.</p>
+<ol type="1">
+<li>It downloads the latest <code>GHC</code> binary for you system and install it.</li>
+<li>It does the same with the <code>cabal</code> program.</li>
+<li>It updates your cabal config file to use <a href="http://www.stackage.org/lts">Haskell LTS</a>.</li>
+<li>It enable profiling to libraries and executables.</li>
+<li>It installs some useful binaries that might cause compilation error if not present.</li>
+</ol>
+<p>As the version of libraries is fixed up until you update the <a href="http://www.stackage.org/lts">Haskell LTS</a> version, you should never use cabal sandbox. That way, you will only compile each needed library once. The compiled objects/binaries will be in your <code>~/.cabal</code> directory.</p>
+<h2 id="some-last-words">Some Last Words</h2>
+<p>This script use the latest <a href="http://www.stackage.org/lts">Haskell LTS</a>. So if you use this script at different dates, the Haskell LTS might have changed.</p>
+<p>While it comes to cabal hell, some solutions are sandboxes and <code>nix</code>. Unfortunately, sandboxes didn’t worked good enough for me after some time. Furthermore, sandboxes forces you to re-compile everything by project. If you have three yesod projects for example it means a lot of time and CPU. Also, <code>nix</code> didn’t worked as expected on OS X. So fixing the list of package to a stable list of them seems to me the best pragmatic way to handle the problem today.</p>
+<p>From my point of view, <a href="http://www.stackage.org/lts">Haskell LTS</a> is the best step in the right direction. The actual cabal hell problem is more a human problem than a tool problem. This is a bias in most programmer to prefer resolve social issues using tools. There is nothing wrong with hackage and cabal. But for a package manager to work in a static typing language as Haskell, packages must work all together. This is a great strength of static typed languages that they ensure that a big part of the API between packages are compatible. But this make the job of package managing far more difficult than in dynamic languages.</p>
+<p>People tend not to respect the rules in package numbering<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. They break their API all the time. So we need a way to organize all of that. And this is precisely what <a href="http://www.stackage.org/lts">Haskell LTS</a> provide. A set of stable packages working all together. So if a developer break its API, it won’t work anymore in stackage. And whether the developer fix its package or all other packages upgrade their usage. During this time, <a href="http://www.stackage.org/lts">Haskell LTS</a> end-users will be able to develop without dependency issues.</p>
+<hr />
+<p class="small">
+<a href="https://www.flickr.com/photos/nesster/4198442186/">The image of the cat about to jump that I slightly edited can found here</a>
+</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>I myself am guilty of such behavior. It was a beginner error.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+          </div>
+          <div id="afterarticle">
+              <div id="social">
+                  <a href="../../../../Scratch/fr/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
+                  ·
+                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/Safer-Haskell-Install/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
+                  ·
+                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/Safer-Haskell-Install/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
+                  <br />
+                  <a class="message" href="../../../../Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
+              </div>
+              <div id="navigation">
+                  <a href="../../../../">Accueil</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/blog">Blog</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/softwares">Logiciels</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/about">Auteur</a>
+              </div>
+              <div id="totop"><a href="#header">↑ Top ↑</a></div>
+              <div id="bottom">
+                  <div>
+                      Published on 2014-08-16
+                  </div>
+                  <div>
+                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+                  </div>
+                  <div>
+                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+                  </div>
+
+                  <div>
+                      Done with
+                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
+                      <span class="pala">&amp;</span>
+                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
+                  </div>
+                  <hr />
+                  <div style="max-width: 100%">
+                      <a href="https://cardanohub.org">
+                          <img src="../../../../Scratch/img/ada-logo.png" class="simple" style="height: 16px;
+                                    border-radius: 50%;
+                                    vertical-align:middle;
+                                    display:inline-block;" />
+                          ADA:
+                      </a>
+                          <code style="display:inline-block;
+                                       word-wrap:break-word;
+                                       text-align: left;
+                                       vertical-align: top;
+                                       max-width: 85%;">
+                              DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp
+                          </code>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+        </div>
+    </body>
+</html>
