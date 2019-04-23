@@ -1,80 +1,72 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="fr">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta charset="utf-8">
         <title>YBlog - Synchronisation avec mobileme (2)</title>
-        <meta name="keywords" content="Apple, mobileme, WebDav, synchronisation, zsh, script">
+        <meta name="keywords" content="Apple, mobileme, WebDav, synchronisation, zsh, script" />
 
         <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/scientific.css" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/solarized.css" />
-		<!-- Font -->
-        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
-		<link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomfr" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/fr/blog/feed/feed.xml" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
         <!--[if lt IE 9]>
         <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
         <![endif]-->
+        <!-- IndieAuth -->
+        <link href="https://twitter.com/yogsototh" rel="me">
+        <link href="https://github.com/yogsototh" rel="me">
+        <link href="mailto:yann.esposito@gmail.com" rel="me">
+        <link rel="pgpkey" href="../../../../pubkey.txt">
     </head>
-    <body lang="fr">
-		<script type="text/javascript">// 
-            document.write('<div id="blackpage"><div>Bientôt<img src="/Scratch/img/loading.gif" alt="Chargement en cours"></img></div></div>');
-            // 
-        </script>
+    <body lang="fr" class="article">
         <div id="content">
 	        			<div id="header">
 			    <div id="choix">
-        	        <div id="choixlang">
-						<a href="../../../../Scratch/en/blog/2009-10-28-custom-website-synchronisation-with-mobileme--2-" onclick="setLanguage('en')">
-							English </a>
-        	        </div>
-					<script type="text/javascript">// 
-					document.write('<div id="switchcss"><a href="#">Changer de theme</a></div>');
-					// 
-					</script>
-                    <div class="tomenu"><a href="#navigation">↓ Menu ↓</a></div>
-        	        <div class="flush"></div>
-        	    </div>
+        	    <span id="choixlang">
+                  <a href="../../../../Scratch/en/blog/2009-10-28-custom-website-synchronisation-with-mobileme--2-/">Anglais</a> 
+        	    </span>
+              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
+        	    <span class="flush"></span>
+        	</div>
 			</div>
 
 			<div id="titre">
 				<h1>Synchronisation avec mobileme (2)</h1>
+				
 			</div>
 			<div class="flush"></div>
-			<div id="afterheader" class="article">
-				<div class="corps">
-					<p>J’ai déjà discuté de la façon dont je <a href="../../../../Scratch/fr/blog/10_Synchronize_Custom_WebSite_with_mobileMe">synchronise mon site web sur mobileme</a>. J’ai amélioré mon script pour le rendre incrémental.</p>
+      <div id="afterheader" class="article">
+          <div class="corps">
+              <p>J’ai déjà discuté de la façon dont je <a href="../../../../Scratch/fr/blog/10_Synchronize_Custom_WebSite_with_mobileMe">synchronise mon site web sur mobileme</a>. J’ai amélioré mon script pour le rendre incrémental.</p>
 <p>Voici mon script, il créé tout d’abord un fichier qui contient la liste des fichiers avec leur <em>hash</em>. Afin de les comparer avec ceux qui sont en ligne sans avoir à les parcourir. Ensuite pour chaque fichier qui semble différent, je met à jour le contenu.</p>
-<p>Cependant même avec ce script j’ai encore des problèmes. Dû à webdav. En particulier le renommage de répertoire. Par exemple :</p>
+<p>Cependant même avec ce script j’ai encore des problèmes. Dû à webdav. En particulier le renommage de répertoire. Par exemple&nbsp;:</p>
 <div>
 <code class="zsh"> mv folder folder2 </code>
 </div>
-
-<p>Retourne OK et pourtant :</p>
+<p>Retourne OK et pourtant&nbsp;:</p>
 <div>
 <code class="zsh"> $ ls folder folder2 </code>
 </div>
-
 <p>Bouuhh…</p>
 <p>Pour résoudre ce type de problèmes j’utilise un <em>framework</em> en zsh. Il résout presque tous les problèmes liés à webdav à l’exception du renommage de répertoire.</p>
 <div>
 <p><code class="zsh" file="webdav-framework"> #!/usr/bin/env zsh</p>
-<p>function samelineprint { print -n -P – “$*” }</p>
+<p>function samelineprint { print -n -P – "\r$*" }</p>
 <h1 id="avec-1-essai-par-seconde-300-5-minutes">avec 1 essai par seconde: 300 = 5 minutes</h1>
 <p>maxessais=300</p>
 <h1 id="try-to-create-a-directory-until-success">try to create a directory until success</h1>
-<p>function trymkdir { target=“<span class="math">$1&quot;     print -- mkdir -p $</span>target local essai=1 while ! mkdir -p <span class="math">$target; do         samelineprint &quot;Echec: essai n°$</span>essai” ((essai++)) ((essai&gt;maxessais)) &amp;&amp; exit 5 done print }</p>
+<p>function trymkdir { target=“$1” print – mkdir -p $target local essai=1 while ! mkdir -p <span class="math inline">$target; do  samelineprint "Echec: essai n°$</span>essai" ((essai++)) ((essai&gt;maxessais)) &amp;&amp; exit 5 done print }</p>
 <h1 id="try-to-copy-until-success">try to copy until success</h1>
-<p>function trycp { element=“$1” target=“<span class="math">$2&quot;     if [[ ! -d $</span>{target:h} ]]; then trymkdir <span class="math"><em>t</em><em>a</em><em>r</em><em>g</em><em>e</em><em>t</em>: <em>h</em><em>f</em><em>i</em><em>l</em><em>o</em><em>c</em><em>a</em><em>l</em><em>e</em><em>s</em><em>s</em><em>a</em><em>i</em> = 1<em>p</em><em>r</em><em>i</em><em>n</em><em>t</em> −  − <em>c</em><em>p</em></span>element <span class="math">$target     while ! \cp $</span>element <span class="math">$target; do         samelineprint &quot;Echec: essai n°$</span>essai” ((essai++)) ((essai&gt;maxessais)) &amp;&amp; exit 5 done print }</p>
+<p>function trycp { element=“$1” target=“$2” if [[ ! -d ${target:h} ]]; then trymkdir ${target:h} fi local essai=1 print – cp $element $target while ! $element <span class="math inline">$target; do  samelineprint "Echec: essai n°$</span>essai" ((essai++)) ((essai&gt;maxessais)) &amp;&amp; exit 5 done print }</p>
 <h1 id="try-to-remove-until-success">try to remove until success</h1>
-<p>function tryrm { target=“<span class="math">$1&quot;     local essai=1     local options=''     [[ -d $</span>target ]] &amp;&amp; options=‘-rf’ print – rm <span class="math"><em>o</em><em>p</em><em>t</em><em>i</em><em>o</em><em>n</em><em>s</em></span>target while ! rm <span class="math"><em>o</em><em>p</em><em>t</em><em>i</em><em>o</em><em>n</em><em>s</em></span>target; do samelineprint”Echec: essai n°<span class="math">$essai&quot;         ((essai++))         ((essai&gt;maxessais)) &amp;&amp; exit 5     done     essai=1     while [[ -e $</span>element ]]; do samelineprint “rm reussi mais fichier source non disparu n°$essai” sleep 1 ((essai++)) ((essai&gt;maxessais)) &amp;&amp; exit 5 done print }</p>
+<p>function tryrm { target=“$1” local essai=1 local options=’’ [[ -d $target ]] &amp;&amp; options=‘-rf’ print – rm $options $target while ! rm $options <span class="math inline">$target; do  samelineprint "Echec: essai n°$</span>essai" ((essai++)) ((essai&gt;maxessais)) &amp;&amp; exit 5 done essai=1 while [[ -e $element ]]; do samelineprint “rm reussi mais fichier source non disparu n°$essai” sleep 1 ((essai++)) ((essai&gt;maxessais)) &amp;&amp; exit 5 done print }</p>
 <h1 id="try-to-rename-until-success">try to rename until success</h1>
-<p>function tryrename { element=“$1” target=“<span class="math">$2&quot;     local essai=1     while [[ -e $</span>target ]]; do samelineprint”Echec n°<span class="math"><em>e</em><em>s</em><em>s</em><em>a</em><em>i</em><em>l</em><em>e</em><em>f</em><em>i</em><em>c</em><em>h</em><em>i</em><em>e</em><em>r</em></span>target existe déjà&quot; ((essai++)) ((essai&gt;maxessais)) &amp;&amp; exit 5 sleep 1 done print – mv <span class="math"><em>e</em><em>l</em><em>e</em><em>m</em><em>e</em><em>n</em><em>t</em></span>target while ! mv <span class="math"><em>e</em><em>l</em><em>e</em><em>m</em><em>e</em><em>n</em><em>t</em></span>target; do samelineprint “Echec: essai n°<span class="math">$essai&quot;         ((essai++))         ((essai&gt;maxessais)) &amp;&amp; exit 4     done     essai=1     while [[ -e $</span>element ]]; do samelineprint”mv reussi mais fichier source non disparu n°$essai&quot; sleep 1 ((essai++)) ((essai&gt;maxessais)) &amp;&amp; exit 5 done print }</p>
+<p>function tryrename { element=“$1” target=“$2” local essai=1 while [[ -e $target ]]; do samelineprint “Echec n°$essai le fichier $target existe déjà” ((essai++)) ((essai&gt;maxessais)) &amp;&amp; exit 5 sleep 1 done print – mv $element $target while ! mv $element <span class="math inline">$target; do  samelineprint "Echec: essai n°$</span>essai" ((essai++)) ((essai&gt;maxessais)) &amp;&amp; exit 4 done essai=1 while [[ -e $element ]]; do samelineprint “mv reussi mais fichier source non disparu n°$essai” sleep 1 ((essai++)) ((essai&gt;maxessais)) &amp;&amp; exit 5 done print }</p>
 <h1 id="try-to-move-until-success">try to move until success</h1>
-function trymv { element=“$1” target=“<span class="math">$2&quot;     local essai=1     print -- mv $</span>element <span class="math"><em>t</em><em>a</em><em>r</em><em>g</em><em>e</em><em>t</em><em>w</em><em>h</em><em>i</em><em>l</em><em>e</em>!<em>m</em><em>v</em></span>element <span class="math">$target; do         samelineprint &quot;Echec: essai n°$</span>essai” ((essai++)) ((essai&gt;maxessais)) &amp;&amp; exit 5 done essai=1 while [[ -e $element ]]; do samelineprint “mv reussi mais fichier source non disparu n°$essai” sleep 1 ((essai++)) ((essai&gt;maxessais)) &amp;&amp; exit 5 done print } </code>
+function trymv { element=“$1” target=“$2” local essai=1 print – mv $element $target while ! mv $element <span class="math inline">$target; do  samelineprint "Echec: essai n°$</span>essai" ((essai++)) ((essai&gt;maxessais)) &amp;&amp; exit 5 done essai=1 while [[ -e $element ]]; do samelineprint “mv reussi mais fichier source non disparu n°$essai” sleep 1 ((essai++)) ((essai&gt;maxessais)) &amp;&amp; exit 5 done print } </code>
 </div>
-
 <p>Et voici le code qui me permet de synchroniser mon site web. Il y a une partie un peu incompréhensible. C’est pour enlever les mail réencodés par le filtre bluecloth qui est une implémentation de markdown. Mes mails, sont encodés à chaque fois de façon différente à chaque réengendrement de page html. C’est pourquoi je les enlève pour ne pas les <em>uploadés</em> inutilement à chaque fois.</p>
 <div>
 <p><code class="zsh" file="publish"> #!/usr/bin/env zsh</p>
@@ -86,11 +78,11 @@ function trymv { element=“$1” target=“<span class="math">$2&quot;     loca
 <p>source $0:h/config</p>
 <h1 id="get-trycp-function-copy-until-success">get trycp function (copy until success)</h1>
 <p>source $0:h/webdav-framework</p>
-<p>if [[ $1 == ‘-h’ ]]; then print – “usage : $0:h [-h|-s|-d]” print – &quot; -a sychronise aussi l’index&quot; print – &quot; -h affiche l’aide&quot; print – &quot; -d modification directe (pas de swap)&quot; print – &quot; -s swappe simplement les répertoires&quot; fi</p>
+<p>if [[ $1 == ‘-h’ ]]; then print – “usage : $0:h [-h|-s|-d]” print – " -a sychronise aussi l’index" print – " -h affiche l’aide" print – " -d modification directe (pas de swap)" print – " -s swappe simplement les répertoires" fi</p>
 <h1 id="publication-incrementale">publication incrementale</h1>
-<p>function incrementalPublish { local ydestRep=<span class="math"><em>d</em><em>e</em><em>s</em><em>t</em><em>R</em><em>e</em><em>p</em></span>suffix localRef=“<span class="math">$srcRep/map.yrf&quot;     print -- &quot;Creation du fichier de references&quot;     create-reference-file.sh &gt; $</span>localRef remoteRef=”/tmp/remoteSiteMapRef.<span class="math">$$.yrf&quot;     if [[ ! -e &quot;$</span>ydestRep/map.yrf&quot; ]]; then # pas de fichier de reference sur la cible print – “pas de fichier de reference sur la cible, passage en mode rsync” rsyncPublish swap else trycp “<span class="math">$ydestRep/map.yrf&quot; &quot;$</span>remoteRef” typeset -U filesToUpdate filesToUpdate=( <span class="math">(<em>d</em><em>i</em><em>f</em><em>f</em></span>localRef $remoteRef | awk ’/<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup>/ {print <span class="math">$2}' ) )         if (($</span>{#filesToUpdate} == 1)); then print – “Seul le fichier <span class="math">${filesToUpdate} sera téléversé&quot;         elif (($</span>{#filesToUpdate}&lt;10)); then print –”<span class="math">${#filesToUpdate} fichiers seront téléversés :&quot;             print -- &quot;$</span>{filesToUpdate}&quot; else print – &quot;<span class="math">${#filesToUpdate} fichiers seront téléversés&quot;         fi         # copy all file with some differences         # except the map in case of error         for element in $</span>filesToUpdate; do if [[ $element == “/map.yrf” ]]; then continue fi if [[ -e <span class="math"><em>s</em><em>r</em><em>c</em><em>R</em><em>e</em><em>p</em></span>element ]]; then trycp <span class="math"><em>s</em><em>r</em><em>c</em><em>R</em><em>e</em><em>p</em></span>element <span class="math"><em>y</em><em>d</em><em>e</em><em>s</em><em>t</em><em>R</em><em>e</em><em>p</em></span>element else tryrm <span class="math"><em>y</em><em>d</em><em>e</em><em>s</em><em>t</em><em>R</em><em>e</em><em>p</em></span>element fi done # if all went fine, copy the map file trycp <span class="math"><em>s</em><em>r</em><em>c</em><em>R</em><em>e</em><em>p</em> / <em>m</em><em>a</em><em>p</em>. <em>y</em><em>r</em><em>f</em></span>ydestRep/map.yrf # remove the temporary file }</p>
+<p>function incrementalPublish { local ydestRep=<span class="math inline"><em>d</em><em>e</em><em>s</em><em>t</em><em>R</em><em>e</em><em>p</em></span>suffix localRef=“$srcRep/map.yrf” print – “Creation du fichier de references” create-reference-file.sh &gt; <span class="math inline">$localRef  remoteRef="/tmp/remoteSiteMapRef.$</span><span class="math inline">$.yrf"  if [[ ! -e "$</span>ydestRep/map.yrf" ]]; then # pas de fichier de reference sur la cible print – “pas de fichier de reference sur la cible, passage en mode rsync” rsyncPublish swap else trycp “<span class="math inline">$ydestRep/map.yrf" "$</span>remoteRef” typeset -U filesToUpdate filesToUpdate=( $(diff $localRef $remoteRef | awk ’/<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>/ {print <span class="math inline">$2}' ) )  if (($</span>{#filesToUpdate} == 1)); then print – “Seul le fichier <span class="math inline">${filesToUpdate} sera téléversé"  elif (($</span>{#filesToUpdate}&lt;10)); then print –”<span class="math inline">${#filesToUpdate} fichiers seront téléversés :"  print -- "$</span>{filesToUpdate}" else print – “${#filesToUpdate} fichiers seront téléversés” fi # copy all file with some differences # except the map in case of error for element in $filesToUpdate; do if [[ $element == “/map.yrf” ]]; then continue fi if [[ -e <span class="math inline"><em>s</em><em>r</em><em>c</em><em>R</em><em>e</em><em>p</em></span>element ]]; then trycp <span class="math inline"><em>s</em><em>r</em><em>c</em><em>R</em><em>e</em><em>p</em></span>element <span class="math inline"><em>y</em><em>d</em><em>e</em><em>s</em><em>t</em><em>R</em><em>e</em><em>p</em></span>element else tryrm <span class="math inline"><em>y</em><em>d</em><em>e</em><em>s</em><em>t</em><em>R</em><em>e</em><em>p</em></span>element fi done # if all went fine, copy the map file trycp $srcRep/map.yrf $ydestRep/map.yrf # remove the temporary file }</p>
 <h1 id="publication-via-rsync">publication via rsync</h1>
-<p>function rsyncPublish { result=1 essai=1 while (( <span class="math"><em>r</em><em>e</em><em>s</em><em>u</em><em>l</em><em>t</em> &gt; 0)); <em>d</em><em>o</em><em>p</em><em>r</em><em>i</em><em>n</em><em>t</em> −  − <em>r</em><em>s</em><em>y</em><em>n</em><em>c</em> − <em>a</em><em>r</em><em>v</em></span>srcRep/ <span class="math"><em>d</em><em>e</em><em>s</em><em>t</em><em>R</em><em>e</em><em>p</em>. <em>t</em><em>m</em><em>p</em><em>i</em><em>f</em>((!<em>t</em><em>e</em><em>s</em><em>t</em><em>m</em><em>o</em><em>d</em><em>e</em>)); <em>t</em><em>h</em><em>e</em><em>n</em><em>r</em><em>s</em><em>y</em><em>n</em><em>c</em> − <em>a</em><em>r</em><em>v</em></span>srcRep/ <span class="math"><em>d</em><em>e</em><em>s</em><em>t</em><em>R</em><em>e</em><em>p</em>. <em>t</em><em>m</em><em>p</em><em>f</em><em>i</em><em>r</em><em>e</em><em>s</em><em>u</em><em>l</em><em>t</em> = </span>? if (( <span class="math">$result &gt; 0 )); then             print -P -- &quot;%BEchec du rsync%b (essai n°$</span>essai)&quot; &gt;&amp;2 fi ((essai++)) done }</p>
+<p>function rsyncPublish { result=1 essai=1 while (( $result &gt; 0 )); do print – rsync -arv $srcRep/ $destRep.tmp if ((!testmode)); then rsync -arv $srcRep/ <span class="math inline"><em>d</em><em>e</em><em>s</em><em>t</em><em>R</em><em>e</em><em>p</em>.<em>t</em><em>m</em><em>p</em><em>f</em><em>i</em><em>r</em><em>e</em><em>s</em><em>u</em><em>l</em><em>t</em>=</span>? if (( <span class="math inline">$result &gt; 0 )); then  print -P -- "%BEchec du rsync%b (essai n°$</span>essai)" &gt;&amp;2 fi ((essai++)) done }</p>
 <h1 id="swap">swap</h1>
 <p>function swap { print -P – “%B[Directory Swap (tmp &lt;=&gt; target)]%b” [[ -e $destRep.old ]] &amp;&amp; tryrm $destRep.old</p>
 <pre><code>print -- &quot;  renommage du repertoire sandard vers le .old&quot;
@@ -106,8 +98,8 @@ tryrename $destRep.old $destRep.tmp
 
 print -P -- &quot;  publication terminée&quot;</code></pre>
 <p>}</p>
-<p>print – “Root = <span class="math">$webroot&quot; print -- &quot;Dest = $</span>destRep”</p>
-<p>if [[ “$1” = “-s” ]]; then swap else print -P “Copie de l’init” -f <span class="math"><em>w</em><em>e</em><em>b</em><em>r</em><em>o</em><em>o</em><em>t</em> / <em>S</em><em>c</em><em>r</em><em>a</em><em>t</em><em>c</em><em>h</em> / <em>m</em><em>u</em><em>l</em><em>t</em><em>i</em> / <em>i</em><em>n</em><em>d</em><em>e</em><em>x</em>. <em>h</em><em>t</em><em>m</em><em>l</em></span>webroot/index.html</p>
+<p>print – “Root = $webroot” print – “Dest = $destRep”</p>
+<p>if [[ “$1” = “-s” ]]; then swap else print -P “Copie de l’init” -f $webroot/Scratch/multi/index.html $webroot/index.html</p>
 <pre><code>if [[ &quot;$1&quot; = &quot;-d&quot; ]]; then
     suffix=&quot;&quot;
 else
@@ -117,80 +109,74 @@ print -P -- &quot;%BSync%b[${Root:t} =&gt; ${destRep:t}$suffix]&quot;
 incrementalPublish</code></pre>
 fi </code>
 </div>
-
 <p>C’est ma façon de remplacer <code>rsync</code> avec des filesystem qui ne permettent pas de l’utiliser. J’espère que ça pourra vous être utile. Je serai heureux de savoir si quelqu’un à une idée sur comment gérer le problème de renommage de répertoire avec webdav.</p>
-<div class="footnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>&lt;&gt;<a href="#fnref1">↩</a></p></li>
+<li id="fn1"><p>&lt;&gt;<a href="#fnref1" class="footnote-back">↩</a></p></li>
 </ol>
-</div>
-				</div>
+</section>
+          </div>
+          <div id="afterarticle">
+              <div id="social">
+                  <a href="../../../../Scratch/fr/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
+                  ·
+                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/2009-10-28-custom-website-synchronisation-with-mobileme--2-/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
+                  ·
+                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/2009-10-28-custom-website-synchronisation-with-mobileme--2-/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
+                  <br />
+                  <a class="message" href="../../../../Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
+              </div>
+              <div id="navigation">
+                  <a href="../../../../">Accueil</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/blog">Blog</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/softwares">Logiciels</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/about">Auteur</a>
+              </div>
+              <div id="totop"><a href="#header">↑ Top ↑</a></div>
+              <div id="bottom">
+                  <div>
+                      Published on 2009-10-28
+                  </div>
+                  <div>
+                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+                  </div>
+                  <div>
+                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+                  </div>
 
-                <div id="social">
-                    <a target="_blank" href="http://feeds.feedburner.com/yannespositocomfr" class="social">r</a>
-                    ·
-                     <a target="_blank" href="https://twitter.com/home?status=http://yannesposito.com/Scratch/fr/blog/2009-10-28-custom-website-synchronisation-with-mobileme--2-/index.html%22via%22@yogsototh" class="social">t</a>
-                    ·
-                    <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=/Scratch/fr/blog/2009-10-28-custom-website-synchronisation-with-mobileme--2-" class="social">`</a>
-                    ·
-                     <a target="_blank" href="https://plus.google.com/share?url=http://yannesposito.com/Scratch/fr/blog/2009-10-28-custom-website-synchronisation-with-mobileme--2-" class="social">g</a>
-                    <br />
-                    <a class="message" href="../../../../Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
-                </div>
-        	    <div id="navigation">
-                    <a href="../../../../">Home</a>
-                    <span class="sep">¦</span>
-        	        <a href="../../../../Scratch/fr/blog">Blog</a>
-                    <span class="sep">¦</span>
-                    <a href="../../../../Scratch/fr/softwares">Softwares</a>
-                    <span class="sep">¦</span>
-                    <a href="../../../../Scratch/fr/about">About</a>
-        	    </div>
-                <div id="totop"><a href="#header">↑ Top ↑</a></div>
-				<div class="corps" id="comment">
-            	    <h2 class="first">Comments</h2>
-					<div id="disqus_thread"></div>
-        			<script type="text/javascript">
-        			    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-        			    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
-
-        			    /* * * DON'T EDIT BELOW THIS LINE * * */
-        			    (function() {
-        			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-        			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        			    })();
-        			</script>
-        			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-        			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-				</div>
-                <div class="tomenu"><a href="#navigation">↑ Menu ↑</a></div>
-				<div id="bottom">
-            	    <div>
-            	        Published on 2009-10-28
-            	    </div>
-            	    <div>
-            	        <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
-            	    </div>
-            	    <div>
-            	       Yann Esposito©
-            	    </div>
-            	    <div>
-            	        Done with
-            	        <a href="http://www.vim.org">Vim</a>
-						<span class="nicer">&amp;</span>
-						<a href="http://jaspervdj.be/hakyll">Hakyll</a>
-            	    </div>
-            	</div>
-			</div>
+                  <div>
+                      Done with
+                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
+                      <span class="pala">&amp;</span>
+                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
+                  </div>
+                  <hr />
+                  <div style="max-width: 100%">
+                      <a href="https://cardanohub.org">
+                          <img src="../../../../Scratch/img/ada-logo.png" class="simple" style="height: 16px;
+                                    border-radius: 50%;
+                                    vertical-align:middle;
+                                    display:inline-block;" />
+                          ADA:
+                      </a>
+                          <code style="display:inline-block;
+                                       word-wrap:break-word;
+                                       text-align: left;
+                                       vertical-align: top;
+                                       max-width: 85%;">
+                              DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp
+                          </code>
+                  </div>
+              </div>
+          </div>
+      </div>
 
         </div>
     </body>
-    <script type="text/javascript" src="../../../../Scratch/js/jquery-1.3.1.min.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/jquery.cookie.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/index.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/highlight/highlight.pack.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/article.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </html>

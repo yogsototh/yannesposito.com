@@ -1,55 +1,52 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="fr">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta charset="utf-8">
         <title>YBlog - Password Management</title>
-        <meta name="keywords" content="password, security">
+        <meta name="keywords" content="password, security" />
 
         <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/scientific.css" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/solarized.css" />
-		<!-- Font -->
-        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
-		<link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomfr" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/fr/blog/feed/feed.xml" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
         <!--[if lt IE 9]>
         <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
         <![endif]-->
+        <!-- IndieAuth -->
+        <link href="https://twitter.com/yogsototh" rel="me">
+        <link href="https://github.com/yogsototh" rel="me">
+        <link href="mailto:yann.esposito@gmail.com" rel="me">
+        <link rel="pgpkey" href="../../../../pubkey.txt">
     </head>
-    <body lang="fr">
-		<script type="text/javascript">// 
-            document.write('<div id="blackpage"><div>Bientôt<img src="/Scratch/img/loading.gif" alt="Chargement en cours"></img></div></div>');
-            // 
-        </script>
+    <body lang="fr" class="article">
         <div id="content">
 	        			<div id="header">
 			    <div id="choix">
-        	        <div id="choixlang">
-						<a href="../../../../Scratch/en/blog/Password-Management" onclick="setLanguage('en')">
-							English </a>
-        	        </div>
-					<script type="text/javascript">// 
-					document.write('<div id="switchcss"><a href="#">Changer de theme</a></div>');
-					// 
-					</script>
-                    <div class="tomenu"><a href="#navigation">↓ Menu ↓</a></div>
-        	        <div class="flush"></div>
-        	    </div>
+        	    <span id="choixlang">
+                  <a href="../../../../Scratch/en/blog/Password-Management/">Anglais</a> 
+        	    </span>
+              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
+        	    <span class="flush"></span>
+        	</div>
 			</div>
 
 			<div id="titre">
 				<h1>Password Management</h1>
+				
 			</div>
 			<div class="flush"></div>
-			<div id="afterheader" class="article">
-				<div class="corps">
-					<p><img src="../../../../Scratch/img/blog/Password-Management/main.png" alt="Title image" /></p>
-<div class="intro">
-
-<p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Une méthode de gestion des mots de passes que j’utilise avec succès depuis quelques années.<br /><strong><code>sha1( mot_de_passe + nom_de_domaine )</code></strong><br />Je ne mémorise qu’un seul mot de passe de très bonne qualité. J’utilise des mots de passe différents sur tous les sites.</p>
+      <div id="afterheader" class="article">
+          <div class="corps">
+              <div>
+<img src="../../../../Scratch/img/blog/Password-Management/main.png" alt="Title image" />
 </div>
-
+<div class="intro">
+<p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Une méthode de gestion des mots de passes que j’utilise avec succès depuis quelques années.<br />
+<strong><code>sha1( mot_de_passe + nom_de_domaine )</code></strong><br />
+Je ne mémorise qu’un seul mot de passe de très bonne qualité. J’utilise des mots de passe différents sur tous les sites.</p>
+</div>
 <p>Avant de commencer, je tiens à préciser qu’il s’agit d’une tentative de vous vendre mon appli iPhone ;-).</p>
 <p>Vous êtes toujours là ? Bon, d’accord, même si vous ne téléchargez pas mon application vous pouvez quand même utiliser ma méthode. Elle est à la fois très sûre et simple à utiliser.</p>
 <p>Si vous souhaitez simplement <em>utiliser</em> le système sans essayer de comprendre comment ça marche derrière vous pouvez <a href="#en-pratique-">aller à la fin de cet article en cliquant ici</a>.</p>
@@ -65,17 +62,17 @@
 </blockquote>
 <p>La méthode la plus courante est de se souvenir de plusieurs mot de passes différents. En général, si vous avez bonne mémoire vous pouvez mémoriser jusqu’à 13 mots de passes. Certain de bonne qualité, d’autre moins.</p>
 <p>Que faire si vous utilisez plus de services que vous pouvez mémoriser de mots de passe ?</p>
-<p>Un <em>mauvaise</em> solution peut être de choisir ses mots de passes de la façon suivante :</p>
+<p>Un <em>mauvaise</em> solution peut être de choisir ses mots de passes de la façon suivante&nbsp;:</p>
 <ul>
 <li>twitter: <code>P45sW0r|)Twitter</code></li>
 <li>gmail: <code>P45sW0r|)gmail</code></li>
 <li>badonlinegame: <code>P45sW0r|)badonlinegame</code></li>
 </ul>
 <p>Malheureusement, si quelqu’un récupère votre mot de passe sur <code>badonlinegame</code>, il peut facilement retrouvez vos autres mots de passe. Bien sûr, on peut imaginer des transformation de mots de passe de meilleure qualité. Mais il est très difficile d’en trouver une suffisamment bonne.</p>
-<p>Fort heureusement, il existe une des fonctions bien connues dans le milieu de la sécurité informatique et qui résolvent précisément ce problème. Il s’agit des <em>fontions de hachages</em>. Il est difficile de retrouver le paramètre d’entrée d’une fonction de hachage à partir de son résultat. Prenons un exemple :</p>
+<p>Fort heureusement, il existe une des fonctions bien connues dans le milieu de la sécurité informatique et qui résolvent précisément ce problème. Il s’agit des <em>fontions de hachages</em>. Il est difficile de retrouver le paramètre d’entrée d’une fonction de hachage à partir de son résultat. Prenons un exemple&nbsp;:</p>
 <p>Si quelqu’un possède <code>9f00fd5dbba232b7c03afd2b62b5fce5cdc7df63</code>, il va avoir de grande difficulté pour retrouver <code>P45sW0r|)</code>.</p>
-<p>Choisisson la fonction de hashage <code>sha1</code>. Connaissant celà, le mot de passe d’un site donné doit avoir la forme :</p>
-<p>Où :</p>
+<p>Choisisson la fonction de hashage <code>sha1</code>. Connaissant celà, le mot de passe d’un site donné doit avoir la forme&nbsp;:</p>
+<p>Où&nbsp;:</p>
 <ul>
 <li><code>master_password</code> est votre unique mot de passe <em>maître</em> ;</li>
 <li><code>domain_name</code> est le nom de domaine du site pour lequel vous voulez le mot de passe.</li>
@@ -89,85 +86,84 @@
 <li>le format du mot de passe : hexadécimal ou base64.</li>
 </ul>
 <h2 id="en-pratique">En pratique ?</h2>
-<p>Selon ma situation, voici les outils que j’ai fait et que j’utilise :</p>
+<p>Selon ma situation, voici les outils que j’ai fait et que j’utilise&nbsp;:</p>
 <ul>
-<li>Sur mon Mac :</li>
+<li>Sur mon Mac :
+<ul>
 <li>J’utilise le widget <a href="http://yannesposito.com/Scratch/files/YPassword-1.7.zip">YPassword</a></li>
 <li>Parfois, certains champs de mots passe interdisent la copie. Dans ce cas, j’utilise un petit utilitaire en AppleScript : <a href="http://yannesposito.com/Scratch/files/forcePaste.app.zip">ForcePaste</a>.</li>
+</ul></li>
 <li>Sous mon Linux : J’utilise le script <a href="http://github.com/yogsototh/getpass">ypassword</a></li>
 <li>Sur mon iPhone : J’utilise l’application <a href="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=436268354&amp;mt=8">YPassword</a></li>
-<li>Sur tous les autres ordinateurs :</li>
+<li>Sur tous les autres ordinateurs :
+<ul>
 <li>L’application Web Cappuccino <a href="http://yannesposito.com/Scratch/en/softwares/ypassword/web/">YPassword</a></li>
 <li>L’application Web jQuery <a href="http://yannesposito.com/Scratch/en/softwares/ypassword/iphoneweb/">YPassword</a></li>
+</ul></li>
 </ul>
 <p>Quelquesoit mon environnement de travail, tous mes mots de passes sont à un copier/coller. Pour certain services, j’utilise des mots de passe de 40 caractères. Actuellement j’utilise plutôt des mots de passes de 10 caractères. Avec des mots de passes plus petit, il est encore plus difficile pour un attaquant de retrouver mon mot de passe principal.</p>
 <p>Je serai heureux de savoir ce que vous pensez de cette méthode. Alors n’hésitez pas à laisser un commentaire ou à m’envoyer un mail.</p>
-				</div>
+          </div>
+          <div id="afterarticle">
+              <div id="social">
+                  <a href="../../../../Scratch/fr/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
+                  ·
+                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/Password-Management/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
+                  ·
+                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/Password-Management/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
+                  <br />
+                  <a class="message" href="../../../../Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
+              </div>
+              <div id="navigation">
+                  <a href="../../../../">Accueil</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/blog">Blog</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/softwares">Logiciels</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/about">Auteur</a>
+              </div>
+              <div id="totop"><a href="#header">↑ Top ↑</a></div>
+              <div id="bottom">
+                  <div>
+                      Published on 2011-05-18
+                  </div>
+                  <div>
+                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+                  </div>
+                  <div>
+                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+                  </div>
 
-                <div id="social">
-                    <a target="_blank" href="http://feeds.feedburner.com/yannespositocomfr" class="social">r</a>
-                    ·
-                     <a target="_blank" href="https://twitter.com/home?status=http://yannesposito.com/Scratch/fr/blog/Password-Management/index.html%22via%22@yogsototh" class="social">t</a>
-                    ·
-                    <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=/Scratch/fr/blog/Password-Management" class="social">`</a>
-                    ·
-                     <a target="_blank" href="https://plus.google.com/share?url=http://yannesposito.com/Scratch/fr/blog/Password-Management" class="social">g</a>
-                    <br />
-                    <a class="message" href="../../../../Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
-                </div>
-        	    <div id="navigation">
-                    <a href="../../../../">Home</a>
-                    <span class="sep">¦</span>
-        	        <a href="../../../../Scratch/fr/blog">Blog</a>
-                    <span class="sep">¦</span>
-                    <a href="../../../../Scratch/fr/softwares">Softwares</a>
-                    <span class="sep">¦</span>
-                    <a href="../../../../Scratch/fr/about">About</a>
-        	    </div>
-                <div id="totop"><a href="#header">↑ Top ↑</a></div>
-				<div class="corps" id="comment">
-            	    <h2 class="first">Comments</h2>
-					<div id="disqus_thread"></div>
-        			<script type="text/javascript">
-        			    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-        			    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
-
-        			    /* * * DON'T EDIT BELOW THIS LINE * * */
-        			    (function() {
-        			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-        			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        			    })();
-        			</script>
-        			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-        			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-				</div>
-                <div class="tomenu"><a href="#navigation">↑ Menu ↑</a></div>
-				<div id="bottom">
-            	    <div>
-            	        Published on 2011-05-18
-            	    </div>
-            	    <div>
-            	        <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
-            	    </div>
-            	    <div>
-            	       Yann Esposito©
-            	    </div>
-            	    <div>
-            	        Done with
-            	        <a href="http://www.vim.org">Vim</a>
-						<span class="nicer">&amp;</span>
-						<a href="http://jaspervdj.be/hakyll">Hakyll</a>
-            	    </div>
-            	</div>
-			</div>
+                  <div>
+                      Done with
+                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
+                      <span class="pala">&amp;</span>
+                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
+                  </div>
+                  <hr />
+                  <div style="max-width: 100%">
+                      <a href="https://cardanohub.org">
+                          <img src="../../../../Scratch/img/ada-logo.png" class="simple" style="height: 16px;
+                                    border-radius: 50%;
+                                    vertical-align:middle;
+                                    display:inline-block;" />
+                          ADA:
+                      </a>
+                          <code style="display:inline-block;
+                                       word-wrap:break-word;
+                                       text-align: left;
+                                       vertical-align: top;
+                                       max-width: 85%;">
+                              DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp
+                          </code>
+                  </div>
+              </div>
+          </div>
+      </div>
 
         </div>
     </body>
-    <script type="text/javascript" src="../../../../Scratch/js/jquery-1.3.1.min.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/jquery.cookie.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/index.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/highlight/highlight.pack.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/article.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </html>

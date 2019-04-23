@@ -1,76 +1,79 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="en">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta charset="utf-8">
         <title>YBlog - Social link the right way</title>
-        <meta name="keywords" content="programming">
+        <meta name="keywords" content="programming" />
 
         <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/scientific.css" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/solarized.css" />
-		<!-- Font -->
-        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
-		<link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomen" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/en/blog/feed/feed.xml" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
         <!--[if lt IE 9]>
         <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
         <![endif]-->
+        <!-- IndieAuth -->
+        <link href="https://twitter.com/yogsototh" rel="me">
+        <link href="https://github.com/yogsototh" rel="me">
+        <link href="mailto:yann.esposito@gmail.com" rel="me">
+        <link rel="pgpkey" href="../../../../pubkey.txt">
     </head>
-    <body lang="en">
-		<script type="text/javascript">// 
-            document.write('<div id="blackpage"><div>Soon<img src="/Scratch/img/loading.gif" alt="Loading"></img></div></div>');
-            // 
-        </script>
+    <body lang="en" class="article">
         <div id="content">
 	        			<div id="header">
 			    <div id="choix">
-        	        <div id="choixlang">
-						<a href="../../../../Scratch/fr/blog/Social-link-the-right-way" onclick="setLanguage('fr')">
-							Français </a>
-        	        </div>
-					<script type="text/javascript">// 
-					document.write('<div id="switchcss"><a href="#">Change Theme</a></div>');
-					// 
-					</script>
-                    <div class="tomenu"><a href="#navigation">↓ Menu ↓</a></div>
-        	        <div class="flush"></div>
-        	    </div>
+        	    <span id="choixlang">
+                  <a href="../../../../Scratch/fr/blog/Social-link-the-right-way/">French</a> 
+        	    </span>
+              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
+        	    <span class="flush"></span>
+        	</div>
 			</div>
 
 			<div id="titre">
 				<h1>Social link the right way</h1>
+				
 			</div>
 			<div class="flush"></div>
-			<div id="afterheader" class="article">
-				<div class="corps">
-					<p><img src="../../../../Scratch/img/blog/Social-link-the-right-way/main.png" alt="Main image" /></p>
-<div class="intro">
-
-<p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span> Default share buttons track your user, aren’t uniform with your design, use computer ressources and slow down your web page loading.</p>
-<p>Do it right. Use static links instead.</p>
-<p>If you don’t want to read, just copy/paste this in your <span class="sc">html</span>:</p>
-<pre class="js"><code>&lt;script&gt;
-var url=document.location;
-document.write(
-  '&lt;'+'a href=&quot;https://twitter.com/home?status='+url+'&quot; '
-    +'target=&quot;_blank&quot;&gt;Tweet this&lt;'+'/a&gt; - '
-
-+ '&lt;'+'a href=&quot;http://www.facebook.com/sharer/sharer.php?u='+url+'&quot; '
-    +'target=&quot;_blank&quot;&gt;Like this&lt;'+'/a&gt; - '
-
-+ '&lt;'+'a href=&quot;https://plus.google.com/share?url='+url+'&quot; '
-    +'target=&quot;_blank&quot;&gt;Share on G+&lt;'+'/a&gt;');
-&lt;/script&gt;</code></pre>
+      <div id="afterheader" class="article">
+          <div class="corps">
+              <div>
+<img src="../../../../Scratch/img/blog/Social-link-the-right-way/main.png" alt="Main image" />
 </div>
-
+<div class="intro">
+<p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span> Default share buttons track your users, aren’t uniform with your design, use computer ressources and slow down your web page loading.</p>
+<p>Do it right. Use static links instead.</p>
+<p>If you don’t want to read, just copy/paste this in your <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span>:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode html"><code class="sourceCode html"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;sociallinks&quot;</span><span class="kw">&gt;</span></a>
+<a class="sourceLine" id="cb1-2" title="2">  <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://twitter.com/home?status=$url$&quot;</span></a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="ot">     target=</span><span class="st">&quot;_blank&quot;</span><span class="ot"> rel=</span><span class="st">&quot;noopener noreferrer nofollow&quot;</span></a>
+<a class="sourceLine" id="cb1-4" title="4">     <span class="kw">&gt;</span>Tweet this<span class="kw">&lt;/a&gt;</span> -</a>
+<a class="sourceLine" id="cb1-5" title="5">  <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;http://www.facebook.com/sharer/sharer.php?u=$url$&quot;</span></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="ot">     target=</span><span class="st">&quot;_blank&quot;</span><span class="ot"> rel=</span><span class="st">&quot;noopener noreferrer nofollow&quot;</span></a>
+<a class="sourceLine" id="cb1-7" title="7">     <span class="kw">&gt;</span>Like this<span class="kw">&lt;/a&gt;</span> -</a>
+<a class="sourceLine" id="cb1-8" title="8">  <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://plus.google.com/share?url=$url$&quot;</span></a>
+<a class="sourceLine" id="cb1-9" title="9"><span class="ot">     target=</span><span class="st">&quot;_blank&quot;</span><span class="ot"> rel=</span><span class="st">&quot;noopener noreferrer nofollow&quot;</span></a>
+<a class="sourceLine" id="cb1-10" title="10">     <span class="kw">&gt;</span>Share on G+<span class="kw">&lt;/a&gt;</span></a>
+<a class="sourceLine" id="cb1-11" title="11"><span class="kw">&lt;/div&gt;</span></a>
+<a class="sourceLine" id="cb1-12" title="12"><span class="kw">&lt;script&gt;</span></a>
+<a class="sourceLine" id="cb1-13" title="13">(<span class="kw">function</span>()<span class="op">{</span><span class="va">window</span>.<span class="at">addEventListener</span>(<span class="st">&quot;DOMContentLoaded&quot;</span><span class="op">,</span><span class="kw">function</span>()<span class="op">{</span></a>
+<a class="sourceLine" id="cb1-14" title="14">    <span class="kw">var</span> url<span class="op">=</span><span class="va">document</span>.<span class="at">location</span><span class="op">;</span></a>
+<a class="sourceLine" id="cb1-15" title="15">    <span class="kw">var</span> links<span class="op">=</span><span class="va">document</span>.<span class="at">getElementById</span>(<span class="st">&quot;sociallinks&quot;</span>)</a>
+<a class="sourceLine" id="cb1-16" title="16">                      .<span class="at">getElementsByTagName</span>(<span class="st">'a'</span>)<span class="op">;</span></a>
+<a class="sourceLine" id="cb1-17" title="17">    <span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span>i<span class="op">!=</span><span class="va">links</span>.<span class="at">length</span><span class="op">;</span>i<span class="op">++</span>)<span class="op">{</span></a>
+<a class="sourceLine" id="cb1-18" title="18">        links[i].<span class="at">setAttribute</span>(<span class="st">&quot;href&quot;</span><span class="op">,</span></a>
+<a class="sourceLine" id="cb1-19" title="19">            links[i].<span class="va">href</span>.<span class="at">replace</span>(<span class="st">'$url$'</span><span class="op">,</span>url))<span class="op">;}}</span>)<span class="op">}</span>)()<span class="op">;</span></a>
+<a class="sourceLine" id="cb1-20" title="20"><span class="kw">&lt;/script&gt;</span></a></code></pre></div>
+</div>
 <h2 id="the-problem">The problem</h2>
 <p>Ever been on a website and want to tweet about it? Fortunately, the website might have a button to help you. But do you really know what this button do?</p>
 <p>The “Like”, “Tweet” and “+1” buttons will call a javascript. It will get access to your cookies. It helps the provider of the button to know who you are.</p>
 <p>In plain English, the “+1” button will inform Google you are visiting the website, <strong>even if you don’t click on “+1”</strong>. The same is true for the “like” button for facebook and the “tweet this” button for twitter.</p>
 <p>The problem is not only a privacy issue. In fact (sadly <span class="sc"><abbr title="In my Humble Opinion">imho</abbr></span>) this isn’t an issue for most people. These button consume computer ressources. Far more than a simple link. It thus slow down a bit the computer and consume energy. These button could also slow down the rendering of your web page.</p>
 <p>Another aspect is their design. Their look and feel is mostly imposed by the provider.</p>
-<p>The most problematic aspect in my opinion is to use a third party js on your website. What if tomorrow twitter update their tweet button? If the upgrade broke something for only a minority of people, they won’t fix it. This could occur anytime without any notification. They just have to add a <code>document.write</code> in their <code>js</code> you call asynchronously and BAM! Your website is just an empty blank page. And as you call many external ressources, it can be very difficult to find the origin of the problem.</p>
+<p>The most problematic aspect in my opinion is to use a third party js on your website. What if tomorrow twitter update their tweet button? If the upgrade break something for only a minority of people, they won’t fix it. This could occur anytime without any notification. They just have to add a <code>document.write</code> in their <code>js</code> you call asynchronously and <strong>BAM!</strong> Your website is just an empty blank page. And as you call many external ressources, it can be very difficult to find the origin of the problem.</p>
 <p><strong>Using social network buttons:</strong></p>
 <ul>
 <li>Pros:
@@ -104,181 +107,194 @@ document.write(
 </ul></li>
 </ul>
 <p><strong>Solution 1 (no js):</strong></p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://twitter.com/home?status=$url$&quot;</span>
-<span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>Tweet this<span class="kw">&lt;/a&gt;</span>
-
-<span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;http://www.facebook.com/sharer/sharer.php?u=$url$&quot;</span>
-<span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>Like this<span class="kw">&lt;/a&gt;</span>
-
-<span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://plus.google.com/share?url=$url$&quot;</span>
-<span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span><span class="kw">&gt;</span>Share on G+<span class="kw">&lt;/a&gt;</span></code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode html"><code class="sourceCode html"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://twitter.com/home?status=$url$&quot;</span></a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="ot">   target=</span><span class="st">&quot;_blank&quot;</span><span class="ot"> rel=</span><span class="st">&quot;noopener noreferrer nofollow&quot;</span></a>
+<a class="sourceLine" id="cb2-3" title="3">   <span class="kw">&gt;</span>Tweet this<span class="kw">&lt;/a&gt;</span></a>
+<a class="sourceLine" id="cb2-4" title="4"></a>
+<a class="sourceLine" id="cb2-5" title="5"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;http://www.facebook.com/sharer/sharer.php?u=$url$&quot;</span></a>
+<a class="sourceLine" id="cb2-6" title="6"><span class="ot">   target=</span><span class="st">&quot;_blank&quot;</span><span class="ot"> rel=</span><span class="st">&quot;noopener noreferrer nofollow&quot;</span></a>
+<a class="sourceLine" id="cb2-7" title="7">   <span class="kw">&gt;</span>Like this<span class="kw">&lt;/a&gt;</span></a>
+<a class="sourceLine" id="cb2-8" title="8"></a>
+<a class="sourceLine" id="cb2-9" title="9"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://plus.google.com/share?url=$url$&quot;</span></a>
+<a class="sourceLine" id="cb2-10" title="10"><span class="ot">   target=</span><span class="st">&quot;_blank&quot;</span><span class="ot"> rel=</span><span class="st">&quot;noopener noreferrer nofollow&quot;</span></a>
+<a class="sourceLine" id="cb2-11" title="11">   <span class="kw">&gt;</span>Share on G+<span class="kw">&lt;/a&gt;</span></a></code></pre></div>
 <p>But you have to replace <code>$url$</code> by the current <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span>.</p>
 <p><strong>Solution 2 (Just copy/paste):</strong></p>
 <p>If you don’t want to write the <span class="sc"><abbr title="Uniform Ressource Locator">url</abbr></span> yourself, you could use some minimal js:</p>
-<pre class="js"><code>&lt;script&gt;
-var url=document.location;
-document.write(
-  '&lt;'+'a href=&quot;https://twitter.com/home?status='+url+'&quot; '
-    +'target=&quot;_blank&quot;&gt;Tweet this&lt;'+'/a&gt; - '
-
-+ '&lt;'+'a href=&quot;http://www.facebook.com/sharer/sharer.php?u='+url+'&quot; '
-    +'target=&quot;_blank&quot;&gt;Like this&lt;'+'/a&gt; - '
-
-+ '&lt;'+'a href=&quot;https://plus.google.com/share?url='+url+'&quot; '
-    +'target=&quot;_blank&quot;&gt;Share on G+&lt;'+'/a&gt;');
-&lt;/script&gt;</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode html"><code class="sourceCode html"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;sociallinks&quot;</span><span class="kw">&gt;</span></a>
+<a class="sourceLine" id="cb3-2" title="2">  <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://twitter.com/home?status=$url$&quot;</span></a>
+<a class="sourceLine" id="cb3-3" title="3"><span class="ot">     target=</span><span class="st">&quot;_blank&quot;</span><span class="ot"> rel=</span><span class="st">&quot;noopener noreferrer nofollow&quot;</span></a>
+<a class="sourceLine" id="cb3-4" title="4">     <span class="kw">&gt;</span>Tweet this<span class="kw">&lt;/a&gt;</span> -</a>
+<a class="sourceLine" id="cb3-5" title="5">  <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;http://www.facebook.com/sharer/sharer.php?u=$url$&quot;</span></a>
+<a class="sourceLine" id="cb3-6" title="6"><span class="ot">     target=</span><span class="st">&quot;_blank&quot;</span><span class="ot"> rel=</span><span class="st">&quot;noopener noreferrer nofollow&quot;</span></a>
+<a class="sourceLine" id="cb3-7" title="7">     <span class="kw">&gt;</span>Like this<span class="kw">&lt;/a&gt;</span> -</a>
+<a class="sourceLine" id="cb3-8" title="8">  <span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://plus.google.com/share?url=$url$&quot;</span></a>
+<a class="sourceLine" id="cb3-9" title="9"><span class="ot">     target=</span><span class="st">&quot;_blank&quot;</span><span class="ot"> rel=</span><span class="st">&quot;noopener noreferrer nofollow&quot;</span></a>
+<a class="sourceLine" id="cb3-10" title="10">     <span class="kw">&gt;</span>Share on G+<span class="kw">&lt;/a&gt;</span></a>
+<a class="sourceLine" id="cb3-11" title="11"><span class="kw">&lt;/div&gt;</span></a>
+<a class="sourceLine" id="cb3-12" title="12"><span class="kw">&lt;script&gt;</span></a>
+<a class="sourceLine" id="cb3-13" title="13">(<span class="kw">function</span>()<span class="op">{</span><span class="va">window</span>.<span class="at">addEventListener</span>(<span class="st">&quot;DOMContentLoaded&quot;</span><span class="op">,</span><span class="kw">function</span>()<span class="op">{</span></a>
+<a class="sourceLine" id="cb3-14" title="14">    <span class="kw">var</span> url<span class="op">=</span><span class="va">document</span>.<span class="at">location</span><span class="op">;</span></a>
+<a class="sourceLine" id="cb3-15" title="15">    <span class="kw">var</span> links<span class="op">=</span><span class="va">document</span>.<span class="at">getElementById</span>(<span class="st">&quot;sociallinks&quot;</span>)</a>
+<a class="sourceLine" id="cb3-16" title="16">                      .<span class="at">getElementsByTagName</span>(<span class="st">'a'</span>)<span class="op">;</span></a>
+<a class="sourceLine" id="cb3-17" title="17">    <span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span>i<span class="op">!=</span><span class="va">links</span>.<span class="at">length</span><span class="op">;</span>i<span class="op">++</span>)<span class="op">{</span></a>
+<a class="sourceLine" id="cb3-18" title="18">        links[i].<span class="at">setAttribute</span>(<span class="st">&quot;href&quot;</span><span class="op">,</span></a>
+<a class="sourceLine" id="cb3-19" title="19">            links[i].<span class="va">href</span>.<span class="at">replace</span>(<span class="st">'$url$'</span><span class="op">,</span>url))<span class="op">;}}</span>)<span class="op">}</span>)()<span class="op">;</span></a>
+<a class="sourceLine" id="cb3-20" title="20"><span class="kw">&lt;/script&gt;</span></a></code></pre></div>
 <p>Here is the result:</p>
-<div style="text-align:center" class="nostar">
+<div class="nostar" style="text-align:center">
+<div id="sociallinks">
+<p><a href="https://twitter.com/home?status=$url$" target="_blank" rel="noopener noreferrer nofollow">Tweet this</a> - <a href="http://www.facebook.com/sharer/sharer.php?u=$url$" target="_blank" rel="noopener noreferrer nofollow">Like this</a> - <a href="https://plus.google.com/share?url=$url$" target="_blank" rel="noopener noreferrer nofollow">Share on G+</a></p>
+</div>
 <script>
-var url=document.location;
-document.write(
-  '<'+'a href="https://twitter.com/home?status='+url+'" '
-    +'target="_blank">Tweet this<'+'/a> - '
-
-+ '<'+'a href="http://www.facebook.com/sharer/sharer.php?u='+url+'" '
-    +'target="_blank">Like this<'+'/a> - '
-
-+ '<'+'a href="https://plus.google.com/share?url='+url+'" '
-    +'target="_blank">Share on G+<'+'/a>');
+(function(){window.addEventListener("DOMContentLoaded",function(){
+    var url=document.location;
+    var links=document.getElementById("sociallinks")
+                      .getElementsByTagName('a');
+    for (var i=0;i!=links.length;i++){
+        links[i].setAttribute("href",
+            links[i].href.replace('$url$',url));}})})();
 </script>
 </div>
-
 <h2 id="good-looking-solutions">Good looking solutions</h2>
 <p>If you don’t want just text but nice icons. You have many choices:</p>
 <ul>
-<li>Use images <code>&lt;img src=&quot;...&quot;/&gt;</code> in the links.</li>
+<li>Use images <code>&lt;img src="..."/&gt;</code> in the links.</li>
 <li>Use icon fonts</li>
 </ul>
 <p>As the first solution is pretty straightforward, I’ll explain the second one.</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>Download the icon font <a href="http://blog.martianwabbit.com/post/4344642365.html">here</a></li>
 <li>put the font file(s) at some place (here ‘fonts/social_font.ttf’ relatively to your <span class="sc">css</span> file)</li>
 <li>Add this to your <span class="sc">css</span></li>
 </ol>
-<pre class="sourceCode css"><code class="sourceCode css"><span class="dv">@font-face</span>
-  font-family<span class="dv">:</span> <span class="st">'social'</span>
-  src<span class="dv">:</span> url(<span class="st">'fonts/social_font.ttf'</span>) format(<span class="st">'truetype'</span>)
-  font-weight<span class="dv">:</span> normal
-  font-style<span class="dv">:</span> normal
-<span class="fl">.social</span>
-  font-family<span class="dv">:</span> social</code></pre>
-<p>Now add this to your <span class="sc">html</span>:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode css"><code class="sourceCode css"><a class="sourceLine" id="cb4-1" title="1"><span class="im">@font-face</span></a>
+<a class="sourceLine" id="cb4-2" title="2">  font-family: 'social'</a>
+<a class="sourceLine" id="cb4-3" title="3">  src: url('fonts/social_font.ttf') format('truetype')</a>
+<a class="sourceLine" id="cb4-4" title="4">  font-weight: normal</a>
+<a class="sourceLine" id="cb4-5" title="5">  font-style: normal</a>
+<a class="sourceLine" id="cb4-6" title="6">.social</a>
+<a class="sourceLine" id="cb4-7" title="7">  font-family: social</a></code></pre></div>
+<p>Now add this to your <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span>:</p>
 <p><strong>Solution 1 (without js):</strong></p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://twitter.com/home?status=$url$&quot;</span>
-<span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span>
-<span class="ot">    class=</span><span class="st">&quot;social&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;#116;</span><span class="kw">&lt;/a&gt;</span>
-·
-<span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;http://www.facebook.com/sharer/sharer.php?u=$url$&quot;</span>
-<span class="ot">   target=</span><span class="st">&quot;_blank&quot;</span>
-<span class="ot">   class=</span><span class="st">&quot;social&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;#0096;</span><span class="kw">&lt;/a&gt;</span>
-·
-<span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://plus.google.com/share?url=$url$&quot;</span>
-<span class="ot">    target=</span><span class="st">&quot;_blank&quot;</span>
-<span class="ot">    class=</span><span class="st">&quot;social&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;#0103;</span><span class="kw">&lt;/a&gt;</span></code></pre>
-<p><strong>Solution 2 (just copy/paste):</strong></p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;script&gt;</span>
-<span class="kw">var</span> url=<span class="ot">document</span>.<span class="fu">location</span>;
-<span class="er">document.write(</span>
-    <span class="st">'&lt;a href=&quot;https://twitter.com/home?status='</span>+url+<span class="st">'&quot;'</span>
-        + <span class="st">' target=&quot;_blank&quot;'</span>
-        + <span class="st">' class=&quot;social&quot;&gt;&amp;#116;&lt;'</span>+<span class="st">'/a&gt;'</span>
-    + <span class="st">' · '</span>
-    + <span class="st">'&lt;'</span> + <span class="st">'a href=&quot;http://www.facebook.com/sharer/sharer.php?u='</span>+url+<span class="st">'&quot;'</span>
-       + <span class="st">' target=&quot;_blank&quot;'</span>
-       + <span class="st">' class=&quot;social&quot;&gt;&amp;#0096;&lt;'</span>+<span class="st">'/a&gt;'</span>
-    + <span class="st">' · '</span>
-    + <span class="st">'&lt;a href=&quot;https://plus.google.com/share?url='</span>+url+<span class="st">'&quot;'</span>
-        + <span class="st">' target=&quot;_blank&quot;'</span>
-        + <span class="st">' class=&quot;social&quot;&gt;&amp;#0103;&lt;'</span>+<span class="st">'/a&gt;'</span>);
-<span class="kw">&lt;/script&gt;</span></code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode html"><code class="sourceCode html"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://twitter.com/home?status=$url$&quot;</span></a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="ot">   target=</span><span class="st">&quot;_blank&quot;</span><span class="ot"> rel=</span><span class="st">&quot;noopener noreferrer nofollow&quot;</span></a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="ot">   class=</span><span class="st">&quot;social&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;#116;</span><span class="kw">&lt;/a&gt;</span></a>
+<a class="sourceLine" id="cb5-4" title="4">·</a>
+<a class="sourceLine" id="cb5-5" title="5"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;http://www.facebook.com/sharer/sharer.php?u=$url$&quot;</span></a>
+<a class="sourceLine" id="cb5-6" title="6"><span class="ot">   target=</span><span class="st">&quot;_blank&quot;</span><span class="ot"> rel=</span><span class="st">&quot;noopener noreferrer nofollow&quot;</span></a>
+<a class="sourceLine" id="cb5-7" title="7"><span class="ot">   class=</span><span class="st">&quot;social&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;#0096;</span><span class="kw">&lt;/a&gt;</span></a>
+<a class="sourceLine" id="cb5-8" title="8">·</a>
+<a class="sourceLine" id="cb5-9" title="9"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://plus.google.com/share?url=$url$&quot;</span></a>
+<a class="sourceLine" id="cb5-10" title="10"><span class="ot">   target=</span><span class="st">&quot;_blank&quot;</span><span class="ot"> rel=</span><span class="st">&quot;noopener noreferrer nofollow&quot;</span></a>
+<a class="sourceLine" id="cb5-11" title="11"><span class="ot">   class=</span><span class="st">&quot;social&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;#0103;</span><span class="kw">&lt;/a&gt;</span></a></code></pre></div>
+<p><strong>Solution 2 (same with a bit more js):</strong></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode html"><code class="sourceCode html"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;sociallinksunicode&quot;</span><span class="kw">&gt;</span></a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://twitter.com/home?status=$url$&quot;</span></a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="ot">   target=</span><span class="st">&quot;_blank&quot;</span><span class="ot"> rel=</span><span class="st">&quot;noopener noreferrer nofollow&quot;</span></a>
+<a class="sourceLine" id="cb6-4" title="4"><span class="ot">   class=</span><span class="st">&quot;social&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;#116;</span><span class="kw">&lt;/a&gt;</span></a>
+<a class="sourceLine" id="cb6-5" title="5">·</a>
+<a class="sourceLine" id="cb6-6" title="6"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;http://www.facebook.com/sharer/sharer.php?u=$url$&quot;</span></a>
+<a class="sourceLine" id="cb6-7" title="7"><span class="ot">   target=</span><span class="st">&quot;_blank&quot;</span><span class="ot"> rel=</span><span class="st">&quot;noopener noreferrer nofollow&quot;</span></a>
+<a class="sourceLine" id="cb6-8" title="8"><span class="ot">   class=</span><span class="st">&quot;social&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;#0096;</span><span class="kw">&lt;/a&gt;</span></a>
+<a class="sourceLine" id="cb6-9" title="9">·</a>
+<a class="sourceLine" id="cb6-10" title="10"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;https://plus.google.com/share?url=$url$&quot;</span></a>
+<a class="sourceLine" id="cb6-11" title="11"><span class="ot">   target=</span><span class="st">&quot;_blank&quot;</span><span class="ot"> rel=</span><span class="st">&quot;noopener noreferrer nofollow&quot;</span></a>
+<a class="sourceLine" id="cb6-12" title="12"><span class="ot">   class=</span><span class="st">&quot;social&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;#0103;</span><span class="kw">&lt;/a&gt;</span></a>
+<a class="sourceLine" id="cb6-13" title="13"><span class="kw">&lt;/div&gt;</span></a>
+<a class="sourceLine" id="cb6-14" title="14"><span class="kw">&lt;script&gt;</span></a>
+<a class="sourceLine" id="cb6-15" title="15">(<span class="kw">function</span>()<span class="op">{</span><span class="va">window</span>.<span class="at">addEventListener</span>(<span class="st">&quot;DOMContentLoaded&quot;</span><span class="op">,</span><span class="kw">function</span>()<span class="op">{</span></a>
+<a class="sourceLine" id="cb6-16" title="16">    <span class="kw">var</span> url<span class="op">=</span><span class="va">document</span>.<span class="at">location</span><span class="op">;</span></a>
+<a class="sourceLine" id="cb6-17" title="17">    <span class="kw">var</span> links<span class="op">=</span><span class="va">document</span>.<span class="at">getElementById</span>(<span class="st">&quot;sociallinksunicode&quot;</span>)</a>
+<a class="sourceLine" id="cb6-18" title="18">                      .<span class="at">getElementsByTagName</span>(<span class="st">'a'</span>)<span class="op">;</span></a>
+<a class="sourceLine" id="cb6-19" title="19">    <span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span>i<span class="op">!=</span><span class="va">links</span>.<span class="at">length</span><span class="op">;</span>i<span class="op">++</span>)<span class="op">{</span></a>
+<a class="sourceLine" id="cb6-20" title="20">        links[i].<span class="at">setAttribute</span>(<span class="st">&quot;href&quot;</span><span class="op">,</span></a>
+<a class="sourceLine" id="cb6-21" title="21">            links[i].<span class="va">href</span>.<span class="at">replace</span>(<span class="st">'$url$'</span><span class="op">,</span>url))<span class="op">;}}</span>)<span class="op">}</span>)()<span class="op">;</span></a>
+<a class="sourceLine" id="cb6-22" title="22"><span class="kw">&lt;/script&gt;</span></a></code></pre></div>
 <p>Here is the result:</p>
-<div style="font-size: 2em; text-align: center;" class="nostar">
+<div class="nostar" style="font-size: 2em; text-align: center;">
+<div id="sociallinksunicode">
+<p><a href="https://twitter.com/home?status=$url$" target="_blank" rel="noopener noreferrer nofollow" class="social">t</a> · <a href="http://www.facebook.com/sharer/sharer.php?u=$url$" target="_blank" rel="noopener noreferrer nofollow" class="social">`</a> · <a href="https://plus.google.com/share?url=$url$" target="_blank" rel="noopener noreferrer nofollow" class="social">g</a></p>
+</div>
 <script>
-document.write(
-    '<a href="https://twitter.com/home?status='+url+'" ' + ' target="_blank" ' + ' class="social">t<'+'/a>'
-    + ' · '
-    + '<' + 'a href="http://www.facebook.com/sharer/sharer.php?u='+url+'"'
-       + ' target="_blank"'
-       + ' class="social">`<'+'/a>'
-    + ' · '
-    + '<a href="https://plus.google.com/share?url='+url+'" ' + ' target="_blank" ' + ' class="social">g<'+'/a>');
+(function(){window.addEventListener("DOMContentLoaded",function(){
+    var url=document.location;
+    var links=document.getElementById("sociallinksunicode")
+                      .getElementsByTagName('a');
+    for (var i=0;i!=links.length;i++){
+        links[i].setAttribute("href",
+            links[i].href.replace('$url$',url));}})})();
 </script>
 </div>
-
 <h2 id="conclusion">Conclusion</h2>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>You get your design back,</li>
 <li>You stop to help tracking people,</li>
 <li>You use less computer ressources and more generally power ressources which is good for the planet,</li>
 <li>Your web pages will load faster.</li>
 </ol>
 <p><em>ps</em>: On my personal website I continue to use Google analytics. Therefore, Google (and only Google, not facebook nor twitter) can track you here. But I might change this in the future.</p>
-				</div>
+          </div>
+          <div id="afterarticle">
+              <div id="social">
+                  <a href="../../../../Scratch/en/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
+                  ·
+                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Social-link-the-right-way/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
+                  ·
+                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Social-link-the-right-way/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
+                  <br />
+                  <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
+              </div>
+              <div id="navigation">
+                  <a href="../../../../">Home</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/blog">Blog</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/softwares">Softwares</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/about">About</a>
+              </div>
+              <div id="totop"><a href="#header">↑ Top ↑</a></div>
+              <div id="bottom">
+                  <div>
+                      Published on 2013-03-14
+                  </div>
+                  <div>
+                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+                  </div>
+                  <div>
+                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+                  </div>
 
-                <div id="social">
-                    <a target="_blank" href="http://feeds.feedburner.com/yannespositocomen" class="social">r</a>
-                    ·
-                     <a target="_blank" href="https://twitter.com/home?status=http://yannesposito.com/Scratch/en/blog/Social-link-the-right-way/index.html%22via%22@yogsototh" class="social">t</a>
-                    ·
-                    <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=/Scratch/en/blog/Social-link-the-right-way" class="social">`</a>
-                    ·
-                     <a target="_blank" href="https://plus.google.com/share?url=http://yannesposito.com/Scratch/en/blog/Social-link-the-right-way" class="social">g</a>
-                    <br />
-                    <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
-                </div>
-        	    <div id="navigation">
-                    <a href="../../../../">Home</a>
-                    <span class="sep">¦</span>
-        	        <a href="../../../../Scratch/en/blog">Blog</a>
-                    <span class="sep">¦</span>
-                    <a href="../../../../Scratch/en/softwares">Softwares</a>
-                    <span class="sep">¦</span>
-                    <a href="../../../../Scratch/en/about">About</a>
-        	    </div>
-                <div id="totop"><a href="#header">↑ Top ↑</a></div>
-				<div class="corps" id="comment">
-            	    <h2 class="first">Comments</h2>
-					<div id="disqus_thread"></div>
-        			<script type="text/javascript">
-        			    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-        			    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
-
-        			    /* * * DON'T EDIT BELOW THIS LINE * * */
-        			    (function() {
-        			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-        			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        			    })();
-        			</script>
-        			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-        			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-				</div>
-                <div class="tomenu"><a href="#navigation">↑ Menu ↑</a></div>
-				<div id="bottom">
-            	    <div>
-            	        Published on 2013-03-14
-            	    </div>
-            	    <div>
-            	        <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
-            	    </div>
-            	    <div>
-            	       Yann Esposito©
-            	    </div>
-            	    <div>
-            	        Done with
-            	        <a href="http://www.vim.org">Vim</a>
-						<span class="nicer">&amp;</span>
-						<a href="http://jaspervdj.be/hakyll">Hakyll</a>
-            	    </div>
-            	</div>
-			</div>
+                  <div>
+                      Done with
+                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
+                      <span class="pala">&amp;</span>
+                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
+                  </div>
+                  <hr />
+                  <div style="max-width: 100%">
+                      <a href="https://cardanohub.org">
+                          <img src="../../../../Scratch/img/ada-logo.png" class="simple" style="height: 16px;
+                                    border-radius: 50%;
+                                    vertical-align:middle;
+                                    display:inline-block;" />
+                          ADA:
+                      </a>
+                          <code style="display:inline-block;
+                                       word-wrap:break-word;
+                                       text-align: left;
+                                       vertical-align: top;
+                                       max-width: 85%;">
+                              DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp
+                          </code>
+                  </div>
+              </div>
+          </div>
+      </div>
 
         </div>
     </body>
-    <script type="text/javascript" src="../../../../Scratch/js/jquery-1.3.1.min.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/jquery.cookie.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/index.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/highlight/highlight.pack.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/article.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </html>

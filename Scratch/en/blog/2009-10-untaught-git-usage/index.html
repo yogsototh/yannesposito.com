@@ -1,50 +1,45 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="en">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta charset="utf-8">
         <title>YBlog - Untaught Git usage</title>
-        <meta name="keywords" content="git, dcvs, programming">
+        <meta name="keywords" content="git, dcvs, programming" />
 
         <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/scientific.css" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/solarized.css" />
-		<!-- Font -->
-        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
-		<link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/yannespositocomen" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/en/blog/feed/feed.xml" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
         <!--[if lt IE 9]>
         <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
         <![endif]-->
+        <!-- IndieAuth -->
+        <link href="https://twitter.com/yogsototh" rel="me">
+        <link href="https://github.com/yogsototh" rel="me">
+        <link href="mailto:yann.esposito@gmail.com" rel="me">
+        <link rel="pgpkey" href="../../../../pubkey.txt">
     </head>
-    <body lang="en">
-		<script type="text/javascript">// 
-            document.write('<div id="blackpage"><div>Soon<img src="/Scratch/img/loading.gif" alt="Loading"></img></div></div>');
-            // 
-        </script>
+    <body lang="en" class="article">
         <div id="content">
 	        			<div id="header">
 			    <div id="choix">
-        	        <div id="choixlang">
-						<a href="../../../../Scratch/fr/blog/2009-10-untaught-git-usage" onclick="setLanguage('fr')">
-							Français </a>
-        	        </div>
-					<script type="text/javascript">// 
-					document.write('<div id="switchcss"><a href="#">Change Theme</a></div>');
-					// 
-					</script>
-                    <div class="tomenu"><a href="#navigation">↓ Menu ↓</a></div>
-        	        <div class="flush"></div>
-        	    </div>
+        	    <span id="choixlang">
+                  <a href="../../../../Scratch/fr/blog/2009-10-untaught-git-usage/">French</a> 
+        	    </span>
+              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
+        	    <span class="flush"></span>
+        	</div>
 			</div>
 
 			<div id="titre">
 				<h1>Untaught Git usage</h1>
+				
 			</div>
 			<div class="flush"></div>
-			<div id="afterheader" class="article">
-				<div class="corps">
-					<p><small> <em>I explain why I had so much difficulties to use Git. There is an “untaught rule” that make hard to work without. Until I read the good document. </em></small></p>
+      <div id="afterheader" class="article">
+          <div class="corps">
+              <p><small> <em>I explain why I had so much difficulties to use Git. There is an “untaught rule” that make hard to work without. Until I read the good document. </em></small></p>
 <p><small> <em> “Cheap branches” aren’t designed to be totally isolated branches but rather should follow a “Master Branch”. There is a </em>Standard Workflow<em> to follow. If you don’t follow it, you prepare yourself with some hard time with Git.</em> </small></p>
 <hr />
 <h1 id="my-way-to-decentralisation">My way to decentralisation</h1>
@@ -107,57 +102,46 @@
 <div>
 <code class="zsh">bzr revert</code>
 </div>
-
 <p>Is clearer than</p>
 <div>
 <code class="zsh">git reset –hard HEAD</code>
 </div>
-
 <p>We can tell the same thing about</p>
 <div>
 <code class="zsh">bzr revert -r -3</code>
 </div>
-
 <p>which seems preferable to</p>
 <div>
 <code class="zsh">git reset –hard HEAD~3</code>
 </div>
-
 <p>Until now, it is not big business. But now, things will go worse. If we want to revert time on all the tree we use the keyword <code>reset</code>.</p>
 <center>
 OK
 </center>
-
 <p>Now, if I want to revert time on on file. We should naturally imagine the command will be:</p>
 <div>
 <code class="zsh">git reset –hard FILE</code>
 </div>
-
 <center>
 <strong>OF COURSE NOT!</strong>
 </center>
-
 <p>The solution is:</p>
 <div>
 <code class="zsh">git checkout FILE</code>
 </div>
-
 <p>What? <strong><code>checkout</code></strong> !? Well, ok. I accept. why not? With Bazaar it is:</p>
 <div>
 <code class="zsh">git revert FILE</code>
 </div>
-
 <p>What I personally found far more natural.</p>
 <p>But the command to change the current <em>cheap branch</em> is really hard to be accepted (from the User Interface point of view). With Bazaar it is:</p>
 <div>
 <code class="zsh">cd ../branch</code>
 </div>
-
 <p>Well yes. With Bazaar you have to change your directory to change your branch. It needs more disk resources but it is really clear. Which is my current branch, is just a <code>pwd</code> away. For Git here is the command:</p>
 <div>
 <code class="zsh">git checkout branch</code>
 </div>
-
 <p><strong>WTF?</strong> I believed <code>checkout</code> was the key to get a file in some state (not the entire tree).</p>
 <p>Then <code>checkout</code> is the same keyword used to get back in time on a file (BUT NOT ON ALL THE TREE where you have to use <code>reset --hard</code>) and to <strong>change current branch</strong>!</p>
 <p>It is totally unnatural. Even if it is theoretically totally justified like you can see in the really good article <a href="http://eagain.net/articles/git-for-computer-scientists/">Git for Computer Scientist</a>. From the user point of vue, it is difficult to do worse than that. It is like somebody made it on purpose to make it the hardest possible to learn and understand.</p>
@@ -172,79 +156,74 @@ OK
 <p><small><a name="note3">‡</a> I must precise that I worked a lot with multi-modal logic and particularly about “Temporal Logics” (linear or not). This is why I was more inclined to see things this way. “Ah ! Just to remember my firsts love with computer science !”</small></p>
 <hr />
 <h1 id="conclusion">Conclusion</h1>
-<h3 id="dcvs-vs.cvs">DCVS vs. CVS ?</h3>
+<h3 id="dcvs-vs.-cvs">DCVS vs. CVS ?</h3>
 <p>Was it a good idea to change to a <em>decentralised</em> versionning system? Clearly yes. Decentralisation give far much great possibilities. Such as working on a fix on a totally isolated branches.</p>
 <h3 id="is-git-better-than-bazaar">Is Git better than Bazaar?</h3>
 <p>Speaking about <em>features</em> I’ll tell Git is the best. But Git was too much in my way. Is was exactly what I didn’t want for my first DCVS.</p>
 <p>I shouldn’t have had those difficulties about understanding <em>cheap branching which must be a patch</em>. In reality, Git make a difference between the Tree and the Branch. Which is obviously not the case for Bazaar. Conceptually, bazaar is simpler to understand.</p>
 <h3 id="finally">Finally</h3>
 <p>In conclusion, I use Git more often than Bazaar and I must say, that I have some preferences for Git. However, Git lack hardly clear commands name like <code>revert</code>. For now I don’t made alias to correct that. But may be one day I should do that.</p>
-				</div>
+          </div>
+          <div id="afterarticle">
+              <div id="social">
+                  <a href="../../../../Scratch/en/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
+                  ·
+                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2009-10-untaught-git-usage/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
+                  ·
+                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2009-10-untaught-git-usage/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
+                  <br />
+                  <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
+              </div>
+              <div id="navigation">
+                  <a href="../../../../">Home</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/blog">Blog</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/softwares">Softwares</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/about">About</a>
+              </div>
+              <div id="totop"><a href="#header">↑ Top ↑</a></div>
+              <div id="bottom">
+                  <div>
+                      Published on 2009-10-13
+                  </div>
+                  <div>
+                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+                  </div>
+                  <div>
+                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+                  </div>
 
-                <div id="social">
-                    <a target="_blank" href="http://feeds.feedburner.com/yannespositocomen" class="social">r</a>
-                    ·
-                     <a target="_blank" href="https://twitter.com/home?status=http://yannesposito.com/Scratch/en/blog/2009-10-untaught-git-usage/index.html%22via%22@yogsototh" class="social">t</a>
-                    ·
-                    <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u=/Scratch/en/blog/2009-10-untaught-git-usage" class="social">`</a>
-                    ·
-                     <a target="_blank" href="https://plus.google.com/share?url=http://yannesposito.com/Scratch/en/blog/2009-10-untaught-git-usage" class="social">g</a>
-                    <br />
-                    <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
-                </div>
-        	    <div id="navigation">
-                    <a href="../../../../">Home</a>
-                    <span class="sep">¦</span>
-        	        <a href="../../../../Scratch/en/blog">Blog</a>
-                    <span class="sep">¦</span>
-                    <a href="../../../../Scratch/en/softwares">Softwares</a>
-                    <span class="sep">¦</span>
-                    <a href="../../../../Scratch/en/about">About</a>
-        	    </div>
-                <div id="totop"><a href="#header">↑ Top ↑</a></div>
-				<div class="corps" id="comment">
-            	    <h2 class="first">Comments</h2>
-					<div id="disqus_thread"></div>
-        			<script type="text/javascript">
-        			    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-        			    var disqus_shortname = 'yannesposito'; // required: replace example with your forum shortname
-
-        			    /* * * DON'T EDIT BELOW THIS LINE * * */
-        			    (function() {
-        			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-        			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        			    })();
-        			</script>
-        			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-        			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-				</div>
-                <div class="tomenu"><a href="#navigation">↑ Menu ↑</a></div>
-				<div id="bottom">
-            	    <div>
-            	        Published on 2009-10-13
-            	    </div>
-            	    <div>
-            	        <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
-            	    </div>
-            	    <div>
-            	       Yann Esposito©
-            	    </div>
-            	    <div>
-            	        Done with
-            	        <a href="http://www.vim.org">Vim</a>
-						<span class="nicer">&amp;</span>
-						<a href="http://jaspervdj.be/hakyll">Hakyll</a>
-            	    </div>
-            	</div>
-			</div>
+                  <div>
+                      Done with
+                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
+                      <span class="pala">&amp;</span>
+                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
+                  </div>
+                  <hr />
+                  <div style="max-width: 100%">
+                      <a href="https://cardanohub.org">
+                          <img src="../../../../Scratch/img/ada-logo.png" class="simple" style="height: 16px;
+                                    border-radius: 50%;
+                                    vertical-align:middle;
+                                    display:inline-block;" />
+                          ADA:
+                      </a>
+                          <code style="display:inline-block;
+                                       word-wrap:break-word;
+                                       text-align: left;
+                                       vertical-align: top;
+                                       max-width: 85%;">
+                              DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp
+                          </code>
+                  </div>
+              </div>
+          </div>
+      </div>
 
         </div>
     </body>
-    <script type="text/javascript" src="../../../../Scratch/js/jquery-1.3.1.min.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/jquery.cookie.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/index.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/highlight/highlight.pack.js"></script>
-    <script type="text/javascript" src="../../../../Scratch/js/article.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </html>
