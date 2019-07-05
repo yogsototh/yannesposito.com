@@ -1,4 +1,4 @@
-* Code magic                                                                            :noexport:
+* Code magic                                      :noexport:
 #+TITLE: her.esy.fun
 #+AUTHOR: Yann Esposito
 #+EMAIL: yann.esposito@gmail.com
@@ -7,136 +7,118 @@
 #+LANGUAGE: en
 #+LANG: en
 #+CREATOR: Spacemacs, org-mode  (Emacs 26.1, Org mode 9.2.3)
-#+OPTIONS: ':t *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline author:t c:nil
-#+OPTIONS: creator:comment d:(not LOGBOOK) date:t e:t email:nil f:t inline:t
-#+OPTIONS: p:nil pri:nil stat:t tags:t tasks:t tex:t timestamp:t
-#+OPTIONS: html-style:nil num:nil toc:nil
-#+OPTIONS: html-postamble:nil
 #+OPTIONS: H:6
-#+OPTIONS: todo:t |:t
-#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="./assets/minimalist.css" />
 #+begin_src elisp :results none
-    (require 'org)
-    (require 'ox-publish)
-    (require 'ox-html)
-    (require 'org-element)
-    (require 'ox-rss)
+  (require 'org)
+  (require 'ox-publish)
+  (require 'ox-html)
+  (require 'org-element)
+  (require 'ox-rss)
 
-    (defun org-blog-prepare (project-plist)
-      "With help from `https://github.com/howardabrams/dot-files'.
-            Touch `index.org' to rebuilt it.
-            Argument `PROJECT-PLIST' contains information about the current project."
-      (let* ((base-directory (plist-get project-plist :base-directory))
-             (buffer (find-file-noselect (expand-file-name "index.org" base-directory) t)))
-        (with-current-buffer buffer
-          (set-buffer-modified-p t)
-          (save-buffer 0))
-        (kill-buffer buffer)))
+  (defun org-blog-prepare (project-plist)
+    "With help from `https://github.com/howardabrams/dot-files'.
+                     Touch `index.org' to rebuilt it.
+                     Argument `PROJECT-PLIST' contains information about the current project."
+    (let* ((base-directory (plist-get project-plist :base-directory))
+           (buffer (find-file-noselect (expand-file-name "index.org" base-directory) t)))
+      (with-current-buffer buffer
+        (set-buffer-modified-p t)
+        (save-buffer 0))
+      (kill-buffer buffer)))
 
-    (defvar org-blog-head
-      "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/minimal.css\"/>
-       <link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/favicon.ico\">")
+  (defvar org-blog-head
+    "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/minimalist.css\"/>
+                <link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/favicon.ico\">")
 
-    (defun org-blog-preamble (_plist)
-      "Pre-amble for whole blog."
-      "<strong><code>Programing Heresy</code></strong>")
+  (defun org-blog-preamble (_plist)
+    "Pre-amble for whole blog."
+    "<strong><code>Programing Heresy</code></strong>")
 
   (defun org-blog-postamble (_plist)
-      "Post-amble for whole blog."
-      "<hr/>
-       <a href=\"/\">Home</a> -
-       <a href=\"/archive.html\">Posts</a>")
+    "Post-amble for whole blog."
+    "<hr/>
+                <a href=\"/\">Home</a> -
+                <a href=\"/archive.html\">Posts</a>")
 
-    (defun org-blog-sitemap-format-entry (entry _style project)
-      "Return string for each ENTRY in PROJECT."
-      (when (s-starts-with-p "posts/" entry)
-        (format "@@html:<span class=\"archive-item\"><span class=\"archive-date\">@@ %s @@html:</span>@@ [[file:%s][%s]] @@html:</span>@@"
-                (format-time-string "%h %d, %Y"
-                                    (org-publish-find-date entry project))
-                entry
-                (org-publish-find-title entry project))))
+  (defun org-blog-sitemap-format-entry (entry _style project)
+    "Return string for each ENTRY in PROJECT."
+    (when (s-starts-with-p "posts/" entry)
+      (format "@@html:<span class=\"archive-item\"><span class=\"archive-date\">@@ %s @@html:</span>@@ [[file:%s][%s]] @@html:</span>@@"
+              (format-time-string "%h %d, %Y"
+                                  (org-publish-find-date entry project))
+              entry
+              (org-publish-find-title entry project))))
 
-    (defun org-blog-publish-to-html (plist filename pub-dir)
-      "Same as `org-html-publish-to-html' but modifies html before finishing."
-      (let ((file-path (org-html-publish-to-html plist filename pub-dir)))
-        (with-current-buffer (find-file-noselect file-path)
-          (goto-char (point-min))
-          (search-forward "<body>")
-          (insert (concat "\n<div class=\"content-wrapper container\">\n "
-                          "  <div class=\"row\"> <div class=\"col\"> </div> "
-                          "  <div class=\"col-sm-6 col-md-8\"> "))
-          (goto-char (point-max))
-          (search-backward "</body>")
-          (insert "\n</div>\n<div class=\"col\"></div></div>\n</div>\n")
-          (save-buffer)
-          (kill-buffer))
-        file-path))
+  (defun org-blog-sitemap-function (title list)
+    "Return sitemap using TITLE and LIST returned by `org-blog-sitemap-format-entry'."
+    (concat "#+TITLE: " title "\n\n"
+            "\n#+begin_archive\n"
+            (mapconcat (lambda (li)
+                         (format "@@html:<li>@@ %s @@html:</li>@@" (car li)))
+                       (seq-filter #'car (cdr list))
+                       "\n")
+            "\n#+end_archive\n"))
 
-    (defun org-blog-sitemap-function (title list)
-      "Return sitemap using TITLE and LIST returned by `org-blog-sitemap-format-entry'."
-      (concat "#+TITLE: " title "\n\n"
-              "\n#+begin_archive\n"
-              (mapconcat (lambda (li)
-                           (format "@@html:<li>@@ %s @@html:</li>@@" (car li)))
-                         (seq-filter #'car (cdr list))
-                         "\n")
-              "\n#+end_archive\n"))
+  (setq base-dir (concat (projectile-project-root) "src"))
+  (setq publish-dir (concat (projectile-project-root) "_site"))
+  (setq assets-dir (concat base-dir "/assets"))
+  (setq publish-assets-dir (concat publish-dir "/assets"))
+  (setq rss-dir base-dir)
+  (setq publish-rss-dir publish-dir)
+  (setq org-publish-project-alist
+        `(("orgfiles"
+           :base-directory ,base-dir
+           :exclude ".*drafts/.*"
+           :base-extension "org"
 
-    (setq org-publish-project-alist
-          `(("orgfiles"
-             :base-directory "~/y/her.esy.fun/src/"
-             :exclude ".*drafts/.*"
-             :base-extension "org"
+           :publishing-directory ,publish-dir
 
-             :publishing-directory "~/y/her.esy.fun/_site/"
+           :recursive t
+           :preparation-function org-blog-prepare
+           :publishing-function org-html-publish-to-html
 
-             :recursive t
-             :preparation-function org-blog-prepare
-             :publishing-function org-blog-publish-to-html
+           :with-toc nil
+           :with-title t
+           :with-date t
+           :section-numbers nil
+           :html-doctype "html5"
+           :html-html5-fancy t
+           :html-head-include-default-style nil
+           :html-head-include-scripts nil
+           :htmlized-source t
+           :html-head-extra ,org-blog-head
+           :html-preamble org-blog-preamble
+           :html-postamble org-blog-postamble
 
-             :with-toc nil
-             :with-title t
-             :with-date t
-             :section-numbers nil
-             :html-doctype "html5"
-             :html-html5-fancy t
-             :html-head-include-default-style nil
-             :html-head-include-scripts nil
-             :htmlized-source t
-             :html-head-extra ,org-blog-head
-             :html-preamble org-blog-preamble
-             :html-postamble org-blog-postamble
+           :auto-sitemap t
+           :sitemap-filename "archive.org"
+           :sitemap-title "Blog Posts"
+           :sitemap-style list
+           :sitemap-sort-files anti-chronologically
+           :sitemap-format-entry org-blog-sitemap-format-entry
+           :sitemap-function org-blog-sitemap-function)
 
-             :auto-sitemap t
-             :sitemap-filename "archive.org"
-             :sitemap-title "Blog Posts"
-             :sitemap-style list
-             :sitemap-sort-files anti-chronologically
-             :sitemap-format-entry org-blog-sitemap-format-entry
-             :sitemap-function org-blog-sitemap-function)
+          ("assets"
+           :base-directory ,assets-dir
+           :base-extension ".*"
+           :publishing-directory ,publish-assets-dir
+           :publishing-function org-publish-attachment
+           :recursive t)
 
-            ("assets"
-             :base-directory "~/y/her.esy.fun/src/assets/"
-             :base-extension ".*"
-             :publishing-directory "~/y/her.esy.fun/_site/assets/"
-             :publishing-function org-publish-attachment
-             :recursive t)
+          ("rss"
+           :base-directory ,rss-dir
+           :base-extension "org"
+           :html-link-home "https://her.esy.fun/"
+           :html-link-use-abs-url t
+           :rss-extension "xml"
+           :publishing-directory ,publish-rss-dir
+           :publishing-function (org-rss-publish-to-rss)
+           :exclude ".*"
+           :include ("archive.org")
+           :section-numbers nil
+           :table-of-contents nil)
 
-            ("rss"
-             :base-directory "~/y/her.esy.fun/src/"
-             :base-extension "org"
-             :html-link-home "https://her.esy.fun/"
-             :html-link-use-abs-url t
-             :rss-extension "xml"
-             :publishing-directory "~/y/her.esy.fun/"
-             :publishing-function (org-rss-publish-to-rss)
-             :exclude ".*"
-             :include ("archive.org")
-             :section-numbers nil
-             :table-of-contents nil)
-
-            ("blog" :components ("orgfiles" "assets" "rss"))))
-
+          ("blog" :components ("orgfiles" "assets" "rss"))))
 #+end_src
 
 * Welcome!
@@ -146,12 +128,4 @@
 This is a new take on my personal blog.
 With a lot more minimalism in mind.
 
-* Posts
-
-#+begin_src elisp :results value list :exports results
-  (mapcar (lambda (d) (concat "[[./posts/" d "][" d "]]"))
-          (directory-files "posts" nil "\\.org"))
-#+end_src
-
-#+RESULTS:
-- [[posts/index.org][index.org]]
+With [[http://orgmode.org][org-mode]]
