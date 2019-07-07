@@ -17,29 +17,32 @@
 
   (defun org-blog-prepare (project-plist)
     "With help from `https://github.com/howardabrams/dot-files'.
-                           Touch `index.org' to rebuilt it.
-                           Argument `PROJECT-PLIST' contains information about the current project."
+     Touch `index.org' to rebuilt it.
+     Argument `PROJECT-PLIST' contains information about the current project."
     (let* ((base-directory (plist-get project-plist :base-directory))
            (buffer (find-file-noselect (expand-file-name "index.org" base-directory) t)))
       (with-current-buffer buffer
         (set-buffer-modified-p t)
-        (save-buffer 0))
-      (kill-buffer buffer)))
+        (save-buffer 0))))
 
   (defvar org-blog-head
-    "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/minimalist.css\"/>
-     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
-     <link rel=\"alternative\" type=\"application/rss+xml\" title=\"Subscribe to articles\" href=\"/archives.xml\" />
-     <link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/favicon.ico\">")
+    (concat
+     "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/minimalist.css\"/>"
+     "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+     "<link rel=\"alternative\" type=\"application/rss+xml\" title=\"Subscribe to articles\" href=\"/archives.xml\" />"
+     "<link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/favicon.ico\">"))
 
   (defun org-blog-preamble (_plist)
     "Pre-amble for whole blog."
-    "<strong><code>Programing Heresy</code></strong>")
+    "<strong><code>Her.esy.fun</code></strong>")
 
   (defun menu ()
     "Blog menu"
-    "<a href=\"/\">Home</a> -
-       <a href=\"/archive.html\">Posts</a>")
+    (concat
+     "<navigation>"
+     "<a href=\"/\">Home</a>"
+     "<a href=\"/archive.html\">Posts</a>"
+     "</navigation>"))
 
   (defun get-from-info (info k)
     (let ((i (car (plist-get info k))))
@@ -49,35 +52,39 @@
   (defun org-blog-postamble (info)
     "Post-amble for whole blog."
     (concat "<footer>"
-            (menu)
-            "<hr/>"
             (when-let ((author (get-from-info info :author)))
               (if-let ((email (plist-get info :email)))
                   (format "<p class=\"author\">Author: <a href=\"mailto:%s\">%s</a></p>" email author)
                 (format "<p class=\"author\">Author: %s</p>" author)))
-            (format "<p class=\"date\">Modified: %s</p>"
-                    (format-time-string "%Y-%m-%d %H:%M:%S"))
             (when-let ((date (get-from-info info :date)))
               (format "<p class=\"date\">Created: %s</p>" date))
+            (when-let ((keywords (plist-get info :keywords)))
+              (format "<p class=\"keywords\">Keywords: <code>%s</code></p>" keywords))
+            (format "<p class=\"date\">Generated: %s</p>"
+                    (format-time-string "%Y-%m-%d %H:%M:%S"))
             (format (concat "<p class=\"creator\"> Generated with "
                             "<a href=\"https://www.gnu.org/software/emacs/\" target=\"_blank\" rel=\"noopener noreferrer\">Emacs %s</a>, "
                             "<a href=\"http://spacemacs.org\" target=\"_blank\" rel=\"noopener noreferrer\">Spacemacs %s</a>, "
                             "<a href=\"http://orgmode.org\" target=\"_blank\" rel=\"noopener noreferrer\">Org Mode %s</a>")
                     emacs-version spacemacs-version org-version)
-            "</footer>"))
+            "</footer>"
+            "<hr/>"
+            (menu)))
 
   (defun org-blog-sitemap-format-entry (entry _style project)
     "Return string for each ENTRY in PROJECT."
     (when (s-starts-with-p "posts/" entry)
-      (format "@@html:<span class=\"archive-item\"><span class=\"archive-date\">@@ %s @@html:</span>@@ [[file:%s][%s]] @@html:</span>@@"
-              (format-time-string "%h %d, %Y"
+      (format "@@html:<span class=\"archive-item\"><span class=\"archive-date\">@@ %s: @@html:</span>@@ [[file:%s][%s]] @@html:</span>@@"
+              (format-time-string "%Y-%m-%d"
                                   (org-publish-find-date entry project))
               entry
               (org-publish-find-title entry project))))
 
   (defun org-blog-sitemap-function (title list)
     "Return sitemap using TITLE and LIST returned by `org-blog-sitemap-format-entry'."
-    (concat "#+TITLE: " title "\n\n"
+    (concat "#+TITLE: " title "\n"
+            "#+AUTHOR: Yann Esposito\n"
+            "#+EMAIL: yann.esposito@gmail.com\n"
             "\n#+begin_archive\n"
             (mapconcat (lambda (li)
                          (format "@@html:<li>@@ %s @@html:</li>@@" (car li)))
