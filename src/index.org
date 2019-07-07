@@ -1,127 +1,153 @@
-* Code magic                                                                                            :noexport:
+* Code magic                                                                            :noexport:
 #+TITLE: her.esy.fun
 #+AUTHOR: Yann Esposito
 #+EMAIL: yann.esposito@gmail.com
+#+DATE: 2019-07-04
 #+KEYWORDS: programming
 #+DESCRIPTION:
 #+LANGUAGE: en
 #+LANG: en
-#+CREATOR: Spacemacs, org-mode  (Emacs 26.1, Org mode 9.2.3)
 #+OPTIONS: H:6
 #+begin_src elisp :results none
-      (require 'org)
-      (require 'ox-publish)
-      (require 'ox-html)
-      (require 'org-element)
-      (require 'ox-rss)
+  (require 'org)
+  (require 'ox-publish)
+  (require 'ox-html)
+  (require 'org-element)
+  (require 'ox-rss)
 
-      (defun org-blog-prepare (project-plist)
-        "With help from `https://github.com/howardabrams/dot-files'.
-                         Touch `index.org' to rebuilt it.
-                         Argument `PROJECT-PLIST' contains information about the current project."
-        (let* ((base-directory (plist-get project-plist :base-directory))
-               (buffer (find-file-noselect (expand-file-name "index.org" base-directory) t)))
-          (with-current-buffer buffer
-            (set-buffer-modified-p t)
-            (save-buffer 0))
-          (kill-buffer buffer)))
+  (defun org-blog-prepare (project-plist)
+    "With help from `https://github.com/howardabrams/dot-files'.
+                           Touch `index.org' to rebuilt it.
+                           Argument `PROJECT-PLIST' contains information about the current project."
+    (let* ((base-directory (plist-get project-plist :base-directory))
+           (buffer (find-file-noselect (expand-file-name "index.org" base-directory) t)))
+      (with-current-buffer buffer
+        (set-buffer-modified-p t)
+        (save-buffer 0))
+      (kill-buffer buffer)))
 
-      (defvar org-blog-head
-        "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/minimalist.css\"/>
-                    <link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/favicon.ico\">")
+  (defvar org-blog-head
+    "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/minimalist.css\"/>
+     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+     <link rel=\"alternative\" type=\"application/rss+xml\" title=\"Subscribe to articles\" href=\"/archives.xml\" />
+     <link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/favicon.ico\">")
 
-      (defun org-blog-preamble (_plist)
-        "Pre-amble for whole blog."
-        "<strong><code>Programing Heresy</code></strong>")
+  (defun org-blog-preamble (_plist)
+    "Pre-amble for whole blog."
+    "<strong><code>Programing Heresy</code></strong>")
 
-      (defun org-blog-postamble (_plist)
-        "Post-amble for whole blog."
-        "<hr/>
-                    <a href=\"/\">Home</a> -
-                    <a href=\"/archive.html\">Posts</a>")
+  (defun menu ()
+    "Blog menu"
+    "<a href=\"/\">Home</a> -
+       <a href=\"/archive.html\">Posts</a>")
 
-      (defun org-blog-sitemap-format-entry (entry _style project)
-        "Return string for each ENTRY in PROJECT."
-        (when (s-starts-with-p "posts/" entry)
-          (format "@@html:<span class=\"archive-item\"><span class=\"archive-date\">@@ %s @@html:</span>@@ [[file:%s][%s]] @@html:</span>@@"
-                  (format-time-string "%h %d, %Y"
-                                      (org-publish-find-date entry project))
-                  entry
-                  (org-publish-find-title entry project))))
+  (defun get-from-info (info k)
+    (let ((i (car (plist-get info k))))
+      (when (and i (stringp i))
+        i)))
 
-      (defun org-blog-sitemap-function (title list)
-        "Return sitemap using TITLE and LIST returned by `org-blog-sitemap-format-entry'."
-        (concat "#+TITLE: " title "\n\n"
-                "\n#+begin_archive\n"
-                (mapconcat (lambda (li)
-                             (format "@@html:<li>@@ %s @@html:</li>@@" (car li)))
-                           (seq-filter #'car (cdr list))
-                           "\n")
-                "\n#+end_archive\n"))
+  (defun org-blog-postamble (info)
+    "Post-amble for whole blog."
+    (concat "<footer>"
+            (menu)
+            "<hr/>"
+            (when-let ((author (get-from-info info :author)))
+              (if-let ((email (plist-get info :email)))
+                  (format "<p class=\"author\">Author: <a href=\"mailto:%s\">%s</a></p>" email author)
+                (format "<p class=\"author\">Author: %s</p>" author)))
+            (format "<p class=\"date\">Modified: %s</p>"
+                    (format-time-string "%Y-%m-%d %H:%M:%S"))
+            (when-let ((date (get-from-info info :date)))
+              (format "<p class=\"date\">Created: %s</p>" date))
+            (format (concat "<p class=\"creator\"> Generated with "
+                            "<a href=\"https://www.gnu.org/software/emacs/\" target=\"_blank\" rel=\"noopener noreferrer\">Emacs %s</a>, "
+                            "<a href=\"http://spacemacs.org\" target=\"_blank\" rel=\"noopener noreferrer\">Spacemacs %s</a>, "
+                            "<a href=\"http://orgmode.org\" target=\"_blank\" rel=\"noopener noreferrer\">Org Mode %s</a>")
+                    emacs-version spacemacs-version org-version)
+            "</footer>"))
 
-      (setq base-dir (concat (projectile-project-root) "src"))
-      (setq publish-dir (concat (projectile-project-root) "_site"))
-      (setq assets-dir (concat base-dir "/assets"))
-      (setq publish-assets-dir (concat publish-dir "/assets"))
-      (setq rss-dir base-dir)
-      (setq publish-rss-dir publish-dir)
-      (setq domainname "https://her.esy.fun")
-      (setq org-publish-project-alist
-            `(("orgfiles"
-               :base-directory ,base-dir
-               :exclude ".*drafts/.*"
-               :base-extension "org"
+  (defun org-blog-sitemap-format-entry (entry _style project)
+    "Return string for each ENTRY in PROJECT."
+    (when (s-starts-with-p "posts/" entry)
+      (format "@@html:<span class=\"archive-item\"><span class=\"archive-date\">@@ %s @@html:</span>@@ [[file:%s][%s]] @@html:</span>@@"
+              (format-time-string "%h %d, %Y"
+                                  (org-publish-find-date entry project))
+              entry
+              (org-publish-find-title entry project))))
 
-               :publishing-directory ,publish-dir
+  (defun org-blog-sitemap-function (title list)
+    "Return sitemap using TITLE and LIST returned by `org-blog-sitemap-format-entry'."
+    (concat "#+TITLE: " title "\n\n"
+            "\n#+begin_archive\n"
+            (mapconcat (lambda (li)
+                         (format "@@html:<li>@@ %s @@html:</li>@@" (car li)))
+                       (seq-filter #'car (cdr list))
+                       "\n")
+            "\n#+end_archive\n"))
 
-               :recursive t
-               :preparation-function org-blog-prepare
-               :publishing-function org-html-publish-to-html
+  (setq base-dir (concat (projectile-project-root) "src"))
+  (setq publish-dir (concat (projectile-project-root) "_site"))
+  (setq assets-dir (concat base-dir "/assets"))
+  (setq publish-assets-dir (concat publish-dir "/assets"))
+  (setq rss-dir base-dir)
+  (setq publish-rss-dir publish-dir)
+  (setq domainname "https://her.esy.fun")
+  (setq org-publish-project-alist
+        `(("orgfiles"
+           :base-directory ,base-dir
+           :exclude ".*drafts/.*"
+           :base-extension "org"
 
-               :with-toc nil
-               :with-title t
-               :with-date t
-               :section-numbers nil
-               :html-doctype "html5"
-               :html-html5-fancy t
-               :html-head-include-default-style nil
-               :html-head-include-scripts nil
-               :htmlized-source t
-               :html-head-extra ,org-blog-head
-               :html-preamble org-blog-preamble
-               :html-postamble org-blog-postamble
+           :publishing-directory ,publish-dir
 
-               :auto-sitemap t
-               :sitemap-filename "archive.org"
-               :sitemap-title "Blog Posts"
-               :sitemap-style list
-               :sitemap-sort-files anti-chronologically
-               :sitemap-format-entry org-blog-sitemap-format-entry
-               :sitemap-function org-blog-sitemap-function)
+           :recursive t
+           :preparation-function org-blog-prepare
+           :publishing-function org-html-publish-to-html
 
-              ("assets"
-               :base-directory ,assets-dir
-               :base-extension ".*"
-               :publishing-directory ,publish-assets-dir
-               :publishing-function org-publish-attachment
-               :recursive t)
+           :with-toc nil
+           :with-title t
+           :with-date t
+           :section-numbers nil
+           :html-doctype "html5"
+           :html-html5-fancy t
+           :html-head-include-default-style nil
+           :html-head-include-scripts nil
+           :htmlized-source t
+           :html-head-extra ,org-blog-head
+           :html-preamble org-blog-preamble
+           :html-postamble org-blog-postamble
 
-              ("rss"
-               :base-directory ,rss-dir
-               :base-extension "org"
-               :html-link-home ,domainname
-               :html-link-use-abs-url t
-               :rss-extension "xml"
-               :publishing-directory ,publish-rss-dir
-               :publishing-function (org-rss-publish-to-rss)
-               :exclude ".*"
-               :include ("archive.org")
-               :section-numbers nil
-               :table-of-contents nil)
+           :auto-sitemap t
+           :sitemap-filename "archive.org"
+           :sitemap-title "Blog Posts"
+           :sitemap-style list
+           :sitemap-sort-files anti-chronologically
+           :sitemap-format-entry org-blog-sitemap-format-entry
+           :sitemap-function org-blog-sitemap-function)
 
-              ("blog" :components ("orgfiles" "assets" "rss"))))
+          ("assets"
+           :base-directory ,assets-dir
+           :base-extension ".*"
+           :publishing-directory ,publish-assets-dir
+           :publishing-function org-publish-attachment
+           :recursive t)
 
-    ;; add target=_blank and rel="noopener noreferrer" to all links by default
+          ("rss"
+           :base-directory ,rss-dir
+           :base-extension "org"
+           :html-link-home ,domainname
+           :html-link-use-abs-url t
+           :rss-extension "xml"
+           :publishing-directory ,publish-rss-dir
+           :publishing-function (org-rss-publish-to-rss)
+           :exclude ".*"
+           :include ("archive.org")
+           :section-numbers nil
+           :table-of-contents nil)
+
+          ("blog" :components ("orgfiles" "assets" "rss"))))
+
+  ;; add target=_blank and rel="noopener noreferrer" to all links by default
   (defun my-org-export-add-target-blank-to-http-links (text backend info)
     "Add target=\"_blank\" to external links."
     (when (and
@@ -146,5 +172,3 @@ With a lot more minimalism in mind.
 
 With [[http://orgmode.org][org-mode]]
 
-
-TEST

@@ -1,129 +1,46 @@
 #+TITLE: Static blog with org-mode
 #+AUTHOR: Yann Esposito
 #+EMAIL: yann.esposito@gmail.com
-#+KEYWORDS: programming, blog
+#+KEYWORDS: programming, blog, org-mode
 
-[[https://her.esy.fun][her.esy.fun]]
+This is the first article using my new blog system.
 
-This is a new take on my personal blog.
-With a lot more minimalism in mind.
+Each time I try different things.
 
-Fully done with [[https://orgmode.org][=org-mode=]].
+A long time ago, I used PHP for my first website.
+I used include and took care of XHTML pages validation.
+Then I used [[http://nanoc.ws][nanoc]], a ruby static website.
+Then I switched to [[https://jaspervdj.be/hakyll/][hakyll]] because I wanted to switch to a Haskell's written tool.
+Now I'll try to use emacs [[http://orgmode.org][org-mode]].
 
-* Code magic
+So the article is a classical, Why?, How?
 
-Here is how I publish this website in emacs using org-mode.
-I just eval that code and then do a simple `org-publish` for the blog.
+* Why?
 
-And that's it.
+Everything started when I was hired in a place where I was given a terrible
+keyboard.
+After a few weeks I started to feel a lot of pain in both my wrists.
+So I started to go from classical IDE to being able to use vim
+correctly[fn:vim].
 
-#+begin_src elisp :results none
-    (require 'org)
-    (require 'ox-publish)
-    (require 'ox-html)
-    (require 'org-element)
-    (require 'ox-rss)
+Then I started to work in Clojure and I heard that emacs might certainly be a
+better fit for LISP dialiects.
+But, I couldn't switch to an editor without vim keybindings support because they
+are so great once you're used to them.
+But miracle it was about the time [[http://spacemacs.org][spacemacs]] appeared and I switched.
+It was really impressive how well the vim keybindings worked so well.
+Even most of the advanced vim features I used to use worked like a charm.
 
-    (defun org-blog-prepare (project-plist)
-      "With help from `https://github.com/howardabrams/dot-files'.
-              Touch `index.org' to rebuilt it.
-              Argument `PROJECT-PLIST' contains information about the current project."
-      (let* ((base-directory (plist-get project-plist :base-directory))
-             (buffer (find-file-noselect (expand-file-name "index.org" base-directory) t)))
-        (with-current-buffer buffer
-          (set-buffer-modified-p t)
-          (save-buffer 0))
-        (kill-buffer buffer)))
+The first benefit of emacs is you can configure emacs with elisp.
+Which unlike vimscript looks like a correct language to work with.
 
-    (defvar org-blog-head
-      "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/minimalist.css\"/>
-       <link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/favicon.ico\">")
+One unexpected benefit of emacs was [[http://orgmode.org][org-mode]].
+I always heard good things about it but it took me a while to really get it and
+to understand why it is so great.
 
-    (defun org-blog-preamble (_plist)
-      "Pre-amble for whole blog."
-      "<strong><code>Programming Heresy</code></strong>")
+If you don't know anything about org-mode, it is many things.
+First imagine a Markdown but more TODO list oriented.
+But along with this, emacs has a lot of helper functions to work with those
+org-mode files.
 
-    (defun org-blog-postamble (_plist)
-      "Post-amble for whole blog."
-      "<hr/>
-         <a href=\"/\">Home</a> -
-         <a href=\"/archive.html\">Posts</a>")
-
-    (defun org-blog-sitemap-format-entry (entry _style project)
-      "Return string for each ENTRY in PROJECT."
-      (when (s-starts-with-p "posts/" entry)
-        (format (concat "@@html:<span class=\"archive-item\">"
-                        "<span class=\"archive-date\">"
-                        "@@ %s @@html:</span>@@ [[file:%s][%s]] @@html:</span>@@")
-                (format-time-string "%Y-%m-%d"
-                                    (org-publish-find-date entry project))
-                entry
-                (org-publish-find-title entry project))))
-
-  (defun org-blog-sitemap-function (title list)
-    "Return sitemap using TITLE and LIST returned by `org-blog-sitemap-format-entry'."
-    (concat "#+TITLE: " title "\n\n"
-            "\n#+begin_archive\n"
-            (mapconcat (lambda (li)
-                         (format "@@html:<li>@@ %s @@html:</li>@@" (car li)))
-                       (seq-filter #'car (cdr list))
-                       "\n")
-            "\n#+end_archive\n"))
-
-  (setq rootdir (projectile-project-root))
-
-  (setq org-publish-project-alist
-          `(("orgfiles"
-             :base-directory (concat rootdir "/src/")
-             :exclude ".*drafts/.*"
-             :base-extension "org"
-
-             :publishing-directory (concat rootdir "/_site/")
-
-             :recursive t
-             :preparation-function org-blog-prepare
-             :publishing-function org-html-publish-to-html
-
-             :with-toc nil
-             :with-title t
-             :with-date t
-             :section-numbers nil
-             :html-doctype "html5"
-             :html-html5-fancy t
-             :html-head-include-default-style nil
-             :html-head-include-scripts nil
-             :htmlized-source t
-             :html-head-extra ,org-blog-head
-             :html-preamble org-blog-preamble
-             :html-postamble org-blog-postamble
-
-             :auto-sitemap t
-             :sitemap-filename "archive.org"
-             :sitemap-title "Blog Posts"
-             :sitemap-style list
-             :sitemap-sort-files anti-chronologically
-             :sitemap-format-entry org-blog-sitemap-format-entry
-             :sitemap-function org-blog-sitemap-function)
-
-            ("assets"
-             :base-directory (concat rootdir "/src/assets/")
-             :base-extension ".*"
-             :publishing-directory (concat rootdir "/_site/assets/")
-             :publishing-function org-publish-attachment
-             :recursive t)
-
-            ("rss"
-             :base-directory (concat rootdir "/src/")
-             :base-extension "org"
-             :html-link-home "https://her.esy.fun/"
-             :html-link-use-abs-url t
-             :rss-extension "xml"
-             :publishing-directory (concat rootdir "/")
-             :publishing-function (org-rss-publish-to-rss)
-             :exclude ".*"
-             :include ("archive.org")
-             :section-numbers nil
-             :table-of-contents nil)
-
-            ("blog" :components ("orgfiles" "assets" "rss"))))
-#+end_src
+[fn:vim] I wrote this article to help people use vim: [[http://yannesposito.com/Scratch/en/blog/Learn-Vim-Progressively/][learn vim progressively]]
