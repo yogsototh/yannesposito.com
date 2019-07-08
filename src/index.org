@@ -1,13 +1,19 @@
-* Code magic                                                                            :noexport:
-#+TITLE: her.esy.fun
-#+AUTHOR: Yann Esposito
-#+EMAIL: yann.esposito@gmail.com
+#+TITLE: Welcome!
 #+DATE: 2019-07-04
 #+KEYWORDS: programming
+#+AUTHOR: Yann Esposito
+#+EMAIL: yann.esposito@gmail.com
 #+DESCRIPTION:
 #+LANGUAGE: en
 #+LANG: en
 #+OPTIONS: H:6
+
+This is a new take on my personal blog.
+With a lot more minimalism in mind.
+
+With [[http://orgmode.org][org-mode]]
+
+* Code magic                                                                            :noexport:
 #+begin_src elisp :results none
   (require 'org)
   (require 'ox-publish)
@@ -32,9 +38,13 @@
      "<link rel=\"alternative\" type=\"application/rss+xml\" title=\"Subscribe to articles\" href=\"/archives.xml\" />"
      "<link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/favicon.ico\">"))
 
-  (defun org-blog-preamble (_plist)
+  (defun org-blog-preamble (info)
     "Pre-amble for whole blog."
-    "<strong><code>Her.esy.fun</code></strong>")
+    (concat
+     "<strong><code>Her.esy.fun"
+     (when-let ((date (get-from-info info :date)))
+       (format " - <span class=\"article-date\">%s</span>" date))
+     "</code></strong>"))
 
   (defun menu ()
     "Blog menu"
@@ -54,18 +64,19 @@
     (concat "<footer>"
             (when-let ((author (get-from-info info :author)))
               (if-let ((email (plist-get info :email)))
-                  (format "<p class=\"author\">Author: <a href=\"mailto:%s\">%s</a></p>" email author)
-                (format "<p class=\"author\">Author: %s</p>" author)))
+                  (format "<div class=\"author\">Author: <a href=\"mailto:%s\">%s</a></div>" email author)
+                (format "<div class=\"author\">Author: %s</div>" author)))
             (when-let ((date (get-from-info info :date)))
-              (format "<p class=\"date\">Created: %s</p>" date))
+              (format "<div class=\"date\">Created: %s</div>" date))
             (when-let ((keywords (plist-get info :keywords)))
-              (format "<p class=\"keywords\">Keywords: <code>%s</code></p>" keywords))
-            (format "<p class=\"date\">Generated: %s</p>"
+              (format "<div class=\"keywords\">Keywords: <code>%s</code></div>" keywords))
+            (format "<div class=\"date\">Generated: %s</div>"
                     (format-time-string "%Y-%m-%d %H:%M:%S"))
-            (format (concat "<p class=\"creator\"> Generated with "
+            (format (concat "<div class=\"creator\"> Generated with "
                             "<a href=\"https://www.gnu.org/software/emacs/\" target=\"_blank\" rel=\"noopener noreferrer\">Emacs %s</a>, "
                             "<a href=\"http://spacemacs.org\" target=\"_blank\" rel=\"noopener noreferrer\">Spacemacs %s</a>, "
-                            "<a href=\"http://orgmode.org\" target=\"_blank\" rel=\"noopener noreferrer\">Org Mode %s</a>")
+                            "<a href=\"http://orgmode.org\" target=\"_blank\" rel=\"noopener noreferrer\">Org Mode %s</a>"
+                            "</div>")
                     emacs-version spacemacs-version org-version)
             "</footer>"
             "<hr/>"
@@ -170,12 +181,112 @@
 
 #+end_src
 
-* Welcome!
+* Template Testing
 
-[[https://her.esy.fun][her.esy.fun]]
+Text can be *bold*, /italic/, +strikethrough+ or =keyword=.
 
-This is a new take on my personal blog.
-With a lot more minimalism in mind.
+[[/index.html][Link to another page]].
 
-With [[http://orgmode.org][org-mode]]
+There should be whitespace between paragraphs.
 
+* Header 2
+
+There should be whitespace between paragraphs.
+GitHub is a code hosting platform for version control and collaboration.
+It lets you and others work together on projects from anywhere.
+
+** Header 3
+
+#+begin_quote
+This is a blockquote folling a header.
+
+When something is important enough, you do it even if the odds are not in your
+favor.
+#+end_quote
+
+*** Header 4
+
+#+begin_src javascript
+// Javascript code with syntax highlighting.
+var fun = function lang(l) {
+  dateformat.i18n = require('./lang/' + l)
+  return true;
+}
+#+end_src
+
+#+begin_src ruby
+# Ruby code with syntax highlighting
+GitHubPages::Dependencies.gems.each do |gem, version|
+  s.add_dependency(gem, "= #{version}")
+end
+#+end_src
+
+#+begin_src clojure
+(defn clj-fn
+  "A clojure function with syntax highlighting"
+  [arg]
+  (clojure.pprint/pprint arg))
+#+end_src
+
+#+begin_src haskell
+-- main hello world
+main :: IO ()
+main = do
+  putStrLn "What is your name?"
+  name <- getLine
+  putStrLn $ "Hello " <> name <> "!"
+#+end_src
+
+**** Header 5
+
+- this is an unordered list following a header.
+- this is an unordered list following a header.
+- this is an unordered list following a header.
+
+***** Header 6
+
+1. this is an ordered list following a header.
+2. this is an ordered list following a header.
+   - sub unordered
+     - sub sub unordered
+     - xxx
+   - unordered
+     1. ordered again
+     2. yep :)
+3. this is an ordered list following a header.
+   1. sub ordered
+   2. second
+      1. sub sub ordered
+      2. still
+   3. here
+4. this is an ordered list following a header.
+
+| head1        | head two          |
+|--------------+-------------------|
+| ok           | good swedish fish |
+| out of stock | good and plenty   |
+| ok           | good =oreos=      |
+| ok           | good =zoute= drop |
+
+There's a horizontal rule below this
+
+------
+
+** Here is an unordered list:
+
+- level 1 item
+  - level 2 item
+  - level 2 item
+  - level 2 item
+    - level 3 item
+    - level 3 item
+- level 1 item
+  - level 2 item
+    - level 3 item
+    - level 3 item
+  - level 2 item
+  - level 2 item
+- level 1 item
+  - level 2 item
+  - level 2 item
+  - level 2 item
