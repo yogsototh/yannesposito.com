@@ -3,7 +3,7 @@
    Author: Yann Esposito
 */
 body {
-    font-family: "Helvetica neue", sans-serif;
+    font-family: menlo, monospace;
     font-size: 15px;
     line-height: 20px;
     max-width: 50em;
@@ -35,12 +35,12 @@ h3 { font-size: 1em; }
 h4 { font-size: 1em; }
 h5 { font-size: 1em; }
 h6 { font-size: 1em; }
-h1::before { content: "# "; opacity: 0.5; }
-h2::before { content: "## "; opacity: 0.5; }
-h3::before { content: "### "; opacity: 0.5; }
-h4::before { content: "#### "; opacity: 0.5; }
-h5::before { content: "##### "; opacity: 0.5; }
-h6::before { content: "###### "; opacity: 0.5; }
+h1::before { content: "# "; }
+h2::before { content: "## "; }
+h3::before { content: "### "; }
+h4::before { content: "#### "; }
+h5::before { content: "##### "; }
+h6::before { content: "###### "; }
 hr {
     position: relative;
     height: 20px;
@@ -52,7 +52,7 @@ hr {
 }
 hr:after {
     content: "----------------------------------------------------------------------------------------------------";
-    font-family: "courrier new", monospace;
+    font-family: menlo, monospace;
     position: absolute;
     opacity: 0.3;
     top: 0;
@@ -73,7 +73,7 @@ pre::before {
     content: "~~~~~~~~~ " attr(class);
 }
 code {
-    font-family: "courrier new", monospace;
+    font-family: menlo, monospace;
 }
 pre code { background: none; }
 blockquote {
@@ -123,7 +123,7 @@ img { max-width: 100%;
 footer { font-size: 0.8em; opacity: 0.5; }
 footer:hover { opacity: 1; }
 navigation { font-weight: bold;
-             font-family: "courrier new", monospace;
+             font-family: menlo, monospace;
            }
 navigation a { display: inline-block;
                padding: .5ex 1ex;
@@ -143,14 +143,35 @@ td, th { height: 20px;
      border-left: solid 1px;
    }
 
-/* colors */
+/* colors
+
+$base03:    #002b36;
+$base02:    #073642;
+$base01:    #586e75;
+$base00:    #657b83;
+
+$base0:     #839496;
+$base1:     #93a1a1;
+$base2:     #eee8d5;
+$base3:     #fdf6e3;
+
+$yellow:    #b58900;
+$orange:    #cb4b16;
+$red:       #dc322f;
+$magenta:   #d33682;
+$violet:    #6c71c4;
+$blue:      #268bd2;
+$cyan:      #2aa198;
+$green:     #859900;
+
+*/
+
 body {
-    background: #00151b; // 0.5 darker than #002b36;
+    background: #00151b; /* 0.5 darker than #002b36; */
     color: #839496;
 }
-p a, p a:visited { color: #93a1a1; }
-a, a:visited { color: #2aa198; }
-a:active, a:hover, a:focus { color: #268bd2; }
+a, a:visited { color: #93a1a1; }
+a:hover, a:active, a:focus { color: #b58900; }
 thead { background-color: #073642;
         color: #93a1a1; }
 tr:hover { background-color: #073642; }
@@ -164,7 +185,15 @@ table, td, th { border-color: #073642; }
 code { background: #002b36; }
 /* -------- */
 /* org mode statuses */
-.todo, .done { color: #000; font-family: "courier new", monospace; font-size: 12px; font-weight: bold; line-height: 20px; padding: 1px 1ex; }
+.timestamp-wrapper { font-family: menlo, monospace; font-size: 12px; }
+.todo, .done { font-family: menlo, monospace;
+               font-size: 12px;
+               font-weight: bold;
+               line-height: 20px;
+               padding: 1px 1ex;
+             }
+/* org colors */
+.todo, .done { color: #000; }
 .TODO { background-color: #dc322f; }
 .IN_PROGRESS { background-color: #b58900; }
 .IN_REVIEW { background-color: #2aa198; }
@@ -172,4 +201,3 @@ code { background: #002b36; }
 .WAITING { background-color: #6c71c4; }
 .DONE { background-color: #859900; }
 .CANCELED { background-color: #d33682; }
-.timestamp-wrapper { font-family: "courier new", monospace; font-size: 12px; }
