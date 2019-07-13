@@ -1,5 +1,4 @@
 #+TITLE: Welcome!
-#+DATE: 2019-07-04
 #+KEYWORDS: programming
 #+AUTHOR: Yann Esposito
 #+EMAIL: yann.esposito@gmail.com
@@ -7,6 +6,7 @@
 #+LANGUAGE: en
 #+LANG: en
 #+OPTIONS: H:5
+#+STARTUP: showeverything
 
 This is a new take on my personal blog.
 I tried to have some minimalism in mind but not too much.
@@ -27,7 +27,7 @@ With [[http://orgmode.org][org-mode]]
 You can have a basic demo about most supported content styles/type (paragraphs,
 lists, tables, etc...) [[file:./demo.org][here]].
 
-* Code magic                                                                            :noexport:
+* Code magic                                   :noexport:
 #+begin_src elisp :results none
   (require 'org)
   (require 'ox-publish)
@@ -37,8 +37,8 @@ lists, tables, etc...) [[file:./demo.org][here]].
 
   (defun org-blog-prepare (project-plist)
     "With help from `https://github.com/howardabrams/dot-files'.
-     Touch `index.org' to rebuilt it.
-     Argument `PROJECT-PLIST' contains information about the current project."
+              Touch `index.org' to rebuilt it.
+              Argument `PROJECT-PLIST' contains information about the current project."
     (let* ((base-directory (plist-get project-plist :base-directory))
            (buffer (find-file-noselect (expand-file-name "index.org" base-directory) t)))
       (with-current-buffer buffer
@@ -52,21 +52,26 @@ lists, tables, etc...) [[file:./demo.org][here]].
      "<link rel=\"alternative\" type=\"application/rss+xml\" title=\"Subscribe to articles\" href=\"/archives.xml\" />"
      "<link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/favicon.ico\">"))
 
-  (defun org-blog-preamble (info)
-    "Pre-amble for whole blog."
-    (concat
-     "<strong><code>Her.esy.fun"
-     (when-let ((date (get-from-info info :date)))
-       (format " - <span class=\"article-date\">%s</span>" date))
-     "</code></strong>"))
-
   (defun menu ()
     "Blog menu"
     (concat
-     "<navigation>"
-     "<a href=\"/\">Home</a>"
-     "<a href=\"/archive.html\">Posts</a>"
+     "<navigation id=\"menu\">"
+     (mapconcat 'identity
+                '("<a href=\"/index.html\">Home</a>"
+                  "<a href=\"/archive.html\">Posts</a>"
+                  "<a href=\"#preamble\">↑ Top ↑</a>")
+                " | ")
      "</navigation>"))
+
+  (defun org-blog-preamble (info)
+    "Pre-amble for whole blog."
+    (concat
+     "<div class=\"content\">"
+     "<strong><a href=\"/index.html\">Her.esy.fun</a></strong>"
+     (when-let ((date (get-from-info info :date)))
+       (format " - <span class=\"article-date\">%s</span>" date))
+     " - <a href=\"#menu\">↓ menu ↓</a>"
+     "</div>"))
 
   (defun get-from-info (info k)
     (let ((i (car (plist-get info k))))
@@ -75,26 +80,30 @@ lists, tables, etc...) [[file:./demo.org][here]].
 
   (defun org-blog-postamble (info)
     "Post-amble for whole blog."
-    (concat "<footer>"
-            (when-let ((author (get-from-info info :author)))
-              (if-let ((email (plist-get info :email)))
-                  (format "<div class=\"author\">Author: <a href=\"mailto:%s\">%s</a></div>" email author)
-                (format "<div class=\"author\">Author: %s</div>" author)))
-            (when-let ((date (get-from-info info :date)))
-              (format "<div class=\"date\">Created: %s</div>" date))
-            (when-let ((keywords (plist-get info :keywords)))
-              (format "<div class=\"keywords\">Keywords: <code>%s</code></div>" keywords))
-            (format "<div class=\"date\">Generated: %s</div>"
-                    (format-time-string "%Y-%m-%d %H:%M:%S"))
-            (format (concat "<div class=\"creator\"> Generated with "
-                            "<a href=\"https://www.gnu.org/software/emacs/\" target=\"_blank\" rel=\"noopener noreferrer\">Emacs %s</a>, "
-                            "<a href=\"http://spacemacs.org\" target=\"_blank\" rel=\"noopener noreferrer\">Spacemacs %s</a>, "
-                            "<a href=\"http://orgmode.org\" target=\"_blank\" rel=\"noopener noreferrer\">Org Mode %s</a>"
-                            "</div>")
-                    emacs-version spacemacs-version org-version)
-            "</footer>"
-            "<hr/>"
-            (menu)))
+    (concat
+     "<div class=\"content\">"
+     "<footer>"
+     "<hr/>"
+     (when-let ((author (get-from-info info :author)))
+       (if-let ((email (plist-get info :email)))
+           (format "<div class=\"author\">Author: <a href=\"mailto:%s\">%s</a></div>" email author)
+         (format "<div class=\"author\">Author: %s</div>" author)))
+     (when-let ((date (get-from-info info :date)))
+       (format "<div class=\"date\">Created: %s</div>" date))
+     (when-let ((keywords (plist-get info :keywords)))
+       (format "<div class=\"keywords\">Keywords: <code>%s</code></div>" keywords))
+     (format "<div class=\"date\">Generated: %s</div>"
+             (format-time-string "%Y-%m-%d %H:%M:%S"))
+     (format (concat "<div class=\"creator\"> Generated with "
+                     "<a href=\"https://www.gnu.org/software/emacs/\" target=\"_blank\" rel=\"noopener noreferrer\">Emacs %s</a>, "
+                     "<a href=\"http://spacemacs.org\" target=\"_blank\" rel=\"noopener noreferrer\">Spacemacs %s</a>, "
+                     "<a href=\"http://orgmode.org\" target=\"_blank\" rel=\"noopener noreferrer\">Org Mode %s</a>"
+                     "</div>")
+             emacs-version spacemacs-version org-version)
+     "<hr/>"
+     "</footer>"
+     (menu)
+     "</div>"))
 
   (defun org-blog-sitemap-format-entry (entry _style project)
     "Return string for each ENTRY in PROJECT."
@@ -194,4 +203,3 @@ lists, tables, etc...) [[file:./demo.org][here]].
                'my-org-export-add-target-blank-to-http-links)
 
 #+end_src
-
