@@ -27,7 +27,7 @@ With [[http://orgmode.org][org-mode]]
 You can have a basic demo about most supported content styles/type (paragraphs,
 lists, tables, etc...) [[file:./demo.org][here]].
 
-* Code magic                                   :noexport:
+* Code magic                                                                            :noexport:
 #+begin_src elisp :results none
   (require 'org)
   (require 'ox-publish)
@@ -63,6 +63,22 @@ lists, tables, etc...) [[file:./demo.org][here]].
                 " | ")
      "</navigation>"))
 
+
+  (defun str-time-to-year-float (date-str)
+    (/ (float-time
+        (apply 'encode-time
+               (mapcar (lambda (x) (if (null x) 0 x))
+                       (parse-time-string date-str))))
+       (* 365.25 24 60 60)))
+
+  (defvar blog-creation-date "2019-07-01")
+
+  (defun y-date (date-str)
+    "Number of year since the begining of this blog"
+    (let ((y (- (str-time-to-year-float date-str)
+                (str-time-to-year-float blog-creation-date))))
+       (format "∆t=%.2f" y)))
+
   (defun org-blog-preamble (info)
     "Pre-amble for whole blog."
     (concat
@@ -89,7 +105,7 @@ lists, tables, etc...) [[file:./demo.org][here]].
            (format "<div class=\"author\">Author: <a href=\"mailto:%s\">%s</a></div>" email author)
          (format "<div class=\"author\">Author: %s</div>" author)))
      (when-let ((date (get-from-info info :date)))
-       (format "<div class=\"date\">Created: %s</div>" date))
+       (format "<div class=\"date\">Created: %s (%s)</div>" date (y-date date)))
      (when-let ((keywords (plist-get info :keywords)))
        (format "<div class=\"keywords\">Keywords: <code>%s</code></div>" keywords))
      (format "<div class=\"date\">Generated: %s</div>"
@@ -201,5 +217,10 @@ lists, tables, etc...) [[file:./demo.org][here]].
 
   (add-to-list 'org-export-filter-link-functions
                'my-org-export-add-target-blank-to-http-links)
-
 #+end_src
+
+#+begin_src elisp :results value verbatim
+#+end_src
+
+#+RESULTS:
+: 42.362765229295
