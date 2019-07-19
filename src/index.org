@@ -19,15 +19,16 @@ But I dislike the new trend of design space and white colors.
 It doesn't really fit the spirit of my website.
 So it looks a bit more like a text into a colored terminal.
 
-I know light is more usual, but I prefer to use a dark background as it will
-tend to consume slightly less energy for some screen technologies.
-
-With [[http://orgmode.org][org-mode]]
-
+The CSS support dark/light theme.
+If unknown, the default color scheme is dark in the hope to save a bit of energy
+from screen.
 You can have a basic demo about most supported content styles/type (paragraphs,
 lists, tables, etc...) [[file:./demo.org][here]].
 
+I write all the content with [[http://orgmode.org][org-mode]].
+
 * Code magic                                                                            :noexport:
+
 #+begin_src elisp :results none
   (require 'org)
   (require 'ox-publish)
@@ -37,8 +38,8 @@ lists, tables, etc...) [[file:./demo.org][here]].
 
   (defun org-blog-prepare (project-plist)
     "With help from `https://github.com/howardabrams/dot-files'.
-              Touch `index.org' to rebuilt it.
-              Argument `PROJECT-PLIST' contains information about the current project."
+                Touch `index.org' to rebuilt it.
+                Argument `PROJECT-PLIST' contains information about the current project."
     (let* ((base-directory (plist-get project-plist :base-directory))
            (buffer (find-file-noselect (expand-file-name "index.org" base-directory) t)))
       (with-current-buffer buffer
@@ -77,7 +78,7 @@ lists, tables, etc...) [[file:./demo.org][here]].
     "Number of year since the begining of this blog"
     (let ((y (- (str-time-to-year-float date-str)
                 (str-time-to-year-float blog-creation-date))))
-       (format "∆t=%.2f" y)))
+      (format "∆t=%.2f" y)))
 
   (defun org-blog-preamble (info)
     "Pre-amble for whole blog."
@@ -218,9 +219,3 @@ lists, tables, etc...) [[file:./demo.org][here]].
   (add-to-list 'org-export-filter-link-functions
                'my-org-export-add-target-blank-to-http-links)
 #+end_src
-
-#+begin_src elisp :results value verbatim
-#+end_src
-
-#+RESULTS:
-: 42.362765229295
