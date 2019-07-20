@@ -1,5 +1,4 @@
 /* CSS to be used for HTML Org-mode export
-
    Author: Yann Esposito
 */
 body {
@@ -24,42 +23,68 @@ body {
     padding: 10px 0;
     opacity: 0.5;
 }
-#preamble:focus,#postamble:focus,
-#preamble:hover,#postamble:hover {
+#preamble:focus,#postamble:focus, #preamble:hover,#postamble:hover {
     opacity:1;
 }
 #content,.content {
     max-width: 50em;
     margin: 0 auto;
+    padding: 10px;
 }
 
-h1, h2, h3, h4, h5, h6,
-pre, code, blockquote, ol, ul,
-ol ol, ul ul, ul ol, ol ul, li,
-p, section, header, footer {
+h1, h2, h3, h4, h5, h6, pre, code, blockquote, ol, ul, ol ol, ul ul, ul ol, ol
+ul, li, p, section, header, footer {
     float: none;
     margin: 0;
     padding: 0;
 }
 
-h1, h2, h3, h4, h5, h6,
-pre, code, blockquote,
-p, ul, ol, section, header, .figure {
+h1, h2, h3, h4, h5, h6, pre, code, blockquote, p, ul, ol, section, header,
+.figure {
     margin-top: 20px;
     margin-bottom: 20px;
 }
-h1 { font-size: 1em; }
-h2 { font-size: 1em; }
-h3 { font-size: 1em; }
-h4 { font-size: 1em; }
-h5 { font-size: 1em; }
-h6 { font-size: 1em; }
-h1::before { content: "# "; }
-h2::before { content: "## "; }
-h3::before { content: "### "; }
-h4::before { content: "#### "; }
-h5::before { content: "##### "; }
-h6::before { content: "###### "; }
+
+figure {
+    margin: 20px 0px;
+}
+
+h1 {
+    font-size: 1em;
+}
+h2 {
+    font-size: 1em;
+}
+h3 {
+    font-size: 1em;
+}
+h4 {
+    font-size: 1em;
+}
+h5 {
+    font-size: 1em;
+}
+h6 {
+    font-size: 1em;
+}
+h1::before {
+    content: "# ";
+}
+h2::before {
+    content: "## ";
+}
+h3::before {
+    content: "### ";
+}
+h4::before {
+    content: "#### ";
+}
+h5::before {
+    content: "##### ";
+}
+h6::before {
+    content: "###### ";
+}
 hr {
     position: relative;
     height: 20px;
@@ -93,7 +118,9 @@ pre::before {
 code {
     font-family: menlo, monospace;
 }
-pre code { background: none; }
+pre code {
+    background: none;
+}
 blockquote {
     margin-left: 0;
     position: relative;
@@ -101,8 +128,12 @@ blockquote {
     padding-left: 2ch;
     overflow: hidden;
 }
-blockquote *:first-child {margin-top: 0;}
-blockquote *:last-child {margin-bottom: 0;}
+blockquote *:first-child {
+    margin-top: 0;
+}
+blockquote *:last-child {
+    margin-bottom: 0;
+}
 blockquote:after {
     content: ">\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>";
     white-space: pre;
@@ -112,12 +143,13 @@ blockquote:after {
     line-height: 20px;
     opacity: 0.3;
 }
-
 li {
     position: relative;
     display: block;
 }
-li li { padding-left: 20px; }
+li li {
+    padding-left: 20px;
+}
 ul > li:before {
     content: "– ";
     font-weight: bold;
@@ -157,6 +189,8 @@ table {
     margin: 20px 0;
     border-collapse: collapse;
     border: solid 1px;
+    display: block;
+    overflow: scroll;
 }
 td, th {
     height: 20px;
@@ -170,7 +204,7 @@ navigation {
     font-weight: bold;
     font-family: menlo, monospace;
     display: block;
-    margin: 0 0 20px 0;
+    margin: 10px 0;
 }
 navigation > a {
     margin-right: 10px;
@@ -185,18 +219,21 @@ navigation > a {
 }
 
 /* org mode statuses */
-.timestamp-wrapper { font-family: menlo, monospace; font-size: 12px; }
-.todo, .done { font-family: menlo, monospace;
-               font-size: 12px;
-               font-weight: bold;
-               line-height: 20px;
-               padding: 1px 1ex;
-             }
+.timestamp-wrapper {
+    font-family: menlo, monospace;
+    font-size: 12px;
+}
+.todo, .done {
+    font-family: menlo, monospace;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 20px;
+    padding: 1px 1ex;
+}
 
-/* colors */
-
+/* colors theme */
 :root {
-    color-scheme: light dark;
+    color-scheme: light dark; /* support color scheme */
     --base03:    #002b36;
     --base02:    #073642;
     --base01:    #586e75;
@@ -223,9 +260,10 @@ navigation > a {
     --todo-txt: #000;
 }
 
+/* org colors */
 @media (prefers-color-scheme: light) {
     :root {
-        --main-background: #fafafa;
+        --main-background: #fefaf0; /* 0.5 lighter than #fdf6e3 */
         --main-foreground: var(--base01);
         --second-foreground: var(--base00);
         --reveal-background: var(--base3);
@@ -238,33 +276,73 @@ body {
     background: var(--main-background);
     color: var(--main-foreground);
 }
-a, a:visited { color: var(--base1); }
-a:hover, a:active, a:focus { color: var(--yellow); }
-thead { background-color: var(--reveal-background);
-        color: var(--second-fg); }
-tr:hover { background-color: var(--reveal-background); }
+a, a:visited {
+    color: var(--base1);
+}
+a:hover, a:active, a:focus {
+    color: var(--yellow);
+}
+thead {
+    background-color: var(--reveal-background);
+    color: var(--second-fg);
+}
+tr:hover {
+    background-color: var(--reveal-background);
+}
 #postamble:hover, #preamble:hover {
     background-color: var(--reveal-background);
     border-color:  var(--border-color);
 }
-h1 { color: var(--violet);}
-h2 { color: var(--magenta);}
-h3 { color: var(--red);}
-h4 { color: var(--orange);}
-h5 { color: var(--yellow);}
-h6 { color: var(--green);}
-table, td, th { border-color: var(--border-color); }
-code { background: var(--reveal-background); }
+h1 {
+    color: var(--violet);
+}
+h2 {
+    color: var(--magenta);
+}
+h3 {
+    color: var(--red);
+}
+h4 {
+    color: var(--orange);
+}
+h5 {
+    color: var(--yellow);
+}
+h6 {
+    color: var(--green);
+}
+table, td, th {
+    border-color: var(--border-color);
+}
+code {
+    background: var(--reveal-background);
+}
 #preamble,#postamble {
     border-color: var(--transparent);
 }
 /* -------- */
 /* org colors */
-.todo, .done { color: var(--todo-txt); }
-.TODO { background-color: var(--red); }
-.IN_PROGRESS { background-color: var(--yellow); }
-.IN_REVIEW { background-color: var(--cyan); }
-.HOLD { background-color: var(--violet); }
-.WAITING { background-color: var(--violet); }
-.DONE { background-color: var(--green); }
-.CANCELED { background-color: var(--magenta); }
+.todo, .done {
+    color: var(--todo-txt);
+}
+.TODO {
+    background-color: var(--red);
+}
+.IN_PROGRESS {
+    background-color: var(--yellow);
+}
+.IN_REVIEW {
+    background-color: var(--cyan);
+}
+.HOLD {
+    background-color: var(--violet);
+}
+.WAITING {
+    background-color: var(--violet);
+}
+.DONE {
+    background-color: var(--green);
+}
+.CANCELED {
+    background-color: var(--magenta);
+}
