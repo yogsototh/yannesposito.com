@@ -38,8 +38,8 @@ I write all the content with [[http://orgmode.org][org-mode]].
 
   (defun org-blog-prepare (project-plist)
     "With help from `https://github.com/howardabrams/dot-files'.
-                Touch `index.org' to rebuilt it.
-                Argument `PROJECT-PLIST' contains information about the current project."
+                    Touch `index.org' to rebuilt it.
+                    Argument `PROJECT-PLIST' contains information about the current project."
     (let* ((base-directory (plist-get project-plist :base-directory))
            (buffer (find-file-noselect (expand-file-name "index.org" base-directory) t)))
       (with-current-buffer buffer
@@ -53,14 +53,15 @@ I write all the content with [[http://orgmode.org][org-mode]].
      "<link rel=\"alternative\" type=\"application/rss+xml\" title=\"Subscribe to articles\" href=\"/archives.xml\" />"
      "<link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/favicon.ico\">"))
 
-  (defun menu ()
+  (defun menu (lst)
     "Blog menu"
     (concat
-     "<navigation id=\"menu\">"
+     "<navigation class=\"menu\">"
      (mapconcat 'identity
-                '("<a href=\"/index.html\">Home</a>"
-                  "<a href=\"/archive.html\">Posts</a>"
-                  "<a href=\"#preamble\">↑ Top ↑</a>")
+                (append
+                 '("<a href=\"/index.html\">Home</a>"
+                   "<a href=\"/archive.html\">Posts</a>")
+                 lst)
                 " | ")
      "</navigation>"))
 
@@ -84,10 +85,12 @@ I write all the content with [[http://orgmode.org][org-mode]].
     "Pre-amble for whole blog."
     (concat
      "<div class=\"content\">"
-     "<strong><a href=\"/index.html\">Her.esy.fun</a></strong>"
+     (menu '("<a href=\"#postamble\">↓ bottom ↓</a>"))
+     "<h1>"
+     (format "%s" (plist-get info :title))
      (when-let ((date (get-from-info info :date)))
        (format " - <span class=\"article-date\">%s</span>" date))
-     " - <a href=\"#menu\">↓ menu ↓</a>"
+     "</h1>"
      "</div>"))
 
   (defun get-from-info (info k)
@@ -100,6 +103,7 @@ I write all the content with [[http://orgmode.org][org-mode]].
       (cond ((eq 0 r) (format "%c" c))
             ((< 0 r 10) (format "&#%d;" c))
             (t (format "&#x%X;" c)))))
+
   (defun obfuscate-html (txt)
     (apply 'concat
            (mapcar 'rand-obfs txt)))
@@ -111,7 +115,8 @@ I write all the content with [[http://orgmode.org][org-mode]].
      "<footer>"
      (when-let ((author (get-from-info info :author)))
        (if-let ((email (plist-get info :email)))
-           (format "<div class=\"author\">Author: <a href=\"mailto:%s\">%s</a></div>" 
+           (format "<div class=\"author\">Author: <a href=\"%s%s\">%s</a></div>"
+                   (obfuscate-html "mailto:")
                    (obfuscate-html email)
                    (obfuscate-html author))
          (format "<div class=\"author\">Author: %s</div>" author)))
@@ -128,7 +133,7 @@ I write all the content with [[http://orgmode.org][org-mode]].
                      "</div>")
              emacs-version spacemacs-version org-version)
      "</footer>"
-     (menu)
+     (menu '("<a href=\"#preamble\">↑ Top ↑</a>"))
      "</div>"))
 
   (defun org-blog-sitemap-format-entry (entry _style project)
@@ -172,7 +177,7 @@ I write all the content with [[http://orgmode.org][org-mode]].
            :publishing-function org-html-publish-to-html
 
            :with-toc nil
-           :with-title t
+           :with-title nil
            :with-date t
            :section-numbers nil
            :html-doctype "html5"
@@ -230,8 +235,8 @@ I write all the content with [[http://orgmode.org][org-mode]].
 #+end_src
 
 #+begin_src elisp :results verbatim
-  (obfuscate-html "yann.esposito@gmail.com")
+  (append nil '("foo"))
 #+end_src
 
 #+RESULTS:
-: "&#x79;&#97;&#x6E;n&#46;&#x65;&#115;&#x70;&#x6F;&#x73;&#105;&#x74;&#x6F;&#x40;&#103;&#x6D;&#x61;&#x69;&#x6C;&#46;&#99;&#111;&#x6D;"
+: ("foo")
