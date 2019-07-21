@@ -4,7 +4,10 @@
 #+DATE: 2019-07-04
 #+KEYWORDS: programming, blog, org-mode
 
-tl;dr: [[#solution][For the impatient]]
+#+begin_quote
+/tl;dr/: [[#solution][Full code for the impatient↓]]. Read the full blog post to have all the details.
+#+end_quote
+
 
 This is the first article using my new blog system.
 
@@ -53,13 +56,11 @@ You can add a task quite easily while doing other work in emacs.
 
 * How?
 
+** Basic Blog
+
 I have a code block in my =index.org= page that I do not export containing
 the elisp code I use to load all the information needed by =org-publish=.
-
-#+begin_src elisp :results none
-...#+begin_src elisp :results none
-...#+end_src
-#+end_src
+Do not export an org-mode subtree you can simply tag it with =:noexport:=.
 
 =org-publish= suppose that you'll export one html page per org file.
 You need to provide a minimum set of information:
@@ -67,12 +68,17 @@ You need to provide a minimum set of information:
 - base directory that should contain your org files
 - publish directory, where you will export the html from the org files
 
-#+begin_src elisp :results none
+A very basic publish rule would be:
+
+#+begin_src org
+,* Magic Script                     :noexport:
+,#+begin_src elisp :results none
   (setq org-publish-project-alist
         '(("orgfiles"
            :base-directory "/users/me/blog/src"
            :publishing-directory "/users/me/blog/_site"
            :recursive t)))
+,#+end_src
 #+end_src
 
 So now, if you put org files in the base directory it will copy
@@ -94,6 +100,7 @@ Notice, org-publish does what you expect and do not re-export all files
 each time but only the one that have changed.
 #+end_quote
 
+** Relative Paths
 
 A first issue with this is that I don't want to put that in my emacs
 preferences.
@@ -118,17 +125,14 @@ Now anyone can clone the repository.
 Open my =index.org= file, and execute the code in it by =C-e C-e= and then will
 be able to publish the website locally in the =_site= directory.
 
-Until there this is nice
+** Assets
 
-But generally you want a bit more features than that for a blog.
+Generally you want a bit more features than that for publishing a blog.
 Typically you would like to have a common template, an header, some CSS.
 
 For that you need to work a bit more.
 First, important thing, add an org publish section to publish your assets (CSS,
 images, etc...)
-
-
-asdf
 
 #+begin_src elisp
   (setq base-dir (concat (projectile-project-root) "src"))
@@ -158,7 +162,20 @@ asdf
   :CUSTOM_ID: solution
   :END:
 
-#+begin_src elisp :results none
+#+begin_src org
+,* Exec the script with ~C-c C-c~  :noexport:
+,#+begin_src elisp :results none
+  ;; Global variables
+  (setq domainname "https://her.esy.fun")
+  (setq base-dir (concat (projectile-project-root) "src"))
+  (setq publish-dir (concat (projectile-project-root) "_site"))
+  (setq assets-dir (concat base-dir "/assets"))
+  (setq publish-assets-dir (concat publish-dir "/assets"))
+  (setq rss-dir base-dir)
+  (setq publish-rss-dir publish-dir)
+  (setq css-name "minimalist.css")
+
+
   (require 'org)
   (require 'ox-publish)
   (require 'ox-html)
@@ -177,7 +194,7 @@ asdf
 
   (defvar org-blog-head
     (concat
-     "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/minimalist.css\"/>"
+     "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/" css-name "\"/>"
      "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
      "<link rel=\"alternative\" type=\"application/rss+xml\" title=\"Subscribe to articles\" href=\"/archives.xml\" />"
      "<link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/favicon.ico\">"))
@@ -194,7 +211,6 @@ asdf
                 " | ")
      "</navigation>"))
 
-
   (defun str-time-to-year-float (date-str)
     (/ (float-time
         (apply 'encode-time
@@ -204,7 +220,7 @@ asdf
 
   (defvar blog-creation-date "2019-07-01")
 
-  (defun y-date (date-str)
+  (defun delta-date (date-str)
     "Number of year since the begining of this blog"
     (let ((y (- (str-time-to-year-float date-str)
                 (str-time-to-year-float blog-creation-date))))
@@ -250,7 +266,7 @@ asdf
                    (obfuscate-html author))
          (format "<div class=\"author\">Author: %s</div>" author)))
      (when-let ((date (get-from-info info :date)))
-       (format "<div class=\"date\">Created: %s (%s)</div>" date (y-date date)))
+       (format "<div class=\"date\">Created: %s (%s)</div>" date (delta-date date)))
      (when-let ((keywords (plist-get info :keywords)))
        (format "<div class=\"keywords\">Keywords: <code>%s</code></div>" keywords))
      (format "<div class=\"date\">Generated: %s</div>"
@@ -286,13 +302,6 @@ asdf
                        "\n")
             "\n#+end_archive\n"))
 
-  (setq base-dir (concat (projectile-project-root) "src"))
-  (setq publish-dir (concat (projectile-project-root) "_site"))
-  (setq assets-dir (concat base-dir "/assets"))
-  (setq publish-assets-dir (concat publish-dir "/assets"))
-  (setq rss-dir base-dir)
-  (setq publish-rss-dir publish-dir)
-  (setq domainname "https://her.esy.fun")
   (setq org-publish-project-alist
         `(("orgfiles"
            :base-directory ,base-dir
@@ -361,5 +370,6 @@ asdf
 
   (add-to-list 'org-export-filter-link-functions
                'my-org-export-add-target-blank-to-http-links)
+,#+end_src
 #+end_src
 
