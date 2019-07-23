@@ -3,6 +3,7 @@
 #+EMAIL: yann.esposito@gmail.com
 #+DATE: 2019-07-04
 #+KEYWORDS: programming, blog, org-mode
+#+OPTIONS: auto-id:t
 
 #+begin_quote
 /tl;dr/: [[#solution][Full code for the impatient↓]]. Read the full blog post to have all the details.
@@ -22,6 +23,9 @@ I am became a quite extensive emacs user now. So using org-mode and org-publish
 is a bit like not having to install any 3rd party software.
 
 * Why?
+  :PROPERTIES:
+  :CUSTOM_ID: why--8eb9
+  :END:
 
 Everything started when I was hired in a place where I was given a terrible
 keyboard.
@@ -55,11 +59,24 @@ You can add a task quite easily while doing other work in emacs.
 [fn:vim] I wrote this article to help people use vim: [[http://yannesposito.com/Scratch/en/blog/Learn-Vim-Progressively/][learn vim progressively]]
 
 * How?
+  :PROPERTIES:
+  :CUSTOM_ID: how--831e
+  :END:
 
 ** Basic Blog
+   :PROPERTIES:
+   :CUSTOM_ID: basic-blog-a1fc
+   :END:
 
-I have a code block in my =index.org= page that I do not export containing
-the elisp code I use to load all the information needed by =org-publish=.
+I put the need minimal code in a =.project.el= file of my blog repository.
+I used the solution given [[https://francismurillo.github.io/2017-02-15-Project-Script-Loader/][here]] (see direct link to the code snippet) to eval the
+content of that file each time I enter into this project.
+
+But even before that, I simply put the code in has an elisp code block of my
+=index.org= that I exectued with =C-c C-c=.
+
+I have a code block in my =index.org= page that I do not export containing the
+elisp code I use to load all the information needed by =org-publish=.
 Do not export an org-mode subtree you can simply tag it with =:noexport:=.
 
 =org-publish= suppose that you'll export one html page per org file.
@@ -101,6 +118,9 @@ each time but only the one that have changed.
 #+end_quote
 
 ** Relative Paths
+   :PROPERTIES:
+   :CUSTOM_ID: relative-paths-d145
+   :END:
 
 A first issue with this is that I don't want to put that in my emacs
 preferences.
@@ -126,6 +146,9 @@ Open my =index.org= file, and execute the code in it by =C-e C-e= and then will
 be able to publish the website locally in the =_site= directory.
 
 ** Assets
+   :PROPERTIES:
+   :CUSTOM_ID: assets-cf7d
+   :END:
 
 Generally you want a bit more features than that for publishing a blog.
 Typically you would like to have a common template, an header, some CSS.
@@ -157,14 +180,41 @@ images, etc...)
           ("blog" :components ("orgfiles" "assets"))))
 #+end_src
 
+
+#+begin_src elisp
+  (setq base-dir           (concat (projectile-project-root) "src"))
+  (setq publish-dir        (concat (projectile-project-root) "_site"))
+  (setq assets-dir         (concat base-dir "/assets"))
+  (setq publish-assets-dir (concat publish-dir "/assets"))
+  (setq org-publish-project-alist
+        `(("orgfiles"
+           :base-directory ,base-dir
+           :exclude ".*drafts/.*"
+           :base-extension "org"
+           :publishing-directory ,publish-dir
+           :recursive t)
+
+          ("assets"
+           :base-directory ,assets-dir
+           :base-extension ".*"
+           :publishing-directory ,publish-assets-dir
+           :publishing-function org-publish-attachment
+           :recursive t)
+
+          ("blog" :components ("orgfiles" "assets"))))
+#+end_src
+
+With that you will copy the assets and export org file to html.
+You can do both by selecting `blog` when doing an `org-publish`.
+
+That's better. But for a blog you also generally want to have your own CSS.
+
 * Current Solution
   :PROPERTIES:
-  :CUSTOM_ID: solution
+  :CUSTOM_ID: current-solution-0a92
   :END:
 
-#+begin_src org
-,* Exec the script with ~C-c C-c~  :noexport:
-,#+begin_src elisp :results none
+#+begin_src elisp
   ;; Global variables
   (setq domainname "https://her.esy.fun")
   (setq base-dir (concat (projectile-project-root) "src"))
@@ -370,6 +420,5 @@ images, etc...)
 
   (add-to-list 'org-export-filter-link-functions
                'my-org-export-add-target-blank-to-http-links)
-,#+end_src
 #+end_src
 
