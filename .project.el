@@ -4,6 +4,8 @@
 (require 'org-element)
 (require 'ox-rss)
 
+(setq org-link-file-path-type 'relative)
+
 (defun org-blog-prepare (project-plist)
   "With help from `https://github.com/howardabrams/dot-files'.
                     Touch `index.org' to rebuilt it.
