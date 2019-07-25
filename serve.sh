@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-cd _site && sws --local --no-auth . --port 5443
+cd _site && sws --local --no-auth . --port 3001

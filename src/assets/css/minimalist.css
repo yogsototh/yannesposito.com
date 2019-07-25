@@ -1,10 +1,24 @@
 /* CSS to be used for HTML Org-mode export
    Author: Yann Esposito
 */
+
+/* Fonts */
 body {
-    font-family: menlo, monospace;
+    font-family: Menlo, Monaco, monospace;
     font-size: 13px;
-    line-height: 20px;
+    line-height: 18px;
+}
+code {
+    font-family: Menlo, Monaco, monospace;
+}
+pre, pre code {
+    font-family: Menlo, Monaco, monospace;
+}
+.todo, .done {
+    font-family: Menlo, Monaco, monospace;
+}
+/* Layout */
+body {
     margin: 0;
     padding: 0;
     border: 0;
@@ -103,28 +117,18 @@ hr {
 }
 hr:after {
     content: "----------------------------------------------------------------------------------------------------";
-    font-family: menlo, monospace;
     position: absolute;
-    opacity: 0.3;
     top: 0;
     left: 0;
-    font-size: 14px;
-    line-height: 20px;
     width: 100%;
     word-wrap: break-word;
 }
 pre { max-width: 100%; overflow: scroll; }
 pre::after,pre::before {
     content: "~~~~~~~~~";
-    font-size: 16px;
-    line-height: 20px;
-    display: block;
-    opacity: 0.3; }
+    display: block; }
 pre::before {
     content: "~~~~~~~~~ " attr(class);
-}
-code {
-    font-family: menlo, monospace;
 }
 pre code {
     background: none;
@@ -148,7 +152,6 @@ blockquote:after {
     position: absolute;
     top: 0;
     left: 0;
-    line-height: 20px;
     opacity: 0.3;
 }
 li {
@@ -210,7 +213,6 @@ td, th {
 }
 navigation {
     font-weight: bold;
-    font-family: menlo, monospace;
     display: block;
     margin: 10px 0;
 }
@@ -219,7 +221,6 @@ navigation > a {
 }
 .footpara { display: inline; }
 .footdef > sup {
-    font-size: 16px;
     vertical-align: middle;
 }
 .footdef > sup::after {
@@ -228,14 +229,11 @@ navigation > a {
 
 /* org mode statuses */
 .timestamp-wrapper {
-    font-family: menlo, monospace;
     font-size: 12px;
 }
 .todo, .done {
-    font-family: menlo, monospace;
     font-size: 12px;
     font-weight: bold;
-    line-height: 20px;
     padding: 1px 1ex;
 }
 
@@ -261,8 +259,9 @@ navigation > a {
     --transparent: rgba(255,255,255,0);
 
     --main-background: #00151b; /* 0.5 darker than #002b36; */
-    --main-foreground: var(--base0);
+    --main-foreground: var(--base1);
     --second-foreground: var(--base0);
+    --soft-foreground: var(--base01);
     --reveal-background: var(--base03);
     --border-color: var(--base02);
     --todo-txt: #000;
@@ -274,6 +273,7 @@ navigation > a {
         --main-background: #fefaf0; /* 0.5 lighter than #fdf6e3 */
         --main-foreground: var(--base01);
         --second-foreground: var(--base00);
+        --soft-foreground: var(--base1);
         --reveal-background: var(--base3);
         --border-color: var(--base2);
         --todo-txt: #FFF;
@@ -294,6 +294,9 @@ body {
 }
 a, a:visited {
     color: var(--second-foreground);
+}
+pre::after,pre::before,hr:after {
+    color: var(--soft-foreground);
 }
 a:hover, a:active, a:focus {
     color: var(--yellow);
