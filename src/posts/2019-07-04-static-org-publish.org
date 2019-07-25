@@ -68,9 +68,10 @@ You can add a task quite easily while doing other work in emacs.
    :CUSTOM_ID: basic-blog-a1fc
    :END:
 
-I put the need minimal code in a =.project.el= file of my blog repository.
-I used the solution given [[https://francismurillo.github.io/2017-02-15-Project-Script-Loader/][here]] (see direct link to the code snippet) to eval the
-content of that file each time I enter into this project.
+I put the need minimal code in a =.project.el.gpg= file of my blog repository.
+Inspired by this [[https://francismurillo.github.io/2017-02-15-Project-Script-Loader/][blog post]] I enhanced this version to be both more user friendly
+and secure (see [[#digression]]).
+
 
 But even before that, I simply put the code in has an elisp code block of my
 =index.org= that I exectued with =C-c C-c=.
@@ -169,30 +170,6 @@ images, etc...)
            :recursive t
            :base-extension "org"
            :exclude ".*drafts/.*")
-
-          ("assets"
-           :base-directory ,assets-dir
-           :base-extension ".*"
-           :publishing-directory ,publish-assets-dir
-           :publishing-function org-publish-attachment
-           :recursive t)
-
-          ("blog" :components ("orgfiles" "assets"))))
-#+end_src
-
-
-#+begin_src elisp
-  (setq base-dir           (concat (projectile-project-root) "src"))
-  (setq publish-dir        (concat (projectile-project-root) "_site"))
-  (setq assets-dir         (concat base-dir "/assets"))
-  (setq publish-assets-dir (concat publish-dir "/assets"))
-  (setq org-publish-project-alist
-        `(("orgfiles"
-           :base-directory ,base-dir
-           :exclude ".*drafts/.*"
-           :base-extension "org"
-           :publishing-directory ,publish-dir
-           :recursive t)
 
           ("assets"
            :base-directory ,assets-dir
@@ -421,4 +398,95 @@ That's better. But for a blog you also generally want to have your own CSS.
   (add-to-list 'org-export-filter-link-functions
                'my-org-export-add-target-blank-to-http-links)
 #+end_src
+
+* Digression
+  :PROPERTIES:
+  :CUSTOM_ID: digression
+  :END:
+
+Auto loading a =.el= file when entering in a project.
+It should be easy and safe.
+
+The best solution I found.
+Save your =.el= file as a =.el.gpg= file.
+With =epa= emacs should encrypt the file for you using your own private key.
+Great! Now we simply verify the file exists and load it only if it is encrypted
+with one of you /trusted keys/.
+The list of key fingerprint you trust is a configuration.
+
+When opening a new file via projectile or dired
+
+1. check the =.project.el.gpg= file is not already loaded for the current project
+2. check the =.project.el.gpg= file exists
+3. check the =.project.el.gpg= file is encrypted with a trusted key
+4. decrypt and load =.project.el.gpg=
+
+That's it.
+
+You simply need to set the =y/trusted-gpg-key-fingerprints= variable with the
+list of your own fingerprint.
+You can get a list of them with =gpg --list-secret-keys=.
+
+Now you can be happy, this is really safe, in the sense that if you clone a new
+project from the internet with a =.project.el.gpg= file in it.
+That file won't be run on your system.
+
+Of course if you want to share that =.el= to other people, you need to adapt.
+But for my use case, this is perfect.
+
+#+begin_src elisp
+  (defvar y/trusted-gpg-key-fingerprints
+    '("448E9FEF4F5B86DE79C1669B7B19A4C650D59646")
+    "The list of GPG fingerprint you trust when decrypting a gpg file.
+    You can retrieve the fingerprints of your own private keys with:
+    `gpg --list-secret-keys' (take care of removing the spaces when copy/pasting here)")
+
+  (defun y/get-encryption-key (file)
+    "given a gpg encrypted file, returns the fingerprint of they
+     key that encrypted it"
+    (string-trim-right
+     (shell-command-to-string
+      (concat
+       "gpg --status-fd 1 --decrypt -o /dev/null " file " 2>/dev/null"
+       "|grep DECRYPTION_KEY"
+       "|awk '{print $4}'"))))
+
+  (defun y/trusted-gpg-origin-p (file)
+    "Returns true if the file is encrypted with a trusted key"
+    (member (y/get-encryption-key file) y/trusted-gpg-key-fingerprints))
+
+  (defun y/project-el-auto-load ()
+    (with-eval-after-load 'projectile
+      (defconst y/project-file ".project.el.gpg"
+        "Filename looked after to be loaded and evaluated.")
+      (defvar y/loaded-projects (list)
+        "Projects that have been loaded by `y/load-project-file'.")
+      (defun y/load-project-file ()
+        "Loads the `y/project-file' for a project. This is run
+         once after the project is loaded signifying project setup."
+        (interactive)
+        (when (projectile-project-p)
+          (lexical-let* ((project-root (projectile-project-root))
+                         (project-init-file (expand-file-name y/project-file project-root)))
+            (when (and (not (member project-root y/loaded-projects)) ;; project file not already loaded
+                       (file-exists-p project-init-file) ;; project file exists
+                       (y/trusted-gpg-origin-p project-init-file)) ;; project file is tursted
+              (message "Loading project init file for %s" (projectile-project-name))
+              (condition-case ex
+                  (progn (load project-init-file)
+                         (add-to-list 'y/loaded-projects project-root)
+                         (message "%s loaded successfully" project-init-file))
+                ('error
+                 (message
+                  "There was an error loading %s: %s"
+                  project-init-file
+                  (error-message-string ex))))))))
+      ;; for some obscure reason there is not really a working hook
+      ;; to be used with projectile to launch the `y/load-project-file'
+      ;; only when switching to a new project.
+      ;; Thus the `y/loaded-projects' state.
+      (add-hook 'find-file-hook #'y/load-project-file t)
+      (add-hook 'dired-mode-hook #'y/load-project-file t)))
+#+end_src
+
 
