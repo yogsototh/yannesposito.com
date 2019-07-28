@@ -14,13 +14,12 @@
 (defvar y/trusted-gpg-key-fingerprints
   '("448E9FEF4F5B86DE79C1669B0000000000000000")
   "The list of GPG fingerprint you trust when decrypting a gpg file.
-           You can retrieve the fingerprints of your own private keys
-           with: `gpg --list-secret-keys' (take care of removing the
-           spaces when copy/pasting here)")
+You can retrieve the fingerprints of your own private keys
+with: `gpg --list-secret-keys' (take care of removing the
+spaces when copy/pasting here)")
 
 (defun y/get-encryption-key (file)
-  "given a gpg encrypted file, returns the fingerprint of
-           they key that encrypted it"
+  "Return the fingerprint of they key that encrypted FILE."
   (string-trim-right
    (shell-command-to-string
     (concat
@@ -29,7 +28,7 @@
      "|awk '{print $4}'"))))
 
 (defun y/trusted-gpg-origin-p (file)
-  "Returns true if the file is encrypted with a trusted key"
+  "Return non-nil if the FILE is encrypted with a trusted key."
   (member (y/get-encryption-key file) y/trusted-gpg-key-fingerprints))
 
 
@@ -46,7 +45,7 @@
 
     (defun y/load-project-file ()
       "Loads the `y/project-file' for a project. This is run once
-           after the project is loaded signifying project setup."
+    after the project is loaded signifying project setup."
       (interactive)
       (when (projectile-project-p)
         (lexical-let* ((current-project-root (projectile-project-root))
