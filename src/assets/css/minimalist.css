@@ -27,42 +27,14 @@ body {
     -moz-hyphens:auto;
     -ms-hyphens:auto;
 }
-#preamble {
-    border-bottom: solid 1px;
-}
-#preamble h1 {
-    margin-bottom: 0;
-}
-#postamble {
-    border-top: solid 1px;
-}
-#preamble,#postamble {
-    padding: 10px 0;
-}
-.menu {
-    opacity: 0.5;
-}
-.menu:hover, .menu:focus {
-    opacity:1;
-}
-#content,.content {
-    max-width: 50em;
-    margin: 0 auto;
-    padding: 10px;
-}
-#content *:first-child {
-    margin-top: 0;
-}
-
 h1, h2, h3, h4, h5, h6, pre, code, blockquote, ol, ul, ol ol, ul ul, ul ol, ol
 ul, li, p, section, header, footer {
     float: none;
     margin: 0;
     padding: 0;
 }
-
 h1, h2, h3, h4, h5, h6, pre, code, blockquote, p, ul, ol, section, header,
-.figure {
+figure {
     margin-top: 20px;
     margin-bottom: 20px;
 }
@@ -152,7 +124,6 @@ blockquote:after {
     position: absolute;
     top: 0;
     left: 0;
-    opacity: 0.3;
 }
 li {
     position: relative;
@@ -176,8 +147,6 @@ ol > li:before {
     opacity: 0.5;
 }
 
-/* colors */
-
 img {
     max-width: 100%;
     max-height: 800px;
@@ -187,13 +156,6 @@ p > img, li > img {
     max-height: 1em;
     margin: 0;
     vertical-align: middle;
-}
-footer {
-    font-size: 0.8em;
-}
-.article-date {
-    opacity: 0.5;
-    font-size: 0.8;
 }
 table {
     width: 100%;
@@ -219,15 +181,32 @@ navigation {
 navigation > a {
     margin-right: 10px;
 }
-.footpara { display: inline; }
-.footdef > sup {
-    vertical-align: middle;
-}
-.footdef > sup::after {
-    content: ": ";
-}
 
-/* org mode statuses */
+/* org mode ids and classes */
+.figure {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+#preamble {
+    border-bottom: solid 1px;
+}
+#preamble h1, #preamble h2 {
+    margin: 0;
+}
+#postamble {
+    border-top: solid 1px;
+}
+#preamble,#postamble {
+    padding: 10px 0;
+}
+#content,.content {
+    max-width: 50em;
+    margin: 0 auto;
+    padding: 10px;
+}
+#content *:first-child {
+    margin-top: 0;
+}
 .timestamp-wrapper {
     font-size: 12px;
 }
@@ -236,6 +215,21 @@ navigation > a {
     font-weight: bold;
     padding: 1px 1ex;
 }
+.article-date {
+    font-size: 0.8;
+    font-style: italic;
+    float: right;
+}
+.footpara {
+    display: inline;
+}
+.footdef > sup {
+    vertical-align: middle;
+}
+.footdef > sup::after {
+    content: ": ";
+}
+
 
 /* colors theme */
 :root {
@@ -258,7 +252,8 @@ navigation > a {
     --green:     #859900;
     --transparent: rgba(255,255,255,0);
 
-    --main-background: #00151b; /* 0.5 darker than #002b36; */
+    /* --main-background: #00151b; /* 0.5 darker than #002b36; */
+    --main-background: var(--base03); /* 0.5 darker than #002b36; */
     --main-foreground: var(--base1);
     --second-foreground: var(--base0);
     --soft-foreground: var(--base01);
@@ -279,7 +274,6 @@ navigation > a {
         --todo-txt: #FFF;
     }
 }
-
 body {
     background: var(--main-background);
     color: var(--main-foreground);
@@ -301,6 +295,12 @@ pre::after,pre::before,hr:after {
 a:hover, a:active, a:focus {
     color: var(--yellow);
 }
+navigation a, navigation a:visited {
+    color: var(--soft-foreground);
+}
+navigation a:focus, navigation a:hover {
+    color: var(--yellow);
+}
 thead {
     background-color: var(--reveal-background);
     color: var(--second-fg);
@@ -308,24 +308,20 @@ thead {
 tr:hover {
     background-color: var(--reveal-background);
 }
-#postamble:hover, #preamble:hover {
-    background-color: var(--reveal-background);
-    border-color:  var(--border-color);
-}
 h1 {
-    color: var(--violet);
-}
-h2 {
     color: var(--magenta);
 }
+h2 {
+    color: var(--violet);
+}
 h3 {
-    color: var(--red);
+    color: var(--blue);
 }
 h4 {
-    color: var(--orange);
+    color: var(--cyan);
 }
 h5 {
-    color: var(--yellow);
+    color: var(--green);
 }
 h6 {
     color: var(--green);
@@ -336,8 +332,14 @@ table, td, th {
 code {
     background: var(--reveal-background);
 }
+blockquote:after  {
+    color: var(--soft-foreground);
+}
 #preamble,#postamble {
     border-color: var(--transparent);
+}
+.article-date {
+    color: var(--soft-foreground);
 }
 /* -------- */
 /* org colors */
