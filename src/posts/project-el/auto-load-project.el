@@ -1,6 +1,6 @@
 ;;; auto-load-project.el --- Auto load elisp file on project open
 
-;; Copyright © 2019 Yann Esposito <yann.esposito@gmail.com>
+;; Copyright © 2019 Yann Esposito <yann@esposito.host>
 
 ;;; Commentary:
 ;;
