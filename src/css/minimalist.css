@@ -112,9 +112,11 @@ blockquote {
     padding-left: 2ch;
     overflow: hidden;
 }
+.notes *:first-child,
 blockquote *:first-child {
     margin-top: 0;
 }
+.notes *:last-child,
 blockquote *:last-child {
     margin-bottom: 0;
 }
@@ -229,7 +231,15 @@ navigation > a {
 .footdef > sup::after {
     content: ": ";
 }
-
+.notes {
+    padding: 5px 10px;
+}
+.notes::before {
+    content: "☞";
+    float: left;
+    display: inline-block;
+    width: 1em;
+}
 
 /* colors theme */
 :root {
@@ -256,8 +266,8 @@ navigation > a {
     --main-background: var(--base03); /* 0.5 darker than #002b36; */
     --main-foreground: var(--base1);
     --second-foreground: var(--base0);
+    --reveal-background: var(--base02);
     --soft-foreground: var(--base01);
-    --reveal-background: var(--base03);
     --border-color: var(--base02);
     --todo-txt: #000;
 }
@@ -268,8 +278,8 @@ navigation > a {
         --main-background: #fefaf0; /* 0.5 lighter than #fdf6e3 */
         --main-foreground: var(--base01);
         --second-foreground: var(--base00);
+        --reveal-background: var(--base2);
         --soft-foreground: var(--base1);
-        --reveal-background: var(--base3);
         --border-color: var(--base2);
         --todo-txt: #FFF;
     }
@@ -366,4 +376,8 @@ blockquote:after  {
 }
 .CANCELED {
     background-color: var(--magenta);
+}
+.notes {
+    background-color: var(--reveal-background);
+    color: var(--second-fg);
 }
