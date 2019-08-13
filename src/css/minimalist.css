@@ -38,7 +38,6 @@ figure {
     margin-top: 20px;
     margin-bottom: 20px;
 }
-
 figure {
     margin: 20px 0px;
 }
@@ -284,100 +283,139 @@ navigation > a {
         --todo-txt: #FFF;
     }
 }
-body {
+#labels {
+    width: 100%;
+}
+#labels label {
+    text-decoration: underline;
+    cursor: pointer;
+}
+input#light, input#dark { display:none; }
+input#light:checked ~ .main {
+    --main-background: #fefaf0; /* 0.5 lighter than #fdf6e3 */
+    --main-foreground: var(--base01);
+    --second-foreground: var(--base00);
+    --reveal-background: var(--base2);
+    --soft-foreground: var(--base1);
+    --border-color: var(--base2);
+    --todo-txt: #FFF;
+}
+input#dark:checked ~ .main {
+    --main-background: var(--base03); /* 0.5 darker than #002b36; */
+    --main-foreground: var(--base1);
+    --second-foreground: var(--base0);
+    --reveal-background: var(--base02);
+    --soft-foreground: var(--base01);
+    --border-color: var(--base02);
+    --todo-txt: #000;
+}
+input#light:checked + #labels {
+    background: #fefaf0;
+    color: var(--base01);
+}
+input#dark:checked + #labels {
+    background: var(--base03);
+    color: var(--base1);
+}
+body,.main {
     background: var(--main-background);
     color: var(--main-foreground);
 }
-::selection {
+::selection, .main ::selection,
+::-moz-selection, .main ::-moz-selection {
     color: var(--todo-txt);
     background-color: var(--yellow);
 }
-::-moz-selection {
-    color: var(--todo-txt);
-    background-color: var(--yellow);
-}
-a, a:visited {
+a, a:visited,
+.main a, .main a:visited {
     color: var(--second-foreground);
 }
-pre::after,pre::before,hr:after {
+pre::after,pre::before,hr:after,
+.main pre::after,.main pre::before,.main hr:after {
     color: var(--soft-foreground);
 }
-a:hover, a:active, a:focus {
+a:hover, a:active, a:focus,
+.main a:hover,.main a:active,.main a:focus {
     color: var(--yellow);
 }
-navigation a, navigation a:visited {
+navigation a, navigation a:visited,
+.main navigation a,.main navigation a:visited {
     color: var(--soft-foreground);
 }
-navigation a:focus, navigation a:hover {
+navigation a:focus, navigation a:hover,
+.main navigation a:focus,.main navigation a:hover {
     color: var(--yellow);
 }
-thead {
+thead,
+.main thead {
     background-color: var(--reveal-background);
     color: var(--second-fg);
 }
-tr:hover {
+tr:hover,
+.main tr:hover {
     background-color: var(--reveal-background);
 }
-h1 {
+h1, .main h1 {
     color: var(--magenta);
 }
-h2 {
+h2, .main h2 {
     color: var(--violet);
 }
-h3 {
+h3, .main h3 {
     color: var(--blue);
 }
-h4 {
+h4, .main h4 {
     color: var(--cyan);
 }
-h5 {
+h5, .main h5 {
     color: var(--green);
 }
-h6 {
+h6, .main h6 {
     color: var(--green);
 }
-table, td, th {
+table, td, th,
+.main table,.main td,.main th {
     border-color: var(--border-color);
 }
-code {
+code, .main code {
     background: var(--reveal-background);
 }
-blockquote:after  {
+blockquote:after, .main blockquote:after {
     color: var(--soft-foreground);
 }
-#preamble,#postamble {
+#preamble,#postamble,.main #preamble, .main #postamble {
     border-color: var(--transparent);
 }
-.article-date {
+.article-date, .main .article-date {
     color: var(--soft-foreground);
 }
 /* -------- */
 /* org colors */
-.todo, .done {
+.todo, .done, .main .todo, .main .done {
     color: var(--todo-txt);
 }
-.TODO {
+.TODO, .main .TODO {
     background-color: var(--red);
 }
-.IN_PROGRESS {
+.IN_PROGRESS, .main .IN_PROGRESS {
     background-color: var(--yellow);
 }
-.IN_REVIEW {
+.IN_REVIEW, .main .IN_REVIEW {
     background-color: var(--cyan);
 }
-.HOLD {
+.HOLD, .main .HOLD {
     background-color: var(--violet);
 }
-.WAITING {
+.WAITING, .main .WAITING {
     background-color: var(--violet);
 }
-.DONE {
+.DONE, .main .DONE {
     background-color: var(--green);
 }
-.CANCELED {
+.CANCELED, .main .CANCELED {
     background-color: var(--magenta);
 }
-.notes {
+.notes, .main .notes {
     background-color: var(--reveal-background);
     color: var(--second-fg);
 }
