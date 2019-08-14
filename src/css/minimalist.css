@@ -190,9 +190,14 @@ navigation > a {
 }
 #preamble {
     border-bottom: solid 1px;
+    margin-bottom: 1em;
 }
 #preamble h1, #preamble h2 {
     margin: 0;
+}
+#preamble h2 {
+    font-weight: normal;
+    font-style: italic;
 }
 #postamble {
     border-top: solid 1px;
@@ -200,7 +205,7 @@ navigation > a {
 }
 #content,.content {
     max-width: 50em;
-    margin: 0 auto;
+    margin: 0 1em;
     padding: 1px;
 }
 #content *:first-child {
@@ -267,6 +272,13 @@ navigation > a {
     --soft-foreground: var(--base01);
     --border-color: var(--base02);
     --todo-txt: #000;
+    --color-h1: var(--magenta);
+    --color-h2: var(--violet);
+    --color-h3: var(--blue);
+    --color-h4: var(--cyan);
+    --color-h5: var(--green);
+    --color-h6: var(--yellow);
+    --color-link: var(--yellow);
 }
 
 /* org colors */
@@ -290,7 +302,9 @@ navigation > a {
     cursor: pointer;
     font-style: italic;
 }
-input#light, input#dark { display:none; }
+
+body > input { display:none; }
+
 input#light:checked ~ .main {
     --main-background: #fefaf0; /* 0.5 lighter than #fdf6e3 */
     --main-foreground: var(--base01);
@@ -300,6 +314,11 @@ input#light:checked ~ .main {
     --border-color: var(--base2);
     --todo-txt: #FFF;
 }
+input#light:checked ~ #labels {
+    background: #fefaf0;
+    color: var(--base00);
+}
+
 input#dark:checked ~ .main {
     --main-background: var(--base03); /* 0.5 darker than #002b36; */
     --main-foreground: var(--base1);
@@ -309,14 +328,33 @@ input#dark:checked ~ .main {
     --border-color: var(--base02);
     --todo-txt: #000;
 }
-input#light:checked ~ #labels {
-    background: #fefaf0;
-    color: var(--base00);
-}
 input#dark:checked ~ #labels {
     background: var(--base03);
     color: var(--base0);
 }
+
+input#raw:checked ~ .main {
+    --main-background: #fff;
+    --main-foreground: #000;
+    --second-foreground: #000;
+    --reveal-background: #fff;
+    --soft-foreground: #000;
+    --border-color: #000;
+    --todo-txt: #000;
+    --color-h1: #000;
+    --color-h2: #000;
+    --color-h3: #000;
+    --color-h4: #000;
+    --color-h5: #000;
+    --color-h6: #000;
+    --color-link: #33d;
+}
+input#raw:checked ~ #labels {
+    background: #fff;
+    color: #000;
+}
+
+
 body,.main {
     background: var(--main-background);
     color: var(--main-foreground);
@@ -337,7 +375,7 @@ pre::after,pre::before,hr:after,
 }
 a:hover, a:active, a:focus,
 .main a:hover,.main a:active,.main a:focus {
-    color: var(--yellow);
+    color: var(--color-link);
 }
 navigation a, navigation a:visited,
 .main navigation a,.main navigation a:visited {
@@ -345,7 +383,7 @@ navigation a, navigation a:visited,
 }
 navigation a:focus, navigation a:hover,
 .main navigation a:focus,.main navigation a:hover {
-    color: var(--yellow);
+    color: var(--color-link);
 }
 thead,
 .main thead {
@@ -357,22 +395,25 @@ tr:hover,
     background-color: var(--reveal-background);
 }
 h1, .main h1 {
-    color: var(--magenta);
+    color: var(--color-h1);
+}
+#preamble h2, .main #preamble h2 {
+    color: var(--color-h4);
 }
 h2, .main h2 {
-    color: var(--violet);
+    color: var(--color-h2);
 }
 h3, .main h3 {
-    color: var(--blue);
+    color: var(--color-h3);
 }
 h4, .main h4 {
-    color: var(--cyan);
+    color: var(--color-h4);
 }
 h5, .main h5 {
-    color: var(--green);
+    color: var(--color-h5);
 }
 h6, .main h6 {
-    color: var(--green);
+    color: var(--color-h6);
 }
 table, td, th,
 .main table,.main td,.main th {

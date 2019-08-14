@@ -1,406 +1,321 @@
-#+TITLE: Static blog with org-mode
+#+TITLE: Blogging with org-mode
+#+SUBTITLE: Meta post about this blog
 #+AUTHOR: Yann Esposito
 #+EMAIL: yann@esposito.host
 #+DATE: 2019-07-27
-#+KEYWORDS: programming, blog, org-mode
+#+KEYWORDS: programming, blog, org-mode, meta
 #+OPTIONS: auto-id:t
 
 #+begin_quote
-/tl;dr/: [[#current-solution][Full code for the impatient↓]].
-Read the full blog post to have all the details.
+/tl;dr/: [[#full-solution][Go to the full solution]] for the impatients.
 #+end_quote
 
-This is the first article using my new blog system.
+As the first article of my new blogging system, let's have a meta blog post.
 
-Once in a while, I create a new personal website.
-A long time ago, I used PHP for my first website.
-I used include and took care of XHTML pages validation.
+Once in a while, I like to change how I blog.
+A long time ago, I used PHP for my first website using my personal space at my
+university.
+And as of today, a clond of my university website still exists:
+http://yann.esposito.free.fr It contains all details about my old research
+activities and teaching resources for my students.
+
 Then I used [[http://nanoc.ws][nanoc]], a ruby static website generator.
 Then I switched to [[https://jaspervdj.be/hakyll/][hakyll]] because I wanted to switch to a Haskell's written
 tool.
-Now I'll try to use [[http://orgmode.org][org-mode]] directly with [[https://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html][org-publish]].
-I am became a quite extensive emacs user now. So using org-mode and org-publish
-is a bit like not having to install any 3rd party software.
 
-* Why?
-  :PROPERTIES:
-  :CUSTOM_ID: why--8eb9
-  :END:
+This time I'll try to use [[http://orgmode.org][org-mode]] directly with [[https://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html][org-publish]].
+I used vim a lot, but recently I switched to emacs.
+The main reason were:
 
-Everything started when I was hired in a place where I was given a terrible
-keyboard.
-After a few weeks I started to feel a lot of pain in both my wrists.
-So I started to go from classical IDE to being able to use vim
-correctly[fn:vim].
+1. You use LISP as plugin language while for Vim it is vimscript which is a
+   quite terrible language.
+2. Many comment on the Internet about people telling that [[https://github.com/emacs-evil/evil][evil]] (vim keybdings in
+   emacs) was really really good. And I can confirm it is.
+3. The [[http://spacemacs.org][spacemacs]] project made it easier to handle the emacs configuratin
+   complexity for a newbie.
 
-Then I started to work in Clojure and I heard that emacs might certainly be a
-better fit for LISP dialiects.
-But, I couldn't switch to an editor without vim keybindings support because they
-are so great once you're used to them.
-By chance it was about the same time that [[http://spacemacs.org][spacemacs]] appeared and I switched.
-Is is really impressive how well the vim keybindings are supported.
-Even most of the advanced vim features I used to use worked like a charm.
-
-The first benefit of emacs is you can configure emacs with elisp.
-Which unlike vimscript looks like a correct language to work with.
-
-One unexpected benefit of emacs was [[http://orgmode.org][org-mode]].
-I always heard good things about it but it took me a while to really get it and
-to understand why it is so great.
-
-If you don't know anything about org-mode, it is many things.
-First imagine a Markdown but more TODO list oriented.
-But along with this, emacs has a lot of helper functions to work with those
-org-mode files.
-
-One real game changer is ~org-capture~.
-You can add a task quite easily while doing other work in emacs.
-
-[fn:vim] I wrote this article to help people use vim: [[http://yannesposito.com/Scratch/en/blog/Learn-Vim-Progressively/][learn vim progressively]]
+And by doing the switch, I discovered a lot of great emacs packages.
+Now I really do not regret the switch.
+In particular, [[http://orgmode.org][org-mode]] has been a game changer.
+I used to write markdown before.
+But now I use the org format.
+It is superior for my usage(s).
 
 * How?
   :PROPERTIES:
-  :CUSTOM_ID: how--831e
+  :CUSTOM_ID: how
   :END:
 
 You can easily follow the org-mode doc to make your own website.
-But I have added a few "goodies".
+But I have added a few niceties.
+First, the code to export is provided in a local file.
+I've got a system to auto-load elisp file when entering in a new project.
+It is quite safe as it uses PGP and check if I trust the person who encrypted
+the file.
+See [[file:project-el/index.org][my other post about it]].
 
-- attempt to obfuscate contact email,
 
-** Basic Blog
+** Configuration variables
    :PROPERTIES:
-   :CUSTOM_ID: basic-blog-a1fc
+   :CUSTOM_ID: configuration-variables
    :END:
-
-I put the need minimal code in a =.project.el.gpg= file of my blog repository.
-Inspired by this [[https://francismurillo.github.io/2017-02-15-Project-Script-Loader/][blog post]] I enhanced this version to be both more user friendly
-and secure (see [[./autoload-emacs-script-by-project.org][Autoload Emacs Script by Project]]).
-
-But even before that, I simply put the code in has an elisp code block of my
-=index.org= that I exectued with =C-c C-c=.
-
-I have a code block in my =index.org= page that I do not export containing the
-elisp code I use to load all the information needed by =org-publish=.
-Do not export an org-mode subtree you can simply tag it with =:noexport:=.
-
-=org-publish= suppose that you'll export one html page per org file.
-You need to provide a minimum set of information:
-
-- base directory that should contain your org files
-- publish directory, where you will export the html from the org files
-
-A very basic publish rule would be:
-
-#+begin_src org
-,* Magic Script                     :noexport:
-,#+begin_src elisp :results none
-  (setq org-publish-project-alist
-        '(("orgfiles"
-           :base-directory "/users/me/blog/src"
-           :publishing-directory "/users/me/blog/_site"
-           :recursive t)))
-,#+end_src
-#+end_src
-
-So now, if you put org files in the base directory it will copy
-recursively the tree in that base directory and will copy it to
-the publishing directory exporting all org files to html files.
-
-Nice.
-
-If you are not familiar with emacs or orgmode, orgpublish.
-This block of code set the variable named ~org-publish-project-alist~.
-The ~alist~ in the end is for "associative list".
-
-#+begin_quote
-/☞/ So when you'll execute the command =org-publish= in emacs.
-You will get prompted to enter the name of what to publish.
-You should see a single proposition named =orgfiles=.
-Once selected the export and publish will occurs.
-Notice, org-publish does what you expect and do not re-export all files
-each time but only the one that have changed.
-#+end_quote
-
-** Relative Paths
-   :PROPERTIES:
-   :CUSTOM_ID: relative-paths-d145
-   :END:
-
-A first issue with this is that I don't want to put that in my emacs
-preferences.
-I would like to be able to publish my website for anyone that could clone my git
-repository.
-So I will use emacs projectile to find the root directory of the current
-project.
 
 #+begin_src elisp
-  (setq base-dir (concat (projectile-project-root) "src"))
-  (setq publish-dir (concat (projectile-project-root) "_site"))
-  (setq org-publish-project-alist
-        `(("orgfiles"
-           :base-directory ,base-dir
-           :publishing-directory ,publish-dir
-           :recursive t
-           :base-extension "org")))
+;; CONFIGURATION VARIABLES
+(setq domainname "https://her.esy.fun")
+(setq base-dir (concat (projectile-project-root) "src"))
+(setq publish-dir (concat (projectile-project-root) "_site"))
+(setq assets-dir (concat base-dir "/"))
+(setq publish-assets-dir (concat publish-dir "/"))
+(setq rss-dir base-dir)
+(setq rss-title "Subscribe to articles")
+(setq publish-rss-dir publish-dir)
+(setq css-path "/css/minimalist.css")
+(setq author-name "Yann Esposito")
+(setq author-email "yann@esposito.host")
 #+end_src
 
-That's better.
-Now anyone can clone the repository.
-Open my =index.org= file, and execute the code in it by =C-e C-e= and then will
-be able to publish the website locally in the =_site= directory.
-
-** Assets
-   :PROPERTIES:
-   :CUSTOM_ID: assets-cf7d
-   :END:
-
-Generally you want a bit more features than that for publishing a blog.
-Typically you would like to have a common template, an header, some CSS.
-
-For that you need to work a bit more.
-First, important thing, add an org publish section to publish your assets (CSS,
-images, etc...)
-
-#+begin_src elisp
-  (setq base-dir (concat (projectile-project-root) "src"))
-  (setq publish-dir (concat (projectile-project-root) "_site"))
-  (setq assets-dir (concat base-dir "/assets"))
-  (setq publish-assets-dir (concat publish-dir "/assets"))
-  (setq org-publish-project-alist
-        `(("orgfiles"
-           :base-directory ,base-dir
-           :publishing-directory ,publish-dir
-           :recursive t
-           :base-extension "org"
-           :exclude ".*drafts/.*")
-
-          ("assets"
-           :base-directory ,assets-dir
-           :base-extension ".*"
-           :publishing-directory ,publish-assets-dir
-           :publishing-function org-publish-attachment
-           :recursive t)
-
-          ("blog" :components ("orgfiles" "assets"))))
-#+end_src
-
-With that you will copy the assets and export org file to html.
-You can do both by selecting `blog` when doing an `org-publish`.
-
-That's better. But for a blog you also generally want to have your own CSS.
-
-* Current Solution
+* Full Solution
   :PROPERTIES:
-  :CUSTOM_ID: current-solution
+  :CUSTOM_ID: full-solution
   :END:
 
 #+begin_src elisp
-  ;; Global variables
-  (setq domainname "https://her.esy.fun")
-  (setq base-dir (concat (projectile-project-root) "src"))
-  (setq publish-dir (concat (projectile-project-root) "_site"))
-  (setq assets-dir (concat base-dir "/assets"))
-  (setq publish-assets-dir (concat publish-dir "/assets"))
-  (setq rss-dir base-dir)
-  (setq publish-rss-dir publish-dir)
-  (setq css-name "minimalist.css")
-  (setq author-name "Yann Esposito")
-  (setq author-email "yann@esposito.host")
 
-  (require 'org)
-  (require 'ox-publish)
-  (require 'ox-html)
-  (require 'org-element)
-  (require 'ox-rss)
+(require 'org)
+(require 'ox-publish)
+(require 'ox-html)
+(require 'org-element)
+(require 'ox-rss)
 
-  (defun org-blog-prepare (project-plist)
-    "With help from `https://github.com/howardabrams/dot-files'.
-  Touch `index.org' to rebuilt it.
-  Argument `PROJECT-PLIST' contains information about the current project."
-    (let* ((base-directory (plist-get project-plist :base-directory))
-           (buffer (find-file-noselect (expand-file-name "index.org" base-directory) t)))
-      (with-current-buffer buffer
-        (set-buffer-modified-p t)
-        (save-buffer 0))))
+(setq org-link-file-path-type 'relative)
 
-  (defvar org-blog-head
-    (concat
-     "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/" css-name "\"/>"
-     "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
-     "<link rel=\"alternative\" type=\"application/rss+xml\" title=\"Subscribe to articles\" href=\"/archives.xml\" />"
-     "<link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/assets/img/favicon.ico\">"))
+(defun org-blog-prepare (project-plist)
+  "With help from `https://github.com/howardabrams/dot-files'.
+Touch `index.org' to rebuilt it.
+Argument `PROJECT-PLIST' contains information about the current project."
+  (let* ((base-directory (plist-get project-plist :base-directory))
+         (buffer (find-file-noselect (expand-file-name "index.org" base-directory) t)))
+    (with-current-buffer buffer
+      (set-buffer-modified-p t)
+      (save-buffer 0))))
 
-  (defun menu (lst)
-    "Blog menu"
-    (concat
-     "<navigation class=\"menu\">"
-     (mapconcat 'identity
-                (append
-                 '("<a href=\"/index.html\">Home</a>"
-                   "<a href=\"/archive.html\">Posts</a>")
-                 lst)
-                " | ")
-     "</navigation>"))
+(defvar org-blog-head
+  (concat
+   "<link rel=\"stylesheet\" type=\"text/css\" href=\"" css-path "\"/>"
+   "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+   "<link rel=\"alternative\" type=\"application/rss+xml\" title=\"" rss-title "\" href=\"/archives.xml\" />"
+   "<link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/favicon.ico\">"))
 
-  (defun str-time-to-year-float (date-str)
-    (/ (float-time
-        (apply 'encode-time
-               (mapcar (lambda (x) (if (null x) 0 x))
-                       (parse-time-string date-str))))
-       (* 365.25 24 60 60)))
+(defun menu (lst)
+  "Blog menu"
+  (concat
+   "<navigation>"
+   (mapconcat 'identity
+              (append
+               '("<a href=\"/index.html\">Home</a>"
+                 "<a href=\"/archive.html\">Posts</a>"
+                 "<a href=\"/about-me.html\">About</a>")
+               lst)
+              " | ")
+   "</navigation>"))
 
-  (defvar blog-creation-date "2019-07-01")
 
-  (defun delta-date (date-str)
-    "Number of year since the begining of this blog"
-    (let ((y (- (str-time-to-year-float date-str)
-                (str-time-to-year-float blog-creation-date))))
-      (format "∆t=%.2f" y)))
+(defun str-time-to-year-float (date-str)
+  (/ (float-time
+      (apply 'encode-time
+             (mapcar (lambda (x) (if (null x) 0 x))
+                     (parse-time-string date-str))))
+     (* 365.25 24 60 60)))
 
-  (defun org-blog-preamble (info)
-    "Pre-amble for whole blog."
-    (concat
-     "<div class=\"content\">"
-     (menu '("<a href=\"#postamble\">↓ bottom ↓</a>"))
-     "<h1>"
-     (format "%s" (plist-get info :title))
-     (when-let ((date (get-from-info info :date)))
-       (format " - <span class=\"article-date\">%s</span>" date))
-     "</h1>"
-     "</div>"))
+(defvar blog-creation-date "2019-07-01")
 
-  (defun get-from-info (info k)
-    (let ((i (car (plist-get info k))))
-      (when (and i (stringp i))
-        i)))
+(defun y-date (date-str)
+  "Number of year since the begining of this blog"
+  (let ((y (- (str-time-to-year-float date-str)
+              (str-time-to-year-float blog-creation-date))))
+    (format "∆t=%.2f" y)))
 
-  (defun rand-obfs (c)
-    (let ((r (% (random) 20)))
-      (cond ((eq 0 r) (format "%c" c))
-            ((< 0 r 10) (format "&#%d;" c))
-            (t (format "&#x%X;" c)))))
+(defun org-blog-preamble (info)
+  "Pre-amble for whole blog."
+  (concat
+   "<div class=\"content\">"
+   (menu '("<a href=\"#postamble\">↓ bottom ↓</a>"))
+   "<h1>"
+   (format "%s" (car (plist-get info :title)))
+   "</h1>"
+   (when-let ((date (get-from-info info :date)))
+     (format "<span class=\"article-date\">%s</span>" date))
+   (when-let ((subtitle (car (plist-get info :subtitle))))
+     (format "<h2>%s</h2>" subtitle))
+   "</div>"))
 
-  (defun obfuscate-html (txt)
-    (apply 'concat
-           (mapcar 'rand-obfs txt)))
+(defun get-from-info (info k)
+  (let ((i (car (plist-get info k))))
+    (when (and i (stringp i))
+      i)))
 
-  (defun org-blog-postamble (info)
-    "Post-amble for whole blog."
-    (concat
-     "<div class=\"content\">"
-     "<footer>"
-     (when-let ((author (get-from-info info :author)))
-       (if-let ((email (plist-get info :email)))
-           (format "<div class=\"author\">Author: <a href=\"%s%s\">%s</a></div>"
+(defun rand-obfs (c)
+  (let ((r (% (random) 20)))
+    (cond ;; ((eq 0 r) (format "%c" c))
+          ((<= 0 r 10) (format "&#%d;" c))
+          (t (format "&#x%X;" c)))))
+
+(defun obfuscate-html (txt)
+  (apply 'concat
+         (mapcar 'rand-obfs txt)))
+
+(defun org-blog-postamble (info)
+  "Post-amble for whole blog."
+  (concat
+   "<div class=\"content\">"
+   ;; TODO install a comment system
+   ;; (let ((url (format "%s%s" domainname (replace-regexp-in-string base-dir "" (plist-get info :input-file)))))
+   ;;   (format "<a href=\"https://comments.esy.fun/slug/%s\">comment</a>"
+   ;;           (url-hexify-string url)))
+   "<footer>"
+   (when-let ((author (get-from-info info :author)))
+     (if-let ((email (plist-get info :email)))
+         (let* ((obfs-email (obfuscate-html email))
+                (obfs-author (obfuscate-html author))
+                (obfs-title (obfuscate-html (get-from-info info :title)))
+                (full-email (format "%s &lt;%s&gt;" obfs-author obfs-email)))
+           (format "<div class=\"author\">Author: <a href=\"%s%s%s%s\">%s</a></div>"
                    (obfuscate-html "mailto:")
-                   (obfuscate-html email)
-                   (obfuscate-html author))
-         (format "<div class=\"author\">Author: %s</div>" author)))
-     (when-let ((date (get-from-info info :date)))
-       (format "<div class=\"date\">Created: %s (%s)</div>" date (delta-date date)))
-     (when-let ((keywords (plist-get info :keywords)))
-       (format "<div class=\"keywords\">Keywords: <code>%s</code></div>" keywords))
-     (format "<div class=\"date\">Generated: %s</div>"
-             (format-time-string "%Y-%m-%d %H:%M:%S"))
-     (format (concat "<div class=\"creator\"> Generated with "
-                     "<a href=\"https://www.gnu.org/software/emacs/\" target=\"_blank\" rel=\"noopener noreferrer\">Emacs %s</a>, "
-                     "<a href=\"http://spacemacs.org\" target=\"_blank\" rel=\"noopener noreferrer\">Spacemacs %s</a>, "
-                     "<a href=\"http://orgmode.org\" target=\"_blank\" rel=\"noopener noreferrer\">Org Mode %s</a>"
-                     "</div>")
-             emacs-version spacemacs-version org-version)
-     "</footer>"
-     (menu '("<a href=\"#preamble\">↑ Top ↑</a>"))
-     "</div>"))
+                   full-email
+                   (obfuscate-html "?subject=yblog: ")
+                   obfs-title
+                   full-email))
+       (format "<div class=\"author\">Author: %s</div>" author)))
+   (when-let ((date (get-from-info info :date)))
+     (format "<div class=\"date\">Created: %s (%s)</div>" date (y-date date)))
+   (when-let ((keywords (plist-get info :keywords)))
+     (format "<div class=\"keywords\">Keywords: <code>%s</code></div>" keywords))
+   (format "<div class=\"date\">Generated: %s</div>"
+           (format-time-string "%Y-%m-%d %H:%M:%S"))
+   (format (concat "<div class=\"creator\"> Generated with "
+                   "<a href=\"https://www.gnu.org/software/emacs/\" target=\"_blank\" rel=\"noopener noreferrer\">Emacs %s</a>, "
+                   "<a href=\"http://spacemacs.org\" target=\"_blank\" rel=\"noopener noreferrer\">Spacemacs %s</a>, "
+                   "<a href=\"http://orgmode.org\" target=\"_blank\" rel=\"noopener noreferrer\">Org Mode %s</a>"
+                   "</div>")
+           emacs-version spacemacs-version org-version)
+   "</footer>"
+   (menu '("<a href=\"#preamble\">↑ Top ↑</a>"))
+   "</div>"))
 
-  (defun org-blog-sitemap-format-entry (entry _style project)
-    "Return string for each ENTRY in PROJECT."
-    (when (s-starts-with-p "posts/" entry)
-      (format "@@html:<span class=\"archive-item\"><span class=\"archive-date\">@@ %s: @@html:</span>@@ [[file:%s][%s]] @@html:</span>@@"
-              (format-time-string "%Y-%m-%d"
-                                  (org-publish-find-date entry project))
-              entry
-              (org-publish-find-title entry project))))
+(defun org-blog-sitemap-format-entry (entry _style project)
+  "Return string for each ENTRY in PROJECT."
+  (when (s-starts-with-p "posts/" entry)
+    (format "@@html:<span class=\"archive-item\"><span class=\"archive-date\">@@ %s: @@html:</span>@@ [[file:%s][%s]] @@html:</span>@@"
+            (format-time-string "%Y-%m-%d"
+                                (org-publish-find-date entry project))
+            entry
+            (org-publish-find-title entry project))))
 
-  (defun org-blog-sitemap-function (title list)
-    "Return sitemap using TITLE and LIST returned by `org-blog-sitemap-format-entry'."
-    (concat "#+TITLE: " title "\n"
-            "#+AUTHOR: " author-name "\n"
-            "#+EMAIL: " author-email "\n"
-            "\n#+begin_archive\n"
-            (mapconcat (lambda (li)
-                         (format "@@html:<li>@@ %s @@html:</li>@@" (car li)))
-                       (seq-filter #'car (cdr list))
-                       "\n")
-            "\n#+end_archive\n"))
+(defun org-blog-sitemap-function (title list)
+  "Return sitemap using TITLE and LIST returned by `org-blog-sitemap-format-entry'."
+  (concat "#+TITLE: " title "\n"
+          "#+AUTHOR: " author-name "\n"
+          "#+EMAIL: " author-email "\n"
+          "\n#+begin_archive\n"
+          (mapconcat (lambda (li)
+                       (format "@@html:<li>@@ %s @@html:</li>@@" (car li)))
+                     (seq-filter #'car (cdr list))
+                     "\n")
+          "\n#+end_archive\n"))
 
-  (setq org-publish-project-alist
-        `(("orgfiles"
-           :base-directory ,base-dir
-           :exclude ".*drafts/.*"
-           :base-extension "org"
+(defun org-blog-publish-to-html (plist filename pub-dir)
+  "Same as `org-html-publish-to-html' but modifies html before finishing."
+  (let ((file-path (org-html-publish-to-html plist filename pub-dir)))
+    (with-current-buffer (find-file-noselect file-path)
+      (goto-char (point-min))
+      (search-forward "<body>")
+      (insert (mapconcat 'identity
+                         '("<input type=\"radio\" id=\"light\" name=\"theme\"/>"
+                           "<input type=\"radio\" id=\"dark\" name=\"theme\"/>"
+                           "<div id=\"labels\">"
+                           "<div class=\"content\">"
+                           "<label for=\"light\">Light Theme</label>"
+                           " / "
+                           "<label for=\"dark\">Dark Theme</label>"
+                           "</div>"
+                           "</div>"
+                           "<div class=\"main\">")
+                         "\n"))
+      (goto-char (point-max))
+      (search-backward "</body>")
+      (insert "\n</div>\n")
+      (save-buffer)
+      (kill-buffer))
+    file-path))
 
-           :publishing-directory ,publish-dir
+(setq org-publish-project-alist
+      `(("orgfiles"
+         :base-directory ,base-dir
+         :exclude ".*drafts/.*"
+         :base-extension "org"
+         :publishing-directory ,publish-dir
 
-           :recursive t
-           :preparation-function org-blog-prepare
-           :publishing-function org-html-publish-to-html
+         :recursive t
+         :preparation-function org-blog-prepare
+         :publishing-function org-blog-publish-to-html
 
-           :with-toc nil
-           :with-title nil
-           :with-date t
-           :section-numbers nil
-           :html-doctype "html5"
-           :html-html5-fancy t
-           :html-head-include-default-style nil
-           :html-head-include-scripts nil
-           :htmlized-source t
-           :html-head-extra ,org-blog-head
-           :html-preamble org-blog-preamble
-           :html-postamble org-blog-postamble
+         :with-toc nil
+         :with-title nil
+         :with-date t
+         :section-numbers nil
+         :html-doctype "html5"
+         :html-html5-fancy t
+         :html-head-include-default-style nil
+         :html-head-include-scripts nil
+         :htmlized-source t
+         :html-head-extra ,org-blog-head
+         :html-preamble org-blog-preamble
+         :html-postamble org-blog-postamble
 
-           :auto-sitemap t
-           :sitemap-filename "archive.org"
-           :sitemap-title "Blog Posts"
-           :sitemap-style list
-           :sitemap-sort-files anti-chronologically
-           :sitemap-format-entry org-blog-sitemap-format-entry
-           :sitemap-function org-blog-sitemap-function)
+         :auto-sitemap t
+         :sitemap-filename "archive.org"
+         :sitemap-title "Blog Posts"
+         :sitemap-style list
+         :sitemap-sort-files anti-chronologically
+         :sitemap-format-entry org-blog-sitemap-format-entry
+         :sitemap-function org-blog-sitemap-function)
 
-          ("assets"
-           :base-directory ,assets-dir
-           :base-extension ".*"
-           :publishing-directory ,publish-assets-dir
-           :publishing-function org-publish-attachment
-           :recursive t)
+        ("assets"
+         :base-directory ,assets-dir
+         :base-extension ".*"
+         :exclude ".*\.org$"
+         :publishing-directory ,publish-assets-dir
+         :publishing-function org-publish-attachment
+         :recursive t)
 
-          ("rss"
-           :base-directory ,rss-dir
-           :base-extension "org"
-           :html-link-home ,domainname
-           :html-link-use-abs-url t
-           :rss-extension "xml"
-           :publishing-directory ,publish-rss-dir
-           :publishing-function (org-rss-publish-to-rss)
-           :exclude ".*"
-           :include ("archive.org")
-           :section-numbers nil
-           :table-of-contents nil)
+        ("rss"
+         :base-directory ,rss-dir
+         :base-extension "org"
+         :html-link-home ,domainname
+         :html-link-use-abs-url t
+         :rss-extension "xml"
+         :publishing-directory ,publish-rss-dir
+         :publishing-function (org-rss-publish-to-rss)
+         :exclude ".*"
+         :include ("archive.org")
+         :section-numbers nil
+         :table-of-contents nil)
 
-          ("blog" :components ("orgfiles" "assets" "rss"))))
+        ("blog" :components ("orgfiles" "assets" "rss"))))
 
-  ;; add target=_blank and rel="noopener noreferrer" to all links by default
-  (defun my-org-export-add-target-blank-to-http-links (text backend info)
-    "Add target=\"_blank\" to external links."
-    (when (and
-           (org-export-derived-backend-p backend 'html)
-           (string-match "href=\"http[^\"]+" text)
-           (not (string-match "target=\"" text))
-           (not (string-match (concat "href=\"" domainname "[^\"]*") text)))
-      (string-match "<a " text)
-      (replace-match "<a target=\"_blank\" rel=\"noopener noreferrer\" " nil nil text)))
+;; add target=_blank and rel="noopener noreferrer" to all links by default
+(defun my-org-export-add-target-blank-to-http-links (text backend info)
+  "Add target=\"_blank\" to external links."
+  (when (and
+         (org-export-derived-backend-p backend 'html)
+         (string-match "href=\"http[^\"]+" text)
+         (not (string-match "target=\"" text))
+         (not (string-match (concat "href=\"" domainname "[^\"]*") text)))
+    (string-match "<a " text)
+    (replace-match "<a target=\"_blank\" rel=\"noopener noreferrer\" " nil nil text)))
 
-  (add-to-list 'org-export-filter-link-functions
-               'my-org-export-add-target-blank-to-http-links)
+(add-to-list 'org-export-filter-link-functions
+             'my-org-export-add-target-blank-to-http-links)
 #+end_src
 
