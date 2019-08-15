@@ -4,7 +4,12 @@
 #+EMAIL: yann@esposito.host
 #+DATE: [2019-07-27]
 #+KEYWORDS: programming, blog, org-mode, meta
-#+OPTIONS: auto-id:t
+#+OPTIONS: auto-id:t toc:t
+
+* Introduction
+  :PROPERTIES:
+  :CUSTOM_ID: introduction
+  :END:
 
 #+begin_quote
 /tl;dr/: [[#full-solution][Go to the full solution]] for the impatients.
@@ -81,6 +86,17 @@ See [[file:project-el/index.org][my other post about it]].
   :END:
 
 #+begin_src elisp
+(setq domainname "https://her.esy.fun")
+(setq base-dir (concat (projectile-project-root) "src"))
+(setq publish-dir (concat (projectile-project-root) "_site"))
+(setq assets-dir (concat base-dir "/"))
+(setq publish-assets-dir (concat publish-dir "/"))
+(setq rss-dir base-dir)
+(setq rss-title "Subscribe to articles")
+(setq publish-rss-dir publish-dir)
+(setq css-path "/css/minimalist.css")
+(setq author-name "Yann Esposito")
+(setq author-email "yann@esposito.host")
 
 (require 'org)
 (require 'ox-publish)
@@ -89,16 +105,8 @@ See [[file:project-el/index.org][my other post about it]].
 (require 'ox-rss)
 
 (setq org-link-file-path-type 'relative)
-
-(defun org-blog-prepare (project-plist)
-  "With help from `https://github.com/howardabrams/dot-files'.
-Touch `index.org' to rebuilt it.
-Argument `PROJECT-PLIST' contains information about the current project."
-  (let* ((base-directory (plist-get project-plist :base-directory))
-         (buffer (find-file-noselect (expand-file-name "index.org" base-directory) t)))
-    (with-current-buffer buffer
-      (set-buffer-modified-p t)
-      (save-buffer 0))))
+(setq org-publish-timestamp-directory
+      (concat (projectile-project-root) "_cache/"))
 
 (defvar org-blog-head
   (concat
@@ -136,6 +144,11 @@ Argument `PROJECT-PLIST' contains information about the current project."
               (str-time-to-year-float blog-creation-date))))
     (format "∆t=%.2f" y)))
 
+(defun get-from-info (info k)
+  (let ((i (car (plist-get info k))))
+    (when (and i (stringp i))
+      i)))
+
 (defun org-blog-preamble (info)
   "Pre-amble for whole blog."
   (concat
@@ -144,16 +157,14 @@ Argument `PROJECT-PLIST' contains information about the current project."
    "<h1>"
    (format "%s" (car (plist-get info :title)))
    "</h1>"
-   (when-let ((date (get-from-info info :date)))
-     (format "<span class=\"article-date\">%s</span>" date))
+   (when-let ((date (plist-get info :date)))
+     (format "<span class=\"article-date\">%s</span>"
+             (format-time-string "%Y-%m-%d"
+                                 (org-timestamp-to-time
+                                  (car date)))))
    (when-let ((subtitle (car (plist-get info :subtitle))))
      (format "<h2>%s</h2>" subtitle))
    "</div>"))
-
-(defun get-from-info (info k)
-  (let ((i (car (plist-get info k))))
-    (when (and i (stringp i))
-      i)))
 
 (defun rand-obfs (c)
   (let ((r (% (random) 20)))
@@ -206,9 +217,11 @@ Argument `PROJECT-PLIST' contains information about the current project."
 (defun org-blog-sitemap-format-entry (entry _style project)
   "Return string for each ENTRY in PROJECT."
   (when (s-starts-with-p "posts/" entry)
-    (format "@@html:<span class=\"archive-item\"><span class=\"archive-date\">@@ %s: @@html:</span>@@ [[file:%s][%s]] @@html:</span>@@"
-            (format-time-string "%Y-%m-%d"
-                                (org-publish-find-date entry project))
+    (format (concat "@@html:<span class=\"archive-item\">"
+                    "<span class=\"archive-date\">@@ %s: @@html:</span>@@"
+                    " [[file:%s][%s]]"
+                    " @@html:</span>@@")
+            (format-time-string "%Y-%m-%d" (org-publish-find-date entry project))
             entry
             (org-publish-find-title entry project))))
 
@@ -233,11 +246,16 @@ Argument `PROJECT-PLIST' contains information about the current project."
       (insert (mapconcat 'identity
                          '("<input type=\"radio\" id=\"light\" name=\"theme\"/>"
                            "<input type=\"radio\" id=\"dark\" name=\"theme\"/>"
+                           "<input type=\"radio\" id=\"raw\" name=\"theme\"/>"
+                           "<input type=\"radio\" id=\"darkraw\" name=\"theme\"/>"
                            "<div id=\"labels\">"
                            "<div class=\"content\">"
-                           "<label for=\"light\">Light Theme</label>"
+                           "Change theme: "
+                           "<label for=\"light\">Light</label>"
+                           "(<label for=\"raw\">raw</label>)"
                            " / "
-                           "<label for=\"dark\">Dark Theme</label>"
+                           "<label for=\"dark\">Dark</label>"
+                           "(<label for=\"darkraw\">raw</label>)"
                            "</div>"
                            "</div>"
                            "<div class=\"main\">")
@@ -257,7 +275,6 @@ Argument `PROJECT-PLIST' contains information about the current project."
          :publishing-directory ,publish-dir
 
          :recursive t
-         :preparation-function org-blog-prepare
          :publishing-function org-blog-publish-to-html
 
          :with-toc nil
