@@ -27,7 +27,9 @@ priority:
 
 1. *Respect Privacy*; no tracker of any sort (no ads, no google analytics, no
    referrer for all external links, etc...)
-2. *javascript free*; no js at all, yes even the theme changer
+2. *nearly no javascript*; no js at all except for a single exception,
+   pages containing Math formula are displayed using mathjax. That means
+   that event the CSS theme switcher does not use javascript.
 3. *Accessible*; should be easy to read on a text browser so people with
    disabilities could easily consume it
 4. *nerdy*; should feel mostly like markdown text in a terminal and source
@@ -188,6 +190,24 @@ Finally in the CSS you can write things like:
   }
 #+end_src
 
+I also added a system to support theme using fragment in the URL.
+
+#+begin_src css
+  input#light:target ~ .main,
+  input#light:checked ~ .main {
+    background-color: var(--light-color);
+    color: var(--dark-color);
+  }
+  input#dark:target ~ .main,
+  input#dark:checked ~ .main {
+    background-color: var(--dark-color);
+    color: var(--light-color);
+  }
+#+end_src
+
+Unfortunately, the fragment system take full priority other the checkbox
+mechanism.
+
 Regarding selecting the user preferred theme, there are plenty of tutorial
 on the internet, you could also simply steal my CSS.
 
@@ -204,3 +224,509 @@ Because a website is mostly, export all of file in org-mode format (easier
 to write and manipulate than raw HTML) to HTML.
 
 In fact, there are numerous details that make this task not this straightforward.
+You want:
+
+1. from a tree of org-mode files, generate an equivalent file tree of HTML
+   files generated from the org-mode files. This is the main purpose of org-publish.
+2. We also want to set specific headers, a CSS file, a favicon, link to RSS
+   file, mobile friendly directives.
+3. Have common header/footer (preamble, postamble) if possible with a menu.
+4. An archive page with a list of posts.
+5. Generate an RSS file
+6. Niceties:
+   - obfuscate your email to prevent spam
+   - link to your email with a link to the current page integrated in the body/subject
+   - replace your external link to open in a new tab securely (=noopener / noreferrer=).
+
+*** Tree of files
+:PROPERTIES:
+:CUSTOM_ID: tree-of-files
+:END:
+#+begin_src elisp
+  (setq domainname "https://her.esy.fun")
+  (setq base-dir (concat (projectile-project-root) "src"))
+  (setq publish-dir (concat (projectile-project-root) "_site"))
+  (setq assets-dir (concat base-dir "/"))
+  (setq publish-assets-dir (concat publish-dir "/"))
+  (setq rss-dir base-dir)
+  (setq rss-title "Subscribe to articles")
+  (setq publish-rss-dir publish-dir)
+  (setq publish-rss-img (concat domainname "/rss.png"))
+  (setq css-path "/css/minimalist.css")
+  (setq author-name "Yann Esposito")
+  (setq author-email "yann@esposito.host")
+
+  (require 'org)
+  (require 'ox-publish)
+  (require 'ox-html)
+  (require 'org-element)
+  (require 'ox-rss)
+
+  (setq org-link-file-path-type 'relative)
+  (setq org-publish-timestamp-directory
+        (concat (projectile-project-root) "_cache/"))
+
+  (setq org-publish-project-alist
+        `(("orgfiles"
+           :base-directory ,base-dir
+           :exclude ".*drafts/.*"
+           :base-extension "org"
+           :publishing-directory ,publish-dir
+           :recursive t
+           :publishing-function org-blog-publish-to-html
+
+           :with-toc nil
+           :with-title nil
+           :with-date t
+           :section-numbers nil
+           :html-doctype "html5"
+           :html-html5-fancy t
+           :html-head-include-default-style nil
+           :html-head-include-scripts nil
+           :htmlized-source t
+           :html-head-extra ,org-blog-head
+           :html-preamble org-blog-preamble
+           :html-postamble org-blog-postamble
+
+           :auto-sitemap t
+           :sitemap-filename "archive.org"
+           :sitemap-title "Blog Posts"
+           :sitemap-style list
+           :sitemap-sort-files anti-chronologically
+           :sitemap-format-entry org-blog-sitemap-format-entry
+           :sitemap-function org-blog-sitemap-function)
+
+          ("assets"
+           :base-directory ,assets-dir
+           :base-extension ".*"
+           :exclude ".*\.org$"
+           :publishing-directory ,publish-assets-dir
+           :publishing-function org-publish-attachment
+           :recursive t)
+
+          ("rss"
+           :base-directory ,rss-dir
+           :base-extension "org"
+           :html-link-home ,domainname
+           :html-link-use-abs-url t
+           :rss-extension "xml"
+           :rss-image-url ,publish-rss-img
+           :publishing-directory ,publish-rss-dir
+           :publishing-function (org-rss-publish-to-rss)
+           :exclude ".*"
+           :include ("archive.org")
+           :section-numbers nil
+           :table-of-contents nil)
+
+          ("blog" :components ("orgfiles" "assets" "rss"))))
+#+end_src
+*** HTML Headers
+:PROPERTIES:
+:CUSTOM_ID: html-headers
+:END:
+
+#+begin_src elisp
+  (defvar org-blog-head
+    (concat
+     "<link rel=\"stylesheet\" type=\"text/css\" href=\"" css-path "\"/>"
+     "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+     "<link rel=\"alternative\" type=\"application/rss+xml\" title=\"" rss-title "\" href=\"/archives.xml\" />"
+     "<link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/favicon.ico\">"))
+
+#+end_src
+*** Preamble & Postamble
+:PROPERTIES:
+:CUSTOM_ID: preamble---postamble
+:END:
+#+begin_src elisp
+(defun menu (lst)
+    "Blog menu"
+    (concat
+     "<navigation>"
+     (mapconcat 'identity
+                (append
+                 '("<a href=\"/index.html\">Home</a>"
+                   "<a href=\"/archive.html\">Posts</a>"
+                   "<a href=\"/about-me.html\">About</a>")
+                 lst)
+                " | ")
+     "</navigation>"))
+
+  (defun get-from-info (info k)
+    (let ((i (car (plist-get info k))))
+      (when (and i (stringp i))
+        i)))
+
+  (defun org-blog-preamble (info)
+    "Pre-amble for whole blog."
+    (concat
+     "<div class=\"content\">"
+     (menu '("<a href=\"#postamble\">↓ bottom ↓</a>"))
+     "<h1>"
+     (format "%s" (car (plist-get info :title)))
+     "</h1>"
+     (when-let ((date (plist-get info :date)))
+       (format "<span class=\"article-date\">%s</span>"
+               (format-time-string "%Y-%m-%d"
+                                   (org-timestamp-to-time
+                                    (car date)))))
+     (when-let ((subtitle (car (plist-get info :subtitle))))
+       (format "<h2>%s</h2>" subtitle))
+     "</div>"))
+
+  (defun org-blog-postamble (info)
+    "Post-amble for whole blog."
+    (concat
+     "<div class=\"content\">"
+     ;; TODO install a comment system
+     ;; (let ((url (format "%s%s" domainname (replace-regexp-in-string base-dir "" (plist-get info :input-file)))))
+     ;;   (format "<a href=\"https://comments.esy.fun/slug/%s\">comment</a>"
+     ;;           (url-hexify-string url)))
+     "<footer>"
+     (when-let ((author (get-from-info info :author)))
+       (if-let ((email (plist-get info :email)))
+           (let* ((obfs-email (obfuscate-html email))
+                  (obfs-author (obfuscate-html author))
+                  (obfs-title (obfuscate-html (get-from-info info :title)))
+                  (full-email (format "%s &lt;%s&gt;" obfs-author obfs-email)))
+             (format "<div class=\"author\">Author: <a href=\"%s%s%s%s\">%s</a></div>"
+                     (obfuscate-html "mailto:")
+                     full-email
+                     (obfuscate-html "?subject=yblog: ")
+                     obfs-title
+                     full-email))
+         (format "<div class=\"author\">Author: %s</div>" author)))
+     (when-let ((date (plist-get info :date)))
+       (format "<div class=\"date\">Created: %s</div>"
+               (format-time-string "%Y-%m-%d"
+                                   (org-timestamp-to-time
+                                    (car date)))))
+     (when-let ((keywords (plist-get info :keywords)))
+       (format "<div class=\"keywords\">Keywords: <code>%s</code></div>" keywords))
+     (format "<div class=\"date\">Generated: %s</div>"
+             (format-time-string "%Y-%m-%d %H:%M:%S"))
+     (format (concat "<div class=\"creator\"> Generated with "
+                     "<a href=\"https://www.gnu.org/software/emacs/\" target=\"_blank\" rel=\"noopener noreferrer\">Emacs %s</a>, "
+                     "<a href=\"http://spacemacs.org\" target=\"_blank\" rel=\"noopener noreferrer\">Spacemacs %s</a>, "
+                     "<a href=\"http://orgmode.org\" target=\"_blank\" rel=\"noopener noreferrer\">Org Mode %s</a>"
+                     "</div>")
+             emacs-version spacemacs-version org-version)
+     "</footer>"
+     (menu '("<a href=\"#preamble\">↑ Top ↑</a>"))
+     "</div>"))
+#+end_src
+*** RSS
+:PROPERTIES:
+:CUSTOM_ID: rss-db16
+:END:
+#+begin_src elisp
+  ("rss"
+   :base-directory ,rss-dir
+   :base-extension "org"
+   :html-link-home ,domainname
+   :html-link-use-abs-url t
+   :rss-extension "xml"
+   :publishing-directory ,publish-rss-dir
+   :publishing-function (org-rss-publish-to-rss)
+   :exclude ".*"
+   :include ("archive.org")
+   :section-numbers nil
+   :table-of-contents nil)
+#+end_src
+*** Obfuscate email
+:PROPERTIES:
+:CUSTOM_ID: obfuscate-email
+:END:
+#+begin_src elisp
+  (defun rand-obfs (c)
+    (let ((r (% (random) 20)))
+      (cond ;; ((eq 0 r) (format "%c" c))
+       ((<= 0 r 10) (format "&#%d;" c))
+       (t (format "&#x%X;" c)))))
+
+  (defun obfuscate-html (txt)
+    (apply 'concat
+           (mapcar 'rand-obfs txt)))
+#+end_src
+*** Specific email subject
+:PROPERTIES:
+:CUSTOM_ID: specific-email-subject
+:END:
+#+begin_src elisp
+  (let* ((obfs-email (obfuscate-html email))
+         (obfs-author (obfuscate-html author))
+         (obfs-title (obfuscate-html (get-from-info info :title)))
+         (full-email (format "%s &lt;%s&gt;" obfs-author obfs-email)))
+    (format "<div class=\"author\">Author: <a href=\"%s%s%s%s\">%s</a></div>"
+            (obfuscate-html "mailto:")
+            full-email
+            (obfuscate-html "?subject=yblog: ")
+            obfs-title
+            full-email))
+#+end_src
+*** Nice external links
+:PROPERTIES:
+:CUSTOM_ID: nice-external-links
+:END:
+
+#+begin_src elisp
+  ;; add target=_blank and rel="noopener noreferrer" to all links by default
+  (defun my-org-export-add-target-blank-to-http-links (text backend info)
+    "Add target=\"_blank\" to external links."
+    (when (and
+           (org-export-derived-backend-p backend 'html)
+           (string-match "href=\"http[^\"]+" text)
+           (not (string-match "target=\"" text))
+           (not (string-match (concat "href=\"" domainname "[^\"]*") text)))
+      (string-match "<a " text)
+      (replace-match "<a target=\"_blank\" rel=\"noopener noreferrer\" " nil nil text)))
+
+  (add-to-list 'org-export-filter-link-functions
+               'my-org-export-add-target-blank-to-http-links)
+#+end_src
+
+*** Full code
+:PROPERTIES:
+:CUSTOM_ID: full-code
+:END:
+
+#+begin_src elisp
+  (setq domainname "https://her.esy.fun")
+  (setq base-dir (concat (projectile-project-root) "src"))
+  (setq publish-dir (concat (projectile-project-root) "_site"))
+  (setq assets-dir (concat base-dir "/"))
+  (setq publish-assets-dir (concat publish-dir "/"))
+  (setq rss-dir base-dir)
+  (setq rss-title "Subscribe to articles")
+  (setq publish-rss-dir publish-dir)
+  (setq publish-rss-img (concat domainname "/rss.png"))
+  (setq css-path "/css/minimalist.css")
+  (setq author-name "Yann Esposito")
+  (setq author-email "yann@esposito.host")
+
+  (require 'org)
+  (require 'ox-publish)
+  (require 'ox-html)
+  (require 'org-element)
+  (require 'ox-rss)
+
+  (setq org-link-file-path-type 'relative)
+  (setq org-publish-timestamp-directory
+        (concat (projectile-project-root) "_cache/"))
+
+  (defvar org-blog-head
+    (concat
+     "<link rel=\"stylesheet\" type=\"text/css\" href=\"" css-path "\"/>"
+     "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+     "<link rel=\"alternative\" type=\"application/rss+xml\" title=\"" rss-title "\" href=\"/archives.xml\" />"
+     "<link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/favicon.ico\">"))
+
+  (defun menu (lst)
+    "Blog menu"
+    (concat
+     "<navigation>"
+     (mapconcat 'identity
+                (append
+                 '("<a href=\"/index.html\">Home</a>"
+                   "<a href=\"/archive.html\">Posts</a>"
+                   "<a href=\"/about-me.html\">About</a>")
+                 lst)
+                " | ")
+     "</navigation>"))
+
+  (defun get-from-info (info k)
+    (let ((i (car (plist-get info k))))
+      (when (and i (stringp i))
+        i)))
+
+  (defun org-blog-preamble (info)
+    "Pre-amble for whole blog."
+    (concat
+     "<div class=\"content\">"
+     (menu '("<a href=\"#postamble\">↓ bottom ↓</a>"))
+     "<h1>"
+     (format "%s" (car (plist-get info :title)))
+     "</h1>"
+     (when-let ((date (plist-get info :date)))
+       (format "<span class=\"article-date\">%s</span>"
+               (format-time-string "%Y-%m-%d"
+                                   (org-timestamp-to-time
+                                    (car date)))))
+     (when-let ((subtitle (car (plist-get info :subtitle))))
+       (format "<h2>%s</h2>" subtitle))
+     "</div>"))
+
+  (defun rand-obfs (c)
+    (let ((r (% (random) 20)))
+      (cond ;; ((eq 0 r) (format "%c" c))
+       ((<= 0 r 10) (format "&#%d;" c))
+       (t (format "&#x%X;" c)))))
+
+  (defun obfuscate-html (txt)
+    (apply 'concat
+           (mapcar 'rand-obfs txt)))
+
+  (defun org-blog-postamble (info)
+    "Post-amble for whole blog."
+    (concat
+     "<div class=\"content\">"
+     ;; TODO install a comment system
+     ;; (let ((url (format "%s%s" domainname (replace-regexp-in-string base-dir "" (plist-get info :input-file)))))
+     ;;   (format "<a href=\"https://comments.esy.fun/slug/%s\">comment</a>"
+     ;;           (url-hexify-string url)))
+     "<footer>"
+     (when-let ((author (get-from-info info :author)))
+       (if-let ((email (plist-get info :email)))
+           (let* ((obfs-email (obfuscate-html email))
+                  (obfs-author (obfuscate-html author))
+                  (obfs-title (obfuscate-html (get-from-info info :title)))
+                  (full-email (format "%s &lt;%s&gt;" obfs-author obfs-email)))
+             (format "<div class=\"author\">Author: <a href=\"%s%s%s%s\">%s</a></div>"
+                     (obfuscate-html "mailto:")
+                     full-email
+                     (obfuscate-html "?subject=yblog: ")
+                     obfs-title
+                     full-email))
+         (format "<div class=\"author\">Author: %s</div>" author)))
+     (when-let ((date (plist-get info :date)))
+       (format "<div class=\"date\">Created: %s</div>"
+               (format-time-string "%Y-%m-%d"
+                                   (org-timestamp-to-time
+                                    (car date)))))
+     (when-let ((keywords (plist-get info :keywords)))
+       (format "<div class=\"keywords\">Keywords: <code>%s</code></div>" keywords))
+     (format "<div class=\"date\">Generated: %s</div>"
+             (format-time-string "%Y-%m-%d %H:%M:%S"))
+     (format (concat "<div class=\"creator\"> Generated with "
+                     "<a href=\"https://www.gnu.org/software/emacs/\" target=\"_blank\" rel=\"noopener noreferrer\">Emacs %s</a>, "
+                     "<a href=\"http://spacemacs.org\" target=\"_blank\" rel=\"noopener noreferrer\">Spacemacs %s</a>, "
+                     "<a href=\"http://orgmode.org\" target=\"_blank\" rel=\"noopener noreferrer\">Org Mode %s</a>"
+                     "</div>")
+             emacs-version spacemacs-version org-version)
+     "</footer>"
+     (menu '("<a href=\"#preamble\">↑ Top ↑</a>"))
+     "</div>"))
+
+  (defun org-blog-sitemap-format-entry (entry _style project)
+    "Return string for each ENTRY in PROJECT."
+    (when (s-starts-with-p "posts/" entry)
+      (format (concat "@@html:<span class=\"archive-item\">"
+                      "<span class=\"archive-date\">@@ %s: @@html:</span>@@"
+                      " [[file:%s][%s]]"
+                      " @@html:</span>@@")
+              (format-time-string "%Y-%m-%d" (org-publish-find-date entry project))
+              entry
+              (org-publish-find-title entry project))))
+
+  (defun org-blog-sitemap-function (title list)
+    "Return sitemap using TITLE and LIST returned by `org-blog-sitemap-format-entry'."
+    (concat "#+TITLE: " title "\n"
+            "#+AUTHOR: " author-name "\n"
+            "#+EMAIL: " author-email "\n"
+            "\n#+begin_archive\n"
+            (mapconcat (lambda (li)
+                         (format "@@html:<li>@@ %s @@html:</li>@@" (car li)))
+                       (seq-filter #'car (cdr list))
+                       "\n")
+            "\n#+end_archive\n"))
+
+  (defun org-blog-publish-to-html (plist filename pub-dir)
+    "Same as `org-html-publish-to-html' but modifies html before finishing."
+    (let ((file-path (org-html-publish-to-html plist filename pub-dir)))
+      (with-current-buffer (find-file-noselect file-path)
+        (goto-char (point-min))
+        (search-forward "<body>")
+        (insert (mapconcat 'identity
+                           '("<input type=\"radio\" id=\"light\" name=\"theme\"/>"
+                             "<input type=\"radio\" id=\"dark\" name=\"theme\"/>"
+                             "<input type=\"radio\" id=\"raw\" name=\"theme\"/>"
+                             "<input type=\"radio\" id=\"darkraw\" name=\"theme\"/>"
+                             "<div id=\"labels\">"
+                             "<div class=\"content\">"
+                             "Change theme: "
+                             "<label for=\"light\">Light</label>"
+                             "(<label for=\"raw\">raw</label>)"
+                             " / "
+                             "<label for=\"dark\">Dark</label>"
+                             "(<label for=\"darkraw\">raw</label>)"
+                             "</div>"
+                             "</div>"
+                             "<div class=\"main\">")
+                           "\n"))
+        (goto-char (point-max))
+        (search-backward "</body>")
+        (insert "\n</div>\n")
+        (save-buffer)
+        (kill-buffer))
+      file-path))
+
+  (setq org-publish-project-alist
+        `(("orgfiles"
+           :base-directory ,base-dir
+           :exclude ".*drafts/.*"
+           :base-extension "org"
+           :publishing-directory ,publish-dir
+
+           :recursive t
+           :publishing-function org-blog-publish-to-html
+
+           :with-toc nil
+           :with-title nil
+           :with-date t
+           :section-numbers nil
+           :html-doctype "html5"
+           :html-html5-fancy t
+           :html-head-include-default-style nil
+           :html-head-include-scripts nil
+           :htmlized-source t
+           :html-head-extra ,org-blog-head
+           :html-preamble org-blog-preamble
+           :html-postamble org-blog-postamble
+
+           :auto-sitemap t
+           :sitemap-filename "archive.org"
+           :sitemap-title "Blog Posts"
+           :sitemap-style list
+           :sitemap-sort-files anti-chronologically
+           :sitemap-format-entry org-blog-sitemap-format-entry
+           :sitemap-function org-blog-sitemap-function)
+
+          ("assets"
+           :base-directory ,assets-dir
+           :base-extension ".*"
+           :exclude ".*\.org$"
+           :publishing-directory ,publish-assets-dir
+           :publishing-function org-publish-attachment
+           :recursive t)
+
+          ("rss"
+           :base-directory ,rss-dir
+           :base-extension "org"
+           :html-link-home ,domainname
+           :html-link-use-abs-url t
+           :rss-extension "xml"
+           :rss-image-url ,publish-rss-img
+           :publishing-directory ,publish-rss-dir
+           :publishing-function (org-rss-publish-to-rss)
+           :exclude ".*"
+           :include ("archive.org")
+           :section-numbers nil
+           :table-of-contents nil)
+
+          ("blog" :components ("orgfiles" "assets" "rss"))))
+
+  ;; add target=_blank and rel="noopener noreferrer" to all links by default
+  (defun my-org-export-add-target-blank-to-http-links (text backend info)
+    "Add target=\"_blank\" to external links."
+    (when (and
+           (org-export-derived-backend-p backend 'html)
+           (string-match "href=\"http[^\"]+" text)
+           (not (string-match "target=\"" text))
+           (not (string-match (concat "href=\"" domainname "[^\"]*") text)))
+      (string-match "<a " text)
+      (replace-match "<a target=\"_blank\" rel=\"noopener noreferrer\" " nil nil text)))
+
+  (add-to-list 'org-export-filter-link-functions
+               'my-org-export-add-target-blank-to-http-links)
+#+end_src
+
