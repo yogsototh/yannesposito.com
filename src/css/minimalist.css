@@ -41,7 +41,60 @@ figure {
 figure {
     margin: 20px 0px;
 }
+li {
+    position: relative;
+    display: block;
+    padding-left: 20px;
+}
+ul > li:before {
+    content: "– ";
+    font-weight: bold;
+    opacity: 0.5;
+    float: left;
+    position: relative;
+    left: -20px;
+    width: 0;
+}
+ol {
+    counter-reset: ol;
+}
+ol > li:before {
+    content: counter(ol) ". ";
+    counter-increment: ol;
+    font-weight: bold;
+    float: left;
+    position: relative;
+    left: -20px;
+    width: 0;
+}
+img {
+    max-width: 100%;
+    max-height: 800px;
+    margin: 20px auto;
+}
+p > img, li > img {
+    max-height: 1em;
+    margin: 0;
+    vertical-align: middle;
+}
+table {
+    width: 100%;
+    margin: 20px 0;
+    border-collapse: collapse;
+    border: solid 1px;
+    display: block;
+    overflow: scroll;
+}
+td, th {
+    height: 20px;
+    padding: 0 10px;
+    text-align: left;
+    vertical-align: middle;
+    border-right: solid 1px;
+    border-left: solid 1px;
+}
 
+/* Markdown tricks */
 h1 {
     font-size: 1em;
 }
@@ -126,58 +179,6 @@ blockquote:after {
     top: 0;
     left: 0;
 }
-li {
-    position: relative;
-    display: block;
-    padding-left: 20px;
-}
-ul > li:before {
-    content: "– ";
-    font-weight: bold;
-    opacity: 0.5;
-    float: left;
-    position: relative;
-    left: -20px;
-    width: 0;
-}
-ol {
-    counter-reset: ol;
-}
-ol > li:before {
-    content: counter(ol) ". ";
-    counter-increment: ol;
-    font-weight: bold;
-    float: left;
-    position: relative;
-    left: -20px;
-    width: 0;
-}
-img {
-    max-width: 100%;
-    max-height: 800px;
-    margin: 20px auto;
-}
-p > img, li > img {
-    max-height: 1em;
-    margin: 0;
-    vertical-align: middle;
-}
-table {
-    width: 100%;
-    margin: 20px 0;
-    border-collapse: collapse;
-    border: solid 1px;
-    display: block;
-    overflow: scroll;
-}
-td, th {
-    height: 20px;
-    padding: 0 10px;
-    text-align: left;
-    vertical-align: middle;
-    border-right: solid 1px;
-    border-left: solid 1px;
-}
 navigation {
     font-weight: bold;
     display: block;
@@ -246,6 +247,9 @@ navigation > a {
     display: inline-block;
     width: 1em;
 }
+.underline {
+    text-decoration: underline;
+}
 
 /* colors theme */
 :root {
@@ -309,6 +313,7 @@ navigation > a {
 
 body > input { display:none; }
 
+/* Light theme checked */
 input#light:checked ~ .main {
     --main-background: #fefaf0; /* 0.5 lighter than #fdf6e3 */
     --main-foreground: var(--base01);
@@ -323,6 +328,7 @@ input#light:checked ~ #labels {
     color: var(--base00);
 }
 
+/* Dark theme checked */
 input#dark:checked ~ .main {
     --main-background: var(--base03); /* 0.5 darker than #002b36; */
     --main-foreground: var(--base1);
@@ -337,6 +343,7 @@ input#dark:checked ~ #labels {
     color: var(--base0);
 }
 
+/* Light raw theme checked */
 input#raw:checked ~ .main {
     --main-background: #fff;
     --main-foreground: #000;
@@ -358,7 +365,12 @@ input#raw:checked ~ #labels {
     background: #fff;
     color: #000;
 }
-
+input#raw:checked ~ .main code,
+input#raw:checked ~ .main pre
+{
+    font-family: monospace;
+}
+/* Light modern theme checked */
 input#modern:checked ~ .main {
     --main-background: #fff;
     --main-foreground: #444;
@@ -434,6 +446,7 @@ input#modern:checked ~ #labels .content {
     margin: 0 auto;
 }
 
+/* Dark raw theme checked */
 input#darkraw:checked ~ .main {
     --main-background: #000;
     --main-foreground: #fff;
@@ -455,8 +468,12 @@ input#darkraw:checked ~ #labels {
     background: #000;
     color: #fff;
 }
-
-
+input#darkraw:checked ~ .main code,
+input#darkraw:checked ~ .main pre
+{
+    font-family: monospace;
+}
+/* Default color theme */
 body,.main {
     background: var(--main-background);
     color: var(--main-foreground);
@@ -540,9 +557,6 @@ blockquote:after, .main blockquote:after {
 }
 /* -------- */
 /* org colors */
-.underline {
-    text-decoration: underline;
-}
 .todo, .done, .main .todo, .main .done {
     background-color: var(--reveal-background);
     border: solid 1px;
