@@ -1,0 +1,131 @@
+#+TITLE: New Blog
+#+SUBTITLE: Peaceful and respectful design
+#+AUTHOR: Yann Esposito
+#+EMAIL: yann@esposito.host
+#+DATE: [2019-07-28]
+#+KEYWORDS: programming, blog, org-mode, web, css
+#+OPTIONS: auto-id:t
+
+* Peaceful and Respectful Website
+:PROPERTIES:
+:CUSTOM_ID: peaceful-and-respectful-website
+:END:
+
+There is a trend about website being quite less accessible, using more and
+more resources, adding trackers, popups, videos, animations, big js
+frameworks, etc...
+
+I wanted a more peaceful and respectful website.
+
+That website was created with the following constraints in mind by order of
+priority:
+
+1. *Respect Privacy*; no tracker of any sort (no ads, no google analytics, no
+   referrer for all external links, etc...)
+2. *javascript free*; no js at all, yes even the theme changer
+3. *Accessible*; should be easy to read on a text browser so people with
+   disabilities could easily consume it
+4. *nerdy*; should feel mostly like markdown text in a terminal and source
+   code should be syntax highlighted.
+5. *theme switchable*; support your preferred light/dark theme by default
+   but you can change it if you want.
+6. *rss*; you should be able to get informed when I add a new blog post.
+7. *frugal*; try to minimize the resources needed to visit my website; no
+   javascript, no web-font, not too much CSS magic, not much images or really
+   compressed one.
+
+Some of the constraints are straightforward to get, some other not.
+
+** Respect Privacy
+:PROPERTIES:
+  :CUSTOM_ID: respect-privacy
+  :END:
+The one should be easy, simply not put any 3rd party inclusion in my website.
+So, no external CSS in my headers, no link to any image I do not host myself.
+No 3rd party javascript.
+
+** Javascript Free
+:PROPERTIES:
+  :CUSTOM_ID: javascript-free
+  :END:
+I do not really see why a content oriented website should need to execute javascript.
+
+** Accessible
+:PROPERTIES:
+:CUSTOM_ID: disability-friendly
+:END:
+A good way to check that a website is friendly to disabled people is by
+looking at it with a text browser.
+If you open most website today you see that at the top of the page is
+crippled with a numerous number of links/metas info used for javascript
+tricks, login/logout buttons, etc...
+The website should only contain, a pretty minimal menu to navigate, and the
+content.
+
+** Nerdy
+:PROPERTIES:
+:CUSTOM_ID: nerdy
+:END:
+The feel of the website should be nerdy, it should look like reading a
+terminal or emacs.
+It should almost feel the same as if you were using a text-browser.
+For sensible people, I added a "modern" theme that should better suit
+modern eye, still the first design should always be the terminal looking
+one.
+
+** Theme switchable
+:PROPERTIES:
+:CUSTOM_ID: theme-switchable
+:END:
+Even if you are not used to disability friendly browser.
+The website should try to guess your preferred way to consume my website.
+Recently we dark/light themes were integrated as a new CSS feature.
+This website should propose your apparently preferred theme.
+But you could also change it manually.
+
+** RSS
+:PROPERTIES:
+:CUSTOM_ID: rss
+:END:
+This is another layer that help you consume my website as you prefer.
+You should at least be informed a new article has been published.
+
+** Frugal
+:PROPERTIES:
+:CUSTOM_ID: frugal
+:END:
+This one is a bit tricky.
+It would mean, that visiting my website should not consume much resources.
+Mainly, this would prevent using heavy medias as much as possible.
+So, no video, no animated gif, no image if possible or very sparse one.
+
+* How
+:PROPERTIES:
+:CUSTOM_ID: how
+:END:
+** CSS
+:PROPERTIES:
+:CUSTOM_ID: css
+:END:
+My CSS should be nerdy, so all title font-size should be equal to the body
+font size.
+Also, I wanted to simulate markdown notation, so my HTML will look like a
+text file.
+There are a few tricks about that.
+
+One of think that wasn't straightforward while writing the CSS was about
+providing a user controlled theme.
+So click and change theme and without any javascript involved.
+That theme changer is really the limit up to which I agree to concede to
+modern standards because it is CSS only.
+
+The trick is to provide one checkbox per theme at the beginning of the body
+of the HTML.
+Then hide those checkbox and have label for each check box.
+Then use the /sibling/ CSS selector =~=.
+Then put all your content in a div of class =.main= for example.
+Finally in the CSS you can write things like:
+
+#+begin_src css
+input#themeid:checked ~ .main { // style when foo is checked }
+#+end_src
