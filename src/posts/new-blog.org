@@ -2,7 +2,7 @@
 #+SUBTITLE: Meta Post (not really related to Donal Knuth)
 #+AUTHOR: Yann Esposito
 #+EMAIL: yann@esposito.host
-#+DATE: [2019-07-28]
+#+DATE: [2019-08-17 Sat]
 #+KEYWORDS: programming, blog, org-mode, web, css
 #+OPTIONS: auto-id:t
 
@@ -42,6 +42,9 @@ priority:
    compressed one.
 
 Some of the constraints are straightforward to get, some other not.
+
+You can also check that not using more resources one of the theme of my
+website looks quite more classical and modern that my preferred ones.
 
 ** Respect Privacy
 :PROPERTIES:
@@ -104,7 +107,9 @@ You should at least be informed a new article has been published.
 This one is a bit tricky.
 It would mean, that visiting my website should not consume much resources.
 Mainly, this would prevent using heavy medias as much as possible.
-So, no video, no animated gif, no image if possible or very sparse one.
+So, no video, no animated gif, no image if possible or very compressed small one.
+So I have a script that convert all images to maximize site to `800x800`
+and use at max 16 colors. On my current example image the size goes from 3.1MB to 88KB.
 
 * How
 :PROPERTIES:
@@ -237,13 +242,34 @@ You want:
    - obfuscate your email to prevent spam
    - link to your email with a link to the current page integrated in the body/subject
    - replace your external link to open in a new tab securely (=noopener / noreferrer=).
+   - compress images during publishing
+
+Also, a single detail make using org-publish a bit awkward compared to
+classical other classical static website generators; it is designed to be
+set in you full emacs configuration.
+But I wanted to be able to clone my git repository and be able to generate
+my website locally even if I clone it on different directories.
+
+So I created a package just for that: [[file:project-el/index.org][Autoload eLISP file in projects]].
 
 *** Tree of files
 :PROPERTIES:
 :CUSTOM_ID: tree-of-files
 :END:
+
+There is a first pass that use =projectile= emacs package to detect the
+current root file of the project and provide a list of absolute paths.
+
+Then you set the associative list =org-publish-project-alist= with many
+straightforward details.
+The source directory, the destination directory, but also, file to exclude,
+a function used to transform org files to HTML, etc...
+
+:PROPERTIES:
+:CUSTOM_ID: tree-of-files
+:END:
 #+begin_src elisp
-  (setq domainname "https://her.esy.fun")
+  (setq domainname "https://john.doe")
   (setq base-dir (concat (projectile-project-root) "src"))
   (setq publish-dir (concat (projectile-project-root) "_site"))
   (setq assets-dir (concat base-dir "/"))
@@ -253,8 +279,8 @@ You want:
   (setq publish-rss-dir publish-dir)
   (setq publish-rss-img (concat domainname "/rss.png"))
   (setq css-path "/css/minimalist.css")
-  (setq author-name "Yann Esposito")
-  (setq author-email "yann@esposito.host")
+  (setq author-name "John Doe")
+  (setq author-email "john@doe.com")
 
   (require 'org)
   (require 'ox-publish)
@@ -301,7 +327,7 @@ You want:
            :base-extension ".*"
            :exclude ".*\.org$"
            :publishing-directory ,publish-assets-dir
-           :publishing-function org-publish-attachment
+           :publishing-function org-blog-publish-attachment
            :recursive t)
 
           ("rss"
@@ -325,6 +351,9 @@ You want:
 :CUSTOM_ID: html-headers
 :END:
 
+I set the header to provide a link to the RSS file, the CSS, the favicon
+and viewport directive for mobile browsers.
+
 #+begin_src elisp
   (defvar org-blog-head
     (concat
@@ -338,6 +367,11 @@ You want:
 :PROPERTIES:
 :CUSTOM_ID: preamble---postamble
 :END:
+
+So I put a menu in both the preamble and postamble.
+The postamble contains a lot of details about the article, author, email,
+date, etc...
+
 #+begin_src elisp
 (defun menu (lst)
     "Blog menu"
@@ -378,10 +412,6 @@ You want:
     "Post-amble for whole blog."
     (concat
      "<div class=\"content\">"
-     ;; TODO install a comment system
-     ;; (let ((url (format "%s%s" domainname (replace-regexp-in-string base-dir "" (plist-get info :input-file)))))
-     ;;   (format "<a href=\"https://comments.esy.fun/slug/%s\">comment</a>"
-     ;;           (url-hexify-string url)))
      "<footer>"
      (when-let ((author (get-from-info info :author)))
        (if-let ((email (plist-get info :email)))
@@ -415,28 +445,13 @@ You want:
      (menu '("<a href=\"#preamble\">↑ Top ↑</a>"))
      "</div>"))
 #+end_src
-*** RSS
-:PROPERTIES:
-:CUSTOM_ID: rss-db16
-:END:
-#+begin_src elisp
-  ("rss"
-   :base-directory ,rss-dir
-   :base-extension "org"
-   :html-link-home ,domainname
-   :html-link-use-abs-url t
-   :rss-extension "xml"
-   :publishing-directory ,publish-rss-dir
-   :publishing-function (org-rss-publish-to-rss)
-   :exclude ".*"
-   :include ("archive.org")
-   :section-numbers nil
-   :table-of-contents nil)
-#+end_src
 *** Obfuscate email
 :PROPERTIES:
 :CUSTOM_ID: obfuscate-email
 :END:
+
+A simple function to obfuscate HTML by using hexadecimal and octal notation.
+
 #+begin_src elisp
   (defun rand-obfs (c)
     (let ((r (% (random) 20)))
@@ -452,6 +467,16 @@ You want:
 :PROPERTIES:
 :CUSTOM_ID: specific-email-subject
 :END:
+
+You can set a subject to an email when you click on it by writing a link
+that looks like:
+
+#+begin_example
+mailto:john@doe.com?subject=the-subject
+#+end_example
+
+Of course most of it is obfuscated.
+
 #+begin_src elisp
   (let* ((obfs-email (obfuscate-html email))
          (obfs-author (obfuscate-html author))
@@ -469,6 +494,8 @@ You want:
 :CUSTOM_ID: nice-external-links
 :END:
 
+Also, why not fix our external link (see [[https://www.jitbit.com/alexblog/256-targetblank---the-most-underestimated-vulnerability-ever/][this article]] as reference):
+
 #+begin_src elisp
   ;; add target=_blank and rel="noopener noreferrer" to all links by default
   (defun my-org-export-add-target-blank-to-http-links (text backend info)
@@ -484,14 +511,55 @@ You want:
   (add-to-list 'org-export-filter-link-functions
                'my-org-export-add-target-blank-to-http-links)
 #+end_src
+*** Image compression
+:PROPERTIES:
+:CUSTOM_ID: image-compression
+:END:
+to compress images I use [[https://imagemagick.org][imagemagick]] like this:
 
+#+begin_src bash
+convert src/a.png -resize 800x800\> +dither -colors 16 -depth 4 dest/a.png
+#+end_src
+
+For example:
+
+
+#+CAPTION: Compressed Image
+#+NAME: fig:compressed-image
+#+ATTR_HTML: A Compressed Image
+[[../img/a.png]]
+
+I compress automatically images during publishing with:
+
+#+begin_src elisp
+  (defun org-blog-publish-attachment (plist filename pub-dir)
+    "Publish a file with no transformation of any kind.
+  FILENAME is the filename of the Org file to be published.  PLIST
+  is the property list for the given project.  PUB-DIR is the
+  publishing directory.
+  Take care of minimizing the pictures using imagemagick.
+  Return output file name."
+    (unless (file-directory-p pub-dir)
+      (make-directory pub-dir t))
+    (or (equal (expand-file-name (file-name-directory filename))
+               (file-name-as-directory (expand-file-name pub-dir)))
+        (let ((dst-file (expand-file-name (file-name-nondirectory filename) pub-dir)))
+          (if (string-match-p ".*\\.\\(png\\|jpg\\|gif\\)$" filename)
+              (shell-command 
+               (format "convert %s -resize 800x800\\> +dither -colors 16 -depth 4 %s"
+                       filename
+                       dst-file))
+            (copy-file filename dst-file t)))))
+#+end_src
 *** Full code
 :PROPERTIES:
 :CUSTOM_ID: full-code
 :END:
 
+Here is the full code:
+
 #+begin_src elisp
-  (setq domainname "https://her.esy.fun")
+  (setq domainname "https://john.doe")
   (setq base-dir (concat (projectile-project-root) "src"))
   (setq publish-dir (concat (projectile-project-root) "_site"))
   (setq assets-dir (concat base-dir "/"))
@@ -501,8 +569,8 @@ You want:
   (setq publish-rss-dir publish-dir)
   (setq publish-rss-img (concat domainname "/rss.png"))
   (setq css-path "/css/minimalist.css")
-  (setq author-name "Yann Esposito")
-  (setq author-email "yann@esposito.host")
+  (setq author-name "John Doe")
+  (setq author-email "john@doe.com")
 
   (require 'org)
   (require 'ox-publish)
@@ -660,6 +728,25 @@ You want:
         (kill-buffer))
       file-path))
 
+(defun org-blog-publish-attachment (plist filename pub-dir)
+    "Publish a file with no transformation of any kind.
+  FILENAME is the filename of the Org file to be published.  PLIST
+  is the property list for the given project.  PUB-DIR is the
+  publishing directory.
+  Take care of minimizing the pictures using imagemagick.
+  Return output file name."
+    (unless (file-directory-p pub-dir)
+      (make-directory pub-dir t))
+    (or (equal (expand-file-name (file-name-directory filename))
+               (file-name-as-directory (expand-file-name pub-dir)))
+        (let ((dst-file (expand-file-name (file-name-nondirectory filename) pub-dir)))
+          (if (string-match-p ".*\\.\\(png\\|jpg\\|gif\\)$" filename)
+              (shell-command 
+               (format "convert %s -resize 800x800\\> +dither -colors 16 -depth 4 %s"
+                       filename
+                       dst-file))
+            (copy-file filename dst-file t)))))
+
   (setq org-publish-project-alist
         `(("orgfiles"
            :base-directory ,base-dir
@@ -696,7 +783,7 @@ You want:
            :base-extension ".*"
            :exclude ".*\.org$"
            :publishing-directory ,publish-assets-dir
-           :publishing-function org-publish-attachment
+           :publishing-function org-blog-publish-attachment
            :recursive t)
 
           ("rss"
