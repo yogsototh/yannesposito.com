@@ -26,38 +26,38 @@ centralised place in your =~/.emacs.d/.init.el= file.
 
 The main principle is quite simple.
 
-1. When finding a new file in a project, check for the presence of a
-   =.project.el.gpg= file.
-2. Check the file was encrypted with by a trusted fingerprint
-3. load the file
+1. When opening a new file in a project, check for the presence of a
+   =project.el= and =project.el.sig= file at the root directory of the
+   project.
+2. Check the file was signed with by a trusted fingerprint.
+3. Load the file.
 
-I found a solution that asked you each time you enter in a project if you trust
-it.
+Other solutions I found on the internet asked you each time you enter in a
+project if you trust the file or not.
 This was both quite annoying and insecure as it is kind of easy to type 'y'
-instead of 'n' and to load an untrusted 3rd party script.
+instead of 'n' and to load 3rd party script.
 
-With emacs epa, opening encrypted gpg files is seamless.
-But here we not only want to open the gpg file but also check we trust the
-person that did it.
-
-Note that checking who's encrypted a gpg file is not straightforward:
+Note that checking who signed a file with an external signature is not as
+straightforward as it should be:
 
 #+begin_src elisp
-(defun y/get-encryption-key (file)
-  "given a gpg encrypted file, returns the fingerprint of they
-   key that encrypted it"
+(defun auto-load-project/get-sign-key (file)
+  "Return the fingerprint of they key that signed FILE.
+
+To sign a file you should used
+
+`gpg --local-user my@email --output project.el.sig --detach-sign project.el`"
   (string-trim-right
    (shell-command-to-string
     (concat
-     "gpg --status-fd 1 --decrypt -o /dev/null " file " 2>/dev/null"
-     "|grep DECRYPTION_KEY"
-     "|awk '{print $4}'"))))
+     (format "gpg --status-fd 1 --verify %s.sig %s 2>/dev/null " file file)
+     "|grep VALIDSIG"
+     "|awk '{print $3}'"))))
 #+end_src
 
 - The `--status-fd` should provide more script friendly output.
   GPG provide localized output by default which are therefore hard to use in
   script (for grep for example).
-- we do not want to decrypt to a file so we redirect the output to =/dev/null=
 
 We use =projectile= to detect the project-root and when we are in a new project.
 Unfortunately the =projectile-after-switch-project-hooks= doesn't work as I
@@ -67,69 +67,38 @@ file.
 In order not to load the code each time, I need to keep a local state of project
 already loaded.
 
+So now, each time I modify the =project.el= I sign it with the following
+command line:
+
+#+begin_src bash
+gpg --local-user my@email --output project.el.sig --detach-sign project.el
+#+end_src
+
 * Solution
   :PROPERTIES:
   :CUSTOM_ID: solution
   :END:
 
-Dowload the code [[file:auto-load-project.el][auto-load-project.el]]
+The project is hosted here: https://gitlab.esy.fun/yogsototh/auto-load-project-el
+
+You can setup the emacs package in spacemacs with:
 
 #+begin_src elisp
-  (defun y/init-project-el-auto-load ()
-    "Initialize the autoload of .project.el.gpg for projects"
-
-    (with-eval-after-load 'projectile
-
-      (defvar y/trusted-gpg-key-fingerprints
-        '("448E9FEF4F5B86DE79C1669B0000000000000000")
-        "The list of GPG fingerprint you trust when decrypting a gpg file.
-           You can retrieve the fingerprints of your own private keys
-           with: `gpg --list-secret-keys' (take care of removing the
-           spaces when copy/pasting here)")
-
-      (defun y/get-encryption-key (file)
-        "given a gpg encrypted file, returns the fingerprint of
-           they key that encrypted it"
-        (string-trim-right
-         (shell-command-to-string
-          (concat
-           "gpg --status-fd 1 --decrypt -o /dev/null " file " 2>/dev/null"
-           "|grep DECRYPTION_KEY"
-           "|awk '{print $4}'"))))
-
-      (defun y/trusted-gpg-origin-p (file)
-        "Returns true if the file is encrypted with a trusted key"
-        (member (y/get-encryption-key file) y/trusted-gpg-key-fingerprints))
-
-
-      (defconst y/project-file ".project.el.gpg"
-        "Project configuration file name.")
-
-      (defvar y/loaded-projects (list)
-        "Projects that have been loaded by `y/load-project-file'.")
-
-      (defun y/load-project-file ()
-        "Loads the `y/project-file' for a project. This is run once
-           after the project is loaded signifying project setup."
-        (interactive)
-        (when (projectile-project-p)
-          (lexical-let* ((current-project-root (projectile-project-root))
-                         (project-init-file (expand-file-name y/project-file current-project-root)))
-            (when (and (not (member current-project-root y/loaded-projects))
-                       (file-exists-p project-init-file)
-                       (y/trusted-gpg-origin-p project-init-file))
-              (message "Loading project init file for %s" (projectile-project-name))
-              (condition-case ex
-                  (progn (load project-init-file)
-                         (add-to-list 'y/loaded-projects current-project-root)
-                         (message "%s loaded successfully" project-init-file))
-                ('error
-                 (message
-                  "There was an error loading %s: %s"
-                  project-init-file
-                  (error-message-string ex))))))))
-      (add-hook 'find-file-hook #'y/load-project-file t)
-      (add-hook 'dired-mode-hook #'y/load-project-file t)))
-
-  (y/init-project-el-auto-load)
+  ;; ...
+  dotspacemacs-additional-packages
+  '((auto-load-project :location
+                       (recipe
+                        :fetcher git
+                        :url "https://gitlab.esy.fun/yogsototh/auto-load-project-el"
+                        :files ("auto-load-project.el"))))
+  ;; ...
+  (defun dotspacemacs/user-config ()
+    ;; ...
+    (require 'auto-load-project)
+    (setq auto-load-project/trusted-gpg-key-fingerprints
+          '("0000000000000000000000000000000000000000" ;; figerprint of trusted key 1
+            "1111111111111111111111111111111111111111"
+            "2222222222222222222222222222222222222222"
+            )))
+  ;; ...
 #+end_src
