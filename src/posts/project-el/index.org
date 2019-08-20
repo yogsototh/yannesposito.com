@@ -102,3 +102,69 @@ You can setup the emacs package in spacemacs with:
             )))
   ;; ...
 #+end_src
+
+The full current code should be easy to follow if you have basic notions
+of eLISP:
+
+#+begin_src elisp
+(require 'projectile)
+
+(defvar auto-load-project/trusted-gpg-key-fingerprints
+  '()
+  "The list of GPG fingerprint you trust when decrypting a gpg file.
+You can retrieve the fingerprints of your own private keys
+with: `gpg --list-secret-keys' (take care of removing the
+spaces when copy/pasting here)")
+
+(defun auto-load-project/get-sign-key (file)
+  "Return the fingerprint of they key that signed FILE.
+
+To sign a file you should used
+
+`gpg --local-user my@email --output project.el.sig --detach-sign project.el`"
+  (string-trim-right
+   (shell-command-to-string
+    (concat
+     (format "gpg --status-fd 1 --verify %s.sig %s 2>/dev/null " file file)
+     "|grep VALIDSIG"
+     "|awk '{print $3}'"))))
+
+(defun auto-load-project/trusted-gpg-origin-p (file)
+  "Return non-nil if the FILE is encrypted with a trusted key."
+  (member (auto-load-project/get-sign-key file)
+          auto-load-project/trusted-gpg-key-fingerprints))
+
+(defconst auto-load-project/project-file "project.el"
+  "Project configuration file name.")
+
+(defvar auto-load-project/loaded-projects (list)
+  "Projects that have been loaded by `auto-load-project/load'.")
+
+(defun auto-load-project/load ()
+  "Loads the `auto-load-project/project-file' for a project.
+This is run once the project is loaded signifying project setup."
+  (interactive)
+  (when (projectile-project-p)
+    (lexical-let* ((current-project-root (projectile-project-root))
+                   (project-init-file (expand-file-name auto-load-project/project-file current-project-root))
+                   (project-sign-file (concat project-init-file ".sig")))
+      (when (and (not (member current-project-root auto-load-project/loaded-projects))
+                 (file-exists-p project-init-file)
+                 (file-exists-p project-sign-file)
+                 (auto-load-project/trusted-gpg-origin-p project-init-file))
+        (message "Loading project init file for %s" (projectile-project-name))
+        (condition-case ex
+            (progn (load project-init-file)
+                   (add-to-list 'auto-load-project/loaded-projects current-project-root)
+                   (message "%s loaded successfully" project-init-file))
+          ('error
+           (message
+            "There was an error loading %s: %s"
+            project-init-file
+            (error-message-string ex))))))))
+
+(add-hook 'find-file-hook #'auto-load-project/load t)
+(add-hook 'dired-mode-hook #'auto-load-project/load t)
+
+(provide 'auto-load-project)
+#+end_src
