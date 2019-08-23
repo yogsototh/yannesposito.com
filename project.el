@@ -1,3 +1,5 @@
+;; sign it with
+;; gpg --local-user yann@esposito.host --output project.el.sig --detach-sign project.el
 (setq domainname "https://her.esy.fun")
 (setq base-dir (concat (projectile-project-root) "src"))
 (setq publish-dir (concat (projectile-project-root) "_site"))
@@ -35,6 +37,7 @@
               (append
                '("<a href=\"/index.html\">Home</a>"
                  "<a href=\"/archive.html\">Posts</a>"
+                 "<a href=\"/slides.html\">Slides</a>"
                  "<a href=\"/about-me.html\">About</a>")
                lst)
               " | ")
