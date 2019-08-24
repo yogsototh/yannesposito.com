@@ -150,26 +150,26 @@ an interactive theme selector without any javascript involved.
 That theme switcher is really the limit I can concede to modern standards
 because it is CSS only.
 
-The trick is to provide one checkbox per theme at the beginning of the body
-of the HTML.
-Then hide those checkbox and have label for each check box.
+The trick is to provide one top-level element per theme at the beginning of
+the body of the HTML.
+Then hide those elements (I chose inputs).
+Finally provide a set of anchor links.
 
 #+begin_src html
     ...
   <body>
-     <input type="radio" id="light" name="theme"/>
-     <input type="radio" id="dark" name="theme"/>
+     <input id="light"/>
+     <input id="dark"/>
      <div id="labels">
        Change theme:
-       <label for="light">Light</label>
-       <label for="dark">Dark</label>
+       <a href="#light">Light</a>
+       <a href="#dark">Dark</a>
      </div>
      <div class="main">
      ALL YOUR CONTENT HERE
      </div>
    </body>
 #+end_src
-
 
 Then use the /sibling/ CSS selector =~=.
 Then put all your content in a div of class =.main= for example.
@@ -184,36 +184,17 @@ Finally in the CSS you can write things like:
     --light-color: #fff;
     --dark-color: #000;
   }
-  input#light:checked ~ .main {
+  input#light:target ~ .main {
     background-color: var(--light-color);
     color: var(--dark-color);
   }
-  input#dark:checked ~ .main {
+  input#dark:target ~ .main {
     background-color: var(--dark-color);
     color: var(--light-color);
   }
 #+end_src
 
-I also added a system to support theme using fragment in the URL.
-
-#+begin_src css
-  input#light:target ~ .main,
-  input#light:checked ~ .main {
-    background-color: var(--light-color);
-    color: var(--dark-color);
-  }
-  input#dark:target ~ .main,
-  input#dark:checked ~ .main {
-    background-color: var(--dark-color);
-    color: var(--light-color);
-  }
-#+end_src
-
-Unfortunately, for now the fragment system take full priority other the
-checkbox mechanism.
-
-Regarding selecting the user preferred theme, there are plenty of tutorial
-on the internet, you could also simply steal my CSS.
+I previously used checkbox inputs but using URL fragment feels better.
 
 ** Blog Engine - org-mode with org-publish
 :PROPERTIES:
