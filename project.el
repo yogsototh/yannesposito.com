@@ -159,23 +159,25 @@
       (goto-char (point-min))
       (search-forward "<body>")
       (insert (mapconcat 'identity
-                         '("<input type=\"radio\" id=\"light\" name=\"theme\"/>"
-                           "<input type=\"radio\" id=\"dark\" name=\"theme\"/>"
-                           "<input type=\"radio\" id=\"raw\" name=\"theme\"/>"
-                           "<input type=\"radio\" id=\"modern\" name=\"theme\"/>"
-                           "<input type=\"radio\" id=\"darkraw\" name=\"theme\"/>"
+                         '(
+                           "<input id=\"light\">"
+                           "<input id=\"raw\">"
+                           "<input id=\"modern\">"
+                           "<input id=\"dark\">"
+                           "<input id=\"darkraw\">"
+
                            "<div id=\"labels\">"
-                           "<div class=\"content\">"
-                           "Change theme: "
-                           "<label for=\"light\">Light</label>"
-                           "(<label for=\"raw\">raw</label>,"
-                           " <label for=\"modern\">modern</label>)"
-                           " / "
-                           "<label for=\"dark\">Dark</label>"
-                           "(<label for=\"darkraw\">raw</label>)"
-                           "</div>"
-                           "</div>"
-                           "<div class=\"main\">")
+                            "<div class=\"content\">"
+                            "Change theme: "
+                            "<a href=\"#light\">light</a>"
+                            "(<a href=\"#raw\">raw</a>,"
+                            "<a href=\"#modern\">modern</a>)"
+                            " / "
+                            "<a href=\"#dark\">dark</a>"
+                            "(<a href=\"#darkraw\">raw</a>)"
+                            "</div>"
+                            "</div>"
+                            "<div class=\"main\">")
                          "\n"))
       (goto-char (point-max))
       (search-backward "</body>")
