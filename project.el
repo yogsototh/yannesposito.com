@@ -1,16 +1,22 @@
 ;; sign it with
 ;; gpg --local-user yann@esposito.host --output project.el.sig --detach-sign project.el
-(setq domainname "https://her.esy.fun")
-(setq base-dir (concat (projectile-project-root) "src"))
-(setq publish-dir (concat (projectile-project-root) "_site"))
-(setq assets-dir (concat base-dir "/"))
-(setq publish-assets-dir (concat publish-dir "/"))
-(setq rss-dir base-dir)
-(setq rss-title "Subscribe to articles")
-(setq publish-rss-dir publish-dir)
-(setq css-path "/css/minimalist.css")
-(setq author-name "Yann Esposito")
-(setq author-email "yann@esposito.host")
+(defvar domainname "https://her.esy.fun")
+(defvar base-dir (concat (projectile-project-root) "src"))
+(defvar publish-dir (concat (projectile-project-root) "_site"))
+(defvar assets-dir (concat base-dir "/"))
+(defvar publish-assets-dir (concat publish-dir "/"))
+(defvar posts-dir (concat base-dir "/posts"))
+(defvar posts-publish-dir (concat publish-dir "/posts"))
+(defvar micro-dir (concat base-dir "/micro"))
+(defvar micro-publish-dir (concat publish-dir "/micro"))
+(defvar rss-dir base-dir)
+(defvar rss-title "Subscribe to articles")
+(defvar posts-descr "Articles")
+(defvar micro-descr "Short micro blog entries à la twitter/mastodon")
+(defvar publish-rss-dir publish-dir)
+(defvar css-path "/css/minimalist.css")
+(defvar author-name "Yann Esposito")
+(defvar author-email "yann@esposito.host")
 
 (require 'org)
 (require 'ox-publish)
@@ -26,7 +32,7 @@
   (concat
    "<link rel=\"stylesheet\" type=\"text/css\" href=\"" css-path "\"/>"
    "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
-   "<link rel=\"alternative\" type=\"application/rss+xml\" title=\"" rss-title "\" href=\"/archives.xml\" />"
+   "<link rel=\"alternative\" type=\"application/rss+xml\" title=\"" rss-title "\" href=\"/posts.xml\" />"
    "<link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/favicon.ico\">"))
 
 (defun menu (lst)
@@ -36,7 +42,7 @@
    (mapconcat 'identity
               (append
                '("<a href=\"/index.html\">Home</a>"
-                 "<a href=\"/archive.html\">Posts</a>"
+                 "<a href=\"/posts.html\">Posts</a>"
                  "<a href=\"/slides.html\">Slides</a>"
                  "<a href=\"/about-me.html\">About</a>")
                lst)
@@ -131,26 +137,31 @@
 
 (defun org-blog-sitemap-format-entry (entry _style project)
   "Return string for each ENTRY in PROJECT."
-  (when (s-starts-with-p "posts/" entry)
-    (format (concat "@@html:<span class=\"archive-item\">"
-                    "<span class=\"archive-date\">@@ %s: @@html:</span>@@"
-                    " [[file:%s][%s]]"
-                    " @@html:</span>@@")
-            (format-time-string "%Y-%m-%d" (org-publish-find-date entry project))
-            entry
-            (org-publish-find-title entry project))))
+  (cond ((not (directory-name-p entry))
+         (let* ((file (org-publish--expand-file-name entry project))
+                (title (org-publish-find-title entry project))
+                (date (format-time-string "%Y-%m-%d" (org-publish-find-date entry project)))
+                (link (concat (file-name-sans-extension entry) ".html")))
+           (with-temp-buffer
+             (insert (format "* [[file:%s][%s]]\n" file title))
+             (org-set-property "RSS_PERMALINK" link)
+             (org-set-property "PUBDATE" date)
+             (org-id-get-create)
+             (insert-file-contents file)
+             (buffer-string))))
+        ((eq style 'tree)
+         (file-name-nondirectory (directory-file-name entry)))))
 
-(defun org-blog-sitemap-function (title list)
+(defun org-blog-sitemap-fn-descr (descr title list)
   "Return sitemap using TITLE and LIST returned by `org-blog-sitemap-format-entry'."
   (concat "#+TITLE: " title "\n"
           "#+AUTHOR: " author-name "\n"
           "#+EMAIL: " author-email "\n"
-          "\n#+begin_archive\n"
+          "#+DESCRIPTION: " descr "\n"
           (mapconcat (lambda (li)
-                       (format "@@html:<li>@@ %s @@html:</li>@@" (car li)))
+                       (format "* %s" (car li)))
                      (seq-filter #'car (cdr list))
-                     "\n")
-          "\n#+end_archive\n"))
+                     "\n")))
 
 (defun org-blog-publish-to-html (plist filename pub-dir)
   "Same as `org-html-publish-to-html' but modifies html before finishing."
@@ -204,16 +215,20 @@ Return output file name."
                                    dst-file))
           (copy-file filename dst-file t)))))
 
+(defalias 'org-blog-posts-sitemap-fn
+  (apply-partially 'org-blog-sitemap-fn-descr posts-descr))
+
+(defalias 'org-blog-micro-sitemap-fn
+  (apply-partially 'org-blog-sitemap-fn-descr micro-descr))
+
 (setq org-publish-project-alist
       `(("orgfiles"
          :base-directory ,base-dir
-         :exclude ".*drafts/.*"
+         :exclude ".*(drafts|posts|micro)/.*"
          :base-extension "org"
          :publishing-directory ,publish-dir
-
          :recursive t
          :publishing-function org-blog-publish-to-html
-
          :with-toc nil
          :with-title nil
          :with-date t
@@ -226,14 +241,59 @@ Return output file name."
          :html-head-extra ,org-blog-head
          :html-preamble org-blog-preamble
          :html-postamble org-blog-postamble
+         :auto-sitemap nil)
 
+        ("posts"
+         :base-directory ,posts-dir
+         :base-extension "org"
+         :publishing-directory ,posts-publish-dir
+         :recursive t
+         :publishing-function org-blog-publish-to-html
+         :with-toc nil
+         :with-title nil
+         :with-date t
+         :section-numbers nil
+         :html-doctype "html5"
+         :html-html5-fancy t
+         :html-head-include-default-style nil
+         :html-head-include-scripts nil
+         :htmlized-source t
+         :html-head-extra ,org-blog-head
+         :html-preamble org-blog-preamble
+         :html-postamble org-blog-postamble
          :auto-sitemap t
-         :sitemap-filename "archive.org"
+         :sitemap-filename "posts.org"
          :sitemap-title "Blog Posts"
          :sitemap-style list
          :sitemap-sort-files anti-chronologically
          :sitemap-format-entry org-blog-sitemap-format-entry
-         :sitemap-function org-blog-sitemap-function)
+         :sitemap-function org-blog-posts-sitemap-fn)
+
+        ("micro"
+         :base-directory ,micro-dir
+         :base-extension "org"
+         :publishing-directory ,micro-publish-dir
+         :recursive t
+         :publishing-function org-blog-publish-to-html
+         :with-toc nil
+         :with-title nil
+         :with-date t
+         :section-numbers nil
+         :html-doctype "html5"
+         :html-html5-fancy t
+         :html-head-include-default-style nil
+         :html-head-include-scripts nil
+         :htmlized-source t
+         :html-head-extra ,org-blog-head
+         :html-preamble org-blog-preamble
+         :html-postamble org-blog-postamble
+         :auto-sitemap t
+         :sitemap-filename "micro.org"
+         :sitemap-title "Micro Blog Posts"
+         :sitemap-style list
+         :sitemap-sort-files anti-chronologically
+         :sitemap-format-entry org-blog-sitemap-format-entry
+         :sitemap-function org-blog-micro-sitemap-fn)
 
         ("assets"
          :base-directory ,assets-dir
@@ -252,11 +312,11 @@ Return output file name."
          :publishing-directory ,publish-rss-dir
          :publishing-function (org-rss-publish-to-rss)
          :exclude ".*"
-         :include ("archive.org")
+         :include ("posts/posts.org" "micro/micro.org")
          :section-numbers nil
          :table-of-contents nil)
 
-        ("blog" :components ("orgfiles" "assets" "rss"))))
+        ("blog" :components ("orgfiles" "posts" "assets" "rss"))))
 
 ;; add target=_blank and rel="noopener noreferrer" to all links by default
 (defun my-org-export-add-target-blank-to-http-links (text backend info)
