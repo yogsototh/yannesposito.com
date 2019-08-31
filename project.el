@@ -25,7 +25,7 @@
 (require 'org-element)
 (require 'ox-rss)
 
-(setq org-link-file-path-type 'relative)
+;; (setq org-link-file-path-type 'relative)
 (setq org-publish-timestamp-directory
       (concat (projectile-project-root) "_cache/"))
 
@@ -44,7 +44,7 @@
    (mapconcat 'identity
               (append
                '("<a href=\"/index.html\">Home</a>"
-                 "<a href=\"/posts/posts.html\">Posts</a>"
+                 "<a href=\"/posts/index.html\">Posts</a>"
                  "<a href=\"/slides.html\">Slides</a>"
                  "<a href=\"/about-me.html\">About</a>")
                lst)
@@ -137,6 +137,16 @@
    (menu '("<a href=\"#preamble\">↑ Top ↑</a>"))
    "</div>"))
 
+(defun date-format-entry (entry _style project)
+  "Return string for each ENTRY in PROJECT."
+  (cond ((not (directory-name-p entry))
+         (let* ((file (org-publish--expand-file-name entry project))
+                (title (org-publish-find-title entry project))
+                (date (format-time-string "%Y-%m-%d" (org-publish-find-date entry project))))
+           (format "- [%s] [[file:%s][%s]]\n" date file title)))
+        ((eq style 'tree)
+         (file-name-nondirectory (directory-file-name entry)))))
+
 (defun org-blog-sitemap-format-entry (sub entry _style project)
   "Return string for each ENTRY in PROJECT."
   (cond ((not (directory-name-p entry))
@@ -154,7 +164,7 @@
              (goto-char 0)
              (end-of-line)
              (forward-char)
-             (while (re-search-forward "^#\\+.*$" nil t)
+             (while (re-search-forward "^#\\+\\(title\\|subtitle\\|options\\|keywords\\|date\\|email\\|author\\).*$" nil t)
                (progn
                  (replace-match "")
                  (kill-line)))
@@ -187,8 +197,7 @@
       (goto-char (point-min))
       (search-forward "<body>")
       (insert (mapconcat 'identity
-                         '(
-                           "<input id=\"light\">"
+                         '("<input id=\"light\">"
                            "<input id=\"raw\">"
                            "<input id=\"modern\">"
                            "<input id=\"dark\">"
@@ -204,12 +213,8 @@
                             "<a href=\"#dark\">dark</a>"
                             "(<a href=\"#darkraw\">raw</a>)"
                             "</div>"
-                            "</div>"
-                            "<div class=\"main\">")
-                         "\n"))
-      (goto-char (point-max))
-      (search-backward "</body>")
-      (insert "\n</div>\n")
+                            "</div>")
+                            "\n"))
       (save-buffer)
       (kill-buffer))
     file-path))
@@ -235,14 +240,8 @@ Return output file name."
 (defalias 'org-blog-posts-sitemap-fn
   (apply-partially 'org-blog-sitemap-fn-descr posts-descr))
 
-(defalias 'org-blog-micro-sitemap-fn
-  (apply-partially 'org-blog-sitemap-fn-descr micro-descr))
-
 (defalias 'org-blog-sitemap-format-entry-posts
   (apply-partially 'org-blog-sitemap-format-entry "posts"))
-
-(defalias 'org-blog-sitemap-format-entry-micro
-  (apply-partially 'org-blog-sitemap-format-entry "micro"))
 
 (defun donothing (_x _y _z)
   nil)
@@ -250,7 +249,7 @@ Return output file name."
 (setq org-publish-project-alist
       `(("orgfiles"
          :base-directory ,base-dir
-         :exclude ".*\\(drafts\\|posts\||micro\\)/.*"
+         :exclude ".*drafts/.*\\|.*/rss.*"
          :base-extension "org"
          :publishing-directory ,publish-dir
          :recursive t
@@ -273,32 +272,26 @@ Return output file name."
          :base-directory ,posts-dir
          :base-extension "org"
          :publishing-directory "/dev/null"
+         :exclude "rss\\.org"
          :recursive t
+         :with-date t
          :publishing-function donothing
          :auto-sitemap t
-         :sitemap-filename "posts.org"
+         :sitemap-filename "index.org"
          :sitemap-title "Articles"
          :sitemap-style list
-         :sitemap-sort-files anti-chronologically)
+         :sitemap-sort-files anti-chronologically
+         :sitemap-format-entry date-format-entry
+         :sitemap-function org-blog-posts-sitemap-fn)
 
-        ("posts"
+        ("posts-rss"
          :base-directory ,posts-dir
          :base-extension "org"
-         :publishing-directory ,posts-publish-dir
+         :publishing-directory "/dev/null"
          :recursive t
-         :publishing-function org-blog-publish-to-html
-         :with-toc nil
+         :publishing-function donothing
          :with-title nil
          :with-date t
-         :section-numbers nil
-         :html-doctype "html5"
-         :html-html5-fancy t
-         :html-head-include-default-style nil
-         :html-head-include-scripts nil
-         :htmlized-source t
-         :html-head-extra ,org-blog-head
-         :html-preamble org-blog-preamble
-         :html-postamble org-blog-postamble
          :auto-sitemap t
          :sitemap-filename "rss.org"
          :sitemap-title "Used For RSS"
@@ -306,32 +299,6 @@ Return output file name."
          :sitemap-sort-files anti-chronologically
          :sitemap-format-entry org-blog-sitemap-format-entry-posts
          :sitemap-function org-blog-posts-sitemap-fn)
-
-        ("micro"
-         :base-directory ,micro-dir
-         :base-extension "org"
-         :publishing-directory ,micro-publish-dir
-         :recursive t
-         :publishing-function org-blog-publish-to-html
-         :with-toc nil
-         :with-title nil
-         :with-date t
-         :section-numbers nil
-         :html-doctype "html5"
-         :html-html5-fancy t
-         :html-head-include-default-style nil
-         :html-head-include-scripts nil
-         :htmlized-source t
-         :html-head-extra ,org-blog-head
-         :html-preamble org-blog-preamble
-         :html-postamble org-blog-postamble
-         :auto-sitemap t
-         :sitemap-filename "rss.org"
-         :sitemap-title "Micro Blog Posts"
-         :sitemap-style list
-         :sitemap-sort-files anti-chronologically
-         :sitemap-format-entry org-blog-sitemap-format-entry-micro
-         :sitemap-function org-blog-micro-sitemap-fn)
 
         ("assets"
          :base-directory ,assets-dir
@@ -350,12 +317,11 @@ Return output file name."
          :publishing-directory ,publish-rss-dir
          :publishing-function (org-rss-publish-to-rss)
          :exclude ".*"
-         :include ("posts/rss.org"
-                   "micro/rss.org")
+         :include ("posts/rss.org")
          :section-numbers nil
          :table-of-contents nil)
 
-        ("blog" :components ("orgfiles" "posts" "posts-index" "micro" "assets" "rss"))))
+        ("blog" :components ("posts-rss" "posts-index" "orgfiles"  "assets" "rss"))))
 
 ;; add target=_blank and rel="noopener noreferrer" to all links by default
 (defun my-org-export-add-target-blank-to-http-links (text backend info)
