@@ -7,6 +7,8 @@
 (defvar publish-assets-dir (concat publish-dir "/"))
 (defvar posts-dir (concat base-dir "/posts"))
 (defvar rss-title "Subscribe to articles")
+(defvar rss-url (concat domainname "/rss.xml"))
+(defvar rss-img (concat domainname "/img/FlatAvatar.png"))
 (defvar rss-description "her.esy.fun articles, mostly random personal thoughts")
 (defvar posts-descr "Articles")
 (defvar css-path "/css/minimalist.css")
@@ -44,21 +46,6 @@
               " | ")
    "</navigation>"))
 
-
-(defun str-time-to-year-float (date-str)
-  (/ (float-time
-      (apply 'encode-time
-             (mapcar (lambda (x) (if (null x) 0 x))
-                     (parse-time-string date-str))))
-     (* 365.25 24 60 60)))
-
-(defvar blog-creation-date "2019-07-01")
-
-(defun y-date (date-str)
-  "Number of year since the begining of this blog"
-  (let ((y (- (str-time-to-year-float date-str)
-              (str-time-to-year-float blog-creation-date))))
-    (format "∆t=%.2f" y)))
 
 (defun get-from-info (info k)
   (let ((i (car (plist-get info k))))
@@ -261,7 +248,9 @@ Return output file name."
          :publishing-directory ,publish-dir
          :publishing-function y/org-rss-publish-to-rss
          :rss-extension "xml"
-         :rss-image-url "https://her.esy.fun/img/FlatAvatar.png"
+         :rss-image-url ,rss-img
+         :rss-feed-url ,rss-url
+         :html-link-home ,rss-url
          :auto-sitemap t
          :sitemap-filename "rss.org"
          :sitemap-title "her.esy.fun"
@@ -277,7 +266,7 @@ Return output file name."
          :publishing-function org-blog-publish-attachment
          :recursive t)
 
-        ("blog" :components ("orgfiles" "assets"))))
+        ("blog" :components ("orgfiles" "assets" "rss"))))
 
 ;; add target=_blank and rel="noopener noreferrer" to all links by default
 (defun my-org-export-add-target-blank-to-http-links (text backend info)
