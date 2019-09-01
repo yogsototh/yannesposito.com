@@ -106,6 +106,7 @@
      (format "<div class=\"date\">Created: %s (%s)</div>" date (y-date date)))
    (when-let ((keywords (plist-get info :keywords)))
      (format "<div class=\"keywords\">Keywords: <code>%s</code></div>" keywords))
+   "<div class=\"rss\"><a href=\"/rss.xml\">RSS</a>: <a href=\"https://validator.w3.org/feed/check.cgi?url=https%3A%2F%2Fher.esy.fun%2Frss.xml\">Valid RSS</a></div>"
    (format "<div class=\"date\">Generated: %s</div>"
            (format-time-string "%Y-%m-%d %H:%M:%S"))
    (format (concat "<div class=\"creator\"> Generated with "
@@ -150,17 +151,21 @@
                            "<input id=\"darkraw\">"
 
                            "<div id=\"labels\">"
-                            "<div class=\"content\">"
-                            "Change theme: "
-                            "<a href=\"#light\">light</a>"
-                            "(<a href=\"#raw\">raw</a>,"
-                            "<a href=\"#modern\">modern</a>)"
-                            " / "
-                            "<a href=\"#dark\">dark</a>"
-                            "(<a href=\"#darkraw\">raw</a>)"
-                            "</div>"
-                            "</div>")
+                           "<div class=\"content\">"
+                           "Change theme: "
+                           "<a href=\"#light\">light</a>"
+                           "(<a href=\"#raw\">raw</a>,"
+                           "<a href=\"#modern\">modern</a>)"
+                           " / "
+                           "<a href=\"#dark\">dark</a>"
+                           "(<a href=\"#darkraw\">raw</a>)"
+                           "</div>"
+                           "</div>"
+                           "<div class=\"main\">")
                             "\n"))
+      (goto-char (point-max))
+      (search-backward "</body>")
+      (insert "\n</div>\n")
       (save-buffer)
       (kill-buffer))
     file-path))
