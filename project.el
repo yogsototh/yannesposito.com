@@ -6,15 +6,9 @@
 (defvar assets-dir (concat base-dir "/"))
 (defvar publish-assets-dir (concat publish-dir "/"))
 (defvar posts-dir (concat base-dir "/posts"))
-(defvar posts-publish-dir (concat publish-dir "/posts"))
-(defvar micro-dir (concat base-dir "/micro"))
-(defvar micro-publish-dir (concat publish-dir "/micro"))
-(defvar rss-dir base-dir)
 (defvar rss-title "Subscribe to articles")
-(defvar micro-rss-title "Subscribe to micro blogs")
+(defvar rss-description "her.esy.fun articles, mostly random personal thoughts")
 (defvar posts-descr "Articles")
-(defvar micro-descr "Short micro blog entries à la twitter/mastodon")
-(defvar publish-rss-dir publish-dir)
 (defvar css-path "/css/minimalist.css")
 (defvar author-name "Yann Esposito")
 (defvar author-email "yann@esposito.host")
@@ -33,8 +27,7 @@
   (concat
    "<link rel=\"stylesheet\" type=\"text/css\" href=\"" css-path "\"/>"
    "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
-   "<link rel=\"alternative\" type=\"application/rss+xml\" title=\"" rss-title "\" href=\"/posts/rss.xml\" />"
-   "<link rel=\"alternative\" type=\"application/rss+xml\" title=\"" micro-rss-title "\" href=\"/micro/rss.xml\" />"
+   "<link rel=\"alternative\" type=\"application/rss+xml\" title=\"" rss-title "\" href=\"/rss.xml\" />"
    "<link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/favicon.ico\">"))
 
 (defun menu (lst)
@@ -44,7 +37,7 @@
    (mapconcat 'identity
               (append
                '("<a href=\"/index.html\">Home</a>"
-                 "<a href=\"/posts/index.html\">Posts</a>"
+                 "<a href=\"/archive.html\">Posts</a>"
                  "<a href=\"/slides.html\">Slides</a>"
                  "<a href=\"/about-me.html\">About</a>")
                lst)
@@ -139,45 +132,11 @@
 
 (defun date-format-entry (entry _style project)
   "Return string for each ENTRY in PROJECT."
-  (cond ((not (directory-name-p entry))
-         (let* ((file (org-publish--expand-file-name entry project))
-                (title (org-publish-find-title entry project))
-                (date (format-time-string "%Y-%m-%d" (org-publish-find-date entry project))))
-           (format "- [%s] [[file:%s][%s]]\n" date file title)))
-        ((eq style 'tree)
-         (file-name-nondirectory (directory-file-name entry)))))
-
-(defun org-blog-sitemap-format-entry (sub entry _style project)
-  "Return string for each ENTRY in PROJECT."
-  (cond ((not (directory-name-p entry))
-         (let* ((file (org-publish--expand-file-name entry project))
-                (title (org-publish-find-title entry project))
-                (date (format-time-string "%Y-%m-%d" (org-publish-find-date entry project)))
-                (link (concat domainname "/" sub "/" (file-name-sans-extension entry) ".html")))
-           (with-temp-buffer
-             (insert (format "* [[file:%s][%s]]\n" file title))
-             (org-set-property "RSS_PERMALINK" link)
-             (org-set-property "PUBDATE" date)
-             (org-id-get-create)
-             (insert-file-contents file)
-
-             (goto-char 0)
-             (end-of-line)
-             (forward-char)
-             (while (re-search-forward "^#\\+\\(title\\|subtitle\\|options\\|keywords\\|date\\|email\\|author\\).*$" nil t)
-               (progn
-                 (replace-match "")
-                 (kill-line)))
-
-             (goto-char 0)
-             (end-of-line)
-             (forward-char)
-             (while (re-search-forward "^\\*" nil t)
-               (replace-match "**"))
-
-             (buffer-string))))
-        ((eq style 'tree)
-         (file-name-nondirectory (directory-file-name entry)))))
+  (when (string-match "posts/.*" entry)
+    (let* ((file (org-publish--expand-file-name entry project))
+           (title (org-publish-find-title entry project))
+           (date (format-time-string "%Y-%m-%d" (org-publish-find-date entry project))))
+      (format "- [%s] [[file:%s][%s]]\n" date file title))))
 
 (defun org-blog-sitemap-fn-descr (descr title list)
   "Return sitemap using TITLE and LIST returned by `org-blog-sitemap-format-entry'."
@@ -185,8 +144,7 @@
           "#+AUTHOR: " author-name "\n"
           "#+EMAIL: " author-email "\n"
           "#+DESCRIPTION: " descr "\n"
-          (mapconcat (lambda (li)
-                       (format "%s" (car li)))
+          (mapconcat (lambda (li) (format "%s" (car li)))
                      (seq-filter #'car (cdr list))
                      "\n")))
 
@@ -240,11 +198,32 @@ Return output file name."
 (defalias 'org-blog-posts-sitemap-fn
   (apply-partially 'org-blog-sitemap-fn-descr posts-descr))
 
-(defalias 'org-blog-sitemap-format-entry-posts
-  (apply-partially 'org-blog-sitemap-format-entry "posts"))
+(defun y/org-rss-publish-to-rss (plist filename pub-dir)
+  (if (equal "rss.org" (file-name-nondirectory filename))
+      (org-rss-publish-to-rss plist filename pub-dir)))
 
-(defun donothing (_x _y _z)
-  nil)
+(defun y/format-rss-feed (title list)
+  (concat "#+TITLE: " title "\n"
+          "#+AUTHOR: " author-name "\n"
+          "#+EMAIL: " author-email "\n"
+          "#+DESCRIPTION: " rss-description "\n"
+          "\n"
+          (org-list-to-subtree list '(:icount "" :istart ""))))
+
+(defun y/format-rss-feed-entry (entry style project)
+  (cond ((not (directory-name-p entry))
+         (let* ((file (org-publish--expand-file-name entry project))
+                (title (org-publish-find-title entry project))
+                (date (format-time-string "%Y-%m-%d" (org-publish-find-date entry project)))
+                (link (concat domainname "/posts/" (file-name-sans-extension entry) ".html")))
+           (with-temp-buffer
+             (insert (format "* [[file:%s][%s]]\n" file title))
+             (org-set-property "RSS_PERMALINK" link)
+             (org-set-property "PUBDATE" date)
+             (org-set-property "ID" (org-auto-id-format title))
+             (buffer-string))))
+        ((eq style 'tree)
+         (file-name-nondirectory (directory-file-name entry)))))
 
 (setq org-publish-project-alist
       `(("orgfiles"
@@ -266,39 +245,29 @@ Return output file name."
          :html-head-extra ,org-blog-head
          :html-preamble org-blog-preamble
          :html-postamble org-blog-postamble
-         :auto-sitemap nil)
 
-        ("posts-index"
-         :base-directory ,posts-dir
-         :base-extension "org"
-         :publishing-directory "/dev/null"
-         :exclude "rss\\.org"
-         :recursive t
-         :with-date t
-         :publishing-function donothing
          :auto-sitemap t
-         :sitemap-filename "index.org"
+         :sitemap-filename "archive.org"
          :sitemap-title "Articles"
          :sitemap-style list
          :sitemap-sort-files anti-chronologically
          :sitemap-format-entry date-format-entry
          :sitemap-function org-blog-posts-sitemap-fn)
 
-        ("posts-rss"
+        ("rss"
          :base-directory ,posts-dir
          :base-extension "org"
-         :publishing-directory "/dev/null"
          :recursive t
-         :publishing-function donothing
-         :with-title nil
-         :with-date t
+         :publishing-directory ,publish-dir
+         :publishing-function y/org-rss-publish-to-rss
+         :rss-extension "xml"
+         :rss-image-url "https://her.esy.fun/img/FlatAvatar.png"
          :auto-sitemap t
          :sitemap-filename "rss.org"
-         :sitemap-title "Used For RSS"
+         :sitemap-title "her.esy.fun"
          :sitemap-style list
-         :sitemap-sort-files anti-chronologically
-         :sitemap-format-entry org-blog-sitemap-format-entry-posts
-         :sitemap-function org-blog-posts-sitemap-fn)
+         :sitemap-function y/format-rss-feed
+         :sitemap-format-entry y/format-rss-feed-entry)
 
         ("assets"
          :base-directory ,assets-dir
@@ -308,20 +277,7 @@ Return output file name."
          :publishing-function org-blog-publish-attachment
          :recursive t)
 
-        ("rss"
-         :base-directory ,rss-dir
-         :base-extension "org"
-         :html-link-home ,domainname
-         :html-link-use-abs-url t
-         :rss-extension "xml"
-         :publishing-directory ,publish-rss-dir
-         :publishing-function (org-rss-publish-to-rss)
-         :exclude ".*"
-         :include ("posts/rss.org")
-         :section-numbers nil
-         :table-of-contents nil)
-
-        ("blog" :components ("posts-rss" "posts-index" "orgfiles"  "assets" "rss"))))
+        ("blog" :components ("orgfiles" "assets"))))
 
 ;; add target=_blank and rel="noopener noreferrer" to all links by default
 (defun my-org-export-add-target-blank-to-http-links (text backend info)
