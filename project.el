@@ -7,6 +7,7 @@
 (defvar publish-assets-dir (concat publish-dir "/"))
 (defvar posts-dir (concat base-dir "/posts"))
 (defvar rss-title "Subscribe to articles")
+(defvar rss-home domainname)
 (defvar rss-url (concat domainname "/rss.xml"))
 (defvar rss-img (concat domainname "/img/FlatAvatar.png"))
 (defvar rss-description "her.esy.fun articles, mostly random personal thoughts")
@@ -202,7 +203,7 @@ Return output file name."
          (let* ((file (org-publish--expand-file-name entry project))
                 (title (org-publish-find-title entry project))
                 (date (format-time-string "%Y-%m-%d" (org-publish-find-date entry project)))
-                (link (concat domainname "/posts/" (file-name-sans-extension entry) ".html")))
+                (link (concat "posts/" (file-name-sans-extension entry) ".html")))
            (with-temp-buffer
              (insert (format "* [[file:%s][%s]]\n" file title))
              (org-set-property "RSS_PERMALINK" link)
@@ -250,7 +251,7 @@ Return output file name."
          :rss-extension "xml"
          :rss-image-url ,rss-img
          :rss-feed-url ,rss-url
-         :html-link-home ,rss-url
+         :html-link-home ,rss-home
          :auto-sitemap t
          :sitemap-filename "rss.org"
          :sitemap-title "her.esy.fun"
