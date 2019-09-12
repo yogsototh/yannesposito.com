@@ -119,13 +119,30 @@
    (menu '("<a href=\"#preamble\">↑ Top ↑</a>"))
    "</div>"))
 
+(defun y/org-get-keywords ()
+  (org-element-map (org-element-parse-buffer 'element) 'keyword
+    (lambda (keyword) (cons (org-element-property :key keyword)
+                            (org-element-property :value keyword)))))
+
+(defun y/org-get-meta (keyword)
+  (cdr (assoc keyword (y/org-get-keywords))))
+
+(defun y/get-meta (file meta-name)
+  "Return the value of the meta of an org-mode file.
+
+(y/get-meta file \"DESCRIPTION\")
+"
+  (org-babel-with-temp-filebuffer file (y/org-get-meta meta-name)))
+
 (defun date-format-entry (entry _style project)
   "Return string for each ENTRY in PROJECT."
   (when (string-match "posts/.*" entry)
     (let* ((file (org-publish--expand-file-name entry project))
            (title (org-publish-find-title entry project))
-           (date (format-time-string "%Y-%m-%d" (org-publish-find-date entry project))))
-      (format "- [%s] [[file:%s][%s]]\n" date file title))))
+           (date (format-time-string "%Y-%m-%d" (org-publish-find-date entry project)))
+           (keywords (y/get-meta file "KEYWORDS"))
+           (description (y/get-meta file "DESCRIPTION")))
+      (format "- [%s] [[file:%s][%s]] /(%s)/  \n  %s" date file title keywords description))))
 
 (defun org-blog-sitemap-fn-descr (descr title list)
   "Return sitemap using TITLE and LIST returned by `org-blog-sitemap-format-entry'."
@@ -207,6 +224,9 @@ Return output file name."
   (cond ((not (directory-name-p entry))
          (let* ((file (org-publish--expand-file-name entry project))
                 (title (org-publish-find-title entry project))
+                (subtitle (y/get-meta (format "%s/%s" posts-dir entry) "SUBTITLE"))
+                (keywords (y/get-meta (format "%s/%s" posts-dir entry) "KEYWORDS"))
+                (description (y/get-meta (format "%s/%s" posts-dir entry) "DESCRIPTION"))
                 (date (format-time-string "%Y-%m-%d" (org-publish-find-date entry project)))
                 (link (concat "posts/" (file-name-sans-extension entry) ".html")))
            (with-temp-buffer
@@ -214,6 +234,14 @@ Return output file name."
              (org-set-property "RSS_PERMALINK" link)
              (org-set-property "PUBDATE" date)
              (org-set-property "ID" (org-auto-id-format title))
+             (when subtitle
+               (org-set-property "SUBTITLE" subtitle))
+             (when keywords
+               (insert "Keywords: ")
+               (insert keywords)
+               (insert "\n\n"))
+             (when description
+               (insert description))
              (buffer-string))))
         ((eq style 'tree)
          (file-name-nondirectory (directory-file-name entry)))))
