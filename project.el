@@ -140,9 +140,17 @@
     (let* ((file (org-publish--expand-file-name entry project))
            (title (org-publish-find-title entry project))
            (date (format-time-string "%Y-%m-%d" (org-publish-find-date entry project)))
-           (keywords (y/get-meta file "KEYWORDS"))
+           (keywords (split-string (y/get-meta file "KEYWORDS") ",\s*"))
            (description (y/get-meta file "DESCRIPTION")))
-      (format "- [%s] [[file:%s][%s]] /(%s)/  \n  %s" date file title keywords description))))
+      (concat
+       "- "
+       (format " [%s]" date)
+       (format " *[[file:%s][%s]]*" file title)
+       (format " @@html:<div class=\"keywords\">@@%s@@html:</div>@@"
+               (mapconcat (lambda (k) (format "@@html:<span class=\"keyword\">@@#%s@@html:</span>@@" k))
+                          (cl-sort keywords 'string-lessp :key 'downcase)
+                          " "))
+       (format "@@html:<div class=\"description\">@@%s@@html:</div>@@" description)))))
 
 (defun org-blog-sitemap-fn-descr (descr title list)
   "Return sitemap using TITLE and LIST returned by `org-blog-sitemap-format-entry'."
@@ -153,6 +161,17 @@
           (mapconcat (lambda (li) (format "%s" (car li)))
                      (seq-filter #'car (cdr list))
                      "\n")))
+
+(defun org-blog-prepare (project-plist)
+  "With help from `https://github.com/howardabrams/dot-files'.
+  Touch `archive.org' to rebuilt it.
+  Argument `PROJECT-PLIST' contains information about the current project."
+  (let* ((base-directory (plist-get project-plist :base-directory))
+         (buffer (find-file-noselect (expand-file-name "archive.org" base-directory) t)))
+    (with-current-buffer buffer
+      (set-buffer-modified-p t)
+      (save-buffer 0))
+    (kill-buffer buffer)))
 
 (defun org-blog-publish-to-html (plist filename pub-dir)
   "Same as `org-html-publish-to-html' but modifies html before finishing."
@@ -166,6 +185,7 @@
                            "<input id=\"modern\">"
                            "<input id=\"dark\">"
                            "<input id=\"darkraw\">"
+                           "<input id=\"matrix\">"
 
                            "<div id=\"labels\">"
                            "<div class=\"content\">"
@@ -175,7 +195,8 @@
                            "<a href=\"#modern\">modern</a>)"
                            " / "
                            "<a href=\"#dark\">dark</a>"
-                           "(<a href=\"#darkraw\">raw</a>)"
+                           "(<a href=\"#darkraw\">raw</a>,"
+                           "<a href=\"#matrix\">matrix</a>)"
                            "</div>"
                            "</div>"
                            "<div class=\"main\">")
@@ -253,6 +274,7 @@ Return output file name."
          :base-extension "org"
          :publishing-directory ,publish-dir
          :recursive t
+         :preparation-function org-blog-prepare
          :publishing-function org-blog-publish-to-html
          :with-toc nil
          :with-title nil

@@ -146,8 +146,7 @@ h6::before {
 }
 hr {
     position: relative;
-    height: 1em;
-    font-size: 0;
+    height: 1px;
     line-height: 0;
     overflow: hidden;
     border: 0;
@@ -158,6 +157,7 @@ hr:after {
     top: 0;
     left: 0;
     width: 100%;
+    font-weight: bold;
     word-wrap: break-word;
 }
 pre { max-width: 100%; overflow: scroll; }
@@ -211,7 +211,7 @@ navigation > a {
     margin: 0 1em;
     padding: 1px;
 }
-#content *:first-child {
+#content:first-child {
     margin-top: 0;
 }
 .timestamp-wrapper {
@@ -223,7 +223,7 @@ navigation > a {
     padding: 1px 1ex;
 }
 .article-date {
-    font-size: 0.8;
+    font-size: 0.8em;
     font-style: italic;
     float: right;
 }
@@ -494,6 +494,33 @@ input#darkraw:target ~ .main code,
 input#darkraw:target ~ .main pre {
     font-family: monospace;
 }
+
+/* Dark matrix theme selected */
+input#matrix:target ~ .main {
+    --main-background: #000;
+    --main-foreground: #0b0;
+    --second-foreground: #0b0;
+    --reveal-background: #000;
+    --soft-foreground: #0b0;
+    --border-color: #0b0;
+    --todo-txt: #0b0;
+    --color-h1: #0b0;
+    --color-h2: #0b0;
+    --color-h3: #0b0;
+    --color-h4: #0b0;
+    --color-h5: #0b0;
+    --color-h6: #0b0;
+    --color-link: white;
+    font-family: monospace;
+}
+input#matrix:target ~ #labels {
+    background: #000;
+    color: #0b0;
+}
+input#matrix:target ~ .main code,
+input#matrix:target ~ .main pre {
+    font-family: monospace;
+}
 /* Default color theme */
 body,.main {
     background: var(--main-background);
@@ -508,6 +535,15 @@ body,.main {
 a, a:visited,
 .main a, .main a:visited {
     color: var(--second-foreground);
+}
+
+.keywords {
+    color: var(--second-foreground);
+    float: right;
+}
+.keyword:hover {
+    cursor: pointer;
+    color: var(--yellow);
 }
 
 .main ol > li:before, ol > li:before {
