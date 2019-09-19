@@ -272,8 +272,9 @@ navigation > a {
 
     /* --main-background: #00151b; /* 0.5 darker than #002b36; */
     --main-background: var(--base03); /* 0.5 darker than #002b36; */
-    --main-foreground: var(--base1);
-    --second-foreground: var(--base0);
+    --main-foreground: var(--base0);
+    --second-foreground: var(--base01);
+    --reveal-foreground: var(--base1);
     --reveal-background: var(--base02);
     --soft-foreground: var(--base01);
     --border-color: var(--base02);
@@ -291,8 +292,9 @@ navigation > a {
 @media (prefers-color-scheme: light) {
     :root {
         --main-background: #fefaf0; /* 0.5 lighter than #fdf6e3 */
-        --main-foreground: var(--base01);
-        --second-foreground: var(--base00);
+        --main-foreground: var(--base00);
+        --second-foreground: var(--base1);
+        --reveal-foreground: var(--base01);
         --reveal-background: var(--base2);
         --soft-foreground: var(--base1);
         --border-color: var(--base2);
@@ -309,13 +311,12 @@ navigation > a {
     font-style: italic;
 }
 
-body > input { display:none; }
-
 /* Light theme selected */
 input#light:target ~ .main {
     --main-background: #fefaf0; /* 0.5 lighter than #fdf6e3 */
     --main-foreground: var(--base01);
     --second-foreground: var(--base00);
+    --reveal-foreground: var(--base01);
     --reveal-background: var(--base2);
     --soft-foreground: var(--base1);
     --border-color: var(--base2);
@@ -328,9 +329,10 @@ input#light:target ~ #labels {
 
 /* Dark theme selected */
 input#dark:target ~ .main {
-    --main-background: var(--base03); /* 0.5 darker than #002b36; */
-    --main-foreground: var(--base1);
-    --second-foreground: var(--base0);
+    --main-background: var(--base03);
+    --main-foreground: var(--base0);
+    --second-foreground: var(--base01);
+    --reveal-foreground: var(--base1);
     --reveal-background: var(--base02);
     --soft-foreground: var(--base01);
     --border-color: var(--base02);
@@ -344,24 +346,25 @@ input#dark:target ~ #labels {
 /* Light raw theme selected */
 input#raw:target ~ .main {
     --main-background: #fff;
-    --main-foreground: #000;
-    --second-foreground: #000;
+    --main-foreground: #333;
+    --second-foreground: #333;
+    --reveal-foreground: #000;
     --reveal-background: #fff;
-    --soft-foreground: #000;
-    --border-color: #000;
-    --todo-txt: #000;
-    --color-h1: #000;
-    --color-h2: #000;
-    --color-h3: #000;
-    --color-h4: #000;
-    --color-h5: #000;
-    --color-h6: #000;
+    --soft-foreground: #555;
+    --border-color: #333;
+    --todo-txt: #333;
+    --color-h1: #333;
+    --color-h2: #333;
+    --color-h3: #333;
+    --color-h4: #333;
+    --color-h5: #333;
+    --color-h6: #333;
     --color-link: var(--magenta);
     font-family: monospace;
 }
 input#raw:target ~ #labels {
     background: #fff;
-    color: #000;
+    color: #333;
 }
 input#raw:target ~ .main code,
 input#raw:target ~ .main pre
@@ -372,7 +375,8 @@ input#raw:target ~ .main pre
 input#modern:target ~ .main {
     --main-background: #fff;
     --main-foreground: #444;
-    --second-foreground: #666;
+    --second-foreground: #aaa;
+    --reveal-foreground: #000;
     --reveal-background: #eee;
     --soft-foreground: #888;
     --border-color: #ddd;
@@ -391,7 +395,6 @@ input#modern:target ~ .main .content,
 input#modern:target ~ .main #content {
   margin: 0 auto;
 }
-
 input#modern:target ~ .main blockquote:after {
     display: none;
 }
@@ -420,9 +423,16 @@ input#modern:target ~ .main h6 {
     line-height: 1.5em;
     margin: 1em 0;
 }
+input#modern:target ~ .main #preamble {
+    border-bottom: solid 1px rgba(0,0,0,0.2);
+}
+input#modern:target ~ .main #postamble {
+    border-top: solid 1px rgba(0,0,0,0.2);
+}
 input#modern:target ~ .main #preamble h1 {
     font-size: 4em;
     line-height: 1.5em;
+    margin: .5em 0;
 }
 input#modern:target ~ .main h1::before,
 input#modern:target ~ .main h2::before,
@@ -445,7 +455,7 @@ input#modern:target ~ .main pre::after {
 input#modern:target ~ .main #preamble,
 input#modern:target ~ .main #postamble {
     background-color: var(--cyan);
-    padding: 2em 0;
+    padding: 1em 0;
 }
 input#modern:target ~ .main #preamble {
   margin-bottom: 2em;
@@ -471,24 +481,25 @@ input#modern:target ~ #labels .content {
 /* Dark raw theme selected */
 input#darkraw:target ~ .main {
     --main-background: #000;
-    --main-foreground: #ddd;
-    --second-foreground: #ddd;
+    --main-foreground: #ccc;
+    --second-foreground: #ccc;
+    --reveal-foreground: #fff;
     --reveal-background: #000;
-    --soft-foreground: #ddd;
-    --border-color: #ddd;
-    --todo-txt: #ddd;
-    --color-h1: #ddd;
-    --color-h2: #ddd;
-    --color-h3: #ddd;
-    --color-h4: #ddd;
-    --color-h5: #ddd;
-    --color-h6: #ddd;
+    --soft-foreground: #ccc;
+    --border-color: #ccc;
+    --todo-txt: #ccc;
+    --color-h1: #ccc;
+    --color-h2: #ccc;
+    --color-h3: #ccc;
+    --color-h4: #ccc;
+    --color-h5: #ccc;
+    --color-h6: #ccc;
     --color-link: var(--yellow);
     font-family: monospace;
 }
 input#darkraw:target ~ #labels {
     background: #000;
-    color: #ddd;
+    color: #ccc;
 }
 input#darkraw:target ~ .main code,
 input#darkraw:target ~ .main pre {
@@ -499,10 +510,11 @@ input#darkraw:target ~ .main pre {
 input#matrix:target ~ .main {
     --main-background: #000;
     --main-foreground: #0b0;
-    --second-foreground: #0b0;
+    --second-foreground: #080;
+    --reveal-foreground: #0f0;
     --reveal-background: #000;
-    --soft-foreground: #0b0;
-    --border-color: #0b0;
+    --soft-foreground: #080;
+    --border-color: #080;
     --todo-txt: #0b0;
     --color-h1: #0b0;
     --color-h2: #0b0;
@@ -534,8 +546,14 @@ body,.main {
 }
 a, a:visited,
 .main a, .main a:visited {
-    color: var(--second-foreground);
+    color: var(--reveal-foreground);
 }
+
+b, strong, i, em {
+    color: var(--reveal-foreground);
+}
+
+body > input { display:none; }
 
 .keywords {
     color: var(--second-foreground);

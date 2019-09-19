@@ -18,8 +18,7 @@ I do not have any social-media platform application on my phone.
 I almost never check social media platform except GitHub.
 
 I check my mails once in a while.
-It can be a few times a day, but it is not unusual not to check my mail for
-a few days or even an entiere week.
+Sometimes a few times a day, but sometime only after a few days.
 
 It is a protection against real-time notifications, and urgency feeling
 that is harmful fof most people.
@@ -38,11 +37,11 @@ TL;DR:
 - Control real-time interactions
 #+end_notes
 
-[fn:posse]: https://indieweb.org/POSSE
+[fn:posse] https://indieweb.org/POSSE
 [fn:dm] http://www.calnewport.com/books/digital-minimalism/
-[fn:espial]: https://github.com/jonschoning/espial
-[fn:node-red]: https://nodered.org
-[fn:pinboard]: https://pinboard.in
+[fn:espial] https://github.com/jonschoning/espial
+[fn:node-red] https://nodered.org
+[fn:pinboard] https://pinboard.in
 
 * Intro
 :PROPERTIES:
@@ -55,7 +54,7 @@ and many social platforms are really useful but at the same can harm us.
 
 The harm mostly come from social anti-pattern that are mostly hacking our
 brain.
-More precisely owr lower part of the brain, the one close to the instinct
+More precisely our lower part of the brain, the one close to the instinct
 which is quite difficult to tame.
 This is why this is the preferred target of those "brain hacks".
 
@@ -67,16 +66,17 @@ Anti-features are:
   notification or if not, generate us to check quite often if our output
   has generated social approval or not.
 
-So now, I how my own blog on my own server with my own domain name.
-And I publish things, but I only check the outcome once or two times a day.
-I receive no notification, I do not have any social media application on my
-phone.
-The social media "reactions" are filtered in my email, put in some
-directory and checked once in a while (no more than twice a day, generally
-only a few times a week).
+Now I control the social inputs from those social medias.
+I receive almost no notification.
+I do not have any social media application on my phone.
+Everything goes through my email, filtered in some folder.
+I only check those notifications in my email once or two times a day.
+It is not exception that I don't check those for an entier week.
 
-The drawback is that it can feel rude for people not to be answered fast.
-I am sorry, but it is a protection for my sanity.
+The main drawback is that not answering immediately to feedback can make me
+look like a rude person.
+I am just protecting myself from realtime and sychronous social interaction
+on Internet.
 
 * Producing
 :PROPERTIES:
@@ -98,45 +98,125 @@ do all of that for himself in less than a few hours/days.
 I wrote an [[file:new-blog.org][article]] sharing the details about my currentl blog platform.
 I also describe how I intend to provide a respectful blog.
 
-** TODO RSS
+** RSS
 :PROPERTIES:
 :CUSTOM_ID: rss
 :END:
-Describe that it is important to provide an RSS feed as a nice standardized
-root to publishing.
+It was important for me to provide an RSS feed.
+So people can follow my blog via an RSS reader.
+For now, I am not fully satisfied with it because my current system only
+provide links but not the full content in the RSS feed.
 
-** TODO Git Broadcast
+But this is good enough for posting news later.
+
+** Git Broadcast
 :PROPERTIES:
 :CUSTOM_ID: git-broadcast
 :END:
 How I push to both my self-hosted repository and GitHub to take advantage
 of all social features offered by GitHub.
-** TODO Espial
+
+I also self host a gitlab instance locally.
+That way I have an infinite number of private repositories.
+I can share my code to anyone.
+
+The main drawback of my self-hosted gitlab instance, is that this is not a
+social platform like Github is.
+So I duplicate all of my public repositories to Github and my origin is
+configured with both my own gitlab and github.
+Each time I make a =git push= the push is broadcasted on both my own gitlab
+instance and on GitHub.
+You can configure broadcast push with:
+
+#+begin_src
+git remote set-url origin --push --add <remote-url>
+git remote set-url origin --push --add <another-remote-url>
+#+end_src
+
+** Espial
 :PROPERTIES:
 :CUSTOM_ID: espial
 :END:
-Describe espial, and how I changed it.
-** TODO node-red
+[[https://github.com/jonschoning/espial][espial]] is an open-source, web-based bookmarking server.
+It is a very easy to install single binary.
+Perfect if you want a self-hosted bookmark web application.
+
+This tool is written in Haskell, and I made a few pull request to add RSS
+feeds of my public bookmarks as well as an RSS feed for my public notes.
+
+Notes, are simply text you save, you can make them public or private.
+** node-red
 :PROPERTIES:
 :CUSTOM_ID: node-red
 :END:
-Describe node-red and how I use it.
-* TODO Consuming
+[[https://nodered.org][node-red]] is a tool that make it easy to write /flows/.
+I use it to syndicate my self-hosted content to social media platforms.
+
+Each time I save a new public bookmark, a new blog post, a new note, I
+tweet it.
+* Consuming
 :PROPERTIES:
 :CUSTOM_ID: consuming
 :END:
-** TODO Emacs elfeed
+So far I explained how I syndicate my content on multiple platform on the
+Internet.
+The main advantage is I own my data and all platform only get the link to
+my content.
+** Emacs elfeed
 :PROPERTIES:
 :CUSTOM_ID: emacs-elfeed
 :END:
+One of my most useful tool to get news is RSS.
+In particular I consume it inside Spacemacs using [[https://github.com/skeeto/elfeed][elfeed]].
 
-** TODO Mail
+I also use elfeed-org to organize my feeds ans I also take care to remove
+feeds with too much volume.
+Generally we shouldn't read more than a few articles a day.
+** Mail
 :PROPERTIES:
 :CUSTOM_ID: mail
 :END:
-Only use mail
+I also use my mail to get most of my notifications.
+And I generally put the social notifications inside a folder and not
+directly in my inbox.
+That way I do not get any direct notification.
+I check my social notifications once in a while.
 
-** TODO Github
+** Github
 :PROPERTIES:
 :CUSTOM_ID: github
 :END:
+I still get notifications on Github because I use it a lot for my work.
+But only email and web notifications, not desktop notifications.
+
+So even for Github, I can take a lot of time to react.
+
+* Conclusion
+:PROPERTIES:
+:CUSTOM_ID: conclusion
+:END:
+This is how I can still use mainstreamsocial media platform while not
+allowing those to optimize their attention grabbing algorithm on me.
+
+I just take what I find positive in them, but do not pay the price of the
+negativity of those platforms.
+
+For now my system is quite tailored made, and adapted to me.
+I think we could imagine that we could offer that to more people by having
+a single, easy to create platform.
+
+The bit sad state, is that I know there are a few system that try to make
+it easy for more people to self-host, or host to a friend, smaller community.
+But this is still reserved to technical savy people.
+
+I think starting from espial we could create a simple small platform to
+provide those feature to most people.
+
+- ability to blog/microg blog and syndicate
+- ability to publish securly private infos to a small group of friends and family
+- generate RSS for different group of peoples
+
+For me this is kind of superior to federation and mastodon, etc...
+Mastodon, unfortunately replicate the anti-features of twitter, facebook,
+and other social media platforms.
+
