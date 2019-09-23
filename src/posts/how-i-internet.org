@@ -1,24 +1,43 @@
 #+TITLE: How I Internet
-#+SUBTITLE: (POSSE) Relaxing the Internet experience
+#+SUBTITLE: Self hosting other advantages
 #+AUTHOR: Yann Esposito
 #+EMAIL: yann@esposito.host
-#+DATE: [2019-09-14 Sat]
+#+DATE: [2019-09-23 Mon]
 #+KEYWORDS: blog, self-hosting, web, zen, minimalism
 #+DESCRIPTION: How I protect myself against attention grabbers and many social media anti-patterns.
 #+OPTIONS: auto-id:t
 
 #+begin_notes
-TL;DR:
+TL;DR: Self-hosting is not only about controlling your data, it also influences
+how you consume Internet for the best.
 
 - I /POSSE[fn:posse]/; Publish Own Site, Syndicate Elsewhere:
   + I own my data I self host my blog, notes, my repositories, my bookmarks, etc...
   + I use espial[fn:espial] for self-hosted bookmarks and notes
   + I use note-red[fn:node-red] to publish my blogs, bookmarks and notes to
     twitter, sync bookmarks with pinboard[fn:pinboard]
-- read Digital Minimalism[fn:dm]
-- Control notifications
-- Control real-time interactions
+- Enhance not only publishing experience but consumption of Internet
+  + read Digital Minimalism[fn:dm]
+  + Control notifications
+  + Control real-time interactions
 #+end_notes
+
+The way I and most people use Internet as changed drastically in a few years.
+It started with social networks and smartphones.
+More recently, applications started to introduce "features" targetting our
+"lower brain" or "social brain".
+It is not unusual to stay a lot longer on our smartphone than what we
+expected.
+
+One solution whould be to get rid of those applications, platform.
+But they provide a real benefit.
+Another solution is to better control our relation with them by minimizing
+our exposition to the worst features, while taking advantage of the really
+useful ones.
+
+I describe how I try to do that myself.
+It start with how I produce info, then what are the consequences on how I
+consume the Internet now.
 
 [fn:posse] https://indieweb.org/POSSE
 [fn:dm] http://www.calnewport.com/books/digital-minimalism/
@@ -26,7 +45,97 @@ TL;DR:
 [fn:node-red] https://nodered.org
 [fn:pinboard] https://pinboard.in
 
-* Intro
+* Producing
+:PROPERTIES:
+:CUSTOM_ID: producing
+:END:
+
+This is how I produce most information.
+Mostly have a self hosted service on which I keep my data, then syndicate
+what I want on different platforms.
+
+** Articles: Self hosted blog
+:PROPERTIES:
+:CUSTOM_ID: self-hosting
+:END:
+I wrote an [[file:new-blog.org][article]] sharing the details about my currentl blog platform.
+I also describe how I intend to provide a respectful blog.
+
+Technically, this is not the simplest path, still it is really efficient.
+In the end there are a lot of solutions for generating static websites.
+
+The harder part is about self-hosting it.
+You need to buy a domain name, and configure you DNS correctly.
+
+This is not something tremendously hard, but don't expect to do that as
+easily as registering to a private service.
+
+** Code: Git Broadcast
+:PROPERTIES:
+:CUSTOM_ID: git-broadcast
+:END:
+
+Self hosting is not reserverd for my writing but also for the code I write
+on my free time projects.
+
+All my public repositories push to both on my self-hosted Gitlab instance
+and GitHub.
+That way I host my own content, while still using to my advantages the
+social feature of Github.
+
+Here is how you can configure your git repositories to push to multiple
+urls:
+
+#+begin_src
+git remote set-url origin --push --add <remote-url>
+git remote set-url origin --push --add <another-remote-url>
+#+end_src
+
+** Bookmarks: Espial
+:PROPERTIES:
+:CUSTOM_ID: espial
+:END:
+[[https://github.com/jonschoning/espial][espial]] is an open-source, web-based bookmarking server.
+It is a very easy to install single binary.
+This is perfect if you want to keep a lot of bookmarks some private some
+publics.
+
+** Notes: Espial
+:PROPERTIES:
+:CUSTOM_ID: notes--espial
+:END:
+
+Notes, are simply text you save, you can make them public or private. I
+tend to use it as my "micro-blogging". For the time when I just want to
+write a short remark and not a full blog post article.
+
+
+** RSS for articles, bookmarks, notes
+:PROPERTIES:
+:CUSTOM_ID: rss
+:END:
+It is important for me to provide an RSS feed.
+People should know when I update my blog.
+
+I am not fully satifisfied with the state of my curren RSS feed.
+It does not contain my full articles content, nor an eay mean to filter by
+keyword or category yet.
+
+Still this is good enough for my current usage.
+
+[[https://github.com/jonschoning/espial][espial]] is written in Haskell, and I made a few pull requests to add RSS
+feeds of my public bookmarks as well as an RSS feed for my public notes.
+
+** Syndicate Elsewhere: node-red
+:PROPERTIES:
+:CUSTOM_ID: node-red
+:END:
+[[https://nodered.org][node-red]] is a tool that make it easy to write /flows/.
+I use it to syndicate my self-hosted content to social media platforms.
+
+Each time I save a new public bookmark, a new blog post, a new note, I
+tweet it.
+* Introduction
 :PROPERTIES:
 :CUSTOM_ID: intro
 :END:
@@ -62,7 +171,6 @@ own tools and broadcast those content to all other social media.
 If people react to this on some social media, I'll get a mail that will be
 put in a "social" folder.
 I forbid myself to constantly check this social folder.
-
 
 I do not have any social media application on my phone.
 Everything goes through my email, filtered in some folder.
@@ -166,80 +274,6 @@ But only email and web notifications, not desktop notifications.
 
 So even for Github, I can take a few days to react.
 
-* Producing
-:PROPERTIES:
-:CUSTOM_ID: producing
-:END:
-
-Another very important aspect of Internet and the Web is the ability to
-produce an output and give it to someone else far away.
-
-For now I only have two circles, myself and fully public.
-
-I will certainly endup with strategies to put intermediate circles of
-publications in the future.
-It is good enough for now.
-
-** Self Hosting
-:PROPERTIES:
-:CUSTOM_ID: self-hosting
-:END:
-A first important step for me was to self host most of my data.
-
-I wrote an [[file:new-blog.org][article]] sharing the details about my currentl blog platform.
-I also describe how I intend to provide a respectful blog.
-
-** RSS
-:PROPERTIES:
-:CUSTOM_ID: rss
-:END:
-It was important for me to provide an RSS feed.
-So people can know when I update my blog.
-For now, I am not fully satisfied with it because my current system only
-provide links but not the full content in the RSS feed.
-
-But this is good enough for my current usage.
-
-** Git Broadcast
-:PROPERTIES:
-:CUSTOM_ID: git-broadcast
-:END:
-I configured all my public repositories to be pushed both on my self-hosted
-Gitlab instance and GitHub.
-
-That way I host my own content, while still using to my advantages the
-social feature of Github.
-
-You can configure your git repositories to push to multiple url by:
-
-#+begin_src
-git remote set-url origin --push --add <remote-url>
-git remote set-url origin --push --add <another-remote-url>
-#+end_src
-
-** Espial
-:PROPERTIES:
-:CUSTOM_ID: espial
-:END:
-[[https://github.com/jonschoning/espial][espial]] is an open-source, web-based bookmarking server.
-It is a very easy to install single binary.
-This is perfect if you want to self-host your bookmarks while having some publics.
-
-This tool is written in Haskell, and I made a few pull requests to add RSS
-feeds of my public bookmarks as well as an RSS feed for my public notes.
-
-Notes, are simply text you save, you can make them public or private. I
-tend to use it as my "micro-blogging". For the time when I just want to
-write a short remark and not a full blog post article.
-** node-red
-:PROPERTIES:
-:CUSTOM_ID: node-red
-:END:
-[[https://nodered.org][node-red]] is a tool that make it easy to write /flows/.
-I use it to syndicate my self-hosted content to social media platforms.
-
-Each time I save a new public bookmark, a new blog post, a new note, I
-tweet it.
 * Conclusion
 :PROPERTIES:
 :CUSTOM_ID: conclusion

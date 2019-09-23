@@ -214,6 +214,9 @@ navigation > a {
 #content:first-child {
     margin-top: 0;
 }
+#postamble {
+    margin-top: 1em;
+}
 .timestamp-wrapper {
     font-size: 12px;
 }
@@ -312,6 +315,7 @@ navigation > a {
 }
 
 /* Light theme selected */
+input#light:checked ~ .main ,
 input#light:target ~ .main {
     --main-background: #fefaf0; /* 0.5 lighter than #fdf6e3 */
     --main-foreground: var(--base01);
@@ -322,12 +326,14 @@ input#light:target ~ .main {
     --border-color: var(--base2);
     --todo-txt: #FFF;
 }
+input#light:checked ~ #labels ,
 input#light:target ~ #labels {
     background: #fefaf0;
     color: var(--base00);
 }
 
 /* Dark theme selected */
+input#dark:checked ~ .main ,
 input#dark:target ~ .main {
     --main-background: var(--base03);
     --main-foreground: var(--base0);
@@ -338,13 +344,15 @@ input#dark:target ~ .main {
     --border-color: var(--base02);
     --todo-txt: #000;
 }
+input#dark:checked ~ #labels ,
 input#dark:target ~ #labels {
     background: var(--base03);
     color: var(--base0);
 }
 
-/* Light raw theme selected */
-input#raw:target ~ .main {
+/* Light simple theme selected */
+input#simple:checked ~ .main ,
+input#simple:target ~ .main {
     --main-background: #fff;
     --main-foreground: #333;
     --second-foreground: #333;
@@ -360,18 +368,34 @@ input#raw:target ~ .main {
     --color-h5: #333;
     --color-h6: #333;
     --color-link: var(--magenta);
-    font-family: monospace;
+    font-family: "Helvetica Neue";
+    font-size: 16px;
+    line-height: 1.5em;
 }
-input#raw:target ~ #labels {
+input#simple:checked ~ .main .content,
+input#simple:target ~ .main .content,
+input#simple:checked ~ .main #content ,
+input#simple:target ~ .main #content {
+    margin: 0 auto;
+}
+input#simple:checked ~ #labels ,
+input#simple:target ~ #labels {
     background: #fff;
     color: #333;
+    font-family: "Helvetica Neue";
+    font-size: 16px;
+    line-height: 1.5em;
 }
-input#raw:target ~ .main code,
-input#raw:target ~ .main pre
+input#simple:checked ~ .main code,
+input#simple:target ~ .main code,
+input#simple:checked ~ .main pre
+,
+input#simple:target ~ .main pre
 {
     font-family: monospace;
 }
 /* Light modern theme selected */
+input#modern:checked ~ .main ,
 input#modern:target ~ .main {
     --main-background: #fff;
     --main-foreground: #444;
@@ -388,16 +412,21 @@ input#modern:target ~ .main {
     line-height: 1.5em;
 }
 
+input#modern:checked ~ #labels a ,
 input#modern:target ~ #labels a {
     color: #fff;
 }
+input#modern:checked ~ .main .content,
 input#modern:target ~ .main .content,
+input#modern:checked ~ .main #content ,
 input#modern:target ~ .main #content {
   margin: 0 auto;
 }
+input#modern:checked ~ .main blockquote:after ,
 input#modern:target ~ .main blockquote:after {
     display: none;
 }
+input#modern:checked ~ .main blockquote ,
 input#modern:target ~ .main blockquote {
     font-family: "Hoefler Text", Georgia, serif;
     font-style: italic;
@@ -405,7 +434,9 @@ input#modern:target ~ .main blockquote {
     line-height: 30px;
     border-left: solid 10px;
 }
+input#modern:checked ~ .main h1,
 input#modern:target ~ .main h1,
+input#modern:checked ~ .main h2 ,
 input#modern:target ~ .main h2 {
     font-family: "Hoefler Text", Georgia, serif;
     font-style: italic;
@@ -414,72 +445,98 @@ input#modern:target ~ .main h2 {
     margin: 1em 0;
 }
 
+input#modern:checked ~ .main h3,
 input#modern:target ~ .main h3,
+input#modern:checked ~ .main h4,
 input#modern:target ~ .main h4,
+input#modern:checked ~ .main h5,
 input#modern:target ~ .main h5,
+input#modern:checked ~ .main h6 ,
 input#modern:target ~ .main h6 {
     font-weight: 200;
     font-size: 1.5em;
     line-height: 1.5em;
     margin: 1em 0;
 }
+input#modern:checked ~ .main #preamble ,
 input#modern:target ~ .main #preamble {
     border-bottom: solid 1px rgba(0,0,0,0.2);
 }
+input#modern:checked ~ .main #postamble ,
 input#modern:target ~ .main #postamble {
     border-top: solid 1px rgba(0,0,0,0.2);
 }
+input#modern:checked ~ .main #preamble h1 ,
 input#modern:target ~ .main #preamble h1 {
     font-size: 4em;
     line-height: 1.5em;
     margin: .5em 0;
 }
+input#modern:checked ~ .main h1::before,
 input#modern:target ~ .main h1::before,
+input#modern:checked ~ .main h2::before,
 input#modern:target ~ .main h2::before,
+input#modern:checked ~ .main h3::before,
 input#modern:target ~ .main h3::before,
+input#modern:checked ~ .main h4::before,
 input#modern:target ~ .main h4::before,
+input#modern:checked ~ .main h5::before,
 input#modern:target ~ .main h5::before,
+input#modern:checked ~ .main h6::before ,
 input#modern:target ~ .main h6::before {
     content: "";
 }
+input#modern:checked ~ .main pre ,
 input#modern:target ~ .main pre {
     font-size: 14px;
     line-height: 1em;
     border-left: solid 4px var(--soft-foreground);
     padding-left: 1em;
 }
+input#modern:checked ~ .main pre::before,
 input#modern:target ~ .main pre::before,
+input#modern:checked ~ .main pre::after ,
 input#modern:target ~ .main pre::after {
     content: "";
 }
+input#modern:checked ~ .main #preamble,
 input#modern:target ~ .main #preamble,
+input#modern:checked ~ .main #postamble ,
 input#modern:target ~ .main #postamble {
     background-color: var(--cyan);
     padding: 1em 0;
 }
+input#modern:checked ~ .main #preamble ,
 input#modern:target ~ .main #preamble {
   margin-bottom: 2em;
 }
+input#modern:checked ~ .main #postamble ,
 input#modern:target ~ .main #postamble {
     margin-top: 2em;
 }
+input#modern:checked ~ .main #postamble code ,
 input#modern:target ~ .main #postamble code {
     background-color: transparent;
 }
+input#modern:checked ~ .main #preamble *,
 input#modern:target ~ .main #preamble *,
+input#modern:checked ~ .main #postamble * ,
 input#modern:target ~ .main #postamble * {
     color: #fff;
 }
+input#modern:checked ~ #labels ,
 input#modern:target ~ #labels {
     background: var(--cyan);
     color: #fff;
 }
+input#modern:checked ~ #labels .content ,
 input#modern:target ~ #labels .content {
     margin: 0 auto;
 }
 
-/* Dark raw theme selected */
-input#darkraw:target ~ .main {
+/* Dark simple theme selected */
+input#darksimple:checked ~ .main ,
+input#darksimple:target ~ .main {
     --main-background: #000;
     --main-foreground: #ccc;
     --second-foreground: #ccc;
@@ -495,18 +552,35 @@ input#darkraw:target ~ .main {
     --color-h5: #ccc;
     --color-h6: #ccc;
     --color-link: var(--yellow);
-    font-family: monospace;
+    font-family: "Helvetica Neue", sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.5em;
 }
-input#darkraw:target ~ #labels {
+input#darksimple:checked ~ #labels ,
+input#darksimple:target ~ #labels {
     background: #000;
     color: #ccc;
+    font-family: "Helvetica Neue", sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.5em;
 }
-input#darkraw:target ~ .main code,
-input#darkraw:target ~ .main pre {
+input#darksimple:checked ~ .main code,
+input#darksimple:target ~ .main code,
+input#darksimple:checked ~ .main pre ,
+input#darksimple:target ~ .main pre {
     font-family: monospace;
+}
+input#darksimple:checked ~ .main .content,
+input#darksimple:target ~ .main .content,
+input#darksimple:checked ~ .main #content ,
+input#darksimple:target ~ .main #content {
+    margin: 0 auto;
 }
 
 /* Dark matrix theme selected */
+input#matrix:checked ~ .main ,
 input#matrix:target ~ .main {
     --main-background: #000;
     --main-foreground: #0b0;
@@ -525,11 +599,14 @@ input#matrix:target ~ .main {
     --color-link: white;
     font-family: monospace;
 }
+input#matrix:checked ~ #labels ,
 input#matrix:target ~ #labels {
     background: #000;
     color: #0b0;
 }
+input#matrix:checked ~ .main code,
 input#matrix:target ~ .main code,
+input#matrix:checked ~ .main pre ,
 input#matrix:target ~ .main pre {
     font-family: monospace;
 }
@@ -557,11 +634,9 @@ body > input { display:none; }
 
 .keywords {
     color: var(--second-foreground);
-    float: right;
 }
-.keyword:hover {
-    cursor: pointer;
-    color: var(--yellow);
+li .keywords {
+    float: right;
 }
 
 .main ol > li:before, ol > li:before {
