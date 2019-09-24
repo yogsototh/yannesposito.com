@@ -7,10 +7,6 @@
 (defvar publish-assets-dir (concat publish-dir "/"))
 (defvar posts-dir (concat base-dir "/posts"))
 (defvar rss-title "Subscribe to articles")
-(defvar rss-home domainname)
-(defvar rss-url (concat domainname "/rss.xml"))
-(defvar rss-img (concat domainname "/img/FlatAvatar.png"))
-(defvar rss-description "her.esy.fun articles, mostly random personal thoughts")
 (defvar posts-descr "Articles")
 (defvar css-path "/css/minimalist.css")
 (defvar author-name "Yann Esposito")
@@ -20,7 +16,6 @@
 (require 'ox-publish)
 (require 'ox-html)
 (require 'org-element)
-(require 'ox-rss)
 
 ;; (setq org-link-file-path-type 'relative)
 (setq org-publish-timestamp-directory
@@ -229,44 +224,6 @@ Return output file name."
 (defalias 'org-blog-posts-sitemap-fn
   (apply-partially 'org-blog-sitemap-fn-descr posts-descr))
 
-(defun y/org-rss-publish-to-rss (plist filename pub-dir)
-  (if (equal "rss.org" (file-name-nondirectory filename))
-      (org-rss-publish-to-rss plist filename pub-dir)))
-
-(defun y/format-rss-feed (title list)
-  (concat "#+TITLE: " title "\n"
-          "#+AUTHOR: " author-name "\n"
-          "#+EMAIL: " author-email "\n"
-          "#+DESCRIPTION: " rss-description "\n"
-          "\n"
-          (org-list-to-subtree list '(:icount "" :istart ""))))
-
-(defun y/format-rss-feed-entry (entry style project)
-  (cond ((not (directory-name-p entry))
-         (let* ((file (org-publish--expand-file-name entry project))
-                (title (org-publish-find-title entry project))
-                (subtitle (y/get-meta (format "%s/%s" posts-dir entry) "SUBTITLE"))
-                (keywords (y/get-meta (format "%s/%s" posts-dir entry) "KEYWORDS"))
-                (description (y/get-meta (format "%s/%s" posts-dir entry) "DESCRIPTION"))
-                (date (format-time-string "%Y-%m-%d" (org-publish-find-date entry project)))
-                (link (concat "posts/" (file-name-sans-extension entry) ".html")))
-           (with-temp-buffer
-             (insert (format "* [[file:%s][%s]]\n" file title))
-             (org-set-property "RSS_PERMALINK" link)
-             (org-set-property "PUBDATE" date)
-             (org-set-property "ID" (org-auto-id-format title))
-             (when subtitle
-               (org-set-property "SUBTITLE" subtitle))
-             (when keywords
-               (insert "Keywords: ")
-               (insert keywords)
-               (insert "\n\n"))
-             (when description
-               (insert description))
-             (buffer-string))))
-        ((eq style 'tree)
-         (file-name-nondirectory (directory-file-name entry)))))
-
 (setq org-publish-project-alist
       `(("orgfiles"
          :base-directory ,base-dir
@@ -297,23 +254,6 @@ Return output file name."
          :sitemap-format-entry date-format-entry
          :sitemap-function org-blog-posts-sitemap-fn)
 
-        ("rss"
-         :base-directory ,posts-dir
-         :base-extension "org"
-         :recursive t
-         :publishing-directory ,publish-dir
-         :publishing-function y/org-rss-publish-to-rss
-         :rss-extension "xml"
-         :rss-image-url ,rss-img
-         :rss-feed-url ,rss-url
-         :html-link-home ,rss-home
-         :auto-sitemap t
-         :sitemap-filename "rss.org"
-         :sitemap-title "her.esy.fun"
-         :sitemap-style list
-         :sitemap-function y/format-rss-feed
-         :sitemap-format-entry y/format-rss-feed-entry)
-
         ("assets"
          :base-directory ,assets-dir
          :base-extension ".*"
@@ -322,7 +262,7 @@ Return output file name."
          :publishing-function org-blog-publish-attachment
          :recursive t)
 
-        ("blog" :components ("orgfiles" "assets" "rss"))))
+        ("blog" :components ("orgfiles" "assets"))))
 
 ;; add target=_blank and rel="noopener noreferrer" to all links by default
 (defun my-org-export-add-target-blank-to-http-links (text backend info)
