@@ -24,20 +24,21 @@ how you consume Internet for the best.
 
 The way I and most people use Internet as changed drastically in a few years.
 It started with social networks and smartphones.
-More recently, applications started to introduce "features" targetting our
+More recently, applications started to introduce "features" targeting our
 "lower brain" or "social brain".
 It is not unusual to stay a lot longer on our smartphone than what we
 expected.
+Since the introduction of those methods, more and more people experience
+difficulties to balance their life, to focus a long time on some subject,
+and even might feel a lot more social anxieties.
 
-One solution whould be to get rid of those applications, platform.
-But they provide a real benefit.
-Another solution is to better control our relation with them by minimizing
-our exposition to the worst features, while taking advantage of the really
-useful ones.
+One solution is of course to totally get rid of those platforms.
+But it would mean throw away all the benefit they provide.
 
-I describe how I try to do that myself.
-It start with how I produce info, then what are the consequences on how I
-consume the Internet now.
+So my personal solution is to still keep the best of those platform while
+minimizing my exposure to most /anti-features/.
+All start by how I produce content.
+And it naturally affect also how I consume information on Internet.
 
 [fn:posse] https://indieweb.org/POSSE
 [fn:dm] http://www.calnewport.com/books/digital-minimalism/
@@ -50,41 +51,44 @@ consume the Internet now.
 :CUSTOM_ID: producing
 :END:
 
-This is how I produce most information.
-Mostly have a self hosted service on which I keep my data, then syndicate
-what I want on different platforms.
+I self host many services.
+I control my data, and then I broadcast those info to different platforms.
 
 ** Articles: Self hosted blog
 :PROPERTIES:
 :CUSTOM_ID: self-hosting
 :END:
-I wrote an [[file:new-blog.org][article]] sharing the details about my currentl blog platform.
-I also describe how I intend to provide a respectful blog.
 
-Technically, this is not the simplest path, still it is really efficient.
-In the end there are a lot of solutions for generating static websites.
+First thing, is I /blog/.
+Writing a blog article is an intermediate format.
+A lot simpler than a real article for some journal, but also should contain
+more details than just a "micro-blog status" where you can mostly express
+an impression, a photo, an opinion...
 
-The harder part is about self-hosting it.
+I wrote an [[file:new-blog.org][article]] that explain the technical details behind my blog.
+It also describes how I try to make it a /respectful/ blog.
+
+The harder part if you want to do it yourself will be about self-hosting it.
 You need to buy a domain name, and configure you DNS correctly.
-
 This is not something tremendously hard, but don't expect to do that as
 easily as registering to a private service.
+But hey, I really believe this is worth the price.
 
 ** Code: Git Broadcast
 :PROPERTIES:
 :CUSTOM_ID: git-broadcast
 :END:
 
-Self hosting is not reserverd for my writing but also for the code I write
-on my free time projects.
+I also self-host the code for my open-source projects.
+But, Github is the developer social network.
+It is easier to find contributor on Github than on your self-hosted repository.
 
-All my public repositories push to both on my self-hosted Gitlab instance
-and GitHub.
-That way I host my own content, while still using to my advantages the
-social feature of Github.
+So, I sync my code between my self-hosted instance and GitHub.
+So if tomorrow something is wrong with Github, I could easily switch to my
+self hosted repositories only.
 
 Here is how you can configure your git repositories to push to multiple
-urls:
+URLs:
 
 #+begin_src
 git remote set-url origin --push --add <remote-url>
@@ -95,146 +99,98 @@ git remote set-url origin --push --add <another-remote-url>
 :PROPERTIES:
 :CUSTOM_ID: espial
 :END:
-[[https://github.com/jonschoning/espial][espial]] is an open-source, web-based bookmarking server.
-It is a very easy to install single binary.
+I also like a tool to synchronize articles on the Internet I like and
+appreciate.
+For that, I use [[https://github.com/jonschoning/espial][espial]] which is an open-source, web-based bookmarking server.
+
+It is a very easy to install, this is a single binary.
+Your bookmark are kept in a single sqlite file.
+
 This is perfect if you want to keep a lot of bookmarks some private some
-publics.
+public.
 
 ** Notes: Espial
 :PROPERTIES:
 :CUSTOM_ID: notes--espial
 :END:
+Another feature provided by [[https://github.com/jonschoning/espial][espial]] is the ability to save notes.
 
-Notes, are simply text you save, you can make them public or private. I
-tend to use it as my "micro-blogging". For the time when I just want to
-write a short remark and not a full blog post article.
-
+You can generate public or private notes.
+I intend to use those notes for my "micro-blogging" needs.
+Useful, for just making some short remark without investing in a full blog
+post.
 
 ** RSS for articles, bookmarks, notes
 :PROPERTIES:
 :CUSTOM_ID: rss
 :END:
-It is important for me to provide an RSS feed.
-People should know when I update my blog.
+It is important for me to provide RSS feeds.
+People should know when I update my content.
 
-I am not fully satifisfied with the state of my curren RSS feed.
-It does not contain my full articles content, nor an eay mean to filter by
-keyword or category yet.
+So my blog, bookmarks and note generate RSS feeds[fn:espialpr].
 
-Still this is good enough for my current usage.
-
-[[https://github.com/jonschoning/espial][espial]] is written in Haskell, and I made a few pull requests to add RSS
+[fn:espialpr] [[https://github.com/jonschoning/espial][espial]] is written in Haskell, and I made a few pull requests to add RSS
 feeds of my public bookmarks as well as an RSS feed for my public notes.
 
 ** Syndicate Elsewhere: node-red
 :PROPERTIES:
 :CUSTOM_ID: node-red
 :END:
-[[https://nodered.org][node-red]] is a tool that make it easy to write /flows/.
-I use it to syndicate my self-hosted content to social media platforms.
 
-Each time I save a new public bookmark, a new blog post, a new note, I
-tweet it.
-* Introduction
-:PROPERTIES:
-:CUSTOM_ID: intro
-:END:
+With those RSS, it is then quite natural to syndicate elsewhere.
+For that I use [[https://nodered.org][node-red]].
 
-Our usage of the Internet changed a lot in recent years.
-The book Digital Minimalism[fn:dm] explains quite clearly how Internet
-and many social platforms are really useful but at the same can harm us.
+This is a web-based tool that make it easy to write /flows/.
+Think about it like a super IFTTT.
 
-The harm mostly come from social anti-pattern that are mostly hacking our
-brain.
-More precisely our lower part of the brain, the one close to the instinct
-which is quite difficult to tame.
-This is why this is the preferred target of those "brain hacks".
-
-Anti-features are:
-
-- *notifications* ;  they are here to grab your attention when you are away
-  doing something else.
-- *likes / upvotes / retweets / pokes...* ; they are here to provide a "brain social
-  sugar". They are not really useful but make us feel good by reinforing
-  our feeling of social approval hacking our "social brain".
-  More than that, we generally fall for most psychologic trick with those
-  and make our production oriented to short content, mêmes, etc...
-- *comments* ; Unlike likes or retweets, comment are a lot more useful,
-  they can start a discussion. They still have two problems:
-  1. Public comment are subject to spam, troll, attacks, etc... 
-  2. Generally comments are associated to real-time notifications, and thus
-     break a slower, calmer, more respectful communication channel. We are
-     not all meant to react instantaneously.
-
-My solution to take back the control, is to generate the content using my
-own tools and broadcast those content to all other social media.
-If people react to this on some social media, I'll get a mail that will be
-put in a "social" folder.
-I forbid myself to constantly check this social folder.
-
-I do not have any social media application on my phone.
-Everything goes through my email, filtered in some folder.
-I only check those notifications in my email once or two times a day.
-Sometime I only check the social mail folder once in a week.
-
-As a result, I receive almost no notification.
-I am almost never interrupted for those social interactions.
-
-The main drawback of course is that I can give the impression that I am
-rude by not answering immediately.
-Unfortunately I am just protecting myself.
-
-If I feel this is a too big problem, I'll create an auto-responder bot that
-will nicely explain that I am sorry for the inconvenience but I can make a
-long time to answer.
-
-So being on the Internet, and in particular on the Web is mostly about
-consuming information and producing information.
-
+To give you an example, each time I save a new public bookmark, a new blog
+post, a new note, I tweet it.
 * Consuming
 :PROPERTIES:
 :CUSTOM_ID: consuming
 :END:
 
-Internet consumption evolved a lot.
-Just think about the few first pages you visited a few years ago and today.
+As I said, now that I can generate my content using my own, self-made
+environment, it also influenced a lot the way I consume and interact with
+other people on the Internet.
 
-People tend to consume on their smartphones and generally inside a social
-media platform dedicated application.
-You are generally presented with an inifinite scroll media content.
-Most of the time either video or photos.
-Sometime with a link to some website, often behind a paywall.
+I consumed a lot of /news/ directly from my smartphone.
+Most of the time using an app dedicated to some social network.
 
-And a lot about things easy to digest.
-A cute cat, an image with a joke, a funny video, and once in a while like
-very rare, a real important information about someone you care about or a
-big news.
-Most of the time, the news will be part of a polemic.
-Because polemic is a very efficient attention grabber.
+The natural presentation is an infinite scroll of content, with buttons to
+engage in the social network with likes/upvotes/comments etc...
+Most of the time, with enabled notifications to answer ASAP to anyone that
+might [[https://www.xkcd.com/386/]["be wrong on the Internet"]].
 
-While I am totally fine with a bit of entertainment and polemic, the level
-at which we are currently exposed right now can be quite harmful.
-
-First thing to think about, why are we so eager to /news/?
-Why not feel the same about old but great content?
-Before all those news system, we were /active/ during our information
-consumption.
-We started from a search engine and /searched/ something.
-Now, we still use search engines, but it is really about searching and not
-trying to /discover/ something new.
-This is also something to keep in mind.
+Here is how I consume Internet content now.
 
 ** News
 :PROPERTIES:
 :CUSTOM_ID: news
 :END:
 
+Before explaining how I consume Internet news, I like to make a short
+digression:
+
+#+begin_quote
+By writing this article I realized that, I mostly consume Internet content
+via *news*.
+More than that, that now, Internet is almost synonymous to news on the web.
+Which is only a very small part of the Internet.
+
+Consuming news via a social network platform makes you a lot more passive.
+I can remember being a lot more active to consume the Internet content
+years ago.
+
+This is something to keep in mind I think.
+#+end_quote
+
 So my entry point to news consumption are:
 
 - highly selected RSS sources (for example HN posts with > 500 upvotes)
 - [[https://lobste.rs][lobste.rs]]
 - [[https://pinboard.in/popular/][popular pinboard.in bookmarks]]
-- very few sub-reddits with small volume
+- very few sub-reddit with small volume
 - [[https://laarc.io][laarc.io]]
 - [[https://fermatslibrary.com][Fermat's Library newsletter]]
 
@@ -242,36 +198,30 @@ I plan on generating RSS from those different sources with "smart filters".
 Typically number of upvote filters for lobste.rs, laarc.io, sub-reddits,
 but also number of bookmarks in popular pinboard, etc...
 
+I use [[https://github.com/skeeto/elfeed][elfeed]] inside Spacemacs.
 I really enjoy staying inside emacs as much as I can.
 This is a clean, dense, text-oriented environment.
 
-*** Emacs elfeed
-:PROPERTIES:
-:CUSTOM_ID: emacs-elfeed
-:END:
-As I said, one of my most useful tool to get news is RSS.
-In particular I consume it inside Spacemacs using [[https://github.com/skeeto/elfeed][elfeed]].
-
-I also use elfeed-org to organize my feeds ans I also take care to remove
+I also use [[https://github.com/remyhonig/elfeed-org][elfeed-org]] to organize my feeds and I also take care to remove
 feeds with too much volume.
 Generally we shouldn't read more than a few articles a day.
 ** Mail
 :PROPERTIES:
 :CUSTOM_ID: mail
 :END:
-I also use my mail to get most of my notifications.
-And I generally put the social notifications inside a folder and not
-directly in my inbox.
-That way I do not get any direct notification.
+Most of my notifications go through my email.
+Social network notifications are moved inside folder and are not directly
+present in my inbox.
 I check my social notifications once in a while.
+So if you are waiting for an answer, sorry for the late reply, it might
+take a while.
 
 ** Github
 :PROPERTIES:
 :CUSTOM_ID: github
 :END:
 I still get notifications on Github because I use it a lot for my work.
-But only email and web notifications, not desktop notifications.
-
+But only via email and the web interface.
 So even for Github, I can take a few days to react.
 
 * Conclusion
@@ -290,21 +240,58 @@ I think we could imagine that we could offer that to more people by having
 a single, easy to create platform.
 
 The bit sad state, is that I know there are a few system that try to make
-it easy for more people to self-host, or provide self-hosting for a smal
+it easy for more people to self-host, or provide self-hosting for a small
 community or family.
 But this is still reserved to technical people in my opinion.
 
-I think we could be inspired by espia to create a simple small platform to
+I think we could be inspired by espial[fn:espial] to create a simple small platform to
 provide those feature to most people.
 
-- ability to blog/microg blog and syndicate
-- ability to publish securly private infos to a small group of friends and family
+- ability to blog/micro-blog and syndicate
+- ability to publish securely private info to a small group of friends and family
 - generate RSS for different group of peoples
 
 I would personally prefer that to a Federation platform (like Mastodon).
-Unfortunately the federated network mostly replicate the anti-features of twitter, facebook,
+Unfortunately the federated network mostly replicate the anti-features of twitter, Facebook,
 and other social media platforms. While I believe we should change our
 consumption habit.
 
 RSS is already a great tool for that.
 
+** Anti-features
+:PROPERTIES:
+:CUSTOM_ID: anti-features
+:END:
+
+A last note about anti-features used by social media platforms.
+Those are anti-features, as they provide almost no benefit for the user.
+All those anti-feature share the same pattern.
+They use /spaced random reward/:
+
+#+begin_notes
+*Spaced Random Reward*
+
+Typically the few first random gifts in a new
+downloaded game.
+The main way used to /hack/ your brain, is by giving it something he likes
+at a random time.
+Then you start to give reward with lower and lower probability.
+Your brain will then be in a /search mode/ where he will /hope/ to get
+another reward by staying a bit longer in the system.
+#+end_notes
+
+- *notifications* ; they are here to grab your attention when you are away
+  doing something else.
+- *likes / upvotes / retweets / pokes...* ; those are also /Internet
+  reward/ but are even stronger because they also target your "social brain".
+  They reinforce a feeling of social approval.
+  More than that, we generally fall for most psychological tricks with those
+  and make our production oriented to short content, memes, etc...
+- *infinite scrolling* ; make you brain want to look a bit more, because it
+  creates a fear to lose a great new info.
+- *comments* ; Unlike likes or retweets, comment are a lot more useful,
+  they can start a discussion. They still have two problems:
+  1. Public comment are subject to spam, troll, attacks, etc...
+  2. Generally comments are associated to real-time notifications, and thus
+     break a slower, calmer, more respectful communication channel. We are
+     not all meant to react instantaneously.
