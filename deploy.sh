@@ -7,5 +7,5 @@ echo "Building RSS"
 ./mkrss.sh
 echo "RSS Built"
 echo -n "Publishing"
-rsync --progress --partial -avHe ssh $rootdir/_site/ root@shoggoth1:/var/www/her.esy.fun/ --delete
+rsync --progress --partial -avHe ssh $rootdir/_site/ root@esy.fun:/var/www/her.esy.fun/ --delete
 echo " [done]"
