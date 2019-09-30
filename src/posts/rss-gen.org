@@ -111,8 +111,9 @@ dates=( )
 # named ${d}-$(basename $fic).rss that naming convention will be useful to
 # sort article by date
 for fic in $postsdir/**/*.html; do
-    blogfile="$(echo "$fic"|sed 's#^'$postsdir'/##')"
-    printf "%-30s" $blogfile
+    postfile="$(echo "$fic"|sed 's#^'$postsdir'/##')"
+    blogfile="$(echo "$fic"|sed 's#^'$webdir'/##')"
+    printf "%-30s" $postfile
     xfic="$tmpdir/$fic.xml"
     mkdir -p $(dirname $xfic)
     hxclean $fic > $xfic # create a cleaner HTML file to help hxselect work
@@ -202,139 +203,33 @@ echo "RSS Generated"
 
 Here is the full script I use:
 
+[[file:rss-gen/mkrss.sh][mkrss.sh]]
+
+You can notice I start my script with:
+
 #+begin_src bash
 #!/usr/bin/env nix-shell
 #!nix-shell -i zsh
-
-# Directory
-webdir="_site"
-postsdir="$webdir/posts"
-rssfile="$webdir/rss.xml"
-
-# maximal number of articles to put in the RSS file
-maxarticles=10
-
-# RSS Metas
-rsstitle="her.esy.fun"
-rssurl="https://her.esy.fun/rss.xml"
-websiteurl="https://her.esy.fun"
-rssdescription="her.esy.fun articles, mostly random personal thoughts"
-rsslang="en"
-rssauthor="yann@esposito.host (Yann Esposito)"
-rssimgtitle="yogsototh"
-rssimgurl="https://her.esy.fun/img/FlatAvatar.png"
-
-# HTML Accessors (similar to CSS accessors)
-dateaccessor='.article-date'
-contentaccessor='#content'
-# title and keyword shouldn't be changed
-titleaccessor='title'
-keywordsaccessor='meta[name=keywords]::attr(content)'
-
-formatdate() {
-    # format the date for RSS
-    local d=$1
-    LC_TIME=en_US date --date $d +'%a, %d %b %Y %H:%M:%S %z'
-}
-
-finddate(){ < $1 hxselect -c $dateaccessor }
-findtitle(){ < $1 hxselect -c $titleaccessor }
-getcontent(){ < $1 hxselect $contentaccessor }
-findkeywords(){ < $1 hxselect -c $keywordsaccessor | sed 's/,//g' }
-mkcategories(){
-    for keyword in $*; do
-        printf "\\n<category>%s</category>" $keyword
-    done
-}
-
-autoload -U colors && colors
-
-tmpdir=$(mktemp -d)
-typeset -a dates
-dates=( )
-for fic in $postsdir/**/*.html; do
-    blogfile="$(echo "$fic"|sed 's#^'$postsdir'/##')"
-    printf "%-30s" $blogfile
-    xfic="$tmpdir/$fic.xml"
-    mkdir -p $(dirname $xfic)
-    hxclean $fic > $xfic
-    d=$(finddate $xfic)
-    echo -n " [$d]"
-    rssdate=$(formatdate $d)
-    title=$(findtitle $xfic)
-    keywords=( $(findkeywords $xfic) )
-    printf ": %-55s" "$title ($keywords)"
-    categories=$(mkcategories $keywords)
-    { printf "\\n<item>"
-      printf "\\n<title>%s</title>" "$title"
-      printf "\\n<guid>%s</guid>" "${websiteurl}/${blogfile}"
-      printf "\\n<pubDate>%s</pubDate>%s" "$rssdate"
-      printf "%s" "$categories"
-      printf "\\n<description><![CDATA[\\n%s\\n]]></description>" "$(getcontent "$xfic")"
-      printf "\\n</item>\\n\\n"
-    } >>  "$tmpdir/${d}-$(basename $fic).rss"
-    dates=( $d $dates )
-    echo " [${fg[green]}OK${reset_color}]"
-done
-echo "Publishing"
-for fic in $(ls $tmpdir/*.rss | sort -r | head -n $maxarticles ); do
-    echo "${fic:t}"
-    cat $fic >> $tmpdir/rss
-done
-
-rssmaxdate=$(formatdate $(for d in $dates; do echo $d; done | sort -r | head -n 1))
-rssbuilddate=$(formatdate $(date))
-{
-cat <<END
-<?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0"
-	   xmlns:content="http://purl.org/rss/1.0/modules/content/"
-	   xmlns:wfw="http://wellformedweb.org/CommentAPI/"
-	   xmlns:dc="http://purl.org/dc/elements/1.1/"
-	   xmlns:atom="http://www.w3.org/2005/Atom"
-	   xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
-	   xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
-	   xmlns:georss="http://www.georss.org/georss"
-     xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
-     xmlns:media="http://search.yahoo.com/mrss/"><channel>
-  <title>${rsstitle}</title>
-  <atom:link href="${rssurl}" rel="self" type="application/rss+xml" />
-  <link>${websiteurl}</link>
-  <description><![CDATA[${rssdescription}]]></description>
-  <language>${rsslang}</language>
-  <pubDate>${rssmaxdate}</pubDate>
-  <lastBuildDate>$rssbuilddate</lastBuildDate>
-  <generator>mkrss.sh</generator>
-  <webMaster>${rssauthor}</webMaster>
-  <image>
-    <url>${rssimgurl}</url>
-    <title>${rssimgtitle}</title>
-    <link>${websiteurl}</link>
-  </image>
-END
-cat $tmpdir/rss
-cat <<END
-</channel>
-</rss>
-END
-} > "$rssfile"
-
-rm -rf $tmpdir
-echo "RSS Generated"
 #+end_src
 
 The =nix-shell= bang pattern is a neat trick to have all the dependencies I
-need when running my script, I could have added zsh, but my main concern
-was about =html-xml-utils=.
+need when running my script.
+It takes care that =zsh=, =coreutils= and =html-xml-utils= are installed
+before running my script.
+For example my script uses =date= from GNU coreutils and not the =BSD= date
+from my OS, which makes the script more portable.
 
 Along my script I have a =shell.nix= file containing:
 
 #+begin_src nix
 { pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09-beta.tar.gz) {} }:
   pkgs.mkShell {
-    buildInputs = [ pkgs.html-xml-utils ];
+    buildInputs = [ pkgs.coreutils  pkgs.html-xml-utils pkgs.zsh ];
   }
 #+end_src
+
+Mainly it /pins/ a package version and the list in =buildInputs= contains
+the packages to install locally.
 
 If you are not already using nix[fn:nix] you should really take a look.
 That =shell.nix= will work on Linux and MacOS.
