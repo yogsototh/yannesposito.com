@@ -3,6 +3,7 @@
 
 rsstpl="rss.tpl"
 webdir="_site"
+postsdir="$webdir/posts"
 rssfile="$webdir/rss.xml"
 
 xmlize() {
@@ -26,6 +27,15 @@ getcontent(){
     local fic="$1"
     cat $fic | hxselect '#content'
 }
+findkeywords(){
+    local fic="$1"
+    cat $fic | hxselect -c '.keywords > code' | sed 's/,//g'
+}
+mkcategories(){
+    for keyword in $*; do
+        printf "\\n<category>%s</category>" $keyword
+    done
+}
 
 realname="Yann Esposito"
 website="https://her.esy.fun"
@@ -33,8 +43,8 @@ website="https://her.esy.fun"
 autoload -U colors && colors
 
 tmpdir=$(mktemp -d)
-for fic in $webdir/posts/**/*.html; do
-    printf "%-40s" "$fic"
+for fic in $postsdir/**/*.html; do
+    printf "%-30s" $(echo "$fic"|sed 's#^'$postsdir'/##')
     xfic="$tmpdir/$fic.xml"
     mkdir -p $(dirname $xfic)
     xmlize $fic > $xfic
@@ -42,9 +52,11 @@ for fic in $webdir/posts/**/*.html; do
     echo -n " [$d]"
     rssdate=$(formatdate $d)
     title=$(findtitle $xfic)
-    printf ": %-30s" "$title"
+    keywords=( $(findkeywords $xfic) )
+    printf ": %-55s" "$title ($keywords)"
+    categories=$(mkcategories $keywords)
     blogfile="$(echo $fic | perl -pe 's#.*?/posts/#/posts/#')"
-    printf "\\n<item>\\n<title>%s</title>\\n<guid>%s%s</guid>\\n<pubDate>%s</pubDate>\\n<description><![CDATA[\\n%s\\n]]></description>\\n</item>\\n\\n" "$title" "$website" "$blogfile" "$rssdate" "$(getcontent "$xfic")" >>  "$tmpdir/${d}-$(basename $fic).rss"
+    printf "\\n<item>\\n<title>%s</title>\\n<guid>%s%s</guid>\\n<pubDate>%s</pubDate>%s\\n<description><![CDATA[\\n%s\\n]]></description>\\n</item>\\n\\n" "$title" "$website" "$blogfile" "$rssdate" "$categories" "$(getcontent "$xfic")" >>  "$tmpdir/${d}-$(basename $fic).rss"
     echo " [${fg[green]}OK${reset_color}]"
 done
 for fic in $(ls $tmpdir/*.rss | sort -r); do
