@@ -48,8 +48,9 @@ tmpdir=$(mktemp -d)
 typeset -a dates
 dates=( )
 for fic in $postsdir/**/*.html; do
-    blogfile="$(echo "$fic"|sed 's#^'$postsdir'/##')"
-    printf "%-30s" $blogfile
+    postfile="$(echo "$fic"|sed 's#^'$postsdir'/##')"
+    blogfile="$(echo "$fic"|sed 's#^'$webdir'/##')"
+    printf "%-30s" $postfile
     xfic="$tmpdir/$fic.xml"
     mkdir -p $(dirname $xfic)
     hxclean $fic > $xfic
