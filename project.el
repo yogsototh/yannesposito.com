@@ -227,7 +227,7 @@ Return output file name."
 (setq org-publish-project-alist
       `(("orgfiles"
          :base-directory ,base-dir
-         :exclude ".*drafts/.*\\|.*/rss.*"
+         :exclude ".*drafts/.*"
          :base-extension "org"
          :publishing-directory ,publish-dir
          :recursive t

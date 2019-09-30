@@ -1,3 +1,50 @@
+#+TITLE: RSS Generation
+#+SUBTITLE: How to generate RSS feed via command line
+#+AUTHOR: Yann Esposito
+#+EMAIL: yann@esposito.host
+#+DATE: [2019-09-30 Mon]
+#+KEYWORDS: programming, web
+#+DESCRIPTION: How I generate RSS feed via command line
+#+OPTIONS: auto-id:t
+
+#+begin_notes
+TL;DR: To generate an RSS file you need to provide many metadatas.
+Those metadata are not part of all HTML files.
+So generating RSS from a tree of HTML file is not straightforward.
+Here is the script I use.
+#+end_notes
+
+* RSS Problem
+:PROPERTIES:
+:CUSTOM_ID: rss-problem
+:END:
+
+RSS feed is meant to declare updates and new articles for a website.
+Each RSS entry must therefore have a date, an unique id, a title, maybe
+some categories, etc...
+
+For most blog platform or even static website generator, those meta infos
+are clearly put in the sources or in some DB.
+
+I use =org-mode= for generating my website, and the =ox-rss= is quite slow
+when generating an RSS with the full content of each item.
+Mainly, the way to achieve full content of my articles inside an RSS with
+=ox-rss= is by first creating a very big org file containing all the
+articles, and then transforming it in RSS. And this is very slow (many minutes).
+
+So a simpler idea inspired by lb[fn:lb] is to generate the RSS directly
+from the generated HTML files.
+The only difficulty is to find the metadata inside those HTML.
+Unfortunately there is no real standard for all those metas.
+
+Has there is no standard place to have all those meta informations inside
+an HTML file in order to use the HTML as source you'll need to "parse" the
+HTML file.
+For that purpose I use =html-xml-utils=.
+
+Here is the full script I use
+
+#+begin_src bash
 #!/usr/bin/env nix-shell
 #!nix-shell -i zsh
 
@@ -116,3 +163,19 @@ END
 
 rm -rf $tmpdir
 echo "RSS Generated"
+#+end_src
+
+The =nix-shell= bang pattern is a neat trick to have all the dependencies I
+need when running my script, I could have added zsh, but my main concern
+was about =html-xml-utils=.
+
+Along my script I have a =shell.nix= file containing:
+
+#+begin_src nix
+{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09-beta.tar.gz) {} }:
+  pkgs.mkShell {
+    buildInputs = [ pkgs.html-xml-utils ];
+  }
+#+end_src
+
+[fn:lb] https://github.com/LukeSmithxyz/lb
