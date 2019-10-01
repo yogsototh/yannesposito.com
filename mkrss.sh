@@ -16,7 +16,6 @@ websiteurl="https://her.esy.fun"
 rssdescription="her.esy.fun articles, mostly random personal thoughts"
 rsslang="en"
 rssauthor="yann@esposito.host (Yann Esposito)"
-rssimgtitle="yogsototh"
 rssimgurl="https://her.esy.fun/img/FlatAvatar.png"
 
 # HTML Accessors (similar to CSS accessors)
@@ -34,7 +33,9 @@ formatdate() {
 
 finddate(){ < $1 hxselect -c $dateaccessor }
 findtitle(){ < $1 hxselect -c $titleaccessor }
-getcontent(){ < $1 hxselect $contentaccessor }
+getcontent(){
+    < $1 hxselect $contentaccessor | \
+                  perl -pe 'use URI; $base="'$2'"; s# (href|src)="((?!https?://)[^"]*)"#" ".$1."=\"".URI->new_abs($2,$base)->as_string."\""#eig' }
 findkeywords(){ < $1 hxselect -c $keywordsaccessor | sed 's/,//g' }
 mkcategories(){
     for keyword in $*; do
@@ -61,12 +62,13 @@ for fic in $postsdir/**/*.html; do
     keywords=( $(findkeywords $xfic) )
     printf ": %-55s" "$title ($keywords)"
     categories=$(mkcategories $keywords)
+    absoluteurl="${websiteurl}/${blogfile}"
     { printf "\\n<item>"
       printf "\\n<title>%s</title>" "$title"
-      printf "\\n<guid>%s</guid>" "${websiteurl}/${blogfile}"
+      printf "\\n<guid>%s</guid>" "$absoluteurl"
       printf "\\n<pubDate>%s</pubDate>%s" "$rssdate"
       printf "%s" "$categories"
-      printf "\\n<description><![CDATA[\\n%s\\n]]></description>" "$(getcontent "$xfic")"
+      printf "\\n<description><![CDATA[\\n%s\\n]]></description>" "$(getcontent "$xfic" "$absoluteurl")"
       printf "\\n</item>\\n\\n"
     } >>  "$tmpdir/${d}-$(basename $fic).rss"
     dates=( $d $dates )
@@ -104,7 +106,7 @@ cat <<END
   <webMaster>${rssauthor}</webMaster>
   <image>
     <url>${rssimgurl}</url>
-    <title>${rssimgtitle}</title>
+    <title>${rsstitle}</title>
     <link>${websiteurl}</link>
   </image>
 END

@@ -90,7 +90,10 @@ formatdate() {
 
 finddate(){ < $1 hxselect -c $dateaccessor }
 findtitle(){ < $1 hxselect -c $titleaccessor }
-getcontent(){ < $1 hxselect $contentaccessor }
+# retrieve the content, take care of using absolute URL
+getcontent(){
+    < $1 hxselect $contentaccessor | \
+                  perl -pe 'use URI; $base="'$2'"; s# (href|src)="((?!https?://)[^"]*)"#" ".$1."=\"".URI->new_abs($2,$base)->as_string."\""#eig' }
 findkeywords(){ < $1 hxselect -c $keywordsaccessor | sed 's/,//g' }
 mkcategories(){
     for keyword in $*; do
@@ -125,12 +128,13 @@ for fic in $postsdir/**/*.html; do
     printf ": %-55s" "$title ($keywords)"
     # up until here, we extracted the informations we need for the item
     categories=$(mkcategories $keywords)
+    absoluteurl="${websiteurl}/${blogfile}"
     { printf "\\n<item>"
       printf "\\n<title>%s</title>" "$title"
-      printf "\\n<guid>%s</guid>" "${websiteurl}/${blogfile}"
+      printf "\\n<guid>%s</guid>" "$absoluteurl"
       printf "\\n<pubDate>%s</pubDate>%s" "$rssdate"
       printf "%s" "$categories"
-      printf "\\n<description><![CDATA[\\n%s\\n]]></description>" "$(getcontent "$xfic")"
+      printf "\\n<description><![CDATA[\\n%s\\n]]></description>" "$(getcontent "$xfic" "$absoluteurl")"
       printf "\\n</item>\\n\\n"
     } >>  "$tmpdir/${d}-$(basename $fic).rss"
     # we append the date to the list of dates
@@ -218,13 +222,15 @@ It takes care that =zsh=, =coreutils= and =html-xml-utils= are installed
 before running my script.
 For example my script uses =date= from GNU coreutils and not the =BSD= date
 from my OS, which makes the script more portable.
+This also take care of using the URI perl package.
 
 Along my script I have a =shell.nix= file containing:
 
 #+begin_src nix
+# { pkgs ? import <nixpkgs> {} }:
 { pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09-beta.tar.gz) {} }:
   pkgs.mkShell {
-    buildInputs = [ pkgs.coreutils  pkgs.html-xml-utils pkgs.zsh ];
+    buildInputs = [ pkgs.coreutils pkgs.html-xml-utils pkgs.zsh pkgs.perl pkgs.perlPackages.URI ];
   }
 #+end_src
 
