@@ -1,0 +1,75 @@
+#+TITLE: Chat in 2019
+#+SUBTITLE: Chatting in 2019
+#+AUTHOR: Yann Esposito
+#+EMAIL: yann@esposito.host
+#+DATE: [2019-08-17 Sat]
+#+KEYWORDS: self-hosting
+#+DESCRIPTION: Chat system
+#+OPTIONS: auto-id:t
+
+#+begin_notes
+tl;dr: After reviewing and testing many different sefl-hosted chat solution
+the clear winner is IRC + ZNC (with replay module) + weechat + thelounge +
+Palaver (on iOS).
+
+The two game changer are:
+- znc replay module (history handled correctly)
+- znc palaver module (push notifications on iOS)
+#+end_notes
+
+The problem at hand is easy.
+You want to have a /private/ and /public/ group chat.
+
+In 2019, you have many choices, now add that to, I want to trust my
+communication by self-hosting the server.
+And the choices start to be quite reduced.
+
+The main features I wanted was:
+
+1. *self-hostable*: so I can trust it
+2. *encrypted*: also, private communication should stay private
+3. *teams*: support private team chat
+4. *history*: replays messages when you were away
+5. *multi-platform*: desktop, smartphone, web interface
+6. *installation*: it should not be too hard to install
+7. *frugal*: neither the server nor clients should use too much resources
+
+Mostly if you are taking a look at /modern/ solutions you might like me be
+quite disapointed.
+
+Major problem, all recent solution are the opposite of frugal.
+Both their server and client eat tons of resources just to display text on
+a screen and download it. I think the real quantity of data a chat
+application need to deal with (text only) is about maximum a few megabites
+of text. Still all those application are generally Electron app that are
+really terrible regarding frugality. In this time of promised Earth doom of
+the future temperature, we should at least take a bit of care about such
+things in my opinion.
+
+Also, a frugal applicaiton is most of the time a lot more reactive, passing
+from instantaneous reaction when compared to sometime half a second lag
+during typing.
+
+I've used Matrix, and in fact it was really good except; the server is
+written in python and is clearly not frugal at all.
+Also I wanted to delete most of the history in the DB, and it was
+impossible to find a working documentation explaining how to do that
+correctly and easily (I'm not even sure this is possible).
+You can easily remove some channels history from the DB, but doing the
+opposite, keeping the history only of some channel and removing all others
+doesn't appear to be easy.
+
+I've tried to install mattermost, ... Dude, to install mattermost, there is
+no package, you need to start a shell script as root that will erase and
+change your nginx configuration.... No seriously...
+
+Rocket.chat, ho.... a nice word about the difference between community
+version and pro version... no thank you. I prefer something sustained by
+free software standards.
+
+I tried XMPP, it was OK. But the clients weren't really good.
+
+Finally, IRC + ZNC with replay module is the winner.
+It was finally, the easiest, best solution.
+
+Really the tw
