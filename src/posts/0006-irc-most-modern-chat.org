@@ -1,87 +1,115 @@
-#+TITLE: IRC Cutting Edge
-#+SUBTITLE: Chatting in 2019
+#+TITLE: Modern IRC
+#+SUBTITLE: In 2019, IRC is still the best.
 #+AUTHOR: Yann Esposito
 #+EMAIL: yann@esposito.host
 #+DATE: [2019-08-17 Sat]
-#+KEYWORDS: self-hosting
-#+DESCRIPTION: Chat system
+#+KEYWORDS: self-hosting, chat, irc
+#+DESCRIPTION: How to modernize IRC
 #+OPTIONS: auto-id:t
 
 #+begin_notes
-tl;dr: After reviewing and testing many different self-hosted chat solutions
-the clear winner is IRC + ZNC (with replay module) + weechat + thelounge +
-Palaver (on iOS).
+tl;dr: Why and how IRC.
+
+After reviewing and testing many different chat solutions the clear winner
+is IRC + ZNC (with replay module) + weechat (with replay script) +
+thelounge + Palaver (on iOS).
 
 The two game changer are:
 - znc replay module (history handled correctly)
 - znc palaver module (push notifications on iOS)
 #+end_notes
 
-The problem at hand is easy.
-You want to have a /private/ and /public/ group chat.
+How to chat in 2019? Certainly with slack, or via a social media app in the
+browser or mobile phone app.
 
-In 2019, you have many choices, now add that to, I want to trust my
-communication by self-hosting the server.
-And the choices start to be quite reduced.
+How geeks should chat in 2019?
 
-The main features I wanted was:
+To answer this question here is my opinion (after having tried many
+different chat solutions[fn:tries].
+Here are the feature I think a modern geeky solution should have:
 
-1. *self-hostable*: so I can trust it
-2. *encrypted*: also, private communication should stay private
-3. *teams*: support private team chat
-4. *history*: replays messages when you were away
-5. *multi-platform*: desktop, smartphone, web interface
-6. *installation*: it should not be too hard to install
-7. *frugal*: neither the server nor clients should use too much resources
-8. *REALLY FREE*: I mean FSF free, not free as in beer.
+1. *terminal client* or *terminal-like UI* (in emacs for example).
+   All modern UI looks cool for screenshots, but if you are going to use it
+   a lot, you will prefer density over good looking.
+   Most app, web app are terrible related to information by number of pixel
+   ratio.
+2. *multiplatform*: If you do not have a terminal at hand (or emacs) then,
+   you should be able to get your message on your phone or via a web
+   interface for portability.
+3. *self-hosted*: you should control your data, your history, your logs,
+   the encryption methods, etc...
+4. *teams* and *direct messages*
+5. *notifications*, I tend to control those a lot, but a small private team
+   chat is one of few exception where you generally want to be notified.
+6. *Frugal*. Really, we have a responsibilty to do our best not to consume
+   more resources than we really need.
+   Chat should be about TEXT, not images, not videos, not presentations and
+   PDF.
+7. Refuse anti-features: show when someone is typing, show when someone
+   as read your message, etc... Those functionality are in fact increasing
+   social insecurity and forces you to answer sooner instead of really
+   taking the time to answer correctly.
+8. Use free software (not just open source software).
 
-Mostly if you are taking a look at /modern/ solutions you might like me be
-quite disapointed.
+I am quite disapointed by /modern/ chat applications.
 
-Major problem, all recent solution are the opposite of frugal.
-Both their server and client eat tons of resources just to display text on
-a screen and download it. I think the real quantity of data a chat
-application need to deal with (text only) is about maximum a few megabites
-of text. Still all those application are generally Electron app that are
-really terrible regarding frugality. In this time of promised Earth doom of
-the future temperature, we should at least take a bit of care about such
-things in my opinion.
+Their major problems are:
 
-Also, a frugal applicaiton is most of the time a lot more reactive, passing
-from instantaneous reaction when compared to sometime half a second lag
-during typing.
+- opposite of frugal (slack consume 400Mo of RAM for me, the technology is
+  an electron app, or an equivalent complex web app consuming the same
+  amount of RAM)
+- not private. Most solution do not encrypt your conversations. Even
+  if using encryption mechanism and you trust your client, and you will
+  still reveal your social network topology.
+- opposite of minimalist and solution focused, I want dense, ascii text. I
+  do not want, emojis, images, gifs, videos, messages that will improve my
+  "engagement" with their app, feature that increase the social drug used
+  by most social network platforms. Typically, show when someone is typing,
+  show when you read a message, get notifications about missed messages,
+  etc... For me those are anti-features.
 
-I've used Matrix, and in fact it was really good except; the server is
-written in python and is clearly not frugal at all.
-Also I wanted to delete most of the history in the DB, and it was
-impossible to find a working documentation explaining how to do that
-correctly and easily (I'm not even sure this is possible).
-You can easily remove some channels history from the DB, but doing the
-opposite, keeping the history only of some channel and removing all others
-doesn't appear to be easy.
+** Different tries
+:PROPERTIES:
+:CUSTOM_ID: different-tries
+:END:
 
-I've tried to install mattermost, ... Dude, to install mattermost, there is
-no package, you need to start a shell script as root that will erase and
-change your nginx configuration.... No seriously...
-
-Rocket.chat, ho.... a nice word about the difference between community
-version and pro version... no thank you. I prefer something sustained by
-free software standards.
-
-I tried XMPP, it was OK. But the clients weren't really good.
+- Matrix: I've used Matrix, and in fact it was really good except; the
+  server is written in python and is clearly not frugal at all.
+  Also I wanted to delete most of the history in the DB, and it was
+  impossible to find a working documentation explaining how to do that
+  correctly and easily (I'm not even sure this is possible).
+  You can easily remove some channels history from the DB, but doing the
+  opposite, keeping the history only of some channel and removing all others
+  doesn't appear to be easy.
+- Mattermost: I've tried to install mattermost, to install it, there is
+  no package, you need to start a shell script as root that will erase and
+  change your nginx configuration.... Seriously...
+- Rocket.chat, ho.... a nice word about the difference between community
+  version and pro version... no thank you. I prefer something sustained by
+  free software standards.
+- I tried XMPP, it was OK. But the clients weren't really good, I could
+  have used bitlbee, the installation looked more complex than IRC.
 
 Finally, IRC + ZNC with replay module is the winner.
-It was finally, the easiest, best solution.
+It was the easiest and best solution.
 
 
 1. it works
-2. it's Free Software not free as in free beer, but free as in freedom.
+2. it is Free Software
 3. it is frugal
-4. it's old
+4. it is old
+5. it is minimalist
+6. it is feature complete for a small team chat.
 
-Drawback, all the one of self-hosted drawback, it is more complicated that
-just, download something and work with it.
-You need to give a few minutes, may be hours to configurer everything correctly.
+[fn:tries] Here is a list of the chatting solutions I used for some time
+and finally abandonned (I certainly forgot a few ones):
+  - slack
+  - matrix (self-hosted)
+  - keybase
+  - discord
+  - gitter
+  - XMPP (both hosted by a 3rd party and self-hosted)
+  - IRC ← the winner
 
 * Tutorial
 :PROPERTIES:
