@@ -159,14 +159,145 @@ and finally abandoned (I certainly forgot a few ones):
 :PROPERTIES:
 :CUSTOM_ID: self-host
 :END:
+You might use an external IRC server.
+But it is a lot safer to self-host it.
+
+Self-hosting might not be easy if you are not familiar about how to do
+that.
+
+1. buy a domain name
+2. buy a machine (VPS, baremetal, host it at your home)
+3. configure the DNS for your domaine name go to your machine
+4. configure letsencrypt to support wildcard hostnames.
+5. know how to create reverse proxy
+
+I couldn't find a nice resource to link to with all those details.
+This is certainly a call to write such article myself.
+
 ** Install/configure ngircd
 :PROPERTIES:
 :CUSTOM_ID: install-configure-ngircd
 :END:
+
+There are multiple IRC server.
+I gave my preference to [[https://github.com/ngircd/ngircd][ngircd]] because it appeared lightweight, easy to
+install and configure.
+
+So use your preferred package manager to install it:
+
+#+begin_src
+sudo apt-get install ngircd
+#+end_src
+
+Configure the =/etc/ngircd/ngircd.conf= file.
+I only show the really interesting lines for a private small IRC for a team.
+
+#+begin_src src
+[Global]
+  Name = irc.your.domain
+  Info = My Incredible IRC
+  Password = privateIRCSecretPassword
+
+[Options]
+  # prevent channel creation
+  AllowedChannelTypes = 
+
+[SSL]
+  Certfile = /etc/letsencrypt/live/your.domain/fullchain.pem
+  Keyfile = /etc/letsencrypt/live/your.domain/privkey.pem
+  Ports = 6667,9999
+
+[Channel]
+  # predefined channel
+  Name = #general
+  Topic = Main team channel
+  MaxUsers = 23
+
+[Channel]
+  Name = #status
+  Topic = Status update channel
+  MaxUsers = 23
+#+end_src
+
 ** Install/configure ZNC
 :PROPERTIES:
 :CUSTOM_ID: install-configure-znc
 :END:
+
+Install ZNC from sources or via your package manager.
+I choose sources. Choose the latest version if you can.
+
+#+begin_src
+> wget https://znc.in/releases/archive/znc-1.7.5.tar.gz
+> tar xzf znc-1.7.5.tar.gz
+> cd znc-1.7.5
+> mkdir build
+> cd build
+> make
+> make install
+#+end_src
+
+Then create your config file for example via:
+
+#+begin_src
+> znc --makeconf
+#+end_src
+
+For the question, keep buffers after replay, you should certainly answer
+yes.
+To use znc web interface behind an nginx reverse proxy:
+
+#+begin_src conf
+ <Listener listener0>
+        AllowIRC = false
+        AllowWeb = true
+        Host = localhost
+        IPv4 = true
+        IPv6 = false
+        Port = 10001
+        SSL = false
+        URIPrefix = /
+</Listener>
+
+<Listener listener1>
+        AllowIRC = true
+        AllowWeb = false
+        IPv4 = true
+        IPv6 = true
+        Port = 10002
+        SSL = true
+        URIPrefix = /
+</Listener>
+#+end_src
+
+*** Playback module
+:PROPERTIES:
+:CUSTOM_ID: playback-module
+:END:
+
+#+begin_src
+> cd ~/.znc/modules
+> wget ...../playback.cpp
+> znc-buildmod playback.cpp
+#+end_src
+
+Should create a =playback.so=.
+
+*** Palaver push module
+:PROPERTIES:
+:CUSTOM_ID: palaver-push-module
+:END:
+
+#+begin_src
+> git clone ... znc-palaver
+> cd znc-palaver
+> znc-buildmod palaver.cpp
+> cp palaver.so ~/.znc/modules/
+#+end_src
+
+That's it.
+The major modernizer of IRC are here in ZNC.
+
 ** Install/configure clients
 :PROPERTIES:
 :CUSTOM_ID: install-configure-clients
