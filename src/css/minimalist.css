@@ -3,12 +3,12 @@
 */
 
 :root {
-    --font-size: 12px;
-    --line-height: 14px;
+    --font-size: 14px;
+    --line-height: 16px;
 }
 /* Fonts */
 body {
-    font-family: Menlo, Monaco, monospace;
+    font-family: Consolas, Anonymous Pro, Monaco, monospace;
     font-size: var(--font-size);
     line-height: var(--line-height);
 }
@@ -91,11 +91,10 @@ p > img, li > img {
     vertical-align: middle;
 }
 table {
-    width: 100%;
+    max-width: 100%;
     margin: 1em 0;
     border-collapse: collapse;
     border: solid 1px;
-    display: block;
     overflow: scroll;
 }
 td, th {
@@ -296,13 +295,13 @@ navigation > a {
     --soft-foreground: var(--base01);
     --border-color: var(--base02);
     --todo-txt: #000;
-    --color-h1: var(--cyan);
-    --color-h2: var(--green);
-    --color-h3: var(--yellow);
-    --color-h4: var(--orange);
-    --color-h5: var(--red);
-    --color-h6: var(--magenta);
-    --color-link: var(--magenta);
+    --color-h1: var(--reveal-foreground);
+    --color-h2: var(--reveal-foreground);
+    --color-h3: var(--reveal-foreground);
+    --color-h4: var(--reveal-foreground);
+    --color-h5: var(--reveal-foreground);
+    --color-h6: var(--reveal-foreground);
+    --color-link: var(--green);
 }
 
 /* org colors */
@@ -316,6 +315,13 @@ navigation > a {
         --soft-foreground: var(--base1);
         --border-color: var(--base2);
         --todo-txt: #FFF;
+        --color-h1: var(--reveal-foreground);
+        --color-h2: var(--reveal-foreground);
+        --color-h3: var(--reveal-foreground);
+        --color-h4: var(--reveal-foreground);
+        --color-h5: var(--reveal-foreground);
+        --color-h6: var(--reveal-foreground);
+        --color-link: var(--orange);
     }
 }
 #labels {
@@ -339,6 +345,13 @@ input#light:target ~ .main {
     --soft-foreground: var(--base1);
     --border-color: var(--base2);
     --todo-txt: #FFF;
+    --color-h1: var(--reveal-foreground);
+    --color-h2: var(--reveal-foreground);
+    --color-h3: var(--reveal-foreground);
+    --color-h4: var(--reveal-foreground);
+    --color-h5: var(--reveal-foreground);
+    --color-h6: var(--reveal-foreground);
+    --color-link: var(--orange);
 }
 input#light:checked ~ #labels ,
 input#light:target ~ #labels {
@@ -460,6 +473,7 @@ input#modern:target ~ .main h2 {
     font-size: 2em;
     line-height: 1.5em;
     margin: 1em 0;
+    color: var(--reveal-foreground);
 }
 
 input#modern:checked ~ .main h3,
@@ -474,6 +488,19 @@ input#modern:target ~ .main h6 {
     font-size: 1.5em;
     line-height: 1.5em;
     margin: 1em 0;
+    color: var(--reveal-foreground);
+}
+input#modern:checked ~ .main h4,
+input#modern:target ~ .main h4 {
+    font-size: 1.25em;
+    line-height: 1.25em;
+}
+input#modern:checked ~ .main h5,
+input#modern:target ~ .main h5,
+input#modern:checked ~ .main h6 ,
+input#modern:target ~ .main h6 {
+    font-size: 1em;
+    line-height: 1em;
 }
 input#modern:checked ~ .main #preamble ,
 input#modern:target ~ .main #preamble {
@@ -670,7 +697,8 @@ pre::after,pre::before,hr:after,
 }
 a:hover, a:active, a:focus,
 .main a:hover,.main a:active,.main a:focus {
-    color: var(--color-link);
+    color: white;
+    background: var(--color-link);
 }
 navigation a, navigation a:visited,
 .main navigation a,.main navigation a:visited {
@@ -678,7 +706,8 @@ navigation a, navigation a:visited,
 }
 navigation a:focus, navigation a:hover,
 .main navigation a:focus,.main navigation a:hover {
-    color: var(--color-link);
+    color: white;
+    background: var(--color-link);
 }
 thead,
 .main thead {
@@ -691,9 +720,6 @@ tr:hover,
 }
 h1, .main h1 {
     color: var(--color-h1);
-}
-#preamble h2, .main #preamble h2 {
-    color: var(--color-h4);
 }
 h2, .main h2 {
     color: var(--color-h2);
