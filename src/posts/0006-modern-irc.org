@@ -2,7 +2,7 @@
 #+SUBTITLE: In 2019, IRC is still the best.
 #+AUTHOR: Yann Esposito
 #+EMAIL: yann@esposito.host
-#+DATE: [2019-08-17 Sat]
+#+DATE: [2019-10-19 Sat]
 #+KEYWORDS: self-hosting, chat, irc
 #+DESCRIPTION: How to modernize IRC
 #+OPTIONS: auto-id:t
@@ -174,6 +174,100 @@ that.
 I couldn't find a nice resource to link to with all those details.
 This is certainly a call to write such article myself.
 
+*** Create a reverse proxy with nginx
+:PROPERTIES:
+:CUSTOM_ID: create-a-reverse-proxy-with-nginx
+:END:
+
+This is how I create new reverse proxy with nginx using a template:
+[[./0006-modern-irc/reverse-proxy-template.m4][reverse-proxy-template.m4]].
+
+#+begin_src m4 :exports none :mkdirp yes :tangle  ./0006-modern-irc/reverse-proxy-template.m4
+# Nginx configuration
+
+server {
+  server_name SUB.DOMAIN;
+  access_log  /var/log/nginx/SUB()_ssl_access.log;
+  error_log   /var/log/nginx/SUB()_ssl_error.log;
+
+  # # access restricted
+  # auth_basic "Admin restricted";
+  # auth_basic_user_file /etc/nginx/htpasswd;
+
+  listen *:443 ssl;
+  listen [::]:443 ssl;
+  server_tokens off;
+
+  ## SSL
+  ssl on;
+  ssl_certificate /etc/letsencrypt/live/DOMAIN/fullchain.pem; # managed by Certbot
+  ssl_certificate_key /etc/letsencrypt/live/DOMAIN/privkey.pem; # managed by Certbot
+  ssl_prefer_server_ciphers on;
+  ssl_session_cache shared:SSL:10m;
+  ssl_session_timeout 5m;
+
+  ## [Optional] Enable HTTP Strict Transport Security
+  ## HSTS is a feature improving protection against MITM attacks
+  ## For more information see: https://www.nginx.com/blog/http-strict-transport-security-hsts-and-nginx/
+  add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+
+  location / {
+	  proxy_pass http://127.0.0.1:PORT;
+	  gzip off;
+	  proxy_redirect off;
+
+          ## Some requests take more than 30 seconds.
+	  proxy_read_timeout      30s;
+	  proxy_connect_timeout   30s;
+
+	  proxy_http_version 1.1;
+
+	  proxy_set_header      Host                $http_host;
+	  proxy_set_header      X-Real-IP           $remote_addr;
+	  proxy_set_header      X-Forwarded-Ssl     on;
+	  proxy_set_header      X-Forwarded-For     $proxy_add_x_forwarded_for;
+	  proxy_set_header      X-Forwarded-Proto   $scheme;
+          proxy_set_header      X-Client-Verify     SUCCESS;
+          proxy_set_header      X-Client-DN         $ssl_client_s_dn;
+          proxy_set_header      X-SSL-Subject       $ssl_client_s_dn;
+          proxy_set_header      X-SSL-Issuer        $ssl_client_i_dn;
+  }
+}
+
+## Redirects all HTTP traffic to the HTTPS host
+server {
+  ## In case of conflict, either remove "default_server" from the listen line below,
+  ## or delete the /etc/nginx/sites-enabled/default file.
+  listen 0.0.0.0:80;
+  listen [::]:80;
+  server_name SUB.DOMAIN;
+  server_tokens off; ## Don't show the nginx version number, a security best practice
+  return 301 https://$http_host$request_uri;
+  access_log  /var/log/nginx/SUB.DOMAIN()_access.log;
+  error_log   /var/log/nginx/SUB.DOMAIN()_error.log;
+}
+#+end_src
+
+That I use with the following script: [[./0006-modern-irc/new-reverse-proxy.sh][new-reverse-proxy.sh]]
+
+#+begin_src bash :mkdirp yes :tangle ./0006-modern-irc/new-reverse-proxy.sh
+#!/usr/bin/env zsh
+
+(($#<3)) && {
+  print "usage: $0:t SUB DOMAIN PORT"
+  exit 1
+} >&2
+
+SUB="$1"
+DOMAIN="$2"
+PORT="$3"
+
+m4 -D SUB=$SUB -D DOMAIN=$DOMAIN -D PORT=$PORT reverse-proxy-template.m4 > $SUB.$DOMAIN
+#+end_src
+
+The script will generate a reverse proxy nginx conf that I put in
+=/etc/nginx/sites-available/= and I link it in =/etc/nginx/sites-enabled=.
+
 ** Install/configure ngircd
 :PROPERTIES:
 :CUSTOM_ID: install-configure-ngircd
@@ -270,6 +364,9 @@ To use znc web interface behind an nginx reverse proxy:
 </Listener>
 #+end_src
 
+
+Now you can put your znc behind a reverse proxy.
+
 *** Playback module
 :PROPERTIES:
 :CUSTOM_ID: playback-module
@@ -302,18 +399,43 @@ The major modernizer of IRC are here in ZNC.
 :PROPERTIES:
 :CUSTOM_ID: install-configure-clients
 :END:
-*** thelounge
-:PROPERTIES:
-:CUSTOM_ID: thelounge
-:END:
 *** weechat
 :PROPERTIES:
 :CUSTOM_ID: weechat
 :END:
+1. add the [[https://weechat.org/scripts/source/zncplayback.py.html/][weechat znc playback script]]
+2. add the default server capabilities
+   #+begin_src irc
+   /set irc.server_default.capabilities "account-notify,away-notify,cap-notify,multi-prefix,server-time,znc.in/server-time-iso,znc.in/self-message,znc.in/playback
+   #+end_src
+3. add the server for your networks:
+   #+begin_src irc
+   /server add zncnetwork znc.my.domain/6697 -ssl -username=username/zncnetwork -password=password -autoconnect
+   /connect zncnetwork
+   #+end_src
+
+More details here: https://wiki.znc.in/Weechat
+*** thelounge
+:PROPERTIES:
+:CUSTOM_ID: thelounge
+:END:
+
+Here are the infos for installing it.
+
+https://thelounge.chat/docs/install-and-upgrade
+
+
+You can use my reverse proxy scripts to put the lounge behind a reverse
+proxy from your host. So you'll be able to reach =thelounge.my.domain=.
 *** Palaver
 :PROPERTIES:
 :CUSTOM_ID: palaver
 :END:
+Using palaver should be straightfoward.
+Here is its website: https://palaverapp.com
+
+I previously used the app mutter, but it appears to be deprecated and has a lot of
+bugs since the iOS 13 update.
 * Bonus
 :PROPERTIES:
 :CUSTOM_ID: bonus
@@ -322,3 +444,14 @@ The major modernizer of IRC are here in ZNC.
 :PROPERTIES:
 :CUSTOM_ID: no-brainer-upload-file
 :END:
+I made an image uploader inspired by the image uploader example of the
+Yesod web framework.
+It is only one single self-executable file + one css and jquery.
+The  only dependency is [[https://docs.haskellstack.org/en/stable/README/][stack]].
+
+So to install it:
+
+1. install [[https://docs.haskellstack.org/en/stable/README/][stack]]
+2. create an nginx reverse proxy protected with basic-auth
+3. share the creds to your team mates
+4. start the script, and enjoy
