@@ -333,6 +333,21 @@ navigation > a {
     font-style: italic;
 }
 
+/* Dark themes soften and darken images */
+img {
+    filter: saturate(0.8) brightness(0.8);
+}
+/* Light themes does not soften and darken images */
+input#light:checked ~ .main img,
+input#light:target ~ .main img,
+input#simple:checked ~ .main img,
+input#simple:target ~ .main img,
+input#modern:checked ~ .main img,
+input#modern:target ~ .main img {
+    filter: none;
+}
+
+/* --------------------------------------------------------------------------- */
 /* Dark theme selected */
 input#dark:checked ~ .main ,
 input#dark:target ~ .main {
@@ -352,7 +367,13 @@ input#dark:target ~ .main {
     --color-h6: var(--reveal-foreground);
     --color-link: var(--green);
 }
+input#dark:checked ~ #labels ,
+input#dark:target ~ #labels {
+    background: var(--base03);
+    color: var(--base0);
+}
 
+/* --------------------------------------------------------------------------- */
 /* Light theme selected */
 input#light:checked ~ .main ,
 input#light:target ~ .main {
@@ -378,24 +399,7 @@ input#light:target ~ #labels {
     color: var(--base00);
 }
 
-/* Dark theme selected */
-input#dark:checked ~ .main ,
-input#dark:target ~ .main {
-    --main-background: var(--base03);
-    --main-foreground: var(--base0);
-    --second-foreground: var(--base01);
-    --reveal-foreground: var(--base1);
-    --reveal-background: var(--base02);
-    --soft-foreground: var(--base01);
-    --border-color: var(--base02);
-    --todo-txt: #000;
-}
-input#dark:checked ~ #labels ,
-input#dark:target ~ #labels {
-    background: var(--base03);
-    color: var(--base0);
-}
-
+/* --------------------------------------------------------------------------- */
 /* Light simple theme selected */
 input#simple:checked ~ .main ,
 input#simple:target ~ .main {
@@ -443,6 +447,41 @@ input#simple:target ~ .main pre
 {
     font-family: monospace;
 }
+
+/* --------------------------------------------------------------------------- */
+/* Dark matrix theme selected */
+input#matrix:checked ~ .main ,
+input#matrix:target ~ .main {
+    --main-background: #000;
+    --main-foreground: #0b0;
+    --second-foreground: #080;
+    --reveal-foreground: #0f0;
+    --reveal-background: #000;
+    --soft-foreground: #080;
+    --border-color: #080;
+    --todo-txt: #0b0;
+    --color-h1: #0b0;
+    --color-h2: #0b0;
+    --color-h3: #0b0;
+    --color-h4: #0b0;
+    --color-h5: #0b0;
+    --color-h6: #0b0;
+    --color-link: #080;
+    font-family: monospace;
+}
+input#matrix:checked ~ #labels ,
+input#matrix:target ~ #labels {
+    background: #000;
+    color: #0b0;
+}
+input#matrix:checked ~ .main code,
+input#matrix:target ~ .main code,
+input#matrix:checked ~ .main pre ,
+input#matrix:target ~ .main pre {
+    font-family: monospace;
+}
+
+/* --------------------------------------------------------------------------- */
 /* Light modern theme selected */
 input#modern:checked ~ .main ,
 input#modern:target ~ .main {
@@ -597,6 +636,7 @@ input#modern:target ~ #labels .content {
     margin: 0 auto;
 }
 
+/* --------------------------------------------------------------------------- */
 /* Dark simple theme selected */
 input#darksimple:checked ~ .main ,
 input#darksimple:target ~ .main {
@@ -646,37 +686,7 @@ input#darksimple:target ~ .main #content {
     margin: 0 auto;
 }
 
-/* Dark matrix theme selected */
-input#matrix:checked ~ .main ,
-input#matrix:target ~ .main {
-    --main-background: #000;
-    --main-foreground: #0b0;
-    --second-foreground: #080;
-    --reveal-foreground: #0f0;
-    --reveal-background: #000;
-    --soft-foreground: #080;
-    --border-color: #080;
-    --todo-txt: #0b0;
-    --color-h1: #0b0;
-    --color-h2: #0b0;
-    --color-h3: #0b0;
-    --color-h4: #0b0;
-    --color-h5: #0b0;
-    --color-h6: #0b0;
-    --color-link: #080;
-    font-family: monospace;
-}
-input#matrix:checked ~ #labels ,
-input#matrix:target ~ #labels {
-    background: #000;
-    color: #0b0;
-}
-input#matrix:checked ~ .main code,
-input#matrix:target ~ .main code,
-input#matrix:checked ~ .main pre ,
-input#matrix:target ~ .main pre {
-    font-family: monospace;
-}
+/* --------------------------------------------------------------------------- */
 /* Default color theme */
 body,.main {
     background: var(--main-background);
