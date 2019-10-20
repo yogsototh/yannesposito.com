@@ -11,12 +11,12 @@
 tl;dr: Why and how to have modern and respectful chat system with IRC.
 
 After reviewing and testing many different chat solutions the clear winner
-is IRC. More precisely a group of different softwares togethers:
+is IRC. More precisely via those softwares:
 - IRC
-- ZNC (with replay module and palaver module)
-- weechat (with replay script)
-- thelounge
-- Palaver (for iOS mobile).
+- ZNC (with playback and palaver module)
+- weechat with replay script (terminal client)
+- thelounge (web client)
+- Palaver (iOS client).
 #+end_notes
 
 How to chat in 2019? Certainly with slack, or via a social media app in the
@@ -77,38 +77,13 @@ Their major problems are:
   + get a "top messages you missed",
   + etc...
 - *Prepare to EEE[fn:eee]*:
-  Most of those "modern" solution are a all-in-one solution, server +
-  clients with generic + specific features.
-  That way, some feature will be only possible in their client or that will
-  push concurrent app developers to follow the pace of new features.
-
-
-** Digression
-:PROPERTIES:
-:CUSTOM_ID: digression
-:END:
-
-The /manipulative/ part is quite important to me.
-Many users appeart to ask for those "features".
-I think this is beacause most of those people should take the time to
-reflect about the real plus value of those features vs their price.
-As it is stated in Digital Minimalism[fn:dm], those feature are not the
-real reason you use it.
-I think this is an instance of the recent software development:
-
-The idea that software MUST evolve and change.
-Add as much new features as possible, instead of striving for simplicity,
-stability and security.
-
-We pass too much time asking about the how and forgetting about the why?
-I would rather prefer a system that does not evolve much but study the real
-full impact of adding a new feature to it.
-And I think some software should be considered *finished* (like TeX).
-
-Would that feature be a full total net positive for everyone?
-Or is there a price to pay? The price is generally the size and complexity
-of the project, that will make it bigger, slower, harder to manipulate,
-install, interact-with.
+  Most of those "modern" solution are all-in-one solutions.
+  Server API + Clients with specific features.
+  Doing it that way make it possible to provide specific features only via
+  this "all in one" solution.
+  If you want to use another client, or if they deprecate some (like slack
+  did by removing their IRC bridge) then you will have no choice to use
+  their entire closed ecosystem.
 
 [fn:eee] [[https://en.wikipedia.org/wiki/Embrace,_extend,_and_extinguish][Embrace, extend, and extinguish]].
 [fn:dm] http://www.calnewport.com/books/digital-minimalism/
@@ -140,11 +115,9 @@ It was the easiest and best solution.
 
 
 1. it works
-2. it is Free Software
-3. it is frugal
-4. it is old
-5. it is minimalist
-6. it is feature complete for a small team chat.
+2. it is frugal
+3. it is old and stable
+4. it is both minimalist and feature complete
 
 [fn:FOMO] Fear Of Missing Out
 [fn:tries] Here is a list of the chatting solutions I used for some time
@@ -379,36 +352,88 @@ To use znc web interface behind an nginx reverse proxy:
 </Listener>
 #+end_src
 
+Now you can put your ZNC behind a reverse proxy.
 
-Now you can put your znc behind a reverse proxy.
+In order not to miss any message in your clients you should keep a bouncer
+running for you that will keep all IRC messages.
+But in order to sync this history correctly among all your different IRC
+clients you should install the playback module.
+And if you wish to receive push notification you should also add a module
+for your application (in my case palaver).
 
 *** Playback module
 :PROPERTIES:
 :CUSTOM_ID: playback-module
 :END:
 
+In order not to miss any messages in all your clients you should add this
+[[https://wiki.znc.in/Playback][ZNC playback module]].
+
 #+begin_src
 > cd ~/.znc/modules
-> wget ...../playback.cpp
+> wget https://raw.githubusercontent.com/jpnurmi/znc-playback/master/playback.cpp
 > znc-buildmod playback.cpp
 #+end_src
 
-Should create a =playback.so=.
+Should create a =playback.so= in =~/.znc/modules=.
 
 *** Palaver push module
 :PROPERTIES:
 :CUSTOM_ID: palaver-push-module
 :END:
 
+You should find the ZNC push palaver module here:
+
+https://github.com/cocodelabs/znc-palaver
+
 #+begin_src
-> git clone ... znc-palaver
+> git clone https://github.com/cocodelabs/znc-palaver znc-palaver
 > cd znc-palaver
 > znc-buildmod palaver.cpp
 > cp palaver.so ~/.znc/modules/
 #+end_src
 
-That's it.
-The major modernizer of IRC are here in ZNC.
+*** Configure your IRC servers
+:PROPERTIES:
+:CUSTOM_ID: configure-your-irc-servers
+:END:
+
+Now you should be able to reach =znc.my.domain=.
+You should see something like
+
+#+NAME: ZNC Login Page
+[[./znc-login.png]]
+
+Login with your admin user (set during the configuration or znc).
+Then go to your Global settings
+
+#+NAME: ZNC Global Settings
+[[./znc-global-settings.png]]
+
+And if you scroll down you should see a list of modules. Select the
+playback and palaver modules and save your preferences.
+
+#+NAME: ZNC Modules
+[[./znc-modules.png]]
+
+Then under the global settings, go to your User settings and scroll down to
+see the Flags:
+
+#+NAME: ZNC User Settings Flags
+[[./znc-user-settings-flags.png]]
+
+Take care to unselect the "Auto Clear Chan Buffer", "Auto Clear Query
+Buffer" and to select "Multi Clients".
+If you forget to do that, the playback plugin will not work as expected.
+
+Finally add your IRC server to via the Network block (in your User Settings):
+
+#+NAME: ZNC Add Network
+[[./znc-add-network.png]]
+
+From now on, you should always appear as a connected user to your IRC server.
+This is your ZNC bouncer reading all the messages for you even when you are
+not here.
 
 ** Install/configure clients
 :PROPERTIES:
@@ -418,16 +443,22 @@ The major modernizer of IRC are here in ZNC.
 :PROPERTIES:
 :CUSTOM_ID: weechat
 :END:
+
+Weechat the IRC client I use the most.
+It is terminal based, use very few resources, it is fast, dense and very nice
+to use.
+
 1. add the [[https://weechat.org/scripts/source/zncplayback.py.html/][weechat znc playback script]]
-2. add the default server capabilities
+2. in weechat, set server capabilities
    #+begin_src irc
    /set irc.server_default.capabilities "account-notify,away-notify,cap-notify,multi-prefix,server-time,znc.in/server-time-iso,znc.in/self-message,znc.in/playback
    #+end_src
-3. add the server for your networks:
+3. add your server
    #+begin_src irc
    /server add zncnetwork znc.my.domain/6697 -ssl -username=username/zncnetwork -password=password -autoconnect
    /connect zncnetwork
    #+end_src
+4. save your confi with =/save=
 
 More details here: https://wiki.znc.in/Weechat
 *** thelounge
@@ -439,18 +470,21 @@ Here are the infos for installing it.
 
 https://thelounge.chat/docs/install-and-upgrade
 
-
 You can use my reverse proxy scripts to put the lounge behind a reverse
 proxy from your host. So you'll be able to reach =thelounge.my.domain=.
+Of course, connect the lounge via ZNC not directly to your IRC server.
+
 *** Palaver
 :PROPERTIES:
 :CUSTOM_ID: palaver
 :END:
 Using palaver should be straightfoward.
+There is a very clear ZNC configuration choice.
+
 Here is its website: https://palaverapp.com
 
-I previously used the app mutter, but it appears to be deprecated and has a lot of
-bugs since the iOS 13 update.
+I previously used the app mutter, but it stopped to work after the iOS 13
+update.
 * Bonus
 :PROPERTIES:
 :CUSTOM_ID: bonus
@@ -459,14 +493,21 @@ bugs since the iOS 13 update.
 :PROPERTIES:
 :CUSTOM_ID: no-brainer-upload-file
 :END:
-I made an image uploader inspired by the image uploader example of the
-Yesod web framework.
-It is only one single self-executable file + one css and jquery.
-The  only dependency is [[https://docs.haskellstack.org/en/stable/README/][stack]].
+
+Quite often you want to share images/files in your chat.
+Instead of using a public channel, I preferred to create a minimalist (223
+lines of haskell) private server for this purpose only.
+
+It is highly inspired from the image uploader example of the Yesod web
+framework.
+It is a single self-executable file + one css and jquery.
+The only dependency is [[https://docs.haskellstack.org/en/stable/README/][stack]].
 
 So to install it:
 
 1. install [[https://docs.haskellstack.org/en/stable/README/][stack]]
-2. create an nginx reverse proxy protected with basic-auth
-3. share the creds to your team mates
-4. start the script, and enjoy
+2. =git clone https://gitlab.esy.fun/yogsototh/ymgur .=
+3. follow the README instructions to launch it
+4. create an nginx reverse proxy protected with basic-auth
+5. share the creds to your group members
+6. enjoy

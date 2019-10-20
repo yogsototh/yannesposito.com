@@ -286,8 +286,7 @@ navigation > a {
     --green:    #859900;
     --transparent: ; rgba(255,255,255,0);
 
-    /* --main-background: #00151b; /* 0.5 darker than #002b36; */
-    --main-background: var(--base03); /* 0.5 darker than #002b36; */
+    --main-background: var(--base03);
     --main-foreground: var(--base0);
     --second-foreground: var(--base01);
     --reveal-foreground: var(--base1);
@@ -307,9 +306,9 @@ navigation > a {
 /* org colors */
 @media (prefers-color-scheme: light) {
     :root {
-        --main-background: #fefaf0; /* 0.5 lighter than #fdf6e3 */
-        --main-foreground: var(--base00);
-        --second-foreground: var(--base1);
+        --main-background: var(--base3);
+        --main-foreground: var(--base01);
+        --second-foreground: var(--base00);
         --reveal-foreground: var(--base01);
         --reveal-background: var(--base2);
         --soft-foreground: var(--base1);
@@ -332,6 +331,26 @@ navigation > a {
     text-decoration: underline;
     cursor: pointer;
     font-style: italic;
+}
+
+/* Dark theme selected */
+input#dark:checked ~ .main ,
+input#dark:target ~ .main {
+    --main-background: var(--base03);
+    --main-foreground: var(--base0);
+    --second-foreground: var(--base01);
+    --reveal-foreground: var(--base1);
+    --reveal-background: var(--base02);
+    --soft-foreground: var(--base01);
+    --border-color: var(--base02);
+    --todo-txt: #000;
+    --color-h1: var(--reveal-foreground);
+    --color-h2: var(--reveal-foreground);
+    --color-h3: var(--reveal-foreground);
+    --color-h4: var(--reveal-foreground);
+    --color-h5: var(--reveal-foreground);
+    --color-h6: var(--reveal-foreground);
+    --color-link: var(--green);
 }
 
 /* Light theme selected */
@@ -394,7 +413,7 @@ input#simple:target ~ .main {
     --color-h4: #333;
     --color-h5: #333;
     --color-h6: #333;
-    --color-link: var(--magenta);
+    --color-link: var(--orange);
     font-family: "Helvetica Neue";
     font-size: 14px;
     line-height: 1.5em;
@@ -595,7 +614,7 @@ input#darksimple:target ~ .main {
     --color-h4: #ccc;
     --color-h5: #ccc;
     --color-h6: #ccc;
-    --color-link: var(--yellow);
+    --color-link: var(--green);
     font-family: "Helvetica Neue", sans-serif;
     font-weight: 300;
     font-size: 14px;
@@ -644,7 +663,7 @@ input#matrix:target ~ .main {
     --color-h4: #0b0;
     --color-h5: #0b0;
     --color-h6: #0b0;
-    --color-link: white;
+    --color-link: #080;
     font-family: monospace;
 }
 input#matrix:checked ~ #labels ,
@@ -695,6 +714,7 @@ pre::after,pre::before,hr:after,
 .main pre::after,.main pre::before,.main hr:after {
     color: var(--soft-foreground);
 }
+#labels label:hover,
 a:hover, a:active, a:focus,
 .main a:hover,.main a:active,.main a:focus {
     color: white;
@@ -717,6 +737,10 @@ thead,
 tr:hover,
 .main tr:hover {
     background-color: var(--reveal-background);
+}
+
+.description {
+    color: var(--second-foreground);
 }
 h1, .main h1 {
     color: var(--color-h1);
