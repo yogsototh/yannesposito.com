@@ -1,8 +1,9 @@
 ;; sign it with
 ;; gpg --local-user yann@esposito.host --output project.el.sig --detach-sign project.el
 (defvar domainname "https://her.esy.fun")
-(defvar base-dir (concat (projectile-project-root) "src"))
-(defvar publish-dir (concat (projectile-project-root) "_site"))
+(defvar root-dir (projectile-project-root))
+(defvar base-dir (concat root-dir "src"))
+(defvar publish-dir (concat root-dir "_site"))
 (defvar assets-dir (concat base-dir "/"))
 (defvar publish-assets-dir (concat publish-dir "/"))
 (defvar posts-dir (concat base-dir "/posts"))
@@ -215,11 +216,13 @@ Return output file name."
   (or (equal (expand-file-name (file-name-directory filename))
 	           (file-name-as-directory (expand-file-name pub-dir)))
       (let ((dst-file (expand-file-name (file-name-nondirectory filename) pub-dir)))
-        (if (string-match-p ".*\\.\\(png\\|jpg\\|gif\\)$" filename)
-            (shell-command (format "~/.nix-profile/bin/convert %s -resize 800x800\\> +dither -colors 16 -depth 4 %s"
-                                   filename
-                                   dst-file))
-          (copy-file filename dst-file t)))))
+        (cond ((string-match-p ".*\\.\\(png\\|jpg\\|gif\\)$" filename)
+               (shell-command (format "~/.nix-profile/bin/convert %s -resize 800x800\\> +dither -colors 16 -depth 4 %s"
+                                      filename
+                                      dst-file)))
+              ((string-match-p ".*\\.css$" filename)
+               (shell-command (format "%s/compresscss.sh %s %s" root-dir filename dst-file)))
+              (t (copy-file filename dst-file t))))))
 
 (defalias 'org-blog-posts-sitemap-fn
   (apply-partially 'org-blog-sitemap-fn-descr posts-descr))
