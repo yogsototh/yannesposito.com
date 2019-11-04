@@ -224,6 +224,8 @@ Return output file name."
 (defalias 'org-blog-posts-sitemap-fn
   (apply-partially 'org-blog-sitemap-fn-descr posts-descr))
 
+(setq org-html-htmlize-output-type 'css)
+(setq org-html-htmlize-font-prefix "org-")
 (setq org-publish-project-alist
       `(("orgfiles"
          :base-directory ,base-dir

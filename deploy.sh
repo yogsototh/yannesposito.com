@@ -3,8 +3,8 @@
 rootdir=${0:h}
 echo $rootdir
 
-echo "Full Build"
-./fullbuild.sh
+# echo "Full Build"
+# ./fullbuild.sh
 echo "Building RSS"
 ./mkrss.sh
 echo "RSS Built"
