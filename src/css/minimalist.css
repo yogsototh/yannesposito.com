@@ -331,6 +331,12 @@ navigation > a {
         --color-link: var(--orange);
     }
 }
+/* Dark themes soften and darken images */
+@media (prefers-color-scheme: dark) {
+  img {
+      filter: saturate(0.8) brightness(0.8);
+  }
+}
 #labels {
     width: 100%;
     text-align: right;
@@ -341,15 +347,18 @@ navigation > a {
     font-style: italic;
 }
 
-/* Dark themes soften and darken images */
-img {
-    filter: saturate(0.8) brightness(0.8);
-}
 /* Light themes does not soften and darken images */
 input#light:checked ~ .main img,
-input#simple:checked ~ .main img,
+input#simple:checked ~ .main img ,
 input#modern:checked ~ .main img {
     filter: none;
+}
+input#dark:checked ~ .main img,
+input#darksimple:checked ~ .main img {
+    filter: saturate(0.8) brightness(0.8);
+}
+input#matrix:checked ~ .main img {
+    filter: brightness(0.8) sepia(100%) hue-rotate(55deg) saturate(2.5);
 }
 
 /* --------------------------------------------------------------------------- */
@@ -758,9 +767,9 @@ pre span.org-builtin                     {color:var(--cyan);}
 pre span.org-string                      {color:var(--green);}
 pre span.org-doc                         {color:var(--green);}
 pre span.org-keyword                     {color:var(--blue);}
-pre span.org-variable-name               {color:var(--magenta);}
-pre span.org-function-name               {color:var(--cyan);}
-pre span.org-type                        {color:var(--violet);}
+pre span.org-variable-name               {color:var(--blue);}
+pre span.org-function-name               {color:var(--blue);}
+pre span.org-type                        {color:var(--yellow);}
 pre span.org-preprocessor                {color:var(--second-foreground);}
 pre span.org-constant                    {color:var(--yellow);}
 pre span.org-comment-delimiter           {color:var(--second-foreground);}
