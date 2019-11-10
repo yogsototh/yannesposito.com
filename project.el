@@ -54,14 +54,14 @@
   (concat
    "<div class=\"content\">"
    (menu '("<a href=\"#postamble\">↓ bottom ↓</a>"))
-   "<h1>"
-   (format "%s" (car (plist-get info :title)))
-   "</h1>"
    (when-let ((date (plist-get info :date)))
      (format "<span class=\"article-date\">%s</span>"
              (format-time-string "%Y-%m-%d"
                                  (org-timestamp-to-time
                                   (car date)))))
+   "<h1>"
+   (format "%s" (car (plist-get info :title)))
+   "</h1>"
    (when-let ((subtitle (car (plist-get info :subtitle))))
      (format "<h2>%s</h2>" subtitle))
    "</div>"))

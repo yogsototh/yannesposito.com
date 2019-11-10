@@ -6,6 +6,10 @@
 #+DESCRIPTION: Small script to change the profile of iTerm in sync with macOS preferences
 #+OPTIONS: auto-id:t toc:t
 
+#+begin_notes
+How to have dark/light profile selected when opening a new iTerm.
+#+end_notes
+
 * The script
 :PROPERTIES:
 :CUSTOM_ID: the-script
@@ -21,50 +25,46 @@ I use =fish= but you can easily adapt that in your =.bashrc=,
 Here is what I have in  my =~/.config/fish/config.fish=:
 
 #+begin_src fish
-  function setItermProfile
-      echo -ne "\033]50;SetProfile=$argv\a"
-  end
+function setItermProfile
+    echo -ne "\033]50;SetProfile=$argv\a"
+end
 
-  function sync_appearance
+function sync_appearance
 
-      set -x MacOSThemeAutoSwitch \
-          (defaults read -g AppleInterfaceStyleSwitchesAutomatically 2>/dev/null)
-      test -z $MacOSThemeAutoSwitch; and set -x MacOSThemeAutoSwitch 0
+    set -x MacOSThemeAutoSwitch \
+        (defaults read -g AppleInterfaceStyleSwitchesAutomatically 2>/dev/null)
+    test -z $MacOSThemeAutoSwitch; and set -x MacOSThemeAutoSwitch 0
 
-      set -x MacOSTheme (defaults read -g AppleInterfaceStyle 2>/dev/null)
-      test -z $MacOSTheme; and set -x MacOSTheme 'nil'
+    set -x MacOSTheme (defaults read -g AppleInterfaceStyle 2>/dev/null)
+    test -z $MacOSTheme; and set -x MacOSTheme 'nil'
 
-      # for debug purpose only
-      # echo $MacOSThemeAutoSwitch
-      # echo $MacOSTheme
+    if test -n $ITERM_PROFILE # check if we are using iTerm2
+        switch $MacOSThemeAutoSwitch
+            case 1 # autoswitch on
+                switch $MacOSTheme
+                    case 'nil'
+                        setItermProfile Light
+                    case '*'
+                        setItermProfile Dark
+                end
+            case 0 # autoswitch off
+                switch $MacOSTheme
+                    case 'Dark'
+                        setItermProfile Dark
+                    case 'Light'
+                        setItermProfile Light
+                    case 'nil'
+                        setItermProfile Light
+                end
+        end
+    end
+end
 
-      if test -n $ITERM_PROFILE # check if we are using iTerm2
-          switch $MacOSThemeAutoSwitch
-              case 1
-                  switch $MacOSTheme
-                      case 'nil'
-                          setItermProfile Light
-                      case '*'
-                          setItermProfile Dark
-                  end
-              case 0
-                  switch $MacOSTheme
-                      case 'Dark'
-                          setItermProfile Dark
-                      case 'Light'
-                          setItermProfile Light
-                      case 'nil'
-                          setItermProfile Light
-                  end
-          end
-      end
-  end
-
-  if status --is-login
-      if status --is-interactive
-          sync_appearance
-      end
-  end
+if status --is-login
+    if status --is-interactive
+        sync_appearance
+    end
+end
 #+end_src
 
 If the appearance change, you can call =sync_appearance= function in your
