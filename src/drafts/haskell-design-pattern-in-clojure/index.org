@@ -1,0 +1,34 @@
+#+TITLE: Haskell Design Pattern in Clojure
+#+SUBTITLE: Some classical haskell tricks equivalent in Clojure
+#+AUTHOR: Yann Esposito
+#+EMAIL: yann@esposito.host
+#+DATE: [2019-11-07 Thu]
+#+KEYWORDS: programming
+#+DESCRIPTION: LISP to simulate Haskell
+#+OPTIONS: auto-id:t
+
+#+begin_notes
+TL;DR: Some clever Haskell trick can in fact be simulated quite efficiently
+with Clojure.
+#+end_notes
+
+* Monads
+:PROPERTIES:
+:CUSTOM_ID: monads
+:END:
+
+#+begin_src haskell
+  fullName :: Maybe Text -> Maybe Text -> Maybe Text
+  fullName firstName lastName = do
+      x <- firstName
+      y <- lastName
+      result <- return (x <> y)
+
+  ask :: IO (Maybe Text)
+  ask = do
+    l <- readLine
+    return $ if null l then Nothing else Just l
+
+  askName <- fullName <$> ask "What is your first name?"
+                      <*> ask "What is your last name?"
+#+end_src
