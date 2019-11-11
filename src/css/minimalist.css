@@ -120,7 +120,6 @@ sup > a {
     text-decoration: none;
     padding: 1px 2px;
     font-weight: bold;
-    background: var(--reveal-background);
 }
 
 /* Markdown tricks */
@@ -269,6 +268,14 @@ navigation > a {
     text-decoration: underline;
 }
 
+#preamble:after, #postamble:before {
+    content: "--------------------------------------------------------------------------------";
+    display: block;
+    height: 1em;
+    overflow: hidden;
+    text-align: center;
+    width: 100%;
+}
 /* colors theme */
 :root {
     color-scheme: light dark; /* support color scheme */
@@ -361,6 +368,15 @@ input#matrix:checked ~ .main img {
     filter: brightness(0.8) sepia(100%) hue-rotate(55deg) saturate(2.5);
 }
 
+input#simple:checked ~ .main #preamble:after,
+input#simple:checked ~ .main #postamble:before,
+input#darksimple:checked ~ .main #preamble:after,
+input#darksimple:checked ~ .main #postamble:before,
+input#modern:checked ~ .main #preamble:after,
+input#modern:checked ~ .main #postamble:before
+{
+    display: none;
+}
 /* --------------------------------------------------------------------------- */
 /* Dark theme selected */
 input#dark:checked ~ .main, input#dark:checked ~ #labels {
@@ -641,6 +657,10 @@ b, strong, i, em {
     color: var(--reveal-foreground);
 }
 
+sup > a {
+    background: var(--reveal-background);
+}
+
 body > input { display:none; }
 
 #labels {
@@ -681,13 +701,15 @@ navigation a:focus, navigation a:hover,
 thead,
 .main thead {
     background-color: var(--reveal-background);
-    color: var(--second-fg);
+    color: var(--second-foreground);
+}
+#preamble:after, #postamble:before {
+    color: var(--second-foreground);
 }
 tr:hover,
 .main tr:hover {
     background-color: var(--reveal-background);
 }
-
 .description {
     color: var(--second-foreground);
 }
@@ -721,7 +743,6 @@ blockquote:after, .main blockquote:after {
 }
 #preamble,#postamble,.main #preamble, .main #postamble {
     border-color: var(--transparent);
-    background: var(--second-background);
 }
 .article-date, .main .article-date {
     color: var(--soft-foreground);
@@ -760,7 +781,7 @@ blockquote:after, .main blockquote:after {
 }
 .notes, .main .notes {
     background-color: var(--reveal-background);
-    color: var(--second-fg);
+    color: var(--reveal-foreground);
 }
 /* ---- SYNTAX HIGHLIGHTING ---- */
 pre span.org-builtin                     {color:var(--cyan);}
