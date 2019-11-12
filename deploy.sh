@@ -5,6 +5,8 @@ echo $rootdir
 
 echo "Full Build"
 ./fullbuild.sh
+echo "Update file size"
+./update-file-size.sh
 echo "Building RSS"
 ./mkrss.sh
 echo "RSS Built"

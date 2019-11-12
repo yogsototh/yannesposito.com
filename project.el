@@ -105,6 +105,7 @@
    "<div class=\"rss\"><a href=\"/rss.xml\">RSS</a>: <a href=\"https://validator.w3.org/feed/check.cgi?url=https%3A%2F%2Fher.esy.fun%2Frss.xml\">Valid RSS</a></div>"
    (format "<div class=\"date\">Generated: %s</div>"
            (format-time-string "%Y-%m-%d %H:%M:%S"))
+   "<div class=\"web-file-size\">Size: XXK (HTML: XXK, CSS: XXK, IMG: XXK)</div>"
    (format (concat "<div class=\"creator\"> Generated with "
                    "<a href=\"https://www.gnu.org/software/emacs/\" target=\"_blank\" rel=\"noopener noreferrer\">Emacs %s</a>, "
                    "<a href=\"http://spacemacs.org\" target=\"_blank\" rel=\"noopener noreferrer\">Spacemacs %s</a>, "
