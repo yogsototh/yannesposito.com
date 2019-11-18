@@ -5,11 +5,6 @@ echo $rootdir
 
 echo "Full Build"
 ./fullbuild.sh
-echo "Update file size"
-./update-file-size.sh
-echo "Building RSS"
-./mkrss.sh
-echo "RSS Built"
 echo -n "Publishing"
 rsync --progress --partial -avHe ssh $rootdir/_site/ root@esy.fun:/var/www/her.esy.fun/ --delete
 echo " [done]"

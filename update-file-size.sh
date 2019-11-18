@@ -9,7 +9,7 @@ sizeof() {
 }
 
 debug () {
-   # print -- $*
+ print -- $* >/dev/null
 }
 
 toh () {
