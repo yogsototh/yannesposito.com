@@ -233,8 +233,8 @@ nav > a {
     --rfg: var(--base1);
     --rbg: var(--base02);
     --bdr: var(--base02);
-    --todo-txt: #000;
-    --link: var(--green);
+    --l-fg: var(--bg);
+    --l-bg: var(--green);
 }
 
 /* org colors */
@@ -247,8 +247,8 @@ nav > a {
         --rfg: var(--base01);
         --rbg: var(--base2);
         --bdr: var(--base2);
-        --todo-txt: #FFF;
-        --link: var(--orange);
+        --l-fg: var(--bg);
+        --l-bg: var(--orange);
     }
 }
 /* Dark themes soften and darken images */
@@ -268,31 +268,31 @@ nav > a {
 }
 
 /* Light themes does not soften and darken images */
-#light:checked ~ .main img,
-#simple:checked ~ .main img ,
-#modern:checked ~ .main img {
+#l:checked ~ .main img,
+#s:checked ~ .main img ,
+#m:checked ~ .main img {
     filter: none;
 }
-#dark:checked ~ .main img,
-#darksimple:checked ~ .main img {
+#d:checked ~ .main img,
+#c:checked ~ .main img {
     filter: saturate(0.8) brightness(0.8);
 }
-#matrix:checked ~ .main img {
+#x:checked ~ .main img {
     filter: brightness(0.8) sepia(100%) hue-rotate(55deg) saturate(2.5);
 }
 
-#simple:checked ~ .main #preamble:after,
-#simple:checked ~ .main #postamble:before,
-#darksimple:checked ~ .main #preamble:after,
-#darksimple:checked ~ .main #postamble:before,
-#modern:checked ~ .main #preamble:after,
-#modern:checked ~ .main #postamble:before
+#s:checked ~ .main #preamble:after,
+#s:checked ~ .main #postamble:before,
+#c:checked ~ .main #preamble:after,
+#c:checked ~ .main #postamble:before,
+#m:checked ~ .main #preamble:after,
+#m:checked ~ .main #postamble:before
 {
     display: none;
 }
 /* --------------------------------------------------------------------------- */
 /* Dark theme selected */
-#dark:checked ~ .main, #dark:checked ~ #labels {
+#d:checked ~ .main, #d:checked ~ #labels {
     --bg: var(--base03);
     --fg: var(--base0);
     --bg2: var(--base02);
@@ -300,13 +300,13 @@ nav > a {
     --rfg: var(--base1);
     --rbg: var(--base02);
     --bdr: var(--base02);
-    --todo-txt: #000;
-    --link: var(--green);
+    --l-fg: var(--bg);
+    --l-bg: var(--green);
 }
 
 /* --------------------------------------------------------------------------- */
 /* Light theme selected */
-#light:checked ~ .main, #light:checked ~ #labels {
+#l:checked ~ .main, #l:checked ~ #labels {
     --bg: var(--base3);
     --fg: var(--base01);
     --bg2: var(--base2);
@@ -314,41 +314,39 @@ nav > a {
     --rfg: var(--base01);
     --rbg: var(--base2);
     --bdr: var(--base2);
-    --todo-txt: #FFF;
-    --link: var(--orange);
+    --l-fg: var(--bg);
+    --l-bg: var(--orange);
 }
 
 /* --------------------------------------------------------------------------- */
 /* Light simple theme selected */
-#simple:checked ~ .main, #simple:checked ~ #labels {
+#c:checked ~ .main, #c:checked ~ #labels,
+#s:checked ~ .main, #s:checked ~ #labels {
     --bg: #fff;
     --fg: #333;
     --bg2: #eee;
     --fg2: #222;
-    --rfg: #000;
-    --rbg: #fff;
+    --rfg: #111;
+    --rbg: #eee;
     --bdr: #CCC;
-    --todo-txt: #333;
-    --link: var(--orange);
-    font-family: "Helvetica Neue";
+    --l-fg: var(--bg);
+    --l-bg: var(--orange);
+    font-family: sans-serif;
     font-size: 16px;
     line-height: 1.5em;
 }
-#simple:checked ~ #labels .content{
+#c:checked ~ #labels .content,
+#s:checked ~ #labels .content,
+#c:checked ~ .main .content,
+#c:checked ~ .main #content,
+#s:checked ~ .main .content,
+#s:checked ~ .main #content {
     margin: 0 auto;
-}
-#simple:checked ~ .main .content,
-#simple:checked ~ .main #content {
-    margin: 0 auto;
-}
-#simple:checked ~ .main code,
-#simple:checked ~ .main pre{
-    font-family: monospace;
 }
 
 /* --------------------------------------------------------------------------- */
 /* Dark matrix theme selected */
-#matrix:checked ~ .main, #matrix:checked ~ #labels {
+#x:checked ~ .main, #x:checked ~ #labels {
     --bg: #000;
     --fg: #0b0;
     --bg2: #040;
@@ -356,8 +354,8 @@ nav > a {
     --rfg: #0f0;
     --rbg: #000;
     --bdr: #080;
-    --todo-txt: #0b0;
-    --link: #080;
+    --l-fg: #0f0;
+    --l-bg: var(--bg);
     --yellow:  #0f0;
     --orange:  #0e0;
     --red:     #0d0;
@@ -369,16 +367,17 @@ nav > a {
     --base03:  #020;
     --base02:  #030;
     --base3:   #0f0;
+    --base2:   #0e0;
     font-family: monospace;
 }
-#matrix:checked ~ .main code,
-#matrix:checked ~ .main pre {
+#x:checked ~ .main code,
+#x:checked ~ .main pre {
     font-family: monospace;
 }
 
 /* --------------------------------------------------------------------------- */
 /* Light modern theme selected */
-#modern:checked ~ .main, #modern:checked ~ #labels {
+#m:checked ~ .main, #m:checked ~ #labels {
     --bg: #fff;
     --fg: #444;
     --bg2: #eee;
@@ -386,33 +385,33 @@ nav > a {
     --rfg: #000;
     --rbg: #eee;
     --bdr: #ddd;
-    --todo-txt: #000;
-    --link: var(--magenta);
+    --l-fg: var(--bg);
+    --l-bg: var(--magenta);
     font-family: "Helvetica Neue", sans-serif;
     font-weight: 300;
     font-size: 16px;
     line-height: 1.5em;
 }
 
-#modern:checked ~ #labels a {
+#m:checked ~ #labels a {
     color: #fff;
 }
-#modern:checked ~ .main .content,
-#modern:checked ~ .main #content {
+#m:checked ~ .main .content,
+#m:checked ~ .main #content {
   margin: 0 auto;
 }
-#modern:checked ~ .main blockquote:after {
+#m:checked ~ .main blockquote:after {
     display: none;
 }
-#modern:checked ~ .main blockquote {
+#m:checked ~ .main blockquote {
     font-family: "Hoefler Text", Georgia, serif;
     font-style: italic;
     font-size: 20px;
     line-height: 30px;
     border-left: solid 10px;
 }
-#modern:checked ~ .main h1,
-#modern:checked ~ .main h2 {
+#m:checked ~ .main h1,
+#m:checked ~ .main h2 {
     font-family: "Hoefler Text", Georgia, serif;
     font-style: italic;
     font-size: 2em;
@@ -421,106 +420,101 @@ nav > a {
     color: var(--rfg);
 }
 
-#modern:checked ~ .main h3,
-#modern:checked ~ .main h4,
-#modern:checked ~ .main h5,
-#modern:checked ~ .main h6 {
+#m:checked ~ .main h3,
+#m:checked ~ .main h4,
+#m:checked ~ .main h5,
+#m:checked ~ .main h6 {
     font-weight: 200;
     font-size: 1.5em;
     line-height: 1.5em;
     margin: 1em 0;
     color: var(--rfg);
 }
-#modern:checked ~ .main h4{
+#m:checked ~ .main h4{
     font-size: 1.25em;
     line-height: 1.25em;
 }
-#modern:checked ~ .main h5,
-#modern:checked ~ .main h6 {
+#m:checked ~ .main h5,
+#m:checked ~ .main h6 {
     font-size: 1em;
     line-height: 1em;
 }
-#modern:checked ~ .main #preamble {
+#m:checked ~ .main #preamble {
     border-bottom: solid 1px rgba(0,0,0,0.2);
 }
-#modern:checked ~ .main #postamble {
+#m:checked ~ .main #postamble {
     border-top: solid 1px rgba(0,0,0,0.2);
 }
-#modern:checked ~ .main #preamble h1 {
+#m:checked ~ .main #preamble h1 {
     font-size: 4em;
     line-height: 1.5em;
     margin: .5em 0;
 }
-#modern:checked ~ .main h1::before,
-#modern:checked ~ .main h2::before,
-#modern:checked ~ .main h3::before,
-#modern:checked ~ .main h4::before,
-#modern:checked ~ .main h5::before,
-#modern:checked ~ .main h6::before {
+#m:checked ~ .main h1::before,
+#m:checked ~ .main h2::before,
+#m:checked ~ .main h3::before,
+#m:checked ~ .main h4::before,
+#m:checked ~ .main h5::before,
+#m:checked ~ .main h6::before {
     content: "";
 }
-#modern:checked ~ .main pre {
+#m:checked ~ .main pre {
     font-size: 14px;
     line-height: 1em;
     border-left: solid 4px var(--fg2);
     padding-left: 1em;
 }
-#modern:checked ~ .main pre::before,
-#modern:checked ~ .main pre::after {
+#m:checked ~ .main pre::before,
+#m:checked ~ .main pre::after {
     content: "";
 }
-#modern:checked ~ .main #preamble,
-#modern:checked ~ .main #postamble {
+#m:checked ~ .main #preamble,
+#m:checked ~ .main #postamble {
     background: var(--cyan);
     padding: 1em 0;
 }
-#modern:checked ~ .main #preamble {
+#m:checked ~ .main #preamble {
   margin-bottom: 2em;
 }
-#modern:checked ~ .main #postamble {
+#m:checked ~ .main #postamble {
     margin-top: 2em;
 }
-#modern:checked ~ .main #postamble code {
+#m:checked ~ .main #postamble code {
     background: transparent;
 }
-#modern:checked ~ .main #preamble *,
-#modern:checked ~ .main #postamble * {
+#m:checked ~ .main #preamble *,
+#m:checked ~ .main #postamble * {
     color: #fff;
 }
-#modern:checked ~ #labels {
+#m:checked ~ #labels {
     background: var(--cyan);
     color: #fff;
 }
-#modern:checked ~ #labels .content {
+#m:checked ~ #labels .content {
     margin: 0 auto;
 }
 
 /* --------------------------------------------------------------------------- */
 /* Dark simple theme selected */
-#darksimple:checked ~ .main, #darksimple:checked ~ #labels {
+#c:checked ~ .main, #c:checked ~ #labels {
     --bg: #000;
     --fg: #ccc;
     --bg2: #111;
     --fg2: #ddd;
-    --rfg: #fff;
-    --rbg: #000;
-    --bdr: #ccc;
-    --todo-txt: #ccc;
+    --rfg: #eee;
+    --rbg: #111;
+    --bdr: #333;
     --link: var(--green);
-    font-family: "Helvetica Neue", sans-serif;
-    font-weight: 300;
-    font-size: 16px;
-    line-height: 1.5em;
 }
-#darksimple:checked ~ #labels .content{
+#c:checked ~ #labels .content{
     margin: 0 auto;
 }
-#darksimple:checked ~ .main code,
-#darksimple:checked ~ .main pre {
+#c:checked ~ .main code,
+#c:checked ~ .main pre {
     font-family: monospace;
 }
-#darksimple:checked ~ .main .content,
-#darksimple:checked ~ .main #content {
+#c:checked ~ .main .content,
+#c:checked ~ .main #content {
     margin: 0 auto;
 }
 
@@ -571,21 +565,15 @@ pre::after,pre::before,hr:after,
 .main pre::after,.main pre::before,.main hr:after {
     color: var(--fg2);
 }
-#labels label:hover,
-a:hover, a:active, a:focus,
-.main a:hover,.main a:active,.main a:focus {
-    color: white;
-    background: var(--link);
-}
-nav a, nav a:visited,
-.main nav a,.main nav a:visited {
+nav a, nav a:visited, .main nav a,.main nav a:visited {
     color: var(--fg2);
 }
-nav a:focus, nav a:hover,
-.main nav a:focus,.main nav a:hover {
-    color: white;
-    background: var(--link);
+#labels label:hover, a:hover, a:active, a:focus, .main a:hover,.main a:active,.main a:focus,
+nav a:focus, nav a:hover, .main nav a:focus,.main nav a:hover {
+    color: var(--l-fg);
+    background: var(--l-bg);
 }
+
 thead, .main thead, tr:hover, .main tr:hover {
     background: var(--rbg);
     color: var(--rfg);
