@@ -17,7 +17,15 @@ toh () {
 }
 
 tmpdir=$(mktemp -d)
-for fic in $webdir/**/*.html(.); do
+
+type -a filelist
+if (($#>0)); then
+    filelist=( $* )
+else
+    filelist=( $webdir/**/*.html(.) )
+fi
+
+for fic in $filelist; do
     print -n -- "$fic   "
 
     htmlsize=$(sizeof $fic)
