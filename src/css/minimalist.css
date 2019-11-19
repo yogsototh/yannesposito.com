@@ -4,54 +4,31 @@
 
 /* Fonts */
 body {
-    font-family: Consolas, Anonymous Pro, Monaco, monospace;
-    font-size: 14px;
+    font: 14px/1.4 monospace;
     line-height: 16px;
-}
-code, pre, pre code, .todo, .done {
-    font-family: Menlo, Monaco, monospace;
 }
 pre, pre code {
     line-height: 1em;
 }
 /* Layout */
-body {
+body, h1, h2, h3, h4, h5, h6, pre, code, blockquote, ol, ul, ol ol, ul ul, ul ol, ol
+ul, li, p, section, header, footer, img {
+    float: none;
     margin: 0;
     padding: 0;
     border: 0;
     hyphens: auto;
-    -webkit-hyphens: auto;
-    -moz-hyphens:auto;
-    -ms-hyphens:auto;
-}
-h1, h2, h3, h4, h5, h6, pre, code, blockquote, ol, ul, ol ol, ul ul, ul ol, ol
-ul, li, p, section, header, footer {
-    float: none;
-    margin: 0;
-    padding: 0;
-}
-footer {
-    font-size: .8em;
-    line-height: 1.25em;
-    padding: 1em 0;
 }
 h1, h2, h3, h4, h5, h6, pre, code, blockquote, p, ul, ol, section, header,
-figure {
+figure,table {
     margin-top: 1em;
     margin-bottom: 1em;
 }
-figure {
-    margin: 1em 0px;
-}
-figure > img {
-    margin: 0px;
-}
 li {
-    position: relative;
     display: block;
     padding-left: 1.5em;
 }
-ul > li:before {
+ol > li:before, ul > li:before {
     content: "– ";
     opacity: 0.5;
     float: left;
@@ -66,11 +43,6 @@ ol {
 ol > li:before {
     content: counter(ol) ". ";
     counter-increment: ol;
-    float: left;
-    text-align: right;
-    position: relative;
-    left: -1.5em;
-    width: 0;
 }
 ol > li:nth-child(n+10) {
     padding-left:28px;
@@ -89,8 +61,8 @@ p > img, li > img {
     vertical-align: middle;
 }
 table {
+    display: block; /* for overflow to work */
     max-width: 100%;
-    margin: 1em 0;
     border-collapse: collapse;
     border: solid 1px;
     overflow: scroll;
@@ -137,26 +109,22 @@ h6::before {
     content: "###### ";
 }
 hr {
-    position: relative;
-    height: 1px;
-    line-height: 0;
-    overflow: hidden;
     border: 0;
 }
-hr:after {
-    content: "----------------------------------------------------------------------------------------------------";
-    position: absolute;
-    top: 0;
-    left: 0;
+#preamble:after, #postamble:before, hr:after {
+    text-align: center;
+    content: "-----------------------------------------------------------------------------";
+    display:block;
     width: 100%;
-    font-weight: bold;
-    word-wrap: break-word;
+    overflow: hidden;
+    opacity: .5;
+    height: 1em;
 }
-pre { max-width: 100%; overflow: scroll; }
-pre::after,pre::before {
+pre { max-width: 100%; overflow-x: scroll; }
+pre:after,pre:before {
     content: "~~~~~~~~~";
     display: block; }
-pre::before {
+pre:before {
     content: "~~~~~~~~~ " attr(class);
 }
 pre code {
@@ -169,14 +137,6 @@ blockquote {
     padding-left: 2ch;
     overflow: hidden;
 }
-.notes *:first-child,
-blockquote *:first-child {
-    margin-top: 0;
-}
-.notes *:last-child,
-blockquote *:last-child {
-    margin-bottom: 0;
-}
 blockquote:after {
     content: ">\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>";
     white-space: pre;
@@ -184,12 +144,12 @@ blockquote:after {
     top: 0;
     left: 0;
 }
-navigation {
+nav {
     font-weight: bold;
     display: block;
-    margin: 10px 0;
+    padding: 10px 0;
 }
-navigation > a {
+nav > a {
     margin-right: 10px;
 }
 
@@ -200,11 +160,12 @@ navigation > a {
 }
 #content,.content {
     max-width: 46em;
-    margin: 0 1em;
-    padding: 1px;
     margin: 0 auto;
 }
-#content:first-child {
+#content:last-child, .notes *:last-child, blockquote *:last-child {
+    margin-bottom: 0;
+}
+#content:first-child, .notes *:first-child, blockquote *:first-child{
     margin-top: 0;
 }
 #postamble {
@@ -244,15 +205,6 @@ navigation > a {
 .underline {
     text-decoration: underline;
 }
-
-#preamble:after, #postamble:before {
-    content: "--------------------------------------------------------------------------------";
-    display: block;
-    height: 1em;
-    overflow: hidden;
-    text-align: center;
-    width: 100%;
-}
 /* colors theme */
 :root {
     color-scheme: light dark; /* support color scheme */
@@ -272,8 +224,6 @@ navigation > a {
     --blue:    #5679a4;
     --cyan:    #4c8493;
     --green:   #728b5c;
-
-    --transparent: rgba(255,255,255,0);
 
     /* Solaryzed accented colors */
     --bg: var(--base03);
@@ -381,7 +331,7 @@ navigation > a {
     --todo-txt: #333;
     --link: var(--orange);
     font-family: "Helvetica Neue";
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.5em;
 }
 #simple:checked ~ #labels .content{
@@ -408,6 +358,14 @@ navigation > a {
     --bdr: #080;
     --todo-txt: #0b0;
     --link: #080;
+    --yellow:  #0f0;
+    --orange:  #0f0;
+    --red:     #0f0;
+    --magenta: #0f0;
+    --violet:  #0f0;
+    --blue:    #080;
+    --cyan:    #080;
+    --green:   #080;
     font-family: monospace;
 }
 #matrix:checked ~ .main code,
@@ -510,7 +468,7 @@ navigation > a {
 }
 #modern:checked ~ .main #preamble,
 #modern:checked ~ .main #postamble {
-    background-color: var(--cyan);
+    background: var(--cyan);
     padding: 1em 0;
 }
 #modern:checked ~ .main #preamble {
@@ -520,7 +478,7 @@ navigation > a {
     margin-top: 2em;
 }
 #modern:checked ~ .main #postamble code {
-    background-color: transparent;
+    background: transparent;
 }
 #modern:checked ~ .main #preamble *,
 #modern:checked ~ .main #postamble * {
@@ -548,7 +506,7 @@ navigation > a {
     --link: var(--green);
     font-family: "Helvetica Neue", sans-serif;
     font-weight: 300;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.5em;
 }
 #darksimple:checked ~ #labels .content{
@@ -573,7 +531,7 @@ body,.main {
 ::selection, .main ::selection,
 ::-moz-selection, .main ::-moz-selection {
     color: white;
-    background-color: var(--blue);
+    background: var(--blue);
 }
 a, a:visited,
 .main a, .main a:visited {
@@ -616,26 +574,18 @@ a:hover, a:active, a:focus,
     color: white;
     background: var(--link);
 }
-navigation a, navigation a:visited,
-.main navigation a,.main navigation a:visited {
+nav a, nav a:visited,
+.main nav a,.main nav a:visited {
     color: var(--fg2);
 }
-navigation a:focus, navigation a:hover,
-.main navigation a:focus,.main navigation a:hover {
+nav a:focus, nav a:hover,
+.main nav a:focus,.main nav a:hover {
     color: white;
     background: var(--link);
 }
-thead,
-.main thead {
-    background-color: var(--rbg);
-    color: var(--fg2);
-}
-#preamble:after, #postamble:before {
-    color: var(--fg2);
-}
-tr:hover,
-.main tr:hover {
-    background-color: var(--rbg);
+thead, .main thead, tr:hover, .main tr:hover {
+    background: var(--rbg);
+    color: var(--rfg);
 }
 .description {
     color: var(--fg2);
@@ -660,7 +610,7 @@ blockquote:after, .main blockquote:after {
     color: var(--fg2);
 }
 #preamble,#postamble,.main #preamble, .main #postamble {
-    border-color: var(--transparent);
+    border-color: transparent;
 }
 .article-date, .main .article-date {
     color: var(--fg2);
@@ -668,7 +618,7 @@ blockquote:after, .main blockquote:after {
 /* -------- */
 /* org colors */
 .todo, .done, .main .todo, .main .done {
-    background-color: var(--rbg);
+    background: var(--rbg);
     border: solid 1px;
     height: 10px;
     display: inline-block;
@@ -698,34 +648,39 @@ blockquote:after, .main blockquote:after {
     color: var(--magenta);
 }
 .notes, .main .notes {
-    background-color: var(--rbg);
+    background: var(--rbg);
     color: var(--rfg);
 }
 /* ---- SYNTAX HIGHLIGHTING ---- */
-.org-builtin                     {color:var(--cyan);}
-.org-string                      {color:var(--green);}
-.org-doc                         {color:var(--green);}
-.org-keyword                     {color:var(--green);}
-.org-variable-name               {color:var(--blue);}
-.org-function-name               {color:var(--blue);}
-.org-type                        {color:var(--yellow);}
-.org-preprocessor                {color:var(--fg2);}
-.org-constant                    {color:var(--yellow);}
-.org-comment-delimiter           {color:var(--fg2);}
-.org-comment                     {color:var(--fg2);}
-.org-css-selector                {color:var(--cyan);}
-.org-outshine-level-1            {color:var(--fg2);}
-.org-outshine-level-2            {color:var(--fg2);}
-.org-outshine-level-3            {color:var(--fg2);}
-.org-outshine-level-4            {color:var(--fg2);}
-.org-outshine-level-5            {color:var(--fg2);}
-.org-outshine-level-6            {color:var(--fg2);}
-.org-outshine-level-7            {color:var(--fg2);}
-.org-outshine-level-8            {color:var(--fg2);}
-.org-outshine-level-9            {color:var(--fg2);}
-.org-nix-builtin                 {color:var(--blue);}
-.org-nix-attribute               {color:var(--cyan);}
+.org-nix-attribute, .org-builtin {
+    color:var(--cyan);
+}
+
+.org-sh-heredoc, .org-diff-added, .org-string, .org-doc, .org-keyword {
+    color:var(--green);
+}
+
+.org-nix-builtin, .org-variable-name, .org-function-name {
+    color:var(--blue);
+}
+
+.org-type, .org-constant {
+    color:var(--yellow);
+}
+
+.org-css-selector {
+    color:var(--cyan);
+}
+
+.org-diff-none, .org-preprocessor, .org-comment-delimiter, .org-comment,
+.org-outshine-level-1, .org-outshine-level-2, .org-outshine-level-3,
+.org-outshine-level-4, .org-outshine-level-5, .org-outshine-level-6,
+.org-outshine-level-7, .org-outshine-level-8, .org-outshine-level-9 {
+    color:var(--fg2);
+}
+
 .org-highlight-number-number     {color:var(--rfg);}
+
 .org-rainbow-delimiters-depth-1  {color:var(--cyan);}
 .org-rainbow-delimiters-depth-2  {color:var(--blue);}
 .org-rainbow-delimiters-depth-3  {color:var(--violet);}
@@ -735,11 +690,9 @@ blockquote:after, .main blockquote:after {
 .org-rainbow-delimiters-depth-7  {color:var(--yellow);}
 .org-rainbow-delimiters-depth-8  {color:var(--green);}
 .org-rainbow-delimiters-depth-9  {color:var(--cyan);}
+
 .org-sh-quoted-exec              {color:var(--magenta);}
-.org-sh-heredoc                  {color:var(--green);}
-.org-diff-added                  {color:var(--green);}
 .org-diff-changed                {color:var(--blue);}
 .org-diff-header                 {color:var(--yellow);}
 .org-diff-hunk-header            {color:var(--magenta);}
-.org-diff-none                   {color:var(--fg2);}
 .org-diff-removed                {color:var(--red);}

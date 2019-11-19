@@ -32,7 +32,7 @@
 (defun menu (lst)
   "Blog menu"
   (concat
-   "<navigation>"
+   "<nav>"
    (mapconcat 'identity
               (append
                '("<a href=\"/index.html\">Home</a>"
@@ -41,7 +41,7 @@
                  "<a href=\"/about-me.html\">About</a>")
                lst)
               " | ")
-   "</navigation>"))
+   "</nav>"))
 
 
 (defun get-from-info (info k)
