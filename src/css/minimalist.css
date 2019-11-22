@@ -51,8 +51,8 @@ ol > li:nth-child(n+10):before {
     left: -28px;
 }
 img {
-    max-width: 100%;
-    max-height: 800px;
+    width: 100%;
+    max-height: 100vh;
     margin: 1em auto;
 }
 p > img, li > img {
@@ -171,9 +171,8 @@ nav > a {
 }
 
 /* org mode ids and classes */
-.figure {
-    margin-top: 1em;
-    margin-bottom: 1em;
+figure, .figure {
+    margin: 1em 0;
 }
 #content,.content {
     max-width: 46em;
@@ -271,8 +270,13 @@ nav > a {
 /* Dark themes soften and darken images */
 @media (prefers-color-scheme: dark) {
   img {
-      filter: saturate(0.8) brightness(0.8);
+      filter: brightness(0.8) sepia(100%) hue-rotate(182deg) saturate(0.6);
   }
+}
+@media (prefers-color-scheme: light) {
+    img {
+        filter: sepia(100%) hue-rotate(182deg) saturate(0.6);
+    }
 }
 #labels {
     width: 100%;
@@ -285,18 +289,11 @@ nav > a {
 }
 
 /* Light themes does not soften and darken images */
-#l:checked ~ .main img,
-#s:checked ~ .main img ,
-#m:checked ~ .main img {
-    filter: none;
-}
-#d:checked ~ .main img,
-#c:checked ~ .main img {
-    filter: saturate(0.8) brightness(0.8);
-}
-#x:checked ~ .main img {
-    filter: brightness(0.8) sepia(100%) hue-rotate(55deg) saturate(2.5);
-}
+#l:checked ~ .main img { filter: sepia(100%) hue-rotate(182deg) saturate(0.6); }
+#s:checked ~ .main img, #m:checked ~ .main img { filter: none; }
+#d:checked ~ .main img { filter: brightness(0.8) sepia(100%) hue-rotate(182deg) saturate(0.6); }
+#c:checked ~ .main img { filter: brightness(0.8); }
+#x:checked ~ .main img { filter: brightness(0.8) sepia(100%) hue-rotate(55deg) saturate(10); }
 
 #s:checked ~ .main #preamble:after,
 #s:checked ~ .main #postamble:before,

@@ -218,7 +218,7 @@ Return output file name."
 	           (file-name-as-directory (expand-file-name pub-dir)))
       (let ((dst-file (expand-file-name (file-name-nondirectory filename) pub-dir)))
         (cond ((string-match-p ".*\\.\\(png\\|jpg\\|gif\\)$" filename)
-               (shell-command (format "~/.nix-profile/bin/convert %s -resize 800x800\\> +dither -colors 16 -depth 4 %s"
+               (shell-command (format "~/.nix-profile/bin/convert %s -resize 400x400\\> -colorspace Gray -ordered-dither o8x8,8 %s"
                                       filename
                                       dst-file)))
               ((string-match-p ".*\\.css$" filename)
