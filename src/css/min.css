@@ -1,10 +1,11 @@
 /* CSS to be used for HTML Org-mode export
    Author: Yann Esposito
 */
+
 /* Fonts */
 body {
-    font: 14px/1.4 monospace;
-    line-height: 16px;
+    font: 16px/1.4 sans-serif;
+    line-height: 1.5em;
 }
 pre, pre code {
     line-height: 1em;
@@ -86,31 +87,6 @@ sup > a {
     font-weight: bold;
 }
 
-/* Markdown tricks */
-h1,h2,h3,h4,h5,h6 {
-    font-size: 1em;
-}
-h1::before {
-    content: "# ";
-}
-h2::before {
-    content: "## ";
-}
-h3::before {
-    content: "### ";
-}
-h4::before {
-    content: "#### ";
-}
-h5::before {
-    content: "##### ";
-}
-h6::before {
-    content: "###### ";
-}
-hr {
-    border: 0;
-}
 #preamble h1 {
     margin-top: 0;
 }
@@ -123,15 +99,6 @@ hr {
 }
 #table-of-contents {
     margin-bottom: 1em;
-}
-#postamble:before, hr:after {
-    text-align: center;
-    content: "-----------------------------------------------------------------------------";
-    display:block;
-    width: 100%;
-    overflow: hidden;
-    opacity: .5;
-    height: 1em;
 }
 pre {
     max-width: 100%;
@@ -148,18 +115,8 @@ pre code {
     background: none;
 }
 blockquote,#table-of-contents {
-    margin-left: 0;
-    position: relative;
-    padding-left: 17px;
+    border-left: solid 2ch;
     padding-left: 2ch;
-    overflow: hidden;
-}
-#table-of-contents:after, blockquote:after {
-    content: ">\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>";
-    white-space: pre;
-    position: absolute;
-    top: 0;
-    left: 0;
 }
 nav {
     font-weight: bold;
@@ -169,7 +126,6 @@ nav {
 nav > a {
     margin-right: 10px;
 }
-
 /* org mode ids and classes */
 figure, .figure {
     margin: 1em 0;
@@ -289,9 +245,18 @@ figure, .figure {
 }
 
 /* Light themes does not soften and darken images */
-#l:checked ~ .main img { filter: sepia(100%) hue-rotate(182deg) saturate(0.6); }
-#d:checked ~ .main img { filter: brightness(0.8) sepia(100%) hue-rotate(182deg) saturate(0.6); }
+#s:checked ~ .main img, #m:checked ~ .main img { filter: none; }
+#c:checked ~ .main img { filter: brightness(0.8); }
 
+#s:checked ~ .main #preamble:after,
+#s:checked ~ .main #postamble:before,
+#c:checked ~ .main #preamble:after,
+#c:checked ~ .main #postamble:before,
+#m:checked ~ .main #preamble:after,
+#m:checked ~ .main #postamble:before
+{
+    display: none;
+}
 /* --------------------------------------------------------------------------- */
 /* Dark theme selected */
 #d:checked ~ .main, #d:checked ~ #labels {
@@ -318,6 +283,207 @@ figure, .figure {
     --bdr: var(--base2);
     --l-fg: var(--bg);
     --l-bg: var(--orange);
+}
+
+/* --------------------------------------------------------------------------- */
+/* Light simple theme selected */
+#c:checked ~ .main, #c:checked ~ #labels,
+#s:checked ~ .main, #s:checked ~ #labels {
+    --bg: #fff;
+    --fg: #333;
+    --bg2: #eee;
+    --fg2: #222;
+    --rfg: #111;
+    --rbg: #eee;
+    --bdr: #CCC;
+    --l-fg: var(--bg);
+    --l-bg: var(--orange);
+    font-family: sans-serif;
+    font-size: 16px;
+    line-height: 1.5em;
+}
+#c:checked ~ #labels .content,
+#s:checked ~ #labels .content,
+#c:checked ~ .main .content,
+#c:checked ~ .main #content,
+#s:checked ~ .main .content,
+#s:checked ~ .main #content {
+    margin: 0 auto;
+}
+
+/* --------------------------------------------------------------------------- */
+/* Dark matrix theme selected */
+#x:checked ~ .main, #x:checked ~ #labels {
+    --bg: #000;
+    --fg: #0b0;
+    --bg2: #040;
+    --fg2: #080;
+    --rfg: #0f0;
+    --rbg: #000;
+    --bdr: #080;
+    --l-fg: #0f0;
+    --l-bg: var(--bg);
+    --yellow:  #0f0;
+    --orange:  #0e0;
+    --red:     #0d0;
+    --magenta: #0f0;
+    --violet:  #0f0;
+    --blue:    #080;
+    --cyan:    #080;
+    --green:   #080;
+    --base03:  #020;
+    --base02:  #030;
+    --base3:   #0f0;
+    --base2:   #0e0;
+    font-family: monospace;
+}
+#x:checked ~ .main code,
+#x:checked ~ .main pre {
+    font-family: monospace;
+}
+
+/* --------------------------------------------------------------------------- */
+/* Light modern theme selected */
+#m:checked ~ .main, #m:checked ~ #labels {
+    --bg: #fff;
+    --fg: #444;
+    --bg2: #eee;
+    --fg2: #333;
+    --rfg: #000;
+    --rbg: #eee;
+    --bdr: #ddd;
+    --l-fg: var(--bg);
+    --l-bg: var(--magenta);
+    font-family: "Helvetica Neue", sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.5em;
+}
+
+#m:checked ~ #labels a {
+    color: #fff;
+}
+#m:checked ~ .main .content,
+#m:checked ~ .main #content {
+  margin: 0 auto;
+}
+#m:checked ~ .main #table-of-contents:after,
+#m:checked ~ .main blockquote:after {
+    display: none;
+}
+#m:checked ~ .main blockquote {
+    font-family: "Hoefler Text", Georgia, serif;
+    font-style: italic;
+    font-size: 20px;
+    line-height: 30px;
+    border-left: solid 10px;
+}
+#m:checked ~ .main h1,
+#m:checked ~ .main h2 {
+    font-family: "Hoefler Text", Georgia, serif;
+    font-style: italic;
+    font-size: 2em;
+    line-height: 1.5em;
+    margin: 1em 0;
+    color: var(--rfg);
+}
+
+#m:checked ~ .main h3,
+#m:checked ~ .main h4,
+#m:checked ~ .main h5,
+#m:checked ~ .main h6 {
+    font-weight: 200;
+    font-size: 1.5em;
+    line-height: 1.5em;
+    margin: 1em 0;
+    color: var(--rfg);
+}
+#m:checked ~ .main h4{
+    font-size: 1.25em;
+    line-height: 1.25em;
+}
+#m:checked ~ .main h5,
+#m:checked ~ .main h6 {
+    font-size: 1em;
+    line-height: 1em;
+}
+#m:checked ~ .main #preamble {
+    border-bottom: solid 1px rgba(0,0,0,0.2);
+}
+#m:checked ~ .main #postamble {
+    border-top: solid 1px rgba(0,0,0,0.2);
+}
+#m:checked ~ .main #preamble h1 {
+    font-size: 4em;
+    line-height: 1.5em;
+    margin: .5em 0;
+}
+#m:checked ~ .main h1::before,
+#m:checked ~ .main h2::before,
+#m:checked ~ .main h3::before,
+#m:checked ~ .main h4::before,
+#m:checked ~ .main h5::before,
+#m:checked ~ .main h6::before {
+    content: "";
+}
+#m:checked ~ .main pre {
+    font-size: 14px;
+    line-height: 1em;
+    border-left: solid 4px var(--fg2);
+    padding-left: 1em;
+}
+#m:checked ~ .main pre::before,
+#m:checked ~ .main pre::after {
+    content: "";
+}
+#m:checked ~ .main #preamble,
+#m:checked ~ .main #postamble {
+    background: var(--cyan);
+    padding: 1em 0;
+}
+#m:checked ~ .main #preamble {
+  margin-bottom: 2em;
+}
+#m:checked ~ .main #postamble {
+    margin-top: 2em;
+}
+#m:checked ~ .main #postamble code {
+    background: transparent;
+}
+#m:checked ~ .main #preamble *,
+#m:checked ~ .main #postamble * {
+    color: #fff;
+}
+#m:checked ~ #labels {
+    background: var(--cyan);
+    color: #fff;
+}
+#m:checked ~ #labels .content {
+    margin: 0 auto;
+}
+
+/* --------------------------------------------------------------------------- */
+/* Dark simple theme selected */
+#c:checked ~ .main, #c:checked ~ #labels {
+    --bg: #000;
+    --fg: #ccc;
+    --bg2: #111;
+    --fg2: #ddd;
+    --rfg: #eee;
+    --rbg: #111;
+    --bdr: #333;
+    --link: var(--green);
+}
+#c:checked ~ #labels .content{
+    margin: 0 auto;
+}
+#c:checked ~ .main code,
+#c:checked ~ .main pre {
+    font-family: monospace;
+}
+#c:checked ~ .main .content,
+#c:checked ~ .main #content {
+    margin: 0 auto;
 }
 
 /* --------------------------------------------------------------------------- */

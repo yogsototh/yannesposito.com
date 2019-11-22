@@ -174,6 +174,7 @@
   "Same as `org-html-publish-to-html' but modifies html before finishing."
   (let* ((file-path (org-html-publish-to-html plist filename pub-dir))
          (mk-path     (format "./%s.html"     (replace-regexp-in-string ".*/\\([^/]*\\)\\.org$" "\\1" filename)))
+         (min-path     (format "./%s-min.html"     (replace-regexp-in-string ".*/\\([^/]*\\)\\.org$" "\\1" filename)))
          (sci-path     (format "./%s-sci.html"     (replace-regexp-in-string ".*/\\([^/]*\\)\\.org$" "\\1" filename)))
          (modern-path     (format "./%s-modern.html"     (replace-regexp-in-string ".*/\\([^/]*\\)\\.org$" "\\1" filename))))
     (with-current-buffer (find-file-noselect file-path)
@@ -190,6 +191,7 @@
                            "<label for=\"d\">dark</label>"
                            " --- "
                            ,(format "<a href=\"%s\">mk</a>" mk-path)
+                           ,(format "<a href=\"%s\">min</a>" min-path)
                            ,(format "<a href=\"%s\">sci</a>" sci-path)
                            ,(format "<a href=\"%s\">modern</a>" modern-path)
                            "</div>"
