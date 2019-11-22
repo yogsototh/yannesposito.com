@@ -9,7 +9,7 @@
 (defvar posts-dir (concat base-dir "/posts"))
 (defvar rss-title "Subscribe to articles")
 (defvar posts-descr "Articles")
-(defvar css-path "/css/minimalist.css")
+(defvar css-path "/css/mk.css")
 (defvar author-name "Yann Esposito")
 (defvar author-email "yann@esposito.host")
 
@@ -172,32 +172,30 @@
 
 (defun org-blog-publish-to-html (plist filename pub-dir)
   "Same as `org-html-publish-to-html' but modifies html before finishing."
-  (let ((file-path (org-html-publish-to-html plist filename pub-dir)))
+  (let* ((file-path (org-html-publish-to-html plist filename pub-dir))
+         (mk-path     (format "./%s.html"     (replace-regexp-in-string ".*/\\([^/]*\\)\\.org$" "\\1" filename)))
+         (sci-path     (format "./%s-sci.html"     (replace-regexp-in-string ".*/\\([^/]*\\)\\.org$" "\\1" filename)))
+         (modern-path     (format "./%s-modern.html"     (replace-regexp-in-string ".*/\\([^/]*\\)\\.org$" "\\1" filename))))
     (with-current-buffer (find-file-noselect file-path)
       (goto-char (point-min))
       (search-forward "<body>")
       (insert (mapconcat 'identity
-                         '("<input name=\"t\" type=\"radio\" id=\"l\">"
-                           "<input name=\"t\" type=\"radio\" id=\"s\">"
-                           "<input name=\"t\" type=\"radio\" id=\"m\">"
+                         `("<input name=\"t\" type=\"radio\" id=\"l\">"
                            "<input name=\"t\" type=\"radio\" id=\"d\">"
-                           "<input name=\"t\" type=\"radio\" id=\"c\">"
-                           "<input name=\"t\" type=\"radio\" id=\"x\">"
 
                            "<div id=\"labels\">"
                            "<div class=\"content\">"
-                           "Change theme: "
                            "<label for=\"l\">light</label>"
-                           "(<label for=\"s\">contrast</label>,"
-                           "<label for=\"m\">modern</label>)"
                            " / "
                            "<label for=\"d\">dark</label>"
-                           "(<label for=\"c\">contrast</label>,"
-                           "<label for=\"x\">matrix</label>)"
+                           " --- "
+                           ,(format "<a href=\"%s\">mk</a>" mk-path)
+                           ,(format "<a href=\"%s\">sci</a>" sci-path)
+                           ,(format "<a href=\"%s\">modern</a>" modern-path)
                            "</div>"
                            "</div>"
                            "<div class=\"main\">")
-                            "\n"))
+                         "\n"))
       (goto-char (point-max))
       (search-backward "</body>")
       (insert "\n</div>\n")

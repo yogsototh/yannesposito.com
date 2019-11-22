@@ -9,6 +9,8 @@ emacs \
 
 echo "Update file size"
 ./update-file-size.sh
+echo "Gen themes clones"
+./dup-for-themes.sh
 echo "Building RSS"
 ./mkrss.sh
 echo "RSS Built"
