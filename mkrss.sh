@@ -50,6 +50,9 @@ tmpdir=$(mktemp -d)
 typeset -a dates
 dates=( )
 for fic in $postsdir/**/*.html; do
+    if echo $fic|egrep -- '-(mk|min|sci|modern).html$'>/dev/null; then
+        continue
+    fi
     postfile="$(echo "$fic"|sed 's#^'$postsdir'/##')"
     blogfile="$(echo "$fic"|sed 's#^'$webdir'/##')"
     printf "%-30s" $postfile

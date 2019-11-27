@@ -154,12 +154,14 @@
           "#+AUTHOR: " author-name "\n"
           "#+EMAIL: " author-email "\n"
           "#+DESCRIPTION: " descr "\n"
-          "@@html:<navigation>"
+          ""
+          "@@html:<nav>"
           "<a href=\"/index.html\">Home</a> | "
           "<a href=\"/archive.html\">Posts</a> | "
           "<a href=\"/slides.html\">Slides</a> | "
           "<a href=\"/about-me.html\">About</a>"
-          "</navigation><br/>@@"
+          "</nav>@@"
+          "\n\n"
           (mapconcat (lambda (li) (format "%s" (car li)))
                      (seq-filter #'car (cdr list))
                      "\n")))
