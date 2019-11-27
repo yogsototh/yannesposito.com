@@ -53,7 +53,6 @@
   "Pre-amble for whole blog."
   (concat
    "<div class=\"content\">"
-   (menu '("<a href=\"#postamble\">↓ bottom ↓</a>"))
    (when-let ((date (plist-get info :date)))
      (format "<span class=\"article-date\">%s</span>"
              (format-time-string "%Y-%m-%d"
@@ -155,6 +154,12 @@
           "#+AUTHOR: " author-name "\n"
           "#+EMAIL: " author-email "\n"
           "#+DESCRIPTION: " descr "\n"
+          "@@html:<navigation>"
+          "<a href=\"/index.html\">Home</a> | "
+          "<a href=\"/archive.html\">Posts</a> | "
+          "<a href=\"/slides.html\">Slides</a> | "
+          "<a href=\"/about-me.html\">About</a>"
+          "</navigation><br/>@@"
           (mapconcat (lambda (li) (format "%s" (car li)))
                      (seq-filter #'car (cdr list))
                      "\n")))
@@ -186,6 +191,7 @@
 
                            "<div id=\"labels\">"
                            "<div class=\"content\">"
+                           "<a id=\"h\" href=\"/index.html\">her.esy.fun</a> - "
                            "<label for=\"l\">light</label>"
                            " / "
                            "<label for=\"d\">dark</label>"
