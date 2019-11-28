@@ -4,8 +4,10 @@
 
 /* Fonts */
 body {
-    font: 14px/1.4 monospace;
-    line-height: 16px;
+    font-family: "Helvetica Neue", sans-serif;
+    font-weight: 300;
+    font-size: 16px/1.6;
+    line-height: 1.5em;
 }
 pre, pre code {
     line-height: 1em;
@@ -91,27 +93,6 @@ sup > a {
 h1,h2,h3,h4,h5,h6 {
     font-size: 1em;
 }
-h1::before {
-    content: "# ";
-}
-h2::before {
-    content: "## ";
-}
-h3::before {
-    content: "### ";
-}
-h4::before {
-    content: "#### ";
-}
-h5::before {
-    content: "##### ";
-}
-h6::before {
-    content: "###### ";
-}
-hr {
-    border: 0;
-}
 #preamble h1 {
     margin-top: 0;
 }
@@ -125,25 +106,10 @@ hr {
 #table-of-contents {
     margin-bottom: 1em;
 }
-#postamble:before, hr:after {
-    text-align: center;
-    content: "-----------------------------------------------------------------------------";
-    display:block;
-    width: 100%;
-    overflow: hidden;
-    opacity: .5;
-    height: 1em;
-}
 pre {
     max-width: 100%;
     overflow-x: scroll;
     overflow-y: hidden;
-}
-pre:after,pre:before {
-    content: "~~~~~~~~~";
-    display: block; }
-pre:before {
-    content: "~~~~~~~~~ " attr(class);
 }
 pre code {
     background: none;
@@ -154,13 +120,6 @@ blockquote,#table-of-contents {
     padding-left: 17px;
     padding-left: 2ch;
     overflow: hidden;
-}
-#table-of-contents:after, blockquote:after {
-    content: ">\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>";
-    white-space: pre;
-    position: absolute;
-    top: 0;
-    left: 0;
 }
 nav {
     font-weight: bold;
@@ -243,42 +202,36 @@ figure, .figure {
     --cyan:    #4c8493;
     --green:   #728b5c;
 
-    /* Solaryzed accented colors */
-    --bg: var(--base03);
-    --fg: var(--base0);
-    --bg2: var(--base02);
-    --fg2: var(--base01);
-    --rfg: var(--base1);
-    --rbg: var(--base02);
-    --bdr: var(--base02);
+    --bg: #fff;
+    --fg: #444;
+    --bg2: #eee;
+    --fg2: #333;
+    --rfg: #000;
+    --rbg: #eee;
+    --bdr: #ddd;
     --l-fg: var(--bg);
-    --l-bg: var(--green);
+    --l-bg: var(--magenta);
 }
 
 /* org colors */
 @media (prefers-color-scheme: light) {
     :root {
-        --bg: var(--base3);
-        --fg: var(--base00);
-        --bg2: var(--base2);
-        --fg2: var(--base1);
-        --rfg: var(--base01);
-        --rbg: var(--base2);
-        --bdr: var(--base2);
+        --bg: #fff;
+        --fg: #444;
+        --bg2: #eee;
+        --fg2: #333;
+        --rfg: #000;
+        --rbg: #eee;
+        --bdr: #ddd;
         --l-fg: var(--bg);
-        --l-bg: var(--orange);
+        --l-bg: var(--magenta);
     }
 }
 /* Dark themes soften and darken images */
 @media (prefers-color-scheme: dark) {
   img {
-      filter: brightness(0.8) sepia(100%) hue-rotate(182deg) saturate(0.6);
+      filter: brightness(0.8);
   }
-}
-@media (prefers-color-scheme: light) {
-    img {
-        filter: sepia(100%) hue-rotate(182deg) saturate(0.6);
-    }
 }
 #h {
     float: left;
@@ -293,145 +246,23 @@ figure, .figure {
     font-style: italic;
 }
 
-/* Light themes does not soften and darken images */
-#l:checked ~ .main img { filter: sepia(100%) hue-rotate(182deg) saturate(0.6); }
-#s:checked ~ .main img, #m:checked ~ .main img { filter: none; }
-#d:checked ~ .main img { filter: brightness(0.8) sepia(100%) hue-rotate(182deg) saturate(0.6); }
-#c:checked ~ .main img { filter: brightness(0.8); }
-#x:checked ~ .main img { filter: brightness(0.8) sepia(100%) hue-rotate(55deg) saturate(10); }
-
-#s:checked ~ .main #preamble:after,
-#s:checked ~ .main #postamble:before,
-#c:checked ~ .main #preamble:after,
-#c:checked ~ .main #postamble:before,
-#m:checked ~ .main #preamble:after,
-#m:checked ~ .main #postamble:before
-{
-    display: none;
-}
-/* --------------------------------------------------------------------------- */
-/* Dark theme selected */
-#d:checked ~ .main, #d:checked ~ #labels {
-    --bg: var(--base03);
-    --fg: var(--base0);
-    --bg2: var(--base02);
-    --fg2: var(--base01);
-    --rfg: var(--base1);
-    --rbg: var(--base02);
-    --bdr: var(--base02);
-    --l-fg: var(--bg);
-    --l-bg: var(--green);
-}
-
-/* --------------------------------------------------------------------------- */
-/* Light theme selected */
-#l:checked ~ .main, #l:checked ~ #labels {
-    --bg: var(--base3);
-    --fg: var(--base01);
-    --bg2: var(--base2);
-    --fg2: var(--base00);
-    --rfg: var(--base01);
-    --rbg: var(--base2);
-    --bdr: var(--base2);
-    --l-fg: var(--bg);
-    --l-bg: var(--orange);
-}
-
-/* --------------------------------------------------------------------------- */
-/* Light simple theme selected */
-#c:checked ~ .main, #c:checked ~ #labels,
-#s:checked ~ .main, #s:checked ~ #labels {
-    --bg: #fff;
-    --fg: #333;
-    --bg2: #eee;
-    --fg2: #222;
-    --rfg: #111;
-    --rbg: #eee;
-    --bdr: #CCC;
-    --l-fg: var(--bg);
-    --l-bg: var(--orange);
-    font-family: sans-serif;
-    font-size: 16px;
-    line-height: 1.5em;
-}
-#c:checked ~ #labels .content,
-#s:checked ~ #labels .content,
-#c:checked ~ .main .content,
-#c:checked ~ .main #content,
-#s:checked ~ .main .content,
-#s:checked ~ .main #content {
-    margin: 0 auto;
-}
-
-/* --------------------------------------------------------------------------- */
-/* Dark matrix theme selected */
-#x:checked ~ .main, #x:checked ~ #labels {
-    --bg: #000;
-    --fg: #0b0;
-    --bg2: #040;
-    --fg2: #080;
-    --rfg: #0f0;
-    --rbg: #000;
-    --bdr: #080;
-    --l-fg: #0f0;
-    --l-bg: var(--bg);
-    --yellow:  #0f0;
-    --orange:  #0e0;
-    --red:     #0d0;
-    --magenta: #0f0;
-    --violet:  #0f0;
-    --blue:    #080;
-    --cyan:    #080;
-    --green:   #080;
-    --base03:  #020;
-    --base02:  #030;
-    --base3:   #0f0;
-    --base2:   #0e0;
-    font-family: monospace;
-}
-#x:checked ~ .main code,
-#x:checked ~ .main pre {
-    font-family: monospace;
-}
-
 /* --------------------------------------------------------------------------- */
 /* Light modern theme selected */
-#m:checked ~ .main, #m:checked ~ #labels {
-    --bg: #fff;
-    --fg: #444;
-    --bg2: #eee;
-    --fg2: #333;
-    --rfg: #000;
-    --rbg: #eee;
-    --bdr: #ddd;
-    --l-fg: var(--bg);
-    --l-bg: var(--magenta);
-    font-family: "Helvetica Neue", sans-serif;
-    font-weight: 300;
-    font-size: 16px;
-    line-height: 1.5em;
-}
 
-#m:checked ~ #labels a {
+#labels a {
     color: #fff;
 }
-#m:checked ~ .main .content,
-#m:checked ~ .main #content {
+.content, #content {
   margin: 0 auto;
 }
-#m:checked ~ .main #table-of-contents:after,
-#m:checked ~ .main blockquote:after {
-    display: none;
-}
-#m:checked ~ .main blockquote {
+blockquote {
     font-family: "Hoefler Text", Georgia, serif;
     font-style: italic;
     font-size: 20px;
     line-height: 30px;
     border-left: solid 10px;
 }
-#m:checked ~ .main h1,
-#m:checked ~ .main h2 {
+h1, h2 {
     font-family: "Hoefler Text", Georgia, serif;
     font-style: italic;
     font-size: 2em;
@@ -440,101 +271,64 @@ figure, .figure {
     color: var(--rfg);
 }
 
-#m:checked ~ .main h3,
-#m:checked ~ .main h4,
-#m:checked ~ .main h5,
-#m:checked ~ .main h6 {
+h3, h4, h5, h6 {
     font-weight: 200;
     font-size: 1.5em;
     line-height: 1.5em;
     margin: 1em 0;
     color: var(--rfg);
 }
-#m:checked ~ .main h4{
+h4{
     font-size: 1.25em;
     line-height: 1.25em;
 }
-#m:checked ~ .main h5,
-#m:checked ~ .main h6 {
+h5, h6 {
     font-size: 1em;
     line-height: 1em;
 }
-#m:checked ~ .main #preamble {
+#preamble {
     border-bottom: solid 1px rgba(0,0,0,0.2);
 }
-#m:checked ~ .main #postamble {
+#postamble {
     border-top: solid 1px rgba(0,0,0,0.2);
 }
-#m:checked ~ .main #preamble h1 {
+#preamble h1 {
     font-size: 4em;
     line-height: 1.5em;
     margin: .5em 0;
 }
-#m:checked ~ .main h1::before,
-#m:checked ~ .main h2::before,
-#m:checked ~ .main h3::before,
-#m:checked ~ .main h4::before,
-#m:checked ~ .main h5::before,
-#m:checked ~ .main h6::before {
-    content: "";
-}
-#m:checked ~ .main pre {
+pre {
     font-size: 14px;
     line-height: 1em;
     border-left: solid 4px var(--fg2);
     padding-left: 1em;
 }
-#m:checked ~ .main pre::before,
-#m:checked ~ .main pre::after {
+pre::before,
+pre::after {
     content: "";
 }
-#m:checked ~ .main #preamble,
-#m:checked ~ .main #postamble {
+#preamble, #postamble {
     background: var(--cyan);
     padding: 1em 0;
 }
-#m:checked ~ .main #preamble {
+#preamble {
   margin-bottom: 2em;
 }
-#m:checked ~ .main #postamble {
-    margin-top: 2em;
+#postamble {
+rgin-top: 2em;
 }
-#m:checked ~ .main #postamble code {
-    background: transparent;
+#postamble code {
+ckground: transparent;
 }
-#m:checked ~ .main #preamble *,
-#m:checked ~ .main #postamble * {
+#preamble *,
+#postamble * {
     color: #fff;
 }
-#m:checked ~ #labels {
+#labels {
     background: var(--cyan);
     color: #fff;
 }
-#m:checked ~ #labels .content {
-    margin: 0 auto;
-}
-
-/* --------------------------------------------------------------------------- */
-/* Dark simple theme selected */
-#c:checked ~ .main, #c:checked ~ #labels {
-    --bg: #000;
-    --fg: #ccc;
-    --bg2: #111;
-    --fg2: #ddd;
-    --rfg: #eee;
-    --rbg: #111;
-    --bdr: #333;
-    --link: var(--green);
-}
-#c:checked ~ #labels .content{
-    margin: 0 auto;
-}
-#c:checked ~ .main code,
-#c:checked ~ .main pre {
-    font-family: monospace;
-}
-#c:checked ~ .main .content,
-#c:checked ~ .main #content {
+#labels .content {
     margin: 0 auto;
 }
 
@@ -639,50 +433,43 @@ blockquote:after, .main blockquote:after {
     font-weight: bold;
     font-size: 10px;
 }
-.TODO, .main .TODO {
-    color: var(--red);
-}
-.IN_PROGRESS, .main .IN_PROGRESS {
-    color: var(--yellow);
-}
-.IN_REVIEW, .main .IN_REVIEW {
-    color: var(--cyan);
-}
-.HOLD, .main .HOLD {
-    color: var(--violet);
-}
-.WAITING, .main .WAITING {
-    color: var(--violet);
-}
-.DONE, .main .DONE {
-    color: var(--green);
-}
-.CANCELED, .main .CANCELED {
-    color: var(--magenta);
-}
 .notes, .main .notes {
     background: var(--rbg);
     color: var(--rfg);
 }
 /* ---- SYNTAX HIGHLIGHTING ---- */
-.org-nix-attribute, .org-builtin {
-    color:var(--cyan);
+.org-rainbow-delimiters-depth-1, .org-rainbow-delimiters-depth-9,
+.org-css-selector, .org-nix-attribute, .org-builtin,
+.IN_REVIEW, a {
+    color:var(--c);
 }
 
-.org-sh-heredoc, .org-diff-added, .org-string, .org-doc, .org-keyword {
-    color:var(--green);
+.org-rainbow-delimiters-depth-2, .org-nix-builtin, .org-variable-name,
+.org-function-name, .org-diff-changed {
+    color:var(--b);
 }
 
-.org-nix-builtin, .org-variable-name, .org-function-name {
-    color:var(--blue);
+.org-rainbow-delimiters-depth-3, .HOLD, .WAITING {
+    color:var(--v);
 }
 
-.org-type, .org-constant {
-    color:var(--yellow);
+.org-rainbow-delimiters-depth-4, .org-diff-hunk-header, .org-sh-quoted-exec,
+.CANCELED {
+    color:var(--m);
 }
-
-.org-css-selector {
-    color:var(--cyan);
+.org-rainbow-delimiters-depth-5, .org-diff-removed, .TODO {
+    color:var(--r);
+}
+.org-rainbow-delimiters-depth-6  {
+    color:var(--o);
+}
+.org-rainbow-delimiters-depth-7, .org-type, .org-constant, .org-diff-header,
+.IN_PROGRESS {
+    color:var(--y);
+}
+.org-rainbow-delimiters-depth-8, .org-sh-heredoc, .org-diff-added, .org-string,
+.org-doc, .org-keyword, .DONE {
+    color:var(--g);
 }
 
 .org-diff-none, .org-preprocessor, .org-comment-delimiter, .org-comment,
@@ -692,20 +479,6 @@ blockquote:after, .main blockquote:after {
     color:var(--fg2);
 }
 
-.org-highlight-number-number     {color:var(--rfg);}
-
-.org-rainbow-delimiters-depth-1  {color:var(--cyan);}
-.org-rainbow-delimiters-depth-2  {color:var(--blue);}
-.org-rainbow-delimiters-depth-3  {color:var(--violet);}
-.org-rainbow-delimiters-depth-4  {color:var(--magenta);}
-.org-rainbow-delimiters-depth-5  {color:var(--red);}
-.org-rainbow-delimiters-depth-6  {color:var(--orange);}
-.org-rainbow-delimiters-depth-7  {color:var(--yellow);}
-.org-rainbow-delimiters-depth-8  {color:var(--green);}
-.org-rainbow-delimiters-depth-9  {color:var(--cyan);}
-
-.org-sh-quoted-exec              {color:var(--magenta);}
-.org-diff-changed                {color:var(--blue);}
-.org-diff-header                 {color:var(--yellow);}
-.org-diff-hunk-header            {color:var(--magenta);}
-.org-diff-removed                {color:var(--red);}
+.org-highlight-number-number {
+    color:var(--rfg);
+}

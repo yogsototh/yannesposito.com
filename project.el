@@ -197,7 +197,7 @@
                            "<label for=\"l\">light</label>"
                            " / "
                            "<label for=\"d\">dark</label>"
-                           " --- "
+                           " - "
                            ,(format "<a href=\"%s\">mk</a>" mk-path)
                            ,(format "<a href=\"%s\">min</a>" min-path)
                            ,(format "<a href=\"%s\">sci</a>" sci-path)
