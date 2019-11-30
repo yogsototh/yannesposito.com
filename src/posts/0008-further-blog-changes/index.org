@@ -1,0 +1,39 @@
+#+TITLE: Further Blog Engine change
+#+AUTHOR: Yann Esposito
+#+EMAIL: yann@esposito.host
+#+DATE: [2019-11-30 Sat]
+#+KEYWORDS: blog
+#+DESCRIPTION: Recent changes on my blog system
+#+OPTIONS: auto-id:t toc:nil
+
+When I started this new blog, I wanted to find something minimal to be able
+to minimize my natural tendency to hack my blogging system.
+
+So regarding my blog, I put a lot more time working on the system than
+writting things.
+Still I enjoyed some choices.
+
+1. I changed how I reduce the size of the images.
+2. I do not merge all CSS styles in the same CSS file, I splitted 4
+   different CSS each supporting light/dark theme.
+   This way the size of each page is reduced.
+3. I added an HTML minimize step. I could optimize this a lot I think.
+4. I added a script that show the size of each webpage (HTML + CSS +
+   Images). There is an example in all the footers of the pages of my website.
+
+So to compress the images I use:
+
+#+begin_src bash
+~/.nix-profile/bin/convert src.jpg -resize 400x400\> -colorspace Gray -ordered-dither o8x8,8 dst.jpg
+#+end_src
+
+I have 4 themes, this is a lot too much, but, I don't know I guess I felt
+inspired.
+I'm particularly proud of the matrix theme (sci dark, try it by selecting
+sci and then choose dark theme). It takes care of making the images green.
+
+One of the theme is a minimal one, it is used to minimize the size of the
+CSS, while I'm writting those lines, the css size is 728 bytes.
+
+I'll certainly be able to optimize a lot more the size of my HTML files too.
+But I haven't invested much time in it yet.
