@@ -23,6 +23,8 @@ for fic in $filelist; do
         continue
     fi
     print -n -- "$fic "
-    cp $fic $tmp; minify --mime text/html $tmp > $fic
+    cp $fic $tmp
+    perl -pi -e 's#<div id="outline-container-[^>]*>#<div>#g;s# id="org[a-f0-9]{7}"##g' $tmp
+    minify --mime text/html $tmp > $fic
     print "[OK]"
 done

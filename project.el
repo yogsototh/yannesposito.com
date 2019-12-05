@@ -24,10 +24,9 @@
 
 (defvar org-blog-head
   (concat
-   "<link rel=\"stylesheet\" type=\"text/css\" href=\"" css-path "\"/>"
-   "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
-   "<link rel=\"alternative\" type=\"application/rss+xml\" title=\"" rss-title "\" href=\"/rss.xml\" />"
-   "<link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/favicon.ico\">"))
+   "<link rel=\"stylesheet\" href=\"" css-path "\"/>"
+   "<link rel=\"alternate\" type=\"application/rss+xml\" href=\"/rss.xml\" />"
+   "<link rel=\"icon\" href=\"/favicon.ico\">"))
 
 (defun menu (lst)
   "Blog menu"
@@ -101,7 +100,7 @@
      (format "<div class=\"date\">Created: %s (%s)</div>" date (y-date date)))
    (when-let ((keywords (plist-get info :keywords)))
      (format "<div class=\"keywords\">Keywords: <code>%s</code></div>" keywords))
-   "<div class=\"rss\"><a href=\"/rss.xml\">RSS</a>: <a href=\"https://validator.w3.org/feed/check.cgi?url=https%3A%2F%2Fher.esy.fun%2Frss.xml\">Valid RSS</a></div>"
+   "<div class=\"rss\"><a rel=\"alternate\" type=\"application/rss+xml\" href=\"/rss.xml\">RSS</a>: <a href=\"https://validator.w3.org/feed/check.cgi?url=https%3A%2F%2Fher.esy.fun%2Frss.xml\">Valid RSS</a></div>"
    (format "<div class=\"date\">Generated: %s</div>"
            (format-time-string "%Y-%m-%d %H:%M:%S"))
    "<div class=\"web-file-size\">Size: XXK (HTML: XXK, CSS: XXK, IMG: XXK)</div>"
