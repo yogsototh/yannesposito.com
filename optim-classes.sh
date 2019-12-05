@@ -1,14 +1,10 @@
 #!/bin/zsh
 
-classes=( $(cat _site/**/*.html | perl -p -e 's/class="?([a-zA-Z0-9-_]*)/\nCLASS: $1\n/g'|grep CLASS|sort -u|cut -d\   -f 2,2) )
+classes=( $( {cat _site/**/*.html | perl -p -e 's/class="?([a-zA-Z0-9_-]*)/\nCLASS: $1\n/g'; cat _site/**/*.css | perl -p -e 's/\.([a-zA-Z-_][a-zA-Z0-9-_]*)/\nCLASS: $1\n/g'}|grep CLASS|sort -u|cut -d\   -f 2,2|awk 'length($1)>2 {print length($1),$1}'|sort -n|cut -d\  -f 2,2) )
 
 chr() {
     [ "$1" -lt 26 ] || return 1
     printf "\\$(printf '%03o' $(( 97 + $1 )))"
-}
-
-ord() {
-    LC_CTYPE=C printf '%d' "'$1"
 }
 
 shortName() {
@@ -23,26 +19,21 @@ i=0;
 typeset -A assoc
 for c in $classes; do
     sn=$(shortName $i)
-    print "$c $sn"
+    print "$c -> $sn"
     assoc[$c]=$sn
     ((i++))
 done
 
-hmltreplace=''
-cssreplace=''
-for long in $classes; do
-    htmlreplace="${htmlreplace}s/\(class=\"\?\)${long}/\$\{1\}${assoc[${long}]}/g;"
-    cssreplace="${cssreplace}s/\(\\.\)${long}/\$\{1\}${assoc[${long}]}/g;"
-done
-
-print -- $htmlreplace
-print -- $cssreplace
 
 for fic in _site/**/*.html; do
     print -- $fic
-    perl -pi -e $htmlreplace $fic;
+    for long in $classes; do
+        perl -pi  -e 's#class=("?)'${long}'#class=$1'${assoc[$long]}'#g' $fic
+    done
 done
 for fic in _site/**/*.css; do
     echo $fic
-    perl -pi -e $cssreplace $fic;
+    for long in $classes; do
+        perl -pi  -e 's#\.'"${long}"'#.'"${assoc[$long]}"'#g' $fic
+    done
 done

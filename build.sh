@@ -13,3 +13,5 @@ echo "Update file size"
 echo "Building RSS"
 ./mkrss.sh
 echo "RSS Built"
+echo "Optim Classes accross CSS/HTML"
+./optim-classes.sh
