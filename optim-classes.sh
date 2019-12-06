@@ -1,6 +1,23 @@
 #!/bin/zsh
 
-classes=( $( {cat _site/**/*.html(N) | perl -p -e 's/class="?([a-zA-Z0-9_-]*)/\nCLASS: $1\n/g'; cat _site/**/*.css(N) | perl -p -e 's/\.([a-zA-Z-_][a-zA-Z0-9-_]*)/\nCLASS: $1\n/g'}|grep CLASS|sort -u|cut -d\   -f 2,2|awk 'length($1)>2 {print length($1),$1}'|sort -n|cut -d\  -f 2,2) )
+webdir="_site"
+
+retrieve_classes_in_html () {
+    cat $webdir/**/*.html(N) | \
+        perl -pe 's/class="?([a-zA-Z0-9_-]*)/\nCLASS: $1\n/g'
+}
+
+retrieve_classes_in_css () {
+    cat $webdir/**/*.css(N) | \
+        perl -pe 's/\.([a-zA-Z-_][a-zA-Z0-9-_]*)/\nCLASS: $1\n/g'
+}
+
+classes=( $( {retrieve_classes_in_html; retrieve_classes_in_css}| \
+                 egrep "^CLASS: [^ ]*$" |\
+                 sort -u | \
+                 awk 'length($2)>2 && $2 != "web-file-size" {print length($2),$2}'|\
+                 sort -rn | \
+                 awk '{print $2}') )
 
 chr() {
     [ "$1" -lt 26 ] || return 1
@@ -24,16 +41,19 @@ for c in $classes; do
     ((i++))
 done
 
-
-for fic in _site/**/*.{html,xml}(N); do
-    print -- $fic
-    for long in $classes; do
-        perl -pi  -e 's#class=("?)'${long}'#class=$1'${assoc[$long]}'#g' $fic
-    done
+htmlreplacer=''
+cssreplacer=''
+for long in $classes; do
+    htmlreplacer=$htmlreplacer's#class=("?)'${long}'#class=$1'${assoc[$long]}'#g;'
+    cssreplacer=$cssreplacer's#\.'${long}'#.'${assoc[$long]}'#g;'
 done
-for fic in _site/**/*.css(N); do
+
+
+for fic in $webdir/**/*.{html,xml}(N); do
+    print -- $fic
+    perl -pi -e $htmlreplacer $fic
+done
+for fic in $webdir/**/*.css(N); do
     echo $fic
-    for long in $classes; do
-        perl -pi  -e 's#\.'"${long}"'#.'"${assoc[$long]}"'#g' $fic
-    done
+    perl -pi  -e $cssreplacer $fic
 done
