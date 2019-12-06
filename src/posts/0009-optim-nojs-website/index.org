@@ -22,14 +22,49 @@ is always the risk the JS code generate class names to manipulate the DOM.
 So here is a small script I wanted to write from a long time that do the following:
 
 1. retrieve all class names in the HTML and in the CSS
-2. create an associative from those long names to shorter names
+2. create a map from those long names to shorter names
 3. replace the class names in the HTML and CSS files.
 
-Here is my quick and dirty script doing that:
+So if you have multiple HTML files with:
+
+#+begin_src html
+<div class="long-org-class-generated-by-org-mode">...</div>
+#+end_src
+
+and CSS files with:
+
+#+begin_src css
+pre .long-org-class-generated-by-org-mode { ... }
+#+end_src
+
+Those will be replaced by something like:
+
+#+begin_src html
+<div class="av">...</div>
+#+end_src
+
+and CSS files with:
+
+#+begin_src css
+pre .av { ... }
+#+end_src
+
+And thus removing many superfluous bytes.
+
+In my personal website, I run this script avec minifying my HTML and CSS
+with classical tools.
+And I still get up to 32% smaller HTML and 22% smaller CSS.
+
+Many 25% smaller HTML if there are a lot of code, because org-mode use very
+long class names when generating the code.
+
+Not bad for a very basic solution.
+
+If you want to try it; here is the quick and dirty script I use:
 
 #+name: optim-classes.sh
 #+begin_src bash
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 webdir="_site"
 
@@ -67,7 +102,7 @@ i=0;
 typeset -A assoc
 for c in $classes; do
     sn=$(shortName $i)
-    print "$c -> $sn"
+    print -- "$c -> $sn"
     assoc[$c]=$sn
     ((i++))
 done
@@ -79,14 +114,23 @@ for long in $classes; do
     cssreplacer=$cssreplacer's#\.'${long}'#.'${assoc[$long]}'#g;'
 done
 
+sizeof() {
+    stat --format="%s" "$*"
+}
 
 for fic in $webdir/**/*.{html,xml}(N); do
-    print -- $fic
+    before=$(sizeof $fic)
+    print -n -- "$fic ($before"
     perl -pi -e $htmlreplacer $fic
+    after=$(sizeof $fic)
+    print -- " => $after [$(( ((before - after) * 100) / before  ))])"
 done
 for fic in $webdir/**/*.css(N); do
-    echo $fic
+    before=$(sizeof $fic)
+    print -n -- "$fic ($before"
     perl -pi  -e $cssreplacer $fic
+    after=$(sizeof $fic)
+    print -- " => $after [$(( ((before - after) * 100) / before  ))])"
 done
 #+end_src
 

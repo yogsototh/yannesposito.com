@@ -36,7 +36,7 @@ i=0;
 typeset -A assoc
 for c in $classes; do
     sn=$(shortName $i)
-    print "$c -> $sn"
+    print -- "$c -> $sn"
     assoc[$c]=$sn
     ((i++))
 done
@@ -48,12 +48,21 @@ for long in $classes; do
     cssreplacer=$cssreplacer's#\.'${long}'#.'${assoc[$long]}'#g;'
 done
 
+sizeof() {
+    stat --format="%s" "$*"
+}
 
 for fic in $webdir/**/*.{html,xml}(N); do
-    print -- $fic
+    before=$(sizeof $fic)
+    print -n -- "$fic ($before"
     perl -pi -e $htmlreplacer $fic
+    after=$(sizeof $fic)
+    print -- " => $after [$(( ((before - after) * 100) / before  ))])"
 done
 for fic in $webdir/**/*.css(N); do
-    echo $fic
+    before=$(sizeof $fic)
+    print -n -- "$fic ($before"
     perl -pi  -e $cssreplacer $fic
+    after=$(sizeof $fic)
+    print -- " => $after [$(( ((before - after) * 100) / before  ))])"
 done
