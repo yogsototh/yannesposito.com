@@ -1,10 +1,10 @@
-#+title: Learn Haskell Fast and Hard
-#+subtitle: Blow your mind with Haskell
+#+title: Learn Haskell Now!
+#+subtitle: A dense Haskell learning material for the brave
 #+date: [2019-12-15 Sun]
 #+author: Yann Esposito
 #+EMAIL: yann@esposito.host
 #+keywords: Haskell, programming, functional, tutorial                                |
-#+DESCRIPTION: Haskell programming tutorial update
+#+DESCRIPTION: A very dense introduction and Haskell tutorial. Brace yourself.
 #+OPTIONS: auto-id:t toc:t
 
 #+begin_notes
@@ -19,11 +19,80 @@ And I took the time to read it again.
 *Prelude*
 
 In 2012, I really believed that every developer should learn Haskell.
-It is the end of 2019 and I still believe it.
-I don't think everyone needs to be a super Haskell ninja, but they should
+This is why I wrote my old article.
+This is the end of 2019 and I still strongly believe that, yes, you must at
+least be able to understand enough Haskell to write a simple tool.
+
+But a few things have changed in the Haskell world.
+
+1. Project building has a few working solution. When I wrote this article I
+   had a few web application that I can no longer build today.
+   I mean, if I really want to invest some time, I'm sure I could make
+   those project build again. But this is not worth the hassle.
+   Now we have =stack=, =nix=, =cabal new-build= and I'm sure some other
+   solutions.
+2. GHC is able to do a lot more magic than then.
+   This is beyond the scope of an introductory material in my opinion.
+   But, while the learning curve is as steep as before the highest point of
+   learning just jumped higher than before with each new GHC release.
+3. Still no real consencus about how to work, learn, and use Haskell.
+   In my opinion there are three different perspective on Haskell that
+   could definitively change how you make decisions about different aspect
+   of Haskell programming. I belive the main groups of ideolgies are
+   application developers, library developers and even language (mostly
+   GHC) developers.
+   I kind of find those tensions a proof of an healthy environment.
+   There are different solutions to the same problems and that is perfectly
+   fine.
+   This is quite different when you compare to other language ecosystems
+   where decisions are more controlled or enforced.
+   I feel fine with both approaches.
+   But you must understand that there is not really any central mindset
+   within Haskeller unlike I can find in some other programming language
+   communities.
+4. Haskell has become a lot more serious programming language now.
+   There are a lot more big projects written in Haskell not just toy projects.
+
+Also I myself have certainly matured on my take on Haskell.
+I am paid to work in Clojure since 2013 now, and most of my personal side
+project are written either in Haskell or in Purescript (an Haskell inspired
+language mostly focused on frontend development).
+
+As such I can follow two functional programming communities growth and
+evolution.
+I am kind of confident that my Haskell understanding is a lot better than
+before.
+But I still think, the ability to learn new Haskell subject is infinite.
+
+I want someday to write an article about my team philosophy about how we
+program.
+Mostly, our rule is to use as few features of a programming language as
+possible to achieve your goal.
+This is a kind of merge between minimalism and pragmatism that in the end
+provide a tremendous amount of benefits.
+This is why, even if I like to try the latest trend/hype in Haskell.
+I generally program without those latest nice features because, with just a
+very few amount of Haskell features you will already be in enviromnent with
+a *lot* of benefits as compared to other programming languages ecosystem.
+
+So enough talk, here is my old article new again, with just a few changes
+and cleanup.
+Also, I will try to go a bit further than before.
+By the end of this article you should be autonomous if you want to create a
+new product in Haskell.
+Be it a simple command line tool or a web application.
+If you are going toward GUI programming, this is a whole subject on its own
+and I do not really mention it.
+
+My .02 for "Single Page Application" is to use Purescript with the halogen
+framework.
+Purescript is really awesome as well as halogen.
+#+end_quote
+
+I really believe that every developer should learn Haskell.
+I don't think every dev needs to be a super Haskell ninja, but they should
 at least discover what Haskell has to offer.
 Learning Haskell opens your mind.
-#+end_quote
 
 Mainstream languages share the same foundations:
 
@@ -36,7 +105,7 @@ Haskell is very different.
 The language uses a lot of concepts I had never heard about before.
 Many of those concepts will help you become a better programmer.
 
-But learning Haskell can be hard.
+But learning Haskell can be (and will certainly be) hard.
 It was for me.
 In this article I try to provide as much help as possible to accelerate
 your learning.
@@ -63,18 +132,23 @@ The article contains five parts:
 
 - Introduction: a short example to show Haskell can be friendly.
 - Basic Haskell: Haskell syntax, and some essential notions.
-- Hard Difficulty Part:
+- Normal Difficulty Part:
 
   - Functional style; a progressive example, from imperative to
     functional style
   - Types; types and a standard binary tree example
   - Infinite Structure; manipulate an infinite binary tree!
 
-- Hell Difficulty Part:
+- Nightmare Difficulty Part:
 
   - Deal with IO; A very minimal example
   - IO trick explained; the hidden detail I lacked to understand IO
   - Monads; incredible how we can generalize
+
+- Hell Difficulty Part:
+
+  - Write a real world command line application
+  - Write a real world full featured REST API
 
 - Appendix:
 
@@ -94,18 +168,22 @@ The article contains five parts:
 #+CAPTION: Haskell logo
 [[./Haskell-logo.png]]
 
-There are different way to install Haskell, I would recommend to use
-[[https://haskellstack.org][=stack=]].
+There are multiple way to install Haskell and I don't think there is a full
+consensus between developer about what is the best method.
+
+For this tutorial, I expect you to have either installed the [[https://nixos.org/nix][nix]] package manager.
+Or to have installed [[https://haskellstack.org][=stack=]].
+
+With those two method I can provide you a bang patter prefix to create self
+executable script that will use the Haskell compiler I expect and hopefully
+all the code example should still work for a _very_ long time.
 
 There are other way to install Haskell on your system you could visit,
-you can learn more about it by visiting [[https://haskell.org][haskell.org]] or [[https://haskell-lang.org][haskell-lang.org]]
+you can learn more about it by visiting [[https://haskell.org][haskell.org]].
 
-Tools:
-
-- =ghc=: Compiler similar to gcc for =C=.
-- =ghci=: Interactive Haskell (REPL)
-- =runhaskell=: Execute a program without compiling it. Convenient but
-  very slow compared to compiled programs.
+The environment in which you will learn Haskell will be quite different
+from an environment to use Haskell seriously for a new project.
+This is because, there are too much choices for that.
 
 ** Don't be afraid
 :PROPERTIES:
@@ -748,7 +826,7 @@ Python, bad indentation can break your code!
         print $ absolute' (-10)
 #+END_SRC
 
-* Hard Part
+* Difficulty: Normal
 :PROPERTIES:
 :CUSTOM_ID: hard-part
 :END:
@@ -2040,7 +2118,7 @@ Look at the result for
     print $ treeTakeDepth 4 infTreeTwo
 #+END_SRC
 
-* Hell Difficulty Part
+* Difficulty: Nightmare
 :PROPERTIES:
 :CUSTOM_ID: hell-difficulty-part
 :END:
@@ -3057,6 +3135,36 @@ particular, monads are very useful for:
 
 If you have followed me until here, then you've done it! You know
 monads[fn:7]!
+
+* Difficulty: Hell
+:PROPERTIES:
+:CUSTOM_ID: difficulty--hell
+:END:
+
+So when I said that the learning curve is steep.
+If you come this far, you can really congratulate yourself.
+This is already what I would personnaly call a tremendous achievement.
+But now, be prepared, it will be a *lot* harder.
+So brace yourself, be ready for the big jump.
+I am pretty sure this part is so hard, that you will have a hard time
+understanding it without looking at other resources.
+This is intended.
+Do not hesitate to read previous sections again, to read external
+resources, ask questions in all Haskell communities platforms.
+Sorry to make it as is, but, really I don't think I can make a dense
+Haskell introduction and not make it ultra hard.
+Do not feel discouraged though, most Haskeller I know had to dig into
+Haskell at least two or three times before it really clicked for them.
+
+** Command line application
+:PROPERTIES:
+:CUSTOM_ID: command-line-application
+:END:
+
+** Web Application
+:PROPERTIES:
+:CUSTOM_ID: web-application
+:END:
 
 * Appendix
 :PROPERTIES:
