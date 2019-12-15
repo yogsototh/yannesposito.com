@@ -15,7 +15,7 @@ retrieve_classes_in_css () {
 classes=( $( {retrieve_classes_in_html; retrieve_classes_in_css}| \
                  egrep "^CLASS: [^ ]*$" |\
                  sort -u | \
-                 awk 'length($2)>2 && $2 != "web-file-size" {print length($2),$2}'|\
+                 awk 'length($2)>2 && $2 !~ /(web-file-size|example|src)/ {print length($2),$2}'|\
                  sort -rn | \
                  awk '{print $2}') )
 
