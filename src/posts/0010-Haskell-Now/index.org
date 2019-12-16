@@ -185,6 +185,46 @@ The environment in which you will learn Haskell will be quite different
 from an environment to use Haskell seriously for a new project.
 This is because, there are too much choices for that.
 
+
+Mainly, you can start by writing your code in a file and executing it by
+putting one of the following at the top of your file:
+
+If you chose Nix: https://nixos.org/nix/
+
+#+BEGIN_EXAMPLE
+#! /usr/bin/env nix-shell
+#! nix-shell -i runghc
+#! nix-shell -p "ghc.withPackages (ps: [ ps.protolude ])"
+#! nix-shell -I nixpkgs="https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz"
+#+END_EXAMPLE
+
+
+If you chose Stack: https://haskellstack.org
+
+#+BEGIN_EXAMPLE haskell
+#!/usr/bin/env stack
+{- stack script
+   --resolver lts-14.16
+   --install-ghc
+   --package protolude
+-}
+#+END_EXAMPLE
+
+*** code                                                                                 :noexport:
+:PROPERTIES:
+:CUSTOM_ID: code
+:END:
+
+
+#+name nixb
+#+begin_src elisp :export none
+(defun nixb ()
+   "#! /usr/bin/env nix-shell\n#! nix-shell -i runghc\n#! nix-shell -p \"ghc.withPackages (ps: [ ps.protolude ])\"\n#! nix-shell -I nixpkgs=\"https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz\"")
+#+end_src
+
+#+RESULTS:
+: nixb
+
 ** Don't be afraid
 :PROPERTIES:
 :CUSTOM_ID: don't-be-afraid
@@ -199,39 +239,29 @@ At first I won't show you any Haskell super power. I will start with
 similarities between Haskell and other programming languages. Let's jump
 to the mandatory "Hello World".
 
-#+BEGIN_SRC haskell
-    main = putStrLn "Hello World!"
+[[./hello.hs]]
+#+NAME: hello.hs
+#+BEGIN_SRC haskell :tangle hello.hs :shebang (nixb)
+main = putStrLn "Hello World!"
 #+END_SRC
 
-To run it, you can save this code in a =hello.hs= and:
-
 #+BEGIN_EXAMPLE
-    ~ runhaskell ./hello.hs
-    Hello World!
+> chmod +x hello.hs
+> ./hello.hs
+Hello World!
 #+END_EXAMPLE
 
-or if you use =stack= first run =stack setup= and then:
-
 #+BEGIN_EXAMPLE
-    ~ stack runhaskell ./hello.hs
-    Hello World!
+> stack ghc -- hello.hs
+> ./hello
+Hello World!
 #+END_EXAMPLE
-
-You could also download the literate Haskell source. You should see a
-link just above the introduction title. Download this file as
-=00_hello_world.lhs= and:
-
-#+BEGIN_EXAMPLE
-    ~ runhaskell 00_hello_world.lhs
-    Hello World!
-#+END_EXAMPLE
-
------
 
 Now, a program asking your name and replying "Hello" using the name you
 entered:
 
-#+BEGIN_SRC haskell
+#+NAME: name.hs
+#+BEGIN_SRC haskell :tangle name.hs :shebang (nixb)
 main = do
     print "What is your name?"
     name <- getLine
