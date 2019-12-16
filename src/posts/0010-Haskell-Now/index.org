@@ -215,15 +215,15 @@ If you chose Stack: https://haskellstack.org
 :CUSTOM_ID: code
 :END:
 
-
-#+name nixb
-#+begin_src elisp :export none
+#+begin_src elisp :eval yes
 (defun nixb ()
    "#! /usr/bin/env nix-shell\n#! nix-shell -i runghc\n#! nix-shell -p \"ghc.withPackages (ps: [ ps.protolude ])\"\n#! nix-shell -I nixpkgs=\"https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz\"")
 #+end_src
 
 #+RESULTS:
 : nixb
+
+#+MACRO: lnk @@html:<a href="$1" target="_blank">$1 ⤓</a>@@
 
 ** Don't be afraid
 :PROPERTIES:
@@ -239,9 +239,8 @@ At first I won't show you any Haskell super power. I will start with
 similarities between Haskell and other programming languages. Let's jump
 to the mandatory "Hello World".
 
-[[./hello.hs]]
-#+NAME: hello.hs
-#+BEGIN_SRC haskell :tangle hello.hs :shebang (nixb)
+{{{lnk(hello.hs)}}}
+#+BEGIN_SRC haskell :tangle hello.hs :shebang '(nixb)
 main = putStrLn "Hello World!"
 #+END_SRC
 
@@ -261,7 +260,7 @@ Now, a program asking your name and replying "Hello" using the name you
 entered:
 
 #+NAME: name.hs
-#+BEGIN_SRC haskell :tangle name.hs :shebang (nixb)
+#+BEGIN_SRC haskell :tangle name.hs :shebang '(nixb)
 main = do
     print "What is your name?"
     name <- getLine
