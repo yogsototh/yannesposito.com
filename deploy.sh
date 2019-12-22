@@ -3,8 +3,7 @@
 rootdir=${0:h}
 echo $rootdir
 
-echo "Full Build"
-./fullbuild.sh
-echo -n "Publishing"
+./clean.sh
+./build.sh
+./pre-deploy.sh
 ./sync.sh
-echo " [done]"

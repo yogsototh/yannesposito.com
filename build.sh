@@ -1,16 +1,8 @@
 #!/usr/bin/env bash
 
+echo "* org-publish"
 emacs \
   --load project.el \
-  --eval "(progn (org-publish \"blog\" t) (evil-quit))"
+  --eval "(progn (org-publish \"blog\") (evil-quit))"
 
-echo "Optim HTML size"
-./optim-html.sh
-echo "Gen themes clones"
-./dup-for-themes.sh
-echo "Building RSS"
-./mkrss.sh
-echo "Optim Classes accross CSS/HTML"
-./optim-classes.sh
-echo "Update file size"
-./update-file-size.sh
+echo "* org-publish [done]"

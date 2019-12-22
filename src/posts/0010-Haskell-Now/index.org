@@ -50,13 +50,17 @@ But a few things have changed in the Haskell world.
    But you must understand that there is not really any central mindset
    within Haskeller unlike I can find in some other programming language
    communities.
-4. Haskell has become a lot more serious programming language now.
-   There are a lot more big projects written in Haskell not just toy projects.
+4. I think that Haskell is now perceived as a lot more serious programming
+   language now.
+   There are a lot more big projects written in Haskell not just toy
+   projects.
+   Thus Haskell as proved that it can be considered to write succesful
+   complex entreprise projects.
 
-Also I myself have certainly matured on my take on Haskell.
-I am paid to work in Clojure since 2013 now, and most of my personal side
-project are written either in Haskell or in Purescript (an Haskell inspired
-language mostly focused on frontend development).
+While the ecosystem evolved I believe that I myself have certainly matured.
+Since 2013 I am paid to develop in Clojure.
+Most of my personal side project are written in Haskell or in an
+Haskell-inspired language.
 
 As such I can follow two functional programming communities growth and
 evolution.
@@ -64,16 +68,17 @@ I am kind of confident that my Haskell understanding is a lot better than
 before.
 But I still think, the ability to learn new Haskell subject is infinite.
 
-I want someday to write an article about my team philosophy about how we
-program.
-Mostly, our rule is to use as few features of a programming language as
+One article I would like to write someday is about my current team
+philosophy about programming.
+Our main rule is to use as few features of a programming language as
 possible to achieve your goal.
 This is a kind of merge between minimalism and pragmatism that in the end
 provide a tremendous amount of benefits.
-This is why, even if I like to try the latest trend/hype in Haskell.
-I generally program without those latest nice features because, with just a
-very few amount of Haskell features you will already be in enviromnent with
-a *lot* of benefits as compared to other programming languages ecosystem.
+This is why, even if I like to play with the latest Haskell trendy feature,
+I generally program without those.
+With just a very few amount of Haskell features you will already be in
+enviromnent with a *lot* of benefits as compared to many programming
+languages.
 
 So enough talk, here is my old article new again, with just a few changes
 and cleanup.
@@ -84,10 +89,15 @@ Be it a simple command line tool or a web application.
 If you are going toward GUI programming, this is a whole subject on its own
 and I do not really mention it.
 
-My .02 for "Single Page Application" is to use Purescript with the halogen
-framework.
+My .02 for "Single Page Application" choice is to use Purescript with the
+halogen framework.
 Purescript is really awesome as well as halogen.
 #+end_quote
+
+* Introduction
+:PROPERTIES:
+:CUSTOM_ID: introduction
+:END:
 
 I really believe that every developer should learn Haskell.
 I don't think every dev needs to be a super Haskell ninja, but they should
@@ -155,10 +165,6 @@ The article contains five parts:
   - More on infinite tree; a more math oriented discussion about
     infinite trees
 
-* Introduction
-:PROPERTIES:
-:CUSTOM_ID: introduction
-:END:
 
 ** Install
 :PROPERTIES:
@@ -185,7 +191,6 @@ The environment in which you will learn Haskell will be quite different
 from an environment to use Haskell seriously for a new project.
 This is because, there are too much choices for that.
 
-
 Mainly, you can start by writing your code in a file and executing it by
 putting one of the following at the top of your file:
 
@@ -210,20 +215,33 @@ If you chose Stack: https://haskellstack.org
 -}
 #+END_EXAMPLE
 
-*** code                                                                                 :noexport:
+In this article most code block can be downloaded, it will have the =nix=
+shebang.
+
+So the first time you'll launch this script it will download all
+dependencies for you and will start its execution.
+
+The next time it should start a lot faster.
+
+*** code                                                                                                 :noexport:
 :PROPERTIES:
 :CUSTOM_ID: code
 :END:
 
 #+begin_src elisp :eval yes
-(defun nixb ()
-   "#! /usr/bin/env nix-shell\n#! nix-shell -i runghc\n#! nix-shell -p \"ghc.withPackages (ps: [ ps.protolude ])\"\n#! nix-shell -I nixpkgs=\"https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz\"")
+  (defun nixb ()
+    (mapconcat 'identity
+               '("#! /usr/bin/env nix-shell"
+                 "#! nix-shell -i runghc"
+                 "#! nix-shell -p \"ghc.withPackages (ps: [ ps.protolude ])\""
+                 "#! nix-shell -I nixpkgs=\"https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz\"")
+               "\n"))
 #+end_src
 
 #+RESULTS:
 : nixb
 
-#+MACRO: lnk @@html:<a href="$1" target="_blank">$1 ⤓</a>@@
+#+MACRO: lnk @@html:<a href="$1" style="float:right" target="_blank">$1 ⤓</a>@@
 
 ** Don't be afraid
 :PROPERTIES:
@@ -241,7 +259,7 @@ to the mandatory "Hello World".
 
 {{{lnk(hello.hs)}}}
 #+BEGIN_SRC haskell :tangle hello.hs :shebang '(nixb)
-main = putStrLn "Hello World!"
+  main = putStrLn "Hello World!"
 #+END_SRC
 
 #+BEGIN_EXAMPLE
@@ -259,7 +277,7 @@ Hello World!
 Now, a program asking your name and replying "Hello" using the name you
 entered:
 
-#+NAME: name.hs
+{{{lnk(name.hs)}}}
 #+BEGIN_SRC haskell :tangle name.hs :shebang '(nixb)
 main = do
     print "What is your name?"

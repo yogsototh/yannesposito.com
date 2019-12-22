@@ -122,4 +122,4 @@ END
 } > "$rssfile"
 
 rm -rf $tmpdir
-echo "RSS Generated"
+echo "* RSS [done]"

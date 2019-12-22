@@ -20,6 +20,7 @@ trans(){
    cat $fic | perl -p -e 's#href="?/css/mk.css"?#href=/css/'$suff'.css#;s#(/?(index|archive|slides|about-me)).html#$1-'$suff'.html#g;s#(posts/[a-zA-Z0-9_-]*).html#$1-'$suff'.html#g;s#-'$suff'.html>mk#.html>mk#g' > ${fic:r}-${suff}.html
 }
 
+print -- "Duplicate HTML by themes"
 for fic in $filelist; do
     if echo $fic|egrep -- '-(mk|min|sci|modern).html$'>/dev/null; then
         continue
@@ -30,3 +31,4 @@ for fic in $filelist; do
     done
     print "[OK]"
 done
+print "Duplicate HTML by theme [done]"
