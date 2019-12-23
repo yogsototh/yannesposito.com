@@ -164,6 +164,12 @@ The article contains five parts:
 
   - More on infinite tree; a more math oriented discussion about
     infinite trees
+** Helpers                                                                                                :noexport:
+:PROPERTIES:
+:CUSTOM_ID: helpers
+:END:
+
+#+MACRO: lnk @@html:<a href="$1" style="float:right" target="_blank">$1 ⤓</a>@@
 
 
 ** Install
@@ -174,121 +180,71 @@ The article contains five parts:
 #+CAPTION: Haskell logo
 [[./Haskell-logo.png]]
 
-There are multiple way to install Haskell and I don't think there is a full
-consensus between developer about what is the best method.
-
-For this tutorial, I expect you to have either installed the [[https://nixos.org/nix][nix]] package
-manager or to have installed [[https://haskellstack.org][=stack=]].
-
-The easiest method would certainly to use [[https://nixos.org/nix][nix]].
-
-*** Nix
-:PROPERTIES:
-:CUSTOM_ID: nix
-:END:
-
 1. Install [[https://nixos.org/nix][nix]]
-2. Write the following =shell.nix= file:
+2. create a new empty directory =hsenv= somewhere
+3. Put the following =shell.nix= file inside it
 
    {{{lnk(shell.nix)}}}
    #+begin_src nix :tangle shell.nix
-   { pkgs ? import (fetchTarball
-        https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {} }:
-   pkgs.mkShell {
-     buildInputs =
-       with pkgs;
-       with pkgs.haskellPackages; [
-       ghc
-       cabal-install
-       zsh
-       protolude
-     ];
-   }
+     { nixpkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {} }:
+     let
+       inherit (nixpkgs) pkgs;
+       inherit (pkgs) haskellPackages;
+
+       haskellDeps = ps: with ps; [
+         base
+         protolude
+       ];
+
+       ghc = haskellPackages.ghcWithPackages haskellDeps;
+
+       nixPackages = [
+         ghc
+         pkgs.gdb
+         haskellPackages.cabal-install
+       ];
+     in
+     pkgs.stdenv.mkDerivation {
+       name = "env";
+       buildInputs = nixPackages;
+     }
    #+end_src
 
-3. In the same directory as the file in a terminal run =nix-shell=.
+4. In the =hsenv= directory, in a terminal, run =nix-shell=.
    You should wait a lot of time for everything to download.
    And you should be ready.
    You will have in your PATH:
    - =ghc=, the Haskell compiler
    - =ghci= that we can described as a Haskell REPL
    - =runghc= that will be able to interpret a Haskell file
+   And you all those tools will be able to use the Haskell library
+   /protolude/.
+5. To test your env, rung =ghci= and type =import Protolude= you should see
+   something like this:
+
+   #+begin_src
+   ~/hsenv> nix-shell
+   [nix-shell:~/hsenv]$ ghci
+   GHCi, version 8.6.5: http://www.haskell.org/ghc/  :? for help
+   Prelude> import Protolude
+   Prelude Protolude>
+   #+end_src
+
+Congratulations you should be ready to start now.
 
 #+begin_notes
-The only really important parts for you will be the two lists, one for
-system dependencies and one for Haskell packages.
-
-=nix= is a generic package manager and goes beyond Haskell.
-Has such you can add zsh in your dependency for example.
+- There are multiple ways to install Haskell and I don't think there is a
+  full consensus between developer about what is the best method. If you
+  whish to use another method take a look at [[http://haskell.org][haskell.org]].
+- This install method is only suitable for using as a playground and
+  perfect for this tutorial. I don't think it is suitable for serious
+  development.
+- =nix= is a generic package manager and goes beyond Haskell. One great
+  good point is that it does not only manage Haskell packages but really a
+  lot of other kind of packages. This can be quite helpful if you need to
+  depends on a Haskell package that itself depends on a system library, for
+  example =ncurses=.
 #+end_notes
-
-*** Executable
-:PROPERTIES:
-:CUSTOM_ID: executable
-:END:
-
-With those two method I can provide you a bang pattern to create self
-executable script that will use the Haskell compiler I expect and hopefully
-all the code example should still work for a _very_ long time.
-
-For other ways to install Haskell on your system you should visit
-[[https://haskell.org][haskell.org]].
-
-The environment in which you will learn Haskell will be quite different
-from an environment to use Haskell seriously for a new project.
-This is because, there are too much choices for that.
-
-Mainly, you can start by writing your code in a file and executing it by
-putting one of the following at the top of your file:
-
-If you chose Nix: https://nixos.org/nix/
-
-#+BEGIN_EXAMPLE
-#! /usr/bin/env nix-shell
-#! nix-shell -i runghc
-#! nix-shell -p "ghc.withPackages (ps: [ ps.protolude ])"
-#! nix-shell -I nixpkgs="https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz"
-#+END_EXAMPLE
-
-
-If you chose Stack: https://haskellstack.org
-
-#+BEGIN_EXAMPLE haskell
-#!/usr/bin/env stack
-{- stack script
-   --resolver lts-14.16
-   --install-ghc
-   --package protolude
--}
-#+END_EXAMPLE
-
-In this article most code block can be downloaded, it will have the =nix=
-shebang.
-
-So the first time you'll launch this script it will download all
-dependencies for you and will start its execution.
-
-The next time it should start a lot faster.
-
-*** code                                                     :noexport:
-:PROPERTIES:
-:CUSTOM_ID: code
-:END:
-
-#+begin_src elisp :eval yes
-  (defun nixb ()
-    (mapconcat 'identity
-               '("#! /usr/bin/env nix-shell"
-                 "#! nix-shell -i runghc"
-                 "#! nix-shell -p \"ghc.withPackages (ps: [ ps.protolude ])\""
-                 "#! nix-shell -I nixpkgs=\"https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz\"")
-               "\n"))
-#+end_src
-
-#+RESULTS:
-: nixb
-
-#+MACRO: lnk @@html:<a href="$1" style="float:right" target="_blank">$1 ⤓</a>@@
 
 ** Don't be afraid
 :PROPERTIES:
@@ -305,19 +261,12 @@ similarities between Haskell and other programming languages. Let's jump
 to the mandatory "Hello World".
 
 {{{lnk(hello.hs)}}}
-#+BEGIN_SRC haskell :tangle hello.hs :shebang '(nixb)
+#+BEGIN_SRC haskell :tangle hello.hs
   main = putStrLn "Hello World!"
 #+END_SRC
 
 #+BEGIN_EXAMPLE
-> chmod +x hello.hs
-> ./hello.hs
-Hello World!
-#+END_EXAMPLE
-
-#+BEGIN_EXAMPLE
-> stack ghc -- hello.hs
-> ./hello
+~ runghc hello.hs
 Hello World!
 #+END_EXAMPLE
 
@@ -325,7 +274,7 @@ Now, a program asking your name and replying "Hello" using the name you
 entered:
 
 {{{lnk(name.hs)}}}
-#+BEGIN_SRC haskell :tangle name.hs :shebang '(nixb)
+#+BEGIN_SRC haskell :tangle name.hs
 main = do
     print "What is your name?"
     name <- getLine
@@ -362,16 +311,15 @@ int main (int argc, char **argv) {
 }
 #+END_SRC
 
-The structure is the same, but there are some syntax differences. The
-main part of this tutorial will be dedicated to explaining why.
+The structure is the same, but there are some syntax differences.
+The main part of this tutorial will be dedicated to explaining why.
 
 In Haskell there is a =main= function and every object has a type. The
-type of =main= is =IO ()=. This means =main= will cause side effects.
+type of =main= is =IO ()=.
+This means =main= will cause side effects.
 
 Just remember that Haskell can look a lot like mainstream imperative
 languages.
-
------
 
 ** Very basic Haskell
 :PROPERTIES:
@@ -479,9 +427,9 @@ Finally, the Haskell way is:
 
 Very clean. No parenthesis, no =def=.
 
-Don't forget, Haskell uses functions and types a lot. It is thus very
-easy to define them. The syntax was particularly well thought out for
-these objects.
+Don't forget, Haskell uses functions and types a lot.
+It is thus very easy to define them.
+The syntax was particularly well thought out for these objects.
 
 *** A Type Example
 :PROPERTIES:
@@ -489,13 +437,16 @@ these objects.
 :END:
 
 Although it is not mandatory, type information for functions is usually
-made explicit. It's not mandatory because the compiler is smart enough
-to discover it for you. It's a good idea because it indicates intent and
-understanding.
+made explicit.
+It's not mandatory because the compiler is smart enough to infer it for
+you.
+It's a good idea because it indicates intent and understanding.
 
-Let's play a little. We declare the type using =::=
+Let's play a little.
+We declare the type using =::=
 
-#+BEGIN_SRC haskell
+{{{lnk(basic.hs)}}}
+#+BEGIN_SRC haskell :tangle basic.hs
   f :: Int -> Int -> Int
   f x y = x*x + y*y
 
@@ -503,15 +454,14 @@ Let's play a little. We declare the type using =::=
 #+END_SRC
 
 #+BEGIN_EXAMPLE
-~ runhaskell 20_very_basic.lhs
+[nix-shell:~/tmp/hsenv]$ runghc basic.hs
 13
 #+END_EXAMPLE
 
------
-
 Now try
 
-#+BEGIN_SRC haskell
+{{{lnk(error_basic.hs)}}}
+#+BEGIN_SRC haskell :tangle error_basic.hs
   f :: Int -> Int -> Int
   f x y = x*x + y*y
 
@@ -521,27 +471,34 @@ Now try
 You should get this error:
 
 #+BEGIN_EXAMPLE
-21_very_basic.lhs:6:23:
-    No instance for (Fractional Int)
-      arising from the literal `4.2'
-    Possible fix: add an instance declaration for (Fractional Int)
-    In the second argument of `f', namely `4.2'
-    In the first argument of `print', namely `(f 2.3 4.2)'
-    In the expression: print (f 2.3 4.2)
+[nix-shell:~/tmp/hsenv]$ runghc error_basic.hs
+
+error_basic.hs:4:17: error:
+    • No instance for (Fractional Int) arising from the literal ‘2.3’
+    • In the first argument of ‘f’, namely ‘2.3’
+      In the first argument of ‘print’, namely ‘(f 2.3 4.2)’
+      In the expression: print (f 2.3 4.2)
+  |
+4 | main = print (f 2.3 4.2)
+  |                 ^^^
 #+END_EXAMPLE
 
 The problem: =4.2= isn't an Int.
 
------
-
 The solution: don't declare a type for =f= for the moment and let
 Haskell infer the most general type for us:
 
-#+BEGIN_SRC haskell
+{{{lnk(float_basic.hs)}}}
+#+BEGIN_SRC haskell :tangle float_basic.hs
   f x y = x*x + y*y
 
   main = print (f 2.3 4.2)
 #+END_SRC
+
+#+begin_example
+[nix-shell:~/tmp/hsenv]$ runghc float_basic.hs
+22.93
+#+end_example
 
 It works! Luckily, we don't have to declare a new function for every
 single type. For example, in =C=, you'll have to declare a function for
@@ -580,39 +537,44 @@ just look at a list of progressive examples:
 | =a -> a=           | the type function from any type =a= to the same type =a=                  |
 | =a -> a -> a=      | the type function of two arguments of any type =a= to the same type =a=   |
 
-In the type =a -> a -> a=, the letter =a= is a /type variable/. It means
-=f= is a function with two arguments and both arguments and the result
-have the same type. The type variable =a= could take many different type
-values. For example =Int=, =Integer=, =Float=...
+In the type =a -> a -> a=, the letter =a= is a /type variable/.
+It means =f= is a function with two arguments and both arguments and the
+result have the same type.
+The type variable =a= could take many different type values.
+For example =Int=, =Integer=, =Float=...
 
 So instead of having a forced type like in =C= and having to declare a
 function for =int=, =long=, =float=, =double=, etc., we declare only one
 function like in a dynamically typed language.
 
-This is sometimes called parametric polymorphism. It's also called
-having your cake and eating it too.
+This is sometimes called parametric polymorphism.
+It's also called having your cake and eating it too.
 
 Generally =a= can be any type, for example a =String= or an =Int=, but
-also more complex types, like =Trees=, other functions, etc. But here
-our type is prefixed with =Num a =>=.
+also more complex types, like =Trees=, other functions, etc...
+But here our type is prefixed with =Num a =>=.
 
-=Num= is a /type class/. A type class can be understood as a set of
-types. =Num= contains only types which behave like numbers. More
-precisely, =Num= is class containing types which implement a specific
+=Num= is a /type class/.
+A type class can be understood as a set of types.
+=Num= contains only types which behave like numbers.
+More precisely, =Num= is class containing types which implement a specific
 list of functions, and in particular =(+)= and =(*)=.
 
-Type classes are a very powerful language construct. We can do some
-incredibly powerful stuff with this. More on this later.
+Type classes are a very powerful language construct.
+We can do some incredibly powerful stuff with this.
+More on this later.
 
 Finally, =Num a => a -> a -> a= means:
 
 Let =a= be a type belonging to the =Num= type class. This is a function
 from type =a= to (=a -> a=).
 
-Yes, strange. In fact, in Haskell no function really has two arguments.
-Instead all functions have only one argument. But we will note that
-taking two arguments is equivalent to taking one argument and returning
-a function taking the second argument as a parameter.
+Yes, strange.
+In fact, in Haskell no function really has two arguments.
+Instead all functions have only one argument.
+But we will note that taking two arguments is equivalent to taking one
+argument and returning a function taking the second argument as a
+parameter.
 
 More precisely =f 3 4= is equivalent to =(f 3) 4=. Note =f 3= is a
 function:
@@ -626,9 +588,11 @@ function:
   g y ⇔ 3*3 + y*y
 #+END_SRC
 
-Another notation exists for functions. The lambda notation allows us to
-create functions without assigning them a name. We call them anonymous
-functions. We could also have written:
+Another notation exists for functions.
+The lambda notation allows us to create functions without assigning them a
+name.
+We call them anonymous functions.
+We could also have written:
 
 #+BEGIN_SRC haskell
   g = \y -> 3*3 + y*y
@@ -637,14 +601,14 @@ functions. We could also have written:
 The =\= is used because it looks like =λ= and is ASCII.
 
 If you are not used to functional programming your brain should be
-starting to heat up. It is time to make a real application.
-
------
+starting to heat up.
+It is time to make a real application.
 
 But just before that, we should verify the type system works as
 expected:
 
-#+BEGIN_SRC haskell
+{{{lnk(typed_float_basic.hs)}}}
+#+BEGIN_SRC haskell :tangle typed_float_basic.hs
   f :: Num a => a -> a -> a
   f x y = x*x + y*y
 

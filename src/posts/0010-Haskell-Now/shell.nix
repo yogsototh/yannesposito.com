@@ -1,0 +1,22 @@
+{ nixpkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {} }:
+let
+  inherit (nixpkgs) pkgs;
+  inherit (pkgs) haskellPackages;
+
+  haskellDeps = ps: with ps; [
+    base
+    protolude
+  ];
+
+  ghc = haskellPackages.ghcWithPackages haskellDeps;
+
+  nixPackages = [
+    ghc
+    pkgs.gdb
+    haskellPackages.cabal-install
+  ];
+in
+pkgs.stdenv.mkDerivation {
+  name = "env";
+  buildInputs = nixPackages;
+}
