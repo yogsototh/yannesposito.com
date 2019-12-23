@@ -177,15 +177,62 @@ The article contains five parts:
 There are multiple way to install Haskell and I don't think there is a full
 consensus between developer about what is the best method.
 
-For this tutorial, I expect you to have either installed the [[https://nixos.org/nix][nix]] package manager.
-Or to have installed [[https://haskellstack.org][=stack=]].
+For this tutorial, I expect you to have either installed the [[https://nixos.org/nix][nix]] package
+manager or to have installed [[https://haskellstack.org][=stack=]].
 
-With those two method I can provide you a bang patter prefix to create self
+The easiest method would certainly to use [[https://nixos.org/nix][nix]].
+
+*** Nix
+:PROPERTIES:
+:CUSTOM_ID: nix
+:END:
+
+1. Install [[https://nixos.org/nix][nix]]
+2. Write the following =shell.nix= file:
+
+   {{{lnk(shell.nix)}}}
+   #+begin_src nix :tangle shell.nix
+   { pkgs ? import (fetchTarball
+        https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {} }:
+   pkgs.mkShell {
+     buildInputs =
+       with pkgs;
+       with pkgs.haskellPackages; [
+       ghc
+       cabal-install
+       zsh
+       protolude
+     ];
+   }
+   #+end_src
+
+3. In the same directory as the file in a terminal run =nix-shell=.
+   You should wait a lot of time for everything to download.
+   And you should be ready.
+   You will have in your PATH:
+   - =ghc=, the Haskell compiler
+   - =ghci= that we can described as a Haskell REPL
+   - =runghc= that will be able to interpret a Haskell file
+
+#+begin_notes
+The only really important parts for you will be the two lists, one for
+system dependencies and one for Haskell packages.
+
+=nix= is a generic package manager and goes beyond Haskell.
+Has such you can add zsh in your dependency for example.
+#+end_notes
+
+*** Executable
+:PROPERTIES:
+:CUSTOM_ID: executable
+:END:
+
+With those two method I can provide you a bang pattern to create self
 executable script that will use the Haskell compiler I expect and hopefully
 all the code example should still work for a _very_ long time.
 
-There are other way to install Haskell on your system you could visit,
-you can learn more about it by visiting [[https://haskell.org][haskell.org]].
+For other ways to install Haskell on your system you should visit
+[[https://haskell.org][haskell.org]].
 
 The environment in which you will learn Haskell will be quite different
 from an environment to use Haskell seriously for a new project.
@@ -223,7 +270,7 @@ dependencies for you and will start its execution.
 
 The next time it should start a lot faster.
 
-*** code                                                                                                 :noexport:
+*** code                                                     :noexport:
 :PROPERTIES:
 :CUSTOM_ID: code
 :END:
