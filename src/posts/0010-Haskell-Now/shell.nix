@@ -19,4 +19,7 @@ in
 pkgs.stdenv.mkDerivation {
   name = "env";
   buildInputs = nixPackages;
+  shellHook = ''
+     export PS1="\n[hs:\033[1;32m\]\W\[\033[0m\]]> "
+  '';
 }
