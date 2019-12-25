@@ -161,7 +161,7 @@ The article contains five parts:
 
   - More on infinite tree; a more math oriented discussion about
     infinite trees
-** Helpers                                                                            :noexport:
+** Helpers                                                                             :noexport:
 :PROPERTIES:
 :CUSTOM_ID: helpers
 :END:
@@ -230,16 +230,32 @@ Congratulations you should be ready to start now.
 
 #+begin_notes
 - There are multiple ways to install Haskell and I don't think there is a
-  full consensus between developer about what is the best method. If you
-  whish to use another method take a look at [[http://haskell.org][haskell.org]].
-- This install method is only suitable for using as a playground and
-  perfect for this tutorial. I don't think it is suitable for serious
-  development.
-- =nix= is a generic package manager and goes beyond Haskell. One great
-  good point is that it does not only manage Haskell packages but really a
-  lot of other kind of packages. This can be quite helpful if you need to
-  depends on a Haskell package that itself depends on a system library, for
-  example =ncurses=.
+  full consensus between developer about what is the best method.
+  If you whish to use another method take a look at [[http://haskell.org][haskell.org]].
+- This install method is only suitable for using as a playground and I
+  think perfectly adapted to run code example from this article.
+  I do not recommend it for serious development.
+- =nix= is a generic package manager and goes beyond Haskell.
+  One great good point is that it does not only manage Haskell packages but
+  really a lot of other kind of packages.
+  This can be quite helpful if you need to depends on a Haskell package that
+  itself depends on a system library, for example =ncurses=.
+- I use [[http://nixos.org/nix][=nix=]] for other projects unrelated to Haskell.
+  For example, I use the nix-shell bang pattern for shell script for which
+  I can assume the executable I want are present.
+#+end_notes
+
+#+begin_notes
+*BONUS*: use [[https://direnv.net][=direnv=]]
+
+#+begin_src
+~ cd hsenv
+~ echo "use nix" > .envrc
+~ direnv allow
+#+end_src
+
+Now each time you'll cd into your hsenv directory you'll get the
+environment set for you.
 #+end_notes
 
 ** Don't be afraid
@@ -338,7 +354,7 @@ of new things.
 Hopefully many of these new concepts will help you to program even in
 imperative languages.
 
-/Smart Static Typing/
+/Advanced Static Typing/
 
 Instead of being in your way like in =C=, =C++= or =Java=, the type system
 is here to help you.
@@ -455,7 +471,7 @@ We declare the type using =::=
 #+END_SRC
 
 #+BEGIN_EXAMPLE
-[nix-shell:~/tmp/hsenv]$ runghc basic.hs
+[nix-shell:~/hsenv]$ runghc basic.hs
 13
 #+END_EXAMPLE
 
@@ -472,7 +488,7 @@ Now try
 You should get this error:
 
 #+BEGIN_EXAMPLE
-[nix-shell:~/tmp/hsenv]$ runghc error_basic.hs
+[nix-shell:~/hsenv]$ runghc error_basic.hs
 
 error_basic.hs:4:17: error:
     • No instance for (Fractional Int) arising from the literal ‘2.3’
@@ -497,7 +513,7 @@ infer the most general type for us:
 #+END_SRC
 
 #+begin_example
-[nix-shell:~/tmp/hsenv]$ runghc float_basic.hs
+[nix-shell:~/hsenv]$ runghc float_basic.hs
 22.93
 #+end_example
 
@@ -823,7 +839,7 @@ But it is considered a good practice to do so.
 
 /Infix notation/
 
-#+BEGIN_SRC haskell
+#+BEGIN_SRC haskell :tangle functions.hs
   square :: Num a => a -> a
   square x = x^2
 #+END_SRC
@@ -832,7 +848,7 @@ Note =^= uses infix notation.
 For each infix operator there its associated prefix notation.
 You just have to put it inside parenthesis.
 
-#+BEGIN_SRC haskell
+#+BEGIN_SRC haskell :tangle functions.hs
   square' x = (^) x 2
 
   square'' x = (^2) x
@@ -841,7 +857,7 @@ You just have to put it inside parenthesis.
 We can remove =x= in the left and right side!
 It's called η-reduction.
 
-#+BEGIN_SRC haskell
+#+BEGIN_SRC haskell :tangle functions.hs
   square''' = (^2)
 #+END_SRC
 
@@ -852,11 +868,18 @@ Here:
   =square= ⇔ =square'= ⇔ =square''= ⇔ =square'''=
 #+END_QUOTE
 
+Note for each prefix notation you can transform it to infix notation with
+=`= like this:
+
+#+begin_example
+  foo x y ↔ x `foo` y
+#+end_example
+
 /Tests/
 
 An implementation of the absolute function.
 
-#+BEGIN_SRC haskell
+#+BEGIN_SRC haskell :tangle functions.hs
   absolute :: (Ord a, Num a) => a -> a
   absolute x = if x >= 0 then x else -x
 #+END_SRC
@@ -867,7 +890,7 @@ You cannot forget the =else=.
 
 Another equivalent version:
 
-#+BEGIN_SRC haskell
+#+BEGIN_SRC haskell :tangle functions.hs
   absolute' x
       | x >= 0 = x
       | otherwise = -x
@@ -878,7 +901,8 @@ Notation warning: indentation is /important/ in Haskell.
 Like in Python, bad indentation can break your code!
 #+END_QUOTE
 
-#+BEGIN_SRC haskell
+{{{lnk(functions.hs)}}}
+#+BEGIN_SRC haskell :tangle functions.hs
   main = do
         print $ square 10
         print $ square' 10
@@ -890,13 +914,22 @@ Like in Python, bad indentation can break your code!
         print $ absolute' (-10)
 #+END_SRC
 
-* Difficulty: Normal
+#+begin_example
+~/t/hsenv> runghc functions.hs
+100
+100
+100
+100
+10
+10
+10
+10
+#+end_example
+
+* Difficulty: First steps
 :PROPERTIES:
-:CUSTOM_ID: hard-part
+:CUSTOM_ID: difficulty--first-steps
 :END:
-
-The hard part can now begin.
-
 ** Functional style
 :PROPERTIES:
 :CUSTOM_ID: functional-style
@@ -920,7 +953,7 @@ example: =[1,2,3,4,5] ⇒  2 + 4 ⇒  6=
 #+END_QUOTE
 
 To show differences between functional and imperative approaches, I'll
-start by providing an imperative solution (in JavaScript):
+start by providing an imperative solution (in javascript):
 
 #+BEGIN_SRC javascript
     function evenSum(list) {
@@ -1010,12 +1043,11 @@ Note that for any non empty list =l=, =l ⇔ (head l):(tail l)=
 The first Haskell solution.
 The function =evenSum= returns the sum of all even numbers in a list:
 
-#+BEGIN_SRC haskell
+{{{lnk(evenSum_v1.hs)}}}
+#+BEGIN_SRC haskell :tangle evenSum_v1.hs
   -- Version 1
   evenSum :: [Integer] -> Integer
-
   evenSum l = accumSum 0 l
-
   accumSum n l = if l == []
                     then n
                     else let x = head l
@@ -1027,39 +1059,36 @@ The function =evenSum= returns the sum of all even numbers in a list:
 
 To test a function you can use =ghci=:
 
-#+BEGIN_HTML
-  % ghci
-  GHCi, version 7.0.3: http://www.haskell.org/ghc/  :? for help
-  Loading package ghc-prim ... linking ... done.
-  Loading package integer-gmp ... linking ... done.
-  Loading package base ... linking ... done.
-  Prelude> :load 11_Functions.lhs
-  [1 of 1] Compiling Main             ( 11_Functions.lhs, interpreted )
-  Ok, modules loaded: Main.
-  *Main> evenSum [1..5]
-  6
-#+END_HTML
+#+begin_example
+~/t/hsenv> ghci
+GHCi, version 8.6.5: http://www.haskell.org/ghc/  :? for help
+Prelude> :l evenSum_v1.hs
+[1 of 1] Compiling Main             ( evenSum_v1.hs, interpreted )
+Ok, one module loaded.
+*Main> evenSum [1..5]
+6
+#+end_example
 
 Here is an example of execution[fn:2]:
 
-#+BEGIN_HTML
-  *Main> evenSum [1..5]
-  accumSum 0 [1,2,3,4,5]
-  1 is odd
-  accumSum 0 [2,3,4,5]
-  2 is even
-  accumSum (0+2) [3,4,5]
-  3 is odd
-  accumSum (0+2) [4,5]
-  2 is even
-  accumSum (0+2+4) [5]
-  5 is odd
-  accumSum (0+2+4) []
-  l == []
-  0+2+4
-  0+6
-  6
-#+END_HTML
+#+begin_example
+*Main> evenSum [1..5]
+accumSum 0 [1,2,3,4,5]
+1 is odd
+accumSum 0 [2,3,4,5]
+2 is even
+accumSum (0+2) [3,4,5]
+3 is odd
+accumSum (0+2) [4,5]
+2 is even
+accumSum (0+2+4) [5]
+5 is odd
+accumSum (0+2+4) []
+l == []
+0+2+4
+0+6
+6
+#+end_example
 
 Coming from an imperative language all should seem right.
 In fact, many things can be improved here.
@@ -1069,17 +1098,14 @@ First, we can generalize the type.
   evenSum :: Integral a => [a] -> a
 #+END_SRC
 
-#+BEGIN_SRC haskell
-  main = do print $ evenSum [1..10]
-#+END_SRC
-
 Next, we can use sub functions using =where= or =let=.
-This way our =accumSum= function won't pollute the namespace of our module.
+This way our =accumSum= function will not pollute the namespace of our
+module.
 
-#+BEGIN_SRC haskell
+{{{lnk(evenSum_v2.hs)}}}
+#+BEGIN_SRC haskell :tangle evenSum_v2.hs
   -- Version 2
   evenSum :: Integral a => [a] -> a
-
   evenSum l = accumSum 0 l
       where accumSum n l =
               if l == []
@@ -1091,15 +1117,10 @@ This way our =accumSum= function won't pollute the namespace of our module.
                               else accumSum n xs
 #+END_SRC
 
-#+BEGIN_SRC haskell
-  main = print $ evenSum [1..10]
-#+END_SRC
-
------
-
 Next, we can use pattern matching.
 
-#+BEGIN_SRC haskell
+{{{lnk(evenSum_v3.hs)}}}
+#+BEGIN_SRC haskell :tangle evenSum_v3.hs
   -- Version 3
   evenSum l = accumSum 0 l
       where
@@ -1143,10 +1164,6 @@ with
 This is a very useful feature.
 It makes our code both terser and easier to read.
 
-#+BEGIN_SRC haskell
-  main = print $ evenSum [1..10]
-#+END_SRC
-
 In Haskell you can simplify function definitions by η-reducing them.
 For example, instead of writing:
 
@@ -1157,15 +1174,15 @@ For example, instead of writing:
 you can simply write
 
 #+BEGIN_SRC haskell
-  f = some expression
+  f = (some expression)
 #+END_SRC
 
 We use this method to remove the =l=:
 
-#+BEGIN_SRC haskell
+{{{lnk(evenSum_v4.hs)}}}
+#+BEGIN_SRC haskell :tangle evenSum_v4.hs
   -- Version 4
   evenSum :: Integral a => [a] -> a
-
   evenSum = accumSum 0
       where
           accumSum n [] = n
@@ -1173,10 +1190,6 @@ We use this method to remove the =l=:
                if even x
                   then accumSum (n+x) xs
                   else accumSum n xs
-#+END_SRC
-
-#+BEGIN_SRC haskell
-  main = print $ evenSum [1..10]
 #+END_SRC
 
 *** Higher Order Functions
@@ -1201,7 +1214,8 @@ Here are some examples:
 
 Let's proceed by small steps.
 
-#+BEGIN_SRC haskell
+{{{lnk(evenSum_v5.hs)}}}
+#+BEGIN_SRC haskell :tangle evenSum_v5.hs
   -- Version 5
   evenSum l = mysum 0 (filter even l)
       where
@@ -1218,7 +1232,7 @@ where
 The function =filter= takes a function of type (=a -> Bool=) and a list of
 type =[a]=.
 It returns a list containing only elements for which the function returned
-=true=.
+=True=.
 
 Our next step is to use another technique to accomplish the same thing as a
 loop.
@@ -1260,7 +1274,8 @@ follow the code as if =foldl= and =foldl'= were identical.
 
 Now our new version of =evenSum= becomes:
 
-#+BEGIN_SRC haskell
+{{{lnk(evenSum_v6.hs)}}}
+#+BEGIN_SRC haskell :tangle evenSum_v6.hs
   -- Version 6
   -- foldl' isn't accessible by default
   -- we need to import it from the module Data.List
@@ -1272,7 +1287,8 @@ Now our new version of =evenSum= becomes:
 We can also simplify this by using directly a lambda notation.
 This way we don't have to create the temporary name =mysum=.
 
-#+BEGIN_SRC haskell
+{{{lnk(evenSum_v7.hs)}}}
+#+BEGIN_SRC haskell :tangle evenSum_v7.hs
   -- Version 7
   -- Generally it is considered a good practice
   -- to import only the necessary function(s)
@@ -1286,15 +1302,10 @@ And of course, we note that
   (\x y -> x+y) ⇔ (+)
 #+END_SRC
 
-#+BEGIN_SRC haskell
-  main = print $ evenSum [1..10]
-#+END_SRC
-
------
-
 Finally
 
-#+BEGIN_SRC haskell
+{{{lnk(evenSum_v8.hs)}}}
+#+BEGIN_SRC haskell :tangle evenSum_v8.hs
   -- Version 8
   import Data.List (foldl')
   evenSum :: Integral a => [a] -> a
@@ -1327,7 +1338,8 @@ The =(.)= function corresponds to mathematical composition.
 
 We can take advantage of this operator to η-reduce our function:
 
-#+BEGIN_SRC haskell
+{{{lnk(evenSum_v9.hs)}}}
+#+BEGIN_SRC haskell :tangle evenSum_v9.hs
   -- Version 9
   import Data.List (foldl')
   evenSum :: Integral a => [a] -> a
@@ -1336,7 +1348,8 @@ We can take advantage of this operator to η-reduce our function:
 
 Also, we could rename some parts to make it clearer:
 
-#+BEGIN_SRC haskell
+{{{lnk(evenSum_v10.hs)}}}
+#+BEGIN_SRC haskell :tangle evenSum_v10.hs
   -- Version 10
   import Data.List (foldl')
   sum' :: (Num a) => [a] -> a
@@ -1365,7 +1378,7 @@ Updating version 10 is extremely easy:
   squareEvenSum' = evenSum . (map (^2))
 #+END_SRC
 
-We just had to add another "transformation function"[^0216].
+We just had to add another "transformation function".
 
 #+BEGIN_EXAMPLE
 map (^2) [1,2,3,4] ⇔ [1,4,9,16]
@@ -1375,9 +1388,9 @@ The =map= function simply applies a function to all the elements of a list.
 
 We didn't have to modify anything /inside/ the function definition.
 This makes the code more modular.
-But in addition you can think more mathematically about your function.
-You can also use your function interchangably with others, as needed.
-That is, you can compose, map, fold, filter using your new function.
+But in addition you can think more mathematically about your functions.
+You can also use your functions interchangeably with others, as needed.
+That is, you can /compose/, map, fold, filter using your new function.
 
 Modifying version 1 is left as an exercise to the reader ☺.
 
@@ -1394,7 +1407,7 @@ Unfortunately, using pure functional programming isn't well suited to all
 usages.
 Or at least such a language hasn't been found yet.
 
-One of the great powers of Haskell is the ability to create DSLs (Domain
+One of the great powers of Haskell is the ability to create DSL (Domain
 Specific Language) making it easy to change the programming paradigm.
 
 In fact, Haskell is also great when you want to write imperative style
@@ -1409,10 +1422,6 @@ to understand when and how to use it.
 But before talking about this Haskell super-power, we must talk about
 another essential aspect of Haskell: /Types/.
 
-#+BEGIN_SRC haskell
-  main = print $ evenSum [1..10]
-#+END_SRC
-
 ** Types
 :PROPERTIES:
 :CUSTOM_ID: types
@@ -1421,8 +1430,10 @@ another essential aspect of Haskell: /Types/.
 #+CAPTION: Dali, the madonna of port Lligat
 [[./salvador-dali-the-madonna-of-port-lligat.jpg]]
 
+#+MACRO: tldr @@html:<abbr title="too long; didn't read">tl;dr:</abbr> @@
+
 #+BEGIN_QUOTE
-  %tldr
+{{{tldr}}}
 
   - =type Name = AnotherType= is just an alias and the compiler doesn't
     mark any difference between =Name= and =AnotherType=.
@@ -1436,8 +1447,8 @@ In Haskell, types are strong and static.
 Why is this important?
 It will help you /greatly/ to avoid mistakes.
 In Haskell, most bugs are caught during the compilation of your program.
-And the main reason is because of the type inference during compilation.
-Type inference makes it easy to detect where you used the wrong parameter
+And the main reason is because of the type checking during compilation.
+Type checking makes it easy to detect where you used the wrong parameter
 at the wrong place, for example.
 
 *** Type inference
@@ -1461,15 +1472,13 @@ You can provide =square= with an =Int=, an =Integer=, a =Float= a
 Proof by example:
 
 #+BEGIN_EXAMPLE
-% ghci
-GHCi, version 7.0.4:
-...
-Prelude> let square x = x*x
+~/t/hsenv> ghci
+GHCi, version 8.6.5: http://www.haskell.org/ghc/  :? for help
+Prelude> let square x = x * x
 Prelude> square 2
 4
 Prelude> square 2.1
 4.41
-Prelude> -- load the Data.Complex module
 Prelude> :m Data.Complex
 Prelude Data.Complex> square (2 :+ 1)
 3.0 :+ 4.0
@@ -1481,15 +1490,12 @@ Now compare with the amount of code necessary in C:
 
 #+BEGIN_SRC C
   int     int_square(int x) { return x*x; }
-
   float   float_square(float x) {return x*x; }
-
   complex complex_square (complex z) {
       complex tmp;
       tmp.real = z.real * z.real - z.img * z.img;
       tmp.img = 2 * z.img * z.real;
   }
-
   complex x,y;
   y = complex_square(x);
 #+END_SRC
@@ -1524,8 +1530,8 @@ int main() {
 #+END_SRC
 
 C++ does a far better job than C in this regard.
-But for more complex functions the syntax can be hard to follow: see [[http://bartoszmilewski.com/2009/10/21/what-does-haskell-have-to-do-with-c/][this
-article]] for example.
+But for more complex functions the syntax can be hard to follow: see
+[[http://bartoszmilewski.com/2009/10/21/what-does-haskell-have-to-do-with-c/][this article]] for example.
 
 In C++ you must declare that a function can work with different types.
 In Haskell, the opposite is the case.
@@ -1549,7 +1555,8 @@ Generally, in Haskell:
 You can construct your own types.
 First, you can use aliases or type synonyms.
 
-#+BEGIN_SRC haskell
+{{{lnk(type_constr_1.hs)}}}
+#+BEGIN_SRC haskell :tangle type_constr_1.hs
   type Name   = String
   type Color  = String
 
@@ -1591,7 +1598,7 @@ Another method is to create your own types using the keyword =data=.
 
 Now if you switch parameters of =showInfos=, the compiler complains!
 So this is a potential mistake you will never make again and the only price
-is to be more verbose.
+is to be a bit more verbose.
 
 Also notice that constructors are functions:
 
@@ -1666,7 +1673,7 @@ If you want to be able to print (=Show=), read (=Read=), test equality
 (=Eq=) and compare (=Ord=) your new data structure you can tell Haskell to
 derive the appropriate functions for you.
 
-#+BEGIN_SRC haskell
+#+BEGIN_SRC haskell :tangle list.hs
   infixr 5 :::
   data List a = Nil | a ::: (List a)
                 deriving (Show,Read,Eq,Ord)
@@ -1676,12 +1683,12 @@ When you add =deriving (Show)= to your data declaration, Haskell creates a
 =show= function for you.
 We'll see soon how you can use your own =show= function.
 
-#+BEGIN_SRC haskell
+#+BEGIN_SRC haskell :tangle list.hs
   convertList [] = Nil
   convertList (x:xs) = x ::: convertList xs
 #+END_SRC
 
-#+BEGIN_SRC haskell
+#+BEGIN_SRC haskell :tangle list.hs
   main = do
         print (0 ::: 1 ::: Nil)
         print (convertList [0,1])
@@ -1704,9 +1711,7 @@ This prints:
 
 We'll just give another standard example: binary trees.
 
-#+BEGIN_SRC haskell
-  import Data.List
-
+#+BEGIN_SRC haskell :tangle tree.hs
   data BinTree a = Empty
                    | Node a (BinTree a) (BinTree a)
                                 deriving (Show)
@@ -1715,7 +1720,7 @@ We'll just give another standard example: binary trees.
 We will also create a function which turns a list into an ordered binary
 tree.
 
-#+BEGIN_SRC haskell
+#+BEGIN_SRC haskell :tangle tree.hs
   treeFromList :: (Ord a) => [a] -> BinTree a
   treeFromList [] = Empty
   treeFromList (x:xs) = Node x (treeFromList (filter (<x) xs))
@@ -1733,7 +1738,7 @@ Look at how elegant this function is. In plain English:
   - the right subtree is the tree created from members of the list =xs=
     which are strictly superior to =x=.
 
-#+BEGIN_SRC haskell
+#+BEGIN_SRC haskell :tangle tree.hs
   main = print $ treeFromList [7,2,4,8]
 #+END_SRC
 
@@ -1745,212 +1750,106 @@ Node 7 (Node 2 Empty (Node 4 Empty Empty)) (Node 8 Empty Empty)
 
 This is an informative but quite unpleasant representation of our tree.
 
-Just for fun, let's code a better display for our trees.
-I simply had fun making a nice function to display trees in a general way.
-You can safely skip this part if you find it too difficult to follow.
+I've added the =containers= package in the =shell.nix= file, it is time to
+use this library which contain an helper to show trees.
 
-We have a few changes to make.
-We remove the =deriving (Show)= from the declaration of our =BinTree= type.
-And it might also be useful to make our BinTree an instance of (=Eq= and
-=Ord=) so we will be able to test equality and compare trees.
+#+BEGIN_SRC haskell :tangle pretty_tree.hs
+import           Data.Tree (Tree,Forest(..))
+import qualified Data.Tree as Tree
 
-#+BEGIN_SRC haskell
-  data BinTree a = Empty
-                   | Node a (BinTree a) (BinTree a)
-                    deriving (Eq,Ord)
+data BinTree a = Empty
+               | Node a (BinTree a) (BinTree a)
+               deriving (Eq,Ord,Show)
+
+treeFromList :: (Ord a) => [a] -> BinTree a
+treeFromList [] = Empty
+treeFromList (x:xs) = Node x (treeFromList (filter (<x) xs))
+                      (treeFromList (filter (>x) xs))
+
+-- | Function to transform our internal BinTree type to the
+-- type of Tree declared in Data.Tree (from containers package)
+-- so that the function Tree.drawForest can use
+binTreeToForestString :: (Show a) => BinTree a -> Forest String
+binTreeToForestString Empty = []
+binTreeToForestString (Node x left right) =
+  [Tree.Node (show x) ((binTreeToForestString left) ++ (binTreeToForestString right))]
+
+-- | Function that given a BinTree print a representation of it in the console
+prettyPrintTree :: (Show a) => BinTree a -> IO ()
+prettyPrintTree = putStrLn . Tree.drawForest . binTreeToForestString
+
+main = do
+  putStrLn "Int binary tree:"
+  prettyPrintTree $ treeFromList [7,2,4,8,1,3,6,21,12,23]
+  putStrLn "\nNote we could also use another type\n"
+  putStrLn "String binary tree:"
+  prettyPrintTree $
+    treeFromList ["foo","bar","baz","gor","yog"]
+  putStrLn "\nAs we can test equality and order trees, we can make tree of trees!\n"
+  putStrLn "\nBinary tree of Char binary trees:"
+  prettyPrintTree (treeFromList
+                    (map treeFromList ["foo","bar","zara","baz","foo"]))
 #+END_SRC
 
-Without the =deriving (Show)=, Haskell doesn't create a =show= method for
-us.
-We will create our own version of =show=.
-To achieve this, we must declare that our newly created type =BinTree a= is
-an instance of the type class =Show=.
-The general syntax is:
-
-#+BEGIN_SRC haskell
-  instance Show (BinTree a) where
-     show t = ... -- You declare your function here
-#+END_SRC
-
-Here is my version of how to show a binary tree.
-Don't worry about the apparent complexity.
-I made a lot of improvements in order to display even stranger objects.
-
-#+BEGIN_SRC haskell
-  -- declare BinTree a to be an instance of Show
-  instance (Show a) => Show (BinTree a) where
-    -- will start by a '<' before the root
-    -- and put a : a begining of line
-    show t = "< " ++ replace '\n' "\n: " (treeshow "" t)
-      where
-      -- treeshow pref Tree
-      --   shows a tree and starts each line with pref
-      -- We don't display the Empty tree
-      treeshow pref Empty = ""
-      -- Leaf
-      treeshow pref (Node x Empty Empty) =
-                    (pshow pref x)
-
-      -- Right branch is empty
-      treeshow pref (Node x left Empty) =
-                    (pshow pref x) ++ "\n" ++
-                    (showSon pref "`--" "   " left)
-
-      -- Left branch is empty
-      treeshow pref (Node x Empty right) =
-                    (pshow pref x) ++ "\n" ++
-                    (showSon pref "`--" "   " right)
-
-      -- Tree with left and right children non empty
-      treeshow pref (Node x left right) =
-                    (pshow pref x) ++ "\n" ++
-                    (showSon pref "|--" "|  " left) ++ "\n" ++
-                    (showSon pref "`--" "   " right)
-
-      -- shows a tree using some prefixes to make it nice
-      showSon pref before next t =
-                    pref ++ before ++ treeshow (pref ++ next) t
-
-      -- pshow replaces "\n" by "\n"++pref
-      pshow pref x = replace '\n' ("\n"++pref) (show x)
-
-      -- replaces one char by another string
-      replace c new string =
-        concatMap (change c new) string
-        where
-            change c new x
-                | x == c = new
-                | otherwise = x:[] -- "x"
-#+END_SRC
-
-The =treeFromList= method remains identical.
-
-#+BEGIN_SRC haskell
-  treeFromList :: (Ord a) => [a] -> BinTree a
-  treeFromList [] = Empty
-  treeFromList (x:xs) = Node x (treeFromList (filter (<x) xs))
-                               (treeFromList (filter (>x) xs))
-#+END_SRC
-
-And now, we can play:
-
-#+BEGIN_SRC haskell
-  main = do
-    putStrLn "Int binary tree:"
-    print $ treeFromList [7,2,4,8,1,3,6,21,12,23]
-#+END_SRC
-
-#+BEGIN_EXAMPLE
+#+begin_example
+~/t/hsenv> runghc pretty_tree.hs
 Int binary tree:
-< 7
-: |--2
-: |  |--1
-: |  `--4
-: |     |--3
-: |     `--6
-: `--8
-:    `--21
-:       |--12
-:       `--23
-#+END_EXAMPLE
+7
+|
++- 2
+|  |
+|  +- 1
+|  |
+|  `- 4
+|     |
+|     +- 3
+|     |
+|     `- 6
+|
+`- 8
+   |
+   `- 21
+      |
+      +- 12
+      |
+      `- 23
 
-Now it is far better!
-The root is shown by starting the line with the =<= character.
-And each following line starts with a =:=.
-But we could also use another type.
 
-#+BEGIN_SRC haskell
-  putStrLn "\nString binary tree:"
-  print $ treeFromList ["foo","bar","baz","gor","yog"]
-#+END_SRC
 
-#+BEGIN_EXAMPLE
+Note we could also use another type
+
 String binary tree:
-< "foo"
-: |--"bar"
-: |  `--"baz"
-: `--"gor"
-:    `--"yog"
-#+END_EXAMPLE
+"foo"
+|
++- "bar"
+|  |
+|  `- "baz"
+|
+`- "gor"
+   |
+   `- "yog"
+
+
 
 As we can test equality and order trees, we can make tree of trees!
 
-#+BEGIN_SRC haskell
-  putStrLn "\nBinary tree of Char binary trees:"
-  print ( treeFromList
-           (map treeFromList ["baz","zara","bar"]))
-#+END_SRC
 
-#+BEGIN_EXAMPLE
 Binary tree of Char binary trees:
-< < 'b'
-: : |--'a'
-: : `--'z'
-: |--< 'b'
-: |  : |--'a'
-: |  : `--'r'
-: `--< 'z'
-:    : `--'a'
-:    :    `--'r'
-#+END_EXAMPLE
+Node 'f' Empty (Node 'o' Empty Empty)
+|
++- Node 'b' (Node 'a' Empty Empty) (Node 'r' Empty Empty)
+|  |
+|  `- Node 'b' (Node 'a' Empty Empty) (Node 'z' Empty Empty)
+|
+`- Node 'z' (Node 'a' Empty (Node 'r' Empty Empty)) Empty
+#+end_example
 
-This is why I chose to prefix each line of tree display by =:= (except
-for the root).
-
-#+CAPTION: Yo Dawg Tree
-[[./yo_dawg_tree.jpg]]
-
-#+BEGIN_SRC haskell
-  putStrLn "\nTree of Binary trees of Char binary trees:"
-  print $ (treeFromList . map (treeFromList . map treeFromList))
-             [ ["YO","DAWG"]
-             , ["I","HEARD"]
-             , ["I","HEARD"]
-             , ["YOU","LIKE","TREES"] ]
-#+END_SRC
-
-Which is equivalent to
-
-#+BEGIN_SRC haskell
-  print ( treeFromList (
-            map treeFromList
-               [ map treeFromList ["YO","DAWG"]
-               , map treeFromList ["I","HEARD"]
-               , map treeFromList ["I","HEARD"]
-               , map treeFromList ["YOU","LIKE","TREES"] ]))
-#+END_SRC
-
-and gives:
-
-#+BEGIN_EXAMPLE
-Binary tree of Binary trees of Char binary trees:
-< < < 'Y'
-: : : `--'O'
-: : `--< 'D'
-: :    : |--'A'
-: :    : `--'W'
-: :    :    `--'G'
-: |--< < 'I'
-: |  : `--< 'H'
-: |  :    : |--'E'
-: |  :    : |  `--'A'
-: |  :    : |     `--'D'
-: |  :    : `--'R'
-: `--< < 'Y'
-:    : : `--'O'
-:    : :    `--'U'
-:    : `--< 'L'
-:    :    : `--'I'
-:    :    :    |--'E'
-:    :    :    `--'K'
-:    :    `--< 'T'
-:    :       : `--'R'
-:    :       :    |--'E'
-:    :       :    `--'S'
-#+END_EXAMPLE
-
-Notice how duplicate trees aren't inserted; there is only one tree
-corresponding to ="I","HEARD"=.
+Notice how duplicate elements aren't inserted in trees.
+For exemple the Char BinTree constructed from the list =foo= is just =f ->
+o=.
+When =o= is inserted another time the second =o= is not duplicated.
+But more importantly it works also for our own =BinTree= notice how the
+tree for =foo= is inserted only once.
 We have this for (almost) free, because we have declared Tree to be an
 instance of =Eq=.
 
@@ -2021,46 +1920,6 @@ This code is mostly the same as the previous one.
   data BinTree a = Empty
                    | Node a (BinTree a) (BinTree a)
                     deriving (Eq,Ord)
-#+END_SRC
-
-#+BEGIN_SRC haskell
-  -- declare BinTree a to be an instance of Show
-  instance (Show a) => Show (BinTree a) where
-    -- will start by a '<' before the root
-    -- and put a : a begining of line
-    show t = "< " ++ replace '\n' "\n: " (treeshow "" t)
-      where
-      treeshow pref Empty = ""
-      treeshow pref (Node x Empty Empty) =
-                    (pshow pref x)
-
-      treeshow pref (Node x left Empty) =
-                    (pshow pref x) ++ "\n" ++
-                    (showSon pref "`--" "   " left)
-
-      treeshow pref (Node x Empty right) =
-                    (pshow pref x) ++ "\n" ++
-                    (showSon pref "`--" "   " right)
-
-      treeshow pref (Node x left right) =
-                    (pshow pref x) ++ "\n" ++
-                    (showSon pref "|--" "|  " left) ++ "\n" ++
-                    (showSon pref "`--" "   " right)
-
-      -- show a tree using some prefixes to make it nice
-      showSon pref before next t =
-                    pref ++ before ++ treeshow (pref ++ next) t
-
-      -- pshow replace "\n" by "\n"++pref
-      pshow pref x = replace '\n' ("\n"++pref) (" " ++ show x)
-
-      -- replace on char by another string
-      replace c new string =
-        concatMap (change c new) string
-        where
-            change c new x
-                | x == c = new
-                | otherwise = x:[] -- "x"
 #+END_SRC
 
 Suppose we don't mind having an ordered binary tree.
@@ -2178,7 +2037,7 @@ Look at the result for
     print $ treeTakeDepth 4 infTreeTwo
 #+END_SRC
 
-* Difficulty: Nightmare
+* Difficulty: Hard
 :PROPERTIES:
 :CUSTOM_ID: hell-difficulty-part
 :END:
@@ -3219,7 +3078,7 @@ In particular, monads are very useful for:
 If you have followed me until here, then you've done it! You know
 monads[fn:7]!
 
-* Difficulty: Hell
+* Difficulty: Nightmarish
 :PROPERTIES:
 :CUSTOM_ID: difficulty--hell
 :END:
@@ -3248,6 +3107,13 @@ Haskell at least two or three times before it really clicked for them.
 :PROPERTIES:
 :CUSTOM_ID: web-application
 :END:
+
+* Difficulty: Hell
+:PROPERTIES:
+:CUSTOM_ID: difficulty--hell-be9a
+:END:
+
+This part will be for advanced Haskell code.
 
 * Appendix
 :PROPERTIES:
