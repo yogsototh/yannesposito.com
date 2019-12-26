@@ -931,10 +931,14 @@ main = do
 10
 #+end_example
 
-* Difficulty: First steps
+* First dive
 :PROPERTIES:
-:CUSTOM_ID: difficulty--first-steps
+:CUSTOM_ID: first-dive
 :END:
+
+In this part, you will be introduced to functional style, types and
+infinite structures manipulation.
+
 ** Functional style
 :PROPERTIES:
 :CUSTOM_ID: functional-style
@@ -2217,13 +2221,17 @@ with memory leaks.
 
 After a bit of experience, most Haskellers can avoid memory leaks naturally.
 
-* Difficulty: Hard
+* Dive into the impure
 :PROPERTIES:
 :CUSTOM_ID: hell-difficulty-part
 :END:
 
 Congratulations for getting so far!
-Now, some of the really hard stuff can start.
+
+You have been introduced to the functional style and how to deal with
+/pure/ code.
+Understand code that is only evaluated without changing the state of the
+external world.
 
 If you are like me, you should get the functional style.
 You should also understand a bit more the advantages of laziness by
@@ -2237,6 +2245,12 @@ And in particular:
 
 Be prepared, the answers might be complex.
 But they are all very rewarding.
+
+In this section you will first introduced about how to /use/ IO.
+That should not be that hard.
+Then, a harder section should explain how IO works.
+And the last part will talk about how we can generalize why we learned so
+far with IO to many different types.
 
 ** Deal With IO
 :PROPERTIES:
@@ -2759,29 +2773,29 @@ and
 [[./slave-market-with-the-disappearing-bust-of-voltaire.jpg]]
 
 Now, we will do a magic trick.
-We will make the temporary world symbols "disappear".
+We will make the temporary world symbols /disappear/.
 We will =bind= the two lines.
 Let's define the =bind= function.
 Its type is quite intimidating at first:
 
 #+BEGIN_SRC haskell
-    bind :: (World -> (a,World))
-            -> (a -> (World -> (b,World)))
-            -> (World -> (b,World))
+bind :: (World -> (a,World))
+        -> (a -> (World -> (b,World)))
+        -> (World -> (b,World))
 #+END_SRC
 
 But remember that =(World -> (a,World))= is the type for an IO action.
 Now let's rename it for clarity:
 
 #+BEGIN_SRC haskell
-    type IO a = World -> (a, World)
+type IO a = World -> (a, World)
 #+END_SRC
 
 Some examples of functions:
 
 #+BEGIN_SRC haskell
-    getLine :: IO String
-    print :: Show a => a -> IO ()
+getLine :: IO String
+print :: Show a => a -> IO ()
 #+END_SRC
 
 =getLine= is an IO action which takes world as a parameter and returns a
@@ -2808,49 +2822,50 @@ This new =IO a= type helps us simplify the type of =bind=:
 It says that =bind= takes two IO actions as parameters and returns another
 IO action.
 
-Now, remember the /important/ patterns. The first was:
+Now, remember the /important/ patterns.
+The first was:
 
 #+BEGIN_SRC haskell
-    pattern1 w0 = 
-     let (x,w1) = action1 w0 in
-     let (y,w2) = action2 x w1 in
-     (y,w2)
+pattern1 w0 =
+  let (x,w1) = action1 w0 in
+  let (y,w2) = action2 x w1 in
+  (y,w2)
 #+END_SRC
 
 Look at the types:
 
 #+BEGIN_SRC haskell
-    action1  :: IO a
-    action2  :: a -> IO b
-    pattern1 :: IO b
+action1  :: IO a
+action2  :: a -> IO b
+pattern1 :: IO b
 #+END_SRC
 
 Doesn't it seem familiar?
 
 #+BEGIN_SRC haskell
-    (bind action1 action2) w0 =
-        let (x, w1) = action1 w0
-            (y, w2) = action2 x w1
-        in  (y, w2)
+(bind action1 action2) w0 =
+    let (x, w1) = action1 w0
+        (y, w2) = action2 x w1
+    in  (y, w2)
 #+END_SRC
 
 The idea is to hide the World argument with this function.
-Let's go: As an example imagine if we wanted to simulate:
+As an example imagine if we wanted to simulate:
 
 #+BEGIN_SRC haskell
-    let (line1, w1) = getLine w0 in
-    let ((), w2) = print line1 in
-    ((), w2)
+let (line1, w1) = getLine w0 in
+let ((), w2) = print line1 in
+((), w2)
 #+END_SRC
 
 Now, using the =bind= function:
 
 #+BEGIN_SRC haskell
-    (res, w2) = (bind getLine print) w0
+(res, w2) = (bind getLine print) w0
 #+END_SRC
 
-As print is of type =Show a => a -> (World -> ((), World))=, we know =res =
-()= (=unit= type).
+As print is of type ~Show a => a -> (World -> ((), World))~, we know
+~res = ()~ (=unit= type).
 If you didn't see what was magic here, let's try with three lines this
 time.
 
@@ -2864,24 +2879,23 @@ time.
 Which is equivalent to:
 
 #+BEGIN_SRC haskell
-  (res,w3) = (bind getLine (\line1 ->
-               (bind getLine (\line2 ->
-                 print (line1 ++ line2))))) w0
+(res,w3) = (bind getLine (\line1 ->
+             (bind getLine (\line2 ->
+               print (line1 ++ line2))))) w0
 #+END_SRC
 
 Didn't you notice something?
 Yes, no temporary World variables are used anywhere!
-This is /MA/.
-/GIC/.
+This is /MA/. /GIC/.
 
 We can use a better notation.
-Let's use =(>>=)= instead of =bind=.
-=(>>=)= is an infix function like =(+)=; reminder =3 + 4 ⇔ (+) 3 4=
+Let's use ~(>>=)~ instead of =bind=.
+~(>>=)~ is an infix function like ~(+)~; reminder ~3 + 4 ⇔ (+) 3 4~
 
 #+BEGIN_SRC haskell
-  (res,w3) = (getLine >>=
-             (\line1 -> getLine >>=
-             (\line2 -> print (line1 ++ line2)))) w0
+(res,w3) = (getLine >>=
+           (\line1 -> getLine >>=
+           (\line2 -> print (line1 ++ line2)))) w0
 #+END_SRC
 
 Merry Christmas Everyone!
@@ -2907,13 +2921,13 @@ Is replaced by:
 
 Note that you can use =x= in =action2= and =x= and =y= in =action3=.
 
-But what about the lines not using the =<-=?
+But what about the lines not using the ~<-~?
 Easy, another function =blindBind=:
 
 #+BEGIN_SRC haskell
-  blindBind :: IO a -> IO b -> IO b
-  blindBind action1 action2 w0 =
-      bind action (\_ -> action2) w0
+blindBind :: IO a -> IO b -> IO b
+blindBind action1 action2 w0 =
+    bind action (\_ -> action2) w0
 #+END_SRC
 
 I didn't simplify this definition for the purposes of clarity.
@@ -2922,73 +2936,71 @@ Of course, we can use a better notation: we'll use the =(>>)= operator.
 And
 
 #+BEGIN_SRC haskell
-  do
-      action1
-      action2
-      action3
+do
+    action1
+    action2
+    action3
 #+END_SRC
 
 Is transformed into
 
 #+BEGIN_SRC haskell
-  action1 >>
-  action2 >>
-  action3
+action1 >>
+action2 >>
+action3
 #+END_SRC
 
 Also, another function is quite useful.
 
 #+BEGIN_SRC haskell
-  putInIO :: a -> IO a
-  putInIO x = IO (\w -> (x,w))
+putInIO :: a -> IO a
+putInIO x = IO (\w -> (x,w))
 #+END_SRC
 
 This is the general way to put pure values inside the "IO context".
-The general name for =putInIO= is =return=.
+The general name for =putInIO= is =pure= but you also see very often =return=.
+Historically =pure= was called =return=.
 This is quite a bad name when you learn Haskell.
 =return= is very different from what you might be used to.
 
 To finish, let's translate our example:
 
 #+BEGIN_SRC haskell
-  askUser :: IO [Integer]
-  askUser = do
-    putStrLn "Enter a list of numbers (separated by commas):"
-    input <- getLine
-    let maybeList = getListFromString input in
-        case maybeList of
-            Just l  -> return l
-            Nothing -> askUser
+askUser :: IO [Integer]
+askUser = do
+  putStrLn "Enter a list of numbers (separated by commas):"
+  input <- getLine
+  let maybeList = getListFromString input in
+      case maybeList of
+          Just l  -> return l
+          Nothing -> askUser
 
-  main :: IO ()
-  main = do
-    list <- askUser
-    print $ sum list
+main :: IO ()
+main = do
+  list <- askUser
+  print $ sum list
 #+END_SRC
 
 Is translated into:
 
-#+BEGIN_SRC haskell
-  import Data.Maybe
+#+BEGIN_SRC haskell :tangle io_bind.hs
+import Data.Maybe
+import Text.Read (readMaybe)
 
-  maybeRead :: Read a => String -> Maybe a
-  maybeRead s = case reads s of
-                    [(x,"")]    -> Just x
-                    _           -> Nothing
-  getListFromString :: String -> Maybe [Integer]
-  getListFromString str = maybeRead $ "[" ++ str ++ "]"
-  askUser :: IO [Integer]
-  askUser =
-      putStrLn "Enter a list of numbers (sep. by commas):" >>
-      getLine >>= \input ->
-      let maybeList = getListFromString input in
-        case maybeList of
-          Just l -> return l
-          Nothing -> askUser
+getListFromString :: String -> Maybe [Integer]
+getListFromString str = readMaybe $ "[" ++ str ++ "]"
+askUser :: IO [Integer]
+askUser =
+    putStrLn "Enter a list of numbers (sep. by commas):" >>
+    getLine >>= \input ->
+    let maybeList = getListFromString input in
+      case maybeList of
+        Just l -> return l
+        Nothing -> askUser
 
-  main :: IO ()
-  main = askUser >>=
-    \list -> print $ sum list
+main :: IO ()
+main = askUser >>=
+  \list -> print $ sum list
 #+END_SRC
 
 You can compile this code to verify that it works.
@@ -3014,54 +3026,174 @@ But mainly, you have access to a coding pattern which will ease the flow of
 your code.
 
 #+BEGIN_QUOTE
-  *Important remarks*:
+*Important remarks*:
 
-  - Monad are not necessarily about effects! There are a lot of /pure/
-    monads.
-  - Monad are more about sequencing
+- Monad are not necessarily about effects! There are a lot of /pure/
+  monads.
+- Monad are more about sequencing
 #+END_QUOTE
 
 In Haskell, =Monad= is a type class.
 To be an instance of this type class, you must provide the functions
-=(>>=)= and =return=.
-The function =(>>)= is derived from =(>>=)=.
-Here is how the type class =Monad= is declared (basically):
+~(>>=)~ and ~return~.
+The function ~(>>)~ is derived from ~(>>=)~.
+Here is how the type class =Monad= is declared (from [[https://hackage.haskell.org/package/base-4.12.0.0/docs/src/GHC.Base.html#Monad][hackage GHC.Base]]):
 
 #+BEGIN_SRC haskell
-  class Monad m  where
-    (>>=) :: m a -> (a -> m b) -> m b
-    return :: a -> m a
+class Applicative m => Monad m where
+    -- | Sequentially compose two actions, passing any value produced
+    -- by the first as an argument to the second.
+    (>>=)       :: forall a b. m a -> (a -> m b) -> m b
 
-    (>>) :: m a -> m b -> m b
-    f >> g = f >>= \_ -> g
+    -- | Sequentially compose two actions, discarding any value produced
+    -- by the first, like sequencing operators (such as the semicolon)
+    -- in imperative languages.
+    (>>)        :: forall a b. m a -> m b -> m b
+    m >> k = m >>= \_ -> k -- See Note [Recursive bindings for Applicative/Monad]
+    {-# INLINE (>>) #-}
 
-    -- You should generally safely ignore this function
-    -- which I believe exists for historical reasons
-    fail :: String -> m a
-    fail = error
+    -- | Inject a value into the monadic type.
+    return      :: a -> m a
+    return      = pure
+
+    -- | Fail with a message.  This operation is not part of the
+    -- mathematical definition of a monad, but is invoked on pattern-match
+    -- failure in a @do@ expression.
+    --
+    -- As part of the MonadFail proposal (MFP), this function is moved
+    -- to its own class 'MonadFail' (see "Control.Monad.Fail" for more
+    -- details). The definition here will be removed in a future
+    -- release.
+    fail        :: String -> m a
+    fail s      = errorWithoutStackTrace s
 #+END_SRC
 
 #+BEGIN_QUOTE
-  Remarks:
+Remarks:
 
-  - the keyword =class= is not your friend. A Haskell class is /not/ a
-    class of the kind you will find in object-oriented programming. A
-    Haskell class has a lot of similarities with Java interfaces. A
-    better word would have been =typeclass=, since that means a set of
-    types. For a type to belong to a class, all functions of the class
-    must be provided for this type.
-  - In this particular example of type class, the type =m= must be a
-    type that takes an argument. for example =IO a=, but also =Maybe a=,
-    =[a]=, etc...
-  - To be a useful monad, your function must obey some rules. If your
-    construction does not obey these rules strange things might happens:
-#+END_QUOTE
-
-#+BEGIN_SRC haskell
+- the keyword =class= is not your friend. A Haskell class is /not/ a
+  class of the kind you will find in object-oriented programming.
+  A Haskell class has a lot of similarities with Java interfaces.
+  A better word would have been =typeclass=, since that means a set of types.
+  For a type to belong to a class, all functions of the class must be
+  provided for this type.
+- In this particular example of type class, the type =m= must be a type
+  that takes an argument.
+  For example =IO a=, but also =Maybe a=, =[a]=, etc...
+- To be a useful monad, your function must obey some rules.
+  If your construction does not obey these rules strange things might happens:
+  #+BEGIN_SRC haskell
   return a >>= k  ==  k a
   m >>= return  ==  m
   m >>= (\x -> k x >>= h)  ==  (m >>= k) >>= h
-#+END_SRC
+  #+END_SRC
+- Furthermore the =Monad= and =Applicative= operations should relate as follow:
+  #+BEGIN_SRC haskell
+  pure = return
+  (<*>) = ap
+  #+END_SRC
+  The above laws imply:
+  #+begin_src haskell
+  fmap f xs = xs >>= return . f
+  (>>) = (*>)
+  #+end_src
+#+END_QUOTE
+
+*** Monad Intuition
+:PROPERTIES:
+:CUSTOM_ID: monad-intuition
+:END:
+
+I explained how to use the IO Monad.
+In the previous chapter I explained how it works behind the scene.
+Notice there is a huge difference between be a client of the Monad API and
+be an architect of the Monad API but also have an intuition about what is
+really a Monad.
+
+So to try to give you an intuition, just remember a Monad is a construction
+that has to do with /composition/ into higher order type constructors
+(types with a parameter).
+So if we consider ~(<=<)~ and ~(>=>)~ (Kleisli arrow composition) which are
+defined (simplified for the purpose of this article) as
+
+#+begin_src haskell
+f >=> g = \x -> f x >>= g
+g <=< f = f >=> g
+#+end_src
+
+Those operation constructed with the bind operator ~(>>=)~ are a
+generalisation of ~(.)~ and  ~(&)~ where ~f & g = g . f~.
+If you can look at the type this become visible, simply compare:
+
+#+begin_src haskell
+f :: a -> b
+g :: b -> c
+g . f :: a -> c
+f & g :: a -> c
+#+end_src
+
+with
+
+#+begin_src haskell
+f :: a -> m b
+g :: b -> m c
+g <=< f :: a -> m c
+f >=> g :: a -> m c
+#+end_src
+
+As I said, this is a generalisation of the composition operation to
+functions that returns types within a higher order type constructor.
+
+To give you better example, consider:
+- ~m = []~; ~[]~ is a higher order type constructor as it takes a type
+  parameter, the /kind/ of this type is ~* -> *~.
+  So if values have types, types have /kinds/.
+  You can see them in =ghci=:
+  #+begin_example
+  [hs:hsenv]> ghci
+  GHCi, version 8.6.5: http://www.haskell.org/ghc/  :? for help
+  Prelude> :kind Int
+  Int :: *
+  Prelude> :kind []
+  [] :: * -> *
+  #+end_example
+  We see that the kind of =Int= is =*= so, it is a monotype, but the kind of
+  =[]= is =* -> *= so it takes one type parameter.
+- ~a~, ~b~ to be ~Int~ and ~c~ to be ~String~
+- ~f n = [n, n+1]~
+- ~g n = [show n,">"++show (n+1)]~
+
+So
+
+#+begin_src haskell
+f 2 = [2,3]
+g 2 = ["2",">3"]
+g 3 = ["3",">4"]
+#+end_src
+
+One would expect to /combine/ ~f~ and ~g~ such that
+~(combine f g) 0 ⇒ ["2",">3","3",">4"]~.
+Unfortunately ~(.)~ will not work directly and this would be cumbersome to
+write.
+But thanks to the Monad abstraction we can write:
+
+#+begin_src haskell
+(f >=> g) 2 ⇒ ["2",">3","3",">4"]
+#+end_src
+
+#+begin_src haskell :tangle monad_composition.hs
+import Control.Monad ((>=>))
+
+f :: Int -> [Int]
+f n = [n, n+1]
+
+g :: Int -> [String]
+g n = [show n,">"++show (n+1)]
+
+main = print $ (f >=> g) 2
+#+end_src
+
+The next chapters are simply about providing some examples of useful Monads.
 
 *** Maybe is a monad
 :PROPERTIES:
@@ -3079,87 +3211,87 @@ Imagine a complex bank operation.
 You are eligible to gain about 700€ only if you can afford to follow a list
 of operations without your balance dipping below zero.
 
-#+BEGIN_SRC haskell
-  deposit  value account = account + value
-  withdraw value account = account - value
+#+BEGIN_SRC haskell :tangle maybe_monad_1.hs
+deposit  value account = account + value
+withdraw value account = account - value
 
-  eligible :: (Num a,Ord a) => a -> Bool
-  eligible account =
-    let account1 = deposit 100 account in
-      if (account1 < 0)
+eligible :: (Num a,Ord a) => a -> Bool
+eligible account =
+  let account1 = deposit 100 account in
+    if (account1 < 0)
+    then False
+    else
+      let account2 = withdraw 200 account1 in
+      if (account2 < 0)
       then False
       else
-        let account2 = withdraw 200 account1 in
-        if (account2 < 0)
+        let account3 = deposit 100 account2 in
+        if (account3 < 0)
         then False
         else
-          let account3 = deposit 100 account2 in
-          if (account3 < 0)
+          let account4 = withdraw 300 account3 in
+          if (account4 < 0)
           then False
           else
-            let account4 = withdraw 300 account3 in
-            if (account4 < 0)
+            let account5 = deposit 1000 account4 in
+            if (account5 < 0)
             then False
             else
-              let account5 = deposit 1000 account4 in
-              if (account5 < 0)
-              then False
-              else
-                True
+              True
 
-  main = do
-    print $ eligible 300 -- True
-    print $ eligible 299 -- False
+main = do
+  print $ eligible 300 -- True
+  print $ eligible 299 -- False
 #+END_SRC
 
 Now, let's make it better using Maybe and the fact that it is a Monad.
 
-#+BEGIN_SRC haskell
-  deposit :: (Num a) => a -> a -> Maybe a
-  deposit value account = Just (account + value)
+#+BEGIN_SRC haskell :tangle maybe_monad_2.hs
+deposit :: (Num a) => a -> a -> Maybe a
+deposit value account = Just (account + value)
 
-  withdraw :: (Num a,Ord a) => a -> a -> Maybe a
-  withdraw value account = if (account < value) 
-                           then Nothing 
-                           else Just (account - value)
+withdraw :: (Num a,Ord a) => a -> a -> Maybe a
+withdraw value account = if (account < value)
+                         then Nothing
+                         else Just (account - value)
 
-  eligible :: (Num a, Ord a) => a -> Maybe Bool
-  eligible account = do
-    account1 <- deposit 100 account 
-    account2 <- withdraw 200 account1 
-    account3 <- deposit 100 account2 
-    account4 <- withdraw 300 account3 
-    account5 <- deposit 1000 account4
-    Just True
+eligible :: (Num a, Ord a) => a -> Maybe Bool
+eligible account = do
+  account1 <- deposit 100 account
+  account2 <- withdraw 200 account1
+  account3 <- deposit 100 account2
+  account4 <- withdraw 300 account3
+  account5 <- deposit 1000 account4
+  Just True
 
-  main = do
-    print $ eligible 300 -- Just True
-    print $ eligible 299 -- Nothing
+main = do
+  print $ eligible 300 -- Just True
+  print $ eligible 299 -- Nothing
 #+END_SRC
 
 Not bad, but we can make it even better:
 
-#+BEGIN_SRC haskell
-  deposit :: (Num a) => a -> a -> Maybe a
-  deposit value account = Just (account + value)
+#+BEGIN_SRC haskell :tangle maybe_monad_3.hs
+deposit :: (Num a) => a -> a -> Maybe a
+deposit value account = Just (account + value)
 
-  withdraw :: (Num a,Ord a) => a -> a -> Maybe a
-  withdraw value account = if (account < value) 
-                           then Nothing 
-                           else Just (account - value)
+withdraw :: (Num a,Ord a) => a -> a -> Maybe a
+withdraw value account = if (account < value) 
+                         then Nothing 
+                         else Just (account - value)
 
-  eligible :: (Num a, Ord a) => a -> Maybe Bool
-  eligible account =
-    deposit 100 account >>=
-    withdraw 200 >>=
-    deposit 100  >>=
-    withdraw 300 >>=
-    deposit 1000 >>
-    return True
+eligible :: (Num a, Ord a) => a -> Maybe Bool
+eligible account =
+  deposit 100 account >>=
+  withdraw 200 >>=
+  deposit 100  >>=
+  withdraw 300 >>=
+  deposit 1000 >>
+  return True
 
-  main = do
-    print $ eligible 300 -- Just True
-    print $ eligible 299 -- Nothing
+main = do
+  print $ eligible 300 -- Just True
+  print $ eligible 299 -- Nothing
 #+END_SRC
 
 We have proven that Monads are a good way to make our code more elegant.
@@ -3168,23 +3300,23 @@ in most imperative languages.
 In fact, this is the kind of construction we make naturally.
 
 #+BEGIN_QUOTE
-  An important remark:
+An important remark:
 
-  The first element in the sequence being evaluated to =Nothing= will
-  stop the complete evaluation. This means you don't execute all lines.
-  You get this for free, thanks to laziness.
+The first element in the sequence being evaluated to =Nothing= will
+stop the complete evaluation. This means you don't execute all lines.
+You get this for free, thanks to laziness.
 #+END_QUOTE
 
-You could also replay these example with the definition of =(>>=)= for
+You could also replay these example with the definition of ~(>>=)~ for
 =Maybe= in mind:
 
 #+BEGIN_SRC haskell
-  instance Monad Maybe where
-      (>>=) :: Maybe a -> (a -> Maybe b) -> Maybe b
-      Nothing  >>= _  = Nothing
-      (Just x) >>= f  = f x
+instance Monad Maybe where
+    (>>=) :: Maybe a -> (a -> Maybe b) -> Maybe b
+    Nothing  >>= _  = Nothing
+    (Just x) >>= f  = f x
 
-      return x = Just x
+    return x = Just x
 #+END_SRC
 
 The =Maybe= monad proved to be useful while being a very simple example.
@@ -3202,21 +3334,21 @@ But now for a cooler example, lists.
 The list monad helps us to simulate non-deterministic computations.
 Here we go:
 
-#+BEGIN_SRC haskell
-  import Control.Monad (guard)
+#+BEGIN_SRC haskell :tangle list_monad.hs
+import Control.Monad (guard)
 
-  allCases = [1..10]
+allCases = [1..10]
 
-  resolve :: [(Int,Int,Int)]
-  resolve = do
-                x <- allCases
-                y <- allCases
-                z <- allCases
-                guard $ 4*x + 2*y < z
-                return (x,y,z)
+resolve :: [(Int,Int,Int)]
+resolve = do
+              x <- allCases
+              y <- allCases
+              z <- allCases
+              guard $ 4*x + 2*y < z
+              return (x,y,z)
 
-  main = do
-    print resolve
+main = do
+  print resolve
 #+END_SRC
 
 MA. GIC. :
@@ -3225,7 +3357,7 @@ MA. GIC. :
 [(1,1,7),(1,1,8),(1,1,9),(1,1,10),(1,2,9),(1,2,10)]
 #+END_EXAMPLE
 
-For the list monad, there is also this syntactic sugar:
+For the list monad, there is also this syntactic sugar (à la Python):
 
 #+BEGIN_SRC haskell
   print $ [ (x,y,z) | x <- allCases,
@@ -3249,30 +3381,104 @@ In particular, monads are very useful for:
 If you have followed me until here, then you've done it! You know
 monads[fn:7]!
 
-* Difficulty: Nightmarish
+* Start swimming
 :PROPERTIES:
 :CUSTOM_ID: difficulty--hell
 :END:
 
-So when I said that the learning curve is steep.
 If you come this far, you can really congratulate yourself.
 This is already what I would personnaly call a tremendous achievement.
-But now, be prepared, it will be a *lot* harder.
-So brace yourself, be ready for the big jump.
-I am pretty sure this part is so hard, that you will have a hard time
-understanding it without looking at other resources.
-This is intended.
-Do not hesitate to read previous sections again, to read external
-resources, ask questions in all Haskell communities platforms.
-Sorry to make it as is, but, really I don't think I can make a dense
-Haskell introduction and not make it ultra hard.
-Do not feel discouraged though, most Haskeller I know had to dig into
-Haskell at least two or three times before it really clicked for them.
+
+From now on, this is more or less a free space.
+You should understand the essence of the Haskell language.
+But now, to really be able to create something useful, you will need to
+also understand not only the language but the ecosystem around it.
+
+There are many different people involved with Haskell and some with quite
+different point of view.
+There are:
+
+- /core contributers/, that write papers, contribute to GHC and participate
+  in language update proposals,
+- /Haskell focused tools creators/,
+  people creating tools useful for the Haskell community like IDE engines
+  and plugins, tools to help building Haskell projects, etc...
+- /library creators/,
+- /application creators/, users that use the resources from the Haskell
+  ecosystem to create useful applications or solve problems using it.
+
+Of course I am missing a lot of categories and also most Haskellers
+participate in many different ones.
+But it is important to bear in mind that Haskell is a free software for
+anyone to use and participate in its enhancements.
+In particular, about the missing categories are just Haskell hobyist that
+write blog post about it, and participate in the community.
+
+This entire section will be about, writing real-world applications.
+How to start a new project, how to search for the libraries and use the
+tools around Haskell for example.
+
+#+begin_notes
+If you find those part too hard, do not feel discouraged though, most
+Haskeller I know had to dig into Haskell at least two or three times before
+it really "clicked" for them.
+#+end_notes
+
+** Start a new project
+:PROPERTIES:
+:CUSTOM_ID: start-a-new-project
+:END:
+
+There are multiple way to start a new project.
+The community exists for some time now, I can think of 3 "starter pack":
+
+1. Use =cabal-install= (the source)
+2. Use =stack=
+3. Use =nix=
+
+All methods will in the end need =cabal-install=.
+While, both the =cabal-install= and =stack= method are "easy" to start
+with, the =nix= method is for more advanced user that want to invest time
+in learning =nix=.
+
+Also, my personal feeling is that for beginners the =stack= method should
+be preferred.
+By default it will "freeze" your dependencies and will improve your ability
+to have reproducible builds.
+
+I wouldn't want to start any war on the tooling.
+Technical choices like those are often the occasion for bikeshedding[fn:8]
+discussions and end up like many programming debates (space vs tabs, vim vs
+emacs, linux vs macOs, c vs c++, etc...)
+
+So even though I will assume that you will use the =stack= method to create
+your project, I still want to show how you could only use =cabal-install=.
+
+[fn:8] From [[https://en.wiktionary.org/wiki/bikeshedding][wikitionary]] the term was coined as a metaphor to illuminate
+       Parkinson’s Law of Triviality.
+       Parkinson observed that a committee whose job is to approve plans for a
+       nuclear power plant may spend the majority of its time on relatively
+       unimportant but easy-to-grasp issues, such as what materials to use
+       for the staff bikeshed, while neglecting the design of the power
+       plant itself, which is far more important but also far more
+       difficult to criticize constructively.
+       It was popularized in the Berkeley Software Distribution community by
+       Poul-Henning Kamp and has spread from there to the software
+       industry at large.
+
+*** =cabal-install=
+:PROPERTIES:
+:CUSTOM_ID: -cabal-install-
+:END:
+
+
 
 ** Command line application
 :PROPERTIES:
 :CUSTOM_ID: command-line-application
 :END:
+
+
 
 ** Web Application
 :PROPERTIES:
@@ -3286,334 +3492,8 @@ Haskell at least two or three times before it really clicked for them.
 
 This part will be for advanced Haskell code.
 
-* Appendix
-:PROPERTIES:
-:CUSTOM_ID: appendix
-:END:
 
-This section is not so much about learning Haskell.
-It is just here to discuss some details further.
-
-** More on Infinite Tree
-:PROPERTIES:
-:CUSTOM_ID: more-on-infinite-tree
-:END:
-
-In the section Infinite Structures we saw some simple constructions.
-Unfortunately we removed two properties from our tree:
-
-1. no duplicate node value
-2. well ordered tree
-
-In this section we will try to keep the first property.
-Concerning the second one, we must relax it but we'll discuss how to keep
-it as much as possible.
-
-This code is mostly the same as the one in the tree section.
-
-#+BEGIN_SRC haskell
-  import Data.List
-  data BinTree a = Empty
-                   | Node a (BinTree a) (BinTree a)
-                    deriving (Eq,Ord)
-
-  -- declare BinTree a to be an instance of Show
-  instance (Show a) => Show (BinTree a) where
-    -- will start by a '<' before the root
-    -- and put a : a begining of line
-    show t = "< " ++ replace '\n' "\n: " (treeshow "" t)
-      where
-      treeshow pref Empty = ""
-      treeshow pref (Node x Empty Empty) =
-                    (pshow pref x)
-
-      treeshow pref (Node x left Empty) =
-                    (pshow pref x) ++ "\n" ++
-                    (showSon pref "`--" "   " left)
-
-      treeshow pref (Node x Empty right) =
-                    (pshow pref x) ++ "\n" ++
-                    (showSon pref "`--" "   " right)
-
-      treeshow pref (Node x left right) =
-                    (pshow pref x) ++ "\n" ++
-                    (showSon pref "|--" "|  " left) ++ "\n" ++
-                    (showSon pref "`--" "   " right)
-
-      -- show a tree using some prefixes to make it nice
-      showSon pref before next t =
-                    pref ++ before ++ treeshow (pref ++ next) t
-
-      -- pshow replace "\n" by "\n"++pref
-      pshow pref x = replace '\n' ("\n"++pref) (show x)
-
-      -- replace on char by another string
-      replace c new string =
-        concatMap (change c new) string
-        where
-            change c new x
-                | x == c = new
-                | otherwise = x:[] -- "x"
-#+END_SRC
-
-Our first step is to create some pseudo-random number list:
-
-#+BEGIN_SRC haskell
-  shuffle = map (\x -> (x*3123) `mod` 4331) [1..]
-#+END_SRC
-
-Just as a reminder, here is the definition of =treeFromList=
-
-#+BEGIN_SRC haskell
-  treeFromList :: (Ord a) => [a] -> BinTree a
-  treeFromList []    = Empty
-  treeFromList (x:xs) = Node x (treeFromList (filter (<x) xs))
-                               (treeFromList (filter (>x) xs))
-#+END_SRC
-
-and =treeTakeDepth=:
-
-#+BEGIN_SRC haskell
-  treeTakeDepth _ Empty = Empty
-  treeTakeDepth 0 _     = Empty
-  treeTakeDepth n (Node x left right) = let
-            nl = treeTakeDepth (n-1) left
-            nr = treeTakeDepth (n-1) right
-            in
-                Node x nl nr
-#+END_SRC
-
-See the result of:
-
-#+BEGIN_SRC haskell
-  main = do
-        putStrLn "take 10 shuffle"
-        print $ take 10 shuffle
-        putStrLn "\ntreeTakeDepth 4 (treeFromList shuffle)"
-        print $ treeTakeDepth 4 (treeFromList shuffle)
-#+END_SRC
-
-#+BEGIN_EXAMPLE
-    % runghc 02_Hard_Part/41_Infinites_Structures.lhs
-    take 10 shuffle
-    [3123,1915,707,3830,2622,1414,206,3329,2121,913]
-    treeTakeDepth 4 (treeFromList shuffle)
-
-    < 3123
-    : |--1915
-    : |  |--707
-    : |  |  |--206
-    : |  |  `--1414
-    : |  `--2622
-    : |     |--2121
-    : |     `--2828
-    : `--3830
-    :    |--3329
-    :    |  |--3240
-    :    |  `--3535
-    :    `--4036
-    :       |--3947
-    :       `--4242
-#+END_EXAMPLE
-
-Yay! It ends! Beware though, it will only work if you always have
-something to put into a branch.
-
-For example
-
-#+BEGIN_SRC haskell
-  treeTakeDepth 4 (treeFromList [1..])
-#+END_SRC
-
-will loop forever. Simply because it will try to access the head of
-=filter (<1) [2..]=. But =filter= is not smart enought to understand
-that the result is the empty list.
-
-Nonetheless, it is still a very cool example of what non strict programs
-have to offer.
-
-Left as an exercise to the reader:
-
-- Prove the existence of a number =n= so that
-  =treeTakeDepth n (treeFromList shuffle)= will enter an infinite loop.
-- Find an upper bound for =n=.
-- Prove there is no =shuffle= list so that, for any depth, the program
-  ends.
-
-This code is mostly the same as the preceding one.
-
-#+BEGIN_SRC haskell
-  import Debug.Trace (trace)
-  import Data.List
-  data BinTree a = Empty
-                   | Node a (BinTree a) (BinTree a)
-                    deriving (Eq,Ord)
-#+END_SRC
-
-#+BEGIN_SRC haskell
-  -- declare BinTree a to be an instance of Show
-  instance (Show a) => Show (BinTree a) where
-    -- will start by a '<' before the root
-    -- and put a : a begining of line
-    show t = "< " ++ replace '\n' "\n: " (treeshow "" t)
-      where
-      treeshow pref Empty = ""
-      treeshow pref (Node x Empty Empty) =
-                    (pshow pref x)
-
-      treeshow pref (Node x left Empty) =
-                    (pshow pref x) ++ "\n" ++
-                    (showSon pref "`--" "   " left)
-
-      treeshow pref (Node x Empty right) =
-                    (pshow pref x) ++ "\n" ++
-                    (showSon pref "`--" "   " right)
-
-      treeshow pref (Node x left right) =
-                    (pshow pref x) ++ "\n" ++
-                    (showSon pref "|--" "|  " left) ++ "\n" ++
-                    (showSon pref "`--" "   " right)
-
-      -- show a tree using some prefixes to make it nice
-      showSon pref before next t =
-                    pref ++ before ++ treeshow (pref ++ next) t
-
-      -- pshow replace "\n" by "\n"++pref
-      pshow pref x = replace '\n' ("\n"++pref) (" " ++ show x)
-
-      -- replace on char by another string
-      replace c new string =
-        concatMap (change c new) string
-        where
-            change c new x
-                | x == c = new
-                | otherwise = x:[] -- "x"
-
-  treeTakeDepth _ Empty = Empty
-  treeTakeDepth 0 _     = Empty
-  treeTakeDepth n (Node x left right) = let
-            nl = treeTakeDepth (n-1) left
-            nr = treeTakeDepth (n-1) right
-            in
-                Node x nl nr
-#+END_SRC
-
-In order to resolve these problem we will modify slightly our
-=treeFromList= and =shuffle= function.
-
-A first problem, is the lack of infinite different number in our
-implementation of =shuffle=. We generated only =4331= different numbers.
-To resolve this we make a slightly better =shuffle= function.
-
-#+BEGIN_SRC haskell
-  shuffle = map rand [1..]
-            where
-                rand x = ((p x) `mod` (x+c)) - ((x+c) `div` 2)
-                p x = m*x^2 + n*x + o -- some polynome
-                m = 3123
-                n = 31
-                o = 7641
-                c = 1237
-#+END_SRC
-
-This shuffle function has the property (hopefully) not to have an upper
-nor lower bound. But having a better shuffle list isn't enough not to
-enter an infinite loop.
-
-Generally, we cannot decide whether =filter (<x) xs= is empty. Then to
-resolve this problem, I'll authorize some error in the creation of our
-binary tree. This new version of code can create binary tree which don't
-have the following property for some of its nodes:
-
-#+BEGIN_QUOTE
-Any element of the left (resp. right) branch must all be strictly
-inferior (resp. superior) to the label of the root.
-#+END_QUOTE
-
-Remark it will remains /mostly/ an ordered binary tree. Furthermore, by
-construction, each node value is unique in the tree.
-
-Here is our new version of =treeFromList=. We simply have replaced
-=filter= by =safefilter=.
-
-#+BEGIN_SRC haskell
-  treeFromList :: (Ord a, Show a) => [a] -> BinTree a
-  treeFromList []    = Empty
-  treeFromList (x:xs) = Node x left right
-            where
-                left = treeFromList $ safefilter (<x) xs
-                right = treeFromList $ safefilter (>x) xs
-#+END_SRC
-
-This new function =safefilter= is almost equivalent to =filter= but
-don't enter infinite loop if the result is a finite list. If it cannot
-find an element for which the test is true after 10000 consecutive
-steps, then it considers to be the end of the search.
-
-#+BEGIN_SRC haskell
-  safefilter :: (a -> Bool) -> [a] -> [a]
-  safefilter f l = safefilter' f l nbTry
-    where
-        nbTry = 10000
-        safefilter' _ _ 0 = []
-        safefilter' _ [] _ = []
-        safefilter' f (x:xs) n =
-                    if f x
-                       then x : safefilter' f xs nbTry
-                       else safefilter' f xs (n-1)
-#+END_SRC
-
-Now run the program and be happy:
-
-#+BEGIN_SRC haskell
-  main = do
-        putStrLn "take 10 shuffle"
-        print $ take 10 shuffle
-        putStrLn "\ntreeTakeDepth 8 (treeFromList shuffle)"
-        print $ treeTakeDepth 8 (treeFromList $ shuffle)
-#+END_SRC
-
-You should realize the time to print each value is different. This is
-because Haskell compute each value when it needs it. And in this case,
-this is when asked to print it on the screen.
-
-Impressively enough, try to replace the depth from =8= to =100=. It will
-work without killing your RAM! The flow and the memory management is
-done naturally by Haskell.
-
-Left as an exercise to the reader:
-
-- Even with large constant value for =deep= and =nbTry=, it seems to
-  work nicely. But in the worst case, it can be exponential. Create a
-  worst case list to give as parameter to =treeFromList=.\\
-  /hint/: think about (=[0,-1,-1,....,-1,1,-1,...,-1,1,...]=).
-- I first tried to implement =safefilter= as follow:
-
-  #+BEGIN_SRC haskell
-    safefilter' f l = if filter f (take 10000 l) == []
-                      then []
-                      else filter f l
-  #+END_SRC
-
-  Explain why it doesn't work and can enter into an infinite loop.
-- Suppose that =shuffle= is real random list with growing bounds. If you
-  study a bit this structure, you'll discover that with probability 1,
-  this structure is finite. Using the following code (suppose we could
-  use =safefilter'= directly as if was not in the where of safefilter)
-  find a definition of =f= such that with probability =1=,
-  =treeFromList' shuffle= is infinite. And prove it. Disclaimer, this is
-  only a conjecture.
-
-#+BEGIN_SRC haskell
-    treeFromList' []  n = Empty
-    treeFromList' (x:xs) n = Node x left right
-        where
-            left = treeFromList' (safefilter' (<x) xs (f n)
-            right = treeFromList' (safefilter' (>x) xs (f n)
-            f = ???
-#+END_SRC
-
-** Thanks
+* Thanks
    :PROPERTIES:
    :CUSTOM_ID: thanks
    :END:
