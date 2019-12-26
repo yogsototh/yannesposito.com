@@ -6,6 +6,7 @@
 #+keywords: Haskell, programming, functional, tutorial                                |
 #+DESCRIPTION: A very dense introduction and Haskell tutorial. Brace yourself.
 #+OPTIONS: auto-id:t toc:t
+#+STARTUP: overview
 
 #+begin_notes
 A very short and intense introduction to Haskell.
@@ -182,32 +183,32 @@ The article contains five parts:
 
    {{{lnk(shell.nix)}}}
    #+begin_src nix :tangle shell.nix
-     { nixpkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {} }:
-     let
-       inherit (nixpkgs) pkgs;
-       inherit (pkgs) haskellPackages;
+   { nixpkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {} }:
+   let
+     inherit (nixpkgs) pkgs;
+     inherit (pkgs) haskellPackages;
 
-       haskellDeps = ps: with ps; [
-         base
-         protolude
-         containers
-       ];
+     haskellDeps = ps: with ps; [
+       base
+       protolude
+       containers
+     ];
 
-       ghc = haskellPackages.ghcWithPackages haskellDeps;
+     ghc = haskellPackages.ghcWithPackages haskellDeps;
 
-       nixPackages = [
-         ghc
-         pkgs.gdb
-         haskellPackages.cabal-install
-       ];
-     in
-     pkgs.stdenv.mkDerivation {
-       name = "env";
-       buildInputs = nixPackages;
-       shellHook = ''
-          export PS1="\n[hs:\033[1;32m\]\W\[\033[0m\]]> "
-       '';
-     }
+     nixPackages = [
+       ghc
+       pkgs.gdb
+       haskellPackages.cabal-install
+     ];
+   in
+   pkgs.stdenv.mkDerivation {
+     name = "env";
+     buildInputs = nixPackages;
+     shellHook = ''
+        export PS1="\n[hs:\033[1;32m\]\W\[\033[0m\]]> "
+     '';
+   }
    #+end_src
 
 4. In the =hsenv= directory, in a terminal, run =nix-shell=.
@@ -280,7 +281,7 @@ Let's jump to the mandatory "Hello World".
 
 {{{lnk(hello.hs)}}}
 #+BEGIN_SRC haskell :tangle hello.hs
-  main = putStrLn "Hello World!"
+main = putStrLn "Hello World!"
 #+END_SRC
 
 #+BEGIN_EXAMPLE
@@ -405,45 +406,45 @@ You might be used to declaring functions like this:
 In =C=:
 
 #+BEGIN_SRC C
-  int f(int x, int y) {
-      return x*x + y*y;
-  }
+int f(int x, int y) {
+    return x*x + y*y;
+}
 #+END_SRC
 
 In JavaScript:
 
 #+BEGIN_SRC javascript
-  function f(x,y) {
-      return x*x + y*y;
-  }
+function f(x,y) {
+    return x*x + y*y;
+}
 #+END_SRC
 
 in Python:
 
 #+BEGIN_SRC python
-  def f(x,y):
-      return x*x + y*y
+def f(x,y):
+    return x*x + y*y
 #+END_SRC
 
 in Ruby:
 
 #+BEGIN_SRC ruby
-  def f(x,y)
-      x*x + y*y
-  end
+def f(x,y)
+    x*x + y*y
+end
 #+END_SRC
 
 In Scheme:
 
 #+BEGIN_SRC scheme
-  (define (f x y)
-      (+ (* x x) (* y y)))
+(define (f x y)
+    (+ (* x x) (* y y)))
 #+END_SRC
 
 Finally, the Haskell way is:
 
 #+BEGIN_SRC haskell
-  f x y = x*x + y*y
+f x y = x*x + y*y
 #+END_SRC
 
 Very clean. No parenthesis, no =def=.
@@ -468,10 +469,10 @@ We declare the type using =::=
 
 {{{lnk(basic.hs)}}}
 #+BEGIN_SRC haskell :tangle basic.hs
-  f :: Int -> Int -> Int
-  f x y = x*x + y*y
+f :: Int -> Int -> Int
+f x y = x*x + y*y
 
-  main = print (f 2 3)
+main = print (f 2 3)
 #+END_SRC
 
 #+BEGIN_EXAMPLE
@@ -483,10 +484,10 @@ Now try
 
 {{{lnk(error_basic.hs)}}}
 #+BEGIN_SRC haskell :tangle error_basic.hs
-  f :: Int -> Int -> Int
-  f x y = x*x + y*y
+f :: Int -> Int -> Int
+f x y = x*x + y*y
 
-  main = print (f 2.3 4.2)
+main = print (f 2.3 4.2)
 #+END_SRC
 
 You should get this error:
@@ -511,9 +512,9 @@ infer the most general type for us:
 
 {{{lnk(float_basic.hs)}}}
 #+BEGIN_SRC haskell :tangle float_basic.hs
-  f x y = x*x + y*y
+f x y = x*x + y*y
 
-  main = print (f 2.3 4.2)
+main = print (f 2.3 4.2)
 #+END_SRC
 
 #+begin_example
@@ -529,23 +530,23 @@ For example, in =C=, you'll have to declare a function for =int=, for
 But, what type should we declare?
 To discover the type Haskell has found for us, just launch ghci:
 
-#+BEGIN_SRC
-  % ghci
-  GHCi, version 7.0.4: http://www.haskell.org/ghc/  :? for help
-  Loading package ghc-prim ... linking ... done.
-  Loading package integer-gmp ... linking ... done.
-  Loading package base ... linking ... done.
-  Loading package ffi-1.0 ... linking ... done.
-  Prelude> let f x y = x*x + y*y
-  Prelude> :type f
-  f :: Num a => a -> a -> a
-#+END_SRC
+#+BEGIN_EXAMPLE
+% ghci
+GHCi, version 7.0.4: http://www.haskell.org/ghc/  :? for help
+Loading package ghc-prim ... linking ... done.
+Loading package integer-gmp ... linking ... done.
+Loading package base ... linking ... done.
+Loading package ffi-1.0 ... linking ... done.
+Prelude> let f x y = x*x + y*y
+Prelude> :type f
+f :: Num a => a -> a -> a
+#+END_EXAMPLE
 
 Uh? What is this strange type?
 
-#+BEGIN_EXAMPLE
+#+BEGIN_SRC haskell
 Num a => a -> a -> a
-#+END_EXAMPLE
+#+END_SRC
 
 First, let's focus on the right part =a -> a -> a=.
 To understand it, just look at a list of progressive examples:
@@ -602,12 +603,12 @@ More precisely =f 3 4= is equivalent to =(f 3) 4=.
 Note =f 3= is a function:
 
 #+BEGIN_SRC haskell
-  f :: Num a => a -> a -> a
+f :: Num a => a -> a -> a
 
-  g :: Num a => a -> a
-  g = f 3
+g :: Num a => a -> a
+g = f 3
 
-  g y ⇔ 3*3 + y*y
+g y ⇔ 3*3 + y*y
 #+END_SRC
 
 Another notation exists for functions.
@@ -631,10 +632,10 @@ expected:
 
 {{{lnk(typed_float_basic.hs)}}}
 #+BEGIN_SRC haskell :tangle typed_float_basic.hs
-  f :: Num a => a -> a -> a
-  f x y = x*x + y*y
+f :: Num a => a -> a -> a
+f x y = x*x + y*y
 
-  main = print (f 3 2.4)
+main = print (f 3 2.4)
 #+END_SRC
 
 It works, because, =3= is a valid representation both for Fractional
@@ -645,15 +646,15 @@ Fractional number.
 If we force our function to work with different types, it will fail:
 
 #+BEGIN_SRC haskell
-  f :: Num a => a -> a -> a
-  f x y = x*x + y*y
+f :: Num a => a -> a -> a
+f x y = x*x + y*y
 
-  x :: Int
-  x = 3
-  y :: Float
-  y = 2.4
-  -- won't work because type x ≠ type y
-  main = print (f x y)
+x :: Int
+x = 3
+y :: Float
+y = 2.4
+-- won't work because type x ≠ type y
+main = print (f x y)
 #+END_SRC
 
 The compiler complains.
@@ -844,8 +845,8 @@ But it is considered a good practice to do so.
 /Infix notation/
 
 #+BEGIN_SRC haskell :tangle functions.hs
-  square :: Num a => a -> a
-  square x = x^2
+square :: Num a => a -> a
+square x = x^2
 #+END_SRC
 
 Note =^= uses infix notation.
@@ -853,30 +854,30 @@ For each infix operator there its associated prefix notation.
 You just have to put it inside parenthesis.
 
 #+BEGIN_SRC haskell :tangle functions.hs
-  square' x = (^) x 2
+square' x = (^) x 2
 
-  square'' x = (^2) x
+square'' x = (^2) x
 #+END_SRC
 
 We can remove =x= in the left and right side!
 It's called η-reduction.
 
 #+BEGIN_SRC haskell :tangle functions.hs
-  square''' = (^2)
+square''' = (^2)
 #+END_SRC
 
 Note we can declare functions with ='= in their name.
 Here:
 
 #+BEGIN_QUOTE
-  =square= ⇔ =square'= ⇔ =square''= ⇔ =square'''=
+=square= ⇔ =square'= ⇔ =square''= ⇔ =square'''=
 #+END_QUOTE
 
 Note for each prefix notation you can transform it to infix notation with
 =`= like this:
 
 #+begin_example
-  foo x y ↔ x `foo` y
+foo x y ↔ x `foo` y
 #+end_example
 
 /Tests/
@@ -884,8 +885,8 @@ Note for each prefix notation you can transform it to infix notation with
 An implementation of the absolute function.
 
 #+BEGIN_SRC haskell :tangle functions.hs
-  absolute :: (Ord a, Num a) => a -> a
-  absolute x = if x >= 0 then x else -x
+absolute :: (Ord a, Num a) => a -> a
+absolute x = if x >= 0 then x else -x
 #+END_SRC
 
 Note: the =if .. then .. else= Haskell notation is more like the =¤?¤:¤=
@@ -895,9 +896,9 @@ You cannot forget the =else=.
 Another equivalent version:
 
 #+BEGIN_SRC haskell :tangle functions.hs
-  absolute' x
-      | x >= 0 = x
-      | otherwise = -x
+absolute' x
+    | x >= 0 = x
+    | otherwise = -x
 #+END_SRC
 
 #+BEGIN_QUOTE
@@ -907,15 +908,15 @@ Like in Python, bad indentation can break your code!
 
 {{{lnk(functions.hs)}}}
 #+BEGIN_SRC haskell :tangle functions.hs
-  main = do
-        print $ square 10
-        print $ square' 10
-        print $ square'' 10
-        print $ square''' 10
-        print $ absolute 10
-        print $ absolute (-10)
-        print $ absolute' 10
-        print $ absolute' (-10)
+main = do
+      print $ square 10
+      print $ square' 10
+      print $ square'' 10
+      print $ square''' 10
+      print $ absolute 10
+      print $ absolute (-10)
+      print $ absolute' 10
+      print $ absolute' (-10)
 #+END_SRC
 
 #+begin_example
@@ -960,15 +961,15 @@ To show differences between functional and imperative approaches, I'll
 start by providing an imperative solution (in javascript):
 
 #+BEGIN_SRC javascript
-    function evenSum(list) {
-        var result = 0;
-        for (var i=0; i< list.length ; i++) {
-            if (list[i] % 2 ==0) {
-                result += list[i];
-            }
+function evenSum(list) {
+    var result = 0;
+    for (var i=0; i< list.length ; i++) {
+        if (list[i] % 2 ==0) {
+            result += list[i];
         }
-        return result;
     }
+    return result;
+}
 #+END_SRC
 
 In Haskell, by contrast, we don't have variables or a for loop.
@@ -985,25 +986,25 @@ Note that for simplicity I assume the int list ends with the first =0=
 value.
 
 #+BEGIN_SRC C
-  int evenSum(int *list) {
-      return accumSum(0,list);
-  }
+int evenSum(int *list) {
+    return accumSum(0,list);
+}
 
-  int accumSum(int n, int *list) {
-      int x;
-      int *xs;
-      if (*list == 0) { // if the list is empty
-          return n;
-      } else {
-          x = list[0]; // let x be the first element of the list
-          xs = list+1; // let xs be the list without x
-          if ( 0 == (x%2) ) { // if x is even
-              return accumSum(n+x, xs);
-          } else {
-              return accumSum(n, xs);
-          }
-      }
-  }
+int accumSum(int n, int *list) {
+    int x;
+    int *xs;
+    if (*list == 0) { // if the list is empty
+        return n;
+    } else {
+        x = list[0]; // let x be the first element of the list
+        xs = list+1; // let xs be the list without x
+        if ( 0 == (x%2) ) { // if x is even
+            return accumSum(n+x, xs);
+        } else {
+            return accumSum(n, xs);
+        }
+    }
+}
 #+END_SRC
 
 Keep this code in mind.
@@ -1012,34 +1013,34 @@ First, however, I need to introduce three simple but useful functions we
 will use:
 
 #+BEGIN_SRC haskell
-  even :: Integral a => a -> Bool
-  head :: [a] -> a
-  tail :: [a] -> [a]
+even :: Integral a => a -> Bool
+head :: [a] -> a
+tail :: [a] -> [a]
 #+END_SRC
 
 =even= verifies if a number is even.
 
 #+BEGIN_SRC haskell
-  even :: Integral a => a -> Bool
-  even 3  ⇒ False
-  even 2  ⇒ True
+even :: Integral a => a -> Bool
+even 3  ⇒ False
+even 2  ⇒ True
 #+END_SRC
 
 =head= returns the first element of a list:
 
 #+BEGIN_SRC haskell
-  head :: [a] -> a
-  head [1,2,3] ⇒ 1
-  head []      ⇒ ERROR
+head :: [a] -> a
+head [1,2,3] ⇒ 1
+head []      ⇒ ERROR
 #+END_SRC
 
 =tail= returns all elements of a list, except the first:
 
 #+BEGIN_SRC haskell
-  tail :: [a] -> [a]
-  tail [1,2,3] ⇒ [2,3]
-  tail [3]     ⇒ []
-  tail []      ⇒ ERROR
+tail :: [a] -> [a]
+tail [1,2,3] ⇒ [2,3]
+tail [3]     ⇒ []
+tail []      ⇒ ERROR
 #+END_SRC
 
 Note that for any non empty list =l=, =l ⇔ (head l):(tail l)=
@@ -1049,16 +1050,16 @@ The function =evenSum= returns the sum of all even numbers in a list:
 
 {{{lnk(evenSum_v1.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v1.hs
-  -- Version 1
-  evenSum :: [Integer] -> Integer
-  evenSum l = accumSum 0 l
-  accumSum n l = if l == []
-                    then n
-                    else let x = head l
-                             xs = tail l
-                         in if even x
-                                then accumSum (n+x) xs
-                                else accumSum n xs
+-- Version 1
+evenSum :: [Integer] -> Integer
+evenSum l = accumSum 0 l
+accumSum n l = if l == []
+                  then n
+                  else let x = head l
+                           xs = tail l
+                       in if even x
+                              then accumSum (n+x) xs
+                              else accumSum n xs
 #+END_SRC
 
 To test a function you can use =ghci=:
@@ -1099,7 +1100,7 @@ In fact, many things can be improved here.
 First, we can generalize the type.
 
 #+BEGIN_SRC haskell
-  evenSum :: Integral a => [a] -> a
+evenSum :: Integral a => [a] -> a
 #+END_SRC
 
 Next, we can use sub functions using =where= or =let=.
@@ -1108,31 +1109,31 @@ module.
 
 {{{lnk(evenSum_v2.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v2.hs
-  -- Version 2
-  evenSum :: Integral a => [a] -> a
-  evenSum l = accumSum 0 l
-      where accumSum n l =
-              if l == []
-                  then n
-                  else let x = head l
-                           xs = tail l
-                       in if even x
-                              then accumSum (n+x) xs
-                              else accumSum n xs
+-- Version 2
+evenSum :: Integral a => [a] -> a
+evenSum l = accumSum 0 l
+    where accumSum n l =
+            if l == []
+                then n
+                else let x = head l
+                         xs = tail l
+                     in if even x
+                            then accumSum (n+x) xs
+                            else accumSum n xs
 #+END_SRC
 
 Next, we can use pattern matching.
 
 {{{lnk(evenSum_v3.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v3.hs
-  -- Version 3
-  evenSum l = accumSum 0 l
-      where
-          accumSum n [] = n
-          accumSum n (x:xs) =
-               if even x
-                  then accumSum (n+x) xs
-                  else accumSum n xs
+-- Version 3
+evenSum l = accumSum 0 l
+    where
+        accumSum n [] = n
+        accumSum n (x:xs) =
+             if even x
+                then accumSum (n+x) xs
+                else accumSum n xs
 #+END_SRC
 
 What is pattern matching?
@@ -1141,8 +1142,8 @@ Use values instead of general parameter names[fn:3].
 Instead of saying: =foo l = if l == [] then <x> else <y>= you simply state:
 
 #+BEGIN_SRC haskell
-  foo [] =  <x>
-  foo l  =  <y>
+foo [] =  <x>
+foo l  =  <y>
 #+END_SRC
 
 But pattern matching goes even further.
@@ -1150,19 +1151,19 @@ It is also able to inspect the inner data of a complex value.
 We can replace
 
 #+BEGIN_SRC haskell
-  foo l =  let x  = head l
-               xs = tail l
-           in if even x
-               then foo (n+x) xs
-               else foo n xs
+foo l =  let x  = head l
+             xs = tail l
+         in if even x
+             then foo (n+x) xs
+             else foo n xs
 #+END_SRC
 
 with
 
 #+BEGIN_SRC haskell
-  foo (x:xs) = if even x
-                   then foo (n+x) xs
-                   else foo n xs
+foo (x:xs) = if even x
+                 then foo (n+x) xs
+                 else foo n xs
 #+END_SRC
 
 This is a very useful feature.
@@ -1172,28 +1173,28 @@ In Haskell you can simplify function definitions by η-reducing them.
 For example, instead of writing:
 
 #+BEGIN_SRC haskell
-  f x = (some expresion) x
+f x = (some expresion) x
 #+END_SRC
 
 you can simply write
 
 #+BEGIN_SRC haskell
-  f = (some expression)
+f = (some expression)
 #+END_SRC
 
 We use this method to remove the =l=:
 
 {{{lnk(evenSum_v4.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v4.hs
-  -- Version 4
-  evenSum :: Integral a => [a] -> a
-  evenSum = accumSum 0
-      where
-          accumSum n [] = n
-          accumSum n (x:xs) =
-               if even x
-                  then accumSum (n+x) xs
-                  else accumSum n xs
+-- Version 4
+evenSum :: Integral a => [a] -> a
+evenSum = accumSum 0
+    where
+        accumSum n [] = n
+        accumSum n (x:xs) =
+             if even x
+                then accumSum (n+x) xs
+                else accumSum n xs
 #+END_SRC
 
 *** Higher Order Functions
@@ -1211,26 +1212,26 @@ Higher order functions are functions taking functions as parameters.
 Here are some examples:
 
 #+BEGIN_SRC haskell
-  filter :: (a -> Bool) -> [a] -> [a]
-  map :: (a -> b) -> [a] -> [b]
-  foldl :: (a -> b -> a) -> a -> [b] -> a
+filter :: (a -> Bool) -> [a] -> [a]
+map :: (a -> b) -> [a] -> [b]
+foldl :: (a -> b -> a) -> a -> [b] -> a
 #+END_SRC
 
 Let's proceed by small steps.
 
 {{{lnk(evenSum_v5.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v5.hs
-  -- Version 5
-  evenSum l = mysum 0 (filter even l)
-      where
-        mysum n [] = n
-        mysum n (x:xs) = mysum (n+x) xs
+-- Version 5
+evenSum l = mysum 0 (filter even l)
+    where
+      mysum n [] = n
+      mysum n (x:xs) = mysum (n+x) xs
 #+END_SRC
 
 where
 
 #+BEGIN_SRC haskell
-  filter even [1..10] ⇔  [2,4,6,8,10]
+filter even [1..10] ⇔  [2,4,6,8,10]
 #+END_SRC
 
 The function =filter= takes a function of type (=a -> Bool=) and a list of
@@ -1245,28 +1246,28 @@ the list.
 The function =foldl= captures a general coding pattern:
 
 #+BEGIN_SRC haskell
-  myfunc list = foo initialValue list
-  foo accumulated []     = accumulated
-  foo tmpValue    (x:xs) = foo (bar tmpValue x) xs
+myfunc list = foo initialValue list
+foo accumulated []     = accumulated
+foo tmpValue    (x:xs) = foo (bar tmpValue x) xs
 #+END_SRC
 
 Which can be replaced by:
 
 #+BEGIN_SRC haskell
-  myfunc list = foldl bar initialValue list
+myfunc list = foldl bar initialValue list
 #+END_SRC
 
 If you really want to know how the magic works, here is the definition of
 =foldl=:
 
 #+BEGIN_SRC haskell
-  foldl f z [] = z
-  foldl f z (x:xs) = foldl f (f z x) xs
+foldl f z [] = z
+foldl f z (x:xs) = foldl f (f z x) xs
 #+END_SRC
 
 #+BEGIN_SRC haskell
-  foldl f z [x1,...xn]
-  ⇔  f (... (f (f z x1) x2) ...) xn
+foldl f z [x1,...xn]
+⇔  f (... (f (f z x1) x2) ...) xn
 #+END_SRC
 
 But as Haskell is lazy, it doesn't evaluate =(f z x)= and simply pushes it
@@ -1280,12 +1281,12 @@ Now our new version of =evenSum= becomes:
 
 {{{lnk(evenSum_v6.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v6.hs
-  -- Version 6
-  -- foldl' isn't accessible by default
-  -- we need to import it from the module Data.List
-  import Data.List
-  evenSum l = foldl' mysum 0 (filter even l)
-    where mysum acc value = acc + value
+-- Version 6
+-- foldl' isn't accessible by default
+-- we need to import it from the module Data.List
+import Data.List
+evenSum l = foldl' mysum 0 (filter even l)
+  where mysum acc value = acc + value
 #+END_SRC
 
 We can also simplify this by using directly a lambda notation.
@@ -1293,27 +1294,27 @@ This way we don't have to create the temporary name =mysum=.
 
 {{{lnk(evenSum_v7.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v7.hs
-  -- Version 7
-  -- Generally it is considered a good practice
-  -- to import only the necessary function(s)
-  import Data.List (foldl')
-  evenSum l = foldl' (\x y -> x+y) 0 (filter even l)
+-- Version 7
+-- Generally it is considered a good practice
+-- to import only the necessary function(s)
+import Data.List (foldl')
+evenSum l = foldl' (\x y -> x+y) 0 (filter even l)
 #+END_SRC
 
 And of course, we note that
 
 #+BEGIN_SRC haskell
-  (\x y -> x+y) ⇔ (+)
+(\x y -> x+y) ⇔ (+)
 #+END_SRC
 
 Finally
 
 {{{lnk(evenSum_v8.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v8.hs
-  -- Version 8
-  import Data.List (foldl')
-  evenSum :: Integral a => [a] -> a
-  evenSum l = foldl' (+) 0 (filter even l)
+-- Version 8
+import Data.List (foldl')
+evenSum :: Integral a => [a] -> a
+evenSum l = foldl' (+) 0 (filter even l)
 #+END_SRC
 
 =foldl'= isn't the easiest function to grasp.
@@ -1323,43 +1324,43 @@ To help you understand what's going on here, let's look at a step by step
 evaluation:
 
 #+BEGIN_SRC haskell
-    evenSum [1,2,3,4]
-  ⇒ foldl' (+) 0 (filter even [1,2,3,4])
-  ⇒ foldl' (+) 0 [2,4]
-  ⇒ foldl' (+) (0+2) [4]
-  ⇒ foldl' (+) 2 [4]
-  ⇒ foldl' (+) (2+4) []
-  ⇒ foldl' (+) 6 []
-  ⇒ 6
+  evenSum [1,2,3,4]
+⇒ foldl' (+) 0 (filter even [1,2,3,4])
+⇒ foldl' (+) 0 [2,4]
+⇒ foldl' (+) (0+2) [4]
+⇒ foldl' (+) 2 [4]
+⇒ foldl' (+) (2+4) []
+⇒ foldl' (+) 6 []
+⇒ 6
 #+END_SRC
 
 Another useful higher order function is =(.)=.
 The =(.)= function corresponds to mathematical composition.
 
 #+BEGIN_SRC haskell
-  (f . g . h) x ⇔  f ( g (h x))
+(f . g . h) x ⇔  f ( g (h x))
 #+END_SRC
 
 We can take advantage of this operator to η-reduce our function:
 
 {{{lnk(evenSum_v9.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v9.hs
-  -- Version 9
-  import Data.List (foldl')
-  evenSum :: Integral a => [a] -> a
-  evenSum = (foldl' (+) 0) . (filter even)
+-- Version 9
+import Data.List (foldl')
+evenSum :: Integral a => [a] -> a
+evenSum = (foldl' (+) 0) . (filter even)
 #+END_SRC
 
 Also, we could rename some parts to make it clearer:
 
 {{{lnk(evenSum_v10.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v10.hs
-  -- Version 10
-  import Data.List (foldl')
-  sum' :: (Num a) => [a] -> a
-  sum' = foldl' (+) 0
-  evenSum :: Integral a => [a] -> a
-  evenSum = sum' . (filter even)
+-- Version 10
+import Data.List (foldl')
+sum' :: (Num a) => [a] -> a
+sum' = foldl' (+) 0
+evenSum :: Integral a => [a] -> a
+evenSum = sum' . (filter even)
 #+END_SRC
 
 It is time to discuss the direction our code has moved as we introduced
@@ -1378,8 +1379,8 @@ sum of all even squares of elements of the list.
 Updating version 10 is extremely easy:
 
 #+BEGIN_SRC haskell
-  squareEvenSum = sum' . (filter even) . (map (^2))
-  squareEvenSum' = evenSum . (map (^2))
+squareEvenSum = sum' . (filter even) . (map (^2))
+squareEvenSum' = evenSum . (map (^2))
 #+END_SRC
 
 We just had to add another "transformation function".
@@ -1467,7 +1468,7 @@ Haskell's saving grace is that it can /infer/ types.
 Here is a simple example, the =square= function in Haskell:
 
 #+BEGIN_SRC haskell
-  square x = x * x
+square x = x * x
 #+END_SRC
 
 This function can =square= any Numeral type.
@@ -1493,15 +1494,15 @@ Prelude Data.Complex> square (2 :+ 1)
 Now compare with the amount of code necessary in C:
 
 #+BEGIN_SRC C
-  int     int_square(int x) { return x*x; }
-  float   float_square(float x) {return x*x; }
-  complex complex_square (complex z) {
-      complex tmp;
-      tmp.real = z.real * z.real - z.img * z.img;
-      tmp.img = 2 * z.img * z.real;
-  }
-  complex x,y;
-  y = complex_square(x);
+int     int_square(int x) { return x*x; }
+float   float_square(float x) {return x*x; }
+complex complex_square (complex z) {
+    complex tmp;
+    tmp.real = z.real * z.real - z.img * z.img;
+    tmp.img = 2 * z.img * z.real;
+}
+complex x,y;
+y = complex_square(x);
 #+END_SRC
 
 For each type, you need to write a new function.
@@ -1561,24 +1562,24 @@ First, you can use aliases or type synonyms.
 
 {{{lnk(type_constr_1.hs)}}}
 #+BEGIN_SRC haskell :tangle type_constr_1.hs
-  type Name   = String
-  type Color  = String
+type Name   = String
+type Color  = String
 
-  showInfos :: Name ->  Color -> String
-  showInfos name color =  "Name: " ++ name
-                          ++ ", Color: " ++ color
-  name :: Name
-  name = "Robin"
-  color :: Color
-  color = "Blue"
-  main = putStrLn $ showInfos name color
+showInfos :: Name ->  Color -> String
+showInfos name color =  "Name: " ++ name
+                        ++ ", Color: " ++ color
+name :: Name
+name = "Robin"
+color :: Color
+color = "Blue"
+main = putStrLn $ showInfos name color
 #+END_SRC
 
 But it doesn't protect you much.
 Try to swap the two parameter of =showInfos= and run the program:
 
 #+BEGIN_SRC haskell
-  putStrLn $ showInfos color name
+putStrLn $ showInfos color name
 #+END_SRC
 
 It will compile and execute.
@@ -1588,16 +1589,16 @@ The compiler will treat them as completely identical.
 Another method is to create your own types using the keyword =data=.
 
 #+BEGIN_SRC haskell
-  data Name   = NameConstr String
-  data Color  = ColorConstr String
+data Name   = NameConstr String
+data Color  = ColorConstr String
 
-  showInfos :: Name ->  Color -> String
-  showInfos (NameConstr name) (ColorConstr color) =
-        "Name: " ++ name ++ ", Color: " ++ color
+showInfos :: Name ->  Color -> String
+showInfos (NameConstr name) (ColorConstr color) =
+      "Name: " ++ name ++ ", Color: " ++ color
 
-  name  = NameConstr "Robin"
-  color = ColorConstr "Blue"
-  main = putStrLn $ showInfos name color
+name  = NameConstr "Robin"
+color = ColorConstr "Blue"
+main = putStrLn $ showInfos name color
 #+END_SRC
 
 Now if you switch parameters of =showInfos=, the compiler complains!
@@ -1607,16 +1608,16 @@ is to be a bit more verbose.
 Also notice that constructors are functions:
 
 #+BEGIN_SRC haskell
-  NameConstr  :: String -> Name
-  ColorConstr :: String -> Color
+NameConstr  :: String -> Name
+ColorConstr :: String -> Color
 #+END_SRC
 
 The syntax of =data= is mainly:
 
 #+BEGIN_SRC haskell
-  data TypeName =   ConstructorName  [types]
-                  | ConstructorName2 [types]
-                  | ...
+data TypeName =   ConstructorName  [types]
+                | ConstructorName2 [types]
+                | ...
 #+END_SRC
 
 Generally the usage is to use the same name for the DataTypeName and
@@ -1625,17 +1626,17 @@ DataTypeConstructor.
 Example:
 
 #+BEGIN_SRC haskell
-  data Complex a = Num a => Complex a a
+data Complex a = Num a => Complex a a
 #+END_SRC
 
 Also you can use the record syntax:
 
 #+BEGIN_SRC haskell
-  data DataTypeName = DataConstructor {
-                        field1 :: [type of field1]
-                      , field2 :: [type of field2]
-                      ...
-                      , fieldn :: [type of fieldn] }
+data DataTypeName = DataConstructor {
+                      field1 :: [type of field1]
+                    , field2 :: [type of field2]
+                    ...
+                    , fieldn :: [type of fieldn] }
 #+END_SRC
 
 And many accessors are made for you.
@@ -1644,11 +1645,11 @@ Furthermore you can use another order when setting values.
 Example:
 
 #+BEGIN_SRC haskell
-  data Complex a = Num a => Complex { real :: a, img :: a}
-  c = Complex 1.0 2.0
-  z = Complex { real = 3, img = 4 }
-  real c ⇒ 1.0
-  img z ⇒ 4
+data Complex a = Num a => Complex { real :: a, img :: a}
+c = Complex 1.0 2.0
+z = Complex { real = 3, img = 4 }
+real c ⇒ 1.0
+img z ⇒ 4
 #+END_SRC
 
 *** Recursive type
@@ -1660,15 +1661,15 @@ You already encountered a recursive type: lists.
 You can re-create lists, but with a more verbose syntax:
 
 #+BEGIN_SRC haskell
-  data List a = Empty | Cons a (List a)
+data List a = Empty | Cons a (List a)
 #+END_SRC
 
 If you really want to use an easier syntax you can use an infix name for
 constructors.
 
 #+BEGIN_SRC haskell
-  infixr 5 :::
-  data List a = Nil | a ::: (List a)
+infixr 5 :::
+data List a = Nil | a ::: (List a)
 #+END_SRC
 
 The number after =infixr= gives the precedence.
@@ -1678,9 +1679,9 @@ If you want to be able to print (=Show=), read (=Read=), test equality
 derive the appropriate functions for you.
 
 #+BEGIN_SRC haskell :tangle list.hs
-  infixr 5 :::
-  data List a = Nil | a ::: (List a)
-                deriving (Show,Read,Eq,Ord)
+infixr 5 :::
+data List a = Nil | a ::: (List a)
+              deriving (Show,Read,Eq,Ord)
 #+END_SRC
 
 When you add =deriving (Show)= to your data declaration, Haskell creates a
@@ -1688,14 +1689,14 @@ When you add =deriving (Show)= to your data declaration, Haskell creates a
 We'll see soon how you can use your own =show= function.
 
 #+BEGIN_SRC haskell :tangle list.hs
-  convertList [] = Nil
-  convertList (x:xs) = x ::: convertList xs
+convertList [] = Nil
+convertList (x:xs) = x ::: convertList xs
 #+END_SRC
 
 #+BEGIN_SRC haskell :tangle list.hs
-  main = do
-        print (0 ::: 1 ::: Nil)
-        print (convertList [0,1])
+main = do
+      print (0 ::: 1 ::: Nil)
+      print (convertList [0,1])
 #+END_SRC
 
 This prints:
@@ -1716,19 +1717,19 @@ This prints:
 We'll just give another standard example: binary trees.
 
 #+BEGIN_SRC haskell :tangle tree.hs
-  data BinTree a = Empty
-                   | Node a (BinTree a) (BinTree a)
-                                deriving (Show)
+data BinTree a = Empty
+                 | Node a (BinTree a) (BinTree a)
+                              deriving (Show)
 #+END_SRC
 
 We will also create a function which turns a list into an ordered binary
 tree.
 
 #+BEGIN_SRC haskell :tangle tree.hs
-  treeFromList :: (Ord a) => [a] -> BinTree a
-  treeFromList [] = Empty
-  treeFromList (x:xs) = Node x (treeFromList (filter (<x) xs))
-                               (treeFromList (filter (>x) xs))
+treeFromList :: (Ord a) => [a] -> BinTree a
+treeFromList [] = Empty
+treeFromList (x:xs) = Node x (treeFromList (filter (<x) xs))
+                             (treeFromList (filter (>x) xs))
 #+END_SRC
 
 Look at how elegant this function is. In plain English:
@@ -1743,7 +1744,7 @@ Look at how elegant this function is. In plain English:
     which are strictly superior to =x=.
 
 #+BEGIN_SRC haskell :tangle tree.hs
-  main = print $ treeFromList [7,2,4,8]
+main = print $ treeFromList [7,2,4,8]
 #+END_SRC
 
 You should obtain the following:
@@ -1884,15 +1885,15 @@ reduce the inner =(b*c)=
 For example in Haskell you can do:
 
 #+BEGIN_SRC haskell
-  -- numbers = [1,2,..]
-  numbers :: [Integer]
-  numbers = 0:map (1+) numbers
+-- numbers = [1,2,..]
+numbers :: [Integer]
+numbers = 0:map (1+) numbers
 
-  take' n [] = []
-  take' 0 l = []
-  take' n (x:xs) = x:take' (n-1) xs
+take' n [] = []
+take' 0 l = []
+take' n (x:xs) = x:take' (n-1) xs
 
-  main = print $ take' 10 numbers
+main = print $ take' 10 numbers
 #+END_SRC
 
 And it stops.
@@ -1912,23 +1913,18 @@ Also, note in Haskell there is a notation for infinite lists
 and most functions will work with them. Also, there is a built-in
 function =take= which is equivalent to our =take'=.
 
-This code is mostly the same as the previous one.
+*** Infinite Trees
+:PROPERTIES:
+:CUSTOM_ID: infinite-trees
+:END:
 
 #+begin_src haskell :tangle infinite_tree.hs :exports none
   import           Data.Tree (Tree,Forest(..))
   import qualified Data.Tree as Tree
 
-#+end_src
-
-
-#+BEGIN_SRC haskell :tangle infinite_tree.hs
   data BinTree a = Empty
                  | Node a (BinTree a) (BinTree a)
                  deriving (Eq,Ord,Show)
-#+END_SRC
-
-
-#+begin_src haskell :tangle infinite_tree.hs :exports none
 
   -- | Function to transform our internal BinTree type to the
   -- type of Tree declared in Data.Tree (from containers package)
@@ -1941,7 +1937,6 @@ This code is mostly the same as the previous one.
   -- | Function that given a BinTree print a representation of it in the console
   prettyPrintTree :: (Show a) => BinTree a -> IO ()
   prettyPrintTree = putStrLn . Tree.drawForest . binTreeToForestString
-  
 #+end_src
 
 
@@ -1949,7 +1944,7 @@ Suppose we don't mind having an ordered binary tree.
 Here is an infinite binary tree:
 
 #+BEGIN_SRC haskell :tangle infinite_tree.hs
-  nullTree = Node 0 nullTree nullTree
+nullTree = Node 0 nullTree nullTree
 #+END_SRC
 
 A complete binary tree where each node is equal to 0.
@@ -1957,22 +1952,22 @@ Now I will prove you can manipulate this object using the following
 function:
 
 #+BEGIN_SRC haskell :tangle infinite_tree.hs
-  -- take all element of a BinTree
-  -- up to some depth
-  treeTakeDepth _ Empty = Empty
-  treeTakeDepth 0 _     = Empty
-  treeTakeDepth n (Node x left right) = let
-            nl = treeTakeDepth (n-1) left
-            nr = treeTakeDepth (n-1) right
-            in
-                Node x nl nr
+-- take all element of a BinTree
+-- up to some depth
+treeTakeDepth _ Empty = Empty
+treeTakeDepth 0 _     = Empty
+treeTakeDepth n (Node x left right) = let
+          nl = treeTakeDepth (n-1) left
+          nr = treeTakeDepth (n-1) right
+          in
+              Node x nl nr
 #+END_SRC
 
 See what occurs for this program:
 
 {{{lnk(infinite_tree.hs)}}}
 #+BEGIN_SRC haskell :tangle infinite_tree.hs
-  main = prettyPrintTree (treeTakeDepth 4 nullTree)
+main = prettyPrintTree (treeTakeDepth 4 nullTree)
 #+END_SRC
 
 This code compiles, runs and stops giving the following result:
@@ -2047,10 +2042,10 @@ interesting tree:
 
 
 #+BEGIN_SRC haskell :tangle infinite_tree_2.hs
-  iTree = Node 0 (dec iTree) (inc iTree)
-          where
-             dec (Node x l r) = Node (x-1) (dec l) (dec r)
-             inc (Node x l r) = Node (x+1) (inc l) (inc r)
+iTree = Node 0 (dec iTree) (inc iTree)
+        where
+           dec (Node x l r) = Node (x-1) (dec l) (dec r)
+           inc (Node x l r) = Node (x+1) (inc l) (inc r)
 #+END_SRC
 
 Another way to create this tree is to use a higher order function.
@@ -2059,12 +2054,12 @@ instead of list.
 Here is such a function:
 
 #+BEGIN_SRC haskell :tangle infinite_tree_2.hs
-  -- apply a function to each node of Tree
-  treeMap :: (a -> b) -> BinTree a -> BinTree b
-  treeMap f Empty = Empty
-  treeMap f (Node x left right) = Node (f x)
-                                       (treeMap f left)
-                                       (treeMap f right)
+-- apply a function to each node of Tree
+treeMap :: (a -> b) -> BinTree a -> BinTree b
+treeMap f Empty = Empty
+treeMap f (Node x left right) = Node (f x)
+                                     (treeMap f left)
+                                     (treeMap f right)
 #+END_SRC
 
 /Hint/: I won't talk more about this here.
@@ -2074,16 +2069,16 @@ structures, search for functor and =fmap=.
 Our definition is now:
 
 #+BEGIN_SRC haskell :tangle infinite_tree_2.hs
-  infTreeTwo :: BinTree Int
-  infTreeTwo = Node 0 (treeMap (\x -> x-1) infTreeTwo)
-                      (treeMap (\x -> x+1) infTreeTwo)
+infTreeTwo :: BinTree Int
+infTreeTwo = Node 0 (treeMap (\x -> x-1) infTreeTwo)
+                    (treeMap (\x -> x+1) infTreeTwo)
 #+END_SRC
 
 Look at the result for
 
 {{{lnk(infinite_tree_2.hs)}}}
 #+BEGIN_SRC haskell :tangle infinite_tree_2.hs
-  main = prettyPrintTree $ treeTakeDepth 4 infTreeTwo
+main = prettyPrintTree $ treeTakeDepth 4 infTreeTwo
 #+END_SRC
 
 #+BEGIN_EXAMPLE
@@ -2119,7 +2114,11 @@ Look at the result for
       `- 3
 #+END_EXAMPLE
 
-#+begin_notes
+*** Fibonnacci infinite list
+:PROPERTIES:
+:CUSTOM_ID: fibonnacci-infinite-list
+:END:
+
 The important things to remember.
 Haskell handle infinite structures naturally mostly because it is not strict.
 
@@ -2130,19 +2129,17 @@ like this common example:
 fib :: [Integer]
 fib = 1:1:zipWith (+) fib (tail fib)
 
-main = traverse_ print (take 20 (drop 200 fib))
+main = traverse print (take 20 (drop 200 fib))
 #+end_src
 
 Many new details in this small code. Don't worry if you do not get all details:
 
 - =fib= is a list of Integer, not a function
-- =(!!)= is used to get the nth element of a list.
 - =drop n= remove n element of a list
 - =take n= keep the first n elements of a list
 - =zipWith op [a1,a2,a3,...] [b1,b2,b3,...]= will generate the list
   =[op a1 b1,op a2 b2,op a3 b3, .... ]=
-- =traverse_= is like map but for performing effects (in this case print)
-  and discarding any result if any.
+- =traverse= is like map but for performing effects (in this case print)
 
 This progam print all fibonnacci numbers from 201 to 221 instantaneously.
 Because, =fib= is a list that will be used as "cache" to compute each
@@ -2176,7 +2173,49 @@ user	0m0.192s
 sys	0m0.058s
 #+end_example
 
-#+end_notes
+Let's see how this work using =Debug.Trace=:
+
+{{{lnk(fib_lazy_trace.hs)}}}
+#+begin_src haskell :tangle fib_lazy_trace.hs
+import Debug.Trace
+
+-- like + but each time this is evaluated print a trace
+tracedPlus x y = trace ("> " ++ show x ++ " + " ++ show y) (x + y)
+
+fib :: [Integer]
+fib = 1:1:zipWith tracedPlus fib (tail fib)
+
+main = do
+  print (fib !! 10)
+  print (fib !! 12)
+#+end_src
+
+#+begin_example
+[hs:hsenv]> runghc fib_lazy_trace.hs
+> 1 + 1
+> 1 + 2
+> 2 + 3
+> 3 + 5
+> 5 + 8
+> 8 + 13
+> 13 + 21
+> 21 + 34
+> 34 + 55
+89
+> 55 + 89
+> 89 + 144
+233
+#+end_example
+
+Notice how, once computed, the list is kept in memory.
+This is why when the second time we ask for the 12th element of fib we only
+perform two more additions.
+This is both a blessing and a curse.
+A blessing if you know when to use this as in this example.
+And a curse as if do not take care about lazyness it will come back at you
+with memory leaks.
+
+After a bit of experience, most Haskellers can avoid memory leaks naturally.
 
 * Difficulty: Hard
 :PROPERTIES:
@@ -2213,29 +2252,29 @@ But they are all very rewarding.
 A typical function doing =IO= looks a lot like an imperative program:
 
 #+BEGIN_SRC haskell
-    f :: IO a
-    f = do
-      x <- action1
-      action2 x
-      y <- action3
-      action4 x y
-  #+END_SRC
+f :: IO a
+f = do
+  x <- action1
+  action2 x
+  y <- action3
+  action4 x y
+#+END_SRC
 
-  - To set a value to an object we use =<-= .
-  - The type of each line is =IO *=; in this example:
+- To set a value to an object we use =<-= .
+- The type of each line is =IO *=; in this example:
 
-    #+begin_src haskell
-    - action1     :: IO b
-    - x           :: b
-    - action2 x   :: IO ()
-    - action3     :: IO c
-    - y           :: c
-    - action4 x y :: IO a
-    #+end_src
+  #+begin_src haskell
+  - action1     :: IO b
+  - x           :: b
+  - action2 x   :: IO ()
+  - action3     :: IO c
+  - y           :: c
+  - action4 x y :: IO a
+  #+end_src
 
-  - Few objects have the type =IO a=, this should help you choose. In
-    particular you cannot use pure functions directly here. To use pure
-    functions you could do =action2 (purefunction x)= for example.
+- Few objects have the type =IO a=, this should help you choose. In
+  particular you cannot use pure functions directly here. To use pure
+  functions you could do =action2 (purefunction x)= for example.
 #+END_QUOTE
 
 In this section, I will explain how to use IO, not how it works.
@@ -2254,13 +2293,13 @@ Print the sum of the numbers.
 
 {{{lnk(io_sum.hs)}}}
 #+BEGIN_SRC haskell :tangle io_sum.hs
-  toList :: String -> [Integer]
-  toList input = read ("[" ++ input ++ "]")
+toList :: String -> [Integer]
+toList input = read ("[" ++ input ++ "]")
 
-  main = do
-    putStrLn "Enter a list of numbers (separated by comma):"
-    input <- getLine
-    print $ sum (toList input)
+main = do
+  putStrLn "Enter a list of numbers (separated by comma):"
+  input <- getLine
+  print $ sum (toList input)
 #+END_SRC
 
 It should be straightforward to understand the behavior of this program.
@@ -2276,10 +2315,10 @@ Or more interestingly, we note that each expression in the =do= block has a
 type of =IO a=.
 
 #+BEGIN_SRC haskell
-  main = do
-    putStrLn "Enter ... " :: IO ()
-    getLine               :: IO String
-    print Something       :: IO ()
+main = do
+  putStrLn "Enter ... " :: IO ()
+  getLine               :: IO String
+  print Something       :: IO ()
 #+END_SRC
 
 We should also pay attention to the effect of the =<-= symbol.
@@ -2295,16 +2334,16 @@ Another important note about using =IO=: all lines in a do block must be of
 one of the two forms:
 
 #+BEGIN_SRC haskell
-    action1 :: IO a
-            -- in this case, generally a = ()
+  action1 :: IO a
+          -- in this case, generally a = ()
 #+END_SRC
 
 or
 
 #+BEGIN_SRC haskell
-    value <- action2    -- where
-                        -- action2 :: IO b
-                        -- value   :: b
+  value <- action2    -- where
+                      -- action2 :: IO b
+                      -- value   :: b
 #+END_SRC
 
 These two kinds of line will correspond to two different ways of sequencing
@@ -2333,7 +2372,8 @@ Here is one way to do this: use the type =Maybe=.
 This is a very common type in Haskell.
 
 #+BEGIN_SRC haskell :tangle io_sum_safe.hs
-  import Data.Maybe
+import Data.Maybe
+import Text.Read (readMaybe)
 #+END_SRC
 
 What is this thing?
@@ -2341,45 +2381,36 @@ What is this thing?
 Its definition is:
 
 #+BEGIN_SRC haskell
-  data Maybe a = Nothing | Just a
+data Maybe a = Nothing | Just a
 #+END_SRC
 
 This is a nice way to tell there was an error while trying to
 create/compute a value.
-The =maybeRead= function is a great example of this.
+The =readMaybe= function is a great example of this.
 This is a function similar to the function =read=[fn:4], but if something
 goes wrong the returned value is =Nothing=.
 If the value is right, it returns =Just <the value>=.
-Don't try to understand too much of this function.
-I use a lower level function than =read=: =reads=.
-
-#+BEGIN_SRC haskell :tangle io_sum_safe.hs
-  maybeRead :: Read a => String -> Maybe a
-  maybeRead s = case reads s of
-                    [(x,"")]    -> Just x
-                    _           -> Nothing
-#+END_SRC
 
 Now to be a bit more readable, we define a function which goes like this:
 If the string has the wrong format, it will return =Nothing=.
 Otherwise, for example for "1,2,3", it will return =Just [1,2,3]=.
 
 #+BEGIN_SRC haskell :tangle io_sum_safe.hs
-  getListFromString :: String -> Maybe [Integer]
-  getListFromString str = maybeRead $ "[" ++ str ++ "]"
+getListFromString :: String -> Maybe [Integer]
+getListFromString str = readMaybe $ "[" ++ str ++ "]"
 #+END_SRC
 
 We simply have to test the value in our main function.
 
 #+BEGIN_SRC haskell :tangle io_sum_safe.hs
-  main :: IO ()
-  main = do
-    putStrLn "Enter a list of numbers (separated by comma):"
-    input <- getLine
-    let maybeList = getListFromString input in
-        case maybeList of
-            Just l  -> print (sum l)
-            Nothing -> putStrLn "Bad format. Good Bye."
+main :: IO ()
+main = do
+  putStrLn "Enter a list of numbers (separated by comma):"
+  input <- getLine
+  let maybeList = getListFromString input
+  case maybeList of
+    Just l  -> print (sum l)
+    Nothing -> putStrLn "Bad format. Good Bye."
 #+END_SRC
 
 In case of error, we display a nice error message.
@@ -2411,29 +2442,26 @@ enters a valid answer.
 
 We keep the first part:
 
-#+BEGIN_SRC haskell
-  import Data.Maybe
+#+BEGIN_SRC haskell :tangle io_sum_ask.hs
+import Data.Maybe
+import Text.Read (readMaybe)
 
-  maybeRead :: Read a => String -> Maybe a
-  maybeRead s = case reads s of
-                    [(x,"")]    -> Just x
-                    _           -> Nothing
-  getListFromString :: String -> Maybe [Integer]
-  getListFromString str = maybeRead $ "[" ++ str ++ "]"
+getListFromString :: String -> Maybe [Integer]
+getListFromString str = readMaybe $ "[" ++ str ++ "]"
 #+END_SRC
 
 Now we create a function which will ask the user for an list of integers
 until the input is right.
 
-#+BEGIN_SRC haskell
-  askUser :: IO [Integer]
-  askUser = do
-    putStrLn "Enter a list of numbers (separated by comma):"
-    input <- getLine
-    let maybeList = getListFromString input in
-        case maybeList of
-            Just l  -> return l
-            Nothing -> askUser
+#+BEGIN_SRC haskell :tangle io_sum_ask.hs
+askUser :: IO [Integer]
+askUser = do
+  putStrLn "Enter a list of numbers (separated by comma):"
+  input <- getLine
+  let maybeList = getListFromString input
+  case maybeList of
+      Just l  -> return l
+      Nothing -> askUser
 #+END_SRC
 
 This function is of type =IO [Integer]=.
@@ -2442,7 +2470,7 @@ some IO actions.
 Some people might explain while waving their hands:
 
 #+BEGIN_QUOTE
-  «This is an =[Integer]= inside an =IO=»
+  «This is an =[Integer]= inside an =IO=.»
 #+END_QUOTE
 
 If you want to understand the details behind all of this, you'll have to
@@ -2452,11 +2480,11 @@ remember to think about the type.
 
 Finally our main function is much simpler:
 
-#+BEGIN_SRC haskell
-  main :: IO ()
-  main = do
-    list <- askUser
-    print $ sum list
+#+BEGIN_SRC haskell :tangle io_sum_ask.hs
+main :: IO ()
+main = do
+  list <- askUser
+  print $ sum list
 #+END_SRC
 
 We have finished with our introduction to =IO=.
@@ -2474,10 +2502,10 @@ Here are the main things to remember:
 If you practice a bit, you should be able to /use/ =IO=.
 
 #+BEGIN_QUOTE
-  /Exercises/:
+/Exercises/:
 
-  - Make a program that sums all of its arguments. Hint: use the
-    function =getArgs=.
+- Make a program that sums all of its arguments. Hint: use the
+  function =getArgs=.
 #+END_QUOTE
 
 ** IO trick explained
@@ -2489,46 +2517,46 @@ If you practice a bit, you should be able to /use/ =IO=.
 [[./magritte_pipe.jpg]]
 
 #+BEGIN_QUOTE
-  Here is a %tldr for this section.
+{{{tldr}}}
 
-  To separate pure and impure parts, =main= is defined as a function
-  which modifies the state of the world.
+To separate pure and impure parts, =main= is defined as a function which
+modifies the state of the world.
 
-  #+BEGIN_EXAMPLE
-      main :: World -> World
-  #+END_EXAMPLE
+#+BEGIN_EXAMPLE
+main :: World -> World
+#+END_EXAMPLE
 
-  A function is guaranteed to have side effects only if it has this
-  type. But look at a typical main function:
+A function is guaranteed to have side effects only if it has this type.
+But look at a typical main function:
 
-  #+BEGIN_EXAMPLE
-      main w0 =
-          let (v1,w1) = action1 w0 in
-          let (v2,w2) = action2 v1 w1 in
-          let (v3,w3) = action3 v2 w2 in
-          action4 v3 w3
-  #+END_EXAMPLE
+#+BEGIN_SRC haskell
+main w0 =
+    let (v1,w1) = action1 w0 in
+    let (v2,w2) = action2 v1 w1 in
+    let (v3,w3) = action3 v2 w2 in
+    action4 v3 w3
+#+END_SRC
 
-  We have a lot of temporary elements (here =w1=, =w2= and =w3=) which
-  must be passed on to the next action.
+We have a lot of temporary elements (here =w1=, =w2= and =w3=) which must
+be passed on to the next action.
 
-  We create a function =bind= or =(>>=)=. With =bind= we don't need
-  temporary names anymore.
+We create a function =bind= or ~(>>=)~.
+With =bind= we don't need temporary names anymore.
 
-  #+BEGIN_EXAMPLE
-      main =
-        action1 >>= action2 >>= action3 >>= action4
-  #+END_EXAMPLE
+#+BEGIN_SRC haskell
+main =
+  action1 >>= action2 >>= action3 >>= action4
+#+END_SRC
 
-  Bonus: Haskell has syntactical sugar for us:
+Bonus: Haskell has syntactical sugar for us:
 
-  #+BEGIN_EXAMPLE
-      main = do
-        v1 <- action1
-        v2 <- action2 v1
-        v3 <- action3 v2
-        action4 v3
-  #+END_EXAMPLE
+#+BEGIN_SRC haskell
+main = do
+  v1 <- action1
+  v2 <- action2 v1
+  v3 <- action3 v2
+  action4 v3
+#+END_SRC
 #+END_QUOTE
 
 Why did we use this strange syntax, and what exactly is this =IO= type?
@@ -2538,19 +2566,19 @@ For now let's just forget all about the pure parts of our program, and
 focus on the impure parts:
 
 #+BEGIN_SRC haskell
-  askUser :: IO [Integer]
-  askUser = do
-    putStrLn "Enter a list of numbers (separated by commas):"
-    input <- getLine
-    let maybeList = getListFromString input in
-        case maybeList of
-            Just l  -> return l
-            Nothing -> askUser
+askUser :: IO [Integer]
+askUser = do
+  putStrLn "Enter a list of numbers (separated by commas):"
+  input <- getLine
+  let maybeList = getListFromString input
+  case maybeList of
+      Just l  -> return l
+      Nothing -> askUser
 
-  main :: IO ()
-  main = do
-    list <- askUser
-    print $ sum list
+main :: IO ()
+main = do
+  list <- askUser
+  print $ sum list
 #+END_SRC
 
 First remark: this looks imperative.
@@ -2575,7 +2603,7 @@ Rather, it is /explicitly/ said that =main= is a function that
 Its type is then something like:
 
 #+BEGIN_SRC haskell
-  main :: World -> World
+main :: World -> World
 #+END_SRC
 
 Not all functions may access this variable.
@@ -2586,7 +2614,7 @@ Haskell considers the state of the world as an input variable to =main=.
 But the real type of main is closer to this one[fn:6]:
 
 #+BEGIN_SRC haskell
-  main :: World -> ((),World)
+main :: World -> ((),World)
 #+END_SRC
 
 The =()= type is the unit type. Nothing to see here.
@@ -2594,17 +2622,17 @@ The =()= type is the unit type. Nothing to see here.
 Now let's rewrite our main function with this in mind:
 
 #+BEGIN_SRC haskell
-  main w0 =
-      let (list,w1) = askUser w0 in
-      let (x,w2) = print (sum list,w1) in
-      x
+main w0 =
+    let (list,w1) = askUser w0 in
+    let (x,w2) = print (sum list,w1) in
+    x
 #+END_SRC
 
 First, we note that all functions which have side effects must have the
 type:
 
 #+BEGIN_SRC haskell
-  World -> (a,World)
+World -> (a,World)
 #+END_SRC
 
 where =a= is the type of the result.
@@ -2636,33 +2664,33 @@ Now, if you look at the style of the main function, it is clearly awkward.
 Let's try to do the same to the =askUser= function:
 
 #+BEGIN_SRC haskell
-  askUser :: World -> ([Integer],World)
+askUser :: World -> ([Integer],World)
 #+END_SRC
 
 Before:
 
 #+BEGIN_SRC haskell
-  askUser :: IO [Integer]
-  askUser = do
-    putStrLn "Enter a list of numbers:"
-    input <- getLine
-    let maybeList = getListFromString input in
-        case maybeList of
-            Just l  -> return l
-            Nothing -> askUser
+askUser :: IO [Integer]
+askUser = do
+  putStrLn "Enter a list of numbers:"
+  input <- getLine
+  let maybeList = getListFromString input in
+      case maybeList of
+          Just l  -> return l
+          Nothing -> askUser
 #+END_SRC
 
 After:
 
 #+BEGIN_SRC haskell
-  askUser w0 =
-      let (_,w1)     = putStrLn "Enter a list of numbers:" in
-      let (input,w2) = getLine w1 in
-      let (l,w3)     = case getListFromString input of
-                        Just l   -> (l,w2)
-                        Nothing  -> askUser w2
-      in
-          (l,w3)
+askUser w0 =
+    let (_,w1)     = putStrLn "Enter a list of numbers:" in
+    let (input,w2) = getLine w1 in
+    let (l,w3)     = case getListFromString input of
+                      Just l   -> (l,w2)
+                      Nothing  -> askUser w2
+    in
+        (l,w3)
 #+END_SRC
 
 This is similar, but awkward. Look at all these temporary =w?= names.
@@ -2683,7 +2711,7 @@ The output type is a couple, =(answer, newWorldValue)=.
 Each function =f= must have a type similar to:
 
 #+BEGIN_SRC haskell
-  f :: World -> (a,World)
+f :: World -> (a,World)
 #+END_SRC
 
 Not only this, but we can also note that we always follow the same usage
@@ -2712,23 +2740,23 @@ For example, we could also have:
 With, of course: =actionN w :: (World) -> (a,World)=.
 
 #+BEGIN_QUOTE
-  IMPORTANT: there are only two important patterns to consider:
+*IMPORTANT*: there are only two important patterns to consider:
 
-  #+BEGIN_SRC haskell
-    let (x,w1) = action1 w0 in
-    let (y,w2) = action2 x w1 in
-  #+END_SRC
+#+BEGIN_SRC haskell
+  let (x,w1) = action1 w0 in
+  let (y,w2) = action2 x w1 in
+#+END_SRC
 
-  and
+and
 
-  #+BEGIN_SRC haskell
-    let (_,w1) = action1 w0 in
-    let (y,w2) = action2 w1 in
-  #+END_SRC
+#+BEGIN_SRC haskell
+  let (_,w1) = action1 w0 in
+  let (y,w2) = action2 w1 in
+#+END_SRC
 #+END_QUOTE
 
-#+CAPTION: Jocker pencil trick
-[[./jocker_pencil_trick.jpg]]
+#+CAPTION: Slave Market with the disappearing bust of Voltaire
+[[./slave-market-with-the-disappearing-bust-of-voltaire.jpg]]
 
 Now, we will do a magic trick.
 We will make the temporary world symbols "disappear".
@@ -3612,10 +3640,37 @@ Thank you man.
        shouldn't see such use in a real application except maybe for
        debugging purposes.
 
-[fn:6] For the curious ones, the real type is
+[fn:6] For the curious ones, the real type looks like
        =data IO a = IO {unIO :: State# RealWorld -> (# State# RealWorld, a #)}=.
-       All the =#= has to do with optimisation and I swapped the fields
-       in my example. But this is the basic idea.
+       All the =#= has to do with optimisation.
+       I swapped the fields in my example.
+       But this is the basic idea.
+       As of today, the definition of =IO= is no more visible into =base=.
+       We have the following explanation in [[http://hackage.haskell.org/package/base-4.12.0.0/docs/src/GHC.IO.html][=GHC.IO.hs=]]:
+       #+begin_quote
+       #+begin_src 
+       The IO Monad is just an instance of the ST monad, where the state is
+       the real world.  We use the exception mechanism (in GHC.Exception) to
+       implement IO exceptions.
+       
+       NOTE: The IO representation is deeply wired in to various parts of the
+       system.  The following list may or may not be exhaustive:
+       
+       Compiler  - types of various primitives in PrimOp.hs
+       
+       RTS       - forceIO (StgStartup.cmm)
+                 - catchzh_fast, (un)?blockAsyncExceptionszh_fast, raisezh_fast
+                   (Exception.cmm)
+                 - raiseAsync (RaiseAsync.c)
+       
+       Prelude   - GHC.IO.hs, and several other places including
+                   GHC.Exception.hs.
+       
+       Libraries - parts of hslibs/lang.
+       
+       --SDM
+       #+end_src
+       #+end_quote
 
 [fn:7] Well, you'll certainly need to practice a bit to get used to them
        and to understand when you can use them and create your own. But

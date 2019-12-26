@@ -4,11 +4,16 @@ import Text.Read (readMaybe)
 getListFromString :: String -> Maybe [Integer]
 getListFromString str = readMaybe $ "[" ++ str ++ "]"
 
-main :: IO ()
-main = do
+askUser :: IO [Integer]
+askUser = do
   putStrLn "Enter a list of numbers (separated by comma):"
   input <- getLine
   let maybeList = getListFromString input
   case maybeList of
-    Just l  -> print (sum l)
-    Nothing -> putStrLn "Bad format. Good Bye."
+      Just l  -> return l
+      Nothing -> askUser
+
+main :: IO ()
+main = do
+  list <- askUser
+  print $ sum list
