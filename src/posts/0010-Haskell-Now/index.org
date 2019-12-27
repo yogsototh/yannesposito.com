@@ -162,7 +162,7 @@ The article contains five parts:
 
   - More on infinite tree; a more math oriented discussion about
     infinite trees
-** Helpers                                                                             :noexport:
+** Helpers                                                                                                :noexport:
 :PROPERTIES:
 :CUSTOM_ID: helpers
 :END:
@@ -211,15 +211,15 @@ The article contains five parts:
    }
    #+end_src
 
-4. In the =hsenv= directory, in a terminal, run =nix-shell=.
+4. In the =hsenv= directory, in a terminal, run =nix-shell --pure=.
    You should wait a lot of time for everything to download.
    And you should be ready.
    You will have in your PATH:
    - =ghc=, the Haskell compiler
    - =ghci= that we can described as a Haskell REPL
    - =runghc= that will be able to interpret a Haskell file
-   And you all those tools will be able to use the Haskell library
-   /protolude/.
+   - =cabal= which is the main tool to deal with Haskell projects
+   - the Haskell libraries =protolude= and =containers=.
 5. To test your env, rung =ghci= and type =import Protolude= you should see
    something like this:
 
@@ -1850,8 +1850,8 @@ Node 'f' Empty (Node 'o' Empty Empty)
 #+end_example
 
 Notice how duplicate elements aren't inserted in trees.
-For exemple the Char BinTree constructed from the list =foo= is just =f ->
-o=.
+For exemple the Char BinTree constructed from the list =foo= is
+just =f -> o=.
 When =o= is inserted another time the second =o= is not duplicated.
 But more importantly it works also for our own =BinTree= notice how the
 tree for =foo= is inserted only once.
@@ -1861,6 +1861,88 @@ instance of =Eq=.
 See how awesome this structure is: we can make trees containing not only
 integers, strings and chars, but also other trees.
 And we can even make a tree containing a tree of trees!
+
+*** More Advanced Types
+:PROPERTIES:
+:CUSTOM_ID: more-advanced-types
+:END:
+
+So far we have presented types that are close to types we can see in most
+typed programming languages.
+But the real strength of Haskell is its type system.
+So I will try to give you an idea about what makes the Haskell type system
+more advanced than in most languages.
+
+So as comparison, classical types/schemas, etc... are about products of
+different sub-types:
+
+#+begin_src haskell
+data ProductType = P Int String
+data PersonRecord = Person { age :: Int, name :: String }
+#+end_src
+
+Haskell has also a notion of =sum types= that I often lack a lot in other
+programming languages I use.
+
+You can define your type as a sum:
+
+#+begin_src haskell
+data Point = D1 Int | D2 Int Int | D3 Int Int Int
+#+end_src
+
+So far so good.
+Sum types are already a nice thing to have, in particular within Haskell
+because now the compiler can warn you if you miss a case.
+For example if you write:
+
+#+begin_src haskell
+case point of
+  D1 x -> ...
+  D2 x y -> ...
+#+end_src
+
+If you compile with the =-Wall= flag (as you should always do for serious
+development) then the compiler will warn you that you are forgetting some
+possible value.
+
+Those are still not really advanced types.
+Advanced type are higher order types.
+Those are the one that help with making your code more polymorphic.
+
+We will start with example I alreday provided, lists:
+
+#+begin_src haskell
+data MyList a = Cons a (MyList a) | Nil
+#+end_src
+
+As you can see =MyList= takes a type parameter.
+So =MyList= is a higher order type.
+Generally, the intuition behind type is that a type is a data structure or
+a container.
+But in fact, Haskell types can be or can contain functions.
+This is for example the case for =IO=.
+And this is why it can be confusing to read the type of some functions.
+I will take as example =sequenceA=:
+
+#+begin_src haskell
+sequenceA :: Applicative f => t (f a) -> f (t a)
+#+end_src
+
+So if you read this, it can be quite difficult to grasp what is the
+intended use of this function.
+A simple technique for example, is to try to replace the higher order types
+(here =t= and =f=) by a type you can have some intuition about.
+For example consider =t= to be the higher order type =Tree= and =f= to be
+the higher order type =[]= (list).
+
+Now you can see that =sequenceA= sill take a Tree of lists and will return
+a list of trees.
+For it to work =[]= need to be part of the =Applicative= class type (which
+is the case).
+I will not enter into the details about what =Applicative= type class is
+here.
+But just with this, you should start to have a better intuition about what
+=sequenceA= is about.
 
 ** Infinite Structures
 :PROPERTIES:
@@ -3491,7 +3573,6 @@ your project, I still want to show how you could only use =cabal-install=.
 :END:
 
 This part will be for advanced Haskell code.
-
 
 * Thanks
    :PROPERTIES:
