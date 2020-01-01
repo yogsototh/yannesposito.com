@@ -162,7 +162,7 @@ The article contains five parts:
 
   - More on infinite tree; a more math oriented discussion about
     infinite trees
-** Helpers                                                                             :noexport:
+** Helpers                                       :noexport:
 :PROPERTIES:
 :CUSTOM_ID: helpers
 :END:
@@ -177,9 +177,10 @@ The article contains five parts:
 #+CAPTION: Haskell logo
 [[./Haskell-logo.png]]
 
-1. Install [[https://nixos.org/nix][nix]]
-2. create a new empty directory =hsenv= somewhere
-3. Put the following =shell.nix= file inside it
+1. Install [[https://nixos.org/nix][nix]] (The version I use is nix (Nix) 2.3.1, future 2.X.X versions
+   should work with the examples in this article)
+3. create a new empty directory =hsenv= somewhere
+4. Put the following =shell.nix= file inside it
 
    {{{lnk(shell.nix)}}}
    #+begin_src nix :tangle shell.nix
@@ -211,7 +212,7 @@ The article contains five parts:
    }
    #+end_src
 
-4. In the =hsenv= directory, in a terminal, run =nix-shell --pure=.
+5. In the =hsenv= directory, in a terminal, run =nix-shell --pure=.
    You should wait a lot of time for everything to download.
    And you should be ready.
    You will have in your PATH:
@@ -220,7 +221,7 @@ The article contains five parts:
    - =runghc= that will be able to interpret a Haskell file
    - =cabal= which is the main tool to deal with Haskell projects
    - the Haskell libraries =protolude= and =containers=.
-5. To test your env, rung =ghci= and type =import Protolude= you should see
+6. To test your env, rung =ghci= and type =import Protolude= you should see
    something like this:
 
    #+begin_src
@@ -3494,18 +3495,17 @@ it really "clicked" for them.
 :CUSTOM_ID: start-a-new-project
 :END:
 
-There are many different way to start.
+There are multiple starting options to create a new project.
 The most common one is certainly to use =cabal-install=.
 Another popular option is to use =stack=.
-=stack= add a layer on top of =cabal-install= and use fixed set of libraries
-known to compile together.
-The last option is to use =cabal-install= but take care of the dependencies
-of your project via =nix=.
-
-The last option is often considered as the most complex and difficult for
-beginner.
-And guess what?
-Against all odds, I will introduce haskell project development via =nix=.
+=stack= adds a layer on top of =cabal-install= and uses fixed set of
+libraries known to compile together.
+Another method is to =nix= to handle the dependencies and use
+=cabal-install= for the rest.
+That final choice is often considered as the most complex and difficult for
+beginners.
+Still this is the one I find the most elegant.
+This is the method I will use in this article.
 
 Still, you shall not be intimidated. Look:
 
@@ -3943,7 +3943,7 @@ executable my-app
 #+end_src
 
 #+begin_notes
-I did not included a version constraint here.
+I did not include a version constraint here.
 This is ok if you do not deploy your library publicly.
 This would be absolutely awful if you deploy your library publicly.
 So while developing a private app nobody can see except you, nothing is
@@ -4080,6 +4080,25 @@ You can download the final cabal file: [[file:my-app/my-app.cabal][my-app.cabal]
 :PROPERTIES:
 :CUSTOM_ID: command-line-application
 :END:
+
+One of the simplest while still useful command line utility I can think of
+is a simple strong password generator.
+
+*** Password Generator
+:PROPERTIES:
+:CUSTOM_ID: password-generator
+:END:
+
+Create a new project named =hspwg= (HaSkell PassWord Generator).
+If you do not want to go through the process of creating a new project form
+scratch again you can download an archive here: [[file:hspwg.init.tar.gz]].
+
+Let us write the most basic application possible.
+Edit the file =src/Main.hs= with:
+
+#+begin_src haskell
+
+#+end_src
 
 ** Web Application
 :PROPERTIES:
