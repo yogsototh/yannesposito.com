@@ -18,7 +18,11 @@ in
     packages = p: [drv];
     # packages dependencies (by default haskellPackages)
     buildInputs = with haskellPackages;
-      [ hlint
+      [ apply-refact
+        hlint
+        stylish-haskell
+        hasktags
+        hoogle
         ghcid
         cabal-install
         cabal2nix

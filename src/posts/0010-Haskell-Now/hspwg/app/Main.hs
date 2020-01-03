@@ -4,9 +4,9 @@ module Main where
 
 import Protolude
 
-import qualified MyLib (genPassword)
+import qualified MyLib (someFunc)
 
 main :: IO ()
 main = do
-  pwd <- MyLib.genPassword
-  putText pwd
+  putText "Hello Haskell!"
+  MyLib.someFunc
