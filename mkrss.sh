@@ -37,7 +37,7 @@ findtitle(){ < $1 hxselect -c $titleaccessor }
 getcontent(){
     < $1 hxselect $contentaccessor | \
                   perl -pe 'use URI; $base="'$2'"; s# (href|src)="((?!https?://)[^"]*)"#" ".$1."=\"".URI->new_abs($2,$base)->as_string."\""#eig' }
-findkeywords(){ < $1 hxselect -c $keywordsaccessor | sed 's/,//g' }
+findkeywords(){ < $1 hxselect -c $keywordsaccessor | sed 's/,/ /g' }
 mkcategories(){
     for keyword in $*; do
         printf "\\n<category>%s</category>" $keyword
