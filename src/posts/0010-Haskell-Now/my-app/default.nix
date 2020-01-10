@@ -29,7 +29,7 @@ in
       ];
     # nice prompt for the nix-shell
     shellHook = ''
-     export PS1="\n[${name}:\033[1;32m\]\W\[\033[0m\]]> "
+     export PS1="\n\[[${name}:\033[1;32m\]\W\[\033[0m\]]> "
   '';
   };
 }
