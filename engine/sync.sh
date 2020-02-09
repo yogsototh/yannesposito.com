@@ -1,5 +1,6 @@
 #!/usr/bin/env zsh
 
+cd $(git rev-parse --show-toplevel)
 rootdir=${0:h}
 echo $rootdir
 

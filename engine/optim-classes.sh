@@ -1,5 +1,6 @@
 #!/bin/zsh
 
+cd $(git rev-parse --show-toplevel)
 webdir="_site"
 
 retrieve_classes_in_html () {

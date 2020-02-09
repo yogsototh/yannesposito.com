@@ -229,7 +229,7 @@ Return output file name."
                                       filename
                                       dst-file)))
               ((string-match-p ".*\\.css$" filename)
-               (shell-command (format "%s/compresscss.sh %s %s" root-dir filename dst-file)))
+               (shell-command (format "%s/engine/compresscss.sh %s %s" root-dir filename dst-file)))
               (t (copy-file filename dst-file t))))))
 
 (defalias 'org-blog-posts-sitemap-fn
@@ -290,5 +290,18 @@ Return output file name."
 
 (add-to-list 'org-export-filter-link-functions
              'my-org-export-add-target-blank-to-http-links)
+
+(defun my-org-export-add-file-links
+    (text backend info)
+  "Add a link to the tangled file before the code."
+  (when (and
+         (org-export-derived-backend-p backend 'html)
+         (string-match "href=\"http[^\"]+" text)
+         (not (string-match "target=\"" text))
+         (not (string-match (concat "href=\"" domainname "[^\"]*") text)))
+    (string-match "<a " text)
+    (replace-match "<a target=\"_blank\" rel=\"noopener noreferrer\" " nil nil text)))
+(add-to-list 'org-export-filter-code-functions
+             'my-org-export-add-file-links)
 
 (provide 'her-esy-fun-publish)
