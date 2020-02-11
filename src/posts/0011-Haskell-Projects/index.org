@@ -1,0 +1,131 @@
+#+title: Create a new Haskell Project
+#+subtitle: Application Tutorial
+#+date: [2020-02-10 Mon]
+#+author: Yann Esposito
+#+EMAIL: yann@esposito.host
+#+keywords: Haskell, programming, functional, tutorial
+#+DESCRIPTION: How to write Haskell application.
+#+OPTIONS: auto-id:t toc:t
+#+STARTUP: overview
+
+#+begin_notes
+Writing a Haskell application can be quite challenging.
+You must know about:
+
+- setup your coding environment
+  - get the right compiler
+  - use libraries
+  - handle your Haskell tooling, editor/IDE
+- project directory structure and best practices
+  - write tests
+  - benchmarks
+  - profiling
+- Code architecture
+  - encode the data structure
+  - manage state and effects
+
+This is both a manual and a tutorial.
+If you follow it, you should be familiar enough with Haskell to be able to
+write your own applications.
+I will focus on command line interfaces and REST APIs.
+#+end_notes
+
+* Haskell Environment Setup
+:PROPERTIES:
+:CUSTOM_ID: haskell-environment-setup
+:END:
+
+My no brainer solution for it:
+
+1. Write this =shell.nix= file and launch =nix-shell=:
+   
+   #+begin_src nix :tangle shell.nix
+   { nixpkgs ? import (fetchGit {
+     name = "nixos-release-19.09";
+     url = "https://github.com/NixOS/nixpkgs";
+     # obtained via
+     # git ls-remote https://github.com/nixos/nixpkgs master
+     ref = "refs/heads/nixpkgs-19.09-darwin";
+     rev = "d5291756487d70bc336e33512a9baf9fa1788faf";
+   }) { config = { allowBroken = true; }; } }:
+   let
+     inherit (nixpkgs) pkgs;
+     inherit (pkgs) haskellPackages;
+   
+     haskellDeps = ps: with ps; [
+       base
+       protolude
+       containers
+     ];
+   
+     hspkgs = haskellPackages;
+   
+     ghc = hspkgs.ghcWithPackages haskellDeps;
+   
+     nixPackages = [
+       ghc
+       pkgs.gdb
+       hspkgs.summoner
+       hspkgs.summoner-tui
+       haskellPackages.cabal-install
+       haskellPackages.ghcid
+     ];
+   in
+   pkgs.stdenv.mkDerivation {
+     name = "env";
+     buildInputs = nixPackages;
+     shellHook = ''
+           export PS1="\n\[[hs:\033[1;32m\]\W\[\033[0m\]]> "
+        '';
+   }
+   #+end_src
+ 2. now launch =summon-tui=
+
+** Retrieve Compiler
+:PROPERTIES:
+:CUSTOM_ID: retrieve-compiler
+:END:
+** Dependency Management
+:PROPERTIES:
+:CUSTOM_ID: dependency-management
+:END:
+** Tooling
+:PROPERTIES:
+:CUSTOM_ID: tooling
+:END:
+* Haskell Project directoy structure
+:PROPERTIES:
+:CUSTOM_ID: haskell-project-directoy-structure
+:END:
+** Tests
+:PROPERTIES:
+:CUSTOM_ID: tests
+:END:
+** Benchmarks
+:PROPERTIES:
+:CUSTOM_ID: benchmarks
+:END:
+** Profiling
+:PROPERTIES:
+:CUSTOM_ID: profiling
+:END:
+* Haskell Code Architecture
+:PROPERTIES:
+:CUSTOM_ID: haskell-code-architecture
+:END:
+** Basic: IO
+:PROPERTIES:
+:CUSTOM_ID: basic--io
+:END:
+** Easy: The Handle Pattern
+:PROPERTIES:
+:CUSTOM_ID: easy--the-handle-pattern
+:END:
+** Advanced: MTL
+:PROPERTIES:
+:CUSTOM_ID: advanced--mtl
+:END:
+** Expert: Free Monad
+:PROPERTIES:
+:CUSTOM_ID: expert--free-monad
+:END:
