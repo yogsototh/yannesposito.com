@@ -1,8 +1,8 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
-cd $(git rev-parse --show-toplevel)
+cd "$(git rev-parse --show-toplevel)" || exit 1
 rootdir=${0:h}
-echo $rootdir
+echo "$rootdir"
 
 ./engine/clean.sh
 ./engine/build.sh
