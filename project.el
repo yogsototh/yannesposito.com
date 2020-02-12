@@ -145,7 +145,8 @@
                (mapconcat (lambda (k) (format "@@html:<span class=\"keyword\">@@#%s@@html:</span>@@" k))
                           (cl-sort keywords 'string-lessp :key 'downcase)
                           " "))
-       (format "@@html:<div class=\"description\">@@%s@@html:</div>@@" description)))))
+       (format "@@html:<div class=\"description\">@@%s@@html:</div>@@" description)
+       (format "@@html:<br/>@@" description)))))
 
 (defun org-blog-sitemap-fn-descr (descr title list)
   "Return sitemap using TITLE and LIST returned by `org-blog-sitemap-format-entry'."
