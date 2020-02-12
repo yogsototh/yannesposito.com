@@ -36,7 +36,6 @@ li {
 }
 ol > li:before, ul > li:before {
     content: "– ";
-    opacity: 0.5;
     float: left;
     position: relative;
     left: -2ch;
@@ -71,16 +70,17 @@ table {
     display: block; /* for overflow to work */
     max-width: 100%;
     border-collapse: collapse;
-    border: solid 1px;
     overflow: scroll;
+    border-top: dashed 2px;
+    border-bottom: dashed 2px;
 }
 td, th {
     height: 1em;
     padding: 0 10px;
     text-align: left;
     vertical-align: middle;
-    border-right: solid 1px;
-    border-left: solid 1px;
+    border-left: dashed 2px;
+    border-right: dashed 2px;
 }
 sup {
     vertical-align: top;
@@ -223,61 +223,6 @@ figure, .figure {
 .underline {
     text-decoration: underline;
 }
-/* colors theme */
-:root {
-    color-scheme: light dark; /* support color scheme */
-    --b03:  #202631;
-    --b02:  #2B313C;
-    --b01:  #656B74;
-    --b00:  #727781;
-    --b0:   #8B919B;
-    --b1:   #989EA8;
-    --b2:   #E5E8ED;
-    --b3:   #F4F7FC;
-    --y: #A98D50;
-    --o: #aa6550;
-    --r: #b85a64;
-    --m: #af53b0;
-    --v: #846f93;
-    --b: #5679a4;
-    --c: #4c8493;
-    --g: #728b5c;
-
-    /* Solaryzed accented colors */
-    --bg: var(--b03);
-    --fg: var(--b0);
-    --bg2: var(--b02);
-    --fg2: var(--b1);
-    --rfg: var(--b1);
-    --rbg: var(--b02);
-    --bdr: var(--b02);
-    --l-fg: var(--bg);
-    --l-bg: var(--g);
-}
-
-/* org colors */
-@media (prefers-color-scheme: light) {
-    :root {
-        --bg: var(--b3);
-        --fg: var(--b01);
-        --bg2: var(--b2);
-        --fg2: var(--b00);
-        --rfg: var(--b01);
-        --rbg: var(--b2);
-        --bdr: var(--b2);
-        --l-fg: var(--bg);
-        --l-bg: var(--o);
-    }
-    img {
-        filter: sepia(100%) hue-rotate(182deg) saturate(0.6);
-    }
-}
-/* Dark themes soften and darken images */
-@media (prefers-color-scheme: dark) {
-  img {
-      filter: brightness(0.8) sepia(100%) hue-rotate(182deg) saturate(0.6);
-  }
-}
 #h {
     float: left;
 }
@@ -294,6 +239,63 @@ figure, .figure {
     font-style: italic;
 }
 
+/* colors theme */
+:root {
+    color-scheme: light dark; /* support color scheme */
+    --b03:  #202631;
+    --b02:  #2b313c;
+    --b01:  #656b74;
+    --b00:  #727781;
+    --b0:   #8b919b;
+    --b1:   #989ea8;
+    --b2:   #e5e8ed;
+    --b3:   #f4f7ff;
+    --y: #a98d50;
+    --o: #aa6550;
+    --r: #b85a64;
+    --m: #af53b0;
+    --v: #846f93;
+    --b: #5679a4;
+    --c: #4c8493;
+    --g: #728b5c;
+
+    /* Solaryzed accented colors */
+    --bg: var(--b03);
+    --fg: var(--b0);
+    --fg0: var(--b00);
+    --bg2: var(--b02);
+    --fg2: var(--b1);
+    --rfg: var(--b1);
+    --rbg: var(--b02);
+    --bdr: var(--b02);
+    --l-fg: var(--bg);
+    --l-bg: var(--g);
+}
+
+/* org colors */
+@media (prefers-color-scheme: light) {
+    :root {
+        --bg: var(--b3);
+        --fg0: var(--b0);
+        --fg: var(--b00);
+        --bg2: var(--b2);
+        --fg2: var(--b01);
+        --rfg: var(--b01);
+        --rbg: var(--b2);
+        --bdr: var(--b2);
+        --l-fg: var(--bg);
+        --l-bg: var(--o);
+    }
+    img {
+        filter: sepia(100%) hue-rotate(182deg) saturate(0.6);
+    }
+}
+/* Dark themes soften and darken images */
+@media (prefers-color-scheme: dark) {
+  img {
+      filter: brightness(0.8) sepia(100%) hue-rotate(182deg) saturate(0.6);
+  }
+}
 /* Light themes does not soften and darken images */
 #l:checked ~ .main img { filter: sepia(100%) hue-rotate(182deg) saturate(0.6); }
 #d:checked ~ .main img { filter: brightness(0.8) sepia(100%) hue-rotate(182deg) saturate(0.6); }
@@ -303,8 +305,9 @@ figure, .figure {
 #d:checked ~ .main, #d:checked ~ #labels {
     --bg: var(--b03);
     --fg: var(--b0);
+    --fg0: var(--b00);
     --bg2: var(--b02);
-    --fg2: var(--b01);
+    --fg2: var(--b1);
     --rfg: var(--b1);
     --rbg: var(--b02);
     --bdr: var(--b02);
@@ -316,9 +319,10 @@ figure, .figure {
 /* Light theme selected */
 #l:checked ~ .main, #l:checked ~ #labels {
     --bg: var(--b3);
-    --fg: var(--b01);
+    --fg0: var(--b0);
+    --fg: var(--b00);
     --bg2: var(--b2);
-    --fg2: var(--b00);
+    --fg2: var(--b01);
     --rfg: var(--b01);
     --rbg: var(--b2);
     --bdr: var(--b2);
@@ -337,6 +341,7 @@ body,.main {
     color: white;
     background: var(--v);
 }
+
 a, a:visited,
 .main a, .main a:visited {
     color: var(--rfg);
@@ -359,19 +364,14 @@ body > input { display:none; }
 
 li .keywords {
     font-style: italic;
-    opacity: .5;
+    color: var(--fg0);
 }
 
-.main ol > li:before, ol > li:before {
-    color: var(--fg2)
-}
-
+.main ol > li:before, ol > li:before,
 pre::after,pre::before,hr:after,
-.main pre::after,.main pre::before,.main hr:after {
-    color: var(--fg2);
-}
+.main pre::after,.main pre::before,.main hr:after,
 nav a, nav a:visited, .main nav a,.main nav a:visited {
-    color: var(--fg2);
+    color: var(--fg0);
 }
 #labels label:hover,
 a:hover,
@@ -406,7 +406,7 @@ h6, .main h6,
 }
 table, td, th,
 .main table,.main td,.main th {
-    border-color: var(--bdr);
+    border-color: var(--fg0);
 }
 code, .main code {
     background: var(--rbg);
@@ -423,13 +423,14 @@ blockquote:after, .main blockquote:after {
 /* -------- */
 /* org colors */
 .todo, .done, .main .todo, .main .done {
-    background: var(--rbg);
-    border: solid 1px;
     height: 10px;
     display: inline-block;
     line-height: 12px;
     font-weight: bold;
     font-size: 10px;
+    border-left: solid 2px;
+    border-right: solid 2px;
+    padding: 0 3px;
 }
 .notes, .main .notes {
     background: var(--rbg);

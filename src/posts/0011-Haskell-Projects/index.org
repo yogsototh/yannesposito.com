@@ -38,7 +38,6 @@ I will focus on command line interfaces and REST APIs.
 My no brainer solution for it:
 
 1. Write this =shell.nix= file and launch =nix-shell=:
-   
    #+begin_src nix :tangle shell.nix
    { nixpkgs ? import (fetchGit {
      name = "nixos-release-19.09";
@@ -79,7 +78,56 @@ My no brainer solution for it:
         '';
    }
    #+end_src
- 2. now launch =summon-tui=
+2. now launch =summon-tui=
+3. add the following nix files:
+   The first file to create is the one that will pin the versions of all your
+   packages and libraries:
+
+   #+caption: [[./my-app/nixpkgs.nix]]
+   #+begin_src nix :tangle my-app/nixpkgs.nix :mkdirp t
+   import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {}
+   #+end_src
+   
+   The second file is the =default.nix= file:
+   
+   #+caption: [[./my-app/default.nix]]
+   #+begin_src nix :tangle my-app/default.nix :mkdirp t
+   { nixpkgs ? import ./nixpkgs.nix
+   , compiler ? "default"
+   , doBenchmark ? false }:
+   let
+     inherit (nixpkgs) pkgs;
+     name = "my-app";
+     haskellPackages = pkgs.haskellPackages;
+     variant = if doBenchmark
+               then pkgs.haskell.lib.doBenchmark
+               else pkgs.lib.id;
+     drv = haskellPackages.callCabal2nix name ./. {};
+   in
+   {
+     my_project = drv;
+     shell = haskellPackages.shellFor {
+       # generate hoogle doc
+       withHoogle = true;
+       packages = p: [drv];
+       # packages dependencies (by default haskellPackages)
+       buildInputs = with haskellPackages;
+         [ hlint
+           ghcid
+           cabal-install
+           cabal2nix
+           hindent
+           # # if you want to add some system lib like ncurses
+           # # you could by writing it like:
+           # pkgs.ncurses
+         ];
+       # nice prompt for the nix-shell
+       shellHook = ''
+        export PS1="\n\[[${name}:\033[1;32m\]\W\[\033[0m\]]> "
+     '';
+     };
+   }
+   #+end_src
 
 ** Retrieve Compiler
 :PROPERTIES:

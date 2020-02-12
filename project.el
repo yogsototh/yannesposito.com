@@ -156,7 +156,7 @@
           "#+DESCRIPTION: " descr "\n"
           ""
           "@@html:<nav>"
-          "<a href=\"/index.html\">Home</a> | "
+          "<a href=\"/\">Home</a> | "
           "<a href=\"/archive.html\">Posts</a> | "
           "<a href=\"/slides.html\">Slides</a> | "
           "<a href=\"/about-me.html\">About</a>"
@@ -180,10 +180,7 @@
 (defun org-blog-publish-to-html (plist filename pub-dir)
   "Same as `org-html-publish-to-html' but modifies html before finishing."
   (let* ((file-path (org-html-publish-to-html plist filename pub-dir))
-         (mk-path     (format "./%s.html"     (replace-regexp-in-string ".*/\\([^/]*\\)\\.org$" "\\1" filename)))
-         (min-path     (format "./%s-min.html"     (replace-regexp-in-string ".*/\\([^/]*\\)\\.org$" "\\1" filename)))
-         (sci-path     (format "./%s-sci.html"     (replace-regexp-in-string ".*/\\([^/]*\\)\\.org$" "\\1" filename)))
-         (modern-path     (format "./%s-modern.html"     (replace-regexp-in-string ".*/\\([^/]*\\)\\.org$" "\\1" filename))))
+         (mk-path     (format "./%s.html"     (replace-regexp-in-string ".*/\\([^/]*\\)\\.org$" "\\1" filename))))
     (with-current-buffer (find-file-noselect file-path)
       (goto-char (point-min))
       (search-forward "<body>")
@@ -193,15 +190,10 @@
 
                            "<div id=\"labels\">"
                            "<div class=\"content\">"
-                           "<a id=\"h\" href=\"/index.html\">her.esy.fun</a> - "
+                           "<a id=\"h\" href=\"/\">her.esy.fun</a>"
                            "<label for=\"l\">light</label>"
                            " / "
                            "<label for=\"d\">dark</label>"
-                           " - "
-                           ,(format "<a href=\"%s\">mk</a>" mk-path)
-                           ,(format "<a href=\"%s\">min</a>" min-path)
-                           ,(format "<a href=\"%s\">sci</a>" sci-path)
-                           ,(format "<a href=\"%s\">modern</a>" modern-path)
                            "</div>"
                            "</div>"
                            "<div class=\"main\">")
