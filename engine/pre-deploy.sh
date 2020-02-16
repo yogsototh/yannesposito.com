@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
+echo "Copying to optim dir"
+rm -rf _optim/ && cp -r _site _optim
 echo "Optim HTML size"
 ./engine/optim-html.sh
 # echo "Gen themes clones"

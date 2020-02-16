@@ -3,7 +3,7 @@
 #!nix-shell -I nixpkgs="https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz"
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
-webdir="_site"
+webdir="_optim"
 
 sizeof() {
     stat --format="%s" "$*"

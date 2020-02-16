@@ -4,7 +4,7 @@
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
 # Directory
-webdir="_site"
+webdir="_optim"
 postsdir="$webdir/posts"
 rssfile="$webdir/rss.xml"
 
