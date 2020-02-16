@@ -10,9 +10,9 @@ body {
     font-family: Palatino, Georgia, serif;
     line-height: var(--lh);
 }
-pre, pre code {
+code, pre, pre code {
     line-height: 1em;
-    font-size: 13px;
+    font-size: 14px;
     font-family: Menlo, monospace;
 }
 blockquote pre {
@@ -69,7 +69,6 @@ p > img, li > img {
     vertical-align: middle;
 }
 table {
-    display: block; /* for overflow to work */
     max-width: 100%;
     border-collapse: collapse;
     overflow: scroll;
@@ -98,6 +97,9 @@ sup > a {
 /* Markdown tricks */
 h1,h2,h3,h4,h5,h6 {
     font-size: 1em;
+}
+h1:before,h2:before,h3:before,h4:before,h5:before,h6:before {
+    font-family: Menlo, monospace;
 }
 h1::before {
     content: "# ";
@@ -157,14 +159,15 @@ pre:before {
 pre code {
     background: none;
 }
-blockquote,#table-of-contents {
+blockquote, #table-of-contents {
     margin-left: 0;
     position: relative;
     padding-left: 17px;
     padding-left: 2ch;
     overflow: hidden;
 }
-#table-of-contents:after, blockquote:after {
+blockquote:after {
+    font-family: Menlo, monospace;
     content: ">\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>";
     white-space: pre;
     position: absolute;
@@ -243,6 +246,8 @@ figure, .figure {
 }
 
 /* colors theme */
+/* --------------------------------------------------------------------------- */
+/* Dark theme selected */
 :root {
     color-scheme: light dark; /* support color scheme */
     --b03:  #202631;
@@ -268,14 +273,31 @@ figure, .figure {
     --fg0: var(--b00);
     --bg2: var(--b02);
     --fg2: var(--b1);
-    --rfg: var(--b1);
+    --rfg: var(--b3);
+    --rbg: var(--b02);
+    --bdr: var(--b02);
+    --l-fg: var(--bg);
+    --l-bg: var(--g);
+    img {
+        filter: brightness(0.8) sepia(100%) hue-rotate(182deg) saturate(0.6);
+    }
+}
+#d:checked ~ .main, #d:checked ~ #labels {
+    --bg: var(--b03);
+    --fg: var(--b2);
+    --fg0: var(--b00);
+    --bg2: var(--b02);
+    --fg2: var(--b1);
+    --rfg: var(--b3);
     --rbg: var(--b02);
     --bdr: var(--b02);
     --l-fg: var(--bg);
     --l-bg: var(--g);
 }
+#d:checked ~ .main img { filter: brightness(0.8) sepia(100%) hue-rotate(182deg) saturate(0.6); }
 
-/* org colors */
+/* --------------------------------------------------------------------------- */
+/* Light theme selected */
 @media (prefers-color-scheme: light) {
     :root {
         --bg: var(--b3);
@@ -283,7 +305,7 @@ figure, .figure {
         --fg: var(--b02);
         --bg2: var(--b2);
         --fg2: var(--b01);
-        --rfg: var(--b01);
+        --rfg: var(--b03);
         --rbg: var(--b2);
         --bdr: var(--b2);
         --l-fg: var(--bg);
@@ -293,33 +315,8 @@ figure, .figure {
         filter: sepia(100%) hue-rotate(182deg) saturate(0.6);
     }
 }
-/* Dark themes soften and darken images */
-@media (prefers-color-scheme: dark) {
-  img {
-      filter: brightness(0.8) sepia(100%) hue-rotate(182deg) saturate(0.6);
-  }
-}
-/* Light themes does not soften and darken images */
-#l:checked ~ .main img { filter: sepia(100%) hue-rotate(182deg) saturate(0.6); }
-#d:checked ~ .main img { filter: brightness(0.8) sepia(100%) hue-rotate(182deg) saturate(0.6); }
 
-/* --------------------------------------------------------------------------- */
-/* Dark theme selected */
-#d:checked ~ .main, #d:checked ~ #labels {
-    --bg: var(--b03);
-    --fg: var(--b1);
-    --fg0: var(--b00);
-    --bg2: var(--b02);
-    --fg2: var(--b1);
-    --rfg: var(--b1);
-    --rbg: var(--b02);
-    --bdr: var(--b02);
-    --l-fg: var(--bg);
-    --l-bg: var(--g);
-}
 
-/* --------------------------------------------------------------------------- */
-/* Light theme selected */
 #l:checked ~ .main, #l:checked ~ #labels {
     --bg: var(--b3);
     --fg0: var(--b0);
@@ -332,6 +329,8 @@ figure, .figure {
     --l-fg: var(--bg);
     --l-bg: var(--o);
 }
+
+#l:checked ~ .main img { filter: sepia(100%) hue-rotate(182deg) saturate(0.6); }
 
 /* --------------------------------------------------------------------------- */
 /* Default color theme */
@@ -360,6 +359,7 @@ sup > a {
 
 body > input { display:none; }
 
+#table-of-contents,
 #labels {
     background: var(--bg2);
     color: var(--fg2);
@@ -372,9 +372,12 @@ li .keywords {
 
 .main ol > li:before, ol > li:before,
 pre::after,pre::before,hr:after,
-.main pre::after,.main pre::before,.main hr:after,
-nav a, nav a:visited, .main nav a,.main nav a:visited {
+.main pre::after,.main pre::before,.main hr:after
+ {
     color: var(--fg0);
+}
+nav a, nav a:visited, .main nav a,.main nav a:visited {
+    color: var(--fg);
 }
 #labels label:hover,
 a:hover,
