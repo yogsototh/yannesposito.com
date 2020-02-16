@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
-rootdir=${0:h}
+rootdir=$PWD
 echo $rootdir
 
 echo -n "Uploading website"
