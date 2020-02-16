@@ -60,12 +60,12 @@ for fic in $webdir/**/*.{html,xml}(N); do
     print -n -- "$fic ($before"
     perl -pi -e $htmlreplacer $fic
     after=$(sizeof $fic)
-    print -- " => $after [$(( ((before - after) * 100) / before  ))])"
+    print -- " => $after [$(( ((before - after) * 100) / before  ))%])"
 done
 for fic in $webdir/**/*.css(N); do
     before=$(sizeof $fic)
     print -n -- "$fic ($before"
     perl -pi  -e $cssreplacer $fic
     after=$(sizeof $fic)
-    print -- " => $after [$(( ((before - after) * 100) / before  ))])"
+    print -- " => $after [$(( ((before - after) * 100) / before  ))%])"
 done
