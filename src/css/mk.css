@@ -266,21 +266,41 @@ figure, .figure {
     --c: #4c8493;
     --g: #728b5c;
 
-    /* Solaryzed accented colors */
-    --bg: var(--b03);
-    --fg: var(--b0);
-    --fg0: var(--b00);
-    --bg2: var(--b02);
-    --fg2: var(--b1);
-    --rfg: var(--b2);
-    --rbg: var(--b02);
-    --bdr: var(--b02);
+    --bg: var(--b3);
+    --fg0: var(--b0);
+    --fg: var(--b02);
+    --bg2: var(--b2);
+    --fg2: var(--b01);
+    --rfg: var(--b03);
+    --rbg: var(--b2);
+    --bdr: var(--b2);
     --l-fg: var(--bg);
-    --l-bg: var(--g);
+    --l-bg: var(--o);
 }
+
 img {
-    filter: brightness(0.7) sepia(100%) hue-rotate(182deg) saturate(0.6);
+    filter: sepia(100%) hue-rotate(182deg) saturate(0.6);
 }
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Dark */
+        --bg: var(--b03);
+        --fg: var(--b0);
+        --fg0: var(--b00);
+        --bg2: var(--b02);
+        --fg2: var(--b1);
+        --rfg: var(--b2);
+        --rbg: var(--b02);
+        --bdr: var(--b02);
+        --l-fg: var(--bg);
+        --l-bg: var(--g);
+    }
+    img {
+        filter: brightness(0.7) sepia(100%) hue-rotate(182deg) saturate(0.6);
+    }
+}
+
 #d:checked ~ .main, #d:checked ~ #labels {
     --bg: var(--b03);
     --fg: var(--b0);
@@ -293,28 +313,7 @@ img {
     --l-fg: var(--bg);
     --l-bg: var(--g);
 }
-#d:checked ~ .main img { filter: brightness(0.8) sepia(100%) hue-rotate(182deg) saturate(0.6); }
-
-/* --------------------------------------------------------------------------- */
-/* Light theme selected */
-@media (prefers-color-scheme: light) {
-    :root {
-        --bg: var(--b3);
-        --fg0: var(--b0);
-        --fg: var(--b02);
-        --bg2: var(--b2);
-        --fg2: var(--b01);
-        --rfg: var(--b03);
-        --rbg: var(--b2);
-        --bdr: var(--b2);
-        --l-fg: var(--bg);
-        --l-bg: var(--o);
-    }
-    img {
-        filter: sepia(100%) hue-rotate(182deg) saturate(0.6);
-    }
-}
-
+#d:checked ~ .main img { filter: brightness(0.7) sepia(100%) hue-rotate(182deg) saturate(0.6); }
 
 #l:checked ~ .main, #l:checked ~ #labels {
     --bg: var(--b3);
@@ -328,7 +327,6 @@ img {
     --l-fg: var(--bg);
     --l-bg: var(--o);
 }
-
 #l:checked ~ .main img { filter: sepia(100%) hue-rotate(182deg) saturate(0.6); }
 
 /* --------------------------------------------------------------------------- */
