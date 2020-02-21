@@ -37,7 +37,11 @@
                '("<a href=\"/index.html\">Home</a>"
                  "<a href=\"/archive.html\">Posts</a>"
                  "<a href=\"/slides.html\">Slides</a>"
-                 "<a href=\"/about-me.html\">About</a>")
+                 "<a href=\"/about-me.html\">About</a>
+                  <span class=\"details\">
+                  (<a href=\"https://gitea.esy.fun/yogsototh\">code</a>
+                   <a href=\"https://espial.esy.fun/u:yogsototh\">bookmarks</a>
+                   <a href=\"https://espial.esy.fun/u:yogsototh/notes\">notes</a>)</span>")
                lst)
               " | ")
    "</nav>"))
