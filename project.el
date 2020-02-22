@@ -4,8 +4,10 @@
 (defvar root-dir (projectile-project-root))
 (defvar base-dir (concat root-dir "src"))
 (defvar publish-dir (concat root-dir "_site"))
+(defvar draft-publish-dir (concat root-dir "_full"))
 (defvar assets-dir (concat base-dir "/"))
 (defvar publish-assets-dir (concat publish-dir "/"))
+(defvar draft-publish-assets-dir (concat publish-drafts-dir "/"))
 (defvar posts-dir (concat base-dir "/posts"))
 (defvar rss-title "Subscribe to articles")
 (defvar posts-descr "Articles")
@@ -264,6 +266,7 @@ Return output file name."
          :sitemap-format-entry date-format-entry
          :sitemap-function org-blog-posts-sitemap-fn)
 
+
         ("assets"
          :base-directory ,assets-dir
          :base-extension ".*"
@@ -272,7 +275,38 @@ Return output file name."
          :publishing-function org-blog-publish-attachment
          :recursive t)
 
-        ("blog" :components ("orgfiles" "assets"))))
+
+        ("draft-org-files"
+         :base-directory ,base-dir
+         :base-extension "org"
+         :publishing-directory ,draft-publish-dir
+         :recursive t
+         :preparation-function org-blog-prepare
+         :publishing-function org-blog-publish-to-html
+         :with-toc nil
+         :with-title nil
+         :with-date t
+         :section-numbers nil
+         :html-doctype "html5"
+         :html-html5-fancy t
+         :html-head-include-default-style nil
+         :html-head-include-scripts nil
+         :htmlized-source t
+         :html-head-extra ,org-blog-head
+         :html-preamble org-blog-preamble
+         :html-postamble org-blog-postamble
+
+         )
+        ("draft-assets"
+         :base-directory ,assets-dir
+         :base-extension ".*"
+         :exclude ".*\.org$"
+         :publishing-directory ,draft-publish-assets-dir
+         :publishing-function org-blog-publish-attachment
+         :recursive t)
+
+        ("blog" :components ("orgfiles" "assets"))
+        ("draft" :components ("draft-org-files" "draft-assets"))))
 
 ;; add target=_blank and rel="noopener noreferrer" to all links by default
 (defun my-org-export-add-target-blank-to-http-links (text backend info)
