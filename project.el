@@ -7,7 +7,7 @@
 (defvar draft-publish-dir (concat root-dir "_full"))
 (defvar assets-dir (concat base-dir "/"))
 (defvar publish-assets-dir (concat publish-dir "/"))
-(defvar draft-publish-assets-dir (concat publish-drafts-dir "/"))
+(defvar draft-publish-assets-dir (concat draft-publish-dir "/"))
 (defvar posts-dir (concat base-dir "/posts"))
 (defvar rss-title "Subscribe to articles")
 (defvar posts-descr "Articles")
