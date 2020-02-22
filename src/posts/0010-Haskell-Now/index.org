@@ -4111,28 +4111,28 @@ Thank you man.
        As of today, the definition of =IO= is no more visible into =base=.
        We have the following explanation in [[http://hackage.haskell.org/package/base-4.12.0.0/docs/src/GHC.IO.html][=GHC.IO.hs=]]:
        #+begin_quote
-       #+begin_src 
-       The IO Monad is just an instance of the ST monad, where the state is
-       the real world.  We use the exception mechanism (in GHC.Exception) to
-       implement IO exceptions.
-       
-       NOTE: The IO representation is deeply wired in to various parts of the
-       system.  The following list may or may not be exhaustive:
-       
-       Compiler  - types of various primitives in PrimOp.hs
-       
-       RTS       - forceIO (StgStartup.cmm)
-                 - catchzh_fast, (un)?blockAsyncExceptionszh_fast, raisezh_fast
-                   (Exception.cmm)
-                 - raiseAsync (RaiseAsync.c)
-       
-       Prelude   - GHC.IO.hs, and several other places including
-                   GHC.Exception.hs.
-       
-       Libraries - parts of hslibs/lang.
-       
-       --SDM
-       #+end_src
+#+begin_src
+The IO Monad is just an instance of the ST monad, where the state is
+the real world.  We use the exception mechanism (in GHC.Exception) to
+implement IO exceptions.
+
+NOTE: The IO representation is deeply wired in to various parts of the
+system.  The following list may or may not be exhaustive:
+
+Compiler  - types of various primitives in PrimOp.hs
+
+RTS       - forceIO (StgStartup.cmm)
+          - catchzh_fast, (un)?blockAsyncExceptionszh_fast, raisezh_fast
+            (Exception.cmm)
+          - raiseAsync (RaiseAsync.c)
+
+Prelude   - GHC.IO.hs, and several other places including
+            GHC.Exception.hs.
+
+Libraries - parts of hslibs/lang.
+
+--SDM
+#+end_src
        #+end_quote
 
 [fn:7] Well, you'll certainly need to practice a bit to get used to them
