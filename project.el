@@ -266,15 +266,27 @@ Return output file name."
          :sitemap-format-entry date-format-entry
          :sitemap-function org-blog-posts-sitemap-fn)
 
-
-        ("assets"
+        ("css"
          :base-directory ,assets-dir
-         :base-extension ".*"
-         :exclude ".*\.org$"
+         :base-extension "css"
          :publishing-directory ,publish-assets-dir
          :publishing-function org-blog-publish-attachment
          :recursive t)
 
+        ("img"
+         :base-directory ,assets-dir
+         :base-extension "(jpg|png|gif|jpeg)"
+         :publishing-directory ,publish-assets-dir
+         :publishing-function org-blog-publish-attachment
+         :recursive t)
+
+        ("files"
+         :base-directory ,assets-dir
+         :base-extension ".*"
+         :exclude ".*\.(org|css|jpg|png|gif|jpeg)$"
+         :publishing-directory ,publish-assets-dir
+         :publishing-function org-blog-publish-attachment
+         :recursive t)
 
         ("draft-org-files"
          :base-directory ,base-dir
@@ -294,18 +306,30 @@ Return output file name."
          :htmlized-source t
          :html-head-extra ,org-blog-head
          :html-preamble org-blog-preamble
-         :html-postamble org-blog-postamble
-
-         )
-        ("draft-assets"
+         :html-postamble org-blog-postamble)
+        ("draft-css"
+         :base-directory ,assets-dir
+         :base-extension "css"
+         :publishing-directory ,draft-publish-assets-dir
+         :publishing-function org-blog-publish-attachment
+         :recursive t)
+        ("draft-img"
+         :base-directory ,assets-dir
+         :base-extension "(jpg|png|gif|jpeg)"
+         :publishing-directory ,draft-publish-assets-dir
+         :publishing-function org-blog-publish-attachment
+         :recursive t)
+        ("draft-files"
          :base-directory ,assets-dir
          :base-extension ".*"
-         :exclude ".*\.org$"
+         :include ".*\.(org|css|jpg|png|gif|jpeg)$"
          :publishing-directory ,draft-publish-assets-dir
          :publishing-function org-blog-publish-attachment
          :recursive t)
 
+        ("assets" :components ("css" "img" "files"))
         ("blog" :components ("orgfiles" "assets"))
+        ("draft-assets" :components ("draft-css" "draft-img" "draft-files"))
         ("draft" :components ("draft-org-files" "draft-assets"))))
 
 ;; add target=_blank and rel="noopener noreferrer" to all links by default
