@@ -346,17 +346,13 @@ Return output file name."
 (add-to-list 'org-export-filter-link-functions
              'my-org-export-add-target-blank-to-http-links)
 
-(defun my-org-export-add-file-links
-    (text backend info)
-  "Add a link to the tangled file before the code."
-  (when (and
-         (org-export-derived-backend-p backend 'html)
-         (string-match "href=\"http[^\"]+" text)
-         (not (string-match "target=\"" text))
-         (not (string-match (concat "href=\"" domainname "[^\"]*") text)))
-    (string-match "<a " text)
-    (replace-match "<a target=\"_blank\" rel=\"noopener noreferrer\" " nil nil text)))
-(add-to-list 'org-export-filter-code-functions
-             'my-org-export-add-file-links)
+(defun my-add-link-to-tangled-files (backend)
+  "Add a link just before source code block with tangled files.
+BACKEND is the export backend. Used as symbol."
+  (while ;; (re-search-forward )
+      (re-search-forward "^\\( *\\)#\\+begin_src .*:tangle \\([^\\s\\n]*\\)" nil t)
+    (replace-match "\\1{{{lnk(\\2)}}}\n3\n\\&")))
+
+(add-hook 'org-export-before-processing-hook 'my-add-link-to-tangled-files)
 
 (provide 'her-esy-fun-publish)

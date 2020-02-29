@@ -177,7 +177,6 @@ The article contains five parts:
 3. create a new empty directory =hsenv= somewhere
 4. Put the following =shell.nix= file inside it
 
-   {{{lnk(shell.nix)}}}
    #+begin_src nix :tangle shell.nix
 { nixpkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {} }:
 let
@@ -275,7 +274,6 @@ I will start with similarities between Haskell and other programming
 languages.
 Let's jump to the mandatory "Hello World".
 
-{{{lnk(hello.hs)}}}
 #+BEGIN_SRC haskell :tangle hello.hs
 main = putStrLn "Hello World!"
 #+END_SRC
@@ -288,7 +286,6 @@ Hello World!
 Now, a program asking your name and replying "Hello" using the name you
 entered:
 
-{{{lnk(name.hs)}}}
 #+BEGIN_SRC haskell :tangle name.hs
 main = do
     print "What is your name?"
@@ -463,7 +460,6 @@ It's a good idea because it indicates intent and understanding.
 Let's play a little.
 We declare the type using =::=
 
-{{{lnk(basic.hs)}}}
 #+BEGIN_SRC haskell :tangle basic.hs
 f :: Int -> Int -> Int
 f x y = x*x + y*y
@@ -478,7 +474,6 @@ main = print (f 2 3)
 
 Now try
 
-{{{lnk(error_basic.hs)}}}
 #+BEGIN_SRC haskell :tangle error_basic.hs
 f :: Int -> Int -> Int
 f x y = x*x + y*y
@@ -506,7 +501,6 @@ The problem: =4.2= isn't an Int.
 The solution: don't declare a type for =f= for the moment and let Haskell
 infer the most general type for us:
 
-{{{lnk(float_basic.hs)}}}
 #+BEGIN_SRC haskell :tangle float_basic.hs
 f x y = x*x + y*y
 
@@ -626,7 +620,6 @@ It is time to make a real application.
 But just before that, we should verify the type system works as
 expected:
 
-{{{lnk(typed_float_basic.hs)}}}
 #+BEGIN_SRC haskell :tangle typed_float_basic.hs
 f :: Num a => a -> a -> a
 f x y = x*x + y*y
@@ -902,7 +895,6 @@ Notation warning: indentation is /important/ in Haskell.
 Like in Python, bad indentation can break your code!
 #+END_QUOTE
 
-{{{lnk(functions.hs)}}}
 #+BEGIN_SRC haskell :tangle functions.hs
 main = do
       print $ square 10
@@ -1048,7 +1040,6 @@ Note that for any non empty list =l=, =l ⇔ (head l):(tail l)=
 The first Haskell solution.
 The function =evenSum= returns the sum of all even numbers in a list:
 
-{{{lnk(evenSum_v1.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v1.hs
 -- Version 1
 evenSum :: [Integer] -> Integer
@@ -1107,7 +1098,6 @@ Next, we can use sub functions using =where= or =let=.
 This way our =accumSum= function will not pollute the namespace of our
 module.
 
-{{{lnk(evenSum_v2.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v2.hs
 -- Version 2
 evenSum :: Integral a => [a] -> a
@@ -1124,7 +1114,6 @@ evenSum l = accumSum 0 l
 
 Next, we can use pattern matching.
 
-{{{lnk(evenSum_v3.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v3.hs
 -- Version 3
 evenSum l = accumSum 0 l
@@ -1184,7 +1173,6 @@ f = (some expression)
 
 We use this method to remove the =l=:
 
-{{{lnk(evenSum_v4.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v4.hs
 -- Version 4
 evenSum :: Integral a => [a] -> a
@@ -1219,7 +1207,6 @@ foldl :: (a -> b -> a) -> a -> [b] -> a
 
 Let's proceed by small steps.
 
-{{{lnk(evenSum_v5.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v5.hs
 -- Version 5
 evenSum l = mysum 0 (filter even l)
@@ -1279,7 +1266,6 @@ follow the code as if =foldl= and =foldl'= were identical.
 
 Now our new version of =evenSum= becomes:
 
-{{{lnk(evenSum_v6.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v6.hs
 -- Version 6
 -- foldl' isn't accessible by default
@@ -1292,7 +1278,6 @@ evenSum l = foldl' mysum 0 (filter even l)
 We can also simplify this by using directly a lambda notation.
 This way we don't have to create the temporary name =mysum=.
 
-{{{lnk(evenSum_v7.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v7.hs
 -- Version 7
 -- Generally it is considered a good practice
@@ -1309,7 +1294,6 @@ And of course, we note that
 
 Finally
 
-{{{lnk(evenSum_v8.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v8.hs
 -- Version 8
 import Data.List (foldl')
@@ -1343,7 +1327,6 @@ The =(.)= function corresponds to mathematical composition.
 
 We can take advantage of this operator to η-reduce our function:
 
-{{{lnk(evenSum_v9.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v9.hs
 -- Version 9
 import Data.List (foldl')
@@ -1353,7 +1336,6 @@ evenSum = (foldl' (+) 0) . (filter even)
 
 Also, we could rename some parts to make it clearer:
 
-{{{lnk(evenSum_v10.hs)}}}
 #+BEGIN_SRC haskell :tangle evenSum_v10.hs
 -- Version 10
 import Data.List (foldl')
@@ -1560,7 +1542,6 @@ Generally, in Haskell:
 You can construct your own types.
 First, you can use aliases or type synonyms.
 
-{{{lnk(type_constr_1.hs)}}}
 #+BEGIN_SRC haskell :tangle type_constr_1.hs
 type Name   = String
 type Color  = String
@@ -2047,7 +2028,6 @@ treeTakeDepth n (Node x left right) = let
 
 See what occurs for this program:
 
-{{{lnk(infinite_tree.hs)}}}
 #+BEGIN_SRC haskell :tangle infinite_tree.hs
 main = prettyPrintTree (treeTakeDepth 4 nullTree)
 #+END_SRC
@@ -2158,7 +2138,6 @@ infTreeTwo = Node 0 (treeMap (\x -> x-1) infTreeTwo)
 
 Look at the result for
 
-{{{lnk(infinite_tree_2.hs)}}}
 #+BEGIN_SRC haskell :tangle infinite_tree_2.hs
 main = prettyPrintTree $ treeTakeDepth 4 infTreeTwo
 #+END_SRC
@@ -2257,7 +2236,6 @@ sys	0m0.058s
 
 Let's see how this work using =Debug.Trace=:
 
-{{{lnk(fib_lazy_trace.hs)}}}
 #+begin_src haskell :tangle fib_lazy_trace.hs
 import Debug.Trace
 
@@ -2383,7 +2361,6 @@ Ask a user to enter a list of numbers.
 Print the sum of the numbers.
 #+END_QUOTE
 
-{{{lnk(io_sum.hs)}}}
 #+BEGIN_SRC haskell :tangle io_sum.hs
 toList :: String -> [Integer]
 toList input = read ("[" ++ input ++ "]")
@@ -3694,14 +3671,12 @@ example, or use variables.
 The first file to create is the one that will pin the versions of all your
 packages and libraries:
 
-{{{lnk(my-app/nixpkgs.nix)}}}
 #+begin_src nix :tangle my-app/nixpkgs.nix :mkdirp t
 import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {}
 #+end_src
 
 The second file is the =default.nix= file:
 
-{{{lnk(my-app/default.nix)}}}
 #+begin_src nix :tangle my-app/default.nix :mkdirp t
 { nixpkgs ? import ./nixpkgs.nix
 , compiler ? "default"
@@ -3765,14 +3740,12 @@ The two last file simply use the =default.nix= file:
 
 The =shell.nix= file:
 
-{{{lnk(my-app/shell.nix)}}}
 #+begin_src nix :tangle my-app/shell.nix :mkdirp t
 (import ./. {}).shell
 #+end_src
 
 And =release.nix=:
 
-{{{lnk(my-app/release.nix)}}}
 #+begin_src nix :tangle my-app/release.nix :mkdirp t
 let
   def = import ./. {};
@@ -3783,7 +3756,6 @@ in
 So download those files as well as this =.gitignore= file:
 
 
-{{{lnk(my-app/.gitignore)}}}
 #+begin_src gitignore :tangle my-app/.gitignore :mkdirp t
 dist-newstyle/
 result
@@ -3951,7 +3923,6 @@ Now that you have added =protolude= modify slightly the code of your app to
 use it.
 Change the code inside =src/MyLib.hs=:
 
-{{{lnk(my-app/src/MyLib.hs)}}}
 #+begin_src haskell :tangle my-app/src/MyLib.hs :mkdirp t
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
