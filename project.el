@@ -350,9 +350,11 @@ Return output file name."
   "Add a link just before source code block with tangled files.
 BACKEND is the export backend. Used as symbol."
   (while ;; (re-search-forward )
-      (re-search-forward "^\\( *\\)#\\+begin_src .*:tangle \\([^\\s\\n]*\\)" nil t)
-    (replace-match "\\1{{{lnk(\\2)}}}\n3\n\\&")))
+      (re-search-forward "^\\( *\\)#\\+begin_src .*:tangle \\([^\s\n]*\\)" nil t)
+    (replace-match "\\1#+CAPTION: [[./\\2][=\\2=]]\n\\&")))
 
-(add-hook 'org-export-before-processing-hook 'my-add-link-to-tangled-files)
+(setq org-export-before-processing-hook nil)
+(add-hook 'org-export-before-processing-hook
+          'my-add-link-to-tangled-files)
 
 (provide 'her-esy-fun-publish)
