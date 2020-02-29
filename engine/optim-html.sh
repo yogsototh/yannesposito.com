@@ -20,12 +20,9 @@ fi
 tmp=$(mktemp)
 
 for fic in $filelist; do
-    if echo $fic|egrep -- '-(mk|min|sci|modern).html$'>/dev/null; then
-        continue
-    fi
     print -n -- "$fic "
     cp $fic $tmp
-    perl -pi -e 's#<div id="outline-container-[^"]*"([^>]*)>#<div$1>#g;s# id="org[a-f0-9]{7}"##g' $tmp
+    perl -pi -e 's#<div id="outline-container-[^"]*"([^>]*)>#<div$1>#g;s# id="org[a-f0-9]{7}"##g;s# class="src src-# class="src-#g;s#<label class="org-src-name">#<label>#g;s#<div class="org-src-container">#<div>#g' $tmp
     minify --mime text/html $tmp > $fic
     print "[OK]"
 done
