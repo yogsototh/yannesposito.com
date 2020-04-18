@@ -7,5 +7,6 @@
                     pkgs.perl
                     pkgs.perlPackages.URI
                     pkgs.minify
+                    pkgs.haskellPackages.sws
                   ];
   }
