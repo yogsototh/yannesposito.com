@@ -73,13 +73,16 @@
                                    (car date))))
       " on "
       (format " <a href=\"%s\">Yann Esposito's blog</a>" websiteorigin)
-      " - "
       (let ((permalink (format "%s%s"
                                websiteorigin
                                (replace-regexp-in-string ".*/_site" ""
                                                          (plist-get info :output-file)))))
-        (format " <a class=\"permalink\" href=\"%s\">§permalink</a>" permalink))
-
+        (concat
+         " - "
+         (let ((orgfile (replace-regexp-in-string "\.html$" ".org" permalink)))
+           (format " <a href=\"%s\">source</a>" orgfile))
+         " - "
+         (format " <a class=\"permalink\" href=\"%s\">§permalink</a>" permalink)))
       "</div>"))
    "</div>"))
 
