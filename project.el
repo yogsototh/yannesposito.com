@@ -1,6 +1,6 @@
 ;; sign it with
 ;; gpg --local-user yann@esposito.host --output project.el.sig --detach-sign project.el
-(defvar domainname "https://her.esy.fun")
+(defvar websiteorigin "https://her.esy.fun")
 (defvar root-dir (projectile-project-root))
 (defvar base-dir (concat root-dir "src"))
 (defvar publish-dir (concat root-dir "_site"))
@@ -58,16 +58,29 @@
   "Pre-amble for whole blog."
   (concat
    "<div class=\"content\">"
-   (when-let ((date (plist-get info :date)))
-     (format "<span class=\"article-date\">%s</span>"
-             (format-time-string "%Y-%m-%d"
-                                 (org-timestamp-to-time
-                                  (car date)))))
    "<h1>"
    (format "%s" (car (plist-get info :title)))
    "</h1>"
    (when-let ((subtitle (car (plist-get info :subtitle))))
      (format "<h2>%s</h2>" subtitle))
+   (when-let ((date (plist-get info :date)))
+     (concat
+      "<div class=\"metas\">"
+      "Published "
+      (format "<span class=\"article-date\">%s</span>"
+              (format-time-string "%Y-%m-%d"
+                                  (org-timestamp-to-time
+                                   (car date))))
+      " on "
+      (format " <a href=\"%s\">Yann Esposito's blog</a>" websiteorigin)
+      " - "
+      (let ((permalink (format "%s%s"
+                               websiteorigin
+                               (replace-regexp-in-string ".*/_site" ""
+                                                         (plist-get info :output-file)))))
+        (format " <a class=\"permalink\" href=\"%s\">§permalink</a>" permalink))
+
+      "</div>"))
    "</div>"))
 
 (defun rand-obfs (c)
@@ -85,7 +98,7 @@
   (concat
    "<div class=\"content\">"
    ;; TODO install a comment system
-   ;; (let ((url (format "%s%s" domainname (replace-regexp-in-string base-dir "" (plist-get info :input-file)))))
+   ;; (let ((url (format "%s%s" websiteorigin (replace-regexp-in-string base-dir "" (plist-get info :input-file)))))
    ;;   (format "<a href=\"https://comments.esy.fun/slug/%s\">comment</a>"
    ;;           (url-hexify-string url)))
    "<footer>"
@@ -185,18 +198,7 @@
       (goto-char (point-min))
       (search-forward "<body>")
       (insert (mapconcat 'identity
-                         `("<input name=\"t\" type=\"radio\" id=\"l\">"
-                           "<input name=\"t\" type=\"radio\" id=\"d\">"
-
-                           "<div id=\"labels\">"
-                           "<div class=\"content\">"
-                           "<a id=\"h\" href=\"/\">her.esy.fun</a>"
-                           "<label for=\"l\">light</label>"
-                           " / "
-                           "<label for=\"d\">dark</label>"
-                           "</div>"
-                           "</div>"
-                           "<div class=\"main\">")
+                         `("<div class=\"main\">")
                          "\n"))
       (goto-char (point-max))
       (search-backward "</body>")
@@ -333,7 +335,7 @@ Return output file name."
          (org-export-derived-backend-p backend 'html)
          (string-match "href=\"http[^\"]+" text)
          (not (string-match "target=\"" text))
-         (not (string-match (concat "href=\"" domainname "[^\"]*") text)))
+         (not (string-match (concat "href=\"" websiteorigin "[^\"]*") text)))
     (string-match "<a " text)
     (replace-match "<a target=\"_blank\" rel=\"noopener noreferrer\" " nil nil text)))
 

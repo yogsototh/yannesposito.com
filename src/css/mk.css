@@ -7,14 +7,14 @@
 }
 body {
     font-size: 15px;
-    font-family: "PT Sans","Trebuchet MS", Verdana, sans-serif;
+    font-family: sans-serif;
     line-height: var(--lh);
     min-height: 100vh;
 }
 code, pre, pre code {
     line-height: 1em;
     font-size: 14px;
-    font-family: "PT Mono", Menlo, monospace;
+    font-family: monospace;
 }
 blockquote pre {
     line-height: var(--lh);
@@ -97,11 +97,12 @@ sup > a {
 }
 
 /* Markdown tricks */
-h1,h2,h3,h4,h5,h6 {
+h1 { font-size: 1.5em; }
+h2,h3,h4,h5,h6 {
     font-size: 1em;
 }
 h1:before,h2:before,h3:before,h4:before,h5:before,h6:before {
-    font-family: Menlo, monospace;
+    font-family: monospace;
 }
 h1::before {
     content: "# ";
@@ -124,8 +125,9 @@ h6::before {
 hr {
     border: 0;
 }
-#preamble h1 {
+#preamble h1, #preamble h2 {
     margin-top: 0;
+    margin-bottom: .5em;
 }
 #table-of-contents,
 #table-of-contents ul,
@@ -176,7 +178,7 @@ figure, .figure {
 }
 #content,.content {
     max-width: 35em;
-    margin: 0 auto;
+    margin: 1em auto;
     padding: 0 1em;
 }
 #content:last-child, .notes *:last-child, blockquote *:last-child {
@@ -196,10 +198,8 @@ figure, .figure {
     font-weight: bold;
     padding: 1px 1ex;
 }
-.article-date {
-    font-size: 0.8em;
-    font-style: italic;
-    float: right;
+.metas {
+    font-weight: normal;
 }
 .footpara {
     display: inline;
@@ -219,9 +219,6 @@ figure, .figure {
 #h {
     float: left;
 }
-.main {
-    padding-top: 1em;
-}
 #labels {
     width: 100%;
     text-align: right;
@@ -234,19 +231,15 @@ figure, .figure {
 label + pre {
     margin-top: 0;
 }
-/* colors theme */
-/* --------------------------------------------------------------------------- */
-/* Dark theme selected */
 :root {
-    color-scheme: light dark; /* support color scheme */
-    --b03:  #202631;
-    --b02:  #2b313c;
+    --b03:  #2E3440;
+    --b02:  #3B4252;
     --b01:  #656b74;
     --b00:  #727781;
     --b0:   #989ea8;
     --b1:   #b0bac7;
-    --b2:   #e5e8ed;
-    --b3:   #f4f7ff;
+    --b2:   #ECEFF4;
+    --b3:   #fff;
     --y: #a98d50;
     --o: #aa6550;
     --r: #b85a64;
@@ -257,65 +250,33 @@ label + pre {
     --g: #728b5c;
 
     --bg: var(--b3);
-    --fg0: var(--b00);
-    --fg: var(--b02);
-    --rfg: var(--b01);
     --rbg: var(--b2);
-    --hl: var(--o);
+    --fg0: var(--b0);
+    --fg: var(--b02);
+    --rfg: var(--b03);
+    --hl: var(--v);
 }
 
 img {
     filter: sepia(100%) hue-rotate(182deg) saturate(0.6);
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        /* Dark */
-        --bg: var(--b03);
-        --fg: var(--b0);
-        --fg0: var(--b00);
-        --rfg: var(--b1);
-        --rbg: var(--b02);
-        --hl: var(--g);
-    }
-    img {
-        filter: brightness(0.7) sepia(100%) hue-rotate(182deg) saturate(0.6);
-    }
-}
-
-#d:checked ~ .main, #d:checked ~ #labels {
-    --bg: var(--b03);
-    --fg: var(--b0);
-    --fg0: var(--b00);
-    --rfg: var(--b1);
-    --rbg: var(--b02);
-    --hl: var(--g);
-}
-#d:checked ~ .main img { filter: brightness(0.7) sepia(100%) hue-rotate(182deg) saturate(0.6); }
-
-#l:checked ~ .main, #l:checked ~ #labels {
-    --bg: var(--b3);
-    --fg0: var(--b00);
-    --fg: var(--b02);
-    --rfg: var(--b01);
-    --rbg: var(--b2);
-    --hl: var(--o);
-}
-#l:checked ~ .main img { filter: sepia(100%) hue-rotate(182deg) saturate(0.6); }
-
-/* --------------------------------------------------------------------------- */
 /* Default color theme */
-body,.main {
+body {
     background: var(--bg);
     color: var(--fg);
 }
-::selection, .main ::selection {
+h1, h2, h3, h4, h5, h6 {
+    color: var(--rbg)
+}
+::selection {
     color: white;
     background: var(--v);
 }
-
-a, a:visited,
-.main a, .main a:visited {
+a {
+    color: var(--hl);
+}
+#content a, #content a:visited {
     color: var(--rfg);
 }
 
@@ -333,31 +294,30 @@ h1:before, h2:before, h3:before, h4:before, h5:before, h6:before {
     color: var(--fg0);
 }
 
+.metas, .metas a, .metas a:visited {
+    color: var(--fg0);
+}
+
 li .keywords {
     font-style: italic;
     color: var(--fg0);
 }
 
-nav a, nav a:visited, .main nav a,.main nav a:visited {
+nav a, nav a:visited {
     color: var(--fg);
 }
 
-.main ol > li:before, ol > li:before,
-pre::after,pre::before,hr:after,
-.main pre::after,.main pre::before,.main hr:after,
-label, label a, .main label, .main label a
-label a:visited, .main label a:visited
-{
+ol > li:before, pre::after,pre::before,hr:after, label, label a, label a:visited {
     color: var(--fg0);
 }
 
 #labels label:hover,
 a:hover,
 a:hover *,
-.main a:hover,
-.main a:hover *,
-nav a:hover,
-.main nav a:hover {
+.metas a:hover,
+#content a:hover,
+#content a:hover *,
+nav a:hover {
     color: var(--bg);
     background: var(--hl);
 }
@@ -366,32 +326,22 @@ abbr { border-bottom: dashed 1px;
        display: inline-block;
      }
 
-thead, .main thead, tr:hover, .main tr:hover {
+thead, tr:hover {
     background: var(--rbg);
     color: var(--rfg);
 }
-h1, .main h1,
-h2, .main h2,
-h3, .main h3,
-h4, .main h4,
-h5, .main h5,
-h6, .main h6,
-{
+h1, h2, h3, h4, h5, h6 {
     color: var(--rfg);
 }
-table, td, th,
-.main table,.main td,.main th {
+table, td, th {
     border-color: var(--fg0);
 }
-code, .main code {
+code {
     background: var(--rbg);
-}
-#preamble,#postamble,.main #preamble, .main #postamble {
-    border-color: transparent;
 }
 /* -------- */
 /* org colors */
-.todo, .done, .main .todo, .main .done {
+.todo, .done {
     height: 10px;
     display: inline-block;
     line-height: 12px;
@@ -401,7 +351,7 @@ code, .main code {
     border-right: solid 2px;
     padding: 0 3px;
 }
-.notes, .main .notes {
+.notes {
     background: var(--rbg);
     color: var(--rfg);
     margin: 1em 0;
@@ -409,7 +359,7 @@ code, .main code {
 /* ---- SYNTAX HIGHLIGHTING ---- */
 .org-rainbow-delimiters-depth-1, .org-rainbow-delimiters-depth-9,
 .org-css-selector, .org-nix-attribute, .org-builtin,
-.IN_REVIEW, a {
+.IN_REVIEW {
     color:var(--c);
 }
 
