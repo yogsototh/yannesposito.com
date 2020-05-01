@@ -8,5 +8,6 @@
                     pkgs.perlPackages.URI
                     pkgs.minify
                     pkgs.haskellPackages.sws
+                    pkgs.cacert
                   ];
   }
