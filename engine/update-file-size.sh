@@ -56,7 +56,8 @@ for fic in $filelist; do
     done
     debug CSS: $csssize
     total=$(( htmlsize + imgsize + csssize ))
-    sizeinfos=$(print -- "Size: $(toh $total) (HTML: $(toh $htmlsize), CSS: $(toh $csssize), IMG: $(toh $imgsize))")
+    # the space is important before the toh total
+    sizeinfos=$(print -- " $(toh $total) (HTML: $(toh $htmlsize), CSS: $(toh $csssize), IMG: $(toh $imgsize))")
     print -- $sizeinfos
     perl -pi -e 's#(<div class="?web-file-size"?>)[^<]*(</div>)#$1'"$sizeinfos"'$2#' $fic
 done

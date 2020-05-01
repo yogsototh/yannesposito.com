@@ -108,6 +108,14 @@
   (apply 'concat
          (mapcar 'rand-obfs txt)))
 
+(defun keywords-to-html (keywords)
+  (let ((keywords (split-string keywords ",\s*")))
+    (format " <span class=\"keywords\">%s</span>"
+            (mapconcat (lambda (k)
+                         (format "<span class=\"keyword\">#%s</span>" k))
+                       (cl-sort keywords 'string-lessp :key 'downcase)
+                       " "))))
+
 (defun org-blog-postamble (info)
   "Post-amble for whole blog."
   (concat
@@ -117,33 +125,61 @@
    ;;   (format "<a href=\"https://comments.esy.fun/slug/%s\">comment</a>"
    ;;           (url-hexify-string url)))
    "<footer>"
-   (when-let ((author (get-from-info info :author)))
-     (if-let ((email (plist-get info :email)))
-         (let* ((obfs-email (obfuscate-html email))
-                (obfs-author (obfuscate-html author))
-                (obfs-title (obfuscate-html (get-from-info info :title)))
-                (full-email (format "%s &lt;%s&gt;" obfs-author obfs-email)))
-           (format "<div class=\"author\">Author: <a href=\"%s%s%s%s\">%s</a></div>"
-                   (obfuscate-html "mailto:")
-                   full-email
-                   (obfuscate-html "?subject=yblog: ")
-                   obfs-title
-                   full-email))
-       (format "<div class=\"author\">Author: %s</div>" author)))
-   (when-let ((date (get-from-info info :date)))
-     (format "<div class=\"date\">Created: %s (%s)</div>" date (y-date date)))
-   (when-let ((keywords (plist-get info :keywords)))
-     (format "<div class=\"keywords\">Keywords: <code>%s</code></div>" keywords))
-   "<div class=\"rss\"><a rel=\"alternate\" type=\"application/rss+xml\" href=\"/rss.xml\">RSS</a>: <a href=\"https://validator.w3.org/feed/check.cgi?url=https%3A%2F%2Fher.esy.fun%2Frss.xml\">Valid RSS</a></div>"
-   (format "<div class=\"date\">Generated: %s</div>"
-           (format-time-string "%Y-%m-%d %H:%M:%S"))
-   "<div class=\"web-file-size\">Size: XXK (HTML: XXK, CSS: XXK, IMG: XXK)</div>"
-   (format (concat "<div class=\"creator\"> Generated with "
-                   "<a href=\"https://www.gnu.org/software/emacs/\" target=\"_blank\" rel=\"noopener noreferrer\">Emacs %s</a>, "
-                   "<a href=\"http://spacemacs.org\" target=\"_blank\" rel=\"noopener noreferrer\">Spacemacs %s</a>, "
-                   "<a href=\"http://orgmode.org\" target=\"_blank\" rel=\"noopener noreferrer\">Org Mode %s</a>"
-                   "</div>")
-           emacs-version spacemacs-version org-version)
+   (let* ((author (when-let ((author (get-from-info info :author)))
+                    (if-let ((email (plist-get info :email)))
+                        (let* ((obfs-email (obfuscate-html email))
+                               (obfs-author (obfuscate-html author))
+                               (obfs-title (obfuscate-html (get-from-info info :title)))
+                               (full-email (format "%s &lt;%s&gt;" obfs-author obfs-email)))
+                          (format "<span class=\"author\"><a href=\"%s%s%s%s\">%s</a></span>"
+                                  (obfuscate-html "mailto:")
+                                  full-email
+                                  (obfuscate-html "?subject=yblog: ")
+                                  obfs-title
+                                  full-email))
+                      (format "<span class=\"author\">%s</span>" author))))
+          (date (when-let ((date (get-from-info info :date)))
+                  (format "<div class=\"date\">Created: %s (%s)</div>" date (y-date date))))
+          (keywords (when-let ((keywords (plist-get info :keywords)))
+                      (keywords-to-html keywords)))
+          (rss
+           (concat
+            "<div class=\"rss\">"
+            "<a rel=\"alternate\""
+            " type=\"application/rss+xml\""
+            " href=\"/rss.xml\">"
+            "RSS"
+            "</a>"
+            " (<a href=\"https://validator.w3.org/feed/check.cgi?url=https%3A%2F%2Fher.esy.fun%2Frss.xml\">"
+            " validate</a>)"
+            "</div>"))
+          (generated-date
+           (format "<div class=\"date\">%s</div>"
+                   (format-time-string "%Y-%m-%d %H:%M:%S")))
+          (size
+           "<div class=\"web-file-size\">XXK (HTML: XXK, CSS: XXK, IMG: XXK)</div>")
+          (generated-with
+           (format (concat "<div class=\"creator\">"
+                           "<a href=\"https://www.gnu.org/software/emacs/\" target=\"_blank\" rel=\"noopener noreferrer\">Emacs %s</a>, "
+                           "<a href=\"http://spacemacs.org\" target=\"_blank\" rel=\"noopener noreferrer\">Spacemacs %s</a>, "
+                           "<a href=\"http://orgmode.org\" target=\"_blank\" rel=\"noopener noreferrer\">Org Mode %s</a>"
+                           "</div>")
+                   emacs-version spacemacs-version org-version)))
+     (concat
+      "<table>"
+      (mapconcat (lambda (entry)
+                   (when (cdr entry)
+                     (format "<tr><td>%s</td><td>%s</td></tr>"
+                             (car entry) (cdr entry))))
+                  `(("Author" . ,author)
+                    ("Date" . ,date)
+                    ("Keywords" . ,keywords)
+                    ("RSS" . ,rss)
+                    ("Size" . ,size)
+                    ("Generated" . ,generated-date)
+                    ("Generated with" . ,generated-with))
+                 " ")
+      "</table>"))
    "</footer>"
    (menu '("<a href=\"#preamble\">↑ Top ↑</a>"))
    "</div>"))
@@ -168,19 +204,16 @@
   (when (string-match "posts/.*" entry)
     (let* ((file (org-publish--expand-file-name entry project))
            (title (org-publish-find-title entry project))
-           (date (format-time-string "%Y-%m-%d" (org-publish-find-date entry project)))
-           (keywords (split-string (y/get-meta file "KEYWORDS") ",\s*"))
+           (artdate (format-time-string "%Y-%m-%d" (org-publish-find-date entry project)))
+           ;; (keywords (y/get-meta file "KEYWORDS"))
            (description (y/get-meta file "DESCRIPTION")))
       (concat
-       "- "
-       (format " [%s]" date)
+       (format " @@html:<span class=\"metas\">%s</span>@@: " artdate)
        (format " *[[file:%s][%s]]*" file title)
-       (format " @@html:<div class=\"keywords\">@@%s@@html:</div>@@"
-               (mapconcat (lambda (k) (format "@@html:<span class=\"keyword\">@@#%s@@html:</span>@@" k))
-                          (cl-sort keywords 'string-lessp :key 'downcase)
-                          " "))
-       (format "@@html:<div class=\"description\">@@%s@@html:</div>@@" description)
-       (format "@@html:<br/>@@" description)))))
+       (format " @@html:<div class=\"description\">@@%s@@html:</div>@@" description)
+       (format " @@html:<div class=\"metas\">@@ ")
+       ;; (keywords-to-html keywords)
+       " @@html:</div>@@\n"))))
 
 (defun org-blog-sitemap-fn-descr (descr title list)
   "Return sitemap using TITLE and LIST returned by `org-blog-sitemap-format-entry'."
