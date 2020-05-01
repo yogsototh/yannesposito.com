@@ -54,9 +54,21 @@
     (when (and i (stringp i))
       i)))
 
+(defun logo ()
+  (concat
+   "<div id=\"logo\">"
+   "<svg width=\"5em\" viewBox=\"0 0 64 64\">"
+   "<circle cx=\"32\" cy=\"32\" r=\"30\" stroke=\"var(--b2)\" stroke-width=\"2\" fill=\"var(--b03)\"/>"
+   "<circle cx=\"32\" cy=\"32\" r=\"12\" stroke=\"var(--r)\" stroke-width=\"2\" fill=\"var(--o)\"/>"
+   "<circle cx=\"32\" cy=\"32\" r=\"6\" stroke-width=\"0\" fill=\"var(--y)\"/>"
+   "<ellipse cx=\"32\" cy=\"14\" rx=\"14\" ry=\"8\" stroke-width=\"0\" fill=\"var(--b3)\"/>"
+   "</svg>"
+   "</div>"))
+
 (defun org-blog-preamble (info)
   "Pre-amble for whole blog."
   (concat
+   (logo)
    "<div class=\"content\">"
    "<h1>"
    (format "%s" (car (plist-get info :title)))
