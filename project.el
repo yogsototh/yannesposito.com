@@ -65,6 +65,16 @@
    "</svg>"
    "</div>"))
 
+(defun gen-permalink (output-file)
+  "Given the output-file generate a permalink"
+  (format "%s%s"
+          websiteorigin
+          (replace-regexp-in-string ".*/_site" "" output-file)))
+
+(defun gen-org-src (permalink)
+  "Given a permalink generate the path to the asssociated .org source file"
+  (replace-regexp-in-string "\.html$" ".org" permalink))
+
 (defun org-blog-preamble (info)
   "Pre-amble for whole blog."
   (concat
@@ -85,13 +95,10 @@
                                    (car date))))
       " on "
       (format " <a href=\"%s\">Yann Esposito's blog</a>" websiteorigin)
-      (let ((permalink (format "%s%s"
-                               websiteorigin
-                               (replace-regexp-in-string ".*/_site" ""
-                                                         (plist-get info :output-file)))))
+      (let ((permalink (gen-permalink (plist-get info :output-file))))
         (concat
          " - "
-         (let ((orgfile (replace-regexp-in-string "\.html$" ".org" permalink)))
+         (let ((orgfile (gen-org-src permalink)))
            (format " <a href=\"%s\">source</a>" orgfile))
          " - "
          (format " <a class=\"permalink\" href=\"%s\">§permalink</a>" permalink)))
@@ -112,7 +119,7 @@
   (let ((keywords (split-string keywords ",\s*")))
     (format " <span class=\"keywords\">%s</span>"
             (mapconcat (lambda (k)
-                         (format "<span class=\"keyword\">#%s</span>" k))
+                         (format "<code>#%s</code>" k))
                        (cl-sort keywords 'string-lessp :key 'downcase)
                        " "))))
 
@@ -151,7 +158,7 @@
             "RSS"
             "</a>"
             " (<a href=\"https://validator.w3.org/feed/check.cgi?url=https%3A%2F%2Fher.esy.fun%2Frss.xml\">"
-            " validate</a>)"
+            "validate</a>)"
             "</div>"))
           (generated-date
            (format "<div class=\"date\">%s</div>"
@@ -164,20 +171,26 @@
                            "<a href=\"http://spacemacs.org\" target=\"_blank\" rel=\"noopener noreferrer\">Spacemacs %s</a>, "
                            "<a href=\"http://orgmode.org\" target=\"_blank\" rel=\"noopener noreferrer\">Org Mode %s</a>"
                            "</div>")
-                   emacs-version spacemacs-version org-version)))
+                   emacs-version spacemacs-version org-version))
+          (website-code
+           "<a href=\"https://gitea.esy.fun/yogsototh/her.esy.fun\" target=\"_blank\" rel=\"noopener noreferrer\">Website source code</a>")
+          (org-src (gen-org-src (gen-permalink (plist-get info :output-file))))
+          (org-src-link (format "<a href=\"%s\">%s</a>" org-src org-src)))
      (concat
       "<table>"
       (mapconcat (lambda (entry)
                    (when (cdr entry)
                      (format "<tr><td>%s</td><td>%s</td></tr>"
                              (car entry) (cdr entry))))
-                  `(("Author" . ,author)
-                    ("Date" . ,date)
-                    ("Keywords" . ,keywords)
-                    ("RSS" . ,rss)
-                    ("Size" . ,size)
-                    ("Generated" . ,generated-date)
-                    ("Generated with" . ,generated-with))
+                  `(("author" . ,author)
+                    ("date" . ,date)
+                    ("tags" . ,keywords)
+                    ("rss" . ,rss)
+                    ("size" . ,size)
+                    ("gen-date" . ,generated-date)
+                    ("get-with" . ,generated-with)
+                    ("website-src" . ,website-code)
+                    ("org-file" . ,org-src-link))
                  " ")
       "</table>"))
    "</footer>"
