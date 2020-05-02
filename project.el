@@ -10,7 +10,6 @@
 (defvar draft-publish-assets-dir (concat draft-publish-dir "/"))
 (defvar posts-dir (concat base-dir "/posts"))
 (defvar rss-title "Subscribe to articles")
-(defvar posts-descr "Articles")
 (defvar css-path "/css/mk.css")
 (defvar author-name "Yann Esposito")
 (defvar author-email "yann@esposito.host")
@@ -57,12 +56,14 @@
 (defun logo ()
   (concat
    "<div id=\"logo\">"
+   "<a href=\"/\">"
    "<svg width=\"5em\" viewBox=\"0 0 64 64\">"
    "<circle cx=\"32\" cy=\"32\" r=\"30\" stroke=\"var(--b2)\" stroke-width=\"2\" fill=\"var(--b03)\"/>"
    "<circle cx=\"32\" cy=\"32\" r=\"12\" stroke=\"var(--r)\" stroke-width=\"2\" fill=\"var(--o)\"/>"
    "<circle cx=\"32\" cy=\"32\" r=\"6\" stroke-width=\"0\" fill=\"var(--y)\"/>"
    "<ellipse cx=\"32\" cy=\"14\" rx=\"14\" ry=\"8\" stroke-width=\"0\" fill=\"var(--b3)\"/>"
    "</svg>"
+   "</a>"
    "</div>"))
 
 (defun relative-link (output-file)
@@ -204,43 +205,25 @@
    (menu '("<a href=\"#preamble\">↑ Top ↑</a>"))
    "</div>"))
 
-(defun y/org-get-keywords ()
-  (org-element-map (org-element-parse-buffer 'element) 'keyword
-    (lambda (keyword) (cons (org-element-property :key keyword)
-                            (org-element-property :value keyword)))))
-
-(defun y/org-get-meta (keyword)
-  (cdr (assoc keyword (y/org-get-keywords))))
-
-(defun y/get-meta (file meta-name)
-  "Return the value of the meta of an org-mode file.
-
-(y/get-meta file \"DESCRIPTION\")
-"
-  (org-babel-with-temp-filebuffer file (y/org-get-meta meta-name)))
-
 (defun date-format-entry (entry _style project)
   "Return string for each ENTRY in PROJECT."
   (when (string-match "posts/.*" entry)
     (let* ((file (org-publish--expand-file-name entry project))
            (title (org-publish-find-title entry project))
            (artdate (format-time-string "%Y-%m-%d" (org-publish-find-date entry project)))
-           ;; (keywords (y/get-meta file "KEYWORDS"))
-           (description (y/get-meta file "DESCRIPTION")))
+           (description (org-publish-find-property entry :description project 'html)))
       (concat
        (format " @@html:<span class=\"metas\">%s</span>@@: " artdate)
        (format " *[[file:%s][%s]]*" file title)
-       (format " @@html:<div class=\"description\">@@%s@@html:</div>@@" description)
+       (format " @@html:<div class=\"description\">%s</div>@@" description)
        (format " @@html:<div class=\"metas\">@@ ")
-       ;; (keywords-to-html keywords)
        " @@html:</div>@@\n"))))
 
-(defun org-blog-sitemap-fn-descr (descr title list)
+(defun org-blog-sitemap-fn-descr (_descr title list)
   "Return sitemap using TITLE and LIST returned by `org-blog-sitemap-format-entry'."
   (concat "#+TITLE: " title "\n"
           "#+AUTHOR: " author-name "\n"
           "#+EMAIL: " author-email "\n"
-          "#+DESCRIPTION: " descr "\n"
           (concat "@@html:" (menu '()) "@@")
           "\n\n"
           (mapconcat (lambda (li) (format "%s" (car li)))
@@ -297,7 +280,7 @@ Return output file name."
               (t (copy-file filename dst-file t))))))
 
 (defalias 'org-blog-posts-sitemap-fn
-  (apply-partially 'org-blog-sitemap-fn-descr posts-descr))
+  (apply-partially 'org-blog-sitemap-fn-descr ""))
 
 (setq org-html-htmlize-output-type 'css)
 (setq org-html-htmlize-font-prefix "org-")
