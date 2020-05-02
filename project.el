@@ -107,6 +107,8 @@
          " - "
          (format " <a class=\"permalink\" href=\"%s\">§permalink</a>" permalink)))
       "</div>"))
+   (when-let ((description (plist-get info :description)))
+     (format "<div class=\"notes\">%s</div>" description))
    "</div>"))
 
 (defun rand-obfs (c)
@@ -259,13 +261,14 @@
 (defun org-blog-publish-to-html (plist filename pub-dir)
   "Same as `org-html-publish-to-html' but modifies html before finishing."
   (let* ((file-path (org-html-publish-to-html plist filename pub-dir))
-         (mk-path     (format "./%s.html"     (replace-regexp-in-string ".*/\\([^/]*\\)\\.org$" "\\1" filename))))
+         (mk-path (format "./%s.html"
+                          (replace-regexp-in-string ".*/\\([^/]*\\)\\.org$"
+                                                    "\\1"
+                                                    filename))))
     (with-current-buffer (find-file-noselect file-path)
       (goto-char (point-min))
       (search-forward "<body>")
-      (insert (mapconcat 'identity
-                         `("<div class=\"main\">")
-                         "\n"))
+      (insert "<div class=\"main\">")
       (goto-char (point-max))
       (search-backward "</body>")
       (insert "\n</div>\n")
