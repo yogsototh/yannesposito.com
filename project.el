@@ -65,11 +65,15 @@
    "</svg>"
    "</div>"))
 
+(defun relative-link (output-file)
+  "Given an output-file generate a link relative to the URL origin."
+  (replace-regexp-in-string ".*/_site" "" output-file))
+
 (defun gen-permalink (output-file)
   "Given the output-file generate a permalink"
   (format "%s%s"
           websiteorigin
-          (replace-regexp-in-string ".*/_site" "" output-file)))
+          (relative-link output-file)))
 
 (defun gen-org-src (permalink)
   "Given a permalink generate the path to the asssociated .org source file"
@@ -174,9 +178,10 @@
                    emacs-version spacemacs-version org-version))
           (website-code
            "<a href=\"https://gitea.esy.fun/yogsototh/her.esy.fun\" target=\"_blank\" rel=\"noopener noreferrer\">Website source code</a>")
-          (org-src (gen-org-src (gen-permalink (plist-get info :output-file))))
+          (org-src (gen-org-src (relative-link (plist-get info :output-file))))
           (org-src-link (format "<a href=\"%s\">%s</a>" org-src org-src)))
      (concat
+      "<i>Any comment? Click on my email below and I'll add it.</i>"
       "<table>"
       (mapconcat (lambda (entry)
                    (when (cdr entry)
@@ -189,7 +194,7 @@
                     ("size" . ,size)
                     ("gen-date" . ,generated-date)
                     ("get-with" . ,generated-with)
-                    ("website-src" . ,website-code)
+                    ("src" . ,website-code)
                     ("org-file" . ,org-src-link))
                  " ")
       "</table>"))
