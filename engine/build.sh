@@ -2,7 +2,7 @@
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
 echo "* org-publish"
-emacs \
+emacs -nw \
   --load project.el \
   --eval "(progn (org-publish \"blog\") (evil-quit))"
 
