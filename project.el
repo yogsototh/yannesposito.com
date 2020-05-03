@@ -269,12 +269,12 @@
      " -sampling-factor 4:2:0"
      " -strip"
      " -resize 400x400\\>"
-     " -interlace Place"
+     " -interlace Plane"
      " -gaussian-blur 0.05"
      " -quality 85"
      " -colorspace Gray"
      " -ordered-dither o8x8,8"
-     "%s" ;; dest
+     " %s" ;; dest
      )
     filename
     dst-file)))
