@@ -31,6 +31,9 @@ for fic in $filelist; do
 
     htmlsize=$(sizeof $fic)
     debug HTML: $htmlsize
+    
+    gzhtmlsize=$( gzip -c $fic|wc -c )
+    debug GZHTML: $gzhtmlsize
 
     xfic=$tmpdir/$fic
     mkdir -p $(dirname $xfic)
@@ -49,21 +52,29 @@ for fic in $filelist; do
 
     css=( $( < $xfic hxselect -i -c -s '\n' 'link[rel=stylesheet]::attr(href)'))
     csssize=0
+    gzcsssize=0
     for i in $css; do
         isize=$( sizeof $webdir/$i )
+        gzisize=$( gzip -c $webdir/$i | wc -c )
         debug $i '=>' $isize
         (( csssize += isize ))
+        (( gzcsssize += gzisize ))
     done
     debug CSS: $csssize
+    debug GZCSS: $gzcsssize
     total=$(( htmlsize + imgsize + csssize ))
+    gztotal=$(( gzhtmlsize + imgsize + gzcsssize ))
     # the space is important before the toh total
     sizeinfos=$(print -- " $(toh $total) (html $(toh $htmlsize), css $(toh $csssize)")
+    gzsizeinfos=$(print -- " $(toh $gztotal) (html $(toh $gzhtmlsize), css $(toh $gzcsssize)")
     if ((imgsize>0)); then
         sizeinfos="$sizeinfos, img $(toh $imgsize))"
+        gzsizeinfos="$gzsizeinfos, img $(toh $imgsize))"
     else
         sizeinfos="$sizeinfos)"
+        gzsizeinfos="$gzsizeinfos)"
     fi
     print -- $sizeinfos
-    perl -pi -e 's#(<div class="?web-file-size"?>)[^<]*(</div>)#$1'"$sizeinfos"'$2#' $fic
+    perl -pi -e 's#(<div class="?web-file-size"?>)[^<]*(</div>)#$1'"$sizeinfos"'$2#;s#(<div class="?gzweb-file-size"?>)[^<]*(</div>)#$1'"$gzsizeinfos"'$2#' $fic
 done
 rm -rf $tmpdir
