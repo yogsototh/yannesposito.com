@@ -259,6 +259,31 @@
       (kill-buffer))
     file-path))
 
+(defun compress-image (filename dst-file)
+  "Compress images using imagemagick"
+  (shell-command
+   (format
+    (concat
+     "~/.nix-profile/bin/convert"
+     " %s" ;; source
+     " -sampling-factor 4:2:0"
+     " -strip"
+     " -resize 400x400\\>"
+     " -interlace Place"
+     " -gaussian-blur 0.05"
+     " -quality 85"
+     " -colorspace Gray"
+     " -ordered-dither o8x8,8"
+     "%s" ;; dest
+     )
+    filename
+    dst-file)))
+
+(defun compress-css (root-dir filename dst-file)
+  "Compress CSS usin compresscss.sh script"
+  (shell-command
+   (format "%s/engine/compresscss.sh %s %s" root-dir filename dst-file)))
+
 (defun org-blog-publish-attachment (plist filename pub-dir)
   "Publish a file with no transformation of any kind.
 FILENAME is the filename of the Org file to be published.  PLIST
@@ -272,11 +297,9 @@ Return output file name."
 	           (file-name-as-directory (expand-file-name pub-dir)))
       (let ((dst-file (expand-file-name (file-name-nondirectory filename) pub-dir)))
         (cond ((string-match-p ".*\\.\\(png\\|jpg\\|gif\\)$" filename)
-               (shell-command (format "~/.nix-profile/bin/convert %s -resize 400x400\\> -colorspace Gray -ordered-dither o8x8,8 %s"
-                                      filename
-                                      dst-file)))
+               (compress-image filename dst-file))
               ((string-match-p ".*\\.css$" filename)
-               (shell-command (format "%s/engine/compresscss.sh %s %s" root-dir filename dst-file)))
+               (compress-css root-dir filename dst-file))
               (t (copy-file filename dst-file t))))))
 
 (defalias 'org-blog-posts-sitemap-fn
