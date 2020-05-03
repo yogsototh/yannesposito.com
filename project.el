@@ -270,7 +270,6 @@
      " -strip"
      " -resize 400x400\\>"
      " -interlace Plane"
-     " -gaussian-blur 0.05"
      " -quality 85"
      " -colorspace Gray"
      " -ordered-dither o8x8,8"
