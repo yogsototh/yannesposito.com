@@ -198,8 +198,8 @@
                     ("rss" . ,rss)
                     ("size" . ,size)
                     ("gz" . ,gzsize)
-                    ("gen-date" . ,generated-date)
-                    ("get-with" . ,generated-with)
+                    ("generated" . ,generated-date)
+                    ("gen-with" . ,generated-with)
                     ("src" . ,website-code)
                     ("org-file" . ,org-src-link))
                  " ")
@@ -274,8 +274,7 @@
      " -resize 400x400\\>"
      " -interlace Plane"
      " -quality 85"
-     " -colorspace Gray"
-     " -ordered-dither o8x8,8"
+     " -ordered-dither o4x4,4"
      " %s" ;; dest
      )
     filename
