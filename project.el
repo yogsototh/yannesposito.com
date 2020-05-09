@@ -171,7 +171,9 @@
            (format "<div class=\"date\">%s</div>"
                    (format-time-string "%Y-%m-%d %H:%M:%S")))
           (size
-           "<div class=\"web-file-size\">XXK (HTML: XXK, CSS: XXK, IMG: XXK)</div>")
+           "<div class=\"web-file-size\">XXK (html XXK, css XXK, img XXK)</div>")
+          (gzsize
+           "<div class=\"gzweb-file-size\">XXK (html XXK, css XXK, img XXK)</div>")
           (generated-with
            (format (concat "<div class=\"creator\">"
                            "<a href=\"https://www.gnu.org/software/emacs/\" target=\"_blank\" rel=\"noopener noreferrer\">Emacs %s</a>, "
@@ -195,6 +197,7 @@
                     ("tags" . ,keywords)
                     ("rss" . ,rss)
                     ("size" . ,size)
+                    ("gz" . ,gzsize)
                     ("gen-date" . ,generated-date)
                     ("get-with" . ,generated-with)
                     ("src" . ,website-code)
