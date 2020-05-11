@@ -254,7 +254,19 @@
     (with-current-buffer (find-file-noselect file-path)
       (goto-char (point-min))
       (search-forward "<body>")
-      (insert "<div class=\"main\">")
+      (insert (mapconcat 'identity
+                         `("<input name=\"t\" type=\"radio\" id=\"l\">"
+                           "<input name=\"t\" type=\"radio\" id=\"d\">"
+
+                           "<div id=\"labels\">"
+                           "<div class=\"content\">"
+                           "<label for=\"l\">light</label>"
+                           "|"
+                           "<label for=\"d\">dark</label>"
+                           "</div>"
+                           "</div>"
+                           "<div class=\"main\">")
+                         "\n"))
       (goto-char (point-max))
       (search-backward "</body>")
       (insert "\n</div>\n")
