@@ -462,6 +462,24 @@ pre { line-height: 1em; }
     --hl: var(--o);
 }
 
+/* dark preferred */
+@media (prefers-color-scheme: dark)
+{
+    :root {
+        --bg: black;
+        --rbg: var(--b03);
+        --fg: var(--b1);
+        --fg0: var(--b00);
+        --rfg: var(--b2);
+        --hl: var(--y);
+    }
+    img { filter: brightness(0.7) saturate(0.5); }
+    pre {
+        background: hsl(210,40%,15%);
+        border-color: hsl(210,15%,43%);
+    }
+}
+
 /* light checked */
 input#l:checked ~ div {
     --bg: var(--b3);
@@ -473,6 +491,10 @@ input#l:checked ~ div {
 }
 input#l:checked ~ div img {
     filter: none;
+}
+input#l:checked ~ div pre {
+    border: 1px solid hsl(210, 15%, 49%);
+    background: hsl(210, 40%, 96%);
 }
 
 /* dark checked */
@@ -489,26 +511,9 @@ input#d:checked ~ div img {
 }
 input#d:checked ~ div pre {
     background: hsl(210,40%,15%);
-    border: hsl(210,15%,43%);
+    border-color: hsl(210,15%,43%);
 }
 
-/* dark preferred */
-@media (prefers-color-scheme: dark)
-{
-    :root {
-        --bg: black;
-        --rbg: var(--b03);
-        --fg: var(--b1);
-        --fg0: var(--b00);
-        --rfg: var(--b2);
-        --hl: var(--y);
-    }
-    img { filter: brightness(0.7) saturate(0.5); }
-    pre {
-        background: hsl(210,40%,15%);
-        border: hsl(210,15%,43%);
-    }
-}
 body, body > div {
     background: var(--bg);
     color: var(--fg);
