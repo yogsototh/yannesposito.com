@@ -284,9 +284,11 @@
      " %s" ;; source
      " -sampling-factor 4:2:0"
      " -strip"
-     " -resize 400x400\\>"
+     " -resize 200x200\\>"
      " -interlace Plane"
      " -quality 85"
+     " -define filter:blur=0.75"
+     " -filter Gaussian"
      " -ordered-dither o4x4,4"
      " %s" ;; dest
      )
@@ -310,7 +312,7 @@ Return output file name."
   (or (equal (expand-file-name (file-name-directory filename))
 	           (file-name-as-directory (expand-file-name pub-dir)))
       (let ((dst-file (expand-file-name (file-name-nondirectory filename) pub-dir)))
-        (cond ((string-match-p ".*\\.\\(png\\|jpg\\|gif\\)$" filename)
+        (cond ((string-match-p ".*\\.\\(png\\|jpg\\|jpeg\\|gif\\)$" filename)
                (compress-image filename dst-file))
               ((string-match-p ".*\\.css$" filename)
                (compress-css root-dir filename dst-file))
