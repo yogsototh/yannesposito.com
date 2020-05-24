@@ -10,7 +10,7 @@
 (defvar draft-publish-assets-dir (concat draft-publish-dir "/"))
 (defvar posts-dir (concat base-dir "/posts"))
 (defvar rss-title "Subscribe to articles")
-(defvar css-path "/css/mk.css")
+(defvar css-path "/css/y.css")
 (defvar author-name "Yann Esposito")
 (defvar author-email "yann@esposito.host")
 
@@ -92,13 +92,14 @@
      (format "<h2>%s</h2>" subtitle))
    (when-let ((date (plist-get info :date)))
      (concat
-      "<div class=\"metas\">"
-      "Published "
+      "<div class=\"author\">"
+      "Yann Esposito"
+      "<br/>"
       (format "<span class=\"article-date\">%s</span>"
               (format-time-string "%Y-%m-%d"
                                   (org-timestamp-to-time
                                    (car date))))
-      " on "
+      "<br/>on "
       (format " <a href=\"%s\">Yann Esposito's blog</a>" websiteorigin)
       (let ((permalink (gen-permalink (plist-get info :output-file))))
         (concat
@@ -109,7 +110,7 @@
          (format " <a class=\"permalink\" href=\"%s\">§permalink</a>" permalink)))
       "</div>"))
    (when-let ((description (plist-get info :description)))
-     (format "<div class=\"notes\">%s</div>" description))
+     (format "<div class=\"abstract\">%s</div>" description))
    "</div>"))
 
 (defun rand-obfs (c)

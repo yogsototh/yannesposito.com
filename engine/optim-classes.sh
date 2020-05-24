@@ -12,7 +12,7 @@ retrieve_classes_in_html () {
 
 retrieve_classes_in_css () {
     cat $webdir/**/*.css(N) | \
-        perl -pe 's/\.([a-zA-Z-_][a-zA-Z0-9-_]*)/\nCLASS: $1\n/g'
+        perl -pe 's/ \.([a-zA-Z-_][a-zA-Z0-9-_]*)/\nCLASS:$1\n/g'
 }
 
 classes=( $( {retrieve_classes_in_html; retrieve_classes_in_css}| \
