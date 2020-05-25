@@ -1,7 +1,10 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 import Development.Shake
 import Development.Shake.Command
 import Development.Shake.FilePath
 import Development.Shake.Util
+import Data.Text as T
 
 main :: IO ()
 main = do
