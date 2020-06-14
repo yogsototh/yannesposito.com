@@ -54,6 +54,10 @@ Even if I update my OS and I forget about this script for a few years.
 As long as I can install nix on the new system and I could download the tar
 file the script will be run the same way as the day I wrote it.
 
+**Remark**:
+You can use any shell (like ~fish~, ~zsh~) but also other languages
+~python~, ~haskell~, etc...
+
 ** Temporary working env
 :PROPERTIES:
 :CUSTOM_ID: temporary-working-env
@@ -132,12 +136,13 @@ in {
 There are a few noticiable artifact here:
 
 The first one is ~weechat~ is a very specify build of weechat with the
-plugin I need. So here is the block I use:
+plugin I need.
+So here is the block I use:
 
 #+begin_src nix
 let
   ...
-  rel20weechat = rel20.weechat.override {
+  weechat-with-weeslack = weechat.override {
       configure = { availablePlugins, ... }: {
         # plugins = with availablePlugins; [ python perl guile ];
         scripts = with pkgs.weechatScripts; [ wee-slack ];
@@ -147,13 +152,15 @@ let
 in
 {
   ...
-  home.packages = with pkgs; [... rel20weechat ...];
+  home.packages = with pkgs; [... weechat-with-wee-slack ...];
   ...
 }
 #+end_src
 
-First ~rel20~ pin a nixpkgs some specific commit of nix packages.
-Second, I overriden the default packages of the =weechat= package.
+Even if this looks cryptic.
+The important detail is just that there exists a way to say to nix I'd like
+to use weechat (an IRC client) with the wee-slack client (which uses python).
+And nix handle the rest for me.
 
 *** Another nice tool is =sws=
 :PROPERTIES:
@@ -162,7 +169,6 @@ Second, I overriden the default packages of the =weechat= package.
 
 I use macOS so even though I'm using a darwin focused nixpkgs
 sometimes a few package can be broken and can't be installed.
-
 
 That occurred with [[https://hackage.haskell.org/package/sws][=sws=]] during the upgrade to 20.03 on darwin.
 This is a simple tool that need haskell to be compiled locally and
