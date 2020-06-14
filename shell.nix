@@ -2,13 +2,15 @@
 let
   haskellDeps = ps : with ps; [
     shake
+    pandoc
+    data-default
   ];
   pkgs1909 = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {};
   ghc = pkgs.haskellPackages.ghcWithPackages haskellDeps;
 in
 pkgs.mkShell {
     buildInputs = with pkgs;
-      [cacert
+      [ cacert
         coreutils
         html-xml-utils
         zsh
@@ -17,6 +19,8 @@ pkgs.mkShell {
         minify
         niv
         ghc
+        git
+        direnv
         pkgs1909.haskellPackages.sws
         haskellPackages.shake
       ];

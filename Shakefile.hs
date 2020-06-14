@@ -4,38 +4,58 @@ import Development.Shake
 import Development.Shake.Command
 import Development.Shake.FilePath
 import Development.Shake.Util
-import Data.Text as T
+
+import Data.Default (Default(def))
+import qualified Data.Set as Set
+import qualified Data.Text as T
+import           Text.Pandoc.Class (PandocPure)
+import qualified Text.Pandoc.Class as Pandoc
+import           Text.Pandoc.Extensions (getDefaultExtensions)
+import           Text.Pandoc.Options (ReaderOptions(..),TrackChanges(RejectChanges))
+import qualified Text.Pandoc.Readers as Readers
+import qualified Text.Pandoc.Writers as Writers
 
 main :: IO ()
 main = do
   let shOpts = shakeOptions { shakeVerbosity = Chatty, shakeLintInside = ["\\"] }
-  shakeArgsForward shOpts buildRules
+  shakeArgs shOpts buildRules
 
-buildRules :: Action ()
+buildRules :: Rules ()
 buildRules = do
-  allPosts <- buildPosts
-  buildIndex allPosts
-  buildFeed allPosts
-  copyStaticFiles
+  phony "clean" $ do
+    putInfo "Cleaning files in _site and _optim"
+    removeFilesAfter "_site" ["//*"]
+    removeFilesAfter "_optim" ["//*"]
 
--- | Find and build all posts
-buildPosts :: Action [Post]
-buildPosts = do
-  pPaths <- getDirectoryFiles "." ["site/posts//*.md"]
-  forP pPaths buildPost
+  "_site//*.html" %> buildPost
+--  buildPosts
+--  allPosts <- buildPosts
+--  buildIndex allPosts
+--  buildFeed allPosts
+--  copyStaticFiles
+
+data Post = Post { postTitle :: T.Text
+                 , postAuthor :: T.Text
+                 , postDate :: T.Text
+                 }
+
+defaultReaderOpts t =
+  def { readerExtensions = getDefaultExtensions t
+      , readerStandalone = True }
+
+orgToHTML :: T.Text -> PandocPure T.Text
+orgToHTML txt = Readers.readOrg (defaultReaderOpts "org") txt
+  >>= Writers.writeHtml5String def
 
 -- | Load a post, process metadata, write it to output, then return the post object
 -- Detects changes to either post content or template
-buildPost :: FilePath -> Action Post
-buildPost srcPath = cacheAction ("build" :: T.Text, srcPath) $ do
-  liftIO . putStrLn $ "Rebuilding post: " <> srcPath
-  postContent <- readFile' srcPath
+buildPost :: FilePath -> Action ()
+buildPost out = do
+  let org = "src/" <> (dropDirectory1 $ out -<.> "org")
+  liftIO . putStrLn $ "Rebuilding post: " <> out
+  postContent <- readFile' org
   -- load post content and metadata as JSON blob
-  postData <- markdownToHTML . T.pack $ postContent
-  let postUrl = T.pack . dropDirectory1 $ srcPath -<.> "html"
-      withPostUrl = _Object . at "url" ?~ String postUrl
-  -- Add additional metadata we've been able to compute
-  let fullPostData = withSiteMeta . withPostUrl $ postData
-  template <- compileTemplate' "site/templates/post.html"
-  writeFile' (outputFolder </> T.unpack postUrl) . T.unpack $ substitute template fullPostData
-  convert fullPostData
+  let pandocReturn = Pandoc.runPure $ orgToHTML . T.pack $ postContent
+  case pandocReturn of
+    Left _ -> putError "BAD"
+    Right outData -> writeFile' out (T.unpack outData)
