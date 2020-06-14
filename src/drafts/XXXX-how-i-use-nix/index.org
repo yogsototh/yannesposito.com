@@ -1,0 +1,178 @@
+#+Title: How I use nix
+#+Author: Yann Esposito
+#+Email: yann@esposito.host
+#+Date: [2020-06-14 Sun]
+#+KEYWORDS: nix, programming
+#+DESCRIPTION: In this article I explain how I use nix.
+#+DESCRIPTION: As a brew replacement, as home environment manager,
+#+DESCRIPTION: to have reproductible dev environment.
+#+LANGUAGE: en
+#+LANG: en
+#+OPTIONS: H:5 auto-id:t toc:nil
+#+STARTUP: showeverything
+
+In this article I'll explain how I use nix.
+I don't use NixOS nor any Linux as my main desktop environment[fn:desktop].
+Still I use [[https://nixos.org/nix][nix]] on a few mac computers.
+It has multiple usages.
+
+First, let's start by the bad news.
+Recent macOS security policy made nix a bit harder to install on a mac.
+See [[https://hydra.nixos.org/build/119559243/download/1/manual/#sect-macos-installation][macOS Installation instructions]].
+
+Once you have nix installed you should update the nix-channel.
+Mainly a nix-channels is where are the definitions of all the packages.
+See [[https://hydra.nixos.org/build/119559243/download/1/manual/#sec-channels][nixOS documentation]].
+
+** Home Manager
+:PROPERTIES:
+:CUSTOM_ID: home-manager
+:END:
+
+First, I use [[https://github.com/rycee/home-manager][home-manager]], it's first usage it to list a reproductible list
+of application I need on all my desktop environments.
+So i edit the file =~/.config/nixpkgs/home.nix=.
+I provide a list of packages I want to have when I start a new shell.
+
+
+#+begin_src nix
+  home.packages = with pkgs; [
+    # nix
+    nix-prefetch-git
+    lorri
+    # emacs
+    emacsMacport
+    imagemagick
+    gnupg
+    # vim
+    neovim
+    # shell
+    direnv
+    fasd
+    fd
+    findutils
+    fortune
+    gawk
+    git
+    gitAndTools.diff-so-fancy
+    graphviz
+    htop
+    httpie
+    jq
+    jwt-cli
+    libressl
+    mustache-go
+    pandoc
+    ripgrep
+    rtv
+    wakatime
+    xpdf # pdftotext
+    yadm
+    youtube-dl
+    # clojure
+    leiningen
+    boot
+    adoptopenjdk-bin
+    joker
+    # Haskell
+    ghc
+    cabal-install
+    (all-hies.selection
+      { selector = p:
+          { inherit (p) ghc865; };})
+    # Common LISP
+    sbcl
+    # mails
+    offlineimap
+    notmuch
+    msmtp
+    gmailieer
+    # docker
+    docker-compose
+    # weechat
+    rel20weechat
+    aspell
+    aspellDicts.en
+    aspellDicts.fr
+  ];
+#+end_src
+
+There are a few noticiable artifact here:
+
+The first one is ~rel20weechat~ is a very specify build of weechat with the
+plugin I need. So here is the block I use:
+
+#+begin_src nix
+rel20 = import (fetchGit {
+  name = "nixpkgs20";
+  url = "https://github.com/NixOS/nixpkgs";
+  # obtained via
+  # git ls-remote https://github.com/NixOS/nixpkgs nixpkgs-20.03-darwin
+  ref = "refs/heads/nixpkgs-20.03-darwin";
+  rev = "58f884cd3d89f47672e649c6edfb2382d4afff6a";
+}) {};
+rel20weechat = rel20.weechat.override {
+    configure = { availablePlugins, ... }: {
+      # plugins = with availablePlugins; [ python perl guile ];
+      scripts = with pkgs.weechatScripts; [ wee-slack ];
+    };
+  };
+#+end_src
+
+First ~rel20~ pin a nixpkgs some specific commit of nix packages.
+Second, I overriden the default packages of the =weechat= package.
+
+Another interresting one is this block:
+
+#+begin_src nix
+let
+  ...
+  rel19 = import (fetchGit {
+    name = "nixpkgs19";
+    url = "https://github.com/NixOS/nixpkgs";
+    ref = "refs/heads/nixpkgs-19.09-darwin";
+    rev = "2f9bafaca90acd010cccd0e79e5f27aa7537957e";
+  }) {};
+  haskellDeps = ps: with ps; [
+    base
+    protolude
+    tidal
+    shake
+    rel19.haskellPackages.sws
+    ];
+  ghc = pkgs.haskellPackages.ghcWithPackages haskellDeps;
+  ...
+in
+  home.packages = with pkgs; [
+    ...
+    ghc
+    ...
+  ]
+#+end_src
+
+So it means I want to install =ghc= the main Haskell compiler.
+But also with some specific haskell packages.
+The interresting part, is that in most classical OS environment if you want
+a package from a specific language platform.
+You need to install the package manager for this language (npm, pip,
+etc...).
+And in =nixpkgs= there are formulae for most of these language specific
+packages.
+So instead of just installing =cabal-install= and then installing the
+packages I need.
+Which could also go bad, because they might be upgraded and not be
+compatible all at the same time.
+
+I used nix to install the packages I needed.
+And one interresting detail.
+One package [[https://hackage.haskell.org/package/sws][=sws=]] is broken in 20.03 on darwin.
+So I used the older version from 19.09.
+
+[fn:desktop]: I'm using macOS, and I have multiple macs.
+A laptop and two desktop machines.
+Using the 27" iMac is my ultimate work station.
+It really enhance my productivity.
+Still the laptop is a superior work environment for more casual tasks.
+I guess I might write someday about my full work environment.
+
+
