@@ -136,34 +136,35 @@ in {
 :CUSTOM_ID: specific-tools
 :END:
 
-There are a few noticiable artifact here:
+There are a few noticiable artifacts here:
 
 The first one is ~weechat~ is a very specify build of weechat with the
 plugin I need.
-So here is the block I use:
+For that I created a new directory =weechat-with-weeslack= containing a
+=default.nix=:
 
 #+begin_src nix
-let
-  ...
-  weechat-with-weeslack = weechat.override {
-      configure = { availablePlugins, ... }: {
-        # plugins = with availablePlugins; [ python perl guile ];
-        scripts = with pkgs.weechatScripts; [ wee-slack ];
-      };
-    };
-  ...
-in
-{
-  ...
-  home.packages = with pkgs; [... weechat-with-wee-slack ...];
-  ...
+{ pkgs, ...}:
+pkgs.weechat.override {
+  configure = { availablePlugins, ... }: {
+    # plugins = with availablePlugins; [ python perl guile ];
+    scripts = with pkgs.weechatScripts; [ wee-slack ];
+  };
 }
+#+end_src
+
+And in my =home.nix= I use:
+
+#+begin_src nix
+  weechat-with-weeslack = import ./weechat-with-weeslack {
+    inherit pkgs;
+  };
 #+end_src
 
 Even if this looks cryptic.
 The important detail is just that there exists a way to say to nix I'd like
 to use weechat (an IRC client) with the wee-slack client (which uses python).
-And nix handle the rest for me.
+And nix handle the rest for me without any conflict.
 
 *** Another nice tool is =sws=
 :PROPERTIES:
@@ -187,29 +188,120 @@ let
     ref = "refs/heads/nixpkgs-19.09-darwin";
     rev = "2f9bafaca90acd010cccd0e79e5f27aa7537957e";
   }) {};
+  haskellDeps = ps: with ps; [
+    base
+    protolude
+    tidal
+    shake
+    rel19.haskellPackages.sws
+    ];
+  ghc = pkgs.haskellPackages.ghcWithPackages haskellDeps;
   ...
 in
   home.packages = with pkgs; [
     ...
     ghc
-    rel19.haskellPackages.sws
     ...
   ]
 #+end_src
 
 So I used the older version from 19.09.
 
-[fn:desktop]: I'm using macOS, and I have multiple macs.
-A laptop and two desktop machines.
-Using the 27″ iMac is my ultimate work station.
-It really enhance my productivity.
-Still the laptop is a superior work environment for more casual tasks.
-I guess I might write someday about my full work environment.
+** Dev environment
+:PROPERTIES:
+:CUSTOM_ID: dev-environment
+:END:
+
+When working on a project.
+You can produce a pretty good local environment.
+For example, for my blog, I only use emacs and a few shell scripts.
+Still I needed to fix a few binaries, like the correct ~date~ via
+~coreutils~.
+And also I use ~html-xml-utils~ to easily deal with html/xml parsing.
+I use it to generate my RSS xml file.
+
+So I have a ~shell.nix~ files at the root of my project:
+
+#+begin_src nix
+{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {} }:
+  let my_aspell = pkgs.aspellWithDicts(p: with p; [en fr]);
+  in
+  pkgs.mkShell {
+    buildInputs = [ pkgs.coreutils
+                    pkgs.html-xml-utils
+                    pkgs.zsh
+                    pkgs.perl
+                    pkgs.perlPackages.URI
+                    pkgs.minify
+                    pkgs.haskellPackages.sws
+                    pkgs.cacert
+                  ];
+  }
+#+end_src
+
+So I just need to launch ~nix-shell~ and I have my environment.
+
+A nice addition is to use direnv[fn:direnv] which support ~nix-shell~ by putting
+~use_nix~ inside the ~.envrc~ at the root of the project.
+But by default invoking ~nix-shell~ can take a few seconds everytime.
+But we can do even better by using lorri[fn:lorri].
+I start the lorri daemon in my ~StartupItems~ mainly I simply created
+the file =~/Library/LaunchAgents/com.github.target.lorri.plist=:
+
+#+begin_src xml :tangle com.github.target.lorri.plist :mkdirp t
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.github.target.lorri</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/zsh</string>
+        <string>-i</string>
+        <string>-c</string>
+        <string>$HOME/.nix-profile/bin/lorri daemon</string>
+    </array>
+    <key>StandardOutPath</key>
+    <string>/var/tmp/lorri.log</string>
+    <key>StandardErrorPath</key>
+    <string>/var/tmp/lorri.log</string>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+	<true/>
+</dict>
+</plist>
+#+end_src
+
+And started the daemon with:
+
+#+begin_src bash
+launchctl load ~/Library/LaunchAgents/com.github.target.lorri.plist
+#+end_src
+
+~lorri~ takes care of keeping a cache and watch my configuration change by
+project.
+This makes the call to ~direnv~ almost instantaneous and seemless.
+I just changed the content of my ~.envrc~ with:
+
+#+begin_src shell
+eval "$(lorri direnv)"
+#+end_src
+
+And of course this would work the same way with more complex ~shell.nix~.
+Typically for Haskell projects.
+
+[fn:direnv] https://direnv.net
+[fn:lorri] https://github.com/target/lorri
+
 
 ** Install
 :PROPERTIES:
 :CUSTOM_ID: install
 :END:
+
+So you would like to use nix too?
 
 First, let's start by the bad news.
 Recent macOS security policy made nix a bit harder to install on a mac.
