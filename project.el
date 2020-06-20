@@ -284,7 +284,7 @@
      " %s" ;; source
      " -sampling-factor 4:2:0"
      " -strip"
-     " -resize 200x200\\>"
+     " -resize 320x320\\>"
      " -interlace Plane"
      " -quality 85"
      " -define filter:blur=0.75"

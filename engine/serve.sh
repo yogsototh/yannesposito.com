@@ -10,4 +10,4 @@ fi
 
 cd $webdir && \
 echo "Serving: $webdir" && \
-sws -d --port 3001 .
+sws -d --port 3000 .
