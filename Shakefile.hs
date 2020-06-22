@@ -81,6 +81,7 @@ sortByPostDate =
         sortBy (\b a -> compare (Down (postDate a)) (Down (postDate b)))
 
 
+build :: FilePath -> FilePath
 build = (</>) siteDir
 
 buildRules :: Rules ()
@@ -89,33 +90,43 @@ buildRules = do
         allRule
         getPost <- mkGetPost
         getPosts <- mkGetPosts getPost
-        let cssDeps = map (siteDir </>) <$> getDirectoryFiles "" ["src/css/*.css"]
+        let cssDeps = map (siteDir </>) <$> getDirectoryFiles "src" ["css/*.css"]
+        -- build "index.html" %> \out -> do
+        --   css <- cssDeps
+        --   need $ css <> ["src/index.org"]
+        --   bp <- getPost "src/index.org"
+        --   eitherHtml <- liftIO $ Pandoc.runIO $ Writers.writeHtml5String def (postBody bp)
+        --   case eitherHtml of
+        --     Left _ -> fail "BAD"
+        --     Right htmlFile -> writeFile' out (T.unpack htmlFile)
+        build "//*.html" %> \out -> do
+          css <- cssDeps
+          let srcFile = "src" </> (dropDirectory1 (replaceExtension out "org"))
+          liftIO $ putText $ "need: " <> (T.pack srcFile) <> " <- " <> (T.pack out)
+          need $ css <> [srcFile]
+          bp <- getPost srcFile
+          eitherHtml <- liftIO $ Pandoc.runIO $ Writers.writeHtml5String def (postBody bp)
+          case eitherHtml of
+            Left _ -> fail "BAD"
+            Right htmlFile -> writeFile' out (T.unpack htmlFile)
         build "articles.html" %> \out -> do
                 css   <- cssDeps
                 posts <- getPosts ()
                 need $ css <> map postUrl (sortByPostDate  posts)
                 let titles = T.unpack $ T.intercalate "\n" $ map postTitle posts
                 writeFile' out titles
-        build "index.html" %> \out -> do
-          css <- cssDeps
-          need $ css <> ["src/index.org"]
-          bp <- getPost "src/index.org"
-          eitherHtml <- liftIO $ Pandoc.runIO $ Writers.writeHtml5String def (postBody bp)
-          case eitherHtml of
-            Left _ -> fail "BAD"
-            Right htmlFile -> writeFile' out (T.unpack htmlFile)
-        -- build "//*.html" %> \out -> do
-        --   css <- cssDeps
-        --   let orgfile = dropDirectory1 out
-        --   post <- getPost orgfile
-        build "src/css/*.css" %> \out -> copyFile' (dropDirectory1 out) out
-
+        build "css/*.css" %> \out -> do
+          let src = "src" </> (dropDirectory1 out)
+              dst = out
+          liftIO $ putText $ T.pack $ "src:" <> src <> " => dst: " <> dst
+          copyFile' src dst
 
 allRule :: Rules ()
 allRule =
-  phony "all" $
-    need (map build [ "index.html"
-                    , "articles.html"])
+  phony "all" $ do
+    allOrgFiles <- getDirectoryFiles "src" ["//*.org"]
+    let allHtmlFiles = map (flip replaceExtension "html") allOrgFiles
+    need (map build (allHtmlFiles <> ["index.html", "articles.html"]))
 
 cleanRule :: Rules ()
 cleanRule =
@@ -123,6 +134,7 @@ cleanRule =
     putInfo "Cleaning files in _site and _optim"
     forM_ [siteDir,optimDir] $ flip removeFilesAfter ["//*"]
 
+mkGetPost :: Rules (FilePath -> Action BlogPost)
 mkGetPost = newCache $ \path -> do
   fileContent  <- readFile' path
   eitherResult <- liftIO $ Pandoc.runIO $ Readers.readOrg def (T.pack fileContent)
@@ -130,5 +142,6 @@ mkGetPost = newCache $ \path -> do
     Left  _      -> fail "BAD"
     Right pandoc -> getBlogpostFromMetas path pandoc
 
+mkGetPosts :: (FilePath -> Action b) -> Rules (() -> Action [b])
 mkGetPosts getPost =
   newCache $ \() -> mapM getPost =<< getDirectoryFiles "" ["src/posts//*.org"]
