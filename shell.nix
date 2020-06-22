@@ -7,6 +7,7 @@ let
     data-default
     protolude
     pkgs1909.haskellPackages.sws
+    stache
   ];
   ghc = pkgs.haskellPackages.ghcWithPackages haskellDeps;
 in

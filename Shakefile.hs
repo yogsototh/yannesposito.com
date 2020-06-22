@@ -9,27 +9,29 @@ import           Development.Shake.FilePath
 import           Development.Shake.Util
 
 import           Control.Monad.Fail
-import           Data.Default                   ( Default(def) )
-import qualified Data.Set                      as Set
-import qualified Data.Text                     as T
-import           Text.Pandoc.Class              ( PandocPure
-                                                , PandocMonad
-                                                )
-import qualified Text.Pandoc.Class             as Pandoc
-import           Text.Pandoc.Definition         ( Pandoc(..)
-                                                , Block(..)
-                                                , Inline
-                                                , nullMeta
-                                                , docTitle
-                                                , docDate
-                                                , docAuthors
-                                                )
-import           Text.Pandoc.Extensions         ( getDefaultExtensions )
-import           Text.Pandoc.Options            ( ReaderOptions(..)
+import           Data.Aeson
+import Text.Megaparsec
+import           Data.Default ( Default(def) )
+import qualified Data.Set as Set
+import qualified Data.Text as T
+import           Text.Mustache
+import           Text.Pandoc.Class ( PandocPure, PandocMonad)
+import qualified Text.Pandoc.Class as Pandoc
+import           Text.Pandoc.Definition ( Pandoc(..)
+                                        , Block(..)
+                                        , Inline
+                                        , nullMeta
+                                        , docTitle
+                                        , docDate
+                                        , docAuthors
+                                        )
+import           Text.Pandoc.Extensions ( getDefaultExtensions )
+import           Text.Pandoc.Options ( ReaderOptions(..)
                                                 , TrackChanges(RejectChanges)
                                                 )
-import qualified Text.Pandoc.Readers           as Readers
-import qualified Text.Pandoc.Writers           as Writers
+import qualified Text.Pandoc.Readers as Readers
+import qualified Text.Pandoc.Templates as PandocTemplates
+import qualified Text.Pandoc.Writers as Writers
 
 main :: IO ()
 main = shakeArgs shOpts buildRules
@@ -90,35 +92,37 @@ buildRules = do
         allRule
         getPost <- mkGetPost
         getPosts <- mkGetPosts getPost
+        getTemplate <- mkGetTemplate
         let cssDeps = map (siteDir </>) <$> getDirectoryFiles "src" ["css/*.css"]
-        -- build "index.html" %> \out -> do
-        --   css <- cssDeps
-        --   need $ css <> ["src/index.org"]
-        --   bp <- getPost "src/index.org"
-        --   eitherHtml <- liftIO $ Pandoc.runIO $ Writers.writeHtml5String def (postBody bp)
-        --   case eitherHtml of
-        --     Left _ -> fail "BAD"
-        --     Right htmlFile -> writeFile' out (T.unpack htmlFile)
+            -- templateDeps = getDirectoryFiles "templates" ["*.mustache"]
         build "//*.html" %> \out -> do
           css <- cssDeps
+          -- templates <- templateDeps
+          template <- getTemplate ("templates" </> "main.mustache")
           let srcFile = "src" </> (dropDirectory1 (replaceExtension out "org"))
-          liftIO $ putText $ "need: " <> (T.pack srcFile) <> " <- " <> (T.pack out)
+          liftIO $ putText $ "need: " <> (toS srcFile) <> " <- " <> (toS out)
           need $ css <> [srcFile]
           bp <- getPost srcFile
           eitherHtml <- liftIO $ Pandoc.runIO $ Writers.writeHtml5String def (postBody bp)
           case eitherHtml of
             Left _ -> fail "BAD"
-            Right htmlFile -> writeFile' out (T.unpack htmlFile)
+            Right innerHtml ->
+              let htmlContent = renderMustache template $ object [ "title" .= postTitle bp
+                                                                 , "authors" .= postAuthors bp
+                                                                 , "date" .= postDate bp
+                                                                 , "body" .= innerHtml
+                                                                 ]
+              in writeFile' out (toS htmlContent)
         build "articles.html" %> \out -> do
                 css   <- cssDeps
                 posts <- getPosts ()
                 need $ css <> map postUrl (sortByPostDate  posts)
-                let titles = T.unpack $ T.intercalate "\n" $ map postTitle posts
+                let titles = toS $ T.intercalate "\n" $ map postTitle posts
                 writeFile' out titles
         build "css/*.css" %> \out -> do
           let src = "src" </> (dropDirectory1 out)
               dst = out
-          liftIO $ putText $ T.pack $ "src:" <> src <> " => dst: " <> dst
+          liftIO $ putText $ toS $ "src:" <> src <> " => dst: " <> dst
           copyFile' src dst
 
 allRule :: Rules ()
@@ -134,10 +138,18 @@ cleanRule =
     putInfo "Cleaning files in _site and _optim"
     forM_ [siteDir,optimDir] $ flip removeFilesAfter ["//*"]
 
+mkGetTemplate :: Rules (FilePath -> Action Template)
+mkGetTemplate = newCache $ \path -> do
+  fileContent <- readFile' path
+  let res = compileMustacheText "page" (toS fileContent)
+  case res of
+    Left _ -> fail "BAD"
+    Right template -> return template
+
 mkGetPost :: Rules (FilePath -> Action BlogPost)
 mkGetPost = newCache $ \path -> do
   fileContent  <- readFile' path
-  eitherResult <- liftIO $ Pandoc.runIO $ Readers.readOrg def (T.pack fileContent)
+  eitherResult <- liftIO $ Pandoc.runIO $ Readers.readOrg def (toS fileContent)
   case eitherResult of
     Left  _      -> fail "BAD"
     Right pandoc -> getBlogpostFromMetas path pandoc
