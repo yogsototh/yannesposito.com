@@ -80,24 +80,42 @@ sortByPostDate :: [BlogPost] -> [BlogPost]
 sortByPostDate =
         sortBy (\b a -> compare (Down (postDate a)) (Down (postDate b)))
 
+
+build = (</>) siteDir
+
 buildRules :: Rules ()
 buildRules = do
-        let build = (</>) siteDir
         cleanRule
+        allRule
         getPost <- mkGetPost
         getPosts <- mkGetPosts getPost
         let cssDeps = map (siteDir </>) <$> getDirectoryFiles "" ["src/css/*.css"]
-        build "index.html" %> \out -> do
+        build "articles.html" %> \out -> do
                 css   <- cssDeps
                 posts <- getPosts ()
                 need $ css <> map postUrl (sortByPostDate  posts)
                 let titles = T.unpack $ T.intercalate "\n" $ map postTitle posts
                 writeFile' out titles
+        build "index.html" %> \out -> do
+          css <- cssDeps
+          need $ css <> ["src/index.org"]
+          bp <- getPost "src/index.org"
+          eitherHtml <- liftIO $ Pandoc.runIO $ Writers.writeHtml5String def (postBody bp)
+          case eitherHtml of
+            Left _ -> fail "BAD"
+            Right htmlFile -> writeFile' out (T.unpack htmlFile)
         -- build "//*.html" %> \out -> do
         --   css <- cssDeps
         --   let orgfile = dropDirectory1 out
         --   post <- getPost orgfile
         build "src/css/*.css" %> \out -> copyFile' (dropDirectory1 out) out
+
+
+allRule :: Rules ()
+allRule =
+  phony "all" $
+    need (map build [ "index.html"
+                    , "articles.html"])
 
 cleanRule :: Rules ()
 cleanRule =
