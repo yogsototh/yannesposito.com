@@ -22,6 +22,7 @@ import           Text.Pandoc.Definition ( Pandoc(..)
                                         , Inline
                                         , nullMeta
                                         , docTitle
+                                        , lookupMeta
                                         , docDate
                                         , docAuthors
                                         )
@@ -59,6 +60,7 @@ data BlogPost =
            , postAuthors :: [T.Text]
            , postUrl :: FilePath
            , postBody :: Pandoc
+           -- , postToc :: Boolean
            }
 
 inlineToText :: PandocMonad m => [Inline] -> m T.Text
@@ -72,7 +74,6 @@ getBlogpostFromMetas path pandoc@(Pandoc meta _) = do
                 title   <- inlineToText $ docTitle meta
                 date    <- inlineToText $ docDate meta
                 authors <- mapM inlineToText $ docAuthors meta
-                -- let url = dropExtension path
                 return $ BlogPost title date authors path pandoc
         case eitherBlogpost of
                 Left  _  -> fail "BAD"
@@ -146,9 +147,17 @@ mkGetTemplate = newCache $ \path -> do
     Left _ -> fail "BAD"
     Right template -> return template
 
+parseOptions :: Text -> [Text] -> Maybe Text
+parseOptions fc =
+  fc & T.lines
+     & map T.toLower
+     & filter (T.isPrefixOf (T.pack "#options: "))
+     & head
+
 mkGetPost :: Rules (FilePath -> Action BlogPost)
 mkGetPost = newCache $ \path -> do
   fileContent  <- readFile' path
+  let options = parseOptions (toS fileContent)
   eitherResult <- liftIO $ Pandoc.runIO $ Readers.readOrg def (toS fileContent)
   case eitherResult of
     Left  _      -> fail "BAD"
