@@ -28,8 +28,9 @@ import           Text.Pandoc.Definition ( Pandoc(..)
                                         )
 import           Text.Pandoc.Extensions ( getDefaultExtensions )
 import           Text.Pandoc.Options ( ReaderOptions(..)
-                                                , TrackChanges(RejectChanges)
-                                                )
+                                     , WriterOptions(..)
+                                     , TrackChanges(RejectChanges)
+                                     )
 import qualified Text.Pandoc.Readers as Readers
 import qualified Text.Pandoc.Templates as PandocTemplates
 import qualified Text.Pandoc.Writers as Writers
@@ -59,8 +60,8 @@ data BlogPost =
            , postDate :: T.Text
            , postAuthors :: [T.Text]
            , postUrl :: FilePath
+           , postToc :: Bool
            , postBody :: Pandoc
-           -- , postToc :: Boolean
            }
 
 inlineToText :: PandocMonad m => [Inline] -> m T.Text
@@ -68,13 +69,13 @@ inlineToText inline =
         Writers.writeAsciiDoc def (Pandoc nullMeta [Plain inline])
 
 getBlogpostFromMetas
-  :: (MonadIO m, MonadFail m) => [Char] -> Pandoc -> m BlogPost
-getBlogpostFromMetas path pandoc@(Pandoc meta _) = do
+  :: (MonadIO m, MonadFail m) => [Char] -> Bool -> Pandoc -> m BlogPost
+getBlogpostFromMetas path toc pandoc@(Pandoc meta _) = do
         eitherBlogpost <- liftIO $ Pandoc.runIO $ do
                 title   <- inlineToText $ docTitle meta
                 date    <- inlineToText $ docDate meta
                 authors <- mapM inlineToText $ docAuthors meta
-                return $ BlogPost title date authors path pandoc
+                return $ BlogPost title date authors path toc pandoc
         case eitherBlogpost of
                 Left  _  -> fail "BAD"
                 Right bp -> return bp
@@ -104,7 +105,7 @@ buildRules = do
           liftIO $ putText $ "need: " <> (toS srcFile) <> " <- " <> (toS out)
           need $ css <> [srcFile]
           bp <- getPost srcFile
-          eitherHtml <- liftIO $ Pandoc.runIO $ Writers.writeHtml5String def (postBody bp)
+          eitherHtml <- liftIO $ Pandoc.runIO $ Writers.writeHtml5String (def { writerTableOfContents = (postToc bp) }) (postBody bp)
           case eitherHtml of
             Left _ -> fail "BAD"
             Right innerHtml ->
@@ -147,21 +148,23 @@ mkGetTemplate = newCache $ \path -> do
     Left _ -> fail "BAD"
     Right template -> return template
 
-parseOptions :: Text -> [Text] -> Maybe Text
-parseOptions fc =
-  fc & T.lines
-     & map T.toLower
-     & filter (T.isPrefixOf (T.pack "#options: "))
-     & head
+tocRequested :: Text -> Bool
+tocRequested fc =
+  let toc = fc & T.lines
+               & map T.toLower
+               & filter (T.isPrefixOf (T.pack "#+options: "))
+               & head
+               & fmap (filter (T.isPrefixOf (T.pack "toc:")) . T.words)
+  in toc == Just ["toc:t"]
 
 mkGetPost :: Rules (FilePath -> Action BlogPost)
 mkGetPost = newCache $ \path -> do
   fileContent  <- readFile' path
-  let options = parseOptions (toS fileContent)
+  let toc = tocRequested (toS fileContent)
   eitherResult <- liftIO $ Pandoc.runIO $ Readers.readOrg def (toS fileContent)
   case eitherResult of
     Left  _      -> fail "BAD"
-    Right pandoc -> getBlogpostFromMetas path pandoc
+    Right pandoc -> getBlogpostFromMetas path toc pandoc
 
 mkGetPosts :: (FilePath -> Action b) -> Rules (() -> Action [b])
 mkGetPosts getPost =

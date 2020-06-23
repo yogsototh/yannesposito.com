@@ -178,32 +178,32 @@ Otherwise, you can follow my advice to use nix:
 4. Put the following =shell.nix= file inside it
 
    #+begin_src nix :tangle shell.nix
-{ nixpkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {} }:
-let
-  inherit (nixpkgs) pkgs;
-  inherit (pkgs) haskellPackages;
-
-  haskellDeps = ps: with ps; [
-    base
-    protolude
-    containers
-  ];
-
-  ghc = haskellPackages.ghcWithPackages haskellDeps;
-
-  nixPackages = [
-    ghc
-    pkgs.gdb
-    haskellPackages.cabal-install
-  ];
-in
-pkgs.stdenv.mkDerivation {
-  name = "env";
-  buildInputs = nixPackages;
-  shellHook = ''
-     export PS1="\n\[[hs:\033[1;32m\]\W\[\033[0m\]]> "
-  '';
-}
+   { nixpkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {} }:
+   let
+     inherit (nixpkgs) pkgs;
+     inherit (pkgs) haskellPackages;
+   
+     haskellDeps = ps: with ps; [
+       base
+       protolude
+       containers
+     ];
+   
+     ghc = haskellPackages.ghcWithPackages haskellDeps;
+   
+     nixPackages = [
+       ghc
+       pkgs.gdb
+       haskellPackages.cabal-install
+     ];
+   in
+   pkgs.stdenv.mkDerivation {
+     name = "env";
+     buildInputs = nixPackages;
+     shellHook = ''
+        export PS1="\n\[[hs:\033[1;32m\]\W\[\033[0m\]]> "
+     '';
+   }
    #+end_src
 
 5. In the =hsenv= directory, in a terminal, run =nix-shell --pure=.
@@ -219,11 +219,11 @@ pkgs.stdenv.mkDerivation {
    something like this:
 
    #+begin_src
-~/hsenv> nix-shell
-[nix-shell:~/hsenv]$ ghci
-GHCi, version 8.6.5: http://www.haskell.org/ghc/  :? for help
-Prelude> import Protolude
-Prelude Protolude>
+   ~/hsenv> nix-shell
+   [nix-shell:~/hsenv]$ ghci
+   GHCi, version 8.6.5: http://www.haskell.org/ghc/  :? for help
+   Prelude> import Protolude
+   Prelude Protolude>
    #+end_src
 
 Congratulations you should be ready to start now.
