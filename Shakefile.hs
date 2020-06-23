@@ -103,14 +103,26 @@ buildRules = do
   getPost <- mkGetPost
   getPosts <- mkGetPosts getPost
   getTemplate <- mkGetTemplate
-  alternatives $ do
     -- build "articles.html" %> \out -> do
     --         css   <- genAllDeps ["//*.css"]
     --         posts <- getPosts ()
     --         need $ css <> map postUrl (sortByPostDate posts)
     --         let titles = toS $ T.intercalate "\n" $ map postTitle posts
     --         writeFile' out titles
-    build "//*.html" %> genHtmlAction getPost getTemplate
+  build "//*" %> \out -> do
+    let asset = dropDirectory1 out
+    case (takeExtension asset) of
+        ".html" -> genHtmlAction getPost getTemplate out
+        ".txt" -> do
+          txtExists <- doesFileExist (srcDir </> asset)
+          if txtExists
+            then copyFileChanged (srcDir </> asset) out
+            else genAsciiAction getPost out
+        ".jpg" -> compressImage asset
+        ".jpeg" -> compressImage asset
+        ".gif" -> compressImage asset
+        ".png" -> compressImage asset
+        _ -> copyFileChanged (srcDir </> asset) out
     -- build "//*.org" %> copy
     -- build "//*.jpg" %> copy
 
@@ -136,27 +148,53 @@ genHtmlAction
   :: (FilePath -> Action BlogPost)
      -> (FilePath -> Action Template) -> [Char] -> Action ()
 genHtmlAction getPost getTemplate out = do
-  template <- getTemplate ("templates" </> "main.mustache")
+  let isPost = takeDirectory1 (dropDirectory1 out) == "post"
+  template <- getTemplate ("templates" </> if isPost then "post.mustache" else "main.mustache")
   let srcFile = srcDir </> (dropDirectory1 (out -<.> "org"))
   liftIO $ putText $ "need: " <> (toS srcFile) <> " -> " <> (toS out)
   need [srcFile]
   bp <- getPost srcFile
   innerHtml <- genHtml bp
   let htmlContent =
-        renderMustache template $ object [ "title" .= postTitle bp
-                                         , "authors" .= postAuthors bp
-                                         , "date" .= postDate bp
-                                         , "body" .= innerHtml
-                                         ]
+        renderMustache template
+          $ object [ "title" .= postTitle bp
+                   , "authors" .= postAuthors bp
+                   , "date" .= postDate bp
+                   , "body" .= innerHtml
+                   ]
   writeFile' out (toS htmlContent)
+
+genAscii :: (MonadIO m, MonadFail m) => BlogPost -> m Text
+genAscii bp = do
+  eitherAscii <- liftIO $ Pandoc.runIO $ Writers.writePlain def (postBody bp)
+  case eitherAscii of
+    Left _ -> fail "BAD"
+    Right innerAscii -> return innerAscii
+
+
+genAsciiAction
+  :: (FilePath -> Action BlogPost)
+     -> [Char] -> Action ()
+genAsciiAction getPost out = do
+  let srcFile = srcDir </> (dropDirectory1 (out -<.> "org"))
+  need [srcFile]
+  bp <- getPost srcFile
+  innerAscii <- genAscii bp
+  let preamble = postTitle bp <> "\n"
+                 <> postDate bp <> "\n\n"
+  writeFile' out (toS  (preamble <> toS innerAscii))
 
 allHtmlAction :: Action ()
 allHtmlAction = do
     allOrgFiles <- getDirectoryFiles srcDir ["//*.org"]
     let allHtmlFiles = map (-<.> "html") allOrgFiles
-    need (map build (allHtmlFiles
-                     -- <> ["articles.html"]
-                    ))
+    need (map build allHtmlFiles)
+
+allAsciiAction :: Action ()
+allAsciiAction = do
+    allOrgFiles <- getDirectoryFiles srcDir ["//*.org"]
+    let allAsciiFiles = map (-<.> "txt") allOrgFiles
+    need (map build allAsciiFiles)
 
 compressImage :: CmdResult b => FilePath -> Action b
 compressImage img = do
@@ -181,14 +219,16 @@ allRule :: Rules ()
 allRule =
   phony "all" $ do
     allAssets <- filter (/= ".DS_Store") <$> getDirectoryFiles srcDir ["//*.*"]
-    forM_ allAssets $ \asset ->
-      case (takeExtension asset) of
-        ".jpg" -> compressImage asset
-        ".jpeg" -> compressImage asset
-        ".gif" -> compressImage asset
-        ".png" -> compressImage asset
-        _ -> copyFileChanged (srcDir </> asset) (siteDir </> asset)
+    need (map build allAssets)
+    -- forM_ allAssets $ \asset ->
+    --   case (takeExtension asset) of
+    --     ".jpg" -> compressImage asset
+    --     ".jpeg" -> compressImage asset
+    --     ".gif" -> compressImage asset
+    --     ".png" -> compressImage asset
+    --     _ -> copyFileChanged (srcDir </> asset) (siteDir </> asset)
     allHtmlAction
+    allAsciiAction
 
 cleanRule :: Rules ()
 cleanRule =
