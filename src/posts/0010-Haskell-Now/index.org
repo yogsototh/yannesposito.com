@@ -1492,7 +1492,7 @@ The only way to work around this problem is to use some meta-programming
 trick, for example using the pre-processor.
 In C++ there is a better way, C++ templates:
 
-#+BEGIN_SRC c++
+#+BEGIN_SRC cpp
 #include <iostream>
 #include <complex>
 using namespace std;
@@ -3880,9 +3880,7 @@ I will not argue much, but mainly, semantic versionning and Haskell
 versionning are just a "right to break things to your users".
 
 I don't want to talk a lot more about this, but, it would be nice if more
-people would watch this talk[fn:9] related to versionning.
-
-[fn:9]: [[https://www.youtube.com/watch?v=oyLBGkS5ICk][Spec-ulation Keynote - Rich Hickey]]
+people would watch this talk[fn:8] related to versionning.
 
 If you want to know more about Haskell versionning convention:
 https://pvp.haskell.org
@@ -4082,30 +4080,32 @@ Thank you man.
        As of today, the definition of =IO= is no more visible into =base=.
        We have the following explanation in [[http://hackage.haskell.org/package/base-4.12.0.0/docs/src/GHC.IO.html][=GHC.IO.hs=]]:
        #+begin_quote
-#+begin_src
-The IO Monad is just an instance of the ST monad, where the state is
-the real world.  We use the exception mechanism (in GHC.Exception) to
-implement IO exceptions.
-
-NOTE: The IO representation is deeply wired in to various parts of the
-system.  The following list may or may not be exhaustive:
-
-Compiler  - types of various primitives in PrimOp.hs
-
-RTS       - forceIO (StgStartup.cmm)
-          - catchzh_fast, (un)?blockAsyncExceptionszh_fast, raisezh_fast
-            (Exception.cmm)
-          - raiseAsync (RaiseAsync.c)
-
-Prelude   - GHC.IO.hs, and several other places including
-            GHC.Exception.hs.
-
-Libraries - parts of hslibs/lang.
-
---SDM
-#+end_src
+       #+begin_src
+       The IO Monad is just an instance of the ST monad, where the state is
+       the real world.  We use the exception mechanism (in GHC.Exception) to
+       implement IO exceptions.
+       
+       NOTE: The IO representation is deeply wired in to various parts of the
+       system.  The following list may or may not be exhaustive:
+       
+       Compiler  - types of various primitives in PrimOp.hs
+       
+       RTS       - forceIO (StgStartup.cmm)
+                 - catchzh_fast, (un)?blockAsyncExceptionszh_fast, raisezh_fast
+                   (Exception.cmm)
+                 - raiseAsync (RaiseAsync.c)
+       
+       Prelude   - GHC.IO.hs, and several other places including
+                   GHC.Exception.hs.
+       
+       Libraries - parts of hslibs/lang.
+       
+       --SDM
+       #+end_src
        #+end_quote
 
 [fn:7] Well, you'll certainly need to practice a bit to get used to them
        and to understand when you can use them and create your own. But
        you already made a big step in this direction.
+
+[fn:8] [[https://www.youtube.com/watch?v=oyLBGkS5ICk][Spec-ulation Keynote - Rich Hickey]]

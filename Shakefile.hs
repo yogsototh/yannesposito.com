@@ -6,33 +6,28 @@ import           Protolude
 import           Development.Shake
 import           Development.Shake.Command
 import           Development.Shake.FilePath
-import           Development.Shake.Util
 
 import           Control.Monad.Fail
 import           Data.Aeson
-import Text.Megaparsec
+-- import qualified Text.Megaparsec as Megaparsec
 import           Data.Default ( Default(def) )
-import qualified Data.Set as Set
 import qualified Data.Text as T
 import           Text.Mustache
-import           Text.Pandoc.Class ( PandocPure, PandocMonad)
+import           Text.Pandoc.Class (PandocMonad)
 import qualified Text.Pandoc.Class as Pandoc
 import           Text.Pandoc.Definition ( Pandoc(..)
                                         , Block(..)
                                         , Inline
                                         , nullMeta
                                         , docTitle
-                                        , lookupMeta
                                         , docDate
                                         , docAuthors
                                         )
-import           Text.Pandoc.Extensions ( getDefaultExtensions )
 import           Text.Pandoc.Options ( ReaderOptions(..)
                                      , WriterOptions(..)
-                                     , TrackChanges(RejectChanges)
+                                     , ObfuscationMethod(..)
                                      )
 import qualified Text.Pandoc.Readers as Readers
-import qualified Text.Pandoc.Templates as PandocTemplates
 import qualified Text.Pandoc.Writers as Writers
 
 main :: IO ()
@@ -46,6 +41,9 @@ main = shakeArgs shOpts buildRules
 
 -- Configuration
 -- Should probably go in a Reader Monad
+
+srcDir :: FilePath
+srcDir = "src"
 
 siteDir :: FilePath
 siteDir  = "_site"
@@ -82,57 +80,115 @@ getBlogpostFromMetas path toc pandoc@(Pandoc meta _) = do
 
 sortByPostDate :: [BlogPost] -> [BlogPost]
 sortByPostDate =
-        sortBy (\b a -> compare (Down (postDate a)) (Down (postDate b)))
+        sortBy (\a b-> compare (Down (postDate a)) (Down (postDate b)))
 
 
 build :: FilePath -> FilePath
 build = (</>) siteDir
 
+genAllDeps :: [FilePattern] -> Action [FilePath]
+genAllDeps patterns = do
+  allMatchedFiles <- getDirectoryFiles srcDir patterns
+  allMatchedFiles &
+    filter ((/= "html") . takeExtension) &
+    filter (null . takeExtension) &
+    map (siteDir </>)  &
+    return
+
 buildRules :: Rules ()
 buildRules = do
-        cleanRule
-        allRule
-        getPost <- mkGetPost
-        getPosts <- mkGetPosts getPost
-        getTemplate <- mkGetTemplate
-        let cssDeps = map (siteDir </>) <$> getDirectoryFiles "src" ["css/*.css"]
-            -- templateDeps = getDirectoryFiles "templates" ["*.mustache"]
-        build "//*.html" %> \out -> do
-          css <- cssDeps
-          -- templates <- templateDeps
-          template <- getTemplate ("templates" </> "main.mustache")
-          let srcFile = "src" </> (dropDirectory1 (replaceExtension out "org"))
-          liftIO $ putText $ "need: " <> (toS srcFile) <> " <- " <> (toS out)
-          need $ css <> [srcFile]
-          bp <- getPost srcFile
-          eitherHtml <- liftIO $ Pandoc.runIO $ Writers.writeHtml5String (def { writerTableOfContents = (postToc bp) }) (postBody bp)
-          case eitherHtml of
-            Left _ -> fail "BAD"
-            Right innerHtml ->
-              let htmlContent = renderMustache template $ object [ "title" .= postTitle bp
-                                                                 , "authors" .= postAuthors bp
-                                                                 , "date" .= postDate bp
-                                                                 , "body" .= innerHtml
-                                                                 ]
-              in writeFile' out (toS htmlContent)
-        build "articles.html" %> \out -> do
-                css   <- cssDeps
-                posts <- getPosts ()
-                need $ css <> map postUrl (sortByPostDate  posts)
-                let titles = toS $ T.intercalate "\n" $ map postTitle posts
-                writeFile' out titles
-        build "css/*.css" %> \out -> do
-          let src = "src" </> (dropDirectory1 out)
-              dst = out
-          liftIO $ putText $ toS $ "src:" <> src <> " => dst: " <> dst
-          copyFile' src dst
+  cleanRule
+  -- build "//*" %> copy
+  allRule
+  getPost <- mkGetPost
+  getPosts <- mkGetPosts getPost
+  getTemplate <- mkGetTemplate
+  alternatives $ do
+    -- build "articles.html" %> \out -> do
+    --         css   <- genAllDeps ["//*.css"]
+    --         posts <- getPosts ()
+    --         need $ css <> map postUrl (sortByPostDate posts)
+    --         let titles = toS $ T.intercalate "\n" $ map postTitle posts
+    --         writeFile' out titles
+    build "//*.html" %> genHtmlAction getPost getTemplate
+    -- build "//*.org" %> copy
+    -- build "//*.jpg" %> copy
+
+copy :: FilePath -> Action ()
+copy out = do
+  let src = srcDir </> (dropDirectory1 out)
+  copyFileChanged src out
+
+genHtml :: (MonadIO m, MonadFail m) => BlogPost -> m Text
+genHtml bp = do
+  eitherHtml <- liftIO $
+    Pandoc.runIO $
+      Writers.writeHtml5String
+        (def { writerTableOfContents = (postToc bp)
+             , writerEmailObfuscation = ReferenceObfuscation
+             })
+        (postBody bp)
+  case eitherHtml of
+    Left _ -> fail "BAD"
+    Right innerHtml -> return innerHtml
+
+genHtmlAction
+  :: (FilePath -> Action BlogPost)
+     -> (FilePath -> Action Template) -> [Char] -> Action ()
+genHtmlAction getPost getTemplate out = do
+  template <- getTemplate ("templates" </> "main.mustache")
+  let srcFile = srcDir </> (dropDirectory1 (out -<.> "org"))
+  liftIO $ putText $ "need: " <> (toS srcFile) <> " -> " <> (toS out)
+  need [srcFile]
+  bp <- getPost srcFile
+  innerHtml <- genHtml bp
+  let htmlContent =
+        renderMustache template $ object [ "title" .= postTitle bp
+                                         , "authors" .= postAuthors bp
+                                         , "date" .= postDate bp
+                                         , "body" .= innerHtml
+                                         ]
+  writeFile' out (toS htmlContent)
+
+allHtmlAction :: Action ()
+allHtmlAction = do
+    allOrgFiles <- getDirectoryFiles srcDir ["//*.org"]
+    let allHtmlFiles = map (-<.> "html") allOrgFiles
+    need (map build (allHtmlFiles
+                     -- <> ["articles.html"]
+                    ))
+
+compressImage :: CmdResult b => FilePath -> Action b
+compressImage img = do
+  let src = srcDir </> img
+      dst = siteDir </> img
+  need [src]
+  let dir = takeDirectory dst
+  dirExists <- doesDirectoryExist dir
+  when (not dirExists) $
+    command [] "mkdir" ["-p", dir]
+  command [] "convert" [src
+                       , "-strip"
+                       , "-resize","320x320>"
+                       , "-interlace","Plane"
+                       , "-quality","85"
+                       , "-define","filter:blur=0.75"
+                       , "-filter","Gaussian"
+                       , "-ordered-dither","o4x4,4"
+                       , dst ]
 
 allRule :: Rules ()
 allRule =
   phony "all" $ do
-    allOrgFiles <- getDirectoryFiles "src" ["//*.org"]
-    let allHtmlFiles = map (flip replaceExtension "html") allOrgFiles
-    need (map build (allHtmlFiles <> ["index.html", "articles.html"]))
+    allAssets <- filter (/= ".DS_Store") <$> getDirectoryFiles srcDir ["//*.*"]
+    forM_ allAssets $ \asset ->
+      case (takeExtension asset) of
+        ".jpg" -> compressImage asset
+        ".jpeg" -> compressImage asset
+        ".gif" -> compressImage asset
+        ".png" -> compressImage asset
+        _ -> copyFileChanged (srcDir </> asset) (siteDir </> asset)
+    allHtmlAction
 
 cleanRule :: Rules ()
 cleanRule =
@@ -161,7 +217,7 @@ mkGetPost :: Rules (FilePath -> Action BlogPost)
 mkGetPost = newCache $ \path -> do
   fileContent  <- readFile' path
   let toc = tocRequested (toS fileContent)
-  eitherResult <- liftIO $ Pandoc.runIO $ Readers.readOrg def (toS fileContent)
+  eitherResult <- liftIO $ Pandoc.runIO $ Readers.readOrg (def { readerStandalone = True }) (toS fileContent)
   case eitherResult of
     Left  _      -> fail "BAD"
     Right pandoc -> getBlogpostFromMetas path toc pandoc
