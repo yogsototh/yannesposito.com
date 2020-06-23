@@ -1,5 +1,6 @@
-{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/20.03.tar.gz) {} }:
 let
+  sources = import ./nix/sources.nix;
+  pkgs = import sources.nixpkgs {};
   pkgs1909 = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {};
   haskellDeps = ps : with ps; [
     shake
