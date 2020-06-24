@@ -17,7 +17,7 @@ import           Text.Pandoc.Class (PandocMonad)
 import qualified Text.Pandoc.Class as Pandoc
 import           Text.Pandoc.Definition ( Pandoc(..)
                                         , Block(..)
-                                        , Inline
+                                        , Inline(..)
                                         , nullMeta
                                         , docTitle
                                         , docDate
@@ -28,6 +28,7 @@ import           Text.Pandoc.Options ( ReaderOptions(..)
                                      , ObfuscationMethod(..)
                                      )
 import qualified Text.Pandoc.Readers as Readers
+import Text.Pandoc.Walk (Walkable(..))
 import qualified Text.Pandoc.Writers as Writers
 
 main :: IO ()
@@ -70,17 +71,25 @@ getBlogpostFromMetas
   :: (MonadIO m, MonadFail m) => [Char] -> Bool -> Pandoc -> m BlogPost
 getBlogpostFromMetas path toc pandoc@(Pandoc meta _) = do
         eitherBlogpost <- liftIO $ Pandoc.runIO $ do
-                title   <- inlineToText $ docTitle meta
-                date    <- inlineToText $ docDate meta
+                title   <- fmap (T.dropEnd 1) $ inlineToText $ docTitle meta
+                date    <- fmap (T.dropAround dateEnvelope) $ inlineToText $ docDate meta
                 authors <- mapM inlineToText $ docAuthors meta
                 return $ BlogPost title date authors path toc pandoc
         case eitherBlogpost of
                 Left  _  -> fail "BAD"
                 Right bp -> return bp
+  where
+    dateEnvelope ' ' = True
+    dateEnvelope '\n' = True
+    dateEnvelope '\t' = True
+    dateEnvelope '[' = True
+    dateEnvelope ']' = True
+    dateEnvelope _ = False
+
 
 sortByPostDate :: [BlogPost] -> [BlogPost]
 sortByPostDate =
-        sortBy (\a b-> compare (Down (postDate a)) (Down (postDate b)))
+        sortBy (\a b-> compare (postDate b) (postDate a))
 
 
 build :: FilePath -> FilePath
@@ -103,16 +112,13 @@ buildRules = do
   getPost <- mkGetPost
   getPosts <- mkGetPosts getPost
   getTemplate <- mkGetTemplate
-    -- build "articles.html" %> \out -> do
-    --         css   <- genAllDeps ["//*.css"]
-    --         posts <- getPosts ()
-    --         need $ css <> map postUrl (sortByPostDate posts)
-    --         let titles = toS $ T.intercalate "\n" $ map postTitle posts
-    --         writeFile' out titles
   build "//*" %> \out -> do
     let asset = dropDirectory1 out
     case (takeExtension asset) of
-        ".html" -> genHtmlAction getPost getTemplate out
+        ".html" -> do
+          if out == siteDir </> "archive.html"
+            then buildArchive getPosts getTemplate out
+            else genHtmlAction getPost getTemplate out
         ".txt" -> do
           txtExists <- doesFileExist (srcDir </> asset)
           if txtExists
@@ -123,23 +129,62 @@ buildRules = do
         ".gif" -> compressImage asset
         ".png" -> compressImage asset
         _ -> copyFileChanged (srcDir </> asset) out
-    -- build "//*.org" %> copy
-    -- build "//*.jpg" %> copy
 
-copy :: FilePath -> Action ()
-copy out = do
-  let src = srcDir </> (dropDirectory1 out)
-  copyFileChanged src out
+buildArchive
+  :: (() -> Action [BlogPost])
+     -> (FilePath -> Action Template) -> [Char] -> Action ()
+buildArchive getPosts getTemplate out = do
+  css   <- genAllDeps ["//*.css"]
+  posts <- fmap sortByPostDate $ getPosts ()
+  need $ css <> map postUrl posts
+  let
+    title :: Text
+    title = "#+title: Posts"
+    articleList = toS $ T.intercalate "\n" $ map postInfo posts
+    fileContent =  title <> "\n\n" <> articleList
+  eitherResult <- liftIO $ Pandoc.runIO $ Readers.readOrg (def { readerStandalone = True }) (toS fileContent)
+  bp <- case eitherResult of
+    Left  _      -> fail "BAD"
+    Right pandoc -> getBlogpostFromMetas out False pandoc
+  innerHtml <- genHtml bp
+  template <- getTemplate ("templates" </> "main.mustache")
+  let htmlContent =
+        renderMustache template
+          $ object [ "title" .= postTitle bp
+                   , "authors" .= postAuthors bp
+                   , "date" .= postDate bp
+                   , "body" .= innerHtml
+                   ]
+  writeFile' out (toS htmlContent)
+
+postInfo :: BlogPost -> Text
+postInfo bp =
+  "- " <> date <> ": " <> orglink
+  where
+    date = T.takeWhile (/= ' ') (postDate bp)
+    url = toS (dropDirectory1 (postUrl bp))
+    orglink = "[[file:" <> url <> "][" <> (postTitle bp) <> "]]"
+
+replaceLinks :: Pandoc -> Pandoc
+replaceLinks = walk replaceOrgLink
+  where
+    replaceOrgLink :: Inline -> Inline
+    replaceOrgLink lnk@(Link attr inl (url,txt)) =
+      if takeExtension (toS url) == ".org"
+      then Link attr inl ((toS (toS url -<.> ".html")),txt)
+      else lnk
+    replaceOrgLink x = x
 
 genHtml :: (MonadIO m, MonadFail m) => BlogPost -> m Text
 genHtml bp = do
+  let htmlBody = replaceLinks (postBody bp)
   eitherHtml <- liftIO $
     Pandoc.runIO $
       Writers.writeHtml5String
         (def { writerTableOfContents = (postToc bp)
              , writerEmailObfuscation = ReferenceObfuscation
              })
-        (postBody bp)
+        htmlBody
   case eitherHtml of
     Left _ -> fail "BAD"
     Right innerHtml -> return innerHtml
@@ -196,7 +241,7 @@ allAsciiAction = do
     let allAsciiFiles = map (-<.> "txt") allOrgFiles
     need (map build allAsciiFiles)
 
-compressImage :: CmdResult b => FilePath -> Action b
+compressImage :: FilePath -> Action ()
 compressImage img = do
   let src = srcDir </> img
       dst = siteDir </> img
@@ -205,28 +250,21 @@ compressImage img = do
   dirExists <- doesDirectoryExist dir
   when (not dirExists) $
     command [] "mkdir" ["-p", dir]
-  command [] "convert" [src
-                       , "-strip"
-                       , "-resize","320x320>"
-                       , "-interlace","Plane"
-                       , "-quality","85"
-                       , "-define","filter:blur=0.75"
-                       , "-filter","Gaussian"
-                       , "-ordered-dither","o4x4,4"
-                       , dst ]
+  command_ [] "convert" [ src
+                        , "-strip"
+                        , "-resize","320x320>"
+                        , "-interlace","Plane"
+                        , "-quality","85"
+                        , "-define","filter:blur=0.75"
+                        , "-filter","Gaussian"
+                        , "-ordered-dither","o4x4,4"
+                        , dst ]
 
 allRule :: Rules ()
 allRule =
   phony "all" $ do
     allAssets <- filter (/= ".DS_Store") <$> getDirectoryFiles srcDir ["//*.*"]
-    need (map build allAssets)
-    -- forM_ allAssets $ \asset ->
-    --   case (takeExtension asset) of
-    --     ".jpg" -> compressImage asset
-    --     ".jpeg" -> compressImage asset
-    --     ".gif" -> compressImage asset
-    --     ".png" -> compressImage asset
-    --     _ -> copyFileChanged (srcDir </> asset) (siteDir </> asset)
+    need (map build $ allAssets <> ["archive.html"])
     allHtmlAction
     allAsciiAction
 
