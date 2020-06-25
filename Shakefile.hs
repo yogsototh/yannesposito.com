@@ -208,11 +208,10 @@ orgContentToText org = do
 
 postamble now bp =
   orgContentToText $ unlines $
-  ["@@html:<footer>@@"
+  [ "@@html:<footer>@@"
+  , "@@html:<i>Any comment? Click on my email below and I'll add it.</i>@@"
   , ""
-  , "/Any comment? Click on my email below and I'll add it./"
-  , ""
-  , "| author | [[mailto:Yann Esposito <yann@esposito.host>?subject=yblog: " <> (postTitle bp) <> "][Yann Esposito <yann@esposito.host>]] |"
+  , "| author | @@html:<span class=\"author\">@@ [[mailto:Yann Esposito <yann@esposito.host>?subject=yblog: " <> (postTitle bp) <> "][Yann Esposito <yann@esposito.host>]] @@html:</span>@@ |"
   , "| tags | " <> T.intercalate " " (map ("#"<>) (postTags bp)) <> " |"
   , "| date | " <> postDate bp <> " |"
   , "| rss | [[file:/rss.xml][RSS]] ([[https://validator.w3.org/feed/check.cgi?url=https%3A%2F%2Fher.esy.fun%2Frss.xml][validate]]) |"
