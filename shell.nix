@@ -26,5 +26,7 @@ pkgs.mkShell {
         git
         direnv
         haskellPackages.shake
+        # for emacs dev
+        ripgrep
       ];
   }

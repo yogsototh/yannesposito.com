@@ -107,12 +107,11 @@ genAllDeps patterns = do
 buildRules :: Rules ()
 buildRules = do
   cleanRule
-  -- build "//*" %> copy
   allRule
   getPost <- mkGetPost
   getPosts <- mkGetPosts getPost
   getTemplate <- mkGetTemplate
-  build "//*" %> \out -> do
+  build "**" %> \out -> do
     let asset = dropDirectory1 out
     case (takeExtension asset) of
         ".html" -> do
@@ -231,13 +230,13 @@ genAsciiAction getPost out = do
 
 allHtmlAction :: Action ()
 allHtmlAction = do
-    allOrgFiles <- getDirectoryFiles srcDir ["//*.org"]
+    allOrgFiles <- getDirectoryFiles srcDir ["**.org"]
     let allHtmlFiles = map (-<.> "html") allOrgFiles
     need (map build allHtmlFiles)
 
 allAsciiAction :: Action ()
 allAsciiAction = do
-    allOrgFiles <- getDirectoryFiles srcDir ["//*.org"]
+    allOrgFiles <- getDirectoryFiles srcDir ["**.org"]
     let allAsciiFiles = map (-<.> "txt") allOrgFiles
     need (map build allAsciiFiles)
 
@@ -263,7 +262,7 @@ compressImage img = do
 allRule :: Rules ()
 allRule =
   phony "all" $ do
-    allAssets <- filter (/= ".DS_Store") <$> getDirectoryFiles srcDir ["//*.*"]
+    allAssets <- filter (/= ".DS_Store") <$> getDirectoryFiles srcDir ["**"]
     need (map build $ allAssets <> ["archive.html"])
     allHtmlAction
     allAsciiAction
@@ -272,7 +271,7 @@ cleanRule :: Rules ()
 cleanRule =
   phony "clean" $ do
     putInfo "Cleaning files in _site and _optim"
-    forM_ [siteDir,optimDir] $ flip removeFilesAfter ["//*"]
+    forM_ [siteDir,optimDir] $ flip removeFilesAfter ["**"]
 
 mkGetTemplate :: Rules (FilePath -> Action Template)
 mkGetTemplate = newCache $ \path -> do
@@ -302,4 +301,4 @@ mkGetPost = newCache $ \path -> do
 
 mkGetPosts :: (FilePath -> Action b) -> Rules (() -> Action [b])
 mkGetPosts getPost =
-  newCache $ \() -> mapM getPost =<< getDirectoryFiles "" ["src/posts//*.org"]
+  newCache $ \() -> mapM getPost =<< getDirectoryFiles "" ["src/posts/**.org"]
