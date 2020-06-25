@@ -80,14 +80,13 @@ getBlogpostFromMetas
 getBlogpostFromMetas path toc pandoc@(Pandoc meta _) = do
         eitherBlogpost <- liftIO $ Pandoc.runIO $ do
                 title   <- fmap (T.dropEnd 1) $ inlineToText $ docTitle meta
-                date    <- fmap (T.dropAround dateEnvelope) $ inlineToText $ docDate meta
+                date    <- fmap (T.takeWhile (/= ' ') . (T.dropAround dateEnvelope)) $ inlineToText $ docDate meta
                 author <- case head $ docAuthors meta of
                             Just m -> inlineToText m
                             Nothing -> return ""
                 let tags = tagsToList $ lookupMeta "keywords" meta
                     description = descr $ lookupMeta "description" meta
                     url = "/" </> dropDirectory1 path -<.> "org"
-                liftIO $ print (lookupMeta "keywords" meta)
                 return $ BlogPost title date author url path tags description toc pandoc
         case eitherBlogpost of
                 Left  _  -> fail "BAD"
@@ -246,7 +245,7 @@ genHtml bp = do
 
 origin :: Text
 origin = "https://her.esy.fun"
-
+  
 genHtmlAction
   :: (FilePath -> Action BlogPost)
      -> (FilePath -> Action Template) -> [Char] -> Action ()
