@@ -1,15 +1,32 @@
-# { pkgs ? import <nixpkgs> {} }:
-{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {} }:
-  let my_aspell = pkgs.aspellWithDicts(p: with p; [en fr]);
-  in
-  pkgs.mkShell {
-    buildInputs = [ pkgs.coreutils
-                    pkgs.html-xml-utils
-                    pkgs.zsh
-                    pkgs.perl
-                    pkgs.perlPackages.URI
-                    pkgs.minify
-                    pkgs.haskellPackages.sws
-                    pkgs.cacert
-                  ];
+let
+  sources = import ./nix/sources.nix;
+  pkgs = import sources.nixpkgs {};
+  pkgs1909 = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {};
+  haskellDeps = ps : with ps; [
+    shake
+    pandoc
+    data-default
+    protolude
+    pkgs1909.haskellPackages.sws
+    stache
+  ];
+  ghc = pkgs.haskellPackages.ghcWithPackages haskellDeps;
+in
+pkgs.mkShell {
+    buildInputs = with pkgs;
+      [ cacert
+        coreutils
+        html-xml-utils
+        zsh
+        perl
+        perlPackages.URI
+        minify
+        niv
+        ghc
+        git
+        direnv
+        haskellPackages.shake
+        # for emacs dev
+        ripgrep
+      ];
   }
