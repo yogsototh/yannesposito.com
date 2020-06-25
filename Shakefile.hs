@@ -7,6 +7,9 @@ import           Development.Shake
 import           Development.Shake.Command
 import           Development.Shake.FilePath
 
+import Data.Time.Format.ISO8601 (iso8601Show)
+import qualified Data.Time.Clock as Clock
+
 import           Control.Monad.Fail
 import           Data.Aeson
 -- import qualified Text.Megaparsec as Megaparsec
@@ -18,10 +21,12 @@ import qualified Text.Pandoc.Class as Pandoc
 import           Text.Pandoc.Definition ( Pandoc(..)
                                         , Block(..)
                                         , Inline(..)
+                                        , MetaValue(..)
                                         , nullMeta
                                         , docTitle
                                         , docDate
                                         , docAuthors
+                                        , lookupMeta
                                         )
 import           Text.Pandoc.Options ( ReaderOptions(..)
                                      , WriterOptions(..)
@@ -59,6 +64,8 @@ data BlogPost =
            , postDate :: T.Text
            , postAuthors :: [T.Text]
            , postUrl :: FilePath
+           , postTags :: [T.Text]
+           , postDescr :: T.Text
            , postToc :: Bool
            , postBody :: Pandoc
            }
@@ -74,7 +81,10 @@ getBlogpostFromMetas path toc pandoc@(Pandoc meta _) = do
                 title   <- fmap (T.dropEnd 1) $ inlineToText $ docTitle meta
                 date    <- fmap (T.dropAround dateEnvelope) $ inlineToText $ docDate meta
                 authors <- mapM inlineToText $ docAuthors meta
-                return $ BlogPost title date authors path toc pandoc
+                let tags = tagsToList $ lookupMeta "keywords" meta
+                    description = descr $ lookupMeta "description" meta
+                liftIO $ print (lookupMeta "keywords" meta)
+                return $ BlogPost title date authors path tags description toc pandoc
         case eitherBlogpost of
                 Left  _  -> fail "BAD"
                 Right bp -> return bp
@@ -85,6 +95,16 @@ getBlogpostFromMetas path toc pandoc@(Pandoc meta _) = do
     dateEnvelope '[' = True
     dateEnvelope ']' = True
     dateEnvelope _ = False
+    tagsToList (Just (MetaList ms)) = map toStr ms
+    tagsToList _ = []
+    descr (Just (MetaString t)) = t
+    descr _ = ""
+    toStr (MetaString t) = t
+    toStr (MetaInlines inlines) = T.intercalate " " $ map inlineToTxt inlines
+    toStr _ = ""
+    inlineToTxt (Str t) = t
+    inlineToTxt _ = ""
+
 
 
 sortByPostDate :: [BlogPost] -> [BlogPost]
@@ -152,6 +172,8 @@ buildArchive getPosts getTemplate out = do
           $ object [ "title" .= postTitle bp
                    , "authors" .= postAuthors bp
                    , "date" .= postDate bp
+                   , "tags" .= postTags bp
+                   , "description" .= postDescr bp
                    , "body" .= innerHtml
                    ]
   writeFile' out (toS htmlContent)
@@ -174,6 +196,33 @@ replaceLinks = walk replaceOrgLink
       else lnk
     replaceOrgLink x = x
 
+orgContentToText org = do
+  eitherResult <- liftIO $ Pandoc.runIO $ Readers.readOrg (def { readerStandalone = True }) org
+  pandoc <- case eitherResult of
+              Left  _      -> fail "BAD"
+              Right p -> return p
+  eitherHtml <- liftIO $ Pandoc.runIO $ Writers.writeHtml5String (def {writerEmailObfuscation = ReferenceObfuscation}) pandoc
+  case eitherHtml of
+    Left _ -> fail "BAD"
+    Right innerHtml -> return innerHtml
+
+postamble now bp =
+  orgContentToText $ unlines $
+  ["@@html:<footer>@@"
+  , ""
+  , "/Any comment? Click on my email below and I'll add it./"
+  , ""
+  , "| author | [[mailto:Yann Esposito <yann@esposito.host>?subject=yblog: " <> (postTitle bp) <> "][Yann Esposito <yann@esposito.host>]] |"
+  , "| tags | " <> T.intercalate " " (map ("#"<>) (postTags bp)) <> " |"
+  , "| date | " <> postDate bp <> " |"
+  , "| rss | [[file:/rss.xml][RSS]] ([[https://validator.w3.org/feed/check.cgi?url=https%3A%2F%2Fher.esy.fun%2Frss.xml][validate]]) |"
+  , "| size | XXK (html XXK, css XXK, img XXK) |"
+  , "| gz | XXK (html XXK, css XXK, img XXK) |"
+  , "| generated | " <> now <> " |"
+  , ""
+  , "@@html:</footer>@@"
+  ]
+
 genHtml :: (MonadIO m, MonadFail m) => BlogPost -> m Text
 genHtml bp = do
   let htmlBody = replaceLinks (postBody bp)
@@ -184,9 +233,12 @@ genHtml bp = do
              , writerEmailObfuscation = ReferenceObfuscation
              })
         htmlBody
-  case eitherHtml of
+  body <- case eitherHtml of
     Left _ -> fail "BAD"
     Right innerHtml -> return innerHtml
+  now <- liftIO Clock.getCurrentTime
+  footer <- postamble (toS (iso8601Show now)) bp
+  return (body <> footer)
 
 genHtmlAction
   :: (FilePath -> Action BlogPost)
@@ -204,6 +256,8 @@ genHtmlAction getPost getTemplate out = do
           $ object [ "title" .= postTitle bp
                    , "authors" .= postAuthors bp
                    , "date" .= postDate bp
+                   , "tags" .= postTags bp
+                   , "description" .= postDescr bp
                    , "body" .= innerHtml
                    ]
   writeFile' out (toS htmlContent)
@@ -230,7 +284,7 @@ genAsciiAction getPost out = do
 
 allHtmlAction :: Action ()
 allHtmlAction = do
-    allOrgFiles <- getDirectoryFiles srcDir ["**.org"]
+    allOrgFiles <- getDirectoryFiles srcDir ["//*.org"]
     let allHtmlFiles = map (-<.> "html") allOrgFiles
     need (map build allHtmlFiles)
 
