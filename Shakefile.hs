@@ -4,7 +4,7 @@
 import           Protolude
 
 import           Development.Shake
-import           Development.Shake.Command
+-- import           Development.Shake.Command
 import           Development.Shake.FilePath
 
 import Data.Time.Format.ISO8601 (iso8601Show)
@@ -62,8 +62,9 @@ optimDir = "_optim"
 data BlogPost =
   BlogPost { postTitle :: T.Text
            , postDate :: T.Text
-           , postAuthors :: [T.Text]
+           , postAuthor :: T.Text
            , postUrl :: FilePath
+           , postSrc :: FilePath
            , postTags :: [T.Text]
            , postDescr :: T.Text
            , postToc :: Bool
@@ -80,11 +81,14 @@ getBlogpostFromMetas path toc pandoc@(Pandoc meta _) = do
         eitherBlogpost <- liftIO $ Pandoc.runIO $ do
                 title   <- fmap (T.dropEnd 1) $ inlineToText $ docTitle meta
                 date    <- fmap (T.dropAround dateEnvelope) $ inlineToText $ docDate meta
-                authors <- mapM inlineToText $ docAuthors meta
+                author <- case head $ docAuthors meta of
+                            Just m -> inlineToText m
+                            Nothing -> return ""
                 let tags = tagsToList $ lookupMeta "keywords" meta
                     description = descr $ lookupMeta "description" meta
+                    url = "/" </> dropDirectory1 path -<.> "org"
                 liftIO $ print (lookupMeta "keywords" meta)
-                return $ BlogPost title date authors path tags description toc pandoc
+                return $ BlogPost title date author url path tags description toc pandoc
         case eitherBlogpost of
                 Left  _  -> fail "BAD"
                 Right bp -> return bp
@@ -155,7 +159,7 @@ buildArchive
 buildArchive getPosts getTemplate out = do
   css   <- genAllDeps ["//*.css"]
   posts <- fmap sortByPostDate $ getPosts ()
-  need $ css <> map postUrl posts
+  need $ css <> map postSrc posts
   let
     title :: Text
     title = "#+title: Posts"
@@ -170,7 +174,7 @@ buildArchive getPosts getTemplate out = do
   let htmlContent =
         renderMustache template
           $ object [ "title" .= postTitle bp
-                   , "authors" .= postAuthors bp
+                   , "author" .= postAuthor bp
                    , "date" .= postDate bp
                    , "tags" .= postTags bp
                    , "description" .= postDescr bp
@@ -183,8 +187,7 @@ postInfo bp =
   "- " <> date <> ": " <> orglink
   where
     date = T.takeWhile (/= ' ') (postDate bp)
-    url = toS (dropDirectory1 (postUrl bp))
-    orglink = "[[file:" <> url <> "][" <> (postTitle bp) <> "]]"
+    orglink = "[[file:" <> (toS (postUrl bp)) <> "][" <> (postTitle bp) <> "]]"
 
 replaceLinks :: Pandoc -> Pandoc
 replaceLinks = walk replaceOrgLink
@@ -196,6 +199,7 @@ replaceLinks = walk replaceOrgLink
       else lnk
     replaceOrgLink x = x
 
+orgContentToText :: (MonadIO m, MonadFail m) => Text -> m Text
 orgContentToText org = do
   eitherResult <- liftIO $ Pandoc.runIO $ Readers.readOrg (def { readerStandalone = True }) org
   pandoc <- case eitherResult of
@@ -206,6 +210,7 @@ orgContentToText org = do
     Left _ -> fail "BAD"
     Right innerHtml -> return innerHtml
 
+postamble :: (MonadIO m, MonadFail m) => Text -> BlogPost -> m Text
 postamble now bp =
   orgContentToText $ unlines $
   [ "@@html:<footer>@@"
@@ -228,7 +233,7 @@ genHtml bp = do
   eitherHtml <- liftIO $
     Pandoc.runIO $
       Writers.writeHtml5String
-        (def { writerTableOfContents = (postToc bp)
+        (def { writerTableOfContents = postToc bp
              , writerEmailObfuscation = ReferenceObfuscation
              })
         htmlBody
@@ -239,11 +244,14 @@ genHtml bp = do
   footer <- postamble (toS (iso8601Show now)) bp
   return (body <> footer)
 
+origin :: Text
+origin = "https://her.esy.fun"
+
 genHtmlAction
   :: (FilePath -> Action BlogPost)
      -> (FilePath -> Action Template) -> [Char] -> Action ()
 genHtmlAction getPost getTemplate out = do
-  let isPost = takeDirectory1 (dropDirectory1 out) == "post"
+  let isPost = takeDirectory1 (dropDirectory1 out) == "posts"
   template <- getTemplate ("templates" </> if isPost then "post.mustache" else "main.mustache")
   let srcFile = srcDir </> (dropDirectory1 (out -<.> "org"))
   liftIO $ putText $ "need: " <> (toS srcFile) <> " -> " <> (toS out)
@@ -253,11 +261,14 @@ genHtmlAction getPost getTemplate out = do
   let htmlContent =
         renderMustache template
           $ object [ "title" .= postTitle bp
-                   , "authors" .= postAuthors bp
+                   , "author" .= postAuthor bp
                    , "date" .= postDate bp
                    , "tags" .= postTags bp
                    , "description" .= postDescr bp
                    , "body" .= innerHtml
+                   , "orgsource" .= T.pack (postUrl bp -<.> "org")
+                   , "txtsource" .= T.pack (postUrl bp -<.> "txt")
+                   , "permalink" .= T.pack (toS origin <> postUrl bp)
                    ]
   writeFile' out (toS htmlContent)
 
@@ -278,7 +289,10 @@ genAsciiAction getPost out = do
   bp <- getPost srcFile
   innerAscii <- genAscii bp
   let preamble = postTitle bp <> "\n"
-                 <> postDate bp <> "\n\n"
+                 <> T.replicate (T.length (postTitle bp)) "=" <> "\n\n"
+                 <> postAuthor bp <> "\n"
+                 <> postDate bp <> "\n"
+                 <> toS origin <> toS (postUrl bp) <> "\n\n"
   writeFile' out (toS  (preamble <> toS innerAscii))
 
 allHtmlAction :: Action ()
@@ -289,7 +303,7 @@ allHtmlAction = do
 
 allAsciiAction :: Action ()
 allAsciiAction = do
-    allOrgFiles <- getDirectoryFiles srcDir ["**.org"]
+    allOrgFiles <- getDirectoryFiles srcDir ["//*.org"]
     let allAsciiFiles = map (-<.> "txt") allOrgFiles
     need (map build allAsciiFiles)
 
