@@ -75,12 +75,22 @@ inlineToText :: PandocMonad m => [Inline] -> m T.Text
 inlineToText inline =
         Writers.writeAsciiDoc def (Pandoc nullMeta [Plain inline])
 
+reformatDate :: Text -> Text
+reformatDate = T.takeWhile (/= ' ') . (T.dropAround dateEnvelope)
+  where
+    dateEnvelope ' ' = True
+    dateEnvelope '\n' = True
+    dateEnvelope '\t' = True
+    dateEnvelope '[' = True
+    dateEnvelope ']' = True
+    dateEnvelope _ = False
+
 getBlogpostFromMetas
   :: (MonadIO m, MonadFail m) => [Char] -> Bool -> Pandoc -> m BlogPost
 getBlogpostFromMetas path toc pandoc@(Pandoc meta _) = do
         eitherBlogpost <- liftIO $ Pandoc.runIO $ do
                 title   <- fmap (T.dropEnd 1) $ inlineToText $ docTitle meta
-                date    <- fmap (T.takeWhile (/= ' ') . (T.dropAround dateEnvelope)) $ inlineToText $ docDate meta
+                date    <- fmap reformatDate $ inlineToText $ docDate meta
                 author <- case head $ docAuthors meta of
                             Just m -> inlineToText m
                             Nothing -> return ""
@@ -92,12 +102,6 @@ getBlogpostFromMetas path toc pandoc@(Pandoc meta _) = do
                 Left  _  -> fail "BAD"
                 Right bp -> return bp
   where
-    dateEnvelope ' ' = True
-    dateEnvelope '\n' = True
-    dateEnvelope '\t' = True
-    dateEnvelope '[' = True
-    dateEnvelope ']' = True
-    dateEnvelope _ = False
     tagsToList (Just (MetaList ms)) = map toStr ms
     tagsToList _ = []
     descr (Just (MetaString t)) = t
@@ -219,8 +223,8 @@ postamble now bp =
   , "| tags | " <> T.intercalate " " (map ("#"<>) (postTags bp)) <> " |"
   , "| date | " <> postDate bp <> " |"
   , "| rss | [[file:/rss.xml][RSS]] ([[https://validator.w3.org/feed/check.cgi?url=https%3A%2F%2Fher.esy.fun%2Frss.xml][validate]]) |"
-  , "| size | XXK (html XXK, css XXK, img XXK) |"
-  , "| gz | XXK (html XXK, css XXK, img XXK) |"
+  , "| size | @@html:<div class=\"web-file-size\">XXK (html XXK, css XXK, img XXK)</div>@@ |"
+  , "| gz | @@html:<div class=\"gzweb-file-size\">XXK (html XXK, css XXK, img XXK)</div>@@ |"
   , "| generated | " <> now <> " |"
   , ""
   , "@@html:</footer>@@"
