@@ -301,4 +301,4 @@ mkGetPost = newCache $ \path -> do
 
 mkGetPosts :: (FilePath -> Action b) -> Rules (() -> Action [b])
 mkGetPosts getPost =
-  newCache $ \() -> mapM getPost =<< getDirectoryFiles "" ["src/posts/**.org"]
+  newCache $ \() -> mapM getPost =<< getDirectoryFiles "" ["src/posts//*.org"]
