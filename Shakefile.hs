@@ -148,6 +148,11 @@ buildRules = do
           if out == siteDir </> "archive.html"
             then buildArchive getPosts getTemplate out
             else genHtmlAction getPost getTemplate out
+        ".pdf" -> do
+          txtExists <- doesFileExist (srcDir </> asset)
+          if txtExists
+            then copyFileChanged (srcDir </> asset) out
+            else genPdfAction getPost out
         ".txt" -> do
           txtExists <- doesFileExist (srcDir </> asset)
           if txtExists
@@ -261,8 +266,11 @@ genHtmlAction
   :: (FilePath -> Action BlogPost)
      -> (FilePath -> Action Template) -> [Char] -> Action ()
 genHtmlAction getPost getTemplate out = do
-  let isPost = takeDirectory1 (dropDirectory1 out) == "posts"
-  template <- getTemplate ("templates" </> if isPost then "post.mustache" else "main.mustache")
+  let tplname = case takeDirectory1 (dropDirectory1 out) of
+                  "posts" -> "post.mustache"
+                  "drafts" -> "post.mustache"
+                  _ -> "main.mustache"
+  template <- getTemplate ("templates" </> tplname)
   let srcFile = srcDir </> (dropDirectory1 (out -<.> "org"))
   liftIO $ putText $ "need: " <> (toS srcFile) <> " -> " <> (toS out)
   need [srcFile]
@@ -278,6 +286,7 @@ genHtmlAction getPost getTemplate out = do
                    , "body" .= innerHtml
                    , "orgsource" .= T.pack (postUrl bp -<.> "org")
                    , "txtsource" .= T.pack (postUrl bp -<.> "txt")
+                   , "pdf" .= T.pack (postUrl bp -<.> "pdf")
                    , "permalink" .= T.pack (toS origin <> postUrl bp)
                    ]
   writeFile' out (toS htmlContent)
@@ -305,10 +314,29 @@ genAsciiAction getPost out = do
                  <> toS origin <> toS (postUrl bp) <> "\n\n"
   writeFile' out (toS  (preamble <> toS innerAscii))
 
+genPdfAction getPost out = do
+  let srcFile = srcDir </> (dropDirectory1 (out -<.> "org"))
+  need [srcFile]
+  command_ [] "pandoc"
+    ["--pdf-engine=xelatex"
+    , "--resource-path=" <> takeDirectory srcFile
+    , srcFile
+    , "-H", "engine" </> "deeplist.tex"
+    , "-V", "mainfont:Hoefler Text"
+    , "-V", "monofont:Menlo"
+    , "-V", "monofontoptions:Scale=0.7"
+    , "-o", out ]
+
 allHtmlAction :: Action ()
 allHtmlAction = do
     allOrgFiles <- getDirectoryFiles srcDir ["//*.org"]
     let allHtmlFiles = map (-<.> "html") allOrgFiles
+    need (map build allHtmlFiles)
+
+allPdfAction :: Action ()
+allPdfAction = do
+    allOrgFiles <- getDirectoryFiles srcDir ["//*.org"]
+    let allHtmlFiles = map (-<.> "pdf") allOrgFiles
     need (map build allHtmlFiles)
 
 allAsciiAction :: Action ()
@@ -341,6 +369,7 @@ needAll = do
     need (map build $ allAssets <> ["archive.html"])
     allHtmlAction
     allAsciiAction
+    allPdfAction
 
 allRule :: Rules ()
 allRule = phony "all" needAll
