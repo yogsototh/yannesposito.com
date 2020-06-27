@@ -29,7 +29,7 @@ for fic in $filelist; do
 
     htmlsize=$(sizeof $fic)
     debug HTML: $htmlsize
-    
+
     gzhtmlsize=$( gzip -c $fic|wc -c )
     debug GZHTML: $gzhtmlsize
 

@@ -1,9 +1,3 @@
-#!/usr/bin/env bash
-
-cd "$(git rev-parse --show-toplevel)" || exit 1
-echo "* org-publish"
-emacs -nw \
-  --load project.el \
-  --eval "(progn (org-publish \"blog\") (evil-quit))"
-
-echo "* org-publish [done]"
+#!/bin/sh
+mkdir -p _shake
+ghc --make Shakefile.hs -rtsopts -threaded -with-rtsopts=-I0 -outputdir=_shake -o _shake/build && _shake/build "$@"

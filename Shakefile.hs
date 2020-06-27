@@ -137,6 +137,7 @@ buildRules :: Rules ()
 buildRules = do
   cleanRule
   allRule
+  fullRule
   getPost <- mkGetPost
   getPosts <- mkGetPosts getPost
   getTemplate <- mkGetTemplate
@@ -157,6 +158,9 @@ buildRules = do
         ".gif" -> compressImage asset
         ".png" -> compressImage asset
         _ -> copyFileChanged (srcDir </> asset) out
+  optimDir </> "rss.xml" %> \_ -> do
+    needAll
+    command_[] "engine/pre-deploy.sh" []
 
 buildArchive
   :: (() -> Action [BlogPost])
@@ -332,13 +336,17 @@ compressImage img = do
                         , "-ordered-dither","o4x4,4"
                         , dst ]
 
-allRule :: Rules ()
-allRule =
-  phony "all" $ do
+needAll = do
     allAssets <- filter (/= ".DS_Store") <$> getDirectoryFiles srcDir ["**"]
     need (map build $ allAssets <> ["archive.html"])
     allHtmlAction
     allAsciiAction
+
+allRule :: Rules ()
+allRule = phony "all" needAll
+
+fullRule :: Rules ()
+fullRule = phony "full" $ need [optimDir </> "rss.xml"]
 
 cleanRule :: Rules ()
 cleanRule =
