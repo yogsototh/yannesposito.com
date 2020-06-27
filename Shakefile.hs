@@ -31,7 +31,9 @@ import           Text.Pandoc.Definition ( Pandoc(..)
 import           Text.Pandoc.Options ( ReaderOptions(..)
                                      , WriterOptions(..)
                                      , ObfuscationMethod(..)
+                                     , HTMLMathMethod(..)
                                      )
+
 import qualified Text.Pandoc.Readers as Readers
 import Text.Pandoc.Walk (Walkable(..))
 import qualified Text.Pandoc.Writers as Writers
@@ -238,6 +240,7 @@ genHtml bp = do
       Writers.writeHtml5String
         (def { writerTableOfContents = postToc bp
              , writerEmailObfuscation = ReferenceObfuscation
+             , writerHTMLMathMethod = MathML
              })
         htmlBody
   body <- case eitherHtml of
