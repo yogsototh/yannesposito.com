@@ -136,6 +136,7 @@ genAllDeps patterns = do
 buildRules :: Rules ()
 buildRules = do
   cleanRule
+  fastRule
   allRule
   fullRule
   getPost <- mkGetPost
@@ -364,18 +365,34 @@ compressImage img = do
                         , "-ordered-dither","o4x4,4"
                         , dst ]
 
+
+needFast = do
+  allAssets <- filter (/= ".DS_Store") <$> getDirectoryFiles srcDir ["**"]
+  need (map build $ allAssets <> ["archive.html"])
+  allHtmlAction
+
+fastRule :: Rules ()
+fastRule =
+  withTargetDocs "generate html" $
+  phony "fast" $
+  needFast
+
 needAll = do
-    allAssets <- filter (/= ".DS_Store") <$> getDirectoryFiles srcDir ["**"]
-    need (map build $ allAssets <> ["archive.html"])
-    allHtmlAction
-    allAsciiAction
-    allPdfAction
+  needFast
+  allAsciiAction
+  allPdfAction
 
 allRule :: Rules ()
-allRule = phony "all" needAll
+allRule =
+  withTargetDocs "generate all, no optim" $
+  phony "all" $
+  needAll
 
 fullRule :: Rules ()
-fullRule = phony "full" $ need [optimDir </> "rss.xml"]
+fullRule =
+  withTargetDocs "generate all and optim" $
+  phony "full" $
+  need [optimDir </> "rss.xml"]
 
 cleanRule :: Rules ()
 cleanRule =

@@ -16,6 +16,7 @@ pkgs.mkShell {
     buildInputs = with pkgs;
       [ cacert
         coreutils
+        entr
         html-xml-utils
         zsh
         perl
