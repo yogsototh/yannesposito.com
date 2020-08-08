@@ -1,27 +1,28 @@
-html { font-family: "Helvetica Neue", sans-serif; font-size: 14px; line-height: 20px; }
+html {
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 16px;
+    line-height: calc(1ex/0.32); }
 html,body { margin: 0; padding: 0; border: 0; }
+h1,h2,h3,h4,h5,h6 {
+    line-height: calc(1ex/0.42);
+    margin: calc(1ex/0.42) 0; }
+#preamble h1 { margin: 0; }
+p { text-align: justify; hyphens: auto; }
 pre { overflow-x: scroll; border: solid 1px; padding: 1ex; }
+pre > code { font-size: 0.875em; }
+code,pre { font-size: 0.875em; }
 figure { margin: 1rem 0; padding: 0; }
-.meta { margin: 1rem 0;}
-.abstract { margin: 1rem; }
-#logo { text-align: center; }
+.meta { font-size: small;}
+.abstract { margin: 1rem; font-size: 0.875em; font-style: italic; }
+#logo { display: inline-block; }
+#logo svg { width: 3em; }
 #preamble, #postamble { text-align: center; }
 #content,.content,#preamble,#postamble {
     padding: 0 1rem;
-    max-width: 67ch;
+    max-width: 68ch;
     overflow: hidden;
     margin: 0 auto;
 }
-
-/* COLORS */
-
-/* colortheme switch */
-body>input { display: none; }
-#labels > .content { margin: 0 auto; text-align: center; }
-label { font-weight: 700; }
-label:hover { cursor: pointer; }
-label ~ pre { margin-top: 0; }
-.org-src-container { margin: 1rem 0; }
 figure img { width: 100%; }
 .footdef > sup { vertical-align: top; font-size: medium; }
 .footdef > sup > a { padding: 0.5em; }
@@ -31,13 +32,21 @@ footer { margin: 3em 0;
          border-top: solid 1px;
          border-bottom: solid 1px;
          line-height: 1em;
-         font-size: 0.85em;
-         text-align: center;
+         font-size: 0.875em;
        }
 td { border-bottom: none; padding: .2rem; }
 table { margin-top: 1rem; }
 nav { text-align: center; padding: 1em 0;  }
 pre { line-height: 1em; }
+
+/* COLORS */
+
+/* colortheme switch */
+body>input { display: none; }
+#labels > .content { margin: 0 auto; text-align: center; }
+label { font-weight: 700; }
+label:hover { cursor: pointer; }
+label ~ pre { margin-top: 0; }
 
 :root {
     --b03:  #2E3440;
@@ -65,7 +74,7 @@ pre { line-height: 1em; }
     --fg0: var(--b0);
     --fg: var(--b02);
     --rfg: #000;
-    --hl: var(--r);
+    --hl: var(--g);
 }
 
 /* dark preferred */
@@ -101,7 +110,7 @@ input#l:checked ~ div {
     --fg0: var(--b0);
     --fg: var(--b02);
     --rfg: #000;
-    --hl: var(--o);
+    --hl: var(--g);
     --y: #c18600;
     --o: #d84100;
     --r: #e62729;
@@ -156,51 +165,14 @@ body, body > div {
     color: var(--fg);
 }
 a,a:visited { color: var(--hl); }
-
 figcaption { color: var(--fg0); }
 
 /* ---- SYNTAX HIGHLIGHTING ---- */
 #table-of-contents { text-align: left; }
-
-.org-rainbow-delimiters-depth-1, .org-rainbow-delimiters-depth-9,
-.org-css-selector, .org-builtin,
-.IN_REVIEW, .ex {
-    color:var(--c);
-}
-
-.org-rainbow-delimiters-depth-2, .org-nix-builtin, .org-variable-name,
-.org-haskell-definition, .org-haskell-operator, .org-function-name, .org-diff-changed,
-.org-nix-attribute, .org-nxml-element-local-name, .op, .fu, .ot {
-    color:var(--b);
-}
-
-.org-rainbow-delimiters-depth-3, .HOLD, .WAITING {
-    color:var(--v);
-}
-
-.org-rainbow-delimiters-depth-4, .org-diff-hunk-header, .org-sh-quoted-exec,
-.CANCELED, .bu {
-    color:var(--m);
-}
-.org-rainbow-delimiters-depth-5, .org-diff-removed, .TODO {
-    color:var(--r);
-}
-.org-rainbow-delimiters-depth-6, .org-haskell-constructor, .dt  {
-    color:var(--o);
-}
-.org-rainbow-delimiters-depth-7, .org-type, .org-constant, .org-diff-header,
-.org-haskell-keyword, .org-haskell-type, .IN_PROGRESS, .kw {
-    color:var(--y);
-}
-.org-rainbow-delimiters-depth-8, .org-sh-heredoc, .org-diff-added, .org-string,
-.org-doc, .org-keyword, .DONE, .st {
-    color:var(--g);
-}
-
-.org-highlight-numbers-number, .org-highlight-number-number,
-.org-diff-none, .org-preprocessor, .org-comment-delimiter, .org-comment,
-.org-outshine-level-1, .org-outshine-level-2, .org-outshine-level-3,
-.org-outshine-level-4, .org-outshine-level-5, .org-outshine-level-6,
-.org-outshine-level-7, .org-outshine-level-8, .org-outshine-level-9, .co {
-    color:var(--fg0);
-}
+.ex { color:var(--c); }
+.op, .fu, .ot {color:var(--b);}
+.bu { color:var(--m); }
+.dt  { color:var(--o); }
+.kw { color:var(--y); }
+.st { color:var(--g); }
+.co { color:var(--fg0); }
