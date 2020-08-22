@@ -94,7 +94,7 @@ getBlogpostFromMetas path toc pandoc@(Pandoc meta _) = do
                 title   <- fmap (T.dropEnd 1) $ inlineToText $ docTitle meta
                 date    <- fmap reformatDate $ inlineToText $ docDate meta
                 author <- case head $ docAuthors meta of
-                            Just m -> inlineToText m
+                            Just m -> fmap T.strip $ inlineToText m
                             Nothing -> return ""
                 let tags = tagsToList $ lookupMeta "keywords" meta
                     description = descr $ lookupMeta "description" meta

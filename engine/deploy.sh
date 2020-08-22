@@ -1,10 +1,11 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
+
+set -e # fail on first error
+set -u # fail if a variable is not set
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
-rootdir=${0:h}
+rootdir="${0:h}"
 echo "$rootdir"
 
-./engine/clean.sh
-./engine/build.sh
-./engine/pre-deploy.sh
+./engine/build.sh full
 ./engine/sync.sh
