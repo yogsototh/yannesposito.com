@@ -269,6 +269,7 @@ genHtmlAction
 genHtmlAction getPost getTemplate out = do
   let tplname = case takeDirectory1 (dropDirectory1 out) of
                   "posts" -> "post.mustache"
+                  "slides" -> "slide.mustache"
                   "drafts" -> "post.mustache"
                   _ -> "main.mustache"
   template <- getTemplate ("templates" </> tplname)
