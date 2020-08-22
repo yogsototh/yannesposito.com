@@ -73,6 +73,6 @@ for fic in $filelist; do
         gzsizeinfos="$gzsizeinfos)"
     fi
     print -- $sizeinfos
-    perl -pi -e 's#(<div class="?web-file-size"?>)[^<]*(</div>)#$1'"$sizeinfos"'$2#;s#(<div class="?gzweb-file-size"?>)[^<]*(</div>)#$1'"$gzsizeinfos"'$2#' $fic
+    perl -pi -e 's#(<span class="?web-file-size"?>)[^<]*(</span>)#$1'"$sizeinfos"'$2#;s#(<span class="?gzweb-file-size"?>)[^<]*(</span>)#$1'"$gzsizeinfos"'$2#' $fic
 done
 rm -rf $tmpdir
