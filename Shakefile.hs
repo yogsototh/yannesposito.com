@@ -4,15 +4,13 @@
 import           Protolude
 
 import           Development.Shake
--- import           Development.Shake.Command
 import           Development.Shake.FilePath
 
-import Data.Time.Format.ISO8601 (iso8601Show)
+import           Data.Time.Format.ISO8601 (iso8601Show)
 import qualified Data.Time.Clock as Clock
 
 import           Control.Monad.Fail
 import           Data.Aeson
--- import qualified Text.Megaparsec as Megaparsec
 import           Data.Default ( Default(def) )
 import qualified Data.Text as T
 import           Text.Mustache
@@ -35,8 +33,9 @@ import           Text.Pandoc.Options ( ReaderOptions(..)
                                      )
 
 import qualified Text.Pandoc.Readers as Readers
-import Text.Pandoc.Walk (Walkable(..))
+import           Text.Pandoc.Walk (Walkable(..))
 import qualified Text.Pandoc.Writers as Writers
+import qualified Text.Pandoc.Templates as Templates
 
 main :: IO ()
 main = shakeArgs shOpts buildRules
@@ -220,7 +219,8 @@ orgContentToText org = do
   pandoc <- case eitherResult of
               Left  _      -> fail "BAD"
               Right p -> return p
-  eitherHtml <- liftIO $ Pandoc.runIO $ Writers.writeHtml5String (def {writerEmailObfuscation = ReferenceObfuscation}) pandoc
+  eitherHtml <- liftIO $ Pandoc.runIO $
+    Writers.writeHtml5String (def {writerEmailObfuscation = ReferenceObfuscation}) pandoc
   case eitherHtml of
     Left _ -> fail "BAD"
     Right innerHtml -> return innerHtml
@@ -242,13 +242,35 @@ postamble now bp =
   , "@@html:</footer>@@"
   ]
 
+tpltxt = T.unlines [
+  "$if(toc)$"
+  , "<nav id=\"$idprefix$TOC\" role=\"doc-toc\">"
+  , "$if(toc-title)$"
+  , "<h2 id=\"$idprefix$toc-title\">$toc-title$</h2>"
+  , "$endif$"
+  , "$table-of-contents$"
+  , "</nav>"
+  , "$endif$"
+  , "$body$"
+  ]
+
+getPostTpl :: IO (Templates.Template Text)
+getPostTpl = do
+    etpl <- Templates.compileTemplate "blog.template" tpltxt
+    case etpl of
+      Left e -> fail e
+      Right tpl -> return tpl
+
 genHtml :: (MonadIO m, MonadFail m) => BlogPost -> m Text
 genHtml bp = do
   let htmlBody = replaceLinks (postBody bp)
-  eitherHtml <- liftIO $
-    Pandoc.runIO $
+  eitherHtml <- liftIO $ do
+    tpl <- getPostTpl
+    Pandoc.runIO $ do
       Writers.writeHtml5String
         (def { writerTableOfContents = postToc bp
+             , writerTemplate = Just tpl
+             , writerTOCDepth = 3
              , writerEmailObfuscation = ReferenceObfuscation
              , writerHTMLMathMethod = MathML
              })
@@ -262,7 +284,7 @@ genHtml bp = do
 
 origin :: Text
 origin = "https://her.esy.fun"
-  
+
 genHtmlAction
   :: (FilePath -> Action BlogPost)
      -> (FilePath -> Action Template) -> [Char] -> Action ()
@@ -316,7 +338,8 @@ genAsciiAction getPost out = do
                  <> toS origin <> toS (postUrl bp) <> "\n\n"
   writeFile' out (toS  (preamble <> toS innerAscii))
 
-genPdfAction getPost out = do
+genPdfAction :: p -> [Char] -> Action ()
+genPdfAction _getPost out = do
   let srcFile = srcDir </> (dropDirectory1 (out -<.> "org"))
   need [srcFile]
   command_ [] "pandoc"
@@ -367,6 +390,7 @@ compressImage img = do
                         , dst ]
 
 
+needFast :: Action ()
 needFast = do
   allAssets <- filter (/= ".DS_Store") <$> getDirectoryFiles srcDir ["**"]
   need (map build $ allAssets <> ["archive.html"])
@@ -378,6 +402,7 @@ fastRule =
   phony "fast" $
   needFast
 
+needAll :: Action ()
 needAll = do
   needFast
   allAsciiAction
