@@ -381,7 +381,7 @@ compressImage img = do
     command [] "mkdir" ["-p", dir]
   command_ [] "convert" [ src
                         , "-strip"
-                        , "-resize","320x320>"
+                        , "-resize","960x960>"
                         , "-interlace","Plane"
                         , "-quality","85"
                         , "-define","filter:blur=0.75"
