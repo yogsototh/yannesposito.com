@@ -28,10 +28,10 @@ And also, I wanted that to follow my working hours and not really the sun.
 I might change my mind and use the code of theme-changer to follow the
 curve of the sun.
 But for now, just using straight hours should be good enough.
-So here is my piece of code I added to my doom-emacs configuration:
+So here is my piece of code I added to my doom-emacs =config.el=:
 
 #+BEGIN_SRC elisp
-(defun y/update-theme ()
+(defun y/auto-update-theme ()
   "depending on time use different theme"
   ;; very early => gruvbox-light, solarized-light, nord-light
   (let* ((hour (nth 2 (decode-time (current-time))))
@@ -44,10 +44,12 @@ So here is my piece of code I added to my doom-emacs configuration:
     (when (not (equal doom-theme theme))
       (setq doom-theme theme)
       (load-theme doom-theme)
-      (run-at-time (format ))
-      )))
+      ;; run that function again next hour
+      (run-at-time (format "%02d:%02d" (+ hour 1) 0) nil 'y/update-time))))
 
-(y/update-theme)
-;; try to update the theme every minute
-(run-with-idle-timer 0 60 'y/update-theme)
+(y/auto-update-theme)
 #+END_SRC
+
+I'm still playing with it.
+So there still might be a bug.
+So far, it's good.
