@@ -24,6 +24,11 @@ But I wanted to have more themes from morning to night:
 5. night: dark theme (oceanic-next)
 6. sleep time: neon-like (laserwave)
 
+And also, I wanted that to follow my working hours and not really the sun.
+I might change my mind and use the code of theme-changer to follow the
+curve of the sun.
+But for now, just using straight hours should be good enough.
+
 #+BEGIN_SRC elisp
 (defun y/update-theme ()
   "depending on time use different theme"
@@ -40,4 +45,6 @@ But I wanted to have more themes from morning to night:
       (load-theme doom-theme))))
 
 (y/update-theme)
+;; try to update the theme every minute
+(run-with-idle-timer 0 60 'y/update-theme)
 #+END_SRC
