@@ -9,28 +9,153 @@
 #+DESCRIPTION: How I use org-mode
 #+OPTIONS: auto-id:t toc:t
 
+#+begin_abstract
 In this article I'll try to give an overview of my current use of [[https://orgmode.org][org mode]].
 I use org mode for:
 
-- tasks management & tracking
+- tasks management & time tracking
 - writing documents (articles, book, etc...)
 - note taking ; which I consider slightly different from just writing documents
+#+end_abstract
 
-It took me a few month to discover a few great org-mode features that
-really changed the way I looked at it.
-After discovering those it is a real life changer.
+In this article I would like to share a tool that was a real life changer
+to me: [[http://orgmode.org][org mode]].
 
-I hope that I could help you discover why org mode is so praised and be
-able to take advantage of its awesomeness faster than I did.
+I use it for a few years now.
+And for me emacs is worth learning just for org-mode.
+This is by far the best solution I ever used to manage my tasks.
+More than that, the solution is so versatile that the power is decupled by
+all the plugins, tools, libs that work around org-mode.
+Also the tool will adapt to your very specific needs.
 
-* Workflows
+Mainly the major problem I see with most tasks management applications is
+the wrong level of complexity facing the user.
+This is a very hard problem to tackle.
+
+If your system is too simple, the users will not be able to manage the
+tasks how they would like.
+If your system is too complex, the user will be faced with too much details.
+So most successful systems have a way to adapt their apparent complexity to
+the need of their users.
+And org mode is exactly like that.
+Not only starting with org mode can be extremely simple but also there are
+mostly no complexity limit.
+Whatever your need most of the time there is already an emacs package that
+take cares of that.
+Even if this is not the case, it is easy to write your own.
+
+Here is the result of a few years of improving my use of org mode.
+Today I can say that org mode is part of my day to day life.
+I still invest a bit of time to improve minor details of my workflow time
+to time.
+But now my daily workflow is mostly stable.
+So I think I can share it.
+
+** Overview
 :PROPERTIES:
-:CUSTOM_ID: workflows
+:CUSTOM_ID: overview
 :END:
 
-** Worfklow 1: See Things to do: org-agenda + clock
+*** daily routine
 :PROPERTIES:
-:CUSTOM_ID: worfklow-1--org-agenda---clock
+:CUSTOM_ID: daily-routine
+:END:
+
+The first thing I do in the morning is to open =org-agenda= view for today.
+It shows me the tasks planned for today.
+What are urgent tasks, deadlines, tasks that have deadlines in a few days, etc...
+I also have a glimpse of my habits, tasks that I should start at some hour
+in the day, etc...
+
+I then start to track (/clock/) the tasks I'm currently working on.
+
+Often during the day, I need to create new tasks.
+Most of the time I create a task and I add either a deadline or a schedule
+date.
+
+Sometime I also need to deal with interruptions.
+In that case, I /capture/ the interruption that will also create a new task
+being clocked.
+
+At the end of the day, every tasks I worked on are saved in a =tracker.org=
+file.
+That file look like a date tree.
+And I generally generate a /report/ that tell me how much hours I worked
+today.
+Some tasks are tagged =work=.
+The report filter only on the =work= tagged tasks.
+
+Also I have some repeating tasks like review memory cards using a spaced
+repetition plugin.
+I start it, and it shows me a few =cards= with questions that I review.
+So mainly those cards contain info I want to keep in my mind and not only
+in my notes.
+
+*** document writing
+:PROPERTIES:
+:CUSTOM_ID: document-writing
+:END:
+
+Writing documents with org mode and in particular technical document is
+just incredible.
+So at first writing document with org mode is a lot like writing markdown.
+Neat, there are a few minor differences.
+The org mode format is not only intended to be exported to HTML only so
+there are a few differences.
+
+Where org mode shine is with the use of *org-babel*.
+
+Mainly you can write code that will make real HTTP call, execute real
+functions in the language of your choice.
+
+I wrote most part of an OAuth2 provider in Clojure.
+And to generate a documentation for our users it is very nice to provide
+the full HTTP request along the response.
+
+But I also often need to play a few tricks in the doc and directly use our
+Clojure code to generate JWT for example.
+The great part is the ability to use those JWT generated from Clojure code
+in the following code block making HTTP call.
+
+That plus the natural ability to fold/unfold the tree structure of the org
+mode file is great.
+
+*** note taking
+:PROPERTIES:
+:CUSTOM_ID: note-taking
+:END:
+
+Time to time, I need to really take the time write note on a technical
+subject or sometime about articles I read about anything.
+For that I use [[https://github.com/org-roam/org-roam][org roam]].
+I only started to use it a few months ago.
+But this is a great addition to my previous workflow that used =deft= (that
+I still use).
+But I must say, this is pretty perfect as a note taking app.
+
+Mainly you capture notes quite easily and put links about the subject, but
+also tags.
+In the end that generate a graph of notes that you could use later to dig
+into your own notes.
+*** journaling
+:PROPERTIES:
+:CUSTOM_ID: journaling
+:END:
+
+Along with note taking.
+I also try to write a journal note everyday.
+For that I use org-journal (another org mode related package).
+I have a default template which take care of a few metrics I want to focus on.
+And I guess it is different for anyone of us.
+
+** Task Management
+:PROPERTIES:
+:CUSTOM_ID: task-management
+:END:
+
+*** Workflow 1; planned tasks : org-agenda + clock
+:PROPERTIES:
+:CUSTOM_ID: worfklow-1--planned-tasks---org-agenda---clock
 :END:
 
 1. look at the current tasks planned for today
@@ -71,10 +196,9 @@ They start to become green when you are doing them correctly.
 
 But generally, I don't use much direct clocking from the agenda.
 Most of the time I prefer the capture mechanism.
-Which bring us to "Worfklow 2".
+Which bring us to "Workflow 2".
 
-
-** Workflow 2: Tracking; org-capture
+*** Workflow 2: Tracking; org-capture
 :PROPERTIES:
 :CUSTOM_ID: workflow-2--org-capture-org-refile
 :END:
@@ -133,7 +257,6 @@ a date tree that looks like this:
   *** 2020-09-23 Wednesday
   **** IN-PROGRESS Chat with John about X                          :interruption:chat:
   :LOGBOOK:
-  CLOCK: [2020-09-23 Wed 17:58]
   :END:
   [2020-09-23 Wed 17:58]
   ref ::
@@ -185,7 +308,7 @@ I generally create a clock report that look like this:
 
 And that's mostly it for TODOs and tasks handling.
 
-** Workflow 3: Add new tasks; org-capture / org-refile
+*** Workflow 3: Add new tasks; org-capture / org-refile
 :PROPERTIES:
 :CUSTOM_ID: workflow-3--org-capture---org-refile
 :END:
@@ -204,7 +327,7 @@ file.
 
 And it will appear in my agenda.
 
-* Footnotes
+** Footnotes
 :PROPERTIES:
 :CUSTOM_ID: footnotes
 :END:
