@@ -311,7 +311,7 @@ genHtmlAction getPost getTemplate out = do
                    , "orgsource" .= T.pack (postUrl bp -<.> "org")
                    , "txtsource" .= T.pack (postUrl bp -<.> "txt")
                    , "pdf" .= T.pack (postUrl bp -<.> "pdf")
-                   , "permalink" .= T.pack (toS origin <> postUrl bp)
+                   , "permalink" .= T.pack (toS origin <> postUrl bp -<.> "html")
                    ]
   writeFile' out (toS htmlContent)
 
