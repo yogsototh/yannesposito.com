@@ -242,6 +242,7 @@ postamble now bp =
   , "@@html:</footer>@@"
   ]
 
+tpltxt :: Text
 tpltxt = T.unlines [
   "$if(toc)$"
   , "<nav id=\"$idprefix$TOC\" role=\"doc-toc\">"
