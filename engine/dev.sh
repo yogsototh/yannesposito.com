@@ -4,5 +4,5 @@ echo "Watching $PWD/src"
 # fswatch --exclude='\\.#' src | while read event; do
 fswatch --exclude='^.*\.#.*$' src | while read event; do
     echo "$event"
-    ./build.sh fast
+    ./engine/build.sh fast
 done
