@@ -430,7 +430,10 @@ cleanRule =
 mkGetTemplate :: Rules (FilePath -> Action Template)
 mkGetTemplate = newCache $ \path -> do
   fileContent <- readFile' path
-  let res = compileMustacheText "page" (toS fileContent)
+  header <- readFile' ("templates" </> "header.mustache")
+  menu   <- readFile' ("templates" </> "menu.mustache")
+  let withIncludes = fileContent & toS & T.replace "{{>header}}" (toS header) & T.replace "{{>menu}}" (toS menu)
+      res = compileMustacheText "page" (toS withIncludes)
   case res of
     Left _ -> fail "BAD"
     Right template -> return template
