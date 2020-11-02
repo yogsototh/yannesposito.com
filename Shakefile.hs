@@ -198,7 +198,7 @@ buildArchive getPosts getTemplate out = do
 
 postInfo :: BlogPost -> Text
 postInfo bp =
-  "- " <> date <> ": " <> orglink
+  "| " <> date <> " | " <> orglink <> " |"
   where
     date = T.takeWhile (/= ' ') (postDate bp)
     orglink = "[[file:" <> (toS (postUrl bp)) <> "][" <> (postTitle bp) <> "]]"

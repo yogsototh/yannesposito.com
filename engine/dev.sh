@@ -1,8 +1,7 @@
 #!/usr/bin/env zsh
 cd "$(git rev-parse --show-toplevel)" || exit 1
-echo "Watching $PWD/{src,templates}"
-# fswatch --exclude='\\.#' src | while read event; do
-fswatch --exclude='^.*\.#.*$' src templates | while read event; do
-    echo "$event"
-    ./engine/build.sh fast
-done
+tmux \
+    new-session './engine/auto-build.sh' \; \
+    split-window './engine/serve.sh' \; \
+    split-window 'lorri watch' \; \
+    select-layout even-vertical

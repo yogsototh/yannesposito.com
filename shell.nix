@@ -27,6 +27,7 @@ pkgs.mkShell {
         git
         direnv
         haskellPackages.shake
+        tmux
         # for emacs dev
         ripgrep
       ];
