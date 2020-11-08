@@ -154,10 +154,11 @@ buildRules = do
             then copyFileChanged (srcDir </> asset) out
             else genPdfAction getPost out
         ".txt" -> do
-          txtExists <- doesFileExist (srcDir </> asset)
-          if txtExists
+          fileExists <- doesFileExist (srcDir </> asset)
+          if fileExists
             then copyFileChanged (srcDir </> asset) out
             else genAsciiAction getPost out
+        ".gmi" -> genGeminiAction getPost out
         ".jpg" -> compressImage asset
         ".jpeg" -> compressImage asset
         ".gif" -> compressImage asset
@@ -353,6 +354,28 @@ genPdfAction _getPost out = do
     , "-V", "monofontoptions:Scale=0.7"
     , "-o", out ]
 
+
+genGemini :: (MonadIO m, MonadFail m) => BlogPost -> m Text
+genGemini bp = do
+  eitherMd <- liftIO $ Pandoc.runIO $ Writers.writeMarkdown def (postBody bp)
+  case eitherMd of
+    Left _ -> fail "BAD"
+    Right innerMd -> return innerMd
+
+genGeminiAction
+  :: (FilePath -> Action BlogPost)
+     -> [Char] -> Action ()
+genGeminiAction getPost out = do
+  let srcFile = srcDir </> (dropDirectory1 (dropDirectory1 (out -<.> "org")))
+  need [srcFile]
+  bp <- getPost srcFile
+  innerGemini <- genGemini bp
+  let preamble = "# " <> postTitle bp <> "\n"
+                 <> postAuthor bp <> "\n"
+                 <> postDate bp <> "\n"
+                 <> toS origin <> toS (postUrl bp) <> "\n\n"
+  writeFile' out (toS  (preamble <> toS innerGemini))
+
 allHtmlAction :: Action ()
 allHtmlAction = do
     allOrgFiles <- getDirectoryFiles srcDir ["//*.org"]
@@ -370,6 +393,12 @@ allAsciiAction = do
     allOrgFiles <- getDirectoryFiles srcDir ["//*.org"]
     let allAsciiFiles = map (-<.> "txt") allOrgFiles
     need (map build allAsciiFiles)
+
+allGeminiAction :: Action ()
+allGeminiAction = do
+    allOrgFiles <- getDirectoryFiles srcDir ["//*.org"]
+    let allGeminiFiles = map (("gemini" </>) . (-<.> "gmi")) allOrgFiles
+    need (map build allGeminiFiles)
 
 compressImage :: FilePath -> Action ()
 compressImage img = do
@@ -408,6 +437,7 @@ needAll = do
   needFast
   allAsciiAction
   allPdfAction
+  allGeminiAction
 
 allRule :: Rules ()
 allRule =
