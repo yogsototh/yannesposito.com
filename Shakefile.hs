@@ -357,10 +357,10 @@ genPdfAction _getPost out = do
 
 genGemini :: (MonadIO m, MonadFail m) => BlogPost -> m Text
 genGemini bp = do
-  eitherAscii <- liftIO $ Pandoc.runIO $ Writers.writePlain def (postBody bp)
-  case eitherAscii of
+  eitherMd <- liftIO $ Pandoc.runIO $ Writers.writeMarkdown def (postBody bp)
+  case eitherMd of
     Left _ -> fail "BAD"
-    Right innerAscii -> return innerAscii
+    Right innerMd -> return innerMd
 
 genGeminiAction
   :: (FilePath -> Action BlogPost)
