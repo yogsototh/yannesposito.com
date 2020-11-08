@@ -158,7 +158,10 @@ buildRules = do
           if fileExists
             then copyFileChanged (srcDir </> asset) out
             else genAsciiAction getPost out
-        ".gmi" -> genGeminiAction getPost out
+        ".gmi" -> 
+          if out == siteDir </> "gemini" </> "archive.gmi"
+            then buildGeminiArchive getPosts out
+            else genGeminiAction getPost out
         ".jpg" -> compressImage asset
         ".jpeg" -> compressImage asset
         ".gif" -> compressImage asset
@@ -196,6 +199,25 @@ buildArchive getPosts getTemplate out = do
                    , "body" .= innerHtml
                    ]
   writeFile' out (toS htmlContent)
+
+buildGeminiArchive
+  :: (() -> Action [BlogPost])
+     -> [Char] -> Action ()
+buildGeminiArchive getPosts out = do
+  posts <- fmap sortByPostDate $ getPosts ()
+  need $ map postSrc posts
+  let
+    title :: Text
+    title = "# Posts"
+    articleList = toS $ T.intercalate "\n" $ map postGeminiInfo posts
+    fileContent =  title <> "\n\n" <> articleList
+  writeFile' out (toS fileContent)
+
+postGeminiInfo :: BlogPost -> Text
+postGeminiInfo bp =
+  "=> " <> (toS (postUrl bp -<.> ".gmi")) <> " " <> date <> ": " <> (postTitle bp)
+  where
+    date = T.takeWhile (/= ' ') (postDate bp)
 
 postInfo :: BlogPost -> Text
 postInfo bp =
@@ -390,7 +412,7 @@ allGeminiAction :: Action ()
 allGeminiAction = do
     allOrgFiles <- getDirectoryFiles srcDir ["//*.org"]
     let allGeminiFiles = map (("gemini" </>) . (-<.> "gmi")) allOrgFiles
-    need (map build allGeminiFiles)
+    need (map build $ allGeminiFiles <> ["gemini" </> "archive.gmi"])
 
 compressImage :: FilePath -> Action ()
 compressImage img = do
