@@ -4,8 +4,9 @@ BEGIN { IGNORECASE=1; }
 
 { skip=0; }
 
-/^#+(BEGIN|END)_SRC / { gsub(/(BEGIN|END)_SRC /,"```"); }
+/^#+(BEGIN|END)_SRC /i { gsub(/#+(BEGIN|END)_SRC /,"```"); }
 /^#\+TITLE: / { gsub(/^#[^:]*: /,"# "); }
+/^ *:[a-zA-Z_0-9]*:/ { skip=1; }
 /^\* / { gsub(/^\* /,"# "); }
 /^\*\* / { gsub(/^\*\* /,"## "); }
 /^\*\*\* / { gsub(/^\*\*\* /,"### "); }
