@@ -355,26 +355,18 @@ genPdfAction _getPost out = do
     , "-o", out ]
 
 
-genGemini :: (MonadIO m, MonadFail m) => BlogPost -> m Text
-genGemini bp = do
-  eitherMd <- liftIO $ Pandoc.runIO $ Writers.writeMarkdown def (postBody bp)
-  case eitherMd of
-    Left _ -> fail "BAD"
-    Right innerMd -> return innerMd
+-- genGemini :: (MonadIO m, MonadFail m) => BlogPost -> m Text
+-- genGemini bp = do
+--   eitherMd <- liftIO $ Pandoc.runIO $ Writers.writeMarkdown def (postBody bp)
+--   case eitherMd of
+--     Left _ -> fail "BAD"
+--     Right innerMd -> return innerMd
 
-genGeminiAction
-  :: (FilePath -> Action BlogPost)
-     -> [Char] -> Action ()
+genGeminiAction :: (FilePath -> Action BlogPost) -> [Char] -> Action ()
 genGeminiAction getPost out = do
   let srcFile = srcDir </> (dropDirectory1 (dropDirectory1 (out -<.> "org")))
   need [srcFile]
-  bp <- getPost srcFile
-  innerGemini <- genGemini bp
-  let preamble = "# " <> postTitle bp <> "\n"
-                 <> postAuthor bp <> "\n"
-                 <> postDate bp <> "\n"
-                 <> toS origin <> toS (postUrl bp) <> "\n\n"
-  writeFile' out (toS  (preamble <> toS innerGemini))
+  command_ [] "./engine/org2gemini.sh" [ srcFile, out ]
 
 allHtmlAction :: Action ()
 allHtmlAction = do
