@@ -159,9 +159,9 @@ buildRules = do
             then copyFileChanged (srcDir </> asset) out
             else genAsciiAction getPost out
         ".gmi" -> 
-          if out == siteDir </> "gemini" </> "archive.gmi"
+          if out == siteDir </> "archive.gmi"
             then buildGeminiArchive getPosts out
-            else genGeminiAction getPost out
+            else genGeminiAction out
         ".jpg" -> compressImage asset
         ".jpeg" -> compressImage asset
         ".gif" -> compressImage asset
@@ -384,9 +384,9 @@ genPdfAction _getPost out = do
 --     Left _ -> fail "BAD"
 --     Right innerMd -> return innerMd
 
-genGeminiAction :: (FilePath -> Action BlogPost) -> [Char] -> Action ()
-genGeminiAction getPost out = do
-  let srcFile = srcDir </> (dropDirectory1 (dropDirectory1 (out -<.> "org")))
+genGeminiAction :: [Char] -> Action ()
+genGeminiAction out = do
+  let srcFile = srcDir </> (dropDirectory1 (out -<.> "org"))
   need [srcFile]
   command_ [] "./engine/org2gemini.sh" [ srcFile, out ]
 
@@ -411,8 +411,8 @@ allAsciiAction = do
 allGeminiAction :: Action ()
 allGeminiAction = do
     allOrgFiles <- getDirectoryFiles srcDir ["//*.org"]
-    let allGeminiFiles = map (("gemini" </>) . (-<.> "gmi")) allOrgFiles
-    need (map build $ allGeminiFiles <> ["gemini" </> "archive.gmi"])
+    let allGeminiFiles = map (-<.> "gmi") allOrgFiles
+    need (map build $ allGeminiFiles <> ["archive.gmi"])
 
 compressImage :: FilePath -> Action ()
 compressImage img = do
