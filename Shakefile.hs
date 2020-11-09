@@ -153,15 +153,13 @@ buildRules = do
           if txtExists
             then copyFileChanged (srcDir </> asset) out
             else genPdfAction getPost out
-        ".txt" -> do
+        ".gmi" -> do
           fileExists <- doesFileExist (srcDir </> asset)
           if fileExists
             then copyFileChanged (srcDir </> asset) out
-            else genAsciiAction getPost out
-        ".gmi" -> 
-          if out == siteDir </> "archive.gmi"
-            then buildGeminiArchive getPosts out
-            else genGeminiAction out
+            else if out == siteDir </> "archive.gmi"
+                    then buildGeminiArchive getPosts out
+                    else genGeminiAction out
         ".jpg" -> compressImage asset
         ".jpeg" -> compressImage asset
         ".gif" -> compressImage asset
@@ -333,34 +331,11 @@ genHtmlAction getPost getTemplate out = do
                    , "description" .= postDescr bp
                    , "body" .= innerHtml
                    , "orgsource" .= T.pack (postUrl bp -<.> "org")
-                   , "txtsource" .= T.pack (postUrl bp -<.> "txt")
+                   , "txtsource" .= T.pack (postUrl bp -<.> "gmi")
                    , "pdf" .= T.pack (postUrl bp -<.> "pdf")
                    , "permalink" .= T.pack (toS origin <> postUrl bp -<.> "html")
                    ]
   writeFile' out (toS htmlContent)
-
-genAscii :: (MonadIO m, MonadFail m) => BlogPost -> m Text
-genAscii bp = do
-  eitherAscii <- liftIO $ Pandoc.runIO $ Writers.writePlain def (postBody bp)
-  case eitherAscii of
-    Left _ -> fail "BAD"
-    Right innerAscii -> return innerAscii
-
-
-genAsciiAction
-  :: (FilePath -> Action BlogPost)
-     -> [Char] -> Action ()
-genAsciiAction getPost out = do
-  let srcFile = srcDir </> (dropDirectory1 (out -<.> "org"))
-  need [srcFile]
-  bp <- getPost srcFile
-  innerAscii <- genAscii bp
-  let preamble = postTitle bp <> "\n"
-                 <> T.replicate (T.length (postTitle bp)) "=" <> "\n\n"
-                 <> postAuthor bp <> "\n"
-                 <> postDate bp <> "\n"
-                 <> toS origin <> toS (postUrl bp) <> "\n\n"
-  writeFile' out (toS  (preamble <> toS innerAscii))
 
 genPdfAction :: p -> [Char] -> Action ()
 genPdfAction _getPost out = do
@@ -402,11 +377,6 @@ allPdfAction = do
     let allHtmlFiles = map (-<.> "pdf") allOrgFiles
     need (map build allHtmlFiles)
 
-allAsciiAction :: Action ()
-allAsciiAction = do
-    allOrgFiles <- getDirectoryFiles srcDir ["//*.org"]
-    let allAsciiFiles = map (-<.> "txt") allOrgFiles
-    need (map build allAsciiFiles)
 
 allGeminiAction :: Action ()
 allGeminiAction = do
@@ -449,7 +419,6 @@ fastRule =
 needAll :: Action ()
 needAll = do
   needFast
-  allAsciiAction
   allPdfAction
   allGeminiAction
 
