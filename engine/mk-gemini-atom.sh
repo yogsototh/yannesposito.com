@@ -11,7 +11,7 @@ maxarticles=10
 
 # RSS Metas
 rsstitle="her.esy.fun"
-rssurl="gemini://her.esy.fun/atom.xml"
+rssurl="gemini://her.esy.fun/gem-atom.xml"
 websiteurl="gemini://her.esy.fun"
 rssdescription="her.esy.fun articles, mostly random personal thoughts"
 rsslang="en"
