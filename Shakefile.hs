@@ -113,12 +113,9 @@ getBlogpostFromMetas path toc pandoc@(Pandoc meta _) = do
     inlineToTxt (Str t) = t
     inlineToTxt _ = ""
 
-
-
 sortByPostDate :: [BlogPost] -> [BlogPost]
 sortByPostDate =
         sortBy (\a b-> compare (postDate b) (postDate a))
-
 
 build :: FilePath -> FilePath
 build = (</>) siteDir
@@ -145,7 +142,7 @@ buildRules = do
     let asset = dropDirectory1 out
     case (takeExtension asset) of
         ".html" -> do
-          if out == siteDir </> "archive.html"
+          if out == siteDir </> "index.html"
             then buildArchive getPosts getTemplate out
             else genHtmlAction getPost getTemplate out
         ".pdf" -> do
@@ -157,7 +154,7 @@ buildRules = do
           fileExists <- doesFileExist (srcDir </> asset)
           if fileExists
             then copyFileChanged (srcDir </> asset) out
-            else if out == siteDir </> "archive.gmi"
+            else if out == siteDir </> "index.gmi"
                     then buildGeminiArchive getPosts out
                     else genGeminiAction out
         ".jpg" -> compressImage asset
@@ -169,6 +166,11 @@ buildRules = do
     needAll
     command_[] "engine/pre-deploy.sh" []
 
+welcomeTxt :: Text
+welcomeTxt = toS $ T.intercalate "\n" $
+  [ "Welcome to my small place on the Internet."
+  ]
+
 buildArchive
   :: (() -> Action [BlogPost])
      -> (FilePath -> Action Template) -> [Char] -> Action ()
@@ -178,9 +180,9 @@ buildArchive getPosts getTemplate out = do
   need $ css <> map postSrc posts
   let
     title :: Text
-    title = "#+title: Posts"
+    title = "#+title: Yann Esposito's blog"
     articleList = toS $ T.intercalate "\n" $ map postInfo posts
-    fileContent =  title <> "\n\n" <> articleList
+    fileContent =  title <> "\n\n" <> welcomeTxt <> "\n\n" <> articleList
   eitherResult <- liftIO $ Pandoc.runIO $ Readers.readOrg (def { readerStandalone = True }) (toS fileContent)
   bp <- case eitherResult of
     Left  _      -> fail "BAD"
@@ -198,6 +200,18 @@ buildArchive getPosts getTemplate out = do
                    ]
   writeFile' out (toS htmlContent)
 
+geminiMenu :: Text
+geminiMenu = T.intercalate "\n"
+  [ "=> /index.gmi Home"
+  , "=> /gem-atom.xml Feed"
+  , "=> /slides.gmi Slides"
+  , "=> /about-me.gmi About"
+  , ""
+  , "=> https://gitea.esy.fun code"
+  , "=> https://espial.esy.fun/u:yogsototh bookmarks"
+  , "=> https://espial.esy.fun/u:yogsototh/notes notes"
+  ]
+
 buildGeminiArchive
   :: (() -> Action [BlogPost])
      -> [Char] -> Action ()
@@ -206,9 +220,12 @@ buildGeminiArchive getPosts out = do
   need $ map postSrc posts
   let
     title :: Text
-    title = "# Posts"
+    title = "# Yann Esposito's posts"
     articleList = toS $ T.intercalate "\n" $ map postGeminiInfo posts
-    fileContent =  title <> "\n\n" <> articleList
+    fileContent =  title
+                   <> "\n\n" <> welcomeTxt
+                   <> "\n\n" <> articleList
+                   <> "\n\n" <> geminiMenu
   writeFile' out (toS fileContent)
 
 postGeminiInfo :: BlogPost -> Text
@@ -253,6 +270,7 @@ postamble now bp =
   , "@@html:<i>Any comment? Click on my email below and I'll add it.</i>@@"
   , ""
   , "| author | @@html:<span class=\"author\">@@ [[mailto:Yann Esposito <yann@esposito.host>?subject=yblog: " <> (postTitle bp) <> "][Yann Esposito <yann@esposito.host>]] @@html:</span>@@ |"
+  , "| gpg | [[file:files/publickey.txt][CB420F8005F1A662]] |"
   , "| tags | " <> T.intercalate " " (map ("#"<>) (postTags bp)) <> " |"
   , "| date | " <> postDate bp <> " |"
   , "| rss | [[file:/rss.xml][RSS]] ([[https://validator.w3.org/feed/check.cgi?url=https%3A%2F%2Fher.esy.fun%2Frss.xml][validate]]) |"
@@ -382,7 +400,7 @@ allGeminiAction :: Action ()
 allGeminiAction = do
     allOrgFiles <- getDirectoryFiles srcDir ["//*.org"]
     let allGeminiFiles = map (-<.> "gmi") allOrgFiles
-    need (map build $ allGeminiFiles <> ["archive.gmi"])
+    need (map build $ allGeminiFiles <> ["index.gmi"])
 
 compressImage :: FilePath -> Action ()
 compressImage img = do
@@ -400,15 +418,16 @@ compressImage img = do
                         , "-quality","85"
                         , "-define","filter:blur=0.75"
                         , "-filter","Gaussian"
-                        , "-ordered-dither","o4x4,4"
+                        -- , "-ordered-dither","o4x4,4"
                         , dst ]
 
 
 needFast :: Action ()
 needFast = do
   allAssets <- filter (/= ".DS_Store") <$> getDirectoryFiles srcDir ["**"]
-  need (map build $ allAssets <> ["archive.html"])
+  need (map build $ allAssets <> ["index.html"])
   allHtmlAction
+  allGeminiAction
 
 fastRule :: Rules ()
 fastRule =
