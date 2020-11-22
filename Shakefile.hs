@@ -181,8 +181,9 @@ buildArchive getPosts getTemplate out = do
   let
     title :: Text
     title = "#+title: Yann Esposito's blog"
+    menu = "@@html:<a href=\"/index.html\">Home</a> | <a href=\"/slides.html\">Slides</a> | <a href=\"/about-me.html\">About</a>@@"
     articleList = toS $ T.intercalate "\n" $ map postInfo posts
-    fileContent =  title <> "\n\n" <> welcomeTxt <> "\n\n" <> articleList
+    fileContent =  title <> "\n\n" <> menu <> "\n\n" <> welcomeTxt <> "\n\n" <> articleList
   eitherResult <- liftIO $ Pandoc.runIO $ Readers.readOrg (def { readerStandalone = True }) (toS fileContent)
   bp <- case eitherResult of
     Left  _      -> fail "BAD"
@@ -205,11 +206,7 @@ geminiMenu = T.intercalate "\n"
   [ "=> /index.gmi Home"
   , "=> /gem-atom.xml Feed"
   , "=> /slides.gmi Slides"
-  , "=> /about-me.gmi About"
-  , ""
-  , "=> https://gitea.esy.fun code"
-  , "=> https://espial.esy.fun/u:yogsototh bookmarks"
-  , "=> https://espial.esy.fun/u:yogsototh/notes notes"
+  , "=> /about-me.gmi About me"
   ]
 
 buildGeminiArchive
@@ -224,8 +221,9 @@ buildGeminiArchive getPosts out = do
     articleList = toS $ T.intercalate "\n" $ map postGeminiInfo posts
     fileContent =  title
                    <> "\n\n" <> welcomeTxt
-                   <> "\n\n" <> articleList
                    <> "\n\n" <> geminiMenu
+                   <> "\n\n" <> "## Articles"
+                   <> "\n\n" <> articleList
   writeFile' out (toS fileContent)
 
 postGeminiInfo :: BlogPost -> Text
@@ -325,6 +323,9 @@ genHtml bp = do
 origin :: Text
 origin = "https://her.esy.fun"
 
+geminiOrigin :: Text
+geminiOrigin = "gemini://her.esy.fun"
+
 genHtmlAction
   :: (FilePath -> Action BlogPost)
      -> (FilePath -> Action Template) -> [Char] -> Action ()
@@ -334,10 +335,11 @@ genHtmlAction getPost getTemplate out = do
                   "slides" -> "slide.mustache"
                   "drafts" -> "post.mustache"
                   _ -> "main.mustache"
-  template <- getTemplate ("templates" </> tplname)
+  let templateFile = "templates" </> tplname
+  template <- getTemplate templateFile
   let srcFile = srcDir </> (dropDirectory1 (out -<.> "org"))
   liftIO $ putText $ "need: " <> (toS srcFile) <> " -> " <> (toS out)
-  need [srcFile]
+  need [srcFile,templateFile,"templates" </> "menu.mustache","Shakefile.hs"]
   bp <- getPost srcFile
   innerHtml <- genHtml bp
   let htmlContent =
@@ -350,6 +352,7 @@ genHtmlAction getPost getTemplate out = do
                    , "body" .= innerHtml
                    , "orgsource" .= T.pack (postUrl bp -<.> "org")
                    , "txtsource" .= T.pack (postUrl bp -<.> "gmi")
+                   , "geminiurl" .= T.pack (toS geminiOrigin <> postUrl bp -<.> "gmi")
                    , "pdf" .= T.pack (postUrl bp -<.> "pdf")
                    , "permalink" .= T.pack (toS origin <> postUrl bp -<.> "html")
                    ]
@@ -358,7 +361,7 @@ genHtmlAction getPost getTemplate out = do
 genPdfAction :: p -> [Char] -> Action ()
 genPdfAction _getPost out = do
   let srcFile = srcDir </> (dropDirectory1 (out -<.> "org"))
-  need [srcFile]
+  need [srcFile,"Shakefile.hs"]
   command_ [] "pandoc"
     ["--pdf-engine=xelatex"
     , "--resource-path=" <> takeDirectory srcFile
