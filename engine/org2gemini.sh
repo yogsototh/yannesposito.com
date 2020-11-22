@@ -9,6 +9,7 @@ dst="$2"
   perl -pe 's#^email:\s+yann\@esposito.host\s*#$&=> /files/publickey.txt gpg\n#g;' | \
   perl -pe 's#\[\[([^]]*)\]\[([^]]*)\]\]#\n=> $1 $2#g;' | \
   perl -pe 's#=> file:([^ ]*)\.org#=> $1.gmi#g;' | \
+  perl -pe 's#=> file:([^ ]*)#=> $1#g;' | \
   perl -pe 's#\[\[(file:)?([^]]*)\]\]#=> $2#g;' | \
   perl -pe 's#^\* *\n##' | \
   perl -pe 's#^\**[ ]*:.*:$##' | \
