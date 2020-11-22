@@ -367,7 +367,7 @@ genPdfAction _getPost out = do
     , "--resource-path=" <> takeDirectory srcFile
     , srcFile
     , "-H", "engine" </> "deeplist.tex"
-    , "-V", "mainfont:Hoefler Text"
+    , "-V", "mainfont:CMU Serif"
     , "-V", "mainfontoptions:Renderer=OpenType, Mapping=tex-text, ItalicFeatures={Alternate = 0},  Ligatures={Common,Rare,Historic,Contextual},Contextuals=Inner,Alternate=1"
     , "-V", "monofont:Menlo"
     , "-V", "monofontoptions:Scale=0.7"
