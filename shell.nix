@@ -23,10 +23,10 @@ pkgs.mkShell {
         perlPackages.URI
         minify
         niv
-        ghc
         git
         direnv
-        haskellPackages.shake
+# ghc
+# haskellPackages.shake
         tmux
         # for emacs dev
         ripgrep
