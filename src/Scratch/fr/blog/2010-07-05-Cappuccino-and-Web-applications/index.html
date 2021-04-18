@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <title>YBlog - Cappuccino ou jQuery ?</title>
+        <meta name="keywords" content="Cappuccino, iPhone, web, javascript, jQuery, Cocoa, programming" />
+
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/fr/blog/feed/feed.xml" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+        <!-- IndieAuth -->
+        <link href="https://twitter.com/yogsototh" rel="me">
+        <link href="https://github.com/yogsototh" rel="me">
+        <link href="mailto:yann.esposito@gmail.com" rel="me">
+        <link rel="pgpkey" href="../../../../pubkey.txt">
+    </head>
+    <body lang="fr" class="article">
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	    <span id="choixlang">
+                  <a href="../../../../Scratch/en/blog/2010-07-05-Cappuccino-and-Web-applications/">Anglais</a> 
+        	    </span>
+              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
+        	    <span class="flush"></span>
+        	</div>
+			</div>
+
+			<div id="titre">
+				<h1>Cappuccino ou jQuery ?</h1>
+				
+			</div>
+			<div class="flush"></div>
+      <div id="afterheader" class="article">
+          <div class="corps">
+              <div class="intro">
+<p><abbr title="Trop long à lire">tlàl</abbr>:</p>
+<ul>
+<li>J’ai essayé de faire une version de <a href="http://yannesposito.com/softwares/ypassword">YPassword</a> en jQuery et avec Cappuccino.</li>
+<li>Cappuccino est très bien sur les navigateurs non mobile mais l’application pèse 1.4Mo et n’est pas compatible avec l’iPhone.</li>
+<li>la version jQuery n’est pas aussi jolie que la version réalisée avec Cappuccino mais elle pèse seulement 106Ko et est compatible avec l’iPhone.</li>
+<li>J’essayerai Dashcode 3</li>
+</ul>
+</div>
+<hr />
+<div class="intro">
+<p>Avant de commencer, je dois dire que je sais que Cappuccino et jQuery ne sont pas plus comparable que Cocoa et la <em>standard library</em> en C++. L’un est fait pour créer des interfaces utilisateurs tandis que l’autre est plus une librairie qui aide aux tâches de bas niveaux. Par contre je les ai utilisé tous les deux pour faire la même application. C’est pourquoi je compare l’expérience que j’ai retenu de chacun pour cette tâche.</p>
+</div>
+<p>J’ai fait une version web de mon widget <a href="http://yannesposito.com/softwares/ypassword">YPassword</a>. C’est un simple widget qui permet d’organiser ses mots de passes simplement avec une grande sécurité et de façon portable. Ce n’est pas un widget créé pour remplacer le <em>trousseau d’accès</em>, mais plus un générateur de mots de passe.</p>
+<p>Le premier a été élaboré à partir du code de mon widget Mac. Vous pouvez l’essayer <a href="http://yannesposito.com/YPassword.old">ici</a>. J’ai ensuite fait une version avec <a href="http://cappuccino.org">Cappuccino</a>, que vous pouvez essayer <a href="http://yannesposito.com/YPassword">ici</a>.</p>
+<h2 id="que-fait-ce-widget">Que fait ce widget ?</h2>
+<div class="intro">
+<p>Si vous vous moquez de savoir ce que fait mon widget, vous pouvez allez directement à la <a href="#cappuccino">section suivante</a>.</p>
+</div>
+<p>J’organise mes mots de passe avec une méthode simple. Je mémorise un mot de passe <em>maître</em>. Et mon mot de passe est alors (principalement) : <code class="ruby">hash(motDePasseMaitre+NomDeDomaine)</code></p>
+<p>En réalité j’ai besoin d’un plus d’informations pour créer mon mot de passe&nbsp;:</p>
+<ul>
+<li>Un mot de passe maître ;</li>
+<li>une URL ;</li>
+<li>une longeur maximale de mot de passe ;</li>
+<li>le type de sortie (hexadécimale ou base64) ;</li>
+<li>Combien de fois mon mot de passe a dû être changé.</li>
+</ul>
+<p>Le mot de passe résultant est calculé comme suit&nbsp;:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode ruby"><code class="sourceCode ruby"><a class="sourceLine" id="cb1-1" title="1">domainName=domaine_Name_Of_URL(url)</a>
+<a class="sourceLine" id="cb1-2" title="2">hash=sha1( masterPassword + leakedTimes + domainName )</a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="kw">if</span> ( kind == <span class="st">'base64'</span> )</a>
+<a class="sourceLine" id="cb1-4" title="4">    hash=base64(hash)</a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="kw">end</span></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="kw">return</span> hash[<span class="dv">0</span>..maxlength]</a></code></pre></div>
+<p>En fait, selon le site web, on peut avoir des contraintes très différentes&nbsp;:</p>
+<ul>
+<li>longueur minimale ;</li>
+<li>longueur maximale ;</li>
+<li>ne doit pas contenir de caractères spéciaux ;</li>
+<li>doit contenir des caractères spéciaux ;</li>
+<li>etc…</li>
+</ul>
+<p>Et si vous souhaitez changer votre mot de passe, le nombre de changement sert à ça. Toutes les informations peuvent rester publiques sans trop de danger à l’exception du mot de passe principal.</p>
+<p>Si vous souhaitez avoir encore plus de détails vous pouvez toujours lire certaines de mes anciens articles de blog (en anglais)&nbsp;:</p>
+<ul>
+<li><a href="http://yannesposito.com/YBlog/Computer/Entr%C3%A9es/2008/7/30_Easy%2C_secure_and_portable_password_management_system.html">simple portable password management</a></li>
+<li><a href="http://yannesposito.com/YBlog/Computer/Entrées/2009/3/15_Shorter_Password_with_the_same_efficiency.html">base64</a></li>
+<li><a href="http://yannesposito.com/YBlog/Computer/Entr%C3%A9es/2009/4/11_Be_able_to_change_your_password.html">change your password</a></li>
+</ul>
+<h2 id="cappuccino">Cappuccino</h2>
+<p>Tout d’abord je voudrais dire que les applications réalisées avec Cappuccino sont tout simplement incroyables. C’est comme avoir une application Mac dans son navigateur.</p>
+<p>Je dois aussi admettre que j’ai pris du plaisir a écrire mon application avec Cappuccino. C’est comme programmer une application Mac ou iPhone. Si vous connaissez bien Cocoa, vous vous sentirez comme <em>à la maison</em>. Si vous ne connaissez pas Cocoa, je vous conseille de vous y intéresser. Il s’agit vraiment d’un framework excellent pour faire des interfaces utilisateur. Je ne suis pas un spécialiste de tous les frameworks. Mais j’ai réalisé des Interfaces Utilisateurs avec les MFC, Java Swing<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> et WXWindows il y a quelques années. Et je dois dire que Cocoa est bien meilleurs que tous ces framework.</p>
+<p>Cappuccino est un framework spécialisé dans le développement d’application web vraiment exceptionnel. Mais il a aussi quelques défauts qui ont surgit lors de l’écriture de mon widget.</p>
+<p>Les choses qui m’ont plu&nbsp;:</p>
+<ul>
+<li>Le résultat est vraiment très beau</li>
+<li>C’était très agréable de programmer</li>
+<li>Comme programmer une application Mac</li>
+<li>J’aurai pu utiliser <a href="http://developer.apple.com/technologies/tools/xcode.html">Interface Builder</a> pour créer l’interface.</li>
+</ul>
+<p>Les choses qui ne m’ont pas plu&nbsp;:</p>
+<ul>
+<li>J’ai mis un bon moment avant de comprendre comment récupérer le <code>onChange</code> des champs textuels.</li>
+<li>La documentation manquait d’organisation.</li>
+<li>Ça ne marche pas sous iPhone.</li>
+<li>Il a fallu déployer 11Mo.</li>
+<li>Il faut télécharger 1,3Mo pour que l’application se charge dans le navigateur.</li>
+</ul>
+<p>Je n’ai pas utilisé les <code>bindings</code> parce qu’il me semble qu’ils ne sont pas prêts.</p>
+<h2 id="jquery">jQuery</h2>
+<p>La version jQuery de YPassword n’est pas aussi bien finie que celle de Cappuccino. Simplement parce qu’il n’y a pas de <em>slider</em> directement avec jQuery. Il faudrait que j’utilise jQueryUI. Et je pense que l’application deviendrait beaucoup plus lourde pour le coups. En tout cas largement au dessus des 106Ko actuels.</p>
+<p>J’ai utilisé le code de mon widget mac en l’adaptant un peu pour faire cette version. C’était relativement facile. Mais jQuery n’est pas un <em>framework orienté application</em>. Il s’agit plus d’un <em>framework pour faire des animations qui la pète</em>.</p>
+<p>Je n’ai pas beaucoup plus à dire sur la version jQuery, sinon que programmer avec jQuery était de la programmation de niveau beaucoup plus bas qu’avec Cappuccino.</p>
+<h2 id="en-conclusion">En conclusion</h2>
+<p>Si vous voulez faire une application compatible iPhone n’utilisez pas Cappuccino. Du moins pas encore. Si vous souhaitez faire un application très simple (comme la mienne), je pense que Cappuccino est un peu trop lourd pour ça.</p>
+<p>Si vous souhaitez faire des applications web complexes qui ressemblent à des applications de bureau alors clairement Cappuccino est un très bon choix. Notez cependant qu’il peut être un peu difficile de débuter.</p>
+<p>Finallement, pour terminer la version web de mon widget, j’essayerai Dashcode 3. Il semblerai que ce soit une bonne alternative pour créer des widget sur le web compatible iPhone. Je ne sais pas si les applications réalisées avec Dashcode 3 sont compatibles pour les browser n’utilisant pas webkit. Mais si c’est le cas, alors ça pourrait sonner le glas des projets comme Cappuccino et Sproutcore.</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Si ça vous intéresse vous pouvez jeter un coup d’œil à <a href="http://labh-curien.univ-st-etienne.fr/informatique/SEDiL/">SEDiL</a>. Je suis assez fier de la vue automatique des arbres que j’ai programmé sans librairie de départ.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+          </div>
+          <div id="afterarticle">
+              <div id="social">
+                  <a href="../../../../Scratch/fr/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
+                  ·
+                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/2010-07-05-Cappuccino-and-Web-applications/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
+                  ·
+                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/2010-07-05-Cappuccino-and-Web-applications/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
+                  <br />
+                  <a class="message" href="../../../../Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
+              </div>
+              <div id="navigation">
+                  <a href="../../../../">Accueil</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/blog">Blog</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/softwares">Logiciels</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/about">Auteur</a>
+              </div>
+              <div id="totop"><a href="#header">↑ Top ↑</a></div>
+              <div id="bottom">
+                  <div>
+                      Published on 2010-07-05
+                  </div>
+                  <div>
+                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+                  </div>
+                  <div>
+                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+                  </div>
+
+                  <div>
+                      Done with
+                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
+                      <span class="pala">&amp;</span>
+                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
+                  </div>
+                  <hr />
+                  <div style="max-width: 100%">
+                      <a href="https://cardanohub.org">
+                          <img src="../../../../Scratch/img/ada-logo.png" class="simple" style="height: 16px;
+                                    border-radius: 50%;
+                                    vertical-align:middle;
+                                    display:inline-block;" />
+                          ADA:
+                      </a>
+                          <code style="display:inline-block;
+                                       word-wrap:break-word;
+                                       text-align: left;
+                                       vertical-align: top;
+                                       max-width: 85%;">
+                              DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp
+                          </code>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+        </div>
+    </body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>YBlog - base64 and sha1 on iPhone</title>
+        <meta name="keywords" content="iPhone, ObjectiveC, programming" />
+
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/en/blog/feed/feed.xml" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+        <!-- IndieAuth -->
+        <link href="https://twitter.com/yogsototh" rel="me">
+        <link href="https://github.com/yogsototh" rel="me">
+        <link href="mailto:yann.esposito@gmail.com" rel="me">
+        <link rel="pgpkey" href="../../../../pubkey.txt">
+    </head>
+    <body lang="en" class="article">
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	    <span id="choixlang">
+                  <a href="../../../../Scratch/fr/blog/2010-09-02-base64-and-sha1-on-iPhone/">French</a> 
+        	    </span>
+              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
+        	    <span class="flush"></span>
+        	</div>
+			</div>
+
+			<div id="titre">
+				<h1>base64 and sha1 on iPhone</h1>
+				
+			</div>
+			<div class="flush"></div>
+      <div id="afterheader" class="article">
+          <div class="corps">
+              <p>Lets be straight: here are two functions to add to your code to have <code>base64</code> and <code>hexadecimal</code> version of the <code>sha1</code> hash of an NSString.</p>
+<p>To use it, simply copy the code in your class and use as this:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode objective-c"><code class="sourceCode objectivec"><a class="sourceLine" id="cb1-1" title="1"><span class="pp">#import </span><span class="im">&lt;CommonCrypto/CommonDigest.h&gt;</span></a>
+<a class="sourceLine" id="cb1-2" title="2">...</a>
+<a class="sourceLine" id="cb1-3" title="3">NSString *b64_hash = [<span class="kw">self</span> b64_sha1:<span class="st">@&quot;some NSString to be sha1'ed&quot;</span>];</a>
+<a class="sourceLine" id="cb1-4" title="4">...</a>
+<a class="sourceLine" id="cb1-5" title="5">NSString *hex_hash = [<span class="kw">self</span> hex_sha1:<span class="st">@&quot;some NSString to be sha1'ed&quot;</span>];</a></code></pre></div>
+<p>The <code>base64</code> algorithm must be programmed by hand on iPhone!</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><a class="sourceLine" id="cb2-1" title="1"></a>
+<a class="sourceLine" id="cb2-2" title="2">- (<span class="dt">unsigned</span> <span class="dt">char</span> *)sha1:(NSString *)baseString result:(<span class="dt">unsigned</span> <span class="dt">char</span> *)result {</a>
+<a class="sourceLine" id="cb2-3" title="3">    <span class="dt">char</span> *c_baseString=(<span class="dt">char</span> *)[baseString UTF8String];</a>
+<a class="sourceLine" id="cb2-4" title="4">    CC_SHA1(c_baseString, strlen(c_baseString), result);</a>
+<a class="sourceLine" id="cb2-5" title="5">    <span class="cf">return</span> result;</a>
+<a class="sourceLine" id="cb2-6" title="6">}</a>
+<a class="sourceLine" id="cb2-7" title="7"></a>
+<a class="sourceLine" id="cb2-8" title="8">- (NSString *)base64:(<span class="dt">unsigned</span> <span class="dt">char</span> *)result {</a>
+<a class="sourceLine" id="cb2-9" title="9">    NSString *password=[[NSString alloc] init];</a>
+<a class="sourceLine" id="cb2-10" title="10">    <span class="dt">static</span> <span class="dt">const</span> <span class="dt">unsigned</span> <span class="dt">char</span> cb64[<span class="dv">65</span>]=<span class="st">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/&quot;</span>;</a>
+<a class="sourceLine" id="cb2-11" title="11">    <span class="cf">for</span> (<span class="dt">int</span> i=<span class="dv">0</span>; i&lt;CC_SHA1_DIGEST_LENGTH; i+=<span class="dv">3</span>) {</a>
+<a class="sourceLine" id="cb2-12" title="12">        password=[password stringByAppendingFormat:@<span class="st">&quot;%c%c%c%c&quot;</span>,</a>
+<a class="sourceLine" id="cb2-13" title="13">            cb64[(result[i] &amp;<span class="bn">0xFC</span>)&gt;&gt;<span class="dv">2</span>],</a>
+<a class="sourceLine" id="cb2-14" title="14">            cb64[((result[i] &amp; <span class="bn">0x03</span>) &lt;&lt; <span class="dv">4</span>)</a>
+<a class="sourceLine" id="cb2-15" title="15">                | ((result[i + <span class="dv">1</span>] &amp; <span class="bn">0xF0</span>) &gt;&gt; <span class="dv">4</span>)],</a>
+<a class="sourceLine" id="cb2-16" title="16">            cb64[((result[i + <span class="dv">1</span>] &amp; <span class="bn">0x0F</span>) &lt;&lt; <span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb2-17" title="17">                | ((result[i + <span class="dv">2</span>] &amp; <span class="bn">0xC0</span>) &gt;&gt; <span class="dv">6</span>)],</a>
+<a class="sourceLine" id="cb2-18" title="18">            cb64[result[i+<span class="dv">2</span>]&amp;<span class="bn">0x3F</span>]</a>
+<a class="sourceLine" id="cb2-19" title="19">                ];            </a>
+<a class="sourceLine" id="cb2-20" title="20">    }</a>
+<a class="sourceLine" id="cb2-21" title="21">    <span class="cf">return</span> password;</a>
+<a class="sourceLine" id="cb2-22" title="22">}</a>
+<a class="sourceLine" id="cb2-23" title="23"></a>
+<a class="sourceLine" id="cb2-24" title="24">- (NSString *)hexadecimalRepresentation:(<span class="dt">unsigned</span> <span class="dt">char</span> *)result {</a>
+<a class="sourceLine" id="cb2-25" title="25">    NSString *password=[[NSString alloc] init];</a>
+<a class="sourceLine" id="cb2-26" title="26">    <span class="cf">for</span> (<span class="dt">int</span> i=<span class="dv">0</span>; i&lt;CC_SHA1_DIGEST_LENGTH; i++) {</a>
+<a class="sourceLine" id="cb2-27" title="27">        password=[password stringByAppendingFormat:@<span class="st">&quot;%02x&quot;</span>, result[i]];</a>
+<a class="sourceLine" id="cb2-28" title="28">    }</a>
+<a class="sourceLine" id="cb2-29" title="29">    <span class="cf">return</span> password;</a>
+<a class="sourceLine" id="cb2-30" title="30">}</a>
+<a class="sourceLine" id="cb2-31" title="31"></a>
+<a class="sourceLine" id="cb2-32" title="32">- (NSString *)b64_sha1:(NSString *)inputString {</a>
+<a class="sourceLine" id="cb2-33" title="33">    <span class="dt">unsigned</span> <span class="dt">char</span> result[CC_SHA1_DIGEST_LENGTH+<span class="dv">1</span>];</a>
+<a class="sourceLine" id="cb2-34" title="34">    [self sha1:inputString result:result];</a>
+<a class="sourceLine" id="cb2-35" title="35">    <span class="cf">return</span> [self base64:result];</a>
+<a class="sourceLine" id="cb2-36" title="36">}</a>
+<a class="sourceLine" id="cb2-37" title="37"></a>
+<a class="sourceLine" id="cb2-38" title="38">- (NSString *)hex_sha1:(NSString *)inputString {</a>
+<a class="sourceLine" id="cb2-39" title="39">    <span class="dt">unsigned</span> <span class="dt">char</span> result[CC_SHA1_DIGEST_LENGTH+<span class="dv">1</span>];</a>
+<a class="sourceLine" id="cb2-40" title="40">    [self sha1:inputString result:result];</a>
+<a class="sourceLine" id="cb2-41" title="41">    <span class="cf">return</span> [self hexadecimalRepresentation:result];</a>
+<a class="sourceLine" id="cb2-42" title="42">}</a></code></pre></div>
+          </div>
+          <div id="afterarticle">
+              <div id="social">
+                  <a href="../../../../Scratch/en/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
+                  ·
+                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2010-09-02-base64-and-sha1-on-iPhone/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
+                  ·
+                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2010-09-02-base64-and-sha1-on-iPhone/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
+                  <br />
+                  <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
+              </div>
+              <div id="navigation">
+                  <a href="../../../../">Home</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/blog">Blog</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/softwares">Softwares</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/about">About</a>
+              </div>
+              <div id="totop"><a href="#header">↑ Top ↑</a></div>
+              <div id="bottom">
+                  <div>
+                      Published on 2010-09-02
+                  </div>
+                  <div>
+                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+                  </div>
+                  <div>
+                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+                  </div>
+
+                  <div>
+                      Done with
+                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
+                      <span class="pala">&amp;</span>
+                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
+                  </div>
+                  <hr />
+                  <div style="max-width: 100%">
+                      <a href="https://cardanohub.org">
+                          <img src="../../../../Scratch/img/ada-logo.png" class="simple" style="height: 16px;
+                                    border-radius: 50%;
+                                    vertical-align:middle;
+                                    display:inline-block;" />
+                          ADA:
+                      </a>
+                          <code style="display:inline-block;
+                                       word-wrap:break-word;
+                                       text-align: left;
+                                       vertical-align: top;
+                                       max-width: 85%;">
+                              DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp
+                          </code>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+        </div>
+    </body>
+</html>

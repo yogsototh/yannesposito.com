@@ -144,7 +144,11 @@ buildRules = do
         ".html" -> do
           if out == siteDir </> "index.html"
             then buildArchive getPosts getTemplate out
-            else genHtmlAction getPost getTemplate out
+            else do
+              htmlExists <- doesFileExist (srcDir </> asset)
+              if htmlExists
+                then copyFileChanged (srcDir </> asset) out
+                else genHtmlAction getPost getTemplate out
         ".pdf" -> do
           txtExists <- doesFileExist (srcDir </> asset)
           if txtExists
@@ -183,7 +187,8 @@ buildArchive getPosts getTemplate out = do
     title = "#+title: Yann Esposito's blog"
     menu = "@@html:<a href=\"/index.html\">Home</a> | <a href=\"/slides.html\">Slides</a> | <a href=\"/about-me.html\">About</a>@@"
     articleList = toS $ T.intercalate "\n" $ map postInfo posts
-    fileContent =  title <> "\n\n" <> menu <> "\n\n" <> welcomeTxt <> "\n\n" <> articleList
+    olderArchives = "---\n\n@@html:<a href=\"/Scratch/en/blog/index.html\">Older Archives from my previous blog</a>@@"
+    fileContent =  title <> "\n\n" <> menu <> "\n\n" <> welcomeTxt <> "\n\n" <> articleList <> olderArchives
   eitherResult <- liftIO $ Pandoc.runIO $ Readers.readOrg (def { readerStandalone = True }) (toS fileContent)
   bp <- case eitherResult of
     Left  _      -> fail "BAD"
