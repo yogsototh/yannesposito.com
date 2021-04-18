@@ -1,123 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>YBlog - Holy Haskell Project Starter</title>
-        <meta name="keywords" content="programming" />
-
-        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/en/blog/feed/feed.xml" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
-        <!--[if lt IE 9]>
-        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
-        <![endif]-->
-        <!-- IndieAuth -->
-        <link href="https://twitter.com/yogsototh" rel="me">
-        <link href="https://github.com/yogsototh" rel="me">
-        <link href="mailto:yann.esposito@gmail.com" rel="me">
-        <link rel="pgpkey" href="../../../../pubkey.txt">
-    </head>
-    <body lang="en" class="article">
-        <div id="content">
-	        			<div id="header">
-			    <div id="choix">
-        	    <span id="choixlang">
-                  <a href="../../../../Scratch/fr/blog/Holy-Haskell-Starter/">French</a> 
-        	    </span>
-              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
-        	    <span class="flush"></span>
-        	</div>
-			</div>
-
-			<div id="titre">
-				<h1>Holy Haskell Project Starter</h1>
-				<h2>A Haskell tutorial: from nothing to something useful</h2>
-
-			</div>
-			<div class="flush"></div>
-      <div id="afterheader" class="article">
-          <div class="corps">
-              <div>
-<img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/holy-grail-monty-python.jpg" alt="Monty Python Holy Grail" />
-</div>
-<div class="intro">
-<p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span> Learn how to start a new Haskell project. Translate a starter tool written in <code>zsh</code> in Haskell using its own result.</p>
-<blockquote>
-<p>“Good Sir Knight, will you come with me to Camelot, and join us at the Round Table?”</p>
-</blockquote>
-<p>In order to work properly with Haskell you need to initialize your environment. Typically, you need to use a cabal file, create some test for your code. Both, unit test and propositional testing (random and exhaustive up to a certain depth). You need to use <code>git</code> and generally hosting it on github. Also, it is recommended to use cabal sandboxes. And as bonus, an auto-update tool that recompile and retest on each file save.</p>
-<p>In this article, we will create such an environment using a zsh script. Then we will write a Haskell project which does the same work as the zsh script. You will then see how to work in such an environment.</p>
-<p>If you are starting to understand Haskell but consider yourself a beginner, this tutorial will show you how to make a real application using quite surprisingly a lot of features:</p>
-<ul>
-<li>use colorized output</li>
-<li>interact with a user in command line</li>
-<li>read/write files</li>
-<li>kind of parse a file (in fact, simply split it)</li>
-<li>use a templating system (mustache: fill a data structure, write files)</li>
-<li>make a HTTP GET request then parse the JSON answer and use it</li>
-<li>use random</li>
-<li>create a cabal package</li>
-<li>add and use non source files to a cabal package</li>
-<li>Test your code (both unit testing and property testing)</li>
-</ul>
-<p><strong>☞</strong> zsh is by its nature more suitable to file manipulation. But the Haskell code is clearly more organized while quite terse for a multi-purpose language.</p>
-<p><strong>☞</strong> holy-project is on hackage. It can be installed with <code>cabal update &amp;&amp; cabal install holy-project</code>.</p>
-</div>
-<p>I recently read this excellent article: <a href="http://jabberwocky.eu/2013/10/24/how-to-start-a-new-haskell-project/">How to Start a New Haskell Project</a>.</p>
-<p>While the article is very good, I lacked some minor informations<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. Inspired by it, I created a simple script to initialize a new Haskell project. During the process I improved some things a bit.</p>
-<p>If you want to use this script, the steps are:</p>
-<ol type="1">
-<li><a href="http://wwW.haskell.org/platform">Install Haskell</a></li>
-<li>Make sure you have the latest <code>cabal-install</code> (at least 1.18)</li>
-</ol>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" title="1"><span class="op">&gt;</span> <span class="ex">cabal</span> install cabal-install</a></code></pre></div>
-<ol start="3" type="1">
-<li>Download and run the script</li>
-</ol>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" title="1"><span class="co"># Download the script</span></a>
-<a class="sourceLine" id="cb2-2" title="2"><span class="fu">git</span> clone https://github.com/yogsototh/init-haskell-project.git</a>
-<a class="sourceLine" id="cb2-3" title="3"><span class="co"># Copy the script in a directory of you PATH variable</span></a>
-<a class="sourceLine" id="cb2-4" title="4"><span class="fu">cp</span> init-haskell-project/holy-haskell.sh ~/bin</a>
-<a class="sourceLine" id="cb2-5" title="5"><span class="co"># Go to the directory containing all your projects</span></a>
-<a class="sourceLine" id="cb2-6" title="6"><span class="bu">cd</span> my/projects/directory</a>
-<a class="sourceLine" id="cb2-7" title="7"><span class="co"># Launch thcript</span></a>
-<a class="sourceLine" id="cb2-8" title="8"><span class="ex">holy-haskell.sh</span></a></code></pre></div>
-<p>What does this script do that <code>cabal init</code> doesn’t do?</p>
-<ul>
-<li>Use cabal sandbox</li>
-<li>It initialize <code>git</code> with the right <code>.gitignore</code> file.</li>
-<li>Use <code>tasty</code> to organize your tests (HUnit, QuickCheck and SmallCheck).</li>
-<li>Use <code>-Wall</code> for <code>ghc</code> compilation.</li>
-<li>Will make references to Holy Grail</li>
-<li>Search your default github username via <a href="http://developer.github.com/v3/search/#search-users">github api</a>.</li>
-</ul>
-<h2 id="zsh-really"><code>zsh</code> really?</h2>
-<div>
-<img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/french-insult.jpg" alt="French insult" />
-</div>
-<p>Developing the script in <code>zsh</code> was easy. But considering its size, it is worth to rewrite it in Haskell. Furthermore, it will be a good exercise.</p>
-<h3 id="patricide">Patricide</h3>
-<p>In a first time, we initialize a new Haskell project with <code>holy-haskell.sh</code>:</p>
-<pre>
+<!doctype html><html lang=en><meta charset=utf-8><title>YBlog - Holy Haskell Project Starter</title><meta name=keywords content="programming"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/en/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=en class=am><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/fr/blog/Holy-Haskell-Starter/>French</a></span>
+<span class=ao><a href=#navigation>↓ Menu ↓</a></span>
+<span class=bn></span></div></div><div id=titre><h1>Holy Haskell Project Starter</h1><h2>A Haskell tutorial: from nothing to something useful</h2></div><div class=bn></div><div id=afterheader class=am><div class=bq><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/holy-grail-monty-python.jpg alt="Monty Python Holy Grail"></div><div class=bl><p><span class=sc><abbr title="Too long; didn't read">tl;dr</abbr>:</span> Learn how to start a new Haskell project. Translate a starter tool written in <code>zsh</code> in Haskell using its own result.<blockquote><p>“Good Sir Knight, will you come with me to Camelot, and join us at the Round Table?”</blockquote><p>In order to work properly with Haskell you need to initialize your environment. Typically, you need to use a cabal file, create some test for your code. Both, unit test and propositional testing (random and exhaustive up to a certain depth). You need to use <code>git</code> and generally hosting it on github. Also, it is recommended to use cabal sandboxes. And as bonus, an auto-update tool that recompile and retest on each file save.<p>In this article, we will create such an environment using a zsh script. Then we will write a Haskell project which does the same work as the zsh script. You will then see how to work in such an environment.<p>If you are starting to understand Haskell but consider yourself a beginner, this tutorial will show you how to make a real application using quite surprisingly a lot of features:<ul><li>use colorized output<li>interact with a user in command line<li>read/write files<li>kind of parse a file (in fact, simply split it)<li>use a templating system (mustache: fill a data structure, write files)<li>make a HTTP GET request then parse the JSON answer and use it<li>use random<li>create a cabal package<li>add and use non source files to a cabal package<li>Test your code (both unit testing and property testing)</ul><p><strong>☞</strong> zsh is by its nature more suitable to file manipulation. But the Haskell code is clearly more organized while quite terse for a multi-purpose language.<p><strong>☞</strong> holy-project is on hackage. It can be installed with <code>cabal update && cabal install holy-project</code>.</div><p>I recently read this excellent article: <a href=http://jabberwocky.eu/2013/10/24/how-to-start-a-new-haskell-project/>How to Start a New Haskell Project</a>.<p>While the article is very good, I lacked some minor informations<a href=#fn1 class=h id=fnref1><sup>1</sup></a>. Inspired by it, I created a simple script to initialize a new Haskell project. During the process I improved some things a bit.<p>If you want to use this script, the steps are:<ol type=1><li><a href=http://wwW.haskell.org/platform>Install Haskell</a><li>Make sure you have the latest <code>cabal-install</code> (at least 1.18)</ol><div class=n id=cb1><pre class="n bash"><code class="n bash"><a class=m id=cb1-1 title=1><span class=op>&gt;</span> <span class=ex>cabal</span> install cabal-install</a></code></pre></div><ol start=3 type=1><li>Download and run the script</ol><div class=n id=cb2><pre class="n bash"><code class="n bash"><a class=m id=cb2-1 title=1><span class=co># Download the script</span></a>
+<a class=m id=cb2-2 title=2><span class=fu>git</span> clone https://github.com/yogsototh/init-haskell-project.git</a>
+<a class=m id=cb2-3 title=3><span class=co># Copy the script in a directory of you PATH variable</span></a>
+<a class=m id=cb2-4 title=4><span class=fu>cp</span> init-haskell-project/holy-haskell.sh ~/bin</a>
+<a class=m id=cb2-5 title=5><span class=co># Go to the directory containing all your projects</span></a>
+<a class=m id=cb2-6 title=6><span class=bu>cd</span> my/projects/directory</a>
+<a class=m id=cb2-7 title=7><span class=co># Launch thcript</span></a>
+<a class=m id=cb2-8 title=8><span class=ex>holy-haskell.sh</span></a></code></pre></div><p>What does this script do that <code>cabal init</code> doesn’t do?<ul><li>Use cabal sandbox<li>It initialize <code>git</code> with the right <code>.gitignore</code> file.<li>Use <code>tasty</code> to organize your tests (HUnit, QuickCheck and SmallCheck).<li>Use <code>-Wall</code> for <code>ghc</code> compilation.<li>Will make references to Holy Grail<li>Search your default github username via <a href=http://developer.github.com/v3/search/#search-users>github api</a>.</ul><h2 id=zsh-really><code>zsh</code> really?</h2><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/french-insult.jpg alt="French insult"></div><p>Developing the script in <code>zsh</code> was easy. But considering its size, it is worth to rewrite it in Haskell. Furthermore, it will be a good exercise.<h3 id=patricide>Patricide</h3><p>In a first time, we initialize a new Haskell project with <code>holy-haskell.sh</code>:<pre>
 > ./holy-haskell.sh
-<span class="green">Bridgekeeper: Stop!
+<span class=bm>Bridgekeeper: Stop!
 Bridgekeeper: Who would cross the Bridge of Death
 Bridgekeeper: must answer me these questions three,
 Bridgekeeper: ere the other side he see.</span>
-<span class="yellow">You: Ask me the questions, bridgekeeper, I am not afraid.</span>
+<span class=an>You: Ask me the questions, bridgekeeper, I am not afraid.</span>
 
-<span class="green">Bridgekeeper: What is the name of your project?</span>
+<span class=bm>Bridgekeeper: What is the name of your project?</span>
 > Holy project
-<span class="green">Bridgekeeper: What is your name?</span> (Yann Esposito (Yogsototh))
+<span class=bm>Bridgekeeper: What is your name?</span> (Yann Esposito (Yogsototh))
 >
-<span class="green">Bridgekeeper: What is your email?</span> (Yann.Esposito@gmail.com)
+<span class=bm>Bridgekeeper: What is your email?</span> (Yann.Esposito@gmail.com)
 >
-<span class="green">Bridgekeeper: What is your github user name?</span> (yogsototh)
+<span class=bm>Bridgekeeper: What is your github user name?</span> (yogsototh)
 >
-<span class="green">Bridgekeeper: What is your project in less than ten words?</span>
+<span class=bm>Bridgekeeper: What is your project in less than ten words?</span>
 > Start your Haskell project with cabal, git and tests.
 Initialize git
 Initialized empty Git repository in .../holy-project/.git/
@@ -144,279 +50,192 @@ Test suite logged to: dist/test/holy-project-0.1.0.0-Tests.log
 1 of 1 test suites (1 of 1 test cases) passed.
 All Tests
   Swallow
-    swallow test:     <span class="green">OK</span>
+    swallow test:     <span class=bm>OK</span>
   coconut
-    coconut:          <span class="green">OK</span>
-    coconut property: <span class="green">OK</span>
+    coconut:          <span class=bm>OK</span>
+    coconut property: <span class=bm>OK</span>
       148 tests completed
 
-<span class="green">All 3 tests passed</span>
+<span class=bm>All 3 tests passed</span>
 
 
 
-<span class="green">Bridgekeeper: What... is the air-speed velocity of an unladen swallow?</span>
-<span class="yellow">You: What do you mean? An African or European swallow?</span>
-<span class="green">Bridgekeeper: Huh? I... I don't know that.</span>
+<span class=bm>Bridgekeeper: What... is the air-speed velocity of an unladen swallow?</span>
+<span class=an>You: What do you mean? An African or European swallow?</span>
+<span class=bm>Bridgekeeper: Huh? I... I don't know that.</span>
 [the bridgekeeper is thrown over]
-<span class="green">Bridgekeeper: Auuuuuuuuuuuugh</span>
+<span class=bm>Bridgekeeper: Auuuuuuuuuuuugh</span>
 Sir Bedevere: How do you know so much about swallows?
-<span class="yellow">You: Well, you have to know these things when you're a king, you know.</span>
-</pre>
-<p>The different steps are:</p>
-<ul>
-<li>small introduction quotes</li>
-<li>ask five questions – <em>three question sir…</em></li>
-<li>create the directory for the project</li>
-<li>init git</li>
-<li>create files</li>
-<li>sandbox cabal</li>
-<li>cabal install and test</li>
-<li>run the test directly in the terminal</li>
-<li>small goodbye quotes</li>
-</ul>
-<p>Features to note:</p>
-<ul>
-<li>color in the terminal</li>
-<li>check some rules on the project name</li>
-<li>random message if error</li>
-<li>use <code>~/.gitconfig</code> file in order to provide a default name and email.</li>
-<li>use the github API which returns JSON to get the default github user name.</li>
-</ul>
-<p>So, apparently nothing too difficult to achieve.</p>
-<p>We should now have an initialized Haskell environment for us to work. The first thing you should do, is to go into this new directory and launch ‘./auto-update’ in some terminal. I personally use <code>tmux</code> on Linux or the splits in <code>iTerm 2</code> on Mac OS X. Now, any modification of a source file will relaunch a compilation and a test.</p>
-<h3 id="the-dialogs">The dialogs</h3>
-<div>
-<img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/bridge-of-death.jpg" alt="Bridge of Death" />
-</div>
-<p>To print the introduction text in <code>zsh</code>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># init colors</span></a>
-<a class="sourceLine" id="cb3-2" title="2"><span class="ex">autoload</span> colors</a>
-<a class="sourceLine" id="cb3-3" title="3"><span class="ex">colors</span></a>
-<a class="sourceLine" id="cb3-4" title="4"><span class="kw">for</span> <span class="ex">COLOR</span> in RED GREEN YELLOW BLUE MAGENTA CYAN BLACK WHITE<span class="kw">;</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb3-5" title="5">    <span class="bu">eval</span> <span class="va">$COLOR</span>=<span class="st">'$fg_no_bold[${(L)COLOR}]'</span></a>
-<a class="sourceLine" id="cb3-6" title="6">    <span class="bu">eval</span> BOLD_<span class="va">$COLOR</span>=<span class="st">'$fg_bold[${(L)COLOR}]'</span></a>
-<a class="sourceLine" id="cb3-7" title="7"><span class="kw">done</span></a>
-<a class="sourceLine" id="cb3-8" title="8"><span class="bu">eval</span> RESET=<span class="st">'$reset_color'</span></a>
-<a class="sourceLine" id="cb3-9" title="9"><span class="co"># functions</span></a>
-<a class="sourceLine" id="cb3-10" title="10"><span class="fu">bk()</span>{<span class="ex">print</span> -- <span class="st">&quot;</span><span class="va">${GREEN}</span><span class="st">Bridgekeeper: </span><span class="va">$*${RESET}</span><span class="st">&quot;</span>}</a>
-<a class="sourceLine" id="cb3-11" title="11"><span class="fu">bkn()</span>{<span class="ex">print</span> -n -- <span class="st">&quot;</span><span class="va">${GREEN}</span><span class="st">Bridgekeeper: </span><span class="va">$*${RESET}</span><span class="st">&quot;</span>}</a>
-<a class="sourceLine" id="cb3-12" title="12"><span class="fu">you()</span>{<span class="ex">print</span> -- <span class="st">&quot;</span><span class="va">${YELLOW}</span><span class="st">You: </span><span class="va">$*${RESET}</span><span class="st">&quot;</span>}</a>
-<a class="sourceLine" id="cb3-13" title="13"><span class="ex">...</span></a>
-<a class="sourceLine" id="cb3-14" title="14"><span class="co"># the introduction dialog</span></a>
-<a class="sourceLine" id="cb3-15" title="15"><span class="ex">bk</span> <span class="st">&quot;Stop!&quot;</span></a>
-<a class="sourceLine" id="cb3-16" title="16"><span class="ex">bk</span> <span class="st">&quot;Who would cross the Bridge of Death&quot;</span></a>
-<a class="sourceLine" id="cb3-17" title="17"><span class="ex">bk</span> <span class="st">&quot;must answer me these questions three,&quot;</span></a>
-<a class="sourceLine" id="cb3-18" title="18"><span class="ex">bk</span> <span class="st">&quot;ere the other side he see.&quot;</span></a>
-<a class="sourceLine" id="cb3-19" title="19"><span class="ex">you</span> <span class="st">&quot;Ask me the questions, bridgekeeper, I am not afraid.\n&quot;</span></a>
-<a class="sourceLine" id="cb3-20" title="20"><span class="ex">...</span></a>
-<a class="sourceLine" id="cb3-21" title="21"><span class="co"># the final dialog</span></a>
-<a class="sourceLine" id="cb3-22" title="22"><span class="ex">print</span> <span class="st">&quot;\n\n&quot;</span></a>
-<a class="sourceLine" id="cb3-23" title="23"><span class="ex">bk</span> <span class="st">&quot;What... is the air-speed velocity of an unladen swallow?&quot;</span></a>
-<a class="sourceLine" id="cb3-24" title="24"><span class="ex">you</span> <span class="st">&quot;What do you mean? An African or European swallow?&quot;</span></a>
-<a class="sourceLine" id="cb3-25" title="25"><span class="ex">bk</span> <span class="st">&quot;Huh? I... I don't know that.&quot;</span></a>
-<a class="sourceLine" id="cb3-26" title="26"><span class="ex">log</span> <span class="st">&quot;[the bridgekeeper is thrown over]&quot;</span></a>
-<a class="sourceLine" id="cb3-27" title="27"><span class="ex">bk</span> <span class="st">&quot;Auuuuuuuuuuuugh&quot;</span></a>
-<a class="sourceLine" id="cb3-28" title="28"><span class="ex">log</span> <span class="st">&quot;Sir Bedevere: How do you know so much about swallows?&quot;</span></a>
-<a class="sourceLine" id="cb3-29" title="29"><span class="ex">you</span> <span class="st">&quot;Well, you have to know these things when you're a king, you know.&quot;</span></a></code></pre></div>
-<p>In the first Haskell version I don’t use colors. We see we can almost copy/paste. I just added the types.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb4-1" title="1"><span class="ot">bk ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb4-2" title="2">bk str <span class="ot">=</span> <span class="fu">putStrLn</span> <span class="op">$</span> <span class="st">&quot;Bridgekeeper: &quot;</span> <span class="op">++</span> str</a>
-<a class="sourceLine" id="cb4-3" title="3"></a>
-<a class="sourceLine" id="cb4-4" title="4"><span class="ot">bkn ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb4-5" title="5">bkn str <span class="ot">=</span> pustStr <span class="op">$</span> <span class="st">&quot;Bridgekeeper: &quot;</span> <span class="op">++</span> str</a>
-<a class="sourceLine" id="cb4-6" title="6"></a>
-<a class="sourceLine" id="cb4-7" title="7"><span class="ot">you ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb4-8" title="8">you str <span class="ot">=</span> <span class="fu">putStrLn</span> <span class="op">$</span> <span class="st">&quot;You: &quot;</span> <span class="op">++</span> str</a>
-<a class="sourceLine" id="cb4-9" title="9"></a>
-<a class="sourceLine" id="cb4-10" title="10"><span class="ot">intro ::</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb4-11" title="11">intro <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb4-12" title="12">    bk <span class="st">&quot;Stop!&quot;</span></a>
-<a class="sourceLine" id="cb4-13" title="13">    bk <span class="st">&quot;Who would cross the Bridge of Death&quot;</span></a>
-<a class="sourceLine" id="cb4-14" title="14">    bk <span class="st">&quot;must answer me these questions three,&quot;</span></a>
-<a class="sourceLine" id="cb4-15" title="15">    bk <span class="st">&quot;ere the other side he see.&quot;</span></a>
-<a class="sourceLine" id="cb4-16" title="16">    you <span class="st">&quot;Ask me the questions, bridgekeeper, I am not afraid.\n&quot;</span></a>
-<a class="sourceLine" id="cb4-17" title="17"></a>
-<a class="sourceLine" id="cb4-18" title="18"><span class="ot">end ::</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb4-19" title="19">end <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb4-20" title="20">    <span class="fu">putStrLn</span> <span class="st">&quot;\n\n&quot;</span></a>
-<a class="sourceLine" id="cb4-21" title="21">    bk <span class="st">&quot;What... is the air-speed velocity of an unladen swallow?&quot;</span></a>
-<a class="sourceLine" id="cb4-22" title="22">    you <span class="st">&quot;What do you mean? An African or European swallow?&quot;</span></a>
-<a class="sourceLine" id="cb4-23" title="23">    bk <span class="st">&quot;Huh? I... I don't know that.&quot;</span></a>
-<a class="sourceLine" id="cb4-24" title="24">    <span class="fu">putStrLn</span> <span class="st">&quot;[the bridgekeeper is thrown over]&quot;</span></a>
-<a class="sourceLine" id="cb4-25" title="25">    bk <span class="st">&quot;Auuuuuuuuuuuugh&quot;</span></a>
-<a class="sourceLine" id="cb4-26" title="26">    <span class="fu">putStrLn</span> <span class="st">&quot;Sir Bedevere: How do you know so much about swallows?&quot;</span></a>
-<a class="sourceLine" id="cb4-27" title="27">    you <span class="st">&quot;Well, you have to know these things when you're a king, you know.&quot;</span></a></code></pre></div>
-<p>Now let’s just add the colors using the <a href="http://hackage.haskell.org/package/ansi-terminal"><code>ansi-terminal</code></a> package. So we have to add <code>ansi-terminal</code> as a build dependency in our cabal file.</p>
-<p>Edit <code>holy-project.cabal</code> to add it.</p>
-<pre><code>...
+<span class=an>You: Well, you have to know these things when you're a king, you know.</span>
+</pre><p>The different steps are:<ul><li>small introduction quotes<li>ask five questions – <em>three question sir…</em><li>create the directory for the project<li>init git<li>create files<li>sandbox cabal<li>cabal install and test<li>run the test directly in the terminal<li>small goodbye quotes</ul><p>Features to note:<ul><li>color in the terminal<li>check some rules on the project name<li>random message if error<li>use <code>~/.gitconfig</code> file in order to provide a default name and email.<li>use the github API which returns JSON to get the default github user name.</ul><p>So, apparently nothing too difficult to achieve.<p>We should now have an initialized Haskell environment for us to work. The first thing you should do, is to go into this new directory and launch ‘./auto-update’ in some terminal. I personally use <code>tmux</code> on Linux or the splits in <code>iTerm 2</code> on Mac OS X. Now, any modification of a source file will relaunch a compilation and a test.<h3 id=the-dialogs>The dialogs</h3><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/bridge-of-death.jpg alt="Bridge of Death"></div><p>To print the introduction text in <code>zsh</code>:<div class=n id=cb3><pre class="n bash"><code class="n bash"><a class=m id=cb3-1 title=1><span class=co># init colors</span></a>
+<a class=m id=cb3-2 title=2><span class=ex>autoload</span> colors</a>
+<a class=m id=cb3-3 title=3><span class=ex>colors</span></a>
+<a class=m id=cb3-4 title=4><span class=kw>for</span> <span class=ex>COLOR</span> in RED GREEN YELLOW BLUE MAGENTA CYAN BLACK WHITE<span class=kw>;</span> <span class=kw>do</span></a>
+<a class=m id=cb3-5 title=5>    <span class=bu>eval</span> <span class=va>$COLOR</span>=<span class=st>'$fg_no_bold[${(L)COLOR}]'</span></a>
+<a class=m id=cb3-6 title=6>    <span class=bu>eval</span> BOLD_<span class=va>$COLOR</span>=<span class=st>'$fg_bold[${(L)COLOR}]'</span></a>
+<a class=m id=cb3-7 title=7><span class=kw>done</span></a>
+<a class=m id=cb3-8 title=8><span class=bu>eval</span> RESET=<span class=st>'$reset_color'</span></a>
+<a class=m id=cb3-9 title=9><span class=co># functions</span></a>
+<a class=m id=cb3-10 title=10><span class=fu>bk()</span>{<span class=ex>print</span> -- <span class=st>&quot;</span><span class=va>${GREEN}</span><span class=st>Bridgekeeper: </span><span class=va>$*${RESET}</span><span class=st>&quot;</span>}</a>
+<a class=m id=cb3-11 title=11><span class=fu>bkn()</span>{<span class=ex>print</span> -n -- <span class=st>&quot;</span><span class=va>${GREEN}</span><span class=st>Bridgekeeper: </span><span class=va>$*${RESET}</span><span class=st>&quot;</span>}</a>
+<a class=m id=cb3-12 title=12><span class=fu>you()</span>{<span class=ex>print</span> -- <span class=st>&quot;</span><span class=va>${YELLOW}</span><span class=st>You: </span><span class=va>$*${RESET}</span><span class=st>&quot;</span>}</a>
+<a class=m id=cb3-13 title=13><span class=ex>...</span></a>
+<a class=m id=cb3-14 title=14><span class=co># the introduction dialog</span></a>
+<a class=m id=cb3-15 title=15><span class=ex>bk</span> <span class=st>&quot;Stop!&quot;</span></a>
+<a class=m id=cb3-16 title=16><span class=ex>bk</span> <span class=st>&quot;Who would cross the Bridge of Death&quot;</span></a>
+<a class=m id=cb3-17 title=17><span class=ex>bk</span> <span class=st>&quot;must answer me these questions three,&quot;</span></a>
+<a class=m id=cb3-18 title=18><span class=ex>bk</span> <span class=st>&quot;ere the other side he see.&quot;</span></a>
+<a class=m id=cb3-19 title=19><span class=ex>you</span> <span class=st>&quot;Ask me the questions, bridgekeeper, I am not afraid.\n&quot;</span></a>
+<a class=m id=cb3-20 title=20><span class=ex>...</span></a>
+<a class=m id=cb3-21 title=21><span class=co># the final dialog</span></a>
+<a class=m id=cb3-22 title=22><span class=ex>print</span> <span class=st>&quot;\n\n&quot;</span></a>
+<a class=m id=cb3-23 title=23><span class=ex>bk</span> <span class=st>&quot;What... is the air-speed velocity of an unladen swallow?&quot;</span></a>
+<a class=m id=cb3-24 title=24><span class=ex>you</span> <span class=st>&quot;What do you mean? An African or European swallow?&quot;</span></a>
+<a class=m id=cb3-25 title=25><span class=ex>bk</span> <span class=st>&quot;Huh? I... I don't know that.&quot;</span></a>
+<a class=m id=cb3-26 title=26><span class=ex>log</span> <span class=st>&quot;[the bridgekeeper is thrown over]&quot;</span></a>
+<a class=m id=cb3-27 title=27><span class=ex>bk</span> <span class=st>&quot;Auuuuuuuuuuuugh&quot;</span></a>
+<a class=m id=cb3-28 title=28><span class=ex>log</span> <span class=st>&quot;Sir Bedevere: How do you know so much about swallows?&quot;</span></a>
+<a class=m id=cb3-29 title=29><span class=ex>you</span> <span class=st>&quot;Well, you have to know these things when you're a king, you know.&quot;</span></a></code></pre></div><p>In the first Haskell version I don’t use colors. We see we can almost copy/paste. I just added the types.<div class=n id=cb4><pre class="n haskell"><code class="n haskell"><a class=m id=cb4-1 title=1><span class=ot>bk ::</span> <span class=dt>String</span> <span class=ot>-&gt;</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb4-2 title=2>bk str <span class=ot>=</span> <span class=fu>putStrLn</span> <span class=op>$</span> <span class=st>&quot;Bridgekeeper: &quot;</span> <span class=op>++</span> str</a>
+<a class=m id=cb4-3 title=3></a>
+<a class=m id=cb4-4 title=4><span class=ot>bkn ::</span> <span class=dt>String</span> <span class=ot>-&gt;</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb4-5 title=5>bkn str <span class=ot>=</span> pustStr <span class=op>$</span> <span class=st>&quot;Bridgekeeper: &quot;</span> <span class=op>++</span> str</a>
+<a class=m id=cb4-6 title=6></a>
+<a class=m id=cb4-7 title=7><span class=ot>you ::</span> <span class=dt>String</span> <span class=ot>-&gt;</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb4-8 title=8>you str <span class=ot>=</span> <span class=fu>putStrLn</span> <span class=op>$</span> <span class=st>&quot;You: &quot;</span> <span class=op>++</span> str</a>
+<a class=m id=cb4-9 title=9></a>
+<a class=m id=cb4-10 title=10><span class=ot>intro ::</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb4-11 title=11>intro <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb4-12 title=12>    bk <span class=st>&quot;Stop!&quot;</span></a>
+<a class=m id=cb4-13 title=13>    bk <span class=st>&quot;Who would cross the Bridge of Death&quot;</span></a>
+<a class=m id=cb4-14 title=14>    bk <span class=st>&quot;must answer me these questions three,&quot;</span></a>
+<a class=m id=cb4-15 title=15>    bk <span class=st>&quot;ere the other side he see.&quot;</span></a>
+<a class=m id=cb4-16 title=16>    you <span class=st>&quot;Ask me the questions, bridgekeeper, I am not afraid.\n&quot;</span></a>
+<a class=m id=cb4-17 title=17></a>
+<a class=m id=cb4-18 title=18><span class=ot>end ::</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb4-19 title=19>end <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb4-20 title=20>    <span class=fu>putStrLn</span> <span class=st>&quot;\n\n&quot;</span></a>
+<a class=m id=cb4-21 title=21>    bk <span class=st>&quot;What... is the air-speed velocity of an unladen swallow?&quot;</span></a>
+<a class=m id=cb4-22 title=22>    you <span class=st>&quot;What do you mean? An African or European swallow?&quot;</span></a>
+<a class=m id=cb4-23 title=23>    bk <span class=st>&quot;Huh? I... I don't know that.&quot;</span></a>
+<a class=m id=cb4-24 title=24>    <span class=fu>putStrLn</span> <span class=st>&quot;[the bridgekeeper is thrown over]&quot;</span></a>
+<a class=m id=cb4-25 title=25>    bk <span class=st>&quot;Auuuuuuuuuuuugh&quot;</span></a>
+<a class=m id=cb4-26 title=26>    <span class=fu>putStrLn</span> <span class=st>&quot;Sir Bedevere: How do you know so much about swallows?&quot;</span></a>
+<a class=m id=cb4-27 title=27>    you <span class=st>&quot;Well, you have to know these things when you're a king, you know.&quot;</span></a></code></pre></div><p>Now let’s just add the colors using the <a href=http://hackage.haskell.org/package/ansi-terminal><code>ansi-terminal</code></a> package. So we have to add <code>ansi-terminal</code> as a build dependency in our cabal file.<p>Edit <code>holy-project.cabal</code> to add it.<pre><code>...
 build-depends:  base &gt;=4.6 &amp;&amp; &lt;4.7
-                <span class="highlight">, ansi-terminal</span>
-...</code></pre>
-<p>Now look at the modified Haskell code:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb6-1" title="1"><span class="highlight"><span class="kw">import</span> <span class="dt">System.Console.ANSI</span></span></a>
-<a class="sourceLine" id="cb6-2" title="2"></a>
-<a class="sourceLine" id="cb6-3" title="3"><span class="ot">colorPutStr ::</span> <span class="dt">Color</span> <span class="ot">-&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb6-4" title="4">colorPutStr color str <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb6-5" title="5">    setSGR  [ <span class="dt">SetColor</span> <span class="dt">Foreground</span> <span class="dt">Dull</span> color</a>
-<a class="sourceLine" id="cb6-6" title="6">            , <span class="dt">SetConsoleIntensity</span> <span class="dt">NormalIntensity</span></a>
-<a class="sourceLine" id="cb6-7" title="7">            ]</a>
-<a class="sourceLine" id="cb6-8" title="8">    <span class="fu">putStr</span> str</a>
-<a class="sourceLine" id="cb6-9" title="9">    setSGR []</a>
-<a class="sourceLine" id="cb6-10" title="10"></a>
-<a class="sourceLine" id="cb6-11" title="11"></a>
-<a class="sourceLine" id="cb6-12" title="12"><span class="ot">bk ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb6-13" title="13">bk str <span class="ot">=</span> <span class="highlight">colorPutStr <span class="dt">Green</span></span> (<span class="st">&quot;Bridgekeeper: &quot;</span> <span class="op">++</span> str <span class="op">++</span> <span class="st">&quot;\n&quot;</span>)</a>
-<a class="sourceLine" id="cb6-14" title="14"><span class="ot">bkn ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb6-15" title="15">bkn str <span class="ot">=</span> <span class="highlight">colorPutStr <span class="dt">Green</span></span> (<span class="st">&quot;Bridgekeeper: &quot;</span> <span class="op">++</span> str)</a>
-<a class="sourceLine" id="cb6-16" title="16"><span class="ot">you ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb6-17" title="17">you str <span class="ot">=</span> <span class="highlight">colorPutStr <span class="dt">Yellow</span></span> (<span class="st">&quot;You: &quot;</span> <span class="op">++</span> str <span class="op">++</span> <span class="st">&quot;\n&quot;</span>)</a>
-<a class="sourceLine" id="cb6-18" title="18"></a>
-<a class="sourceLine" id="cb6-19" title="19"><span class="ot">intro ::</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb6-20" title="20">intro <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb6-21" title="21">    bk <span class="st">&quot;Stop!&quot;</span></a>
-<a class="sourceLine" id="cb6-22" title="22">    bk <span class="st">&quot;Who would cross the Bridge of Death&quot;</span></a>
-<a class="sourceLine" id="cb6-23" title="23">    bk <span class="st">&quot;must answer me these questions three,&quot;</span></a>
-<a class="sourceLine" id="cb6-24" title="24">    bk <span class="st">&quot;ere the other side he see.&quot;</span></a>
-<a class="sourceLine" id="cb6-25" title="25">    you <span class="st">&quot;Ask me the questions, bridgekeeper, I am not afraid.\n&quot;</span></a>
-<a class="sourceLine" id="cb6-26" title="26"></a>
-<a class="sourceLine" id="cb6-27" title="27"><span class="ot">end ::</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb6-28" title="28">end <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb6-29" title="29">    <span class="fu">putStrLn</span> <span class="st">&quot;\n\n&quot;</span></a>
-<a class="sourceLine" id="cb6-30" title="30">    bk <span class="st">&quot;What... is the air-speed velocity of an unladen swallow?&quot;</span></a>
-<a class="sourceLine" id="cb6-31" title="31">    you <span class="st">&quot;What do you mean? An African or European swallow?&quot;</span></a>
-<a class="sourceLine" id="cb6-32" title="32">    bk <span class="st">&quot;Huh? I... I don't know that.&quot;</span></a>
-<a class="sourceLine" id="cb6-33" title="33">    <span class="fu">putStrLn</span> <span class="st">&quot;[the bridgekeeper is thrown over]&quot;</span></a>
-<a class="sourceLine" id="cb6-34" title="34">    bk <span class="st">&quot;Auuuuuuuuuuuugh&quot;</span></a>
-<a class="sourceLine" id="cb6-35" title="35">    <span class="fu">putStrLn</span> <span class="st">&quot;Sir Bedevere: How do you know so much about swallows?&quot;</span></a>
-<a class="sourceLine" id="cb6-36" title="36">    you <span class="st">&quot;Well, you have to know these things when you're a king, you know.&quot;</span></a></code></pre></div>
-<p>We could put this code in <code>src/Main.hs</code>. Declare a main function:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb7-1" title="1"><span class="ot">main ::</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb7-2" title="2">main <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb7-3" title="3">    intro</a>
-<a class="sourceLine" id="cb7-4" title="4">    end</a></code></pre></div>
-<p>Make <code>cabal install</code> and run <code>cabal run</code> (or <code>./.cabal-sandbox/bin/holy-project</code>). It works!</p>
-<h2 id="five-questions-three-questions-sir">Five Questions – Three questions Sir!</h2>
-<div>
-<img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/bring-out-your-dead.jpg" alt="Bring out your dead!" />
-</div>
-<p>In order to ask questions, here is how we do it in shell script:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb8-1" title="1"><span class="ex">print</span> -- <span class="st">&quot;What is your name?&quot;</span></a>
-<a class="sourceLine" id="cb8-2" title="2"><span class="bu">read</span> <span class="va">name</span></a></code></pre></div>
-<p>If we want to abstract things a bit, the easiest way in shell is to use a global variable<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> which will get the value of the user input like this:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb9-1" title="1"><span class="va">answer=</span><span class="st">&quot;&quot;</span></a>
-<a class="sourceLine" id="cb9-2" title="2"><span class="fu">ask()</span><span class="kw">{</span></a>
-<a class="sourceLine" id="cb9-3" title="3">    <span class="bu">local</span> <span class="va">info=</span><span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span></a>
-<a class="sourceLine" id="cb9-4" title="4">    <span class="ex">bk</span> <span class="st">&quot;What is your </span><span class="va">$info</span><span class="st">?&quot;</span></a>
-<a class="sourceLine" id="cb9-5" title="5">    <span class="ex">print</span> -n <span class="st">&quot;&gt; &quot;</span></a>
-<a class="sourceLine" id="cb9-6" title="6">    <span class="bu">read</span> <span class="va">answer</span></a>
-<a class="sourceLine" id="cb9-7" title="7"><span class="kw">}</span></a>
-<a class="sourceLine" id="cb9-8" title="8"><span class="ex">...</span></a>
-<a class="sourceLine" id="cb9-9" title="9"><span class="ex">ask</span> name</a>
-<a class="sourceLine" id="cb9-10" title="10"><span class="va">name=</span><span class="st">&quot;</span><span class="va">$answer</span><span class="st">&quot;</span></a></code></pre></div>
-<p>In Haskell we won’t need any global variable:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb10-1" title="1"><span class="kw">import</span> <span class="dt">System.IO</span> (hFlush, stdout)</a>
-<a class="sourceLine" id="cb10-2" title="2"><span class="op">...</span></a>
-<a class="sourceLine" id="cb10-3" title="3"><span class="ot">ask ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb10-4" title="4">ask info <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb10-5" title="5">    bk <span class="op">$</span> <span class="st">&quot;What is your &quot;</span> <span class="op">++</span> info <span class="op">++</span> <span class="st">&quot;?&quot;</span></a>
-<a class="sourceLine" id="cb10-6" title="6">    <span class="fu">putStr</span> <span class="st">&quot;&gt; &quot;</span></a>
-<a class="sourceLine" id="cb10-7" title="7">    hFlush stdout <span class="co">-- Because we want to ask on the same line.</span></a>
-<a class="sourceLine" id="cb10-8" title="8">    <span class="fu">getLine</span></a></code></pre></div>
-<p>Now our main function might look like:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb11-1" title="1">main <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb11-2" title="2">    intro</a>
-<a class="sourceLine" id="cb11-3" title="3">    _ <span class="ot">&lt;-</span> ask <span class="st">&quot;project name&quot;</span></a>
-<a class="sourceLine" id="cb11-4" title="4">    _ <span class="ot">&lt;-</span> ask <span class="st">&quot;name&quot;</span></a>
-<a class="sourceLine" id="cb11-5" title="5">    _ <span class="ot">&lt;-</span> ask <span class="st">&quot;email&quot;</span></a>
-<a class="sourceLine" id="cb11-6" title="6">    _ <span class="ot">&lt;-</span> ask <span class="st">&quot;github account&quot;</span></a>
-<a class="sourceLine" id="cb11-7" title="7">    _ <span class="ot">&lt;-</span> ask <span class="st">&quot;project in less than a dozen word&quot;</span></a>
-<a class="sourceLine" id="cb11-8" title="8">    end</a></code></pre></div>
-<p>You could test it with <code>cabal install</code> and then <code>./.cabal-sandbox/bin/holy-project</code>.</p>
-<p>We will see later how to guess the answer using the <code>.gitconfig</code> file and the github API.</p>
-<h2 id="using-answers">Using answers</h2>
-<div>
-<img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/castle-of-hhhhaaaarr.jpg" alt="Castle of Aaaaarrrr????" />
-</div>
-<h3 id="create-the-project-name">Create the project name</h3>
-<p>I don’t really like the ability to use capital letter in a package name. So in shell I transform the project name like this:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb12-1" title="1"><span class="co"># replace all spaces by dashes then lowercase the string</span></a>
-<a class="sourceLine" id="cb12-2" title="2"><span class="va">project=</span>${<span class="va">${project:gs</span><span class="er">/</span><span class="va"> </span><span class="er">/-/</span><span class="va">}</span>:<span class="ex">l</span>}</a></code></pre></div>
-<p>In order to achieve the same result in Haskell (don’t forget to add the <code>split</code> package):</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb13-1" title="1"><span class="kw">import</span> <span class="dt">Data.Char</span>        (toLower)</a>
-<a class="sourceLine" id="cb13-2" title="2"><span class="kw">import</span> <span class="dt">Data.List</span>        (intercalate)</a>
-<a class="sourceLine" id="cb13-3" title="3"><span class="kw">import</span> <span class="dt">Data.List.Split</span>  (splitOneOf)</a>
-<a class="sourceLine" id="cb13-4" title="4"><span class="op">...</span></a>
-<a class="sourceLine" id="cb13-5" title="5"><span class="ot">projectNameFromString ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb13-6" title="6">projectNameFromString str <span class="ot">=</span> intercalate <span class="st">&quot;-&quot;</span> (splitOneOf <span class="st">&quot; -&quot;</span> (<span class="fu">map</span> <span class="fu">toLower</span> str))</a></code></pre></div>
-<p>One important thing to note is that in zsh the transformation occurs on strings but in haskell we use list as intermediate representation:</p>
-<pre><code>zsh:
-&quot;Holy grail&quot; ==( ${project:gs/ /-/} )=&gt; &quot;Holy<span class="highlight">-</span>grail&quot;
-             ==( ${project:l}       )=&gt; &quot;<span class="highlight">h</span>oly-grail&quot;
+                <span class=r>, ansi-terminal</span>
+...</code></pre><p>Now look at the modified Haskell code:<div class=n id=cb6><pre class="n haskell"><code class="n haskell"><a class=m id=cb6-1 title=1><span class=r><span class=kw>import</span> <span class=dt>System.Console.ANSI</span></span></a>
+<a class=m id=cb6-2 title=2></a>
+<a class=m id=cb6-3 title=3><span class=ot>colorPutStr ::</span> <span class=dt>Color</span> <span class=ot>-&gt;</span> <span class=dt>String</span> <span class=ot>-&gt;</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb6-4 title=4>colorPutStr color str <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb6-5 title=5>    setSGR  [ <span class=dt>SetColor</span> <span class=dt>Foreground</span> <span class=dt>Dull</span> color</a>
+<a class=m id=cb6-6 title=6>            , <span class=dt>SetConsoleIntensity</span> <span class=dt>NormalIntensity</span></a>
+<a class=m id=cb6-7 title=7>            ]</a>
+<a class=m id=cb6-8 title=8>    <span class=fu>putStr</span> str</a>
+<a class=m id=cb6-9 title=9>    setSGR []</a>
+<a class=m id=cb6-10 title=10></a>
+<a class=m id=cb6-11 title=11></a>
+<a class=m id=cb6-12 title=12><span class=ot>bk ::</span> <span class=dt>String</span> <span class=ot>-&gt;</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb6-13 title=13>bk str <span class=ot>=</span> <span class=r>colorPutStr <span class=dt>Green</span></span> (<span class=st>&quot;Bridgekeeper: &quot;</span> <span class=op>++</span> str <span class=op>++</span> <span class=st>&quot;\n&quot;</span>)</a>
+<a class=m id=cb6-14 title=14><span class=ot>bkn ::</span> <span class=dt>String</span> <span class=ot>-&gt;</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb6-15 title=15>bkn str <span class=ot>=</span> <span class=r>colorPutStr <span class=dt>Green</span></span> (<span class=st>&quot;Bridgekeeper: &quot;</span> <span class=op>++</span> str)</a>
+<a class=m id=cb6-16 title=16><span class=ot>you ::</span> <span class=dt>String</span> <span class=ot>-&gt;</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb6-17 title=17>you str <span class=ot>=</span> <span class=r>colorPutStr <span class=dt>Yellow</span></span> (<span class=st>&quot;You: &quot;</span> <span class=op>++</span> str <span class=op>++</span> <span class=st>&quot;\n&quot;</span>)</a>
+<a class=m id=cb6-18 title=18></a>
+<a class=m id=cb6-19 title=19><span class=ot>intro ::</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb6-20 title=20>intro <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb6-21 title=21>    bk <span class=st>&quot;Stop!&quot;</span></a>
+<a class=m id=cb6-22 title=22>    bk <span class=st>&quot;Who would cross the Bridge of Death&quot;</span></a>
+<a class=m id=cb6-23 title=23>    bk <span class=st>&quot;must answer me these questions three,&quot;</span></a>
+<a class=m id=cb6-24 title=24>    bk <span class=st>&quot;ere the other side he see.&quot;</span></a>
+<a class=m id=cb6-25 title=25>    you <span class=st>&quot;Ask me the questions, bridgekeeper, I am not afraid.\n&quot;</span></a>
+<a class=m id=cb6-26 title=26></a>
+<a class=m id=cb6-27 title=27><span class=ot>end ::</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb6-28 title=28>end <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb6-29 title=29>    <span class=fu>putStrLn</span> <span class=st>&quot;\n\n&quot;</span></a>
+<a class=m id=cb6-30 title=30>    bk <span class=st>&quot;What... is the air-speed velocity of an unladen swallow?&quot;</span></a>
+<a class=m id=cb6-31 title=31>    you <span class=st>&quot;What do you mean? An African or European swallow?&quot;</span></a>
+<a class=m id=cb6-32 title=32>    bk <span class=st>&quot;Huh? I... I don't know that.&quot;</span></a>
+<a class=m id=cb6-33 title=33>    <span class=fu>putStrLn</span> <span class=st>&quot;[the bridgekeeper is thrown over]&quot;</span></a>
+<a class=m id=cb6-34 title=34>    bk <span class=st>&quot;Auuuuuuuuuuuugh&quot;</span></a>
+<a class=m id=cb6-35 title=35>    <span class=fu>putStrLn</span> <span class=st>&quot;Sir Bedevere: How do you know so much about swallows?&quot;</span></a>
+<a class=m id=cb6-36 title=36>    you <span class=st>&quot;Well, you have to know these things when you're a king, you know.&quot;</span></a></code></pre></div><p>We could put this code in <code>src/Main.hs</code>. Declare a main function:<div class=n id=cb7><pre class="n haskell"><code class="n haskell"><a class=m id=cb7-1 title=1><span class=ot>main ::</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb7-2 title=2>main <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb7-3 title=3>    intro</a>
+<a class=m id=cb7-4 title=4>    end</a></code></pre></div><p>Make <code>cabal install</code> and run <code>cabal run</code> (or <code>./.cabal-sandbox/bin/holy-project</code>). It works!<h2 id=five-questions-three-questions-sir>Five Questions – Three questions Sir!</h2><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/bring-out-your-dead.jpg alt="Bring out your dead!"></div><p>In order to ask questions, here is how we do it in shell script:<div class=n id=cb8><pre class="n bash"><code class="n bash"><a class=m id=cb8-1 title=1><span class=ex>print</span> -- <span class=st>&quot;What is your name?&quot;</span></a>
+<a class=m id=cb8-2 title=2><span class=bu>read</span> <span class=va>name</span></a></code></pre></div><p>If we want to abstract things a bit, the easiest way in shell is to use a global variable<a href=#fn2 class=h id=fnref2><sup>2</sup></a> which will get the value of the user input like this:<div class=n id=cb9><pre class="n bash"><code class="n bash"><a class=m id=cb9-1 title=1><span class=va>answer=</span><span class=st>&quot;&quot;</span></a>
+<a class=m id=cb9-2 title=2><span class=fu>ask()</span><span class=kw>{</span></a>
+<a class=m id=cb9-3 title=3>    <span class=bu>local</span> <span class=va>info=</span><span class=st>&quot;</span><span class=va>$1</span><span class=st>&quot;</span></a>
+<a class=m id=cb9-4 title=4>    <span class=ex>bk</span> <span class=st>&quot;What is your </span><span class=va>$info</span><span class=st>?&quot;</span></a>
+<a class=m id=cb9-5 title=5>    <span class=ex>print</span> -n <span class=st>&quot;&gt; &quot;</span></a>
+<a class=m id=cb9-6 title=6>    <span class=bu>read</span> <span class=va>answer</span></a>
+<a class=m id=cb9-7 title=7><span class=kw>}</span></a>
+<a class=m id=cb9-8 title=8><span class=ex>...</span></a>
+<a class=m id=cb9-9 title=9><span class=ex>ask</span> name</a>
+<a class=m id=cb9-10 title=10><span class=va>name=</span><span class=st>&quot;</span><span class=va>$answer</span><span class=st>&quot;</span></a></code></pre></div><p>In Haskell we won’t need any global variable:<div class=n id=cb10><pre class="n haskell"><code class="n haskell"><a class=m id=cb10-1 title=1><span class=kw>import</span> <span class=dt>System.IO</span> (hFlush, stdout)</a>
+<a class=m id=cb10-2 title=2><span class=op>...</span></a>
+<a class=m id=cb10-3 title=3><span class=ot>ask ::</span> <span class=dt>String</span> <span class=ot>-&gt;</span> <span class=dt>IO</span> <span class=dt>String</span></a>
+<a class=m id=cb10-4 title=4>ask info <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb10-5 title=5>    bk <span class=op>$</span> <span class=st>&quot;What is your &quot;</span> <span class=op>++</span> info <span class=op>++</span> <span class=st>&quot;?&quot;</span></a>
+<a class=m id=cb10-6 title=6>    <span class=fu>putStr</span> <span class=st>&quot;&gt; &quot;</span></a>
+<a class=m id=cb10-7 title=7>    hFlush stdout <span class=co>-- Because we want to ask on the same line.</span></a>
+<a class=m id=cb10-8 title=8>    <span class=fu>getLine</span></a></code></pre></div><p>Now our main function might look like:<div class=n id=cb11><pre class="n haskell"><code class="n haskell"><a class=m id=cb11-1 title=1>main <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb11-2 title=2>    intro</a>
+<a class=m id=cb11-3 title=3>    _ <span class=ot>&lt;-</span> ask <span class=st>&quot;project name&quot;</span></a>
+<a class=m id=cb11-4 title=4>    _ <span class=ot>&lt;-</span> ask <span class=st>&quot;name&quot;</span></a>
+<a class=m id=cb11-5 title=5>    _ <span class=ot>&lt;-</span> ask <span class=st>&quot;email&quot;</span></a>
+<a class=m id=cb11-6 title=6>    _ <span class=ot>&lt;-</span> ask <span class=st>&quot;github account&quot;</span></a>
+<a class=m id=cb11-7 title=7>    _ <span class=ot>&lt;-</span> ask <span class=st>&quot;project in less than a dozen word&quot;</span></a>
+<a class=m id=cb11-8 title=8>    end</a></code></pre></div><p>You could test it with <code>cabal install</code> and then <code>./.cabal-sandbox/bin/holy-project</code>.<p>We will see later how to guess the answer using the <code>.gitconfig</code> file and the github API.<h2 id=using-answers>Using answers</h2><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/castle-of-hhhhaaaarr.jpg alt="Castle of Aaaaarrrr????"></div><h3 id=create-the-project-name>Create the project name</h3><p>I don’t really like the ability to use capital letter in a package name. So in shell I transform the project name like this:<div class=n id=cb12><pre class="n bash"><code class="n bash"><a class=m id=cb12-1 title=1><span class=co># replace all spaces by dashes then lowercase the string</span></a>
+<a class=m id=cb12-2 title=2><span class=va>project=</span>${<span class=va>${project:gs</span><span class=er>/</span><span class=va> </span><span class=er>/-/</span><span class=va>}</span>:<span class=ex>l</span>}</a></code></pre></div><p>In order to achieve the same result in Haskell (don’t forget to add the <code>split</code> package):<div class=n id=cb13><pre class="n haskell"><code class="n haskell"><a class=m id=cb13-1 title=1><span class=kw>import</span> <span class=dt>Data.Char</span>        (toLower)</a>
+<a class=m id=cb13-2 title=2><span class=kw>import</span> <span class=dt>Data.List</span>        (intercalate)</a>
+<a class=m id=cb13-3 title=3><span class=kw>import</span> <span class=dt>Data.List.Split</span>  (splitOneOf)</a>
+<a class=m id=cb13-4 title=4><span class=op>...</span></a>
+<a class=m id=cb13-5 title=5><span class=ot>projectNameFromString ::</span> <span class=dt>String</span> <span class=ot>-&gt;</span> <span class=dt>String</span></a>
+<a class=m id=cb13-6 title=6>projectNameFromString str <span class=ot>=</span> intercalate <span class=st>&quot;-&quot;</span> (splitOneOf <span class=st>&quot; -&quot;</span> (<span class=fu>map</span> <span class=fu>toLower</span> str))</a></code></pre></div><p>One important thing to note is that in zsh the transformation occurs on strings but in haskell we use list as intermediate representation:<pre><code>zsh:
+&quot;Holy grail&quot; ==( ${project:gs/ /-/} )=&gt; &quot;Holy<span class=r>-</span>grail&quot;
+             ==( ${project:l}       )=&gt; &quot;<span class=r>h</span>oly-grail&quot;
 
 haskell
-&quot;Holy grail&quot; ==( map toLower     )=&gt; &quot;<span class="highlight">h</span>oly grail&quot;
-             ==( splitOneOf &quot; -&quot; )=&gt; <span class="highlight">[</span>&quot;holy&quot;<span class="highlight">,</span>&quot;grail&quot;<span class="highlight">]</span>
-             ==( intercalate &quot;-&quot; )=&gt; <span class="highlight">&quot;</span>holy<span class="highlight">-</span>grail<span class="highlight">&quot;</span></code></pre>
-<h3 id="create-the-module-name">Create the module name</h3>
-<p>The module name is a capitalized version of the project name where we remove dashes.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb15-1" title="1"><span class="co"># Capitalize a string</span></a>
-<a class="sourceLine" id="cb15-2" title="2"><span class="fu">capitalize()</span><span class="kw">{</span></a>
-<a class="sourceLine" id="cb15-3" title="3">    <span class="bu">local</span> <span class="va">str=</span><span class="st">&quot;</span><span class="va">$(</span><span class="ex">print</span> -- <span class="st">&quot;</span><span class="va">$*</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="st">'s/-/ /g'</span><span class="va">)</span><span class="st">&quot;</span></a>
-<a class="sourceLine" id="cb15-4" title="4">    <span class="ex">print</span> -- $<span class="dt">{(C)str}</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="st">'s/ //g'</span></a>
-<a class="sourceLine" id="cb15-5" title="5"><span class="kw">}</span></a></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb16-1" title="1"><span class="co">-- | transform a chain like &quot;Holy project&quot; in &quot;HolyProject&quot;</span></a>
-<a class="sourceLine" id="cb16-2" title="2"><span class="ot">capitalize ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb16-3" title="3">capitalize str <span class="ot">=</span> <span class="fu">concatMap</span> capitalizeWord (splitOneOf <span class="st">&quot; -&quot;</span> str)</a>
-<a class="sourceLine" id="cb16-4" title="4">    <span class="kw">where</span></a>
-<a class="sourceLine" id="cb16-5" title="5"><span class="ot">        capitalizeWord ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb16-6" title="6">        capitalizeWord (x<span class="op">:</span>xs)   <span class="ot">=</span> <span class="fu">toUpper</span> x<span class="op">:</span><span class="fu">map</span> <span class="fu">toLower</span> xs</a>
-<a class="sourceLine" id="cb16-7" title="7">        capitalizeWord  _       <span class="ot">=</span> []</a></code></pre></div>
-<p>The haskell version is made by hand where zsh already had a capitalize operation on string with many words. Here is the difference between the shell and haskell way (note I splitted the effect of <code>concatMap</code> as <code>map</code> and <code>concat</code>):</p>
-<pre><code>shell:
-&quot;Holy-grail&quot; ==( sed 's/-/ /g' )=&gt; &quot;Holy<span class="highlight"> </span>grail&quot;
-             ==( ${(C)str}     )=&gt; &quot;Holy <span class="highlight">G</span>rail&quot;
+&quot;Holy grail&quot; ==( map toLower     )=&gt; &quot;<span class=r>h</span>oly grail&quot;
+             ==( splitOneOf &quot; -&quot; )=&gt; <span class=r>[</span>&quot;holy&quot;<span class=r>,</span>&quot;grail&quot;<span class=r>]</span>
+             ==( intercalate &quot;-&quot; )=&gt; <span class=r>&quot;</span>holy<span class=r>-</span>grail<span class=r>&quot;</span></code></pre><h3 id=create-the-module-name>Create the module name</h3><p>The module name is a capitalized version of the project name where we remove dashes.<div class=n id=cb15><pre class="n bash"><code class="n bash"><a class=m id=cb15-1 title=1><span class=co># Capitalize a string</span></a>
+<a class=m id=cb15-2 title=2><span class=fu>capitalize()</span><span class=kw>{</span></a>
+<a class=m id=cb15-3 title=3>    <span class=bu>local</span> <span class=va>str=</span><span class=st>&quot;</span><span class=va>$(</span><span class=ex>print</span> -- <span class=st>&quot;</span><span class=va>$*</span><span class=st>&quot;</span> <span class=kw>|</span> <span class=fu>sed</span> <span class=st>'s/-/ /g'</span><span class=va>)</span><span class=st>&quot;</span></a>
+<a class=m id=cb15-4 title=4>    <span class=ex>print</span> -- $<span class=dt>{(C)str}</span> <span class=kw>|</span> <span class=fu>sed</span> <span class=st>'s/ //g'</span></a>
+<a class=m id=cb15-5 title=5><span class=kw>}</span></a></code></pre></div><div class=n id=cb16><pre class="n haskell"><code class="n haskell"><a class=m id=cb16-1 title=1><span class=co>-- | transform a chain like &quot;Holy project&quot; in &quot;HolyProject&quot;</span></a>
+<a class=m id=cb16-2 title=2><span class=ot>capitalize ::</span> <span class=dt>String</span> <span class=ot>-&gt;</span> <span class=dt>String</span></a>
+<a class=m id=cb16-3 title=3>capitalize str <span class=ot>=</span> <span class=fu>concatMap</span> capitalizeWord (splitOneOf <span class=st>&quot; -&quot;</span> str)</a>
+<a class=m id=cb16-4 title=4>    <span class=kw>where</span></a>
+<a class=m id=cb16-5 title=5><span class=ot>        capitalizeWord ::</span> <span class=dt>String</span> <span class=ot>-&gt;</span> <span class=dt>String</span></a>
+<a class=m id=cb16-6 title=6>        capitalizeWord (x<span class=op>:</span>xs)   <span class=ot>=</span> <span class=fu>toUpper</span> x<span class=op>:</span><span class=fu>map</span> <span class=fu>toLower</span> xs</a>
+<a class=m id=cb16-7 title=7>        capitalizeWord  _       <span class=ot>=</span> []</a></code></pre></div><p>The haskell version is made by hand where zsh already had a capitalize operation on string with many words. Here is the difference between the shell and haskell way (note I splitted the effect of <code>concatMap</code> as <code>map</code> and <code>concat</code>):<pre><code>shell:
+&quot;Holy-grail&quot; ==( sed 's/-/ /g' )=&gt; &quot;Holy<span class=r> </span>grail&quot;
+             ==( ${(C)str}     )=&gt; &quot;Holy <span class=r>G</span>rail&quot;
              ==( sed 's/ //g'  )=&gt; &quot;HolyGrail&quot;
 
 haskell:
-&quot;Holy-grail&quot; ==( splitOneOf &quot; -&quot;    )=&gt; <span class="highlight">[</span>&quot;Holy&quot;<span class="highlight">,</span>&quot;grail&quot;<span class="highlight">]</span>
-             ==( map capitalizeWord )=&gt; [&quot;Holy&quot;,&quot;<span class="highlight">G</span>rail&quot;]
-             ==( concat             )=&gt; &quot;HolyGrail&quot;</code></pre>
-<p>As the preceding example, in shell we work on strings while Haskell use temporary lists representations.</p>
-<h3 id="check-the-project-name">Check the project name</h3>
-<p>Also I want to be quite restrictive on the kind of project name we can give. This is why I added a check function.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb18-1" title="1"><span class="ot">ioassert ::</span> <span class="dt">Bool</span> <span class="ot">-&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb18-2" title="2">ioassert <span class="dt">True</span> _ <span class="ot">=</span> <span class="fu">return</span> ()</a>
-<a class="sourceLine" id="cb18-3" title="3">ioassert <span class="dt">False</span> str <span class="ot">=</span> <span class="fu">error</span> str</a>
-<a class="sourceLine" id="cb18-4" title="4"></a>
-<a class="sourceLine" id="cb18-5" title="5"><span class="ot">main ::</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb18-6" title="6">main <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb18-7" title="7">  intro</a>
-<a class="sourceLine" id="cb18-8" title="8">  project <span class="ot">&lt;-</span> ask <span class="st">&quot;project name&quot;</span></a>
-<a class="sourceLine" id="cb18-9" title="9">  ioassert (checkProjectName project)</a>
-<a class="sourceLine" id="cb18-10" title="10">       <span class="st">&quot;Use only letters, numbers, spaces and dashes please&quot;</span></a>
-<a class="sourceLine" id="cb18-11" title="11">  <span class="kw">let</span> projectname <span class="ot">=</span> projectNameFromString project</a>
-<a class="sourceLine" id="cb18-12" title="12">      modulename <span class="ot">=</span> capitalize project</a></code></pre></div>
-<p>Which verify the project name is not empty and use only letter, numbers and dashes:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb19-1" title="1"><span class="co">-- | verify if project name is conform</span></a>
-<a class="sourceLine" id="cb19-2" title="2"><span class="ot">checkProjectName ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span></a>
-<a class="sourceLine" id="cb19-3" title="3">checkProjectName [] <span class="ot">=</span> <span class="dt">False</span></a>
-<a class="sourceLine" id="cb19-4" title="4">checkProjectName str <span class="ot">=</span></a>
-<a class="sourceLine" id="cb19-5" title="5">    <span class="fu">all</span> (\c <span class="ot">-&gt;</span> isLetter c <span class="op">||</span> isNumber c <span class="op">||</span> c<span class="op">==</span><span class="ch">'-'</span> <span class="op">||</span> c<span class="op">==</span><span class="ch">' '</span>) str</a></code></pre></div>
-<h2 id="create-the-project">Create the project</h2>
-<div>
-<img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/giant-three-head.jpg" alt="Giant with three heads and mustaches" />
-</div>
-<p>Making a project will consists in creating files and directories whose name and content depends on the answer we had until now.</p>
-<p>In shell, for each file to create, we used something like:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb20-1" title="1"><span class="op">&gt;</span> <span class="ex">file-to-create</span> cat <span class="op">&lt;&lt;END</span></a>
-<a class="sourceLine" id="cb20-2" title="2">file content here.</a>
-<a class="sourceLine" id="cb20-3" title="3">We can use <span class="va">$variables</span> here</a>
-<a class="sourceLine" id="cb20-4" title="4"><span class="op">END</span></a></code></pre></div>
-<p>In Haskell, while possible, we shouldn’t put the file content in the source code. We have a relatively easy way to include external file in a cabal package. This is what we will be using.</p>
-<p>Furthermore, we need a templating system to replace small part of the static file by computed values. For this task, I choose to use <a href="http://hackage.haskell.org/package/hastache"><code>hastache</code></a>, a Haskell implementation of Mustache templates<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.</p>
-<h3 id="add-external-files-in-a-cabal-project">Add external files in a cabal project</h3>
-<p>Cabal provides a way to add files which are not source files to a package. You simply have to add a <code>Data-Files:</code> entry in the header of the cabal file:</p>
-<pre><code>data-files: scaffold/LICENSE
+&quot;Holy-grail&quot; ==( splitOneOf &quot; -&quot;    )=&gt; <span class=r>[</span>&quot;Holy&quot;<span class=r>,</span>&quot;grail&quot;<span class=r>]</span>
+             ==( map capitalizeWord )=&gt; [&quot;Holy&quot;,&quot;<span class=r>G</span>rail&quot;]
+             ==( concat             )=&gt; &quot;HolyGrail&quot;</code></pre><p>As the preceding example, in shell we work on strings while Haskell use temporary lists representations.<h3 id=check-the-project-name>Check the project name</h3><p>Also I want to be quite restrictive on the kind of project name we can give. This is why I added a check function.<div class=n id=cb18><pre class="n haskell"><code class="n haskell"><a class=m id=cb18-1 title=1><span class=ot>ioassert ::</span> <span class=dt>Bool</span> <span class=ot>-&gt;</span> <span class=dt>String</span> <span class=ot>-&gt;</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb18-2 title=2>ioassert <span class=dt>True</span> _ <span class=ot>=</span> <span class=fu>return</span> ()</a>
+<a class=m id=cb18-3 title=3>ioassert <span class=dt>False</span> str <span class=ot>=</span> <span class=fu>error</span> str</a>
+<a class=m id=cb18-4 title=4></a>
+<a class=m id=cb18-5 title=5><span class=ot>main ::</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb18-6 title=6>main <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb18-7 title=7>  intro</a>
+<a class=m id=cb18-8 title=8>  project <span class=ot>&lt;-</span> ask <span class=st>&quot;project name&quot;</span></a>
+<a class=m id=cb18-9 title=9>  ioassert (checkProjectName project)</a>
+<a class=m id=cb18-10 title=10>       <span class=st>&quot;Use only letters, numbers, spaces and dashes please&quot;</span></a>
+<a class=m id=cb18-11 title=11>  <span class=kw>let</span> projectname <span class=ot>=</span> projectNameFromString project</a>
+<a class=m id=cb18-12 title=12>      modulename <span class=ot>=</span> capitalize project</a></code></pre></div><p>Which verify the project name is not empty and use only letter, numbers and dashes:<div class=n id=cb19><pre class="n haskell"><code class="n haskell"><a class=m id=cb19-1 title=1><span class=co>-- | verify if project name is conform</span></a>
+<a class=m id=cb19-2 title=2><span class=ot>checkProjectName ::</span> <span class=dt>String</span> <span class=ot>-&gt;</span> <span class=dt>Bool</span></a>
+<a class=m id=cb19-3 title=3>checkProjectName [] <span class=ot>=</span> <span class=dt>False</span></a>
+<a class=m id=cb19-4 title=4>checkProjectName str <span class=ot>=</span></a>
+<a class=m id=cb19-5 title=5>    <span class=fu>all</span> (\c <span class=ot>-&gt;</span> isLetter c <span class=op>||</span> isNumber c <span class=op>||</span> c<span class=op>==</span><span class=ch>'-'</span> <span class=op>||</span> c<span class=op>==</span><span class=ch>' '</span>) str</a></code></pre></div><h2 id=create-the-project>Create the project</h2><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/giant-three-head.jpg alt="Giant with three heads and mustaches"></div><p>Making a project will consists in creating files and directories whose name and content depends on the answer we had until now.<p>In shell, for each file to create, we used something like:<div class=n id=cb20><pre class="n bash"><code class="n bash"><a class=m id=cb20-1 title=1><span class=op>&gt;</span> <span class=ex>file-to-create</span> cat <span class=op>&lt;&lt;END</span></a>
+<a class=m id=cb20-2 title=2>file content here.</a>
+<a class=m id=cb20-3 title=3>We can use <span class=va>$variables</span> here</a>
+<a class=m id=cb20-4 title=4><span class=op>END</span></a></code></pre></div><p>In Haskell, while possible, we shouldn’t put the file content in the source code. We have a relatively easy way to include external file in a cabal package. This is what we will be using.<p>Furthermore, we need a templating system to replace small part of the static file by computed values. For this task, I choose to use <a href=http://hackage.haskell.org/package/hastache><code>hastache</code></a>, a Haskell implementation of Mustache templates<a href=#fn3 class=h id=fnref3><sup>3</sup></a>.<h3 id=add-external-files-in-a-cabal-project>Add external files in a cabal project</h3><p>Cabal provides a way to add files which are not source files to a package. You simply have to add a <code>Data-Files:</code> entry in the header of the cabal file:<pre><code>data-files: scaffold/LICENSE
             , scaffold/Setup.hs
             , scaffold/auto-update
             , scaffold/gitignore
@@ -428,260 +247,198 @@ haskell:
             , scaffold/src/ModuleName/Swallow.hs
             , scaffold/test/ModuleName/Coconut/Test.hs
             , scaffold/test/ModuleName/Swallow/Test.hs
-            , scaffold/test/Test.hs</code></pre>
-<p>Now we simply have to create our files at the specified path. Here is for example the first lines of the LICENSE file.</p>
-<pre class="mustache"><code>The MIT License (MIT)
+            , scaffold/test/Test.hs</code></pre><p>Now we simply have to create our files at the specified path. Here is for example the first lines of the LICENSE file.<pre class=z><code>The MIT License (MIT)
 
-Copyright (c) <span class="highlight">{{year}}</span> <span class="highlight">{{author}}</span>
+Copyright (c) <span class=r>{{year}}</span> <span class=r>{{author}}</span>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
-...</code></pre>
-<p>It will be up to our program to replace the <code>{{year}}</code> and <code>{{author}}</code> at runtime. We have to find the files. Cabal will create a module named <code>Paths_holy_project</code>. If we import this module we have the function <code>genDataFileName</code> at our disposal. Now we can read the files at runtime like this:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb23-1" title="1">  <span class="op">...</span></a>
-<a class="sourceLine" id="cb23-2" title="2">  <span class="kw">do</span></a>
-<a class="sourceLine" id="cb23-3" title="3">    pkgFilePath     <span class="ot">&lt;-</span> <span class="highlight">getDataFileName <span class="st">&quot;scaffold/LICENSE&quot;</span></span></a>
-<a class="sourceLine" id="cb23-4" title="4">    templateContent <span class="ot">&lt;-</span> <span class="fu">readFile</span> pkgFilePath</a>
-<a class="sourceLine" id="cb23-5" title="5">    <span class="op">...</span></a></code></pre></div>
-<h3 id="create-files-and-directories">Create files and directories</h3>
-<p>A first remark is for portability purpose we shouldn’t use String for file path. For example on Windows <code>/</code> isn’t considered as a subdirectory character. To resolve this problem we will use <code>FilePath</code>:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb24-1" title="1"><span class="kw">import</span> <span class="dt">System.Directory</span></a>
-<a class="sourceLine" id="cb24-2" title="2"><span class="kw">import</span> <span class="dt">System.FilePath.Posix</span>        (takeDirectory,(&lt;/&gt;))</a>
-<a class="sourceLine" id="cb24-3" title="3"><span class="op">...</span></a>
-<a class="sourceLine" id="cb24-4" title="4">createProject <span class="op">...</span> <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb24-5" title="5">      <span class="op">...</span></a>
-<a class="sourceLine" id="cb24-6" title="6">      <span class="highlight">createDirectory</span> projectName     <span class="co">-- mkdir</span></a>
-<a class="sourceLine" id="cb24-7" title="7">      <span class="highlight">setCurrentDirectory</span> projectName <span class="co">-- cd</span></a>
-<a class="sourceLine" id="cb24-8" title="8">      genFile <span class="st">&quot;LICENSE&quot;</span> <span class="st">&quot;LICENSE&quot;</span></a>
-<a class="sourceLine" id="cb24-9" title="9">      genFile <span class="st">&quot;gitignore&quot;</span> <span class="st">&quot;.gitignore&quot;</span></a>
-<a class="sourceLine" id="cb24-10" title="10">      genFile <span class="st">&quot;src/Main.hs&quot;</span> (<span class="st">&quot;src&quot;</span> <span class="op">&lt;/&gt;</span> <span class="st">&quot;Main.hs&quot;</span>)</a>
-<a class="sourceLine" id="cb24-11" title="11"></a>
-<a class="sourceLine" id="cb24-12" title="12">genFile dataFilename outputFilename <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb24-13" title="13">    pkgfileName <span class="ot">&lt;-</span> getDataFileName (<span class="st">&quot;scaffold/&quot;</span> <span class="op">++</span> filename)</a>
-<a class="sourceLine" id="cb24-14" title="14">    template <span class="ot">&lt;-</span> <span class="fu">readFile</span> pkgfileName</a>
-<a class="sourceLine" id="cb24-15" title="15">    transformedFile <span class="ot">&lt;-</span> <span class="op">???</span> <span class="co">-- hastache magic here</span></a>
-<a class="sourceLine" id="cb24-16" title="16">    <span class="highlight">createDirectoryIfMissing</span> <span class="dt">True</span> (takeDirectory outputFileName)</a>
-<a class="sourceLine" id="cb24-17" title="17">    <span class="highlight"><span class="fu">writeFile</span></span> outputFileName transformedFile</a></code></pre></div>
-<h3 id="use-hastache">Use Hastache</h3>
-<p>In order to use hastache we can either create a context manually or use generics to create a context from a record. This is the last option we will show here. So in a first time, we need to import some modules and declare a record containing all necessary informations to create our project.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb25-1" title="1"><span class="ot">{-# LANGUAGE DeriveDataTypeable #-}</span></a>
-<a class="sourceLine" id="cb25-2" title="2"><span class="op">...</span></a>
-<a class="sourceLine" id="cb25-3" title="3"><span class="kw">import</span> <span class="dt">Data.Data</span></a>
-<a class="sourceLine" id="cb25-4" title="4"><span class="kw">import</span> <span class="dt">Text.Hastache</span></a>
-<a class="sourceLine" id="cb25-5" title="5"><span class="kw">import</span> <span class="dt">Text.Hastache.Context</span></a>
-<a class="sourceLine" id="cb25-6" title="6"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.ByteString</span>            <span class="kw">as</span> <span class="dt">BS</span></a>
-<a class="sourceLine" id="cb25-7" title="7"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.ByteString.Lazy.Char8</span> <span class="kw">as</span> <span class="dt">LZ</span></a></code></pre></div>
-<div class="sourceCode" id="cb26"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb26-1" title="1"><span class="kw">data</span> <span class="dt">Project</span> <span class="ot">=</span> <span class="dt">Project</span> {</a>
-<a class="sourceLine" id="cb26-2" title="2"><span class="ot">    projectName   ::</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb26-3" title="3">    ,<span class="ot"> moduleName    ::</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb26-4" title="4">    ,<span class="ot"> author        ::</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb26-5" title="5">    ,<span class="ot"> mail          ::</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb26-6" title="6">    ,<span class="ot"> ghaccount     ::</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb26-7" title="7">    ,<span class="ot"> synopsis      ::</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb26-8" title="8">    ,<span class="ot"> year          ::</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb26-9" title="9">    } <span class="kw">deriving</span> (<span class="dt">Data</span>, <span class="dt">Typeable</span>)</a></code></pre></div>
-<p>Once we have declared this, we should populate our Project record with the data provided by the user. So our main function should look like:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb27-1" title="1"><span class="ot">main ::</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb27-2" title="2">main <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb27-3" title="3">    intro</a>
-<a class="sourceLine" id="cb27-4" title="4">    project <span class="ot">&lt;-</span> ask <span class="st">&quot;project name&quot;</span></a>
-<a class="sourceLine" id="cb27-5" title="5">    ioassert (checkProjectName project)</a>
-<a class="sourceLine" id="cb27-6" title="6">             <span class="st">&quot;Use only letters, numbers, spaces and dashes please&quot;</span></a>
-<a class="sourceLine" id="cb27-7" title="7">    <span class="kw">let</span> projectname <span class="ot">=</span> projectNameFromString project</a>
-<a class="sourceLine" id="cb27-8" title="8">        modulename  <span class="ot">=</span> capitalize project</a>
-<a class="sourceLine" id="cb27-9" title="9">    <span class="highlight">in_author</span>       <span class="ot">&lt;-</span> ask <span class="st">&quot;name&quot;</span></a>
-<a class="sourceLine" id="cb27-10" title="10">    <span class="highlight">in_email</span>        <span class="ot">&lt;-</span> ask <span class="st">&quot;email&quot;</span></a>
-<a class="sourceLine" id="cb27-11" title="11">    <span class="highlight">in_ghaccount</span>    <span class="ot">&lt;-</span> ask <span class="st">&quot;github account&quot;</span></a>
-<a class="sourceLine" id="cb27-12" title="12">    <span class="highlight">in_synopsis</span>     <span class="ot">&lt;-</span> ask <span class="st">&quot;project in less than a dozen word?&quot;</span></a>
-<a class="sourceLine" id="cb27-13" title="13">    <span class="highlight">current_year</span>    <span class="ot">&lt;-</span> getCurrentYear</a>
-<a class="sourceLine" id="cb27-14" title="14">    createProject <span class="op">$</span> <span class="highlight"><span class="dt">Project</span> projectname modulename in_author in_email</span></a>
-<a class="sourceLine" id="cb27-15" title="15">                            <span class="highlight">in_ghaccount in_synopsis current_year</span></a>
-<a class="sourceLine" id="cb27-16" title="16">    end</a></code></pre></div>
-<p>Finally we could use hastache this way:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb28-1" title="1"><span class="ot">createProject ::</span> <span class="highlight"><span class="dt">Project</span></span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb28-2" title="2">createProject <span class="highlight">p</span> <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb28-3" title="3">    <span class="kw">let</span> <span class="highlight">context</span> <span class="ot">=</span> <span class="highlight">mkGenericContext p</span></a>
-<a class="sourceLine" id="cb28-4" title="4">    createDirectory (<span class="highlight">projectName p</span>)</a>
-<a class="sourceLine" id="cb28-5" title="5">    setCurrentDirectory (<span class="highlight">projectName p</span>)</a>
-<a class="sourceLine" id="cb28-6" title="6">    genFile <span class="highlight">context</span> <span class="st">&quot;gitignore&quot;</span>      <span class="op">$</span> <span class="st">&quot;.gitignore&quot;</span></a>
-<a class="sourceLine" id="cb28-7" title="7">    genFile <span class="highlight">context</span> <span class="st">&quot;project.cabal&quot;</span>  <span class="op">$</span> (projectName p) <span class="op">++</span> <span class="st">&quot;.cabal&quot;</span></a>
-<a class="sourceLine" id="cb28-8" title="8">    genFile <span class="highlight">context</span> <span class="st">&quot;src/Main.hs&quot;</span>)   <span class="op">$</span> <span class="st">&quot;src&quot;</span> <span class="op">&lt;/&gt;</span> <span class="st">&quot;Main.hs&quot;</span></a>
-<a class="sourceLine" id="cb28-9" title="9">    <span class="op">...</span></a>
-<a class="sourceLine" id="cb28-10" title="10"></a>
-<a class="sourceLine" id="cb28-11" title="11"><span class="ot">genFile ::</span> <span class="dt">MuContext</span> <span class="dt">IO</span> <span class="ot">-&gt;</span> <span class="dt">FilePath</span> <span class="ot">-&gt;</span> <span class="dt">FilePath</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb28-12" title="12">genFile context filename outputFileName <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb28-13" title="13">    pkgfileName <span class="ot">&lt;-</span> getDataFileName (<span class="st">&quot;scaffold/&quot;</span><span class="op">++</span>filename)</a>
-<a class="sourceLine" id="cb28-14" title="14">    template <span class="ot">&lt;-</span> <span class="highlight"><span class="dt">BS</span><span class="op">.</span></span><span class="fu">readFile</span> pkgfileName</a>
-<a class="sourceLine" id="cb28-15" title="15">    transformedFile <span class="ot">&lt;-</span> <span class="highlight">hastacheStr defaultConfig template context</span></a>
-<a class="sourceLine" id="cb28-16" title="16">    createDirectoryIfMissing <span class="dt">True</span> (takeDirectory outputFileName)</a>
-<a class="sourceLine" id="cb28-17" title="17">    <span class="highlight"><span class="dt">LZ</span><span class="op">.</span></span><span class="fu">writeFile</span> outputFileName transformedFile</a></code></pre></div>
-<p>We use external files in mustache format. We ask question to our user to fill a data structure. We use this data structure to create a context. Hastache use this context with the external files to create the project files.</p>
-<h2 id="git-and-cabal">Git and Cabal</h2>
-<div>
-<img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/tim.jpg" alt="Tim" />
-</div>
-<p>We need to initialize git and cabal. For this we simply call external command with the <code>system</code> function.</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb29-1" title="1"><span class="kw">import</span> <span class="dt">System.Cmd</span></a>
-<a class="sourceLine" id="cb29-2" title="2"></a>
-<a class="sourceLine" id="cb29-3" title="3"><span class="op">...</span></a>
-<a class="sourceLine" id="cb29-4" title="4">main <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb29-5" title="5">    <span class="op">...</span></a>
-<a class="sourceLine" id="cb29-6" title="6">    _ <span class="ot">&lt;-</span> system <span class="st">&quot;git init .&quot;</span></a>
-<a class="sourceLine" id="cb29-7" title="7">    _ <span class="ot">&lt;-</span> system <span class="st">&quot;cabal sandbox init&quot;</span></a>
-<a class="sourceLine" id="cb29-8" title="8">    _ <span class="ot">&lt;-</span> system <span class="st">&quot;cabal install&quot;</span></a>
-<a class="sourceLine" id="cb29-9" title="9">    _ <span class="ot">&lt;-</span> system <span class="st">&quot;cabal test&quot;</span></a>
-<a class="sourceLine" id="cb29-10" title="10">    _ <span class="ot">&lt;-</span> system <span class="op">$</span> <span class="st">&quot;./.cabal-sandbox/bin/test-&quot;</span> <span class="op">++</span> projectName</a></code></pre></div>
-<h2 id="ameliorations">Ameliorations</h2>
-<p>Our job is almost finished. Now, we only need to add some nice feature to make the application more enjoyable.</p>
-<h3 id="better-error-message">Better error message</h3>
-<div>
-<img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/rabbit.jpg" alt="Rabbit" />
-</div>
-<p>The first one would be to add a better error message.</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb30-1" title="1"><span class="kw">import</span> <span class="dt">System.Random</span></a>
-<a class="sourceLine" id="cb30-2" title="2"></a>
-<a class="sourceLine" id="cb30-3" title="3"><span class="ot">holyError ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb30-4" title="4">holyError str <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb30-5" title="5">    r <span class="ot">&lt;-</span> randomIO</a>
-<a class="sourceLine" id="cb30-6" title="6">    <span class="kw">if</span> r</a>
-<a class="sourceLine" id="cb30-7" title="7">        <span class="kw">then</span></a>
-<a class="sourceLine" id="cb30-8" title="8">            <span class="kw">do</span></a>
-<a class="sourceLine" id="cb30-9" title="9">                bk <span class="st">&quot;What... is your favourite colour?&quot;</span></a>
-<a class="sourceLine" id="cb30-10" title="10">                you <span class="st">&quot;Blue. No, yel...&quot;</span></a>
-<a class="sourceLine" id="cb30-11" title="11">                <span class="fu">putStrLn</span> <span class="st">&quot;[You are thrown over the edge into the volcano]&quot;</span></a>
-<a class="sourceLine" id="cb30-12" title="12">                you <span class="st">&quot;You: Auuuuuuuuuuuugh&quot;</span></a>
-<a class="sourceLine" id="cb30-13" title="13">                bk <span class="st">&quot; Hee hee heh.&quot;</span></a>
-<a class="sourceLine" id="cb30-14" title="14">        <span class="kw">else</span></a>
-<a class="sourceLine" id="cb30-15" title="15">            <span class="kw">do</span></a>
-<a class="sourceLine" id="cb30-16" title="16">                bk <span class="st">&quot;What is the capital of Assyria?&quot;</span></a>
-<a class="sourceLine" id="cb30-17" title="17">                you <span class="st">&quot;I don't know that!&quot;</span></a>
-<a class="sourceLine" id="cb30-18" title="18">                <span class="fu">putStrLn</span> <span class="st">&quot;[You are thrown over the edge into the volcano]&quot;</span></a>
-<a class="sourceLine" id="cb30-19" title="19">                you <span class="st">&quot;Auuuuuuuuuuuugh&quot;</span></a>
-<a class="sourceLine" id="cb30-20" title="20">    <span class="fu">error</span> (<span class="ch">'\n'</span><span class="op">:</span>str)</a></code></pre></div>
-<p>And also update where this can be called</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb31-1" title="1"><span class="ot">ioassert ::</span> <span class="dt">Bool</span> <span class="ot">-&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb31-2" title="2">ioassert <span class="dt">True</span> _ <span class="ot">=</span> <span class="fu">return</span> ()</a>
-<a class="sourceLine" id="cb31-3" title="3">ioassert <span class="dt">False</span> str <span class="ot">=</span> holyError str</a></code></pre></div>
-<h3 id="use-.gitconfig">Use <code>.gitconfig</code></h3>
-<p>We want to retrieve the <code>~/.gitconfig</code> file content and see if it contains a name and email information. We will need to access to the <code>HOME</code> environment variable. Also, as we use bytestring package for hastache, let’s take advantage of this library.</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb32-1" title="1"><span class="kw">import</span> <span class="dt">Data.Maybe</span>           (fromJust)</a>
-<a class="sourceLine" id="cb32-2" title="2"><span class="kw">import</span> <span class="dt">System.Environment</span>   (getEnv)</a>
-<a class="sourceLine" id="cb32-3" title="3"><span class="kw">import</span> <span class="dt">Control.Exception</span></a>
-<a class="sourceLine" id="cb32-4" title="4"><span class="kw">import</span> <span class="dt">System.IO.Error</span></a>
-<a class="sourceLine" id="cb32-5" title="5"><span class="kw">import</span> <span class="dt">Control.Monad</span>        (guard)</a>
-<a class="sourceLine" id="cb32-6" title="6"></a>
-<a class="sourceLine" id="cb32-7" title="7"><span class="ot">safeReadGitConfig ::</span> <span class="dt">IO</span> <span class="dt">LZ.ByteString</span></a>
-<a class="sourceLine" id="cb32-8" title="8">safeReadGitConfig <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb32-9" title="9">    e <span class="ot">&lt;-</span> tryJust (guard <span class="op">.</span> isDoesNotExistError)</a>
-<a class="sourceLine" id="cb32-10" title="10">                 (<span class="kw">do</span></a>
-<a class="sourceLine" id="cb32-11" title="11">                    home <span class="ot">&lt;-</span> getEnv <span class="st">&quot;HOME&quot;</span></a>
-<a class="sourceLine" id="cb32-12" title="12">                    LZ.readFile <span class="op">$</span> home <span class="op">++</span> <span class="st">&quot;/.gitconfig&quot;</span> )</a>
-<a class="sourceLine" id="cb32-13" title="13">    <span class="fu">return</span> <span class="op">$</span> <span class="fu">either</span> (<span class="fu">const</span> (LZ.empty)) <span class="fu">id</span> e</a>
-<a class="sourceLine" id="cb32-14" title="14"><span class="op">...</span></a>
-<a class="sourceLine" id="cb32-15" title="15">main <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb32-16" title="16">    gitconfig <span class="ot">&lt;-</span> safeReadGitConfig</a>
-<a class="sourceLine" id="cb32-17" title="17">    <span class="kw">let</span> (name,email) <span class="ot">=</span> <span class="highlight">getNameAndMail</span> gitconfig</a>
-<a class="sourceLine" id="cb32-18" title="18">    project <span class="ot">&lt;-</span> ask <span class="st">&quot;project name&quot;</span> <span class="dt">Nothing</span></a>
-<a class="sourceLine" id="cb32-19" title="19">    <span class="op">...</span></a>
-<a class="sourceLine" id="cb32-20" title="20">    in_author       <span class="ot">&lt;-</span> ask <span class="st">&quot;name&quot;</span> name</a>
-<a class="sourceLine" id="cb32-21" title="21">    <span class="op">...</span></a></code></pre></div>
-<p>We could note I changed the ask function slightly to take a maybe parameter.</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb33-1" title="1"><span class="ot">ask ::</span> <span class="dt">String</span> <span class="highlight"><span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">String</span></span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb33-2" title="2">ask info hint <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb33-3" title="3">    bk <span class="op">$</span> <span class="st">&quot;What is your &quot;</span> <span class="op">++</span> info <span class="op">++</span> <span class="st">&quot;?&quot;</span> <span class="op">++</span> <span class="highlight">(<span class="fu">maybe</span> <span class="st">&quot;&quot;</span> (\h <span class="ot">-&gt;</span> <span class="st">&quot; (&quot;</span><span class="op">++</span>h<span class="op">++</span><span class="st">&quot;)&quot;</span>) hint)</span></a>
-<a class="sourceLine" id="cb33-4" title="4">    <span class="op">...</span></a></code></pre></div>
-<p>Concerning the parsing of <code>.gitconfig</code>, it is quite minimalist.</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb34-1" title="1"><span class="ot">getNameAndMail ::</span> <span class="dt">LZ.ByteString</span> <span class="ot">-&gt;</span> (<span class="dt">Maybe</span> <span class="dt">String</span>,<span class="dt">Maybe</span> <span class="dt">String</span>)</a>
-<a class="sourceLine" id="cb34-2" title="2">getNameAndMail gitConfigContent <span class="ot">=</span> (getFirstValueFor splitted <span class="st">&quot;name&quot;</span>,</a>
-<a class="sourceLine" id="cb34-3" title="3">                                   getFirstValueFor splitted <span class="st">&quot;email&quot;</span>)</a>
-<a class="sourceLine" id="cb34-4" title="4">    <span class="kw">where</span></a>
-<a class="sourceLine" id="cb34-5" title="5">        <span class="co">-- make lines of words</span></a>
-<a class="sourceLine" id="cb34-6" title="6"><span class="ot">        splitted ::</span> [[<span class="dt">LZ.ByteString</span>]]</a>
-<a class="sourceLine" id="cb34-7" title="7">        splitted <span class="ot">=</span> <span class="fu">map</span> LZ.words (LZ.lines gitConfigContent)</a>
-<a class="sourceLine" id="cb34-8" title="8"></a>
-<a class="sourceLine" id="cb34-9" title="9"><span class="co">-- Get the first line which start with</span></a>
-<a class="sourceLine" id="cb34-10" title="10"><span class="co">-- 'elem =' and return the third field (value)</span></a>
-<a class="sourceLine" id="cb34-11" title="11"><span class="ot">getFirstValueFor ::</span> [[<span class="dt">LZ.ByteString</span>]] <span class="ot">-&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">String</span></a>
-<a class="sourceLine" id="cb34-12" title="12">getFirstValueFor splitted key <span class="ot">=</span> firstJust (<span class="fu">map</span> (getValueForKey key) splitted)</a>
-<a class="sourceLine" id="cb34-13" title="13"></a>
-<a class="sourceLine" id="cb34-14" title="14"><span class="co">-- return the first Just value of a list of Maybe</span></a>
-<a class="sourceLine" id="cb34-15" title="15"><span class="ot">firstJust ::</span> (<span class="dt">Eq</span> a) <span class="ot">=&gt;</span> [<span class="dt">Maybe</span> a] <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a</a>
-<a class="sourceLine" id="cb34-16" title="16">firstJust l <span class="ot">=</span> <span class="kw">case</span> <span class="fu">dropWhile</span> (<span class="op">==</span><span class="dt">Nothing</span>) l <span class="kw">of</span></a>
-<a class="sourceLine" id="cb34-17" title="17">    [] <span class="ot">-&gt;</span> <span class="dt">Nothing</span></a>
-<a class="sourceLine" id="cb34-18" title="18">    (j<span class="op">:</span>_) <span class="ot">-&gt;</span> j</a>
-<a class="sourceLine" id="cb34-19" title="19"></a>
-<a class="sourceLine" id="cb34-20" title="20"><span class="co">-- Given a line of words (&quot;word1&quot;:&quot;word2&quot;:rest)</span></a>
-<a class="sourceLine" id="cb34-21" title="21"><span class="co">-- getValue will return rest if word1 == key</span></a>
-<a class="sourceLine" id="cb34-22" title="22"><span class="co">-- 'elem =' or Nothing otherwise</span></a>
-<a class="sourceLine" id="cb34-23" title="23"><span class="ot">getValueForKey ::</span> <span class="dt">String</span>            <span class="co">-- key</span></a>
-<a class="sourceLine" id="cb34-24" title="24">                  <span class="ot">-&gt;</span> [<span class="dt">LZ.ByteString</span>] <span class="co">-- line of words</span></a>
-<a class="sourceLine" id="cb34-25" title="25">                  <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">String</span>    <span class="co">-- the value if found</span></a>
-<a class="sourceLine" id="cb34-26" title="26">getValueForKey el (n<span class="op">:</span>e<span class="op">:</span>xs) <span class="ot">=</span> <span class="kw">if</span> (n <span class="op">==</span> (LZ.pack el)) <span class="op">&amp;&amp;</span> (e <span class="op">==</span> (LZ.pack <span class="st">&quot;=&quot;</span>))</a>
-<a class="sourceLine" id="cb34-27" title="27">                        <span class="kw">then</span> <span class="dt">Just</span> (LZ.unpack (LZ.unwords xs))</a>
-<a class="sourceLine" id="cb34-28" title="28">                        <span class="kw">else</span> <span class="dt">Nothing</span></a>
-<a class="sourceLine" id="cb34-29" title="29">getValueForKey _ _ <span class="ot">=</span> <span class="dt">Nothing</span></a></code></pre></div>
-<p>We could notice, <code>getNameAndMail</code> doesn’t read the full file and stop at the first occurrence of name and mail.</p>
-<h3 id="use-the-github-api">Use the github API</h3>
-<div>
-<img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/coconut.jpg" alt="Coconut and Swallow" />
-</div>
-<p>The task seems relatively easy, but we’ll see there will be some complexity hidden. Make a request on <code>https://api.github.com/search/users?q=&lt;email&gt;</code>. Parse the JSON and get the <code>login</code> field of the first item.</p>
-<p>So the first problem to handle is to connect an URL. For this we will use the <code>http-conduit</code> package.</p>
-<p>Generally, for simple request, we should use:</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb35-1" title="1"><span class="kw">do</span></a>
-<a class="sourceLine" id="cb35-2" title="2">    body <span class="ot">&lt;-</span> simpleHTTP (<span class="st">&quot;https://api.github.com/search/users?q=&quot;</span> <span class="op">++</span> email)</a>
-<a class="sourceLine" id="cb35-3" title="3">    <span class="op">...</span></a></code></pre></div>
-<p>But, after some research, I discovered we must declare an User-Agent in the HTTP header to be accepted by the github API. So we have to change the HTTP Header, and our code became slightly more complex:</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb36-1" title="1"><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span></a>
-<a class="sourceLine" id="cb36-2" title="2"><span class="op">...</span></a>
-<a class="sourceLine" id="cb36-3" title="3"><span class="ot">simpleHTTPWithUserAgent ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">LZ.ByteString</span></a>
-<a class="sourceLine" id="cb36-4" title="4">simpleHTTPWithUserAgent url <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb36-5" title="5">    r  <span class="ot">&lt;-</span> parseUrl url</a>
-<a class="sourceLine" id="cb36-6" title="6">    <span class="kw">let</span> request <span class="ot">=</span> r { requestHeaders <span class="ot">=</span>  [ (<span class="st">&quot;User-Agent&quot;</span>,<span class="st">&quot;HTTP-Conduit&quot;</span>) ] }</a>
-<a class="sourceLine" id="cb36-7" title="7">    withManager <span class="op">$</span> (<span class="fu">return</span><span class="op">.</span>responseBody) <span class="op">&lt;=&lt;</span> httpLbs request</a>
-<a class="sourceLine" id="cb36-8" title="8"></a>
-<a class="sourceLine" id="cb36-9" title="9"><span class="ot">getGHUser ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> (<span class="dt">Maybe</span> <span class="dt">String</span>)</a>
-<a class="sourceLine" id="cb36-10" title="10">getGHUser <span class="st">&quot;&quot;</span>    <span class="ot">=</span> <span class="fu">return</span> <span class="dt">Nothing</span></a>
-<a class="sourceLine" id="cb36-11" title="11">getGHUser email <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb36-12" title="12">            <span class="kw">let</span> url <span class="ot">=</span> <span class="st">&quot;https://api.github.com/search/users?q=&quot;</span> <span class="op">++</span> email</a>
-<a class="sourceLine" id="cb36-13" title="13">            body <span class="ot">&lt;-</span> simpleHTTPWithUserAgent url</a>
-<a class="sourceLine" id="cb36-14" title="14">            <span class="op">...</span></a></code></pre></div>
-<p>So now, we have a String containing a JSON representation. In javascript we would have used <code>login=JSON.parse(body).items[0].login</code>. How does Haskell will handle it (knowing the J in JSON is for Javascript)?</p>
-<p>First we will need to add the <code>lens-aeson</code> package and use it that way:</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb37-1" title="1"><span class="kw">import</span> <span class="dt">Control.Lens.Operators</span>           ((^?))</a>
-<a class="sourceLine" id="cb37-2" title="2"><span class="kw">import</span> <span class="dt">Control.Lens.Aeson</span></a>
-<a class="sourceLine" id="cb37-3" title="3"><span class="kw">import</span> <span class="dt">Data.Aeson.Encode</span>                (fromValue)</a>
-<a class="sourceLine" id="cb37-4" title="4"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.Text.Lazy</span>         <span class="kw">as</span> <span class="dt">TLZ</span></a>
-<a class="sourceLine" id="cb37-5" title="5"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.Text.Lazy.Builder</span> <span class="kw">as</span> <span class="dt">TLB</span></a>
-<a class="sourceLine" id="cb37-6" title="6"></a>
-<a class="sourceLine" id="cb37-7" title="7"><span class="ot">getGHUser ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> (<span class="dt">Maybe</span> <span class="dt">String</span>)</a>
-<a class="sourceLine" id="cb37-8" title="8">getGHUser email <span class="ot">=</span> <span class="kw">do</span></a>
-<a class="sourceLine" id="cb37-9" title="9">    <span class="kw">let</span> url <span class="ot">=</span> <span class="st">&quot;https://api.github.com/search/users?q=&quot;</span> <span class="op">++</span> email</a>
-<a class="sourceLine" id="cb37-10" title="10">    body <span class="ot">&lt;-</span> simpleHTTPWithUserAgent url</a>
-<a class="sourceLine" id="cb37-11" title="11">    <span class="kw">let</span> login <span class="ot">=</span> <span class="highlight">body <span class="op">^?</span> key <span class="st">&quot;items&quot;</span> <span class="op">.</span> nth <span class="dv">0</span> <span class="op">.</span> key <span class="st">&quot;login&quot;</span></span></a>
-<a class="sourceLine" id="cb37-12" title="12">    <span class="fu">return</span> <span class="op">$</span> <span class="fu">fmap</span> jsonValueToString login</a>
-<a class="sourceLine" id="cb37-13" title="13">    <span class="kw">where</span></a>
-<a class="sourceLine" id="cb37-14" title="14">        jsonValueToString <span class="ot">=</span> TLZ.unpack <span class="op">.</span> TLB.toLazyText <span class="op">.</span> fromValue</a></code></pre></div>
-<p>It looks ugly, but it’s terse. In fact each function <code>(^?)</code>, <code>key</code> and <code>nth</code> has some great mathematical properties and everything is type safe. Unfortunately I had to make my own <code>jsonValueToString</code>. I hope I simply missed a simpler existing function.</p>
-<p>You can read <a href="https://www.fpcomplete.com/user/tel/lens-aeson-traversals-prisms">this article on <code>lens-aeson</code> and prisms</a> to know more.</p>
-<h4 id="concurrency">Concurrency</h4>
-<div>
-<img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/priest.jpg" alt="Priests" />
-</div>
-<p>We now have all the feature provided by the original <code>zsh</code> script shell. But here is a good occasion to use some Haskell great feature.</p>
-<p>We will launch the API request sooner and in parallel to minimize our wait time:</p>
-<pre><code>import Control.Concurrent
+...</code></pre><p>It will be up to our program to replace the <code>{{year}}</code> and <code>{{author}}</code> at runtime. We have to find the files. Cabal will create a module named <code>Paths_holy_project</code>. If we import this module we have the function <code>genDataFileName</code> at our disposal. Now we can read the files at runtime like this:<div class=n id=cb23><pre class="n haskell"><code class="n haskell"><a class=m id=cb23-1 title=1>  <span class=op>...</span></a>
+<a class=m id=cb23-2 title=2>  <span class=kw>do</span></a>
+<a class=m id=cb23-3 title=3>    pkgFilePath     <span class=ot>&lt;-</span> <span class=r>getDataFileName <span class=st>&quot;scaffold/LICENSE&quot;</span></span></a>
+<a class=m id=cb23-4 title=4>    templateContent <span class=ot>&lt;-</span> <span class=fu>readFile</span> pkgFilePath</a>
+<a class=m id=cb23-5 title=5>    <span class=op>...</span></a></code></pre></div><h3 id=create-files-and-directories>Create files and directories</h3><p>A first remark is for portability purpose we shouldn’t use String for file path. For example on Windows <code>/</code> isn’t considered as a subdirectory character. To resolve this problem we will use <code>FilePath</code>:<div class=n id=cb24><pre class="n haskell"><code class="n haskell"><a class=m id=cb24-1 title=1><span class=kw>import</span> <span class=dt>System.Directory</span></a>
+<a class=m id=cb24-2 title=2><span class=kw>import</span> <span class=dt>System.FilePath.Posix</span>        (takeDirectory,(&lt;/&gt;))</a>
+<a class=m id=cb24-3 title=3><span class=op>...</span></a>
+<a class=m id=cb24-4 title=4>createProject <span class=op>...</span> <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb24-5 title=5>      <span class=op>...</span></a>
+<a class=m id=cb24-6 title=6>      <span class=r>createDirectory</span> projectName     <span class=co>-- mkdir</span></a>
+<a class=m id=cb24-7 title=7>      <span class=r>setCurrentDirectory</span> projectName <span class=co>-- cd</span></a>
+<a class=m id=cb24-8 title=8>      genFile <span class=st>&quot;LICENSE&quot;</span> <span class=st>&quot;LICENSE&quot;</span></a>
+<a class=m id=cb24-9 title=9>      genFile <span class=st>&quot;gitignore&quot;</span> <span class=st>&quot;.gitignore&quot;</span></a>
+<a class=m id=cb24-10 title=10>      genFile <span class=st>&quot;src/Main.hs&quot;</span> (<span class=st>&quot;src&quot;</span> <span class=op>&lt;/&gt;</span> <span class=st>&quot;Main.hs&quot;</span>)</a>
+<a class=m id=cb24-11 title=11></a>
+<a class=m id=cb24-12 title=12>genFile dataFilename outputFilename <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb24-13 title=13>    pkgfileName <span class=ot>&lt;-</span> getDataFileName (<span class=st>&quot;scaffold/&quot;</span> <span class=op>++</span> filename)</a>
+<a class=m id=cb24-14 title=14>    template <span class=ot>&lt;-</span> <span class=fu>readFile</span> pkgfileName</a>
+<a class=m id=cb24-15 title=15>    transformedFile <span class=ot>&lt;-</span> <span class=op>???</span> <span class=co>-- hastache magic here</span></a>
+<a class=m id=cb24-16 title=16>    <span class=r>createDirectoryIfMissing</span> <span class=dt>True</span> (takeDirectory outputFileName)</a>
+<a class=m id=cb24-17 title=17>    <span class=r><span class=fu>writeFile</span></span> outputFileName transformedFile</a></code></pre></div><h3 id=use-hastache>Use Hastache</h3><p>In order to use hastache we can either create a context manually or use generics to create a context from a record. This is the last option we will show here. So in a first time, we need to import some modules and declare a record containing all necessary informations to create our project.<div class=n id=cb25><pre class="n haskell"><code class="n haskell"><a class=m id=cb25-1 title=1><span class=ot>{-# LANGUAGE DeriveDataTypeable #-}</span></a>
+<a class=m id=cb25-2 title=2><span class=op>...</span></a>
+<a class=m id=cb25-3 title=3><span class=kw>import</span> <span class=dt>Data.Data</span></a>
+<a class=m id=cb25-4 title=4><span class=kw>import</span> <span class=dt>Text.Hastache</span></a>
+<a class=m id=cb25-5 title=5><span class=kw>import</span> <span class=dt>Text.Hastache.Context</span></a>
+<a class=m id=cb25-6 title=6><span class=kw>import</span> <span class=kw>qualified</span> <span class=dt>Data.ByteString</span>            <span class=kw>as</span> <span class=dt>BS</span></a>
+<a class=m id=cb25-7 title=7><span class=kw>import</span> <span class=kw>qualified</span> <span class=dt>Data.ByteString.Lazy.Char8</span> <span class=kw>as</span> <span class=dt>LZ</span></a></code></pre></div><div class=n id=cb26><pre class="n haskell"><code class="n haskell"><a class=m id=cb26-1 title=1><span class=kw>data</span> <span class=dt>Project</span> <span class=ot>=</span> <span class=dt>Project</span> {</a>
+<a class=m id=cb26-2 title=2><span class=ot>    projectName   ::</span> <span class=dt>String</span></a>
+<a class=m id=cb26-3 title=3>    ,<span class=ot> moduleName    ::</span> <span class=dt>String</span></a>
+<a class=m id=cb26-4 title=4>    ,<span class=ot> author        ::</span> <span class=dt>String</span></a>
+<a class=m id=cb26-5 title=5>    ,<span class=ot> mail          ::</span> <span class=dt>String</span></a>
+<a class=m id=cb26-6 title=6>    ,<span class=ot> ghaccount     ::</span> <span class=dt>String</span></a>
+<a class=m id=cb26-7 title=7>    ,<span class=ot> synopsis      ::</span> <span class=dt>String</span></a>
+<a class=m id=cb26-8 title=8>    ,<span class=ot> year          ::</span> <span class=dt>String</span></a>
+<a class=m id=cb26-9 title=9>    } <span class=kw>deriving</span> (<span class=dt>Data</span>, <span class=dt>Typeable</span>)</a></code></pre></div><p>Once we have declared this, we should populate our Project record with the data provided by the user. So our main function should look like:<div class=n id=cb27><pre class="n haskell"><code class="n haskell"><a class=m id=cb27-1 title=1><span class=ot>main ::</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb27-2 title=2>main <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb27-3 title=3>    intro</a>
+<a class=m id=cb27-4 title=4>    project <span class=ot>&lt;-</span> ask <span class=st>&quot;project name&quot;</span></a>
+<a class=m id=cb27-5 title=5>    ioassert (checkProjectName project)</a>
+<a class=m id=cb27-6 title=6>             <span class=st>&quot;Use only letters, numbers, spaces and dashes please&quot;</span></a>
+<a class=m id=cb27-7 title=7>    <span class=kw>let</span> projectname <span class=ot>=</span> projectNameFromString project</a>
+<a class=m id=cb27-8 title=8>        modulename  <span class=ot>=</span> capitalize project</a>
+<a class=m id=cb27-9 title=9>    <span class=r>in_author</span>       <span class=ot>&lt;-</span> ask <span class=st>&quot;name&quot;</span></a>
+<a class=m id=cb27-10 title=10>    <span class=r>in_email</span>        <span class=ot>&lt;-</span> ask <span class=st>&quot;email&quot;</span></a>
+<a class=m id=cb27-11 title=11>    <span class=r>in_ghaccount</span>    <span class=ot>&lt;-</span> ask <span class=st>&quot;github account&quot;</span></a>
+<a class=m id=cb27-12 title=12>    <span class=r>in_synopsis</span>     <span class=ot>&lt;-</span> ask <span class=st>&quot;project in less than a dozen word?&quot;</span></a>
+<a class=m id=cb27-13 title=13>    <span class=r>current_year</span>    <span class=ot>&lt;-</span> getCurrentYear</a>
+<a class=m id=cb27-14 title=14>    createProject <span class=op>$</span> <span class=r><span class=dt>Project</span> projectname modulename in_author in_email</span></a>
+<a class=m id=cb27-15 title=15>                            <span class=r>in_ghaccount in_synopsis current_year</span></a>
+<a class=m id=cb27-16 title=16>    end</a></code></pre></div><p>Finally we could use hastache this way:<div class=n id=cb28><pre class="n haskell"><code class="n haskell"><a class=m id=cb28-1 title=1><span class=ot>createProject ::</span> <span class=r><span class=dt>Project</span></span> <span class=ot>-&gt;</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb28-2 title=2>createProject <span class=r>p</span> <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb28-3 title=3>    <span class=kw>let</span> <span class=r>context</span> <span class=ot>=</span> <span class=r>mkGenericContext p</span></a>
+<a class=m id=cb28-4 title=4>    createDirectory (<span class=r>projectName p</span>)</a>
+<a class=m id=cb28-5 title=5>    setCurrentDirectory (<span class=r>projectName p</span>)</a>
+<a class=m id=cb28-6 title=6>    genFile <span class=r>context</span> <span class=st>&quot;gitignore&quot;</span>      <span class=op>$</span> <span class=st>&quot;.gitignore&quot;</span></a>
+<a class=m id=cb28-7 title=7>    genFile <span class=r>context</span> <span class=st>&quot;project.cabal&quot;</span>  <span class=op>$</span> (projectName p) <span class=op>++</span> <span class=st>&quot;.cabal&quot;</span></a>
+<a class=m id=cb28-8 title=8>    genFile <span class=r>context</span> <span class=st>&quot;src/Main.hs&quot;</span>)   <span class=op>$</span> <span class=st>&quot;src&quot;</span> <span class=op>&lt;/&gt;</span> <span class=st>&quot;Main.hs&quot;</span></a>
+<a class=m id=cb28-9 title=9>    <span class=op>...</span></a>
+<a class=m id=cb28-10 title=10></a>
+<a class=m id=cb28-11 title=11><span class=ot>genFile ::</span> <span class=dt>MuContext</span> <span class=dt>IO</span> <span class=ot>-&gt;</span> <span class=dt>FilePath</span> <span class=ot>-&gt;</span> <span class=dt>FilePath</span> <span class=ot>-&gt;</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb28-12 title=12>genFile context filename outputFileName <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb28-13 title=13>    pkgfileName <span class=ot>&lt;-</span> getDataFileName (<span class=st>&quot;scaffold/&quot;</span><span class=op>++</span>filename)</a>
+<a class=m id=cb28-14 title=14>    template <span class=ot>&lt;-</span> <span class=r><span class=dt>BS</span><span class=op>.</span></span><span class=fu>readFile</span> pkgfileName</a>
+<a class=m id=cb28-15 title=15>    transformedFile <span class=ot>&lt;-</span> <span class=r>hastacheStr defaultConfig template context</span></a>
+<a class=m id=cb28-16 title=16>    createDirectoryIfMissing <span class=dt>True</span> (takeDirectory outputFileName)</a>
+<a class=m id=cb28-17 title=17>    <span class=r><span class=dt>LZ</span><span class=op>.</span></span><span class=fu>writeFile</span> outputFileName transformedFile</a></code></pre></div><p>We use external files in mustache format. We ask question to our user to fill a data structure. We use this data structure to create a context. Hastache use this context with the external files to create the project files.<h2 id=git-and-cabal>Git and Cabal</h2><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/tim.jpg alt=Tim></div><p>We need to initialize git and cabal. For this we simply call external command with the <code>system</code> function.<div class=n id=cb29><pre class="n haskell"><code class="n haskell"><a class=m id=cb29-1 title=1><span class=kw>import</span> <span class=dt>System.Cmd</span></a>
+<a class=m id=cb29-2 title=2></a>
+<a class=m id=cb29-3 title=3><span class=op>...</span></a>
+<a class=m id=cb29-4 title=4>main <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb29-5 title=5>    <span class=op>...</span></a>
+<a class=m id=cb29-6 title=6>    _ <span class=ot>&lt;-</span> system <span class=st>&quot;git init .&quot;</span></a>
+<a class=m id=cb29-7 title=7>    _ <span class=ot>&lt;-</span> system <span class=st>&quot;cabal sandbox init&quot;</span></a>
+<a class=m id=cb29-8 title=8>    _ <span class=ot>&lt;-</span> system <span class=st>&quot;cabal install&quot;</span></a>
+<a class=m id=cb29-9 title=9>    _ <span class=ot>&lt;-</span> system <span class=st>&quot;cabal test&quot;</span></a>
+<a class=m id=cb29-10 title=10>    _ <span class=ot>&lt;-</span> system <span class=op>$</span> <span class=st>&quot;./.cabal-sandbox/bin/test-&quot;</span> <span class=op>++</span> projectName</a></code></pre></div><h2 id=ameliorations>Ameliorations</h2><p>Our job is almost finished. Now, we only need to add some nice feature to make the application more enjoyable.<h3 id=better-error-message>Better error message</h3><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/rabbit.jpg alt=Rabbit></div><p>The first one would be to add a better error message.<div class=n id=cb30><pre class="n haskell"><code class="n haskell"><a class=m id=cb30-1 title=1><span class=kw>import</span> <span class=dt>System.Random</span></a>
+<a class=m id=cb30-2 title=2></a>
+<a class=m id=cb30-3 title=3><span class=ot>holyError ::</span> <span class=dt>String</span> <span class=ot>-&gt;</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb30-4 title=4>holyError str <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb30-5 title=5>    r <span class=ot>&lt;-</span> randomIO</a>
+<a class=m id=cb30-6 title=6>    <span class=kw>if</span> r</a>
+<a class=m id=cb30-7 title=7>        <span class=kw>then</span></a>
+<a class=m id=cb30-8 title=8>            <span class=kw>do</span></a>
+<a class=m id=cb30-9 title=9>                bk <span class=st>&quot;What... is your favourite colour?&quot;</span></a>
+<a class=m id=cb30-10 title=10>                you <span class=st>&quot;Blue. No, yel...&quot;</span></a>
+<a class=m id=cb30-11 title=11>                <span class=fu>putStrLn</span> <span class=st>&quot;[You are thrown over the edge into the volcano]&quot;</span></a>
+<a class=m id=cb30-12 title=12>                you <span class=st>&quot;You: Auuuuuuuuuuuugh&quot;</span></a>
+<a class=m id=cb30-13 title=13>                bk <span class=st>&quot; Hee hee heh.&quot;</span></a>
+<a class=m id=cb30-14 title=14>        <span class=kw>else</span></a>
+<a class=m id=cb30-15 title=15>            <span class=kw>do</span></a>
+<a class=m id=cb30-16 title=16>                bk <span class=st>&quot;What is the capital of Assyria?&quot;</span></a>
+<a class=m id=cb30-17 title=17>                you <span class=st>&quot;I don't know that!&quot;</span></a>
+<a class=m id=cb30-18 title=18>                <span class=fu>putStrLn</span> <span class=st>&quot;[You are thrown over the edge into the volcano]&quot;</span></a>
+<a class=m id=cb30-19 title=19>                you <span class=st>&quot;Auuuuuuuuuuuugh&quot;</span></a>
+<a class=m id=cb30-20 title=20>    <span class=fu>error</span> (<span class=ch>'\n'</span><span class=op>:</span>str)</a></code></pre></div><p>And also update where this can be called<div class=n id=cb31><pre class="n haskell"><code class="n haskell"><a class=m id=cb31-1 title=1><span class=ot>ioassert ::</span> <span class=dt>Bool</span> <span class=ot>-&gt;</span> <span class=dt>String</span> <span class=ot>-&gt;</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb31-2 title=2>ioassert <span class=dt>True</span> _ <span class=ot>=</span> <span class=fu>return</span> ()</a>
+<a class=m id=cb31-3 title=3>ioassert <span class=dt>False</span> str <span class=ot>=</span> holyError str</a></code></pre></div><h3 id=use-.gitconfig>Use <code>.gitconfig</code></h3><p>We want to retrieve the <code>~/.gitconfig</code> file content and see if it contains a name and email information. We will need to access to the <code>HOME</code> environment variable. Also, as we use bytestring package for hastache, let’s take advantage of this library.<div class=n id=cb32><pre class="n haskell"><code class="n haskell"><a class=m id=cb32-1 title=1><span class=kw>import</span> <span class=dt>Data.Maybe</span>           (fromJust)</a>
+<a class=m id=cb32-2 title=2><span class=kw>import</span> <span class=dt>System.Environment</span>   (getEnv)</a>
+<a class=m id=cb32-3 title=3><span class=kw>import</span> <span class=dt>Control.Exception</span></a>
+<a class=m id=cb32-4 title=4><span class=kw>import</span> <span class=dt>System.IO.Error</span></a>
+<a class=m id=cb32-5 title=5><span class=kw>import</span> <span class=dt>Control.Monad</span>        (guard)</a>
+<a class=m id=cb32-6 title=6></a>
+<a class=m id=cb32-7 title=7><span class=ot>safeReadGitConfig ::</span> <span class=dt>IO</span> <span class=dt>LZ.ByteString</span></a>
+<a class=m id=cb32-8 title=8>safeReadGitConfig <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb32-9 title=9>    e <span class=ot>&lt;-</span> tryJust (guard <span class=op>.</span> isDoesNotExistError)</a>
+<a class=m id=cb32-10 title=10>                 (<span class=kw>do</span></a>
+<a class=m id=cb32-11 title=11>                    home <span class=ot>&lt;-</span> getEnv <span class=st>&quot;HOME&quot;</span></a>
+<a class=m id=cb32-12 title=12>                    LZ.readFile <span class=op>$</span> home <span class=op>++</span> <span class=st>&quot;/.gitconfig&quot;</span> )</a>
+<a class=m id=cb32-13 title=13>    <span class=fu>return</span> <span class=op>$</span> <span class=fu>either</span> (<span class=fu>const</span> (LZ.empty)) <span class=fu>id</span> e</a>
+<a class=m id=cb32-14 title=14><span class=op>...</span></a>
+<a class=m id=cb32-15 title=15>main <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb32-16 title=16>    gitconfig <span class=ot>&lt;-</span> safeReadGitConfig</a>
+<a class=m id=cb32-17 title=17>    <span class=kw>let</span> (name,email) <span class=ot>=</span> <span class=r>getNameAndMail</span> gitconfig</a>
+<a class=m id=cb32-18 title=18>    project <span class=ot>&lt;-</span> ask <span class=st>&quot;project name&quot;</span> <span class=dt>Nothing</span></a>
+<a class=m id=cb32-19 title=19>    <span class=op>...</span></a>
+<a class=m id=cb32-20 title=20>    in_author       <span class=ot>&lt;-</span> ask <span class=st>&quot;name&quot;</span> name</a>
+<a class=m id=cb32-21 title=21>    <span class=op>...</span></a></code></pre></div><p>We could note I changed the ask function slightly to take a maybe parameter.<div class=n id=cb33><pre class="n haskell"><code class="n haskell"><a class=m id=cb33-1 title=1><span class=ot>ask ::</span> <span class=dt>String</span> <span class=r><span class=ot>-&gt;</span> <span class=dt>Maybe</span> <span class=dt>String</span></span> <span class=ot>-&gt;</span> <span class=dt>IO</span> <span class=dt>String</span></a>
+<a class=m id=cb33-2 title=2>ask info hint <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb33-3 title=3>    bk <span class=op>$</span> <span class=st>&quot;What is your &quot;</span> <span class=op>++</span> info <span class=op>++</span> <span class=st>&quot;?&quot;</span> <span class=op>++</span> <span class=r>(<span class=fu>maybe</span> <span class=st>&quot;&quot;</span> (\h <span class=ot>-&gt;</span> <span class=st>&quot; (&quot;</span><span class=op>++</span>h<span class=op>++</span><span class=st>&quot;)&quot;</span>) hint)</span></a>
+<a class=m id=cb33-4 title=4>    <span class=op>...</span></a></code></pre></div><p>Concerning the parsing of <code>.gitconfig</code>, it is quite minimalist.<div class=n id=cb34><pre class="n haskell"><code class="n haskell"><a class=m id=cb34-1 title=1><span class=ot>getNameAndMail ::</span> <span class=dt>LZ.ByteString</span> <span class=ot>-&gt;</span> (<span class=dt>Maybe</span> <span class=dt>String</span>,<span class=dt>Maybe</span> <span class=dt>String</span>)</a>
+<a class=m id=cb34-2 title=2>getNameAndMail gitConfigContent <span class=ot>=</span> (getFirstValueFor splitted <span class=st>&quot;name&quot;</span>,</a>
+<a class=m id=cb34-3 title=3>                                   getFirstValueFor splitted <span class=st>&quot;email&quot;</span>)</a>
+<a class=m id=cb34-4 title=4>    <span class=kw>where</span></a>
+<a class=m id=cb34-5 title=5>        <span class=co>-- make lines of words</span></a>
+<a class=m id=cb34-6 title=6><span class=ot>        splitted ::</span> [[<span class=dt>LZ.ByteString</span>]]</a>
+<a class=m id=cb34-7 title=7>        splitted <span class=ot>=</span> <span class=fu>map</span> LZ.words (LZ.lines gitConfigContent)</a>
+<a class=m id=cb34-8 title=8></a>
+<a class=m id=cb34-9 title=9><span class=co>-- Get the first line which start with</span></a>
+<a class=m id=cb34-10 title=10><span class=co>-- 'elem =' and return the third field (value)</span></a>
+<a class=m id=cb34-11 title=11><span class=ot>getFirstValueFor ::</span> [[<span class=dt>LZ.ByteString</span>]] <span class=ot>-&gt;</span> <span class=dt>String</span> <span class=ot>-&gt;</span> <span class=dt>Maybe</span> <span class=dt>String</span></a>
+<a class=m id=cb34-12 title=12>getFirstValueFor splitted key <span class=ot>=</span> firstJust (<span class=fu>map</span> (getValueForKey key) splitted)</a>
+<a class=m id=cb34-13 title=13></a>
+<a class=m id=cb34-14 title=14><span class=co>-- return the first Just value of a list of Maybe</span></a>
+<a class=m id=cb34-15 title=15><span class=ot>firstJust ::</span> (<span class=dt>Eq</span> a) <span class=ot>=&gt;</span> [<span class=dt>Maybe</span> a] <span class=ot>-&gt;</span> <span class=dt>Maybe</span> a</a>
+<a class=m id=cb34-16 title=16>firstJust l <span class=ot>=</span> <span class=kw>case</span> <span class=fu>dropWhile</span> (<span class=op>==</span><span class=dt>Nothing</span>) l <span class=kw>of</span></a>
+<a class=m id=cb34-17 title=17>    [] <span class=ot>-&gt;</span> <span class=dt>Nothing</span></a>
+<a class=m id=cb34-18 title=18>    (j<span class=op>:</span>_) <span class=ot>-&gt;</span> j</a>
+<a class=m id=cb34-19 title=19></a>
+<a class=m id=cb34-20 title=20><span class=co>-- Given a line of words (&quot;word1&quot;:&quot;word2&quot;:rest)</span></a>
+<a class=m id=cb34-21 title=21><span class=co>-- getValue will return rest if word1 == key</span></a>
+<a class=m id=cb34-22 title=22><span class=co>-- 'elem =' or Nothing otherwise</span></a>
+<a class=m id=cb34-23 title=23><span class=ot>getValueForKey ::</span> <span class=dt>String</span>            <span class=co>-- key</span></a>
+<a class=m id=cb34-24 title=24>                  <span class=ot>-&gt;</span> [<span class=dt>LZ.ByteString</span>] <span class=co>-- line of words</span></a>
+<a class=m id=cb34-25 title=25>                  <span class=ot>-&gt;</span> <span class=dt>Maybe</span> <span class=dt>String</span>    <span class=co>-- the value if found</span></a>
+<a class=m id=cb34-26 title=26>getValueForKey el (n<span class=op>:</span>e<span class=op>:</span>xs) <span class=ot>=</span> <span class=kw>if</span> (n <span class=op>==</span> (LZ.pack el)) <span class=op>&amp;&amp;</span> (e <span class=op>==</span> (LZ.pack <span class=st>&quot;=&quot;</span>))</a>
+<a class=m id=cb34-27 title=27>                        <span class=kw>then</span> <span class=dt>Just</span> (LZ.unpack (LZ.unwords xs))</a>
+<a class=m id=cb34-28 title=28>                        <span class=kw>else</span> <span class=dt>Nothing</span></a>
+<a class=m id=cb34-29 title=29>getValueForKey _ _ <span class=ot>=</span> <span class=dt>Nothing</span></a></code></pre></div><p>We could notice, <code>getNameAndMail</code> doesn’t read the full file and stop at the first occurrence of name and mail.<h3 id=use-the-github-api>Use the github API</h3><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/coconut.jpg alt="Coconut and Swallow"></div><p>The task seems relatively easy, but we’ll see there will be some complexity hidden. Make a request on <code>https://api.github.com/search/users?q=&lt;email></code>. Parse the JSON and get the <code>login</code> field of the first item.<p>So the first problem to handle is to connect an URL. For this we will use the <code>http-conduit</code> package.<p>Generally, for simple request, we should use:<div class=n id=cb35><pre class="n haskell"><code class="n haskell"><a class=m id=cb35-1 title=1><span class=kw>do</span></a>
+<a class=m id=cb35-2 title=2>    body <span class=ot>&lt;-</span> simpleHTTP (<span class=st>&quot;https://api.github.com/search/users?q=&quot;</span> <span class=op>++</span> email)</a>
+<a class=m id=cb35-3 title=3>    <span class=op>...</span></a></code></pre></div><p>But, after some research, I discovered we must declare an User-Agent in the HTTP header to be accepted by the github API. So we have to change the HTTP Header, and our code became slightly more complex:<div class=n id=cb36><pre class="n haskell"><code class="n haskell"><a class=m id=cb36-1 title=1><span class=ot>{-# LANGUAGE OverloadedStrings #-}</span></a>
+<a class=m id=cb36-2 title=2><span class=op>...</span></a>
+<a class=m id=cb36-3 title=3><span class=ot>simpleHTTPWithUserAgent ::</span> <span class=dt>String</span> <span class=ot>-&gt;</span> <span class=dt>IO</span> <span class=dt>LZ.ByteString</span></a>
+<a class=m id=cb36-4 title=4>simpleHTTPWithUserAgent url <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb36-5 title=5>    r  <span class=ot>&lt;-</span> parseUrl url</a>
+<a class=m id=cb36-6 title=6>    <span class=kw>let</span> request <span class=ot>=</span> r { requestHeaders <span class=ot>=</span>  [ (<span class=st>&quot;User-Agent&quot;</span>,<span class=st>&quot;HTTP-Conduit&quot;</span>) ] }</a>
+<a class=m id=cb36-7 title=7>    withManager <span class=op>$</span> (<span class=fu>return</span><span class=op>.</span>responseBody) <span class=op>&lt;=&lt;</span> httpLbs request</a>
+<a class=m id=cb36-8 title=8></a>
+<a class=m id=cb36-9 title=9><span class=ot>getGHUser ::</span> <span class=dt>String</span> <span class=ot>-&gt;</span> <span class=dt>IO</span> (<span class=dt>Maybe</span> <span class=dt>String</span>)</a>
+<a class=m id=cb36-10 title=10>getGHUser <span class=st>&quot;&quot;</span>    <span class=ot>=</span> <span class=fu>return</span> <span class=dt>Nothing</span></a>
+<a class=m id=cb36-11 title=11>getGHUser email <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb36-12 title=12>            <span class=kw>let</span> url <span class=ot>=</span> <span class=st>&quot;https://api.github.com/search/users?q=&quot;</span> <span class=op>++</span> email</a>
+<a class=m id=cb36-13 title=13>            body <span class=ot>&lt;-</span> simpleHTTPWithUserAgent url</a>
+<a class=m id=cb36-14 title=14>            <span class=op>...</span></a></code></pre></div><p>So now, we have a String containing a JSON representation. In javascript we would have used <code>login=JSON.parse(body).items[0].login</code>. How does Haskell will handle it (knowing the J in JSON is for Javascript)?<p>First we will need to add the <code>lens-aeson</code> package and use it that way:<div class=n id=cb37><pre class="n haskell"><code class="n haskell"><a class=m id=cb37-1 title=1><span class=kw>import</span> <span class=dt>Control.Lens.Operators</span>           ((^?))</a>
+<a class=m id=cb37-2 title=2><span class=kw>import</span> <span class=dt>Control.Lens.Aeson</span></a>
+<a class=m id=cb37-3 title=3><span class=kw>import</span> <span class=dt>Data.Aeson.Encode</span>                (fromValue)</a>
+<a class=m id=cb37-4 title=4><span class=kw>import</span> <span class=kw>qualified</span> <span class=dt>Data.Text.Lazy</span>         <span class=kw>as</span> <span class=dt>TLZ</span></a>
+<a class=m id=cb37-5 title=5><span class=kw>import</span> <span class=kw>qualified</span> <span class=dt>Data.Text.Lazy.Builder</span> <span class=kw>as</span> <span class=dt>TLB</span></a>
+<a class=m id=cb37-6 title=6></a>
+<a class=m id=cb37-7 title=7><span class=ot>getGHUser ::</span> <span class=dt>String</span> <span class=ot>-&gt;</span> <span class=dt>IO</span> (<span class=dt>Maybe</span> <span class=dt>String</span>)</a>
+<a class=m id=cb37-8 title=8>getGHUser email <span class=ot>=</span> <span class=kw>do</span></a>
+<a class=m id=cb37-9 title=9>    <span class=kw>let</span> url <span class=ot>=</span> <span class=st>&quot;https://api.github.com/search/users?q=&quot;</span> <span class=op>++</span> email</a>
+<a class=m id=cb37-10 title=10>    body <span class=ot>&lt;-</span> simpleHTTPWithUserAgent url</a>
+<a class=m id=cb37-11 title=11>    <span class=kw>let</span> login <span class=ot>=</span> <span class=r>body <span class=op>^?</span> key <span class=st>&quot;items&quot;</span> <span class=op>.</span> nth <span class=dv>0</span> <span class=op>.</span> key <span class=st>&quot;login&quot;</span></span></a>
+<a class=m id=cb37-12 title=12>    <span class=fu>return</span> <span class=op>$</span> <span class=fu>fmap</span> jsonValueToString login</a>
+<a class=m id=cb37-13 title=13>    <span class=kw>where</span></a>
+<a class=m id=cb37-14 title=14>        jsonValueToString <span class=ot>=</span> TLZ.unpack <span class=op>.</span> TLB.toLazyText <span class=op>.</span> fromValue</a></code></pre></div><p>It looks ugly, but it’s terse. In fact each function <code>(^?)</code>, <code>key</code> and <code>nth</code> has some great mathematical properties and everything is type safe. Unfortunately I had to make my own <code>jsonValueToString</code>. I hope I simply missed a simpler existing function.<p>You can read <a href=https://www.fpcomplete.com/user/tel/lens-aeson-traversals-prisms>this article on <code>lens-aeson</code> and prisms</a> to know more.<h4 id=concurrency>Concurrency</h4><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/priest.jpg alt=Priests></div><p>We now have all the feature provided by the original <code>zsh</code> script shell. But here is a good occasion to use some Haskell great feature.<p>We will launch the API request sooner and in parallel to minimize our wait time:<pre><code>import Control.Concurrent
 ...
 main :: IO ()
 main = do
     intro
     gitconfig &lt;- safeReadGitConfig
     let (name,email) = getNameAndMail gitconfig
-    <span class="highlight">earlyhint &lt;- newEmptyMVar</span>
-    <span class="highlight">maybe   (putMVar earlyhint Nothing)</span> -- if no email found put Nothing
-            <span class="highlight">(\hintmail -&gt; do</span>  -- in the other case request the github API
-                <span class="highlight">forkIO (putMVar earlyhint =&lt;&lt; getGHUser hintmail)</span>
-                <span class="highlight">return ())</span>
-            <span class="highlight">email</span>
+    <span class=r>earlyhint &lt;- newEmptyMVar</span>
+    <span class=r>maybe   (putMVar earlyhint Nothing)</span> -- if no email found put Nothing
+            <span class=r>(\hintmail -&gt; do</span>  -- in the other case request the github API
+                <span class=r>forkIO (putMVar earlyhint =&lt;&lt; getGHUser hintmail)</span>
+                <span class=r>return ())</span>
+            <span class=r>email</span>
     project &lt;- ask &quot;project name&quot; Nothing
     ioassert (checkProjectName project)
              &quot;Use only letters, numbers, spaces and dashes please&quot;
@@ -689,254 +446,116 @@ main = do
         modulename  = capitalize project
     in_author       &lt;- ask &quot;name&quot; name
     in_email        &lt;- ask &quot;email&quot; email
-    <span class="highlight">ghUserHint      &lt;- if maybe &quot;&quot; id email /= in_email</span>
-                            <span class="highlight">then getGHUser in_email</span>
-                            <span class="highlight">else takeMVar earlyhint</span>
+    <span class=r>ghUserHint      &lt;- if maybe &quot;&quot; id email /= in_email</span>
+                            <span class=r>then getGHUser in_email</span>
+                            <span class=r>else takeMVar earlyhint</span>
     in_ghaccount    &lt;- ask &quot;github account&quot; ghUserHint
     in_synopsis     &lt;- ask &quot;project in less than a dozen word?&quot; Nothing
     current_year    &lt;- getCurrentYear
     createProject $ Project projectname modulename in_author in_email
                             in_ghaccount in_synopsis current_year
-    end</code></pre>
-<p>While it might feel a bit confusing, it is in fact quite simple.</p>
-<ol type="1">
-<li>declare an <a href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/Control-Concurrent-MVar.html"><code>MVar</code></a>. Mainly a variable which either is empty or contains something.</li>
-<li>If we didn’t found any email hint, put Nothing in the <code>MVar</code>.</li>
-<li>If we have an email hint, ask on the github API in a new process and once finished put the result in the <code>MVar</code>.</li>
-<li>If the user enter an email different from the hint email, then just request the github api now.</li>
-<li>If the user enter the same email, then wait for the MVar to be filled and ask the next question with the result.</li>
-</ol>
-<p>If you have a github account and had set correctly your <code>.gitconfig</code>, you might not even wait.</p>
-<h2 id="project-structure">Project Structure</h2>
-<p>We have a working product. But, I don’t consider our job finished. The code is about 335 lines.</p>
-<p>Considering that we:</p>
-<ul>
-<li>have 29 lines of import and 52 lines of comments (rest 255 lines)</li>
-<li>ask questions</li>
-<li>use a templating system to generate files</li>
-<li>call an asynchronous HTTP request</li>
-<li>parse JSON</li>
-<li>parse <code>.gitconfig</code></li>
-<li>use colored output</li>
-</ul>
-<p>This is quite few.</p>
-<h3 id="modularizing">Modularizing</h3>
-<div>
-<img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/black-knight.jpg" alt="The Black Knight" />
-</div>
-<p>For short programs it is not obvious to split them into different modules. But my personal preference is to split it anyway.</p>
-<p>First we put all content of <code>src/Main.hs</code> in <code>src/HolyProject.hs</code>. We rename the <code>main</code> function by <code>holyStarter</code>. And our <code>src/Main.hs</code> should contains:</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb39-1" title="1"><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span></a>
-<a class="sourceLine" id="cb39-2" title="2"><span class="kw">import</span> <span class="dt">HolyProject</span></a>
-<a class="sourceLine" id="cb39-3" title="3"><span class="ot">main ::</span> <span class="dt">IO</span> ()</a>
-<a class="sourceLine" id="cb39-4" title="4">main <span class="ot">=</span> holyStarter</a></code></pre></div>
-<p>Of course you have to remember to rename the module of <code>src/HolyProject.hs</code>. I separated all functions in different submodules:</p>
-<ul>
-<li><code>HolyProject.GitConfig</code>
-<ul>
-<li><code>getNameAndMailFromGitConfig</code>: retrieve name an email from <code>.gitconfig</code> file</li>
-</ul></li>
-<li><code>HolyProject.GithubAPI</code>
-<ul>
-<li><code>searchGHUser</code>: retrieve github user name using github API.</li>
-</ul></li>
-<li><code>HolyProject.MontyPython</code>
-<ul>
-<li><code>bk</code>: bridge keeper speaks</li>
-<li><code>you</code>: you speak</li>
-<li><code>ask</code>: Ask a question and wait for an answer</li>
-</ul></li>
-<li><code>HolyProject.StringUtils</code>: String helper functions
-<ul>
-<li><code>projectNameFromString</code></li>
-<li><code>capitalize</code></li>
-<li><code>checkProjectName</code></li>
-</ul></li>
-</ul>
-<p>The <code>HolyProject.hs</code> file contains mostly the code that ask questions, show errors and copy files using hastache.</p>
-<p>One of the benefits in modularizing the code is that our main code is clearer. Some functions are declared only in a module and are not exported. This help us hide technical details. For example, the modification of the HTTP header to use the github API.</p>
-<h3 id="documenting">Documenting</h3>
-<div>
-<img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/holy-grenade.jpg" alt="The Holy Grenade" />
-</div>
-<p>We didn’t take much advantage of the project structure yet. A first thing is to generate some documentation. Before most function I added comment starting with <code>-- |</code>. These comment will be used by haddock to create a documentation. First, you need to install <code>haddock</code> manually.</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb40-1" title="1"><span class="ex">cabal</span> install haddock</a></code></pre></div>
-<p>Be sure to have <code>haddock</code> in your <code>PATH</code>. You could for example add it like this:</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb41-1" title="1"><span class="co"># You might want to add this line in your .profile</span></a>
-<a class="sourceLine" id="cb41-2" title="2"><span class="bu">export</span> <span class="va">PATH=$PATH</span>:./.cabal-sandbox/bin</a></code></pre></div>
-<p>And if you are at the root of your project you’ll get it. And now just launch:</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb42-1" title="1"><span class="ex">cabal</span> haddock</a></code></pre></div>
-<p>And magically, you’ll have a documentation in <code>dist/doc/html/holy-project/index.html</code>.</p>
-<h3 id="tests">Tests</h3>
-<p>While the Haskell static typing is quite efficient to prevent entire classes of bugs, Haskell doesn’t discard the need to test to minimize the number of bugs.</p>
-<h4 id="unit-testing-with-hunit">Unit Testing with HUnit</h4>
-<div>
-<img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/witch.jpg" alt="A Witch! A Witch!" />
-</div>
-<p>It is generally said to test we should use unit testing for code in IO and QuickCheck or SmallCheck for pure code.</p>
-<p>A unit test example on pure code is in the file <code>test/HolyProject/Swallow/Test.hs</code>:</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb43-1" title="1"><span class="kw">module</span> <span class="dt">HolyProject.Swallow.Test</span></a>
-<a class="sourceLine" id="cb43-2" title="2">    (swallowSuite)</a>
-<a class="sourceLine" id="cb43-3" title="3"><span class="kw">where</span></a>
-<a class="sourceLine" id="cb43-4" title="4"><span class="kw">import</span> <span class="dt">Test.Tasty</span> (testGroup, <span class="dt">TestTree</span>)</a>
-<a class="sourceLine" id="cb43-5" title="5"><span class="kw">import</span> <span class="dt">Test.Tasty.HUnit</span></a>
-<a class="sourceLine" id="cb43-6" title="6"><span class="kw">import</span> <span class="dt">HolyProject.Swallow</span> (<span class="highlight">swallow</span>)</a>
-<a class="sourceLine" id="cb43-7" title="7"></a>
-<a class="sourceLine" id="cb43-8" title="8"><span class="ot">swallowSuite ::</span> <span class="dt">TestTree</span></a>
-<a class="sourceLine" id="cb43-9" title="9">swallowSuite <span class="ot">=</span> testGroup <span class="st">&quot;Swallow&quot;</span></a>
-<a class="sourceLine" id="cb43-10" title="10">    [testCase <span class="st">&quot;swallow test&quot;</span> testSwallow]</a>
-<a class="sourceLine" id="cb43-11" title="11"></a>
-<a class="sourceLine" id="cb43-12" title="12"><span class="co">-- in Swallow: swallow = (++)</span></a>
-<a class="sourceLine" id="cb43-13" title="13"><span class="ot">testSwallow ::</span> <span class="dt">Assertion</span></a>
-<a class="sourceLine" id="cb43-14" title="14">testSwallow <span class="ot">=</span> <span class="st">&quot;something&quot;</span> <span class="op">@=?</span> <span class="highlight">swallow</span> <span class="st">&quot;some&quot;</span> <span class="st">&quot;thing&quot;</span></a></code></pre></div>
-<p>Note <code>swallow</code> is <code>(++)</code>. We group tests by group. Each group can contain some test suite. Here we have a test suite with only one test. The <code>(@=?)</code> verify the equality between its two parameters.</p>
-<p>So now, we could safely delete the directory <code>test/HolyProject/Swallow</code> and the file <code>src/HolyProject/Swallow.hs</code>. And we are ready to make our own real world unit test. We will first test the module <code>HolyProject.GithubAPI</code>. Let’s create a file <code>test/HolyProject/GithubAPI/Test.hs</code> with the following content:</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb44-1" title="1"><span class="kw">module</span> <span class="dt">HolyProject.GithubAPI.Test</span></a>
-<a class="sourceLine" id="cb44-2" title="2">( githubAPISuite</a>
-<a class="sourceLine" id="cb44-3" title="3">) <span class="kw">where</span></a>
-<a class="sourceLine" id="cb44-4" title="4"><span class="kw">import</span> <span class="dt">Test.Tasty</span> (testGroup, <span class="dt">TestTree</span>)</a>
-<a class="sourceLine" id="cb44-5" title="5"><span class="kw">import</span> <span class="dt">Test.Tasty.HUnit</span></a>
-<a class="sourceLine" id="cb44-6" title="6"><span class="kw">import</span> <span class="dt">HolyProject.GithubAPI</span></a>
-<a class="sourceLine" id="cb44-7" title="7"></a>
-<a class="sourceLine" id="cb44-8" title="8"><span class="ot">githubAPISuite ::</span> <span class="dt">TestTree</span></a>
-<a class="sourceLine" id="cb44-9" title="9">githubAPISuite <span class="ot">=</span> testGroup <span class="st">&quot;GithubAPI&quot;</span></a>
-<a class="sourceLine" id="cb44-10" title="10">    [ testCase <span class="st">&quot;Yann&quot;</span> <span class="op">$</span> ioTestEq</a>
-<a class="sourceLine" id="cb44-11" title="11">            (searchGHUser <span class="st">&quot;Yann.Esposito@gmail.com&quot;</span>)</a>
-<a class="sourceLine" id="cb44-12" title="12">            (<span class="dt">Just</span> <span class="st">&quot;\&quot;yogsototh\&quot;&quot;</span>)</a>
-<a class="sourceLine" id="cb44-13" title="13">    , testCase <span class="st">&quot;Jasper&quot;</span> <span class="op">$</span> ioTestEq</a>
-<a class="sourceLine" id="cb44-14" title="14">            (searchGHUser <span class="st">&quot;Jasper Van der Jeugt&quot;</span>)</a>
-<a class="sourceLine" id="cb44-15" title="15">            (<span class="dt">Just</span> <span class="st">&quot;\&quot;jaspervdj\&quot;&quot;</span>)</a>
-<a class="sourceLine" id="cb44-16" title="16">    ]</a>
-<a class="sourceLine" id="cb44-17" title="17"></a>
-<a class="sourceLine" id="cb44-18" title="18"><span class="co">-- | Test if some IO action returns some expected value</span></a>
-<a class="sourceLine" id="cb44-19" title="19"><span class="ot">ioTestEq ::</span> (<span class="dt">Eq</span> a, <span class="dt">Show</span> a) <span class="ot">=&gt;</span> <span class="dt">IO</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Assertion</span></a>
-<a class="sourceLine" id="cb44-20" title="20">ioTestEq action expected <span class="ot">=</span> action <span class="op">&gt;&gt;=</span> assertEqual <span class="st">&quot;&quot;</span> expected</a></code></pre></div>
-<p>You have to modify your cabal file. More precisely, you have to add <code>HolyProject.GithubAPI</code> in the exposed modules of the library secion). You also have to update the <code>test/Test.hs</code> file to use <code>GithubAPI</code> instead of <code>Swallow</code>.</p>
-<p>So we have our example of unit testing using IO. We search the github nickname for some people I know and we verify github continue to give the same answer as expected.</p>
-<h4 id="property-testing-with-smallcheck-and-quickcheck">Property Testing with SmallCheck and QuickCheck</h4>
-<div>
-<img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/zoot.jpg" alt="My name is Zoot. Just Zoot" />
-</div>
-<p>When it comes to pure code, a very good method is to use QuickCheck and SmallCheck. SmallCheck will verify all cases up to some depth about some property. While QuickCheck will verify some random cases.</p>
-<p>As this kind of verification of property is mostly doable on pure code, we will test the <code>StringUtils</code> module.</p>
-<p>So don’t forget to declare <code>HolyProject.StringUtils</code> in the exposed modules in the library section of your cabal file. Remove all references to the <code>Coconut</code> module.</p>
-<p>Modify the <code>test/Test.hs</code> to remove all references about <code>Coconut</code>. Create a <code>test/HolyProject/StringUtils/Test.hs</code> file containing:</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb45-1" title="1"><span class="kw">module</span> <span class="dt">HolyProject.StringUtils.Test</span></a>
-<a class="sourceLine" id="cb45-2" title="2">( stringUtilsSuite</a>
-<a class="sourceLine" id="cb45-3" title="3">) <span class="kw">where</span></a>
-<a class="sourceLine" id="cb45-4" title="4"><span class="kw">import</span>              <span class="dt">Test.Tasty</span>                      (testGroup, <span class="dt">TestTree</span>)</a>
-<a class="sourceLine" id="cb45-5" title="5"><span class="kw">import</span>              <span class="dt">Test.Tasty.SmallCheck</span>           (forAll)</a>
-<a class="sourceLine" id="cb45-6" title="6"><span class="kw">import</span> <span class="kw">qualified</span>    <span class="dt">Test.Tasty.SmallCheck</span>       <span class="kw">as</span>  <span class="dt">SC</span></a>
-<a class="sourceLine" id="cb45-7" title="7"><span class="kw">import</span> <span class="kw">qualified</span>    <span class="dt">Test.Tasty.QuickCheck</span>       <span class="kw">as</span>  <span class="dt">QC</span></a>
-<a class="sourceLine" id="cb45-8" title="8"><span class="kw">import</span>              <span class="dt">Test.SmallCheck.Series</span>          (<span class="dt">Serial</span>)</a>
-<a class="sourceLine" id="cb45-9" title="9"><span class="kw">import</span>              <span class="dt">HolyProject.StringUtils</span></a>
-<a class="sourceLine" id="cb45-10" title="10"></a>
-<a class="sourceLine" id="cb45-11" title="11"><span class="ot">stringUtilsSuite ::</span> <span class="dt">TestTree</span></a>
-<a class="sourceLine" id="cb45-12" title="12">stringUtilsSuite <span class="ot">=</span> testGroup <span class="st">&quot;StringUtils&quot;</span></a>
-<a class="sourceLine" id="cb45-13" title="13">    [ SC.testProperty <span class="st">&quot;SC projectNameFromString idempotent&quot;</span> <span class="op">$</span></a>
-<a class="sourceLine" id="cb45-14" title="14">            idempotent projectNameFromString</a>
-<a class="sourceLine" id="cb45-15" title="15">    , SC.testProperty <span class="st">&quot;SC capitalize idempotent&quot;</span> <span class="op">$</span></a>
-<a class="sourceLine" id="cb45-16" title="16">            deeperIdempotent capitalize</a>
-<a class="sourceLine" id="cb45-17" title="17">    , QC.testProperty <span class="st">&quot;QC projectNameFromString idempotent&quot;</span> <span class="op">$</span></a>
-<a class="sourceLine" id="cb45-18" title="18">            idempotent capitalize</a>
-<a class="sourceLine" id="cb45-19" title="19">    ]</a>
-<a class="sourceLine" id="cb45-20" title="20"></a>
-<a class="sourceLine" id="cb45-21" title="21">idempotent f <span class="ot">=</span> \s <span class="ot">-&gt;</span> f s <span class="op">==</span> f (f s)</a>
-<a class="sourceLine" id="cb45-22" title="22"></a>
-<a class="sourceLine" id="cb45-23" title="23"><span class="ot">deeperIdempotent ::</span> (<span class="dt">Eq</span> a, <span class="dt">Show</span> a, <span class="dt">Serial</span> m a) <span class="ot">=&gt;</span> (a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">SC.Property</span> m</a>
-<a class="sourceLine" id="cb45-24" title="24">deeperIdempotent f <span class="ot">=</span> forAll <span class="op">$</span> SC.changeDepth1 (<span class="op">+</span><span class="dv">1</span>) <span class="op">$</span> \s <span class="ot">-&gt;</span> f s <span class="op">==</span> f (f s)</a></code></pre></div>
-<p>The result is here:</p>
-<pre>
+    end</code></pre><p>While it might feel a bit confusing, it is in fact quite simple.<ol type=1><li>declare an <a href=http://www.haskell.org/ghc/docs/latest/html/libraries/base/Control-Concurrent-MVar.html><code>MVar</code></a>. Mainly a variable which either is empty or contains something.<li>If we didn’t found any email hint, put Nothing in the <code>MVar</code>.<li>If we have an email hint, ask on the github API in a new process and once finished put the result in the <code>MVar</code>.<li>If the user enter an email different from the hint email, then just request the github api now.<li>If the user enter the same email, then wait for the MVar to be filled and ask the next question with the result.</ol><p>If you have a github account and had set correctly your <code>.gitconfig</code>, you might not even wait.<h2 id=project-structure>Project Structure</h2><p>We have a working product. But, I don’t consider our job finished. The code is about 335 lines.<p>Considering that we:<ul><li>have 29 lines of import and 52 lines of comments (rest 255 lines)<li>ask questions<li>use a templating system to generate files<li>call an asynchronous HTTP request<li>parse JSON<li>parse <code>.gitconfig</code><li>use colored output</ul><p>This is quite few.<h3 id=modularizing>Modularizing</h3><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/black-knight.jpg alt="The Black Knight"></div><p>For short programs it is not obvious to split them into different modules. But my personal preference is to split it anyway.<p>First we put all content of <code>src/Main.hs</code> in <code>src/HolyProject.hs</code>. We rename the <code>main</code> function by <code>holyStarter</code>. And our <code>src/Main.hs</code> should contains:<div class=n id=cb39><pre class="n haskell"><code class="n haskell"><a class=m id=cb39-1 title=1><span class=kw>module</span> <span class=dt>Main</span> <span class=kw>where</span></a>
+<a class=m id=cb39-2 title=2><span class=kw>import</span> <span class=dt>HolyProject</span></a>
+<a class=m id=cb39-3 title=3><span class=ot>main ::</span> <span class=dt>IO</span> ()</a>
+<a class=m id=cb39-4 title=4>main <span class=ot>=</span> holyStarter</a></code></pre></div><p>Of course you have to remember to rename the module of <code>src/HolyProject.hs</code>. I separated all functions in different submodules:<ul><li><code>HolyProject.GitConfig</code><ul><li><code>getNameAndMailFromGitConfig</code>: retrieve name an email from <code>.gitconfig</code> file</ul><li><code>HolyProject.GithubAPI</code><ul><li><code>searchGHUser</code>: retrieve github user name using github API.</ul><li><code>HolyProject.MontyPython</code><ul><li><code>bk</code>: bridge keeper speaks<li><code>you</code>: you speak<li><code>ask</code>: Ask a question and wait for an answer</ul><li><code>HolyProject.StringUtils</code>: String helper functions<ul><li><code>projectNameFromString</code><li><code>capitalize</code><li><code>checkProjectName</code></ul></ul><p>The <code>HolyProject.hs</code> file contains mostly the code that ask questions, show errors and copy files using hastache.<p>One of the benefits in modularizing the code is that our main code is clearer. Some functions are declared only in a module and are not exported. This help us hide technical details. For example, the modification of the HTTP header to use the github API.<h3 id=documenting>Documenting</h3><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/holy-grenade.jpg alt="The Holy Grenade"></div><p>We didn’t take much advantage of the project structure yet. A first thing is to generate some documentation. Before most function I added comment starting with <code>-- |</code>. These comment will be used by haddock to create a documentation. First, you need to install <code>haddock</code> manually.<div class=n id=cb40><pre class="n bash"><code class="n bash"><a class=m id=cb40-1 title=1><span class=ex>cabal</span> install haddock</a></code></pre></div><p>Be sure to have <code>haddock</code> in your <code>PATH</code>. You could for example add it like this:<div class=n id=cb41><pre class="n bash"><code class="n bash"><a class=m id=cb41-1 title=1><span class=co># You might want to add this line in your .profile</span></a>
+<a class=m id=cb41-2 title=2><span class=bu>export</span> <span class=va>PATH=$PATH</span>:./.cabal-sandbox/bin</a></code></pre></div><p>And if you are at the root of your project you’ll get it. And now just launch:<div class=n id=cb42><pre class="n bash"><code class="n bash"><a class=m id=cb42-1 title=1><span class=ex>cabal</span> haddock</a></code></pre></div><p>And magically, you’ll have a documentation in <code>dist/doc/html/holy-project/index.html</code>.<h3 id=tests>Tests</h3><p>While the Haskell static typing is quite efficient to prevent entire classes of bugs, Haskell doesn’t discard the need to test to minimize the number of bugs.<h4 id=unit-testing-with-hunit>Unit Testing with HUnit</h4><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/witch.jpg alt="A Witch! A Witch!"></div><p>It is generally said to test we should use unit testing for code in IO and QuickCheck or SmallCheck for pure code.<p>A unit test example on pure code is in the file <code>test/HolyProject/Swallow/Test.hs</code>:<div class=n id=cb43><pre class="n haskell"><code class="n haskell"><a class=m id=cb43-1 title=1><span class=kw>module</span> <span class=dt>HolyProject.Swallow.Test</span></a>
+<a class=m id=cb43-2 title=2>    (swallowSuite)</a>
+<a class=m id=cb43-3 title=3><span class=kw>where</span></a>
+<a class=m id=cb43-4 title=4><span class=kw>import</span> <span class=dt>Test.Tasty</span> (testGroup, <span class=dt>TestTree</span>)</a>
+<a class=m id=cb43-5 title=5><span class=kw>import</span> <span class=dt>Test.Tasty.HUnit</span></a>
+<a class=m id=cb43-6 title=6><span class=kw>import</span> <span class=dt>HolyProject.Swallow</span> (<span class=r>swallow</span>)</a>
+<a class=m id=cb43-7 title=7></a>
+<a class=m id=cb43-8 title=8><span class=ot>swallowSuite ::</span> <span class=dt>TestTree</span></a>
+<a class=m id=cb43-9 title=9>swallowSuite <span class=ot>=</span> testGroup <span class=st>&quot;Swallow&quot;</span></a>
+<a class=m id=cb43-10 title=10>    [testCase <span class=st>&quot;swallow test&quot;</span> testSwallow]</a>
+<a class=m id=cb43-11 title=11></a>
+<a class=m id=cb43-12 title=12><span class=co>-- in Swallow: swallow = (++)</span></a>
+<a class=m id=cb43-13 title=13><span class=ot>testSwallow ::</span> <span class=dt>Assertion</span></a>
+<a class=m id=cb43-14 title=14>testSwallow <span class=ot>=</span> <span class=st>&quot;something&quot;</span> <span class=op>@=?</span> <span class=r>swallow</span> <span class=st>&quot;some&quot;</span> <span class=st>&quot;thing&quot;</span></a></code></pre></div><p>Note <code>swallow</code> is <code>(++)</code>. We group tests by group. Each group can contain some test suite. Here we have a test suite with only one test. The <code>(@=?)</code> verify the equality between its two parameters.<p>So now, we could safely delete the directory <code>test/HolyProject/Swallow</code> and the file <code>src/HolyProject/Swallow.hs</code>. And we are ready to make our own real world unit test. We will first test the module <code>HolyProject.GithubAPI</code>. Let’s create a file <code>test/HolyProject/GithubAPI/Test.hs</code> with the following content:<div class=n id=cb44><pre class="n haskell"><code class="n haskell"><a class=m id=cb44-1 title=1><span class=kw>module</span> <span class=dt>HolyProject.GithubAPI.Test</span></a>
+<a class=m id=cb44-2 title=2>( githubAPISuite</a>
+<a class=m id=cb44-3 title=3>) <span class=kw>where</span></a>
+<a class=m id=cb44-4 title=4><span class=kw>import</span> <span class=dt>Test.Tasty</span> (testGroup, <span class=dt>TestTree</span>)</a>
+<a class=m id=cb44-5 title=5><span class=kw>import</span> <span class=dt>Test.Tasty.HUnit</span></a>
+<a class=m id=cb44-6 title=6><span class=kw>import</span> <span class=dt>HolyProject.GithubAPI</span></a>
+<a class=m id=cb44-7 title=7></a>
+<a class=m id=cb44-8 title=8><span class=ot>githubAPISuite ::</span> <span class=dt>TestTree</span></a>
+<a class=m id=cb44-9 title=9>githubAPISuite <span class=ot>=</span> testGroup <span class=st>&quot;GithubAPI&quot;</span></a>
+<a class=m id=cb44-10 title=10>    [ testCase <span class=st>&quot;Yann&quot;</span> <span class=op>$</span> ioTestEq</a>
+<a class=m id=cb44-11 title=11>            (searchGHUser <span class=st>&quot;Yann.Esposito@gmail.com&quot;</span>)</a>
+<a class=m id=cb44-12 title=12>            (<span class=dt>Just</span> <span class=st>&quot;\&quot;yogsototh\&quot;&quot;</span>)</a>
+<a class=m id=cb44-13 title=13>    , testCase <span class=st>&quot;Jasper&quot;</span> <span class=op>$</span> ioTestEq</a>
+<a class=m id=cb44-14 title=14>            (searchGHUser <span class=st>&quot;Jasper Van der Jeugt&quot;</span>)</a>
+<a class=m id=cb44-15 title=15>            (<span class=dt>Just</span> <span class=st>&quot;\&quot;jaspervdj\&quot;&quot;</span>)</a>
+<a class=m id=cb44-16 title=16>    ]</a>
+<a class=m id=cb44-17 title=17></a>
+<a class=m id=cb44-18 title=18><span class=co>-- | Test if some IO action returns some expected value</span></a>
+<a class=m id=cb44-19 title=19><span class=ot>ioTestEq ::</span> (<span class=dt>Eq</span> a, <span class=dt>Show</span> a) <span class=ot>=&gt;</span> <span class=dt>IO</span> a <span class=ot>-&gt;</span> a <span class=ot>-&gt;</span> <span class=dt>Assertion</span></a>
+<a class=m id=cb44-20 title=20>ioTestEq action expected <span class=ot>=</span> action <span class=op>&gt;&gt;=</span> assertEqual <span class=st>&quot;&quot;</span> expected</a></code></pre></div><p>You have to modify your cabal file. More precisely, you have to add <code>HolyProject.GithubAPI</code> in the exposed modules of the library secion). You also have to update the <code>test/Test.hs</code> file to use <code>GithubAPI</code> instead of <code>Swallow</code>.<p>So we have our example of unit testing using IO. We search the github nickname for some people I know and we verify github continue to give the same answer as expected.<h4 id=property-testing-with-smallcheck-and-quickcheck>Property Testing with SmallCheck and QuickCheck</h4><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/zoot.jpg alt="My name is Zoot. Just Zoot"></div><p>When it comes to pure code, a very good method is to use QuickCheck and SmallCheck. SmallCheck will verify all cases up to some depth about some property. While QuickCheck will verify some random cases.<p>As this kind of verification of property is mostly doable on pure code, we will test the <code>StringUtils</code> module.<p>So don’t forget to declare <code>HolyProject.StringUtils</code> in the exposed modules in the library section of your cabal file. Remove all references to the <code>Coconut</code> module.<p>Modify the <code>test/Test.hs</code> to remove all references about <code>Coconut</code>. Create a <code>test/HolyProject/StringUtils/Test.hs</code> file containing:<div class=n id=cb45><pre class="n haskell"><code class="n haskell"><a class=m id=cb45-1 title=1><span class=kw>module</span> <span class=dt>HolyProject.StringUtils.Test</span></a>
+<a class=m id=cb45-2 title=2>( stringUtilsSuite</a>
+<a class=m id=cb45-3 title=3>) <span class=kw>where</span></a>
+<a class=m id=cb45-4 title=4><span class=kw>import</span>              <span class=dt>Test.Tasty</span>                      (testGroup, <span class=dt>TestTree</span>)</a>
+<a class=m id=cb45-5 title=5><span class=kw>import</span>              <span class=dt>Test.Tasty.SmallCheck</span>           (forAll)</a>
+<a class=m id=cb45-6 title=6><span class=kw>import</span> <span class=kw>qualified</span>    <span class=dt>Test.Tasty.SmallCheck</span>       <span class=kw>as</span>  <span class=dt>SC</span></a>
+<a class=m id=cb45-7 title=7><span class=kw>import</span> <span class=kw>qualified</span>    <span class=dt>Test.Tasty.QuickCheck</span>       <span class=kw>as</span>  <span class=dt>QC</span></a>
+<a class=m id=cb45-8 title=8><span class=kw>import</span>              <span class=dt>Test.SmallCheck.Series</span>          (<span class=dt>Serial</span>)</a>
+<a class=m id=cb45-9 title=9><span class=kw>import</span>              <span class=dt>HolyProject.StringUtils</span></a>
+<a class=m id=cb45-10 title=10></a>
+<a class=m id=cb45-11 title=11><span class=ot>stringUtilsSuite ::</span> <span class=dt>TestTree</span></a>
+<a class=m id=cb45-12 title=12>stringUtilsSuite <span class=ot>=</span> testGroup <span class=st>&quot;StringUtils&quot;</span></a>
+<a class=m id=cb45-13 title=13>    [ SC.testProperty <span class=st>&quot;SC projectNameFromString idempotent&quot;</span> <span class=op>$</span></a>
+<a class=m id=cb45-14 title=14>            idempotent projectNameFromString</a>
+<a class=m id=cb45-15 title=15>    , SC.testProperty <span class=st>&quot;SC capitalize idempotent&quot;</span> <span class=op>$</span></a>
+<a class=m id=cb45-16 title=16>            deeperIdempotent capitalize</a>
+<a class=m id=cb45-17 title=17>    , QC.testProperty <span class=st>&quot;QC projectNameFromString idempotent&quot;</span> <span class=op>$</span></a>
+<a class=m id=cb45-18 title=18>            idempotent capitalize</a>
+<a class=m id=cb45-19 title=19>    ]</a>
+<a class=m id=cb45-20 title=20></a>
+<a class=m id=cb45-21 title=21>idempotent f <span class=ot>=</span> \s <span class=ot>-&gt;</span> f s <span class=op>==</span> f (f s)</a>
+<a class=m id=cb45-22 title=22></a>
+<a class=m id=cb45-23 title=23><span class=ot>deeperIdempotent ::</span> (<span class=dt>Eq</span> a, <span class=dt>Show</span> a, <span class=dt>Serial</span> m a) <span class=ot>=&gt;</span> (a <span class=ot>-&gt;</span> a) <span class=ot>-&gt;</span> <span class=dt>SC.Property</span> m</a>
+<a class=m id=cb45-24 title=24>deeperIdempotent f <span class=ot>=</span> forAll <span class=op>$</span> SC.changeDepth1 (<span class=op>+</span><span class=dv>1</span>) <span class=op>$</span> \s <span class=ot>-&gt;</span> f s <span class=op>==</span> f (f s)</a></code></pre></div><p>The result is here:<pre>
 All Tests
   StringUtils
-    SC projectNameFromString idempotent: <span class="green">OK</span>
+    SC projectNameFromString idempotent: <span class=bm>OK</span>
       206 tests completed
-    SC capitalize idempotent:            <span class="green">OK</span>
+    SC capitalize idempotent:            <span class=bm>OK</span>
       1237 tests completed
-    QC projectNameFromString idempotent: <span class="red">FAIL</span>
+    QC projectNameFromString idempotent: <span class=cr>FAIL</span>
       *** Failed! Falsifiable (after 19 tests and 5 shrinks):
       "a a"
       Use --quickcheck-replay '18 913813783 2147483380' to reproduce.
   GithubAPI
-    Yann:                                <span class="green">OK</span>
-    Jasper:                              <span class="green">OK</span>
+    Yann:                                <span class=bm>OK</span>
+    Jasper:                              <span class=bm>OK</span>
 
-<span class="red">1 out of 5 tests failed</span>
-</pre>
-<p>The test fail, but this is not an error. Our <code>capitalize</code> function shouldn’t be idempotent. I simply added this test to show what occurs when a test fail. If you want to look more closely to the error you could do this:</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb46-1" title="1">$ <span class="ex">./interact</span></a>
-<a class="sourceLine" id="cb46-2" title="2"><span class="ex">GHCi</span>, version 7.6.2: http://www.haskell.org/ghc/   :? for help</a>
-<a class="sourceLine" id="cb46-3" title="3"><span class="ex">Loading</span> package ghc-prim ... linking ... done.</a>
-<a class="sourceLine" id="cb46-4" title="4"><span class="ex">Loading</span> package integer-gmp ... linking ... done.</a>
-<a class="sourceLine" id="cb46-5" title="5"><span class="ex">Loading</span> package base ... linking ... done.</a>
-<a class="sourceLine" id="cb46-6" title="6"><span class="ex">Prelude</span><span class="op">&gt;</span> :l src/HolyProject/StringUtils</a>
-<a class="sourceLine" id="cb46-7" title="7">[<span class="ex">1</span> of 1] Compiling HolyProject.StringUtils ( src/HolyProject/StringUtils.hs, interpreted )</a>
-<a class="sourceLine" id="cb46-8" title="8"><span class="ex">Ok</span>, modules loaded: HolyProject.StringUtils.</a>
-<a class="sourceLine" id="cb46-9" title="9"><span class="ex">*HolyProject.StringUtils</span><span class="op">&gt;</span> capitalize <span class="st">&quot;a a&quot;</span></a>
-<a class="sourceLine" id="cb46-10" title="10"><span class="dt"><span class="highlight"></span><span class="st">&quot;AA&quot;</span><span class="dt"></span></span></a>
-<a class="sourceLine" id="cb46-11" title="11"><span class="ex">*HolyProject.StringUtils</span><span class="op">&gt;</span> capitalize (capitalize <span class="st">&quot;a a&quot;</span>)</a>
-<a class="sourceLine" id="cb46-12" title="12"><span class="dt"><span class="highlight"></span><span class="st">&quot;Aa&quot;</span><span class="dt"></span></span></a>
-<a class="sourceLine" id="cb46-13" title="13"><span class="ex">*HolyProject.StringUtils</span><span class="op">&gt;</span></a></code></pre></div>
-<p>It is important to use <code>./interact</code> instead of <code>ghci</code>. Because we need to tell <code>ghci</code> how to found the package installed.</p>
-<p>Apparently, SmallCheck didn’t found any counter example. I don’t know how it generates Strings and using deeper search is really long.</p>
-<h2 id="conclusion">Conclusion</h2>
-<div>
-<img src="../../../../Scratch/img/blog/Holy-Haskell-Starter/a-blessing.jpg" alt="Rabbit" />
-</div>
-<p>Congratulation!</p>
-<p>Now you could start programming in Haskell and publish your own cabal package.</p>
-<section class="footnotes">
-<hr />
-<ol>
-<li id="fn1"><p>For example, you have to install the test libraries manually to use <code>cabal test</code>.<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>There is no easy way to do something like <code>name=$(ask name)</code>. Simply because <code>$(ask name)</code> run in another process which doesn’t get access to the standard input<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>Having a good level of power in templates is very difficult. <span class="sc"><abbr title="In my Humble Opinion">imho</abbr></span> Mustache has made the best compromise.<a href="#fnref3" class="footnote-back">↩</a></p></li>
-</ol>
-</section>
-          </div>
-          <div id="afterarticle">
-              <div id="social">
-                  <a href="../../../../Scratch/en/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
-                  ·
-                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Holy-Haskell-Starter/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
-                  ·
-                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Holy-Haskell-Starter/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
-                  <br />
-                  <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
-              </div>
-              <div id="navigation">
-                  <a href="../../../../">Home</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/en/blog">Blog</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/en/softwares">Softwares</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/en/about">About</a>
-              </div>
-              <div id="totop"><a href="#header">↑ Top ↑</a></div>
-              <div id="bottom">
-                  <div>
-                      Published on 2013-11-14
-                  </div>
-                  <div>
-                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
-                  </div>
-                  <div>
-                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
-                  </div>
-
-                  <div>
-                      Done with
-                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
-                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
-                      <span class="pala">&amp;</span>
-                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
-                  </div>
-              </div>
-          </div>
-      </div>
-
-        </div>
-    </body>
-</html>
+<span class=cr>1 out of 5 tests failed</span>
+</pre><p>The test fail, but this is not an error. Our <code>capitalize</code> function shouldn’t be idempotent. I simply added this test to show what occurs when a test fail. If you want to look more closely to the error you could do this:<div class=n id=cb46><pre class="n bash"><code class="n bash"><a class=m id=cb46-1 title=1>$ <span class=ex>./interact</span></a>
+<a class=m id=cb46-2 title=2><span class=ex>GHCi</span>, version 7.6.2: http://www.haskell.org/ghc/   :? for help</a>
+<a class=m id=cb46-3 title=3><span class=ex>Loading</span> package ghc-prim ... linking ... done.</a>
+<a class=m id=cb46-4 title=4><span class=ex>Loading</span> package integer-gmp ... linking ... done.</a>
+<a class=m id=cb46-5 title=5><span class=ex>Loading</span> package base ... linking ... done.</a>
+<a class=m id=cb46-6 title=6><span class=ex>Prelude</span><span class=op>&gt;</span> :l src/HolyProject/StringUtils</a>
+<a class=m id=cb46-7 title=7>[<span class=ex>1</span> of 1] Compiling HolyProject.StringUtils ( src/HolyProject/StringUtils.hs, interpreted )</a>
+<a class=m id=cb46-8 title=8><span class=ex>Ok</span>, modules loaded: HolyProject.StringUtils.</a>
+<a class=m id=cb46-9 title=9><span class=ex>*HolyProject.StringUtils</span><span class=op>&gt;</span> capitalize <span class=st>&quot;a a&quot;</span></a>
+<a class=m id=cb46-10 title=10><span class=dt><span class=r></span><span class=st>&quot;AA&quot;</span><span class=dt></span></span></a>
+<a class=m id=cb46-11 title=11><span class=ex>*HolyProject.StringUtils</span><span class=op>&gt;</span> capitalize (capitalize <span class=st>&quot;a a&quot;</span>)</a>
+<a class=m id=cb46-12 title=12><span class=dt><span class=r></span><span class=st>&quot;Aa&quot;</span><span class=dt></span></span></a>
+<a class=m id=cb46-13 title=13><span class=ex>*HolyProject.StringUtils</span><span class=op>&gt;</span></a></code></pre></div><p>It is important to use <code>./interact</code> instead of <code>ghci</code>. Because we need to tell <code>ghci</code> how to found the package installed.<p>Apparently, SmallCheck didn’t found any counter example. I don’t know how it generates Strings and using deeper search is really long.<h2 id=conclusion>Conclusion</h2><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/a-blessing.jpg alt=Rabbit></div><p>Congratulation!<p>Now you could start programming in Haskell and publish your own cabal package.<section class=u><hr><ol><li id=fn1><p>For example, you have to install the test libraries manually to use <code>cabal test</code>.<a href=#fnref1 class=d>↩</a><li id=fn2><p>There is no easy way to do something like <code>name=$(ask name)</code>. Simply because <code>$(ask name)</code> run in another process which doesn’t get access to the standard input<a href=#fnref2 class=d>↩</a><li id=fn3><p>Having a good level of power in templates is very difficult. <span class=sc><abbr title="In my Humble Opinion">imho</abbr></span> Mustache has made the best compromise.<a href=#fnref3 class=d>↩</a></ol></section></div><div id=afterarticle><div id=social><a href=../../../../Scratch/en/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=ar>RSS</a>
+·
+<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Holy-Haskell-Starter/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=ar>Tweet</a>
+·
+<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Holy-Haskell-Starter/" target=_blank rel="noopener noreferrer nofollow" class=ar>FB</a><br><a class=af href=../../../../Scratch/en/blog/Social-link-the-right-way/>These social sharing links preserve your privacy</a></div><div id=navigation><a href=../../../../>Home</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/en/blog>Blog</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/en/softwares>Softwares</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/en/about>About</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2013-11-14</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
+<a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+<a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
+<span class=bz>&</span>
+<a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=at style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
+ADA:</a>
+<code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>

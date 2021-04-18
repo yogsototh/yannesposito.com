@@ -1,0 +1,110 @@
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Autoload Script by project</title><meta name=author content="Yann Esposito"><meta name=description content><meta name=keywords content><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><input name=t type=radio id=b>
+<input name=t type=radio id=l>
+<input name=t type=radio id=d>
+<input name=t type=radio id=g><div id=labels><div class=ak><label for=b>book</label>&nbsp;
+/&nbsp;
+<label for=l>light</label>&nbsp;
+<span id=logo><a href=/><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="var(--b2)" stroke-width="2" fill="var(--b03)"/><circle cx="32" cy="32" r="12" stroke="var(--r)" stroke-width="2" fill="var(--o)"/><circle cx="32" cy="32" r="6" stroke-width="0" fill="var(--y)"/><ellipse cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="var(--b3)"/></svg></a></span>&nbsp;
+<label for=d>dark</label>&nbsp;
+/&nbsp;
+<label for=g>geek</label></div></div><div class=cc><div id=preamble class=aq><div class=ak><h1>Autoload Script by project</h1><div class=ca><span class=am-date>2019-08-18</span> on
+<a href=https://her.esy.fun><span class=bc>Yann Esposito</span>'s blog</a> -
+<a href=/posts/0003-project-el/index.org>source</a> -
+<a href=/posts/0003-project-el/index.gmi>gmi</a> -
+<a href=/posts/0003-project-el/index.pdf>pdf</a> -
+<a class=q href=https://her.esy.fun/posts/0003-project-el/index.html>§permalink</a></div><div class=ac></div></div></div><div id=content><blockquote><p><em>tl;dr</em>: A script that use projectile and GPG to securely load an emacs lisp script when opening a new project.<p>Check the <a href=#solution>#solution</a> section to get the code.</blockquote><h1 id=problem>Problem</h1><p>When providing a repository containing only org files of my blog. I also wanted to provide everything necessary for users to be able to publish my website. Emacs, org-publish mostly assume you should put all those details in a centralised place in your <code class=w>~/.emacs.d/.init.el</code> file.<p>The main principle is quite simple.<ol><li>When opening a new file in a project, check for the presence of a <code class=w>project.el</code> and <code class=w>project.el.sig</code> file at the root directory of the project.<li>Check the file was signed with by a trusted fingerprint.<li>Load the file.</ol><p>Other solutions I found on the internet asked you each time you enter in a project if you trust the file or not. This was both quite annoying and insecure as it is kind of easy to type 'y' instead of 'n' and to load 3rd party script.<p>Note that checking who signed a file with an external signature is not as straightforward as it should be:<pre class=bp><code>(defun auto-load-project/get-sign-key (file)
+  &quot;Return the fingerprint of they key that signed FILE.
+
+To sign a file you should used
+
+`gpg --local-user my@email --output project.el.sig --detach-sign project.el`&quot;
+  (string-trim-right
+   (shell-command-to-string
+    (concat
+     (format &quot;gpg --status-fd 1 --verify %s.sig %s 2&gt;/dev/null &quot; file file)
+     &quot;|grep VALIDSIG&quot;
+     &quot;|awk &#39;{print $3}&#39;&quot;))))
+</code></pre><ul><li>The `–status-fd` should provide more script friendly output. GPG provide localized output by default which are therefore hard to use in script (for grep for example).</ul><p>We use <code class=w>projectile</code> to detect the project-root and when we are in a new project. Unfortunately the <code class=w>projectile-after-switch-project-hooks</code> doesn't work as I expected. So I use the hooks <code class=w>find-file-hook</code> and <code class=w>dired-mode-hook</code> to try to load the file. In order not to load the code each time, I need to keep a local state of project already loaded.<p>So now, each time I modify the <code class=w>project.el</code> I sign it with the following command line:<div class=n id=cb2><pre class="n bash"><code class="n bash"><span id=cb2-1><a href=#cb2-1 aria-hidden=true tabindex=-1></a><span class=ex>gpg</span> <span class=at>--local-user</span> my@email <span class=at>--output</span> project.el.sig <span class=at>--detach-sign</span> project.el</span></code></pre></div><h1 id=solution>Solution</h1><p>The project is hosted here: <a href=https://gitlab.esy.fun/yogsototh/auto-load-project-el>https://gitlab.esy.fun/yogsototh/auto-load-project-el</a><p>You can setup the emacs package in spacemacs with:<pre class=bp><code>;; ...
+dotspacemacs-additional-packages
+&#39;((auto-load-project :location
+                     (recipe
+                      :fetcher git
+                      :url &quot;https://gitlab.esy.fun/yogsototh/auto-load-project-el&quot;
+                      :files (&quot;auto-load-project.el&quot;))))
+;; ...
+(defun dotspacemacs/user-config ()
+  ;; ...
+  (require &#39;auto-load-project)
+  (setq auto-load-project/trusted-gpg-key-fingerprints
+        &#39;(&quot;0000000000000000000000000000000000000000&quot;
+          &quot;1111111111111111111111111111111111111111&quot;
+          &quot;2222222222222222222222222222222222222222&quot;
+          )))
+;; ...
+</code></pre><p>The full current code should be easy to follow if you have basic notions of eLISP:<pre class=bp><code>(require &#39;projectile)
+
+(defvar auto-load-project/trusted-gpg-key-fingerprints
+  &#39;()
+  &quot;The list of GPG fingerprint you trust when decrypting a gpg file.
+You can retrieve the fingerprints of your own private keys
+with: `gpg --list-secret-keys&#39; (take care of removing the
+spaces when copy/pasting here)&quot;)
+
+(defun auto-load-project/get-sign-key (file)
+  &quot;Return the fingerprint of they key that signed FILE.
+
+To sign a file you should used
+
+`gpg --local-user my@email --output project.el.sig --detach-sign project.el`&quot;
+  (string-trim-right
+   (shell-command-to-string
+    (concat
+     (format &quot;gpg --status-fd 1 --verify %s.sig %s 2&gt;/dev/null &quot; file file)
+     &quot;|grep VALIDSIG&quot;
+     &quot;|awk &#39;{print $3}&#39;&quot;))))
+
+(defun auto-load-project/trusted-gpg-origin-p (file)
+  &quot;Return non-nil if the FILE is encrypted with a trusted key.&quot;
+  (member (auto-load-project/get-sign-key file)
+          auto-load-project/trusted-gpg-key-fingerprints))
+
+(defconst auto-load-project/project-file &quot;project.el&quot;
+  &quot;Project configuration file name.&quot;)
+
+(defvar auto-load-project/loaded-projects (list)
+  &quot;Projects that have been loaded by `auto-load-project/load&#39;.&quot;)
+
+(defun auto-load-project/load ()
+  &quot;Loads the `auto-load-project/project-file&#39; for a project.
+This is run once the project is loaded signifying project setup.&quot;
+  (interactive)
+  (when (projectile-project-p)
+    (lexical-let* ((current-project-root (projectile-project-root))
+                   (project-init-file (expand-file-name auto-load-project/project-file current-project-root))
+                   (project-sign-file (concat project-init-file &quot;.sig&quot;)))
+      (when (and (not (member current-project-root auto-load-project/loaded-projects))
+                 (file-exists-p project-init-file)
+                 (file-exists-p project-sign-file)
+                 (auto-load-project/trusted-gpg-origin-p project-init-file))
+        (message &quot;Loading project init file for %s&quot; (projectile-project-name))
+        (condition-case ex
+            (progn (load project-init-file)
+                   (add-to-list &#39;auto-load-project/loaded-projects current-project-root)
+                   (message &quot;%s loaded successfully&quot; project-init-file))
+          (&#39;error
+           (message
+            &quot;There was an error loading %s: %s&quot;
+            project-init-file
+            (error-message-string ex))))))))
+
+(add-hook &#39;find-file-hook #&#39;auto-load-project/load t)
+(add-hook &#39;dired-mode-hook #&#39;auto-load-project/load t)
+
+(provide &#39;auto-load-project)
+</code></pre><p><footer><i>Any comment? Click on my email below and I'll add it.</i><table><tbody><tr class=ct><td>author<td><span class=bc><a href="mailto:Yann Esposito <yann@esposito.host>?subject=yblog: Autoload Script by project" class=bo>Yann Esposito &lt;yann@esposito.host></a></span><tr class=cg><td>gpg<td><a href=files/publickey.txt>CB420F8005F1A662</a><tr class=ct><td>tags<td><tr class=cg><td>date<td>2019-08-18<tr class=ct><td>rss<td><a href=/rss.xml>RSS</a> (<a href="https://validator.w3.org/feed/check.cgi?url=https%3A%2F%2Fher.esy.fun%2Frss.xml">validate</a>)<tr class=cg><td>size<td><span class=web-file-size> 16K (html 9.2K, css 5.9K)</span><tr class=ct><td>gz<td><span class=gzweb-file-size> 5.2K (html 3.3K, css 2.0K)</span><tr class=cg><td>generated<td>2021-04-18T10:16:08.418902Z</table><p></footer></p><br><a href=gemini://her.esy.fun/posts/0003-project-el/index.gmi><code>=> This article is also available on gemini</code></a></div><div id=postamble class=aq><div class=ak><nav><a href=/index.html>Home</a> |
+<a href=/slides.html>Slides</a> |
+<a href=/about-me.html>About</a>
+<span class=ai>(<a href=https://gitea.esy.fun/yogsototh>code</a>
+<a href=https://espial.esy.fun/u:yogsototh>bookmarks</a>
+<a href=https://espial.esy.fun/u:yogsototh/notes>notes</a>)</span> |
+<a href=#preamble>↑ Top ↑</a></nav></div></div></div>

@@ -1,153 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>YBlog - 40 character's passwords</title>
-        <meta name="keywords" content="password, security" />
-
-        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/en/blog/feed/feed.xml" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
-        <!--[if lt IE 9]>
-        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
-        <![endif]-->
-        <!-- IndieAuth -->
-        <link href="https://twitter.com/yogsototh" rel="me">
-        <link href="https://github.com/yogsototh" rel="me">
-        <link href="mailto:yann.esposito@gmail.com" rel="me">
-        <link rel="pgpkey" href="../../../../pubkey.txt">
-    </head>
-    <body lang="en" class="article">
-        <div id="content">
-	        			<div id="header">
-			    <div id="choix">
-        	    <span id="choixlang">
-                  <a href="../../../../Scratch/fr/blog/Password-Management/">French</a> 
-        	    </span>
-              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
-        	    <span class="flush"></span>
-        	</div>
-			</div>
-
-			<div id="titre">
-				<h1>40 character's passwords</h1>
-				
-			</div>
-			<div class="flush"></div>
-      <div id="afterheader" class="article">
-          <div class="corps">
-              <div>
-<img src="../../../../Scratch/img/blog/Password-Management/main.png" alt="Title image" />
-</div>
-<div class="intro">
-<p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span> How I manage safely my password with success for some years now.<br />
-<strong><code>sha1( password + domain_name )</code></strong><br />
-I memorize only one password. I use a different password on all website.</p>
-</div>
-<p>Disclamer, this is an unashamed attempt to make you download my iPhone app ;-). You’re always here? Even if you won’t download my app, you should read more. My method doesn’t necessitate my app. It is both safe and easy to use everyday.</p>
-<p>If you just want to <em>use</em> the tools without searching to understand why it is safe, just jump at the <a href="#in-practice">end of this article by clicking here</a>.</p>
-<h2 id="why-you-should-use-a-password-manager">Why you should use a Password Manager?</h2>
-<blockquote>
-<p>Even paranoid could have ennemies.</p>
-</blockquote>
-<p>Imagine you find a really good password. You use it on GMail, Amazon, PayPal, Twitter, Facebook… One day you see a nice online game you want to try. They ask you your email and a password. Some week passes, and the host machine of this online game is hacked. Your mail and password is now in bad hands. Unfortunately for you, you use the same password everywhere. Then, the attacker can simply try your password everywhere. On PayPal for example.</p>
-<p>Well now, how could we fix that?</p>
-<h2 id="which-methodology">Which methodology?</h2>
-<blockquote>
-<p>the good, the bad <em>&amp;</em> the ugly</p>
-</blockquote>
-<p>The mostly used method is to remember a subset of different passwords. In the best cases, your remember about 13 password. Some strong, some weak.</p>
-<p>What to do if you use more online services than your memory can handle?</p>
-<p>A <em>bad</em> solution would be to chose passwords like this:</p>
-<ul>
-<li>twitter: <code>P45sW0r|)Twitter</code></li>
-<li>gmail: <code>P45sW0r|)gmail</code></li>
-<li>badonlinegame: <code>P45sW0r|)badonlinegame</code></li>
-</ul>
-<p>Unfortunately, if someone get your password on badonlinegame, he could easily find your other passwords. Of course you can imagine some better transformation. But it is hard to find a very good one.</p>
-<p>Fortunately, there exists functions which handle exactly this problem. <em>Hash Function</em>. Knowing the result of a hash function, it is difficult to know what was their input. For example:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">hash(</span><span class="st">&quot;P45sW0r|)&quot;</span><span class="kw">)</span> = 9f00fd5dbba232b7c03afd2b62b5fce5cdc7df63</a></code></pre></div>
-<p>If someone has <code>9f00fd5dbba232b7c03afd2b62b5fce5cdc7df63</code>, he will have hard time to recover <code>P45sW0r|)</code>.</p>
-<p>Let choose SHA1 as hash function. Now the password for any website should of the form:</p>
-<p><code lang="zsh"> sha1( master_password + domain_name ) ~~~~~~</p>
-<p>Where:</p>
-<ul>
-<li><code>master_password</code> is your unique master password,</li>
-<li><code>domain_name</code> is the domain name of the website you want the password for,</li>
-</ul>
-<hr />
-<p>But what about some website constraint? For example regarding the length of the password? What to do if you want to change your password? What to do if you want number or special characters? This is why, for each website I need some other parameters:</p>
-<ul>
-<li>the login name</li>
-<li>the password’s length,</li>
-<li>the password number (in order to change it),</li>
-<li>The output format: hexadecimal or base64.</li>
-</ul>
-<h2 id="in-practice">In practice?</h2>
-<p>Depending on my situation here are the tools I made <em>&amp;</em> use:</p>
-<ul>
-<li>On my Mac:
-<ul>
-<li>I use the dashboard widget <a href="http://yannesposito.com/Scratch/files/YPassword-1.7.zip">YPassword</a></li>
-<li>Sometimes, some password field are forbidden to paste into. For time like this, I use this AppleScript made tool: <a href="http://yannesposito.com/Scratch/files/forcePaste.app.zip">ForcePaste</a>.</li>
-</ul></li>
-<li>On my Linux Box: I use the script <a href="http://github.com/yogsototh/getpass">ypassword</a></li>
-<li>On my iPhone: I use the <a href="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=436268354&amp;mt=8">YPassword app</a></li>
-<li>On any other computer:
-<ul>
-<li><a href="http://yannesposito.com/Scratch/en/softwares/ypassword/web/">Cappuccino Made YPassword</a> Web application</li>
-<li><a href="http://yannesposito.com/Scratch/en/softwares/ypassword/iphoneweb/">jQuery Made YPassword</a> Web application</li>
-</ul></li>
-</ul>
-<p>My password are at a copy/paste on all environment I use. I have some services for which I have password of 40 characters. Now I use 10 character for most of my passwords. Further more using shorter password make it even harder for an attaquer to retrieve my master password.</p>
-<p>I would be happy to hear your thoughts on using this methodology.</p>
-          </div>
-          <div id="afterarticle">
-              <div id="social">
-                  <a href="../../../../Scratch/en/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
-                  ·
-                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Password-Management/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
-                  ·
-                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Password-Management/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
-                  <br />
-                  <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
-              </div>
-              <div id="navigation">
-                  <a href="../../../../">Home</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/en/blog">Blog</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/en/softwares">Softwares</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/en/about">About</a>
-              </div>
-              <div id="totop"><a href="#header">↑ Top ↑</a></div>
-              <div id="bottom">
-                  <div>
-                      Published on 2011-05-18
-                  </div>
-                  <div>
-                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
-                  </div>
-                  <div>
-                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
-                  </div>
-
-                  <div>
-                      Done with
-                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
-                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
-                      <span class="pala">&amp;</span>
-                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
-                  </div>
-              </div>
-          </div>
-      </div>
-
-        </div>
-    </body>
-</html>
+<!doctype html><html lang=en><meta charset=utf-8><title>YBlog - 40 character's passwords</title><meta name=keywords content="password,security"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/en/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=en class=am><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/fr/blog/Password-Management/>French</a></span>
+<span class=ao><a href=#navigation>↓ Menu ↓</a></span>
+<span class=bn></span></div></div><div id=titre><h1>40 character's passwords</h1></div><div class=bn></div><div id=afterheader class=am><div class=bq><div><img src=../../../../Scratch/img/blog/Password-Management/main.png alt="Title image"></div><div class=bl><p><span class=sc><abbr title="Too long; didn't read">tl;dr</abbr>:</span> How I manage safely my password with success for some years now.<br><strong><code>sha1( password + domain_name )</code></strong><br>I memorize only one password. I use a different password on all website.</div><p>Disclamer, this is an unashamed attempt to make you download my iPhone app ;-). You’re always here? Even if you won’t download my app, you should read more. My method doesn’t necessitate my app. It is both safe and easy to use everyday.<p>If you just want to <em>use</em> the tools without searching to understand why it is safe, just jump at the <a href=#in-practice>end of this article by clicking here</a>.<h2 id=why-you-should-use-a-password-manager>Why you should use a Password Manager?</h2><blockquote><p>Even paranoid could have ennemies.</blockquote><p>Imagine you find a really good password. You use it on GMail, Amazon, PayPal, Twitter, Facebook… One day you see a nice online game you want to try. They ask you your email and a password. Some week passes, and the host machine of this online game is hacked. Your mail and password is now in bad hands. Unfortunately for you, you use the same password everywhere. Then, the attacker can simply try your password everywhere. On PayPal for example.<p>Well now, how could we fix that?<h2 id=which-methodology>Which methodology?</h2><blockquote><p>the good, the bad <em>&</em> the ugly</blockquote><p>The mostly used method is to remember a subset of different passwords. In the best cases, your remember about 13 password. Some strong, some weak.<p>What to do if you use more online services than your memory can handle?<p>A <em>bad</em> solution would be to chose passwords like this:<ul><li>twitter: <code>P45sW0r|)Twitter</code><li>gmail: <code>P45sW0r|)gmail</code><li>badonlinegame: <code>P45sW0r|)badonlinegame</code></ul><p>Unfortunately, if someone get your password on badonlinegame, he could easily find your other passwords. Of course you can imagine some better transformation. But it is hard to find a very good one.<p>Fortunately, there exists functions which handle exactly this problem. <em>Hash Function</em>. Knowing the result of a hash function, it is difficult to know what was their input. For example:<div class=n id=cb1><pre class="n zsh"><code class="n zsh"><a class=m id=cb1-1 title=1><span class=kw>hash(</span><span class=st>&quot;P45sW0r|)&quot;</span><span class=kw>)</span> = 9f00fd5dbba232b7c03afd2b62b5fce5cdc7df63</a></code></pre></div><p>If someone has <code>9f00fd5dbba232b7c03afd2b62b5fce5cdc7df63</code>, he will have hard time to recover <code>P45sW0r|)</code>.<p>Let choose SHA1 as hash function. Now the password for any website should of the form:<p><code lang=zsh>sha1( master_password + domain_name ) ~~~~~~<p>Where:<ul><li><code>master_password</code> is your unique master password,<li><code>domain_name</code> is the domain name of the website you want the password for,</ul><hr><p>But what about some website constraint? For example regarding the length of the password? What to do if you want to change your password? What to do if you want number or special characters? This is why, for each website I need some other parameters:<ul><li>the login name<li>the password’s length,<li>the password number (in order to change it),<li>The output format: hexadecimal or base64.</ul><h2 id=in-practice>In practice?</h2><p>Depending on my situation here are the tools I made <em>&</em> use:<ul><li>On my Mac:<ul><li>I use the dashboard widget <a href=http://yannesposito.com/Scratch/files/YPassword-1.7.zip>YPassword</a><li>Sometimes, some password field are forbidden to paste into. For time like this, I use this AppleScript made tool: <a href=http://yannesposito.com/Scratch/files/forcePaste.app.zip>ForcePaste</a>.</ul><li>On my Linux Box: I use the script <a href=http://github.com/yogsototh/getpass>ypassword</a><li>On my iPhone: I use the <a href="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=436268354&mt=8">YPassword app</a><li>On any other computer:<ul><li><a href=http://yannesposito.com/Scratch/en/softwares/ypassword/web/>Cappuccino Made YPassword</a> Web application<li><a href=http://yannesposito.com/Scratch/en/softwares/ypassword/iphoneweb/>jQuery Made YPassword</a> Web application</ul></ul><p>My password are at a copy/paste on all environment I use. I have some services for which I have password of 40 characters. Now I use 10 character for most of my passwords. Further more using shorter password make it even harder for an attaquer to retrieve my master password.<p>I would be happy to hear your thoughts on using this methodology.</div><div id=afterarticle><div id=social><a href=../../../../Scratch/en/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=ar>RSS</a>
+·
+<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Password-Management/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=ar>Tweet</a>
+·
+<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Password-Management/" target=_blank rel="noopener noreferrer nofollow" class=ar>FB</a><br><a class=af href=../../../../Scratch/en/blog/Social-link-the-right-way/>These social sharing links preserve your privacy</a></div><div id=navigation><a href=../../../../>Home</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/en/blog>Blog</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/en/softwares>Softwares</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/en/about>About</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2011-05-18</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
+<a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+<a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
+<span class=bz>&</span>
+<a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=at style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
+ADA:</a>
+<code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>

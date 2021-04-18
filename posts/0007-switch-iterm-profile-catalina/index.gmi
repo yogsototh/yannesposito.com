@@ -1,0 +1,65 @@
+# Catalina iTerm Theme switch
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2019-11-10 Sun]
+keywords:  self-hosting, chat, irc
+description:  Change the profile of iTerm in sync with macOS preferences.
+______
+How to have dark/light profile selected when opening a new iTerm.
+______
+# The script
+For the script to work you need to have two iTerm profiles, one named
+=Dark= and the other one =Light=. Just go to =Preferences= then =Profiles= then
+=Duplicate profile=.
+I use =fish= but you can easily adapt that in your =.bashrc=,
+=.bash_profile= etc...
+Here is what I have in  my =~/.config/fish/config.fish=:
+```fish
+function setItermProfile
+    echo -ne "\033]50;SetProfile=$argv\a"
+end
+function sync_appearance
+    set -x MacOSThemeAutoSwitch \
+        (defaults read -g AppleInterfaceStyleSwitchesAutomatically 2>/dev/null)
+    test -z $MacOSThemeAutoSwitch; and set -x MacOSThemeAutoSwitch 0
+    set -x MacOSTheme (defaults read -g AppleInterfaceStyle 2>/dev/null)
+    test -z $MacOSTheme; and set -x MacOSTheme 'nil'
+    if test -n $ITERM_PROFILE # check if we are using iTerm2
+        switch $MacOSThemeAutoSwitch
+            case 1 # autoswitch on
+                switch $MacOSTheme
+                    case 'nil'
+                        setItermProfile Light
+                    case '*'
+                        setItermProfile Dark
+                end
+            case 0 # autoswitch off
+                switch $MacOSTheme
+                    case 'Dark'
+                        setItermProfile Dark
+                    case 'Light'
+                        setItermProfile Light
+                    case 'nil'
+                        setItermProfile Light
+                end
+        end
+    end
+end
+if status --is-login
+    if status --is-interactive
+        sync_appearance
+    end
+end
+```
+If the appearance change, you can call =sync_appearance= function in your
+shell to sync with the OS dark/light appearance.
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes

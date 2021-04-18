@@ -1,0 +1,139 @@
+/* COLORS */
+
+/* colortheme switch */
+body>input { display: none; }
+#labels > .ak { margin: 0 auto; text-align: center; }
+label { font-weight: 700; }
+label:hover { cursor: pointer; }
+#logo { text-align: center; }
+body { margin:0; padding: 0; border: 0; max-width: none;}
+#content,.ak,#preamble,#postamble {
+    max-width: 80ch;
+    overflow: hidden;
+    margin: 0 auto;
+}
+figure img { width: 100%; }
+.footdef > sup { vertical-align: top; font-size: medium; }
+.footdef > sup > a { padding: 0.5em; }
+.footpara { display: inline; }
+footer { margin: 3em 0; padding: 1em 0; border-top: solid 1px; border-bottom: solid 1px; line-height: 1em; }
+#postamble td { border-bottom: none; }
+nav { text-align: center; padding: 2em 0;  }
+
+
+:root {
+    --b03:  #2E3440;
+    --b02:  #3B4252;
+    /* not used because light mode is has more contrast
+    --b01:  #656b74;
+   */
+    --b00:  #727781;
+    --b0:   #989ea8;
+    --b1:   #b0bac7;
+    --b2:   #ECEFF4;
+    --b3:   #fff;
+    --y: #c18600;
+    --o: #d84100;
+    --r: #e62729;
+    --m: #ec0085;
+    --v: #6c71c4;
+    --b: #0095ff;
+    --c: #00b0a3;
+    --g: #879a00;
+
+    /* default light */
+    --bg: var(--b3);
+    --rbg: var(--b2);
+    --fg0: var(--b0);
+    --fg: var(--b02);
+    --rfg: #000;
+    --hl: var(--o);
+}
+
+/* light checked */
+input#l:checked ~ div {
+    --bg: var(--b3);
+    --rbg: var(--b2);
+    --fg0: var(--b0);
+    --fg: var(--b02);
+    --rfg: #000;
+    --hl: var(--o);
+}
+input#l:checked ~ div img {
+    filter: none;
+}
+
+/* dark checked */
+input#d:checked ~ div {
+    --bg: hsl(210,20%,2%);
+    --rbg: var(--b03);
+    --fg: var(--b1);
+    --fg0: var(--b00);
+    --rfg: var(--b2);
+    --hl: var(--y);
+}
+input#d:checked ~ div img {
+    filter: brightness(0.5) saturate(0.5);
+}
+
+/* dark preferred */
+@media (prefers-color-scheme: dark)
+{
+    :root {
+        --bg: black;
+        --rbg: var(--b03);
+        --fg: var(--b1);
+        --fg0: var(--b00);
+        --rfg: var(--b2);
+        --hl: var(--y);
+    }
+    img { filter: brightness(0.5) saturate(0.5); }
+}
+body, body > div {
+    background: var(--bg);
+    color: var(--fg);
+}
+a,a:visited { color: var(--hl); }
+
+/* ---- SYNTAX HIGHLIGHTING ---- */
+.cs-rainbow-delimiters-depth-1, .cs-rainbow-delimiters-depth-9,
+.cs-css-selector, .cs-nix-attribute, .cs-builtin,
+.IN_REVIEW {
+    color:var(--c);
+}
+
+.cs-rainbow-delimiters-depth-2, .cs-nix-builtin, .cs-variable-name,
+.cs-haskell-definition, .cs-haskell-operator, .cs-function-name, .cs-diff-changed {
+    color:var(--b);
+}
+
+.cs-rainbow-delimiters-depth-3, .HOLD, .WAITING {
+    color:var(--v);
+}
+
+.cs-rainbow-delimiters-depth-4, .cs-diff-hunk-header, .cs-sh-quoted-exec,
+.CANCELED {
+    color:var(--m);
+}
+.cs-rainbow-delimiters-depth-5, .cs-diff-removed, .TODO {
+    color:var(--r);
+}
+.cs-rainbow-delimiters-depth-6, .cs-haskell-constructor  {
+    color:var(--o);
+}
+.cs-rainbow-delimiters-depth-7, .cs-type, .cs-constant, .cs-diff-header,
+.cs-haskell-keyword, .cs-haskell-type, .IN_PROGRESS {
+    color:var(--y);
+}
+.cs-rainbow-delimiters-depth-8, .cs-sh-heredoc, .cs-diff-added, .cs-string,
+.cs-doc, .cs-keyword, .DONE {
+    color:var(--g);
+}
+
+.cs-highlight-numbers-number, .cs-highlight-number-number,
+.cs-diff-none, .cs-preprocessor, .cs-comment-delimiter, .cs-comment,
+.cs-outshine-level-1, .cs-outshine-level-2, .cs-outshine-level-3,
+.cs-outshine-level-4, .cs-outshine-level-5, .cs-outshine-level-6,
+.cs-outshine-level-7, .cs-outshine-level-8, .cs-outshine-level-9 {
+    color:var(--fg0);
+}

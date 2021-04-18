@@ -1,53 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>YBlog - Better than Grep</title>
-        
-        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/en/blog/feed/feed.xml" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
-        <!--[if lt IE 9]>
-        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
-        <![endif]-->
-        <!-- IndieAuth -->
-        <link href="https://twitter.com/yogsototh" rel="me">
-        <link href="https://github.com/yogsototh" rel="me">
-        <link href="mailto:yann.esposito@gmail.com" rel="me">
-        <link rel="pgpkey" href="../../../../pubkey.txt">
-    </head>
-    <body lang="en" class="article">
-        <div id="content">
-	        			<div id="header">
-			    <div id="choix">
-        	    <span id="choixlang">
-                  <a href="../../../../Scratch/fr/blog/02_ackgrep/">French</a> 
-        	    </span>
-              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
-        	    <span class="flush"></span>
-        	</div>
-			</div>
-
-			<div id="titre">
-				<h1>Better than Grep</h1>
-				
-			</div>
-			<div class="flush"></div>
-      <div id="afterheader" class="article">
-          <div class="corps">
-              <h1 id="update">update</h1>
-<p>As <a href="http://www.theworkinggeek.com">Andy Lester</a> told me <a href="http://betterthangrep.com"><code>ack</code></a> is a simple file you only have to copy in your <code>~/bin</code> folder. Now I’ve got <code>ack</code> on my professional server.</p>
-<p>Go on <a href="http://betterthangrep.com">http://betterthangrep.com</a> to download it.</p>
-<p>Sincerely, I don’t understand <code>ack</code> don’t become a common command on all UNIX systems. I can no more live without. For me it is as essential as <code>which</code> or <code>find</code>.</p>
-<hr />
-<h1 id="better-than-grep">Better than grep</h1>
-<p>One of the my main usage of <code>grep</code> is</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">grep</span> <span class="st">'pattern'</span> **/*<span class="kw">(.)</span></a></code></pre></div>
-<p>Most of time it is enough. But it is far better with colored output. <code>ack-grep</code> in Ubuntu does that. As I couldn’t install it on my ‘Evil Company Server’, I had done one myself in very few lines:</p>
-<pre><code>#!/usr/bin/env zsh
+<!doctype html><html lang=en><meta charset=utf-8><title>YBlog - Better than Grep</title><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/en/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=en class=am><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/fr/blog/02_ackgrep/>French</a></span>
+<span class=ao><a href=#navigation>↓ Menu ↓</a></span>
+<span class=bn></span></div></div><div id=titre><h1>Better than Grep</h1></div><div class=bn></div><div id=afterheader class=am><div class=bq><h1 id=update>update</h1><p>As <a href=http://www.theworkinggeek.com>Andy Lester</a> told me <a href=http://betterthangrep.com><code>ack</code></a> is a simple file you only have to copy in your <code>~/bin</code> folder. Now I’ve got <code>ack</code> on my professional server.<p>Go on <a href=http://betterthangrep.com>http://betterthangrep.com</a> to download it.<p>Sincerely, I don’t understand <code>ack</code> don’t become a common command on all UNIX systems. I can no more live without. For me it is as essential as <code>which</code> or <code>find</code>.<hr><h1 id=better-than-grep>Better than grep</h1><p>One of the my main usage of <code>grep</code> is<div class=n id=cb1><pre class="n zsh"><code class="n zsh"><a class=m id=cb1-1 title=1><span class=kw>grep</span> <span class=st>'pattern'</span> **/*<span class=kw>(.)</span></a></code></pre></div><p>Most of time it is enough. But it is far better with colored output. <code>ack-grep</code> in Ubuntu does that. As I couldn’t install it on my ‘Evil Company Server’, I had done one myself in very few lines:<pre><code>#!/usr/bin/env zsh
 (($#&lt;1)) &amp;&amp; { print 'usage: ack &quot;regexp&quot;' &gt;&amp;2; exit 1 }
 
 listeFic=( **/*(.) )
@@ -58,52 +11,21 @@ if (m/([^:]*)(:.*)('$1')(.*)/) {
     print color(&quot;reset&quot;).$2;
     print color(&quot;black&quot;,&quot;on_yellow&quot;).$3;
     print color(&quot;reset&quot;).$4.&quot;\n&quot;;
-} '</code></pre>
-<p>For my team and I it is usable enough. I hope it could help.</p>
-          </div>
-          <div id="afterarticle">
-              <div id="social">
-                  <a href="../../../../Scratch/en/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
-                  ·
-                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/02_ackgrep/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
-                  ·
-                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/02_ackgrep/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
-                  <br />
-                  <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
-              </div>
-              <div id="navigation">
-                  <a href="../../../../">Home</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/en/blog">Blog</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/en/softwares">Softwares</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/en/about">About</a>
-              </div>
-              <div id="totop"><a href="#header">↑ Top ↑</a></div>
-              <div id="bottom">
-                  <div>
-                      Published on 2009-07-22
-                  </div>
-                  <div>
-                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
-                  </div>
-                  <div>
-                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
-                  </div>
-
-                  <div>
-                      Done with
-                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
-                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
-                      <span class="pala">&amp;</span>
-                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
-                  </div>
-              </div>
-          </div>
-      </div>
-
-        </div>
-    </body>
-</html>
+} '</code></pre><p>For my team and I it is usable enough. I hope it could help.</div><div id=afterarticle><div id=social><a href=../../../../Scratch/en/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=ar>RSS</a>
+·
+<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/02_ackgrep/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=ar>Tweet</a>
+·
+<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/02_ackgrep/" target=_blank rel="noopener noreferrer nofollow" class=ar>FB</a><br><a class=af href=../../../../Scratch/en/blog/Social-link-the-right-way/>These social sharing links preserve your privacy</a></div><div id=navigation><a href=../../../../>Home</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/en/blog>Blog</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/en/softwares>Softwares</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/en/about>About</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2009-07-22</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
+<a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+<a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
+<span class=bz>&</span>
+<a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=at style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
+ADA:</a>
+<code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>

@@ -1,110 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>YBlog - Disqus versus Intense Debate (Why I switched)</title>
-        <meta name="keywords" content="disqus, intense debate, web, blog" />
-
-        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/en/blog/feed/feed.xml" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
-        <!--[if lt IE 9]>
-        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
-        <![endif]-->
-        <!-- IndieAuth -->
-        <link href="https://twitter.com/yogsototh" rel="me">
-        <link href="https://github.com/yogsototh" rel="me">
-        <link href="mailto:yann.esposito@gmail.com" rel="me">
-        <link rel="pgpkey" href="../../../../pubkey.txt">
-    </head>
-    <body lang="en" class="article">
-        <div id="content">
-	        			<div id="header">
-			    <div id="choix">
-        	    <span id="choixlang">
-                  <a href="../../../../Scratch/fr/blog/2009-09-Disqus-versus-Intense-Debate--Why-I-switched-/">French</a> 
-        	    </span>
-              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
-        	    <span class="flush"></span>
-        	</div>
-			</div>
-
-			<div id="titre">
-				<h1>Disqus versus Intense Debate (Why I switched)</h1>
-				
-			</div>
-			<div class="flush"></div>
-      <div id="afterheader" class="article">
-          <div class="corps">
-              <h1 id="disqus-vs.-intense-debate"><a href="http://disqus.com/">Disqus</a> <em>vs.</em> <a href="http://intensedebate.com/">Intense Debate</a></h1>
-<p>I made a blog entry about how I tried to integrate <a href="http://disqus.com">Disqus</a>. I had to wait Disqus comment to be displayed before loading correctly my page. This is why I tried to include it in a “non-blocking” way. Unfortunately, I had <a href="../../../../Scratch/en/blog/11_Load_Disqus_Asynchronously/">difficulties to make it works correctly</a>.</p>
-<p>Furthermore, it was not trivial to make comment to be shared between multiple version of the same page (each page has three differents representations, one for each language and one more for the multi-language version).</p>
-<p>I am a bit sad to quit <a href="http://disqus.com">Disqus</a> because I must confess <a href="http://giannii.com">giannii</a> had helped me has efficiently as he could. But the problem I had with disqus are inherent to some design choice not simply technical ones.</p>
-<p>During the time I tried to integrate <a href="http://disqus.com/">Disqus</a> I never tried <a href="http://intensedebate.com">Intense Debate</a>. Now that I have tried, i must confess it does exactly what I needed.</p>
-<p>In order to make it fully asynchronous, you’ve just to download their common js and replace the following line:</p>
-<div>
-<div class="sourceCode" id="cb1"><pre class="sourceCode javascript"><code class="sourceCode javascript"><a class="sourceLine" id="cb1-1" title="1"><span class="va">document</span>.<span class="at">getElementsByTagName</span>(<span class="st">&quot;head&quot;</span>)[<span class="dv">0</span>].<span class="at">appendChild</span>(commentScript)<span class="op">;</span></a></code></pre></div>
-</div>
-<p>by:</p>
-<div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode javascript"><code class="sourceCode javascript"><a class="sourceLine" id="cb2-1" title="1"><span class="at">$</span>(document).<span class="at">ready</span>( <span class="kw">function</span>() <span class="op">{</span></a>
-<a class="sourceLine" id="cb2-2" title="2">    <span class="va">document</span>.<span class="at">getElementsByTagName</span>(<span class="st">&quot;head&quot;</span>)[<span class="dv">0</span>].<span class="at">appendChild</span>(commentScript)<span class="op">;</span></a>
-<a class="sourceLine" id="cb2-3" title="3"><span class="op">}</span>)<span class="op">;</span></a></code></pre></div>
-</div>
-<h2 id="and-the-winner-is-intense-debate">And the Winner is: <a href="http://intensedebate.com/">Intense Debate</a></h2>
-<p>To conclude, main advantages (for me) of <a href="http://intensedebate.com/">Intense Debate</a> over <a href="http://disqus.com/">Disqus</a>:</p>
-<ul>
-<li>Load Asynchronously ; don’t block my website</li>
-<li>Add for free buttons like “share to any” and load them <strong>asynchronously</strong>.</li>
-</ul>
-<p>Voilà.</p>
-          </div>
-          <div id="afterarticle">
-              <div id="social">
-                  <a href="../../../../Scratch/en/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
-                  ·
-                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2009-09-Disqus-versus-Intense-Debate--Why-I-switched-/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
-                  ·
-                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2009-09-Disqus-versus-Intense-Debate--Why-I-switched-/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
-                  <br />
-                  <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
-              </div>
-              <div id="navigation">
-                  <a href="../../../../">Home</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/en/blog">Blog</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/en/softwares">Softwares</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/en/about">About</a>
-              </div>
-              <div id="totop"><a href="#header">↑ Top ↑</a></div>
-              <div id="bottom">
-                  <div>
-                      Published on 2009-09-28
-                  </div>
-                  <div>
-                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
-                  </div>
-                  <div>
-                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
-                  </div>
-
-                  <div>
-                      Done with
-                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
-                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
-                      <span class="pala">&amp;</span>
-                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
-                  </div>
-              </div>
-          </div>
-      </div>
-
-        </div>
-    </body>
-</html>
+<!doctype html><html lang=en><meta charset=utf-8><title>YBlog - Disqus versus Intense Debate (Why I switched)</title><meta name=keywords content="disqus,intense debate,web,blog"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/en/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=en class=am><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/fr/blog/2009-09-Disqus-versus-Intense-Debate--Why-I-switched-/>French</a></span>
+<span class=ao><a href=#navigation>↓ Menu ↓</a></span>
+<span class=bn></span></div></div><div id=titre><h1>Disqus versus Intense Debate (Why I switched)</h1></div><div class=bn></div><div id=afterheader class=am><div class=bq><h1 id=disqus-vs.-intense-debate><a href=http://disqus.com/>Disqus</a> <em>vs.</em> <a href=http://intensedebate.com/>Intense Debate</a></h1><p>I made a blog entry about how I tried to integrate <a href=http://disqus.com>Disqus</a>. I had to wait Disqus comment to be displayed before loading correctly my page. This is why I tried to include it in a “non-blocking” way. Unfortunately, I had <a href=../../../../Scratch/en/blog/11_Load_Disqus_Asynchronously/>difficulties to make it works correctly</a>.<p>Furthermore, it was not trivial to make comment to be shared between multiple version of the same page (each page has three differents representations, one for each language and one more for the multi-language version).<p>I am a bit sad to quit <a href=http://disqus.com>Disqus</a> because I must confess <a href=http://giannii.com>giannii</a> had helped me has efficiently as he could. But the problem I had with disqus are inherent to some design choice not simply technical ones.<p>During the time I tried to integrate <a href=http://disqus.com/>Disqus</a> I never tried <a href=http://intensedebate.com>Intense Debate</a>. Now that I have tried, i must confess it does exactly what I needed.<p>In order to make it fully asynchronous, you’ve just to download their common js and replace the following line:<div><div class=n id=cb1><pre class="n javascript"><code class="n javascript"><a class=m id=cb1-1 title=1><span class=va>document</span>.<span class=at>getElementsByTagName</span>(<span class=st>&quot;head&quot;</span>)[<span class=dv>0</span>].<span class=at>appendChild</span>(commentScript)<span class=op>;</span></a></code></pre></div></div><p>by:<div><div class=n id=cb2><pre class="n javascript"><code class="n javascript"><a class=m id=cb2-1 title=1><span class=at>$</span>(document).<span class=at>ready</span>( <span class=kw>function</span>() <span class=op>{</span></a>
+<a class=m id=cb2-2 title=2>    <span class=va>document</span>.<span class=at>getElementsByTagName</span>(<span class=st>&quot;head&quot;</span>)[<span class=dv>0</span>].<span class=at>appendChild</span>(commentScript)<span class=op>;</span></a>
+<a class=m id=cb2-3 title=3><span class=op>}</span>)<span class=op>;</span></a></code></pre></div></div><h2 id=and-the-winner-is-intense-debate>And the Winner is: <a href=http://intensedebate.com/>Intense Debate</a></h2><p>To conclude, main advantages (for me) of <a href=http://intensedebate.com/>Intense Debate</a> over <a href=http://disqus.com/>Disqus</a>:<ul><li>Load Asynchronously ; don’t block my website<li>Add for free buttons like “share to any” and load them <strong>asynchronously</strong>.</ul><p>Voilà.</div><div id=afterarticle><div id=social><a href=../../../../Scratch/en/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=ar>RSS</a>
+·
+<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2009-09-Disqus-versus-Intense-Debate--Why-I-switched-/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=ar>Tweet</a>
+·
+<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2009-09-Disqus-versus-Intense-Debate--Why-I-switched-/" target=_blank rel="noopener noreferrer nofollow" class=ar>FB</a><br><a class=af href=../../../../Scratch/en/blog/Social-link-the-right-way/>These social sharing links preserve your privacy</a></div><div id=navigation><a href=../../../../>Home</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/en/blog>Blog</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/en/softwares>Softwares</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/en/about>About</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2009-09-28</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
+<a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+<a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
+<span class=bz>&</span>
+<a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=at style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
+ADA:</a>
+<code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>

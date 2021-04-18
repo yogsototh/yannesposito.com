@@ -1,68 +1,8 @@
-<!DOCTYPE html>
-<html lang="fr">
-    <head>
-        <meta charset="utf-8">
-        <title>YBlog - Vim as IDE</title>
-        <meta name="keywords" content="programming, vi, vim, ide, haskell, clojure" />
-
-        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/fr/blog/feed/feed.xml" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
-        <!--[if lt IE 9]>
-        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
-        <![endif]-->
-        <!-- IndieAuth -->
-        <link href="https://twitter.com/yogsototh" rel="me">
-        <link href="https://github.com/yogsototh" rel="me">
-        <link href="mailto:yann.esposito@gmail.com" rel="me">
-        <link rel="pgpkey" href="../../../../pubkey.txt">
-    </head>
-    <body lang="fr" class="article">
-        <div id="content">
-	        			<div id="header">
-			    <div id="choix">
-        	    <span id="choixlang">
-                  <a href="../../../../Scratch/en/blog/Vim-as-IDE/">Anglais</a> 
-        	    </span>
-              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
-        	    <span class="flush"></span>
-        	</div>
-			</div>
-
-			<div id="titre">
-				<h1>Vim as IDE</h1>
-				
-			</div>
-			<div class="flush"></div>
-      <div id="afterheader" class="article">
-          <div class="corps">
-              <div>
-<img src="../../../../Scratch/img/blog/Vim-as-IDE/vim_spock.jpg" alt="Main image" />
-</div>
-<div class="intro">
-<p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Comment utiliser vim comme une IDE très efficace</p>
-<p>In <a href="../../../../Scratch/en/blog/Learn-Vim-Progressively/">Learn Vim Progressively</a> I’ve show how Vim is great for editing text, and navigating in the same file (buffer). In this short article you’ll see how I use Vim as an IDE. Mainly by using some great plugins.</p>
-</div>
-<h2 id="vim-plugin-manager">Vim Plugin Manager</h2>
-<p>There are a <em>lot</em> of Vim plugins. To manage them I use <a href="https://github.com/junegunn/vim-plug"><code>vim-plug</code></a>.</p>
-<p>To install it:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">mkdir</span> -p ~/.vim/autoload</a>
-<a class="sourceLine" id="cb1-2" title="2">curl -fLo ~/.vim/autoload/plug.vim <span class="kw">\</span></a>
-<a class="sourceLine" id="cb1-3" title="3">             https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim</a></code></pre></div>
-<div class="small">
-<p>☞ Note I have two parts in my <code>.vimrc</code>. The first part contains the list of all my plugins. The second part contains the personal preferences I setted for each plugin. I’ll separate each part by <code>...</code> in the code.</p>
-</div>
-<h2 id="survival">Survival</h2>
-<h3 id="colorscheme">Colorscheme</h3>
-<div>
-<img src="../../../../Scratch/img/blog/Vim-as-IDE/solarized.png" alt="Solarized theme" />
-</div>
-<p>Before anything, you should protect your eyes using a readable and low contrast colorscheme.</p>
-<p>For this I use <a href="http://ethanschoonover.com/solarized">solarized dark</a>. To add it, you only have to write this in your <code>~/.vimrc</code> file:</p>
-<pre class="vim"><code>call plug#begin('~/.vim/plugged')
+<!doctype html><html lang=fr><meta charset=utf-8><title>YBlog - Vim as IDE</title><meta name=keywords content="programming,vi,vim,ide,haskell,clojure"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/fr/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=fr class=am><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/en/blog/Vim-as-IDE/>Anglais</a></span>
+<span class=ao><a href=#navigation>↓ Menu ↓</a></span>
+<span class=bn></span></div></div><div id=titre><h1>Vim as IDE</h1></div><div class=bn></div><div id=afterheader class=am><div class=bq><div><img src=../../../../Scratch/img/blog/Vim-as-IDE/vim_spock.jpg alt="Main image"></div><div class=bl><p><span class=sc><abbr title="Trop long; pas lu">tlpl</abbr>:</span> Comment utiliser vim comme une IDE très efficace<p>In <a href=../../../../Scratch/en/blog/Learn-Vim-Progressively/>Learn Vim Progressively</a> I’ve show how Vim is great for editing text, and navigating in the same file (buffer). In this short article you’ll see how I use Vim as an IDE. Mainly by using some great plugins.</div><h2 id=vim-plugin-manager>Vim Plugin Manager</h2><p>There are a <em>lot</em> of Vim plugins. To manage them I use <a href=https://github.com/junegunn/vim-plug><code>vim-plug</code></a>.<p>To install it:<div class=n id=cb1><pre class="n zsh"><code class="n zsh"><a class=m id=cb1-1 title=1><span class=kw>mkdir</span> -p ~/.vim/autoload</a>
+<a class=m id=cb1-2 title=2>curl -fLo ~/.vim/autoload/plug.vim <span class=kw>\</span></a>
+<a class=m id=cb1-3 title=3>             https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim</a></code></pre></div><div class=be><p>☞ Note I have two parts in my <code>.vimrc</code>. The first part contains the list of all my plugins. The second part contains the personal preferences I setted for each plugin. I’ll separate each part by <code>...</code> in the code.</div><h2 id=survival>Survival</h2><h3 id=colorscheme>Colorscheme</h3><div><img src=../../../../Scratch/img/blog/Vim-as-IDE/solarized.png alt="Solarized theme"></div><p>Before anything, you should protect your eyes using a readable and low contrast colorscheme.<p>For this I use <a href=http://ethanschoonover.com/solarized>solarized dark</a>. To add it, you only have to write this in your <code>~/.vimrc</code> file:<pre class=cm><code>call plug#begin('~/.vim/plugged')
 
 Plug 'altercation/vim-colors-solarized'
 
@@ -73,28 +13,10 @@ set background=dark
 try
     colorscheme solarized
 catch
-endtry</code></pre>
-<h3 id="minimal-hygiene">Minimal hygiene</h3>
-<p>You should be able to see and destroy trailing whitespaces.</p>
-<div>
-<img src="../../../../Scratch/img/blog/Vim-as-IDE/trim.gif" alt="Trim whitespaces" />
-</div>
-<pre class="vim"><code>Plug 'bronson/vim-trailing-whitespace'</code></pre>
-<p>You can clean trailing whitespace with <code>:FixWhitespace</code>.</p>
-<p>And also you should see your 80th column.</p>
-<pre class="vim"><code>if (exists('+colorcolumn'))
+endtry</code></pre><h3 id=minimal-hygiene>Minimal hygiene</h3><p>You should be able to see and destroy trailing whitespaces.<div><img src=../../../../Scratch/img/blog/Vim-as-IDE/trim.gif alt="Trim whitespaces"></div><pre class=cm><code>Plug 'bronson/vim-trailing-whitespace'</code></pre><p>You can clean trailing whitespace with <code>:FixWhitespace</code>.<p>And also you should see your 80th column.<pre class=cm><code>if (exists('+colorcolumn'))
     set colorcolumn=80
     highlight ColorColumn ctermbg=9
-endif</code></pre>
-<div>
-<img src="../../../../Scratch/img/blog/Vim-as-IDE/80thcolumn.png" alt="80th column" />
-</div>
-<h2 id="file-management">File Management</h2>
-<p>One of the most important hidden skills in programming is the ability to search and find files in your projects.</p>
-<p>The majority of people use something like <code>NERDTree</code>. This is the classical left column with a tree of files of your project. <em>I stopped to use this</em>. And you should probably too.</p>
-<p>I switched to <em>unite</em>. No left column lost. Faster to find files. Mainly it works like Spotlight on OS X.</p>
-<p>First install <a href="https://github.com/ggreer/the_silver_searcher"><code>ag</code> (the silver search)</a>. If you don’t know <code>ack</code> or <code>ag</code> your life is going to be upgraded. This is a simple but essential tool. It is mostly a <code>grep</code> on steroids.</p>
-<pre class="vim"><code>&quot; Unite
+endif</code></pre><div><img src=../../../../Scratch/img/blog/Vim-as-IDE/80thcolumn.png alt="80th column"></div><h2 id=file-management>File Management</h2><p>One of the most important hidden skills in programming is the ability to search and find files in your projects.<p>The majority of people use something like <code>NERDTree</code>. This is the classical left column with a tree of files of your project. <em>I stopped to use this</em>. And you should probably too.<p>I switched to <em>unite</em>. No left column lost. Faster to find files. Mainly it works like Spotlight on OS X.<p>First install <a href=https://github.com/ggreer/the_silver_searcher><code>ag</code> (the silver search)</a>. If you don’t know <code>ack</code> or <code>ag</code> your life is going to be upgraded. This is a simple but essential tool. It is mostly a <code>grep</code> on steroids.<pre class=cm><code>&quot; Unite
 &quot;   depend on vimproc
 &quot;   ------------- VERY IMPORTANT ------------
 &quot;   you have to go to .vim/plugin/vimproc.vim and do a ./make
@@ -113,59 +35,16 @@ endtry
 &quot; search a file in the filetree
 nnoremap &lt;space&gt;&lt;space&gt; :split&lt;cr&gt; :&lt;C-u&gt;Unite -start-insert file_rec/async&lt;cr&gt;
 &quot; reset not it is &lt;C-l&gt; normally
-:nnoremap &lt;space&gt;r &lt;Plug&gt;(unite_restart)</code></pre>
-<p>Now type space twice. A list of files appears. Start to type some letters of the file you are searching for. Select it, type return and bingo the file opens in a new horizontal split.</p>
-<div>
-<img src="../../../../Scratch/img/blog/Vim-as-IDE/unite.gif" alt="Unite example" />
-</div>
-<p>If something goes wrong just type <code>&lt;space&gt;r</code> to reset the unite cache.</p>
-<p>Now you are able to search file by name easily and efficiently.</p>
-<p>Now search text in many files. For this you use <a href="https://github.com/ggreer/the_silver_searcher"><code>ag</code></a>:</p>
-<pre class="vim"><code>Plug 'rking/ag.vim'
+:nnoremap &lt;space&gt;r &lt;Plug&gt;(unite_restart)</code></pre><p>Now type space twice. A list of files appears. Start to type some letters of the file you are searching for. Select it, type return and bingo the file opens in a new horizontal split.<div><img src=../../../../Scratch/img/blog/Vim-as-IDE/unite.gif alt="Unite example"></div><p>If something goes wrong just type <code>&lt;space>r</code> to reset the unite cache.<p>Now you are able to search file by name easily and efficiently.<p>Now search text in many files. For this you use <a href=https://github.com/ggreer/the_silver_searcher><code>ag</code></a>:<pre class=cm><code>Plug 'rking/ag.vim'
 ...
 &quot; --- type ° to search the word in all files in the current dir
 nmap ° :Ag &lt;c-r&gt;=expand(&quot;&lt;cword&gt;&quot;)&lt;cr&gt;&lt;cr&gt;
-nnoremap &lt;space&gt;/ :Ag</code></pre>
-<p>Don’t forget to add a space after the <code>:Ag</code>.</p>
-<p>These are two of the most powerful shortcut for working in a project. using <code>°</code> which is nicely positioned on my <code>azerty</code> keyboard. You should use a key close to <code>*</code>.</p>
-<p>So what <code>°</code> is doing? It reads the string under the cursor and search for it in all files. Really useful to search where a function is used.</p>
-<p>If you type <code>&lt;space&gt;/</code> followed by a string, it will search for all occurrences of this string in the project files.</p>
-<p>So with this you should already be able to navigate between files very easily.</p>
-<h2 id="language-agnostic-plugins">Language Agnostic Plugins</h2>
-<h3 id="git">Git</h3>
-<div>
-<img src="../../../../Scratch/img/blog/Vim-as-IDE/git-gutter.png" alt="Show modified lines" />
-</div>
-<p>Show which line changed since your last commit.</p>
-<pre class="vim"><code>Plug 'airblade/vim-gitgutter'</code></pre>
-<p>And the “defacto” git plugin:</p>
-<pre class="vim"><code>Plug 'tpope/vim-fugitive'</code></pre>
-<p>You can reset your changes from the latest git commit with <code>:Gread</code>. You can stage your changes with <code>:Gwrite</code>.</p>
-<div>
-<img src="../../../../Scratch/img/blog/Vim-as-IDE/Gread.gif" alt="Reset changes" />
-</div>
-<h3 id="align-things">Align things</h3>
-<pre class="vim"><code>Plug 'junegunn/vim-easy-align'
+nnoremap &lt;space&gt;/ :Ag</code></pre><p>Don’t forget to add a space after the <code>:Ag</code>.<p>These are two of the most powerful shortcut for working in a project. using <code>°</code> which is nicely positioned on my <code>azerty</code> keyboard. You should use a key close to <code>*</code>.<p>So what <code>°</code> is doing? It reads the string under the cursor and search for it in all files. Really useful to search where a function is used.<p>If you type <code>&lt;space>/</code> followed by a string, it will search for all occurrences of this string in the project files.<p>So with this you should already be able to navigate between files very easily.<h2 id=language-agnostic-plugins>Language Agnostic Plugins</h2><h3 id=git>Git</h3><div><img src=../../../../Scratch/img/blog/Vim-as-IDE/git-gutter.png alt="Show modified lines"></div><p>Show which line changed since your last commit.<pre class=cm><code>Plug 'airblade/vim-gitgutter'</code></pre><p>And the “defacto” git plugin:<pre class=cm><code>Plug 'tpope/vim-fugitive'</code></pre><p>You can reset your changes from the latest git commit with <code>:Gread</code>. You can stage your changes with <code>:Gwrite</code>.<div><img src=../../../../Scratch/img/blog/Vim-as-IDE/Gread.gif alt="Reset changes"></div><h3 id=align-things>Align things</h3><pre class=cm><code>Plug 'junegunn/vim-easy-align'
 
 ...
 
 &quot; Easy align interactive
-vnoremap &lt;silent&gt; &lt;Enter&gt; :EasyAlign&lt;cr&gt;</code></pre>
-<p>Just select and type <code>Return</code> then <code>space</code>. Type <code>Return</code> many type to change the alignments.</p>
-<p>If you want to align the second column, <code>Return</code> then <code>2</code> then <code>space</code>.</p>
-<div>
-<img src="../../../../Scratch/img/blog/Vim-as-IDE/easy-align.gif" alt="Easy align example" />
-</div>
-<h3 id="basic-auto-completion-c-n-c-p">Basic auto completion: <code>C-n</code> &amp; <code>C-p</code></h3>
-<p>Vim has a basic auto completion system. The shortcuts are <code>C-n</code> and <code>C-p</code> while you are in insert mode. This is generally good enough in most cases. For example when I open a file not in my configured languages.</p>
-<h2 id="haskell">Haskell</h2>
-<p>My current Haskell programming environment is great!</p>
-<p>Each time I save a file, I get a comment pointing to my errors or proposing me how to improve my code.</p>
-<p>So here we go:</p>
-<blockquote>
-<p>☞ Don’t forget to install <code>ghc-mod</code> with: <code>cabal install ghc-mod</code></p>
-</blockquote>
-<pre class="vim"><code>&quot; ---------- VERY IMPORTANT -----------
+vnoremap &lt;silent&gt; &lt;Enter&gt; :EasyAlign&lt;cr&gt;</code></pre><p>Just select and type <code>Return</code> then <code>space</code>. Type <code>Return</code> many type to change the alignments.<p>If you want to align the second column, <code>Return</code> then <code>2</code> then <code>space</code>.<div><img src=../../../../Scratch/img/blog/Vim-as-IDE/easy-align.gif alt="Easy align example"></div><h3 id=basic-auto-completion-c-n-c-p>Basic auto completion: <code>C-n</code> & <code>C-p</code></h3><p>Vim has a basic auto completion system. The shortcuts are <code>C-n</code> and <code>C-p</code> while you are in insert mode. This is generally good enough in most cases. For example when I open a file not in my configured languages.<h2 id=haskell>Haskell</h2><p>My current Haskell programming environment is great!<p>Each time I save a file, I get a comment pointing to my errors or proposing me how to improve my code.<p>So here we go:<blockquote><p>☞ Don’t forget to install <code>ghc-mod</code> with: <code>cabal install ghc-mod</code></blockquote><pre class=cm><code>&quot; ---------- VERY IMPORTANT -----------
 &quot; Don't forget to install ghc-mod with:
 &quot; cabal install ghc-mod
 &quot; -------------------------------------
@@ -208,28 +87,7 @@ endfunction
 autocmd BufEnter *.hs,*.lhs :call SetToCabalBuild()
 
 &quot; -- neco-ghc
-let $PATH=$PATH.':'.expand(&quot;~/.cabal/bin&quot;)</code></pre>
-<p>Just enjoy!</p>
-<div>
-<img src="../../../../Scratch/img/blog/Vim-as-IDE/vim-lint.gif" alt="hlint on save" />
-</div>
-<p>I use <code>-</code> for my leader because I use <code>,</code> a lot for its native usage.</p>
-<ul>
-<li><code>-ht</code> will highlight and show the type of the block under the cursor.</li>
-<li><code>-hT</code> will insert the type of the current block.</li>
-<li><code>-hh</code> will unhighlight the selection.</li>
-</ul>
-<div>
-<img src="../../../../Scratch/img/blog/Vim-as-IDE/auto-typing.gif" alt="Auto typing on save" />
-</div>
-<h2 id="clojure">Clojure</h2>
-<div>
-<img src="../../../../Scratch/img/blog/Vim-as-IDE/clojure.gif" alt="Rainbow parenthesis" />
-</div>
-<p>My main language at work is Clojure. And my current vim environment is quite good. I lack the automatic integration to <code>lein-kibit</code> thought. If I have the courage I might do it myself one day. But due to the very long startup time of clojure, I doubt I’ll be able to make a useful vim plugin.</p>
-<p>So mainly you’ll have real rainbow-parenthesis (the default values are broken for solarized).</p>
-<p>I used the vim <code>paredit</code> plugin before. But it is too restrictive. Now I use <code>sexp</code> which feel more coherent with the spirit of vim.</p>
-<pre class="vim"><code>&quot; &quot; -- Clojure
+let $PATH=$PATH.':'.expand(&quot;~/.cabal/bin&quot;)</code></pre><p>Just enjoy!<div><img src=../../../../Scratch/img/blog/Vim-as-IDE/vim-lint.gif alt="hlint on save"></div><p>I use <code>-</code> for my leader because I use <code>,</code> a lot for its native usage.<ul><li><code>-ht</code> will highlight and show the type of the block under the cursor.<li><code>-hT</code> will insert the type of the current block.<li><code>-hh</code> will unhighlight the selection.</ul><div><img src=../../../../Scratch/img/blog/Vim-as-IDE/auto-typing.gif alt="Auto typing on save"></div><h2 id=clojure>Clojure</h2><div><img src=../../../../Scratch/img/blog/Vim-as-IDE/clojure.gif alt="Rainbow parenthesis"></div><p>My main language at work is Clojure. And my current vim environment is quite good. I lack the automatic integration to <code>lein-kibit</code> thought. If I have the courage I might do it myself one day. But due to the very long startup time of clojure, I doubt I’ll be able to make a useful vim plugin.<p>So mainly you’ll have real rainbow-parenthesis (the default values are broken for solarized).<p>I used the vim <code>paredit</code> plugin before. But it is too restrictive. Now I use <code>sexp</code> which feel more coherent with the spirit of vim.<pre class=cm><code>&quot; &quot; -- Clojure
 Plug 'kien/rainbow_parentheses.vim'
 Plug 'guns/vim-clojure-static'
 Plug 'guns/vim-sexp'
@@ -261,56 +119,21 @@ let g:rbpt_colorpairs = [
 	\ ['darkgreen',   'RoyalBlue3'],
 	\ ['darkyellow',  'DarkOrchid3'],
 	\ ['darkred',     'firebrick3'],
-	\ ]</code></pre>
-<p>Working with Clojure will becomre quite smoother. You can eval any part of your code, you must launch a Clojure REPL manually in another terminal thought.</p>
-<h2 id="last-words">Last words</h2>
-<p>I hope it will be useful.</p>
-<p>Last but not least, if you want to use my vim configuration you can get it here:</p>
-<p><a href="http://github.com/yogsototh/vimrc"><code>github.com/yogsototh/vimrc</code></a></p>
-          </div>
-          <div id="afterarticle">
-              <div id="social">
-                  <a href="../../../../Scratch/fr/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
-                  ·
-                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/Vim-as-IDE/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
-                  ·
-                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/Vim-as-IDE/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
-                  <br />
-                  <a class="message" href="../../../../Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
-              </div>
-              <div id="navigation">
-                  <a href="../../../../">Accueil</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/fr/blog">Blog</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/fr/softwares">Logiciels</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/fr/about">Auteur</a>
-              </div>
-              <div id="totop"><a href="#header">↑ Top ↑</a></div>
-              <div id="bottom">
-                  <div>
-                      Published on 2014-12-07
-                  </div>
-                  <div>
-                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
-                  </div>
-                  <div>
-                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
-                  </div>
-
-                  <div>
-                      Done with
-                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
-                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
-                      <span class="pala">&amp;</span>
-                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
-                  </div>
-              </div>
-          </div>
-      </div>
-
-        </div>
-    </body>
-</html>
+	\ ]</code></pre><p>Working with Clojure will becomre quite smoother. You can eval any part of your code, you must launch a Clojure REPL manually in another terminal thought.<h2 id=last-words>Last words</h2><p>I hope it will be useful.<p>Last but not least, if you want to use my vim configuration you can get it here:<p><a href=http://github.com/yogsototh/vimrc><code>github.com/yogsototh/vimrc</code></a></div><div id=afterarticle><div id=social><a href=../../../../Scratch/fr/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=ar>RSS</a>
+·
+<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/Vim-as-IDE/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=ar>Tweet</a>
+·
+<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/Vim-as-IDE/" target=_blank rel="noopener noreferrer nofollow" class=ar>FB</a><br><a class=af href=../../../../Scratch/fr/blog/Social-link-the-right-way/>Ces liens sociaux préservent votre vie privée</a></div><div id=navigation><a href=../../../../>Accueil</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/fr/blog>Blog</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/fr/softwares>Logiciels</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/fr/about>Auteur</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2014-12-07</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
+<a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+<a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
+<span class=bz>&</span>
+<a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=at style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
+ADA:</a>
+<code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>

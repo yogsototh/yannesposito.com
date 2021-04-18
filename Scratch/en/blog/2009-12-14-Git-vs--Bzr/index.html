@@ -1,150 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>YBlog - Git vs. Bzr</title>
-        <meta name="keywords" content="git, bzr, DCVS, Bazaar" />
-
-        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/en/blog/feed/feed.xml" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
-        <!--[if lt IE 9]>
-        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
-        <![endif]-->
-        <!-- IndieAuth -->
-        <link href="https://twitter.com/yogsototh" rel="me">
-        <link href="https://github.com/yogsototh" rel="me">
-        <link href="mailto:yann.esposito@gmail.com" rel="me">
-        <link rel="pgpkey" href="../../../../pubkey.txt">
-    </head>
-    <body lang="en" class="article">
-        <div id="content">
-	        			<div id="header">
-			    <div id="choix">
-        	    <span id="choixlang">
-                  <a href="../../../../Scratch/fr/blog/2009-12-14-Git-vs--Bzr/">French</a> 
-        	    </span>
-              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
-        	    <span class="flush"></span>
-        	</div>
-			</div>
-
-			<div id="titre">
-				<h1>Git vs. Bzr</h1>
-				<h2>Why I switched from bazaar to git</h2>
-
-			</div>
-			<div class="flush"></div>
-      <div id="afterheader" class="article">
-          <div class="corps">
-              <div class="intro">
-<p>Why even if I believe <code>git</code> has many bad point I believe it is the best DCVS around to work with. This is why I first tell why I prefer <a href="http://bazaar-vcs.org">Bazaar</a> over <a href="http://git-scm.org">Git</a>. Secondly I’ll talk about the only advantage of git against Bazaar which lead me to prefer it.</p>
-</div>
-<h2 id="the-dcvs-discovery">The DCVS discovery</h2>
-<p>Before beginning this article, you should know I come from <em>subversion</em>. I find subversion to be a really good CVS. But I was converted to the decentralized ones.</p>
-<p>There is two way of perceive version control system. Either you think in term of branches (see the really good article on <a href="http://betterexplained.com/articles/a-visual-guide-to-version-control/">betterexplained</a>) or think in term of patches. Another way to say that, is weather you concentrate on vertices or on transitions of the graph of possible states of your project.</p>
-<p>This is the second approach who was behind <code>git</code> and this is the first behind Bazaar. <code>git</code> was created by Linus Torvald in order to close some gap in the version system used to develop the Linux kernel. And patches is a term which is more present than ‘state’ in the development community.</p>
-<p>I first was convinced by Bazaar. Why? Argument in favor of Bazaar were: user friendly, terminology close to the subversion one. And I tried a bit the two, and it was clearly more natural for me to use Bazaar. But after seeing so many people using <code>git</code> I decided to give it a serious try.</p>
-<p>And it was so fastidious! The <code>git</code> terminology was <em>horrible</em>! And it is nothing to say it.</p>
-<h2 id="where-bazaar-is-better-than-git">Where Bazaar is better than <code>git</code></h2>
-<p>The first example, <code>checkout</code> is used to make only one thing from the technical point of vue. But from the user perspective, you make many <em>different</em> things with this word. Example:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb1-1" title="1">git checkout pipo</a></code></pre></div>
-<p>undo the current modification of the file <code>pipo</code></p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb2-1" title="1">git checkout pipo</a></code></pre></div>
-<p>change the current branch to the branch <code>pipo</code></p>
-<p>And, like me, you remark, it is exactly the same command to make two completely different things. What occur when you have a <code>pipo</code> branch and a <code>pipo</code> file? By default, it change the current branch. In order to leave the ambiguity you have to use the following syntax:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb3-1" title="1">git checkout ./pipo</a></code></pre></div>
-<p>Yes, hum…</p>
-<p>It works, but it is clearly not really user friendly. Furthermore, checkout had a complete different signification in older CSV like <code>cvs</code> et <code>svn</code>. <code>checkout</code> was used to get a distant project locally.</p>
-<p>Bazaar terminology is far more natural, because there is no command to change the current branch as there is only one branch per directory. Changing a branch in Bazaar is changing the current directory. I also believe it is the biggest problem of Bazaar, I’ll tell you why. And to undo things in Bazaar:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb4-1" title="1">bzr revert pipo</a></code></pre></div>
-<p>Furthermore, most Bazaar command take a revision number in parameter. For example, to get back 3 versions earlier, it is enough to write:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb5-1" title="1">bzr revert -r -3 pipo</a></code></pre></div>
-<p>The <code>git</code> equivalent is far more cryptic:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb6-1" title="1">bzr checkout HEAD~3 pipo</a></code></pre></div>
-<p>One more time, Bazaar is far more readable.</p>
-<p>Back in time for all the project:</p>
-<p>with Bazaar:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb7-1" title="1">bzr revert -r -3 pipo</a></code></pre></div>
-<p>and with <code>git</code>? <code>git checkout</code>? Of course not! It would be too simple. What we find in the documentation (<code>man</code>) and everywhere on the net:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb8-1" title="1">git reset --hard HEAD~3</a></code></pre></div>
-<p>Except that this command is horrible. It forget revisions! Then you must use it with prudence. And you cannot tell other people working on the project you discard some changes. If someone had pulled the <em>bad</em> version, you are <em>doomed</em>. This is why you can also use:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb9-1" title="1">git checkout HEAD~3 -- <span class="kw">.</span> <span class="kw">&amp;&amp;</span> git commit -m <span class="st">'back in time'</span></a></code></pre></div>
-<p>Just to keep a backup branch. Without it we can definitively loose the current version HEAD. But some error may rest when there were some addition and deletion of files. <em>The unique way to be really clean without any risk is to use the following command:</em></p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb10-1" title="1"><span class="kw">for</span> i <span class="kw">in</span> <span class="ot">$(</span><span class="kw">seq</span> 0 2<span class="ot">)</span>; <span class="kw">do</span></a>
-<a class="sourceLine" id="cb10-2" title="2">    git revert -n --no-edit <span class="kw">head</span>~<span class="ot">$i</span>;</a>
-<a class="sourceLine" id="cb10-3" title="3"><span class="kw">done</span></a>
-<a class="sourceLine" id="cb10-4" title="4">git commit -m <span class="st">&quot;reverted 3 versions back&quot;</span></a></code></pre></div>
-<p>And with this command this is the only good way to undo things in a project and tell other contributor you reverted something. You simply revert version in backward order.</p>
-<p>The rule is simple: <em>NEVER use the <code>git reset</code> command on a version somebody else could have <code>fetched</code></em></p>
-<p>It was said. Discover the best method took me some time. I’d made many different tries. The safer and best way of reverting back your tree is to use this method. If you want to make it automatic just had the following alias in your <code>~/.gitconfig</code>. Of course this alias will work only on environment having <code>zsh</code> installed. Which is the cas for most UNIX (Ubuntu, Mac OS X…).</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb11-1" title="1">[alias]</a>
-<a class="sourceLine" id="cb11-2" title="2">    uncommit = !<span class="kw">zsh</span> -c <span class="st">'&quot;if (($0)); then nb=$(( $0 - 1 )); else nb=0; fi; i=0; while ((i&lt;=nb)); do git revert -n --no-edit HEAD~$i; ((i++)); done; git commit -m \&quot;revert to $0 version(s) back\&quot;&quot;'</span></a></code></pre></div>
-<h1 id="what-make-git-by-far-the-best-dcvs-today">What make <code>git</code> by far the best DCVS today</h1>
-<p>After talking about the negatives points of <code>git</code>, now it’s time to speak about the very positive feature that make <code>git</code> the best DCVS in my humble opinion.</p>
-<h2 id="cheap-branching">Cheap branching</h2>
-<p>You always work into the same main directory. For example, you can work on two fix in the same time. Say <code>fix1</code> require you to work on <code>file1</code> and <code>fix2</code> to work on <code>file2</code>. You can work in any order on <code>file1</code> and <code>file2</code> in the <code>master</code> branch. And then go to branch <code>fix1</code>, commit <code>file1</code> into it. Then go to branch <code>fix2</code> and commit <code>file2</code> into it. And finally merge the two branches <code>fix1</code> and <code>fix2</code> into <code>master</code>.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">&gt;</span> vim file1</a>
-<a class="sourceLine" id="cb12-2" title="2"><span class="kw">&gt;</span> vim file2</a>
-<a class="sourceLine" id="cb12-3" title="3"><span class="kw">&gt;</span> git br fix1</a>
-<a class="sourceLine" id="cb12-4" title="4"><span class="kw">&gt;</span> git add file1</a>
-<a class="sourceLine" id="cb12-5" title="5"><span class="kw">&gt;</span> git commit -m <span class="st">'fix1'</span></a>
-<a class="sourceLine" id="cb12-6" title="6"><span class="kw">&gt;</span> git br fix2</a>
-<a class="sourceLine" id="cb12-7" title="7"><span class="kw">&gt;</span> git add file2</a>
-<a class="sourceLine" id="cb12-8" title="8"><span class="kw">&gt;</span> git commit -m <span class="st">'fix2'</span></a>
-<a class="sourceLine" id="cb12-9" title="9"><span class="kw">&gt;</span> git commit master</a>
-<a class="sourceLine" id="cb12-10" title="10"><span class="kw">&gt;</span> git merge fix1</a>
-<a class="sourceLine" id="cb12-11" title="11"><span class="kw">&gt;</span> git merge fix2</a></code></pre></div>
-<p>And this is great not to worry about working in the <em>good</em> branch and coding in the same time. You just worry about your code and then about the versionning system.</p>
-<p>And I use this possibilities <em>a lot</em>. Working with bazaar, I often made the error to begin a change in the bad branch. then I have to copy my modifications, then revert. In short it was tiedous.</p>
-<p>This is why I prefer using <code>git</code> on an every day usage. If Bazaar implement the same way of cheap branching than git. I should switch again.</p>
-          </div>
-          <div id="afterarticle">
-              <div id="social">
-                  <a href="../../../../Scratch/en/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
-                  ·
-                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2009-12-14-Git-vs--Bzr/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
-                  ·
-                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2009-12-14-Git-vs--Bzr/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
-                  <br />
-                  <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
-              </div>
-              <div id="navigation">
-                  <a href="../../../../">Home</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/en/blog">Blog</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/en/softwares">Softwares</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/en/about">About</a>
-              </div>
-              <div id="totop"><a href="#header">↑ Top ↑</a></div>
-              <div id="bottom">
-                  <div>
-                      Published on 2009-12-14
-                  </div>
-                  <div>
-                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
-                  </div>
-                  <div>
-                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
-                  </div>
-
-                  <div>
-                      Done with
-                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
-                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
-                      <span class="pala">&amp;</span>
-                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
-                  </div>
-              </div>
-          </div>
-      </div>
-
-        </div>
-    </body>
-</html>
+<!doctype html><html lang=en><meta charset=utf-8><title>YBlog - Git vs. Bzr</title><meta name=keywords content="git,bzr,DCVS,Bazaar"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/en/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=en class=am><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/fr/blog/2009-12-14-Git-vs--Bzr/>French</a></span>
+<span class=ao><a href=#navigation>↓ Menu ↓</a></span>
+<span class=bn></span></div></div><div id=titre><h1>Git vs. Bzr</h1><h2>Why I switched from bazaar to git</h2></div><div class=bn></div><div id=afterheader class=am><div class=bq><div class=bl><p>Why even if I believe <code>git</code> has many bad point I believe it is the best DCVS around to work with. This is why I first tell why I prefer <a href=http://bazaar-vcs.org>Bazaar</a> over <a href=http://git-scm.org>Git</a>. Secondly I’ll talk about the only advantage of git against Bazaar which lead me to prefer it.</div><h2 id=the-dcvs-discovery>The DCVS discovery</h2><p>Before beginning this article, you should know I come from <em>subversion</em>. I find subversion to be a really good CVS. But I was converted to the decentralized ones.<p>There is two way of perceive version control system. Either you think in term of branches (see the really good article on <a href=http://betterexplained.com/articles/a-visual-guide-to-version-control/>betterexplained</a>) or think in term of patches. Another way to say that, is weather you concentrate on vertices or on transitions of the graph of possible states of your project.<p>This is the second approach who was behind <code>git</code> and this is the first behind Bazaar. <code>git</code> was created by Linus Torvald in order to close some gap in the version system used to develop the Linux kernel. And patches is a term which is more present than ‘state’ in the development community.<p>I first was convinced by Bazaar. Why? Argument in favor of Bazaar were: user friendly, terminology close to the subversion one. And I tried a bit the two, and it was clearly more natural for me to use Bazaar. But after seeing so many people using <code>git</code> I decided to give it a serious try.<p>And it was so fastidious! The <code>git</code> terminology was <em>horrible</em>! And it is nothing to say it.<h2 id=where-bazaar-is-better-than-git>Where Bazaar is better than <code>git</code></h2><p>The first example, <code>checkout</code> is used to make only one thing from the technical point of vue. But from the user perspective, you make many <em>different</em> things with this word. Example:<div class=n id=cb1><pre class="n zsh"><code class="n zsh"><a class=m id=cb1-1 title=1>git checkout pipo</a></code></pre></div><p>undo the current modification of the file <code>pipo</code><div class=n id=cb2><pre class="n zsh"><code class="n zsh"><a class=m id=cb2-1 title=1>git checkout pipo</a></code></pre></div><p>change the current branch to the branch <code>pipo</code><p>And, like me, you remark, it is exactly the same command to make two completely different things. What occur when you have a <code>pipo</code> branch and a <code>pipo</code> file? By default, it change the current branch. In order to leave the ambiguity you have to use the following syntax:<div class=n id=cb3><pre class="n zsh"><code class="n zsh"><a class=m id=cb3-1 title=1>git checkout ./pipo</a></code></pre></div><p>Yes, hum…<p>It works, but it is clearly not really user friendly. Furthermore, checkout had a complete different signification in older CSV like <code>cvs</code> et <code>svn</code>. <code>checkout</code> was used to get a distant project locally.<p>Bazaar terminology is far more natural, because there is no command to change the current branch as there is only one branch per directory. Changing a branch in Bazaar is changing the current directory. I also believe it is the biggest problem of Bazaar, I’ll tell you why. And to undo things in Bazaar:<div class=n id=cb4><pre class="n zsh"><code class="n zsh"><a class=m id=cb4-1 title=1>bzr revert pipo</a></code></pre></div><p>Furthermore, most Bazaar command take a revision number in parameter. For example, to get back 3 versions earlier, it is enough to write:<div class=n id=cb5><pre class="n zsh"><code class="n zsh"><a class=m id=cb5-1 title=1>bzr revert -r -3 pipo</a></code></pre></div><p>The <code>git</code> equivalent is far more cryptic:<div class=n id=cb6><pre class="n zsh"><code class="n zsh"><a class=m id=cb6-1 title=1>bzr checkout HEAD~3 pipo</a></code></pre></div><p>One more time, Bazaar is far more readable.<p>Back in time for all the project:<p>with Bazaar:<div class=n id=cb7><pre class="n zsh"><code class="n zsh"><a class=m id=cb7-1 title=1>bzr revert -r -3 pipo</a></code></pre></div><p>and with <code>git</code>? <code>git checkout</code>? Of course not! It would be too simple. What we find in the documentation (<code>man</code>) and everywhere on the net:<div class=n id=cb8><pre class="n zsh"><code class="n zsh"><a class=m id=cb8-1 title=1>git reset --hard HEAD~3</a></code></pre></div><p>Except that this command is horrible. It forget revisions! Then you must use it with prudence. And you cannot tell other people working on the project you discard some changes. If someone had pulled the <em>bad</em> version, you are <em>doomed</em>. This is why you can also use:<div class=n id=cb9><pre class="n zsh"><code class="n zsh"><a class=m id=cb9-1 title=1>git checkout HEAD~3 -- <span class=kw>.</span> <span class=kw>&amp;&amp;</span> git commit -m <span class=st>'back in time'</span></a></code></pre></div><p>Just to keep a backup branch. Without it we can definitively loose the current version HEAD. But some error may rest when there were some addition and deletion of files. <em>The unique way to be really clean without any risk is to use the following command:</em><div class=n id=cb10><pre class="n zsh"><code class="n zsh"><a class=m id=cb10-1 title=1><span class=kw>for</span> i <span class=kw>in</span> <span class=ot>$(</span><span class=kw>seq</span> 0 2<span class=ot>)</span>; <span class=kw>do</span></a>
+<a class=m id=cb10-2 title=2>    git revert -n --no-edit <span class=kw>head</span>~<span class=ot>$i</span>;</a>
+<a class=m id=cb10-3 title=3><span class=kw>done</span></a>
+<a class=m id=cb10-4 title=4>git commit -m <span class=st>&quot;reverted 3 versions back&quot;</span></a></code></pre></div><p>And with this command this is the only good way to undo things in a project and tell other contributor you reverted something. You simply revert version in backward order.<p>The rule is simple: <em>NEVER use the <code>git reset</code> command on a version somebody else could have <code>fetched</code></em><p>It was said. Discover the best method took me some time. I’d made many different tries. The safer and best way of reverting back your tree is to use this method. If you want to make it automatic just had the following alias in your <code>~/.gitconfig</code>. Of course this alias will work only on environment having <code>zsh</code> installed. Which is the cas for most UNIX (Ubuntu, Mac OS X…).<div class=n id=cb11><pre class="n zsh"><code class="n zsh"><a class=m id=cb11-1 title=1>[alias]</a>
+<a class=m id=cb11-2 title=2>    uncommit = !<span class=kw>zsh</span> -c <span class=st>'&quot;if (($0)); then nb=$(( $0 - 1 )); else nb=0; fi; i=0; while ((i&lt;=nb)); do git revert -n --no-edit HEAD~$i; ((i++)); done; git commit -m \&quot;revert to $0 version(s) back\&quot;&quot;'</span></a></code></pre></div><h1 id=what-make-git-by-far-the-best-dcvs-today>What make <code>git</code> by far the best DCVS today</h1><p>After talking about the negatives points of <code>git</code>, now it’s time to speak about the very positive feature that make <code>git</code> the best DCVS in my humble opinion.<h2 id=cheap-branching>Cheap branching</h2><p>You always work into the same main directory. For example, you can work on two fix in the same time. Say <code>fix1</code> require you to work on <code>file1</code> and <code>fix2</code> to work on <code>file2</code>. You can work in any order on <code>file1</code> and <code>file2</code> in the <code>master</code> branch. And then go to branch <code>fix1</code>, commit <code>file1</code> into it. Then go to branch <code>fix2</code> and commit <code>file2</code> into it. And finally merge the two branches <code>fix1</code> and <code>fix2</code> into <code>master</code>.<div class=n id=cb12><pre class="n zsh"><code class="n zsh"><a class=m id=cb12-1 title=1><span class=kw>&gt;</span> vim file1</a>
+<a class=m id=cb12-2 title=2><span class=kw>&gt;</span> vim file2</a>
+<a class=m id=cb12-3 title=3><span class=kw>&gt;</span> git br fix1</a>
+<a class=m id=cb12-4 title=4><span class=kw>&gt;</span> git add file1</a>
+<a class=m id=cb12-5 title=5><span class=kw>&gt;</span> git commit -m <span class=st>'fix1'</span></a>
+<a class=m id=cb12-6 title=6><span class=kw>&gt;</span> git br fix2</a>
+<a class=m id=cb12-7 title=7><span class=kw>&gt;</span> git add file2</a>
+<a class=m id=cb12-8 title=8><span class=kw>&gt;</span> git commit -m <span class=st>'fix2'</span></a>
+<a class=m id=cb12-9 title=9><span class=kw>&gt;</span> git commit master</a>
+<a class=m id=cb12-10 title=10><span class=kw>&gt;</span> git merge fix1</a>
+<a class=m id=cb12-11 title=11><span class=kw>&gt;</span> git merge fix2</a></code></pre></div><p>And this is great not to worry about working in the <em>good</em> branch and coding in the same time. You just worry about your code and then about the versionning system.<p>And I use this possibilities <em>a lot</em>. Working with bazaar, I often made the error to begin a change in the bad branch. then I have to copy my modifications, then revert. In short it was tiedous.<p>This is why I prefer using <code>git</code> on an every day usage. If Bazaar implement the same way of cheap branching than git. I should switch again.</div><div id=afterarticle><div id=social><a href=../../../../Scratch/en/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=ar>RSS</a>
+·
+<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2009-12-14-Git-vs--Bzr/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=ar>Tweet</a>
+·
+<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2009-12-14-Git-vs--Bzr/" target=_blank rel="noopener noreferrer nofollow" class=ar>FB</a><br><a class=af href=../../../../Scratch/en/blog/Social-link-the-right-way/>These social sharing links preserve your privacy</a></div><div id=navigation><a href=../../../../>Home</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/en/blog>Blog</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/en/softwares>Softwares</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/en/about>About</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2009-12-14</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
+<a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+<a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
+<span class=bz>&</span>
+<a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=at style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
+ADA:</a>
+<code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>

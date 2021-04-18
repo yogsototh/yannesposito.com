@@ -1,317 +1,70 @@
-<!DOCTYPE html>
-<html lang="fr">
-    <head>
-        <meta charset="utf-8">
-        <title>YBlog - Parsec Presentation</title>
-        <meta name="keywords" content="programming, haskell, parsec, parser" />
-
-        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/fr/blog/feed/feed.xml" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
-        <!--[if lt IE 9]>
-        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
-        <![endif]-->
-        <!-- IndieAuth -->
-        <link href="https://twitter.com/yogsototh" rel="me">
-        <link href="https://github.com/yogsototh" rel="me">
-        <link href="mailto:yann.esposito@gmail.com" rel="me">
-        <link rel="pgpkey" href="../../../../pubkey.txt">
-    </head>
-    <body lang="fr" class="article">
-        <div id="content">
-	        			<div id="header">
-			    <div id="choix">
-        	    <span id="choixlang">
-                  <a href="../../../../Scratch/en/blog/Parsec-Presentation/">Anglais</a> 
-        	    </span>
-              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
-        	    <span class="flush"></span>
-        	</div>
-			</div>
-
-			<div id="titre">
-				<h1>Parsec Presentation</h1>
-				
-			</div>
-			<div class="flush"></div>
-      <div id="afterheader" class="article">
-          <div class="corps">
-              <p><img src="http://yogsototh.github.io/parsec-presentation/parsec/img/mp/AST.png" alt="AST" /><br />
-</p>
-<div class="intro">
-<p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Une introduction rapide à Parsec. Un parser en Haskell.</p>
-</div>
-<ul>
-<li>The <span class="sc"><abbr title="HyperText Markup Language">html</abbr></span> presentation is <a href="http://yogsototh.github.io/parsec-presentation/parsec.html">here</a>.</li>
+<!doctype html><html lang=fr><meta charset=utf-8><title>YBlog - Parsec Presentation</title><meta name=keywords content="programming,haskell,parsec,parser"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/fr/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=fr class=am><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/en/blog/Parsec-Presentation/>Anglais</a></span>
+<span class=ao><a href=#navigation>↓ Menu ↓</a></span>
+<span class=bn></span></div></div><div id=titre><h1>Parsec Presentation</h1></div><div class=bn></div><div id=afterheader class=am><div class=bq><p><img src=http://yogsototh.github.io/parsec-presentation/parsec/img/mp/AST.png alt=AST><br><div class=bl><p><span class=sc><abbr title="Trop long; pas lu">tlpl</abbr>:</span> Une introduction rapide à Parsec. Un parser en Haskell.</div><ul><li>The <span class=sc><abbr title="HyperText Markup Language">html</abbr></span> presentation is <a href=http://yogsototh.github.io/parsec-presentation/parsec.html>here</a>.</ul><div style=display:none>() () () () () (
+) (<p>) () () () () () () () () ()</div><section class=bf><div style=text-align:center;font-size:.9em;width:100%;line-height:1.2em><h1 style=position:relative>Parsec</h1><author><em class=bu>by</em> Yann Esposito</author><div style="font-size:.5em;margin:0 1em"><p><twitter><a href=http://twitter.com/yogsototh><span class=aa data-cites=yogsototh>@yogsototh</span></a>,</twitter> <googleplus><a href=https://plus.google.com/117858550730178181663>+yogsototh</a></googleplus></div><div style=font-size:.8em><p><em class=bu>for</em> <a href=http://www.meetup.com/riviera-scala-clojure>Riviera Scala Clojure Meetup (Haskell)</a><br><em class=bu>the</em> <ti style="font-size: .8em">8 Oct 2013</ti></div></div></section><section class=bf><h2 id=parsing>Parsing</h2><p>Latin pars (ōrātiōnis), meaning part (of speech).<ul><li><strong>analysing a string of symbols</strong><li><strong>formal grammar</strong>.</ul></section><section class=bf><h2 id=parsing-in-programming-languages>Parsing in Programming Languages</h2><p>Complexity:<table><thead><tr class=az><th align=left>Method<th align=left>Typical Example<th align=left>Output Data Structure<tbody><tr class=ct><td align=left>Splitting<td align=left>CSV<td align=left>Array, Map<tr class=cg><td align=left>Regexp<td align=left>email<td align=left><ul><li>Fixed Layout Tree<tr class=ct><td align=left>Parser<td align=left>Programming language<td align=left><ul><li>Most Data Structure</table></section><section class=bf><h2 id=parser-culture>Parser <span class=cx>&</span> culture</h2><p>In Haskell Parser are really easy to use.<p>Generally:<ul><li>In most languages: <strong>split</strong> then <strong>regexp</strong> then <strong>parse</strong><li>In Haskell: <strong>split</strong> then <strong>parse</strong></ul></section><section class=bf><h2 id=parsing-example>Parsing Example</h2><p>From String:<pre class="n haskell"><code class="n haskell">(<span class=dv>1</span><span class=fu>+</span><span class=dv>3</span>)<span class=fu>*</span>(<span class=dv>1</span><span class=fu>+</span><span class=dv>5</span><span class=fu>+</span><span class=dv>9</span>)</code></pre><p>To data structure:<p><img src=http://yogsototh.github.io/parsec-presentation/parsec/img/mp/AST.png alt=AST><br></section><section class=bf><h2 id=parsec>Parsec</h2><blockquote><p>Parsec lets you construct parsers by combining high-order Combinators to create larger expressions.<p>Combinator parsers are written and used within the same programming language as the rest of the program.<p>The parsers are first-class citizens of the languages […]"<p><em><a href=http://www.haskell.org/haskellwiki/Parsec>Haskell Wiki</a></em></blockquote></section><section class=bf><h2 id=parser-libraries>Parser Libraries</h2><p>In reality there are many choices:<table><tbody><tr class=ct><td align=left>attoparsec<td align=left>fast<tr class=cg><td align=left>Bytestring-lexing<td align=left>fast<tr class=ct><td align=left>Parsec 3<td align=left>powerful, nice error reporting</table></section><section class=bf><h2 id=haskell-remarks-1>Haskell Remarks (1)</h2><p>spaces are meaningful<pre class="n haskell"><code class="n haskell">f x   <span class=co>-- ⇔ f(x) in C-like languages</span>
+f x y <span class=co>-- ⇔ f(x,y)</span></code></pre></section><section class=bf><h2 id=haskell-remarks-2>Haskell Remarks (2)</h2><p>Don’t mind strange operators (<code>&lt;*></code>, <code>&lt;$></code>).<br>Consider them like separators, typically commas.<br>They are just here to deal with types.<p>Informally:<pre class="n haskell"><code class="n haskell">toto <span class=fu>&lt;$&gt;</span> x <span class=fu>&lt;*&gt;</span> y <span class=fu>&lt;*&gt;</span> z
+<span class=co>-- ⇔ toto x y z</span>
+<span class=co>-- ⇔ toto(x,y,z) in C-like languages</span></code></pre></section><section class=bf><h2 id=minimal-parsec-examples>Minimal Parsec Examples</h2><pre class="n haskell"><code class="n haskell">whitespaces <span class=fu>=</span> many (oneOf <span class=st>&quot;\t &quot;</span>)
+number <span class=fu>=</span> many1 digit
+symbol <span class=fu>=</span> oneOf <span class=st>&quot;!#$%<span class=cx>&amp;</span>|*+-/:&lt;=&gt;?@^_~&quot;</span></code></pre><pre class="n haskell">
+<code class="n haskell"><span class=st>" \t "</span> <span class=co>– whitespaces on " \t "</span> <span class=st>""</span> <span class=co>– whitespaces on “32”</span> <span class=st>“32”</span> <span class=co>– number on “32”</span>
 </ul>
-<div style="display:none">
-() () () () () (
-) (
-<p>) () () () () () () () () ()</p>
-</div>
-<!-- Begin slides. Just make elements with a class of slide. -->
-<section class="slide">
-<div style="text-align:center; font-size: .9em; width: 100%; line-height: 1.2em">
-<h1 style="position: relative;">
-Parsec
-</h1>
-<author><em class="base1">by</em> Yann Esposito</author>
-<div style="font-size:.5em; margin: 0 1em;">
-<p><twitter> <a href="http://twitter.com/yogsototh"><span class="citation" data-cites="yogsototh">@yogsototh</span></a>, </twitter> <googleplus> <a href="https://plus.google.com/117858550730178181663">+yogsototh</a> </googleplus></p>
-</div>
-<div style="font-size:.8em">
-<p><em class="base1">for</em> <a href="http://www.meetup.com/riviera-scala-clojure"> Riviera Scala Clojure Meetup (Haskell) </a><br /> <em class="base1">the</em> <ti style="font-size: .8em">8 Oct 2013</ti></p>
-</div>
-</div>
-</section>
-<section class="slide">
-<h2 id="parsing">
-Parsing
-</h2>
-<p>
-Latin pars (ōrātiōnis), meaning part (of speech).
-</p>
-<ul>
-<li>
-<strong>analysing a string of symbols</strong>
-</li>
-<li>
-<strong>formal grammar</strong>.
-</li>
 </ul>
-</section>
-<section class="slide">
-<h2 id="parsing-in-programming-languages">
-Parsing in Programming Languages
-</h2>
-<p>
-Complexity:
-</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">
-Method
-</th>
-<th align="left">
-Typical Example
-</th>
-<th align="left">
-Output Data Structure
-</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">
-Splitting
-</td>
-<td align="left">
-CSV
-</td>
-<td align="left">
-Array, Map
-</td>
-</tr>
-<tr class="even">
-<td align="left">
-Regexp
-</td>
-<td align="left">
-email
-</td>
-<td align="left">
-<ul>
-<li>Fixed Layout Tree
-</td>
-</tr>
-<tr class="odd">
-<td align="left">
-Parser
-</td>
-<td align="left">
-Programming language
-</td>
-<td align="left">
-<ul>
-<li>Most Data Structure
-</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section class="slide">
-<h2 id="parser-culture">
-Parser <span class="and">&amp;</span> culture
-</h2>
-<p>
-In Haskell Parser are really easy to use.
-</p>
-<p>
-Generally:
-</p>
-<ul>
-<li>
-In most languages: <strong>split</strong> then <strong>regexp</strong> then <strong>parse</strong>
-</li>
-<li>
-In Haskell: <strong>split</strong> then <strong>parse</strong>
-</li>
-</ul>
-</section>
-<section class="slide">
-<h2 id="parsing-example">
-Parsing Example
-</h2>
-<p>
-From String:
-</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">(<span class="dv">1</span><span class="fu">+</span><span class="dv">3</span>)<span class="fu">*</span>(<span class="dv">1</span><span class="fu">+</span><span class="dv">5</span><span class="fu">+</span><span class="dv">9</span>)</code></pre>
-<p>
-To data structure:
-</p>
-<p>
-<img src="http://yogsototh.github.io/parsec-presentation/parsec/img/mp/AST.png" alt="AST" /><br />
-</p>
-</section>
-<section class="slide">
-<h2 id="parsec">
-Parsec
-</h2>
-<blockquote>
-<p>
-Parsec lets you construct parsers by combining high-order Combinators to create larger expressions.
-</p>
-<p>
-Combinator parsers are written and used within the same programming language as the rest of the program.
-</p>
-<p>
-The parsers are first-class citizens of the languages […]"
-</p>
-<p>
-<em><a href="http://www.haskell.org/haskellwiki/Parsec">Haskell Wiki</a></em>
-</p>
-</blockquote>
-</section>
-<section class="slide">
-<h2 id="parser-libraries">
-Parser Libraries
-</h2>
-<p>
-In reality there are many choices:
-</p>
-<table>
-<tbody>
-<tr class="odd">
-<td align="left">
-attoparsec
-</td>
-<td align="left">
-fast
-</td>
-</tr>
-<tr class="even">
-<td align="left">
-Bytestring-lexing
-</td>
-<td align="left">
-fast
-</td>
-</tr>
-<tr class="odd">
-<td align="left">
-Parsec 3
-</td>
-<td align="left">
-powerful, nice error reporting
-</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section class="slide">
-<h2 id="haskell-remarks-1">
-Haskell Remarks (1)
-</h2>
-<p>
-spaces are meaningful
-</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">f x   <span class="co">-- ⇔ f(x) in C-like languages</span>
-f x y <span class="co">-- ⇔ f(x,y)</span></code></pre>
-</section>
-<section class="slide">
-<h2 id="haskell-remarks-2">
-Haskell Remarks (2)
-</h2>
-<p>
-Don’t mind strange operators (<code>&lt;*&gt;</code>, <code>&lt;$&gt;</code>).<br />Consider them like separators, typically commas.<br />They are just here to deal with types.
-</p>
-<p>
-Informally:
-</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">toto <span class="fu">&lt;$&gt;</span> x <span class="fu">&lt;*&gt;</span> y <span class="fu">&lt;*&gt;</span> z
-<span class="co">-- ⇔ toto x y z</span>
-<span class="co">-- ⇔ toto(x,y,z) in C-like languages</span></code></pre>
-</section>
-<section class="slide">
-<h2 id="minimal-parsec-examples">
-Minimal Parsec Examples
-</h2>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">whitespaces <span class="fu">=</span> many (oneOf <span class="st">&quot;\t &quot;</span>)
-number <span class="fu">=</span> many1 digit
-symbol <span class="fu">=</span> oneOf <span class="st">&quot;!#$%<span class="and">&amp;</span>|*+-/:&lt;=&gt;?@^_~&quot;</span></code></pre>
-<pre class="sourceCode haskell">
-<code class="sourceCode haskell"><span class="st">" \t "</span> <span class="co">– whitespaces on " \t "</span> <span class="st">""</span> <span class="co">– whitespaces on “32”</span> <span class="st">“32”</span> <span class="co">– number on “32”</span></li>
-</ul></li>
-</ul>
-<span class="co">– number on " 
+<span class=co>– number on " 
           </div>
-          <div id="afterarticle">
-              <div id="social">
-                  <a href="../../../../Scratch/fr/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
+          <div id=afterarticle>
+              <div id=social>
+                  <a href=../../../../Scratch/fr/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=ar>RSS</a>
                   ·
-                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/Parsec-Presentation/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
+                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/Parsec-Presentation/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=ar>Tweet</a>
                   ·
-                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/Parsec-Presentation/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
-                  <br />
-                  <a class="message" href="../../../../Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
+                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/Parsec-Presentation/" target=_blank rel="noopener noreferrer nofollow" class=ar>FB</a>
+                  <br>
+                  <a class=af href=../../../../Scratch/fr/blog/Social-link-the-right-way/>Ces liens sociaux préservent votre vie privée</a>
               </div>
-              <div id="navigation">
-                  <a href="../../../../">Accueil</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/fr/blog">Blog</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/fr/softwares">Logiciels</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/fr/about">Auteur</a>
+              <div id=navigation>
+                  <a href=../../../../>Accueil</a>
+                  <span class=cq>¦</span>
+                  <a href=../../../../Scratch/fr/blog>Blog</a>
+                  <span class=cq>¦</span>
+                  <a href=../../../../Scratch/fr/softwares>Logiciels</a>
+                  <span class=cq>¦</span>
+                  <a href=../../../../Scratch/fr/about>Auteur</a>
               </div>
-              <div id="totop"><a href="#header">↑ Top ↑</a></div>
-              <div id="bottom">
+              <div id=totop><a href=#header>↑ Top ↑</a></div>
+              <div id=bottom>
                   <div>
                       Published on 2013-10-09
                   </div>
                   <div>
-                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+                      <a href=https://twitter.com/yogsototh>Follow @yogsototh</a>
                   </div>
                   <div>
-                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+                      <a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a>
                   </div>
 
                   <div>
                       Done with
-                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
-                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
-                      <span class="pala">&amp;</span>
-                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
+                      <a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+                      <a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
+                      <span class=bz>&amp;</span>
+                      <a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+                      <a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a>
+                  </div>
+                  <hr>
+                  <div style=max-width:100%>
+                      <a href=https://cardanohub.org>
+                          <img src=../../../../Scratch/img/ada-logo.png class=at style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
+                          ADA:
+                      </a>
+                          <code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>
+                              DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp
+                          </code>
                   </div>
               </div>
           </div>
       </div>
 
         </div>
-    </body>
-</html>
+    
+

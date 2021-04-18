@@ -1,0 +1,129 @@
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Git Project Manager / Commission Open Source</title><meta name=author content="Yann Esposito"><meta name=description content><meta name=keywords content><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><link rel=stylesheet href=/css/slides.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><input name=t type=radio id=b>
+<input name=t type=radio id=l>
+<input name=t type=radio id=d>
+<input name=t type=radio id=g><div id=labels><div class=ak><label for=b>book</label>&nbsp;
+/&nbsp;
+<label for=l>light</label>&nbsp;
+<span id=logo><a href=/><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="var(--b2)" stroke-width="2" fill="var(--b03)"/><circle cx="32" cy="32" r="12" stroke="var(--r)" stroke-width="2" fill="var(--o)"/><circle cx="32" cy="32" r="6" stroke-width="0" fill="var(--y)"/><ellipse cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="var(--b3)"/></svg></a></span>&nbsp;
+<label for=d>dark</label>&nbsp;
+/&nbsp;
+<label for=g>geek</label></div></div><div class=cc><div id=preamble class=aq><div class=ak><h1>Git Project Manager / Commission Open Source</h1><div class=ca><span class=am-date>&lt;2018-10-25</span> on
+<a href=https://her.esy.fun><span class=bc>Yann Esposito</span>'s blog</a> -
+<a href=/slides/git-project-manager.org>source</a> -
+<a href=/slides/git-project-manager.gmi>txt</a> -
+<a href=/slides/git-project-manager.pdf>pdf</a> -
+<a class=q href=https://her.esy.fun/slides/git-project-manager.html>§permalink</a></div><div class=ac></div></div></div><div id=content><h1>Code from this talk → <a href=https://gitlab.esy.fun/yogsototh/gpm>Git Project Manager</a></h1><h2><code class=w>git</code> is a <strong>Distributed</strong> Concurrent Versions System</h2><h2>GitHub is a <strong>Centralized</strong> <code class=w>git</code> host</h2><h1>Can we do without Github™?</h1><h3>Betteridge's law</h3><p>Betteridge's law of headlines is an adage that states:<blockquote><p>Any headline that ends in a question mark can be answered by the word no.</blockquote><div class=k><p>Here the answer is <strong>YES</strong>!<ul><li>Linux (only mail)<li>GHC used a self hosted instance of phabricator + trac<li>many others I don't know</ul></div><h3>All right, we can, but <em>should we</em>?</h3><pre><code>__   _______ ____  _
+\ \ / / ____/ ___|| |
+ \ V /|  _| \___ \| |
+  | | | |___ ___) |_|
+  |_| |_____|____/(_)
+</code></pre><h3>Short History</h3><ul><li>Internet (decentralized, email, bbs, usenet, etc…)<li>P2P -> no business<li>Centralized -> business, steal data!!!!<li>Decentralized again!<ul><li>cryptobulshit: crash business <code class=w>$$$$ -> #!@*!</code><li>bio blockchains: sustainable business <code class=w>$$</code><li>old fashionned style: ???</ul></ul><h2>GitHub™</h2><h3>GitHub™: Social Network</h3><ul><li>user management & trust<li>discoverability</ul><h3>GitHub™: its free!</h3><blockquote><p>If you're not paying for it, you're the product being sold.</blockquote><p>$$: Pay for private repositories<h3>GitHub™: Features!!!</h3><p>From their website (in that order):<ul><li><em>Code Review</em>: comment diffs, approve, refuse, etc…<li><em>Project Management</em>: issues, milestones, dashboard, etc…<li><em>Integrations</em>: travis, slack, etc…<li><em>Team Management</em>: access rights, community guidelines, etc…<li><em>Social Coding</em>: follow, explore, share, etc…<li><em>Documentation</em>: github pages, wiki, …à<li><em>Code Hosting</em>: all your code in one place, tree view, blame view, etc…</ul><h3>GitHub™: Metas</h3><p>Most GitHub™ features put data in their own internal closed representation:<ul><li>Issues<li>Comments<li>Pages<li>Pull Request & review<li>Wiki</ul><p>Note there are tools to export them. Ex: migrate to Gitlab<h3>GitHub™ is great today but can suck tomorrow</h3><ul><li><em>bloatware</em> remember digg, readitlater?<li><em>downgradeware</em> Swagger-UI v3 (v2 is neat), reddit new redesign (looks better, but slow)<li><em>payware</em> You rely on our feature, but now, we want you to move or to pay. Fair ;)<li><em>crapware</em> Nothing works as expected unless you pay: Twitter streaming API?<li><em>dieware</em> Remember Friendfeed? Google Reader™?<li>etc…</ul><h3>GitHub™ force all your team member to use GitHub™</h3><p>Were you already forced to:<ul><li>use PowerPoint? Excel? Word?<li>code in PHP? in Java?<li>work on windows? Harder need to ssh to UNIX machines?<li>use Eclipse instead of vim/emacs?<li>use a super complex GUI instead of a few command line tools?<li>etc…</ul><p><strong>REAL STORY @WORK</strong>: github dashboard is slow & terrible for the manager.<h3>Why you shouldn't rely too much on GitHub™?</h3><ul><li>Github™ is great to get you started:<ul><li>nothing to install<li>only high level interface<li>everything explained with nice docs<li>github is really a great product</ul><li><strong>The hidden price to pay</strong>:<ul><li>use closed source services<li>give freely many private infos<li>you must TRUST github for privacy, private account</ul></ul><h3>Why not self hosted Gitlab then?</h3><p>Gitlab is a better alternative but:<ul><li>You still keep the metas of your project in the Gitlab server in some DB.<li>You still force all the member of your team to use your Gitlab version, with your Gitlab plugins, with your Gitlab settings, etc…<li>Gitlab push a big warn so you are pushed to upgrade (new features & anti-features)</ul><h3><code class=w>git clone</code></h3><ul><li><p>[X] code<li><p>[X] web pages<li><p>[ ] <strong>issues</strong><li><p>[ ] <strong>reviews</strong><li><p>[ ] <strong>comments</strong><li><p>[ ] <strong>wiki/doc</strong><li><p>[ ] <strong>hooks</strong></ul><h1>Git Project Manager</h1><h3>Problems</h3><ul><li>can't clone everything<li>big dependence on private tooling (that could change or being interrupted)<li>force same tooling choices accross your team members</ul><h3>Solution</h3><ul><li>put metas in git branches <strong>CLONE ALL THE THINGS!!!!</strong></ul><div class=k><ul><li>use text files for everything <strong>DO NOT FORCE ANY TOOL</strong></ul></div><div class=k><ul><li>only rely on conventions, better on standardized conventions <strong>HELP TO WRITE SPECIFIC OPEN SOURCE TOOLS</strong></ul></div><h3>Git Project Manager <code class=w>gpm</code></h3><ul><li>command line tool<li>integrate your project management metas in your git repo<li>automate a few common tasks<li>follow a few conventions</ul><p><em>Tool freedom</em><ul><li>people on the team don't need to install or use <code class=w>gpm</code><li>they just need to follow a minimal set of conventions<li>want to use other conventions? Write yourself a <code class=w>gpm</code> in a few hours.<li>but really there are <em>very few</em> conventions <code class=w>gpm</code> follows</ul><h3><code class=w>gpm</code> conventions</h3><ul><li><code class=w>git</code> as DCSV<li>text files<li>Project Management metas goes in the branch <code class=w>gpm</code></ul><h3>Encouraged but not enforced <code class=w>gpm</code> conventions</h3><ul><li>encourage to use <code class=w>org-mode</code> format but you can change<li>issues goes in <code class=w>issues.org</code> file<li>reviews goes in <code class=w>reviews/</code> with name <code class=w>&lt;branch>-&lt;reviewer>.org</code><li>docs goes in <code class=w>wiki.org</code><li>serve goes in your XDG data dir (standard)</ul><h3>git is awesome!</h3><p>battery included:<ul><li><code class=w>git</code> hooks<li><code class=w>git instaweb</code><li><code class=w>git daemon</code></ul><h3>org-mode is awesome</h3><ul><li>TODO list oriented document convention<li>Extremely versatile:<ul><li>issues, bug tracking, comments<li>handling with minimal friction code reviews <code class=w>org-annotate-file</code><li>workflows:<ul><li>basic trello (TODO, IN-PROGRESS, DONE)<li>scrum (EPIC / USER-STORY / etc…)<li>kanban:<ul><li>EPIC with different statuses (prep, specified,etc..), comments<li>user stories with evaluation, different status, comments<li>QA status<li>Ops status</ul></ul></ul></ul><h1>DEMO</h1><h3>Create a git project</h3><div class=n id=cb2><pre class="n bash"><code class="n bash"><span id=cb2-1><a href=#cb2-1 aria-hidden=true tabindex=-1></a><span class=fu>mkdir</span> <span class=at>-p</span> /tmp/gpm-playground/testprj</span>
+<span id=cb2-2><a href=#cb2-2 aria-hidden=true tabindex=-1></a><span class=bu>cd</span> /tmp/gpm-playground/testprj</span>
+<span id=cb2-3><a href=#cb2-3 aria-hidden=true tabindex=-1></a><span class=bu>echo</span> <span class=st>&quot;Hello GPM&quot;</span> <span class=op>&gt;</span> README</span>
+<span id=cb2-4><a href=#cb2-4 aria-hidden=true tabindex=-1></a><span class=fu>git</span> init .</span>
+<span id=cb2-5><a href=#cb2-5 aria-hidden=true tabindex=-1></a><span class=fu>git</span> add README</span>
+<span id=cb2-6><a href=#cb2-6 aria-hidden=true tabindex=-1></a><span class=fu>git</span> commit <span class=at>-m</span> <span class=st>&quot;Initial commit&quot;</span></span></code></pre></div><h3><code class=w>gpm init</code> (1)</h3><div class=n id=cb3><pre class="n bash"><code class="n bash"><span id=cb3-1><a href=#cb3-1 aria-hidden=true tabindex=-1></a><span class=ex>gpm</span> init</span></code></pre></div><pre><code>GPM -- Git Project Manager
+==========================
+Create a new branch gpm (be sure the branch gpm doesn&#39;t already exists)
+    git checkout --orphan gpm
+Switched to a new branch &#39;gpm&#39;
+cleanup the branch
+    git rm --cached -r .
+    git clean -fd
+</code></pre><h3><code class=w>gpm init</code> (2)</h3><pre><code>* issue.org
+    git add issues.org
+    git add templat
+* wiki.org
+    git add wiki.or
+* reviews.org
+    create some example review for inspiration
+      reviews/write-contributing-yogsototh.org
+    git add reviews
+    create some review templates
+      templates/new-review.org
+    git add templates
+</code></pre><h3><code class=w>gpm init</code> (3)</h3><pre><code>* hooks/
+    Copyings default hooks into the hooks directory
+    git add hoo
+* server init
+create dir: /Users/yaesposi/.local/share/gpm/public
+    git init .
+    git rev-parse --show-toplevel
+    git rev-parse --show-toplevel
+    git clone --mirror /tmp/gpm-playground/testprj
+               ~/.local/share/gpm/public/testprj.git
+Cloning into bare repository &#39;.../testprj.git&#39;...
+done.
+    git update-server-info
+    git commit -m &#39;gpm initialized&#39;
+    git checkout master
+Switched to branch &#39;master&#39;
+</code></pre><h3>The <code class=w>gpm</code> branch</h3><pre><code>&gt; git checktout gpm
+&gt; tree
+.
+├── hooks
+│   ├── applypatch-msg.sample
+│   ├── commit-msg.sample
+│   └── ...
+├── issues.org
+├── reviews
+│   └── write-contributing-yogsototh.org
+├── templates
+│   ├── new-issue.org
+│   └── new-review.org
+└── wiki.org
+
+3 directories, 16 files
+</code></pre><h3>Hooks</h3><div class=n id=cb8><pre class="n bash"><code class="n bash"><span id=cb8-1><a href=#cb8-1 aria-hidden=true tabindex=-1></a><span class=op>&gt;</span> gpm <span class=ex>hooks</span></span>
+<span id=cb8-2><a href=#cb8-2 aria-hidden=true tabindex=-1></a><span class=ex>Usage:</span> gpm hooks sync</span>
+<span id=cb8-3><a href=#cb8-3 aria-hidden=true tabindex=-1></a>  <span class=ex>Handle</span> hooks for this git repository</span>
+<span id=cb8-4><a href=#cb8-4 aria-hidden=true tabindex=-1></a></span>
+<span id=cb8-5><a href=#cb8-5 aria-hidden=true tabindex=-1></a><span class=ex>Available</span> options:</span>
+<span id=cb8-6><a href=#cb8-6 aria-hidden=true tabindex=-1></a>  <span class=ex>-h,--help</span>                Show this help text</span>
+<span id=cb8-7><a href=#cb8-7 aria-hidden=true tabindex=-1></a></span>
+<span id=cb8-8><a href=#cb8-8 aria-hidden=true tabindex=-1></a><span class=ex>Available</span> commands:</span>
+<span id=cb8-9><a href=#cb8-9 aria-hidden=true tabindex=-1></a>  <span class=fu>sync</span>                     Synchronize hooks from gpm branch</span></code></pre></div><h3><code class=w>issues.org</code> Basic</h3><pre class=cs><code>#+TODO: TODO(t) STARTED(s) WAITING(w) | DONE(d) CANCELLED(c)
+* Basic Usages
+** TODO Do thing 3
+** STARTED Do thing 2
+** DONE Do thing 1
+</code></pre><h3><code class=w>issues.org</code> Complex workflow, review</h3><pre class=cs><code> #+PROPERTY: ASSIGNEE
+ #+PROPERTY: REVIEWER
+ #+TODO: REVIEW(i) | MERGED(m)
+ #+TODO: ACCEPTED(a) CHANGE_REQUESTED(c) QUESTION(q) FEEDBACK(f) | REFUSED(r)
+ ** REVIEW Basic review process
+  :PROPERTIES:
+  :BRANCH:   explain-review-process
+  :ASSIGNEE: yogsototh
+  :END:
+
+*** ACCEPTED Review finished
+   :PROPERTIES:
+   :REVIEWER: shubby
+   :END:
+</code></pre><h3><code class=w>issues.org</code> Full Professional Usage</h3><pre class=cs><code>#+TAGS: epic(e) user_story(u) task(t) qa(q) ops(o)
+
+ * Some Title                                                                               :epic:
+ ** Some User Story                                                                       :story:
+ *** Dev Task                                                                         :task:dev:
+ *** Document Task                                                                    :task:doc:
+ *** QA Task                                                                           :task:qa:
+ *** Ops Task                                                                         :task:ops:
+</code></pre><h3><code class=w>gpm new-issue</code></h3><div class=n id=cb12><pre class="n bash"><code class="n bash"><span id=cb12-1><a href=#cb12-1 aria-hidden=true tabindex=-1></a><span class=op>&gt;</span> gpm <span class=ex>new-issue</span> <span class=at>-i</span></span></code></pre></div><h3><code class=w>gpm serve</code></h3><ul><li>web interface: <code class=w>git instaweb</code> (port 1234)<li>git server: <code class=w>git daemon</code> (port 9418)</ul><pre><code>Usage: gpm serve (start | stop | update | path)
+  Serve the git to the web
+
+Available options:
+  -h,--help                Show this help text
+
+Available commands:
+  start                    Start to serve all gpm tracked repositories
+  stop                     Stop to serve all gpm tracked repositories
+  update                   Update the served git repository
+  path                     Show the path of the bare repository
+</code></pre><h3><code class=w>gpm review</code>: classical workflow</h3><ol><li>dev create a new feature branch<li>reviewer review the branch<li>dev pull the <code class=w>gpm</code> branch and <code class=w>gpm retrieve</code> the reviews<li>dev take feedbacks into account<li>goto 2 until reviewer accept the branch<li>integration manager/dictator/lieutenant merge the branch</ol><h3><code class=w>gpm review</code>: reviewer (step 2 of previous slide)</h3><ol><li>reviewer pull the remote feature branch<li>gpm review start: create a local file<li>write the review: <code class=w>org-annotate-file</code> FTW!<li>stop the review: copy the local file in gpm branch and commit it<li><code class=w>gpm update</code> to serve the updated <code class=w>gpm</code> branch</ol><h1>Conclusion</h1><h3>Proof of concept</h3><ul><li><code class=w>gpm</code> is a proof of concept but so simple its already usable<li>git clone should provide most of your projects data<li>don't enforce tooling on your team, use text files<li>I advise you to use org-mode it is awesome! <strong>REALLY!</strong><ul><li>vimer? ⇒ spacemacs or doom-emacs<li>IDE? ⇒ switch to spacemacs eat the bullet!<li>you still can edit org-mode with notepad</ul></ul><h3>Lot of things already done</h3><ul><li>git-scm.org has plenty of resources<li>git instaweb<li>git daemon<li>how to serve git with apaches, if you want to use another non decentralized workflow, or share hosting with a few peers</ul><h3>Going further: Decentralized Web</h3><ul><li>the Internet was thought to be decentralized<li>centralization of services made lot of things easy, it was fair at first<li>but made us dependant and the balance is no more fair<li>it is time to re-decentralize the Internet and take back control<li>we shouldn't be dependant of private services<li>we should pay private service, but they should adapt to us, not the other way around</ul><h3>Decentralized Authentication: IndieAuth</h3><ul><li>one of your online identities = one domaine name<li>serve a page with all your online identity providers and username<ul><li>google<li>twitter<li>etc…<li>but also your GPG keys (see keybase)</ul></ul><p>Mainly you OWN & CONTROL your identity and the informations about it.<h3>Decentralized Comments: webmention</h3><ul><li>you host your comment<li>a 3rd party website can decide to show it in its comment section</ul><h3>Decentralized Web</h3><ul><li>Your content is yours (prevent site death, change it, delete it…)<li>Better connection:<ul><li>messages can go to all your services<li>use open standards</ul><li>You are in control<ul><li>post anything, any format, no monitoring, share links.</ul></ul><p>Follow:<ul><li><a href=https://indiewebify.me>https://indiewebify.me</a><li><a href=https://indieweb.html>https://indieweb.org</a></ul><p><footer><i>Any comment? Click on my email below and I'll add it.</i><table><tbody><tr class=ct><td>author<td><span class=bc><a href="mailto:Yann Esposito <yann@esposito.host>?subject=yblog: Git Project Manager / Commission Open Source" class=bo>Yann Esposito &lt;yann@esposito.host></a></span><tr class=cg><td>gpg<td><a href=files/publickey.txt>CB420F8005F1A662</a><tr class=ct><td>tags<td><tr class=cg><td>date<td>&lt;2018-10-25<tr class=ct><td>rss<td><a href=/rss.xml>RSS</a> (<a href="https://validator.w3.org/feed/check.cgi?url=https%3A%2F%2Fher.esy.fun%2Frss.xml">validate</a>)<tr class=cg><td>size<td><span class=web-file-size> 25K (html 19K, css 6.6K)</span><tr class=ct><td>gz<td><span class=gzweb-file-size> 8.9K (html 6.6K, css 2.3K)</span><tr class=cg><td>generated<td>2021-04-18T10:16:07.396301Z</table><p></footer></p><br><a href=gemini://her.esy.fun/slides/git-project-manager.gmi><code>=> This article is also available on gemini</code></a></div><div id=postamble class=aq><div class=ak><nav><a href=/index.html>Home</a> |
+<a href=/slides.html>Slides</a> |
+<a href=/about-me.html>About</a>
+<span class=ai>(<a href=https://gitea.esy.fun/yogsototh>code</a>
+<a href=https://espial.esy.fun/u:yogsototh>bookmarks</a>
+<a href=https://espial.esy.fun/u:yogsototh/notes>notes</a>)</span> |
+<a href=#preamble>↑ Top ↑</a></nav></div></div></div>

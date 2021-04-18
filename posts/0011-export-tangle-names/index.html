@@ -1,0 +1,31 @@
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Add links to code block during orgmode export</title><meta name=author content="Yann Esposito"><meta name=description content><meta name=keywords content><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><input name=t type=radio id=b>
+<input name=t type=radio id=l>
+<input name=t type=radio id=d>
+<input name=t type=radio id=g><div id=labels><div class=ak><label for=b>book</label>&nbsp;
+/&nbsp;
+<label for=l>light</label>&nbsp;
+<span id=logo><a href=/><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="var(--b2)" stroke-width="2" fill="var(--b03)"/><circle cx="32" cy="32" r="12" stroke="var(--r)" stroke-width="2" fill="var(--o)"/><circle cx="32" cy="32" r="6" stroke-width="0" fill="var(--y)"/><ellipse cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="var(--b3)"/></svg></a></span>&nbsp;
+<label for=d>dark</label>&nbsp;
+/&nbsp;
+<label for=g>geek</label></div></div><div class=cc><div id=preamble class=aq><div class=ak><h1>Add links to code block during orgmode export</h1><div class=ca><span class=am-date>2020-02-29</span> on
+<a href=https://her.esy.fun><span class=bc>Yann Esposito</span>'s blog</a> -
+<a href=/posts/0011-export-tangle-names/index.org>source</a> -
+<a href=/posts/0011-export-tangle-names/index.gmi>gmi</a> -
+<a href=/posts/0011-export-tangle-names/index.pdf>pdf</a> -
+<a class=q href=https://her.esy.fun/posts/0011-export-tangle-names/index.html>§permalink</a></div><div class=ac></div></div></div><div id=content><p>I wanted to add a link to the file I export with org tangle. And it was surprisingly difficult to find. Apparently I am one of the few people that use orgmode the way I do.<p>Using orgmode file as markdown to blog. And exporting to a different file some code block. So I often endup writing something like:<pre class=cs><code>..begin_src elisp :tangle foo.el
+</code></pre><p>I tangle the source code that export the code block to an external file. Then I use this hook during HTML export to add a caption with the link the file I tangled:<pre class=bp data-tangle=org_html_export_show_tangle.el><code>(defun my-add-link-to-tangled-files (backend)
+  &quot;Add a link just before source code block with tangled files.
+BACKEND is the export backend. Used as symbol.&quot;
+  (while ;; (re-search-forward )
+      (re-search-forward &quot;^\\( *\\)#\\+begin_src .*:tangle \\([^\s\n]*\\)&quot; nil t)
+    (replace-match &quot;\\1#+CAPTION: [[./\\2][=\\2=]]\n\\&amp;&quot;)))
+
+(add-hook &#39;org-export-before-processing-hook
+          &#39;my-add-link-to-tangled-files)
+</code></pre><p>And this article is an example of the result. The link with the listing is generated automatically for me.<p>A small note regarding CSS. My <code class=w>pre</code> have a <code class=w>margin-top</code>. But I wanted to get rid of it when the previous block was a <code class=w>label</code>. This is achievable with:<div class=n id=cb3><pre class="n css"><code class="n css"><span id=cb3-1><a href=#cb3-1 aria-hidden=true tabindex=-1></a>label <span class=op>+</span> pre {<span class=kw>margin-top</span>: <span class=dv>0</span><span class=op>;</span>}</span></code></pre></div><p>That's it. It took me really a long time to just think about using caption, and not trying something smarter like injecting html code, etc… So I hope it could help someone.<p><footer><i>Any comment? Click on my email below and I'll add it.</i><table><tbody><tr class=ct><td>author<td><span class=bc><a href="mailto:Yann Esposito <yann@esposito.host>?subject=yblog: Add links to code block during orgmode export" class=bo>Yann Esposito &lt;yann@esposito.host></a></span><tr class=cg><td>gpg<td><a href=files/publickey.txt>CB420F8005F1A662</a><tr class=ct><td>tags<td><tr class=cg><td>date<td>2020-02-29<tr class=ct><td>rss<td><a href=/rss.xml>RSS</a> (<a href="https://validator.w3.org/feed/check.cgi?url=https%3A%2F%2Fher.esy.fun%2Frss.xml">validate</a>)<tr class=cg><td>size<td><span class=web-file-size> 11K (html 4.8K, css 5.9K)</span><tr class=ct><td>gz<td><span class=gzweb-file-size> 4.0K (html 2.1K, css 2.0K)</span><tr class=cg><td>generated<td>2021-04-18T10:16:07.783Z</table><p></footer></p><br><a href=gemini://her.esy.fun/posts/0011-export-tangle-names/index.gmi><code>=> This article is also available on gemini</code></a></div><div id=postamble class=aq><div class=ak><nav><a href=/index.html>Home</a> |
+<a href=/slides.html>Slides</a> |
+<a href=/about-me.html>About</a>
+<span class=ai>(<a href=https://gitea.esy.fun/yogsototh>code</a>
+<a href=https://espial.esy.fun/u:yogsototh>bookmarks</a>
+<a href=https://espial.esy.fun/u:yogsototh/notes>notes</a>)</span> |
+<a href=#preamble>↑ Top ↑</a></nav></div></div></div>

@@ -1,155 +1,69 @@
-<!DOCTYPE html>
-<html lang="fr">
-    <head>
-        <meta charset="utf-8">
-        <title>YBlog - Comment réparer un XML coupé ?</title>
-        <meta name="keywords" content="arbre, HTML, script, ruby" />
-
-        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/fr/blog/feed/feed.xml" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
-        <!--[if lt IE 9]>
-        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
-        <![endif]-->
-        <!-- IndieAuth -->
-        <link href="https://twitter.com/yogsototh" rel="me">
-        <link href="https://github.com/yogsototh" rel="me">
-        <link href="mailto:yann.esposito@gmail.com" rel="me">
-        <link rel="pgpkey" href="../../../../pubkey.txt">
-    </head>
-    <body lang="fr" class="article">
-        <div id="content">
-	        			<div id="header">
-			    <div id="choix">
-        	    <span id="choixlang">
-                  <a href="../../../../Scratch/en/blog/2010-05-19-How-to-cut-HTML-and-repair-it/">Anglais</a> 
-        	    </span>
-              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
-        	    <span class="flush"></span>
-        	</div>
-			</div>
-
-			<div id="titre">
-				<h1>Comment réparer un XML coupé ?</h1>
-				<h2>et comment s'en sortir sans parseur ?</h2>
-
-			</div>
-			<div class="flush"></div>
-      <div id="afterheader" class="article">
-          <div class="corps">
-              <p>Sur ma page d’accueil vous pouvez voir la liste des mes derniers articles avec le début de ceux-ci. Pour arriver à faire ça, j’ai besoin de couper le code XHTML de mes pages en plein milieu. Il m’a donc fallu trouver un moyen de les réparer.</p>
-<p>Prenons un exemple&nbsp;:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode html"><code class="sourceCode html"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;corps&quot;</span><span class="kw">&gt;</span></a>
-<a class="sourceLine" id="cb1-2" title="2">    <span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;intro&quot;</span><span class="kw">&gt;</span></a>
-<a class="sourceLine" id="cb1-3" title="3">        <span class="kw">&lt;p&gt;</span>Introduction<span class="kw">&lt;/p&gt;</span></a>
-<a class="sourceLine" id="cb1-4" title="4">    <span class="kw">&lt;/div&gt;</span></a>
-<a class="sourceLine" id="cb1-5" title="5">    <span class="kw">&lt;p&gt;</span>The first paragraph<span class="kw">&lt;/p&gt;</span></a>
-<a class="sourceLine" id="cb1-6" title="6">    <span class="kw">&lt;img</span><span class="ot"> src=</span><span class="st">&quot;/img/img.png&quot;</span><span class="ot"> alt=</span><span class="st">&quot;an image&quot;</span><span class="kw">/&gt;</span></a>
-<a class="sourceLine" id="cb1-7" title="7">    <span class="kw">&lt;p&gt;</span>Another long paragraph<span class="kw">&lt;/p&gt;</span></a>
-<a class="sourceLine" id="cb1-8" title="8"><span class="kw">&lt;/div&gt;</span></a></code></pre></div>
-<p>Après avoir coupé, j’obtiens&nbsp;:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode html"><code class="sourceCode html"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;corps&quot;</span><span class="kw">&gt;</span></a>
-<a class="sourceLine" id="cb2-2" title="2">    <span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;intro&quot;</span><span class="kw">&gt;</span></a>
-<a class="sourceLine" id="cb2-3" title="3">        <span class="kw">&lt;p&gt;</span>Introduction<span class="kw">&lt;/p&gt;</span></a>
-<a class="sourceLine" id="cb2-4" title="4">    <span class="kw">&lt;/div&gt;</span></a>
-<a class="sourceLine" id="cb2-5" title="5">    <span class="kw">&lt;p&gt;</span>The first paragraph<span class="kw">&lt;/p&gt;</span></a>
-<a class="sourceLine" id="cb2-6" title="6">    <span class="kw">&lt;img</span><span class="ot"> src=</span><span class="st">&quot;/img/im</span></a></code></pre></div>
-<p>En plein milieu d’un tag <code>&lt;img&gt;</code> !</p>
-<p>En réalité, ce n’est pas si difficile que celà peut paraître au premier abord. Le secret réside dans le fait de comprendre que l’on n’a pas besoin de conserver la structure complète de l’arbre pour le réparer, mais seulement la liste des parents non fermés.</p>
-<p>Pour notre exemple, juste après le paragraphe <code>first paragraph</code> nous n’avons qu’à fermer un <code>div</code> pour la classe <code>corps</code> et le XML est réparé. Bien entendu, quand on est dans le cas où un tag est coupé au milieu, on a qu’à remonté juste avant le début de ce tag corrompu.</p>
-<p>Donc, tout ce que nous avons à faire, c’est d’enregistrer la liste des parents dans une pile. Supposons que nous traitions le premier exemple complètement. La pile passera par les états suivants&nbsp;:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode html"><code class="sourceCode html"><a class="sourceLine" id="cb3-1" title="1">[]           </a>
-<a class="sourceLine" id="cb3-2" title="2">[div]           <span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;corps&quot;</span><span class="kw">&gt;</span></a>
-<a class="sourceLine" id="cb3-3" title="3">[div, div]          <span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;intro&quot;</span><span class="kw">&gt;</span></a>
-<a class="sourceLine" id="cb3-4" title="4">[div, div, p]           <span class="kw">&lt;p&gt;</span></a>
-<a class="sourceLine" id="cb3-5" title="5">                            Introduction</a>
-<a class="sourceLine" id="cb3-6" title="6">[div, div]              <span class="kw">&lt;/p&gt;</span></a>
-<a class="sourceLine" id="cb3-7" title="7">[div]               <span class="kw">&lt;/div&gt;</span></a>
-<a class="sourceLine" id="cb3-8" title="8">[div, p]            <span class="kw">&lt;p&gt;</span></a>
-<a class="sourceLine" id="cb3-9" title="9">                        The first paragraph</a>
-<a class="sourceLine" id="cb3-10" title="10">[div]               <span class="kw">&lt;/p&gt;</span></a>
-<a class="sourceLine" id="cb3-11" title="11">[div]               <span class="kw">&lt;img</span><span class="ot"> src=</span><span class="st">&quot;/img/img.png&quot;</span><span class="ot"> alt=</span><span class="st">&quot;an image&quot;</span><span class="kw">/&gt;</span></a>
-<a class="sourceLine" id="cb3-12" title="12">[div, p]            <span class="kw">&lt;p&gt;</span></a>
-<a class="sourceLine" id="cb3-13" title="13">                        Another long paragraph</a>
-<a class="sourceLine" id="cb3-14" title="14">[div]               <span class="kw">&lt;/p&gt;</span></a>
-<a class="sourceLine" id="cb3-15" title="15">[]              <span class="kw">&lt;/div&gt;</span></a></code></pre></div>
-<p>L’algorithme est alors très simple : ~~~~~~ {.html} let res be the XML as a string ; read res and each time you encouter a tag: if it is an opening one: push it to the stack else if it is a closing one: pop the stack.</p>
-<p>remove any malformed/cutted tag in the end of res for each tag in the stack, pop it, and write: res = res + closed tag</p>
-<p>return res ~~~~~~</p>
-<p>Et <code>res</code> contiend le XML réparé.</p>
-<p>Finallement, voici le code en ruby que j’utilise. La variable <code>xml</code> contient le XML coupé.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode ruby"><code class="sourceCode ruby"><a class="sourceLine" id="cb4-1" title="1"><span class="co"># repair cutted XML code by closing the tags</span></a>
-<a class="sourceLine" id="cb4-2" title="2"><span class="co"># work even if the XML is cut into a tag.</span></a>
-<a class="sourceLine" id="cb4-3" title="3"><span class="co"># example:</span></a>
-<a class="sourceLine" id="cb4-4" title="4"><span class="co">#    transform '&lt;div&gt; &lt;span&gt; toto &lt;/span&gt; &lt;p&gt; hello &lt;a href=&quot;http://tur'</span></a>
-<a class="sourceLine" id="cb4-5" title="5"><span class="co">#    into      '&lt;div&gt; &lt;span&gt; toto &lt;/span&gt; &lt;p&gt; hello &lt;/p&gt;&lt;/div&gt;'</span></a>
-<a class="sourceLine" id="cb4-6" title="6"><span class="kw">def</span> repair_xml( xml )</a>
-<a class="sourceLine" id="cb4-7" title="7">    parents=[]</a>
-<a class="sourceLine" id="cb4-8" title="8">    depth=<span class="dv">0</span></a>
-<a class="sourceLine" id="cb4-9" title="9">    xml.scan(<span class="ot"> %r{&lt;(/?)(\w*)[^&gt;]*(/?)&gt;}</span> ).each <span class="kw">do</span> |m|</a>
-<a class="sourceLine" id="cb4-10" title="10">        <span class="kw">if</span> m[<span class="dv">2</span>] == <span class="st">&quot;/&quot;</span></a>
-<a class="sourceLine" id="cb4-11" title="11">            <span class="kw">next</span></a>
-<a class="sourceLine" id="cb4-12" title="12">        <span class="kw">end</span></a>
-<a class="sourceLine" id="cb4-13" title="13">        <span class="kw">if</span> m[<span class="dv">0</span>] == <span class="st">&quot;&quot;</span> </a>
-<a class="sourceLine" id="cb4-14" title="14">            parents[depth]=m[<span class="dv">1</span>]</a>
-<a class="sourceLine" id="cb4-15" title="15">            depth+=<span class="dv">1</span></a>
-<a class="sourceLine" id="cb4-16" title="16">        <span class="kw">else</span></a>
-<a class="sourceLine" id="cb4-17" title="17">            depth-=<span class="dv">1</span></a>
-<a class="sourceLine" id="cb4-18" title="18">        <span class="kw">end</span></a>
-<a class="sourceLine" id="cb4-19" title="19">    <span class="kw">end</span></a>
-<a class="sourceLine" id="cb4-20" title="20">    res=xml.sub(<span class="ot">/&lt;[^&gt;]*$/m</span>,<span class="st">''</span>)</a>
-<a class="sourceLine" id="cb4-21" title="21">    depth-=<span class="dv">1</span></a>
-<a class="sourceLine" id="cb4-22" title="22">    depth.downto(<span class="dv">0</span>).each { |x| res&lt;&lt;=<span class="ot"> %{</span><span class="st">&lt;/</span><span class="ot">#{</span>parents[x]<span class="ot">}</span><span class="st">&gt;</span><span class="ot">}</span> }</a>
-<a class="sourceLine" id="cb4-23" title="23">    res</a>
-<a class="sourceLine" id="cb4-24" title="24"><span class="kw">end</span></a></code></pre></div>
-<p>Je ne sais pas si ce code pourra vous être utile. Par contre le raisonnement pour y parvenir mérite d’être connu.</p>
-          </div>
-          <div id="afterarticle">
-              <div id="social">
-                  <a href="../../../../Scratch/fr/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
-                  ·
-                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/2010-05-19-How-to-cut-HTML-and-repair-it/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
-                  ·
-                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/2010-05-19-How-to-cut-HTML-and-repair-it/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
-                  <br />
-                  <a class="message" href="../../../../Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
-              </div>
-              <div id="navigation">
-                  <a href="../../../../">Accueil</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/fr/blog">Blog</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/fr/softwares">Logiciels</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/fr/about">Auteur</a>
-              </div>
-              <div id="totop"><a href="#header">↑ Top ↑</a></div>
-              <div id="bottom">
-                  <div>
-                      Published on 2010-05-19
-                  </div>
-                  <div>
-                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
-                  </div>
-                  <div>
-                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
-                  </div>
-
-                  <div>
-                      Done with
-                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
-                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
-                      <span class="pala">&amp;</span>
-                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
-                  </div>
-              </div>
-          </div>
-      </div>
-
-        </div>
-    </body>
-</html>
+<!doctype html><html lang=fr><meta charset=utf-8><title>YBlog - Comment réparer un XML coupé ?</title><meta name=keywords content="arbre,HTML,script,ruby"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/fr/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=fr class=am><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/en/blog/2010-05-19-How-to-cut-HTML-and-repair-it/>Anglais</a></span>
+<span class=ao><a href=#navigation>↓ Menu ↓</a></span>
+<span class=bn></span></div></div><div id=titre><h1>Comment réparer un XML coupé ?</h1><h2>et comment s'en sortir sans parseur ?</h2></div><div class=bn></div><div id=afterheader class=am><div class=bq><p>Sur ma page d’accueil vous pouvez voir la liste des mes derniers articles avec le début de ceux-ci. Pour arriver à faire ça, j’ai besoin de couper le code XHTML de mes pages en plein milieu. Il m’a donc fallu trouver un moyen de les réparer.<p>Prenons un exemple&nbsp;:<div class=n id=cb1><pre class="n html"><code class="n html"><a class=m id=cb1-1 title=1><span class=kw>&lt;div</span><span class=ot> class=</span><span class=st>&quot;corps&quot;</span><span class=kw>&gt;</span></a>
+<a class=m id=cb1-2 title=2>    <span class=kw>&lt;div</span><span class=ot> class=</span><span class=st>&quot;intro&quot;</span><span class=kw>&gt;</span></a>
+<a class=m id=cb1-3 title=3>        <span class=kw>&lt;p&gt;</span>Introduction<span class=kw>&lt;/p&gt;</span></a>
+<a class=m id=cb1-4 title=4>    <span class=kw>&lt;/div&gt;</span></a>
+<a class=m id=cb1-5 title=5>    <span class=kw>&lt;p&gt;</span>The first paragraph<span class=kw>&lt;/p&gt;</span></a>
+<a class=m id=cb1-6 title=6>    <span class=kw>&lt;img</span><span class=ot> src=</span><span class=st>&quot;/img/img.png&quot;</span><span class=ot> alt=</span><span class=st>&quot;an image&quot;</span><span class=kw>/&gt;</span></a>
+<a class=m id=cb1-7 title=7>    <span class=kw>&lt;p&gt;</span>Another long paragraph<span class=kw>&lt;/p&gt;</span></a>
+<a class=m id=cb1-8 title=8><span class=kw>&lt;/div&gt;</span></a></code></pre></div><p>Après avoir coupé, j’obtiens&nbsp;:<div class=n id=cb2><pre class="n html"><code class="n html"><a class=m id=cb2-1 title=1><span class=kw>&lt;div</span><span class=ot> class=</span><span class=st>&quot;corps&quot;</span><span class=kw>&gt;</span></a>
+<a class=m id=cb2-2 title=2>    <span class=kw>&lt;div</span><span class=ot> class=</span><span class=st>&quot;intro&quot;</span><span class=kw>&gt;</span></a>
+<a class=m id=cb2-3 title=3>        <span class=kw>&lt;p&gt;</span>Introduction<span class=kw>&lt;/p&gt;</span></a>
+<a class=m id=cb2-4 title=4>    <span class=kw>&lt;/div&gt;</span></a>
+<a class=m id=cb2-5 title=5>    <span class=kw>&lt;p&gt;</span>The first paragraph<span class=kw>&lt;/p&gt;</span></a>
+<a class=m id=cb2-6 title=6>    <span class=kw>&lt;img</span><span class=ot> src=</span><span class=st>&quot;/img/im</span></a></code></pre></div><p>En plein milieu d’un tag <code>&lt;img></code> !<p>En réalité, ce n’est pas si difficile que celà peut paraître au premier abord. Le secret réside dans le fait de comprendre que l’on n’a pas besoin de conserver la structure complète de l’arbre pour le réparer, mais seulement la liste des parents non fermés.<p>Pour notre exemple, juste après le paragraphe <code>first paragraph</code> nous n’avons qu’à fermer un <code>div</code> pour la classe <code>corps</code> et le XML est réparé. Bien entendu, quand on est dans le cas où un tag est coupé au milieu, on a qu’à remonté juste avant le début de ce tag corrompu.<p>Donc, tout ce que nous avons à faire, c’est d’enregistrer la liste des parents dans une pile. Supposons que nous traitions le premier exemple complètement. La pile passera par les états suivants&nbsp;:<div class=n id=cb3><pre class="n html"><code class="n html"><a class=m id=cb3-1 title=1>[]           </a>
+<a class=m id=cb3-2 title=2>[div]           <span class=kw>&lt;div</span><span class=ot> class=</span><span class=st>&quot;corps&quot;</span><span class=kw>&gt;</span></a>
+<a class=m id=cb3-3 title=3>[div, div]          <span class=kw>&lt;div</span><span class=ot> class=</span><span class=st>&quot;intro&quot;</span><span class=kw>&gt;</span></a>
+<a class=m id=cb3-4 title=4>[div, div, p]           <span class=kw>&lt;p&gt;</span></a>
+<a class=m id=cb3-5 title=5>                            Introduction</a>
+<a class=m id=cb3-6 title=6>[div, div]              <span class=kw>&lt;/p&gt;</span></a>
+<a class=m id=cb3-7 title=7>[div]               <span class=kw>&lt;/div&gt;</span></a>
+<a class=m id=cb3-8 title=8>[div, p]            <span class=kw>&lt;p&gt;</span></a>
+<a class=m id=cb3-9 title=9>                        The first paragraph</a>
+<a class=m id=cb3-10 title=10>[div]               <span class=kw>&lt;/p&gt;</span></a>
+<a class=m id=cb3-11 title=11>[div]               <span class=kw>&lt;img</span><span class=ot> src=</span><span class=st>&quot;/img/img.png&quot;</span><span class=ot> alt=</span><span class=st>&quot;an image&quot;</span><span class=kw>/&gt;</span></a>
+<a class=m id=cb3-12 title=12>[div, p]            <span class=kw>&lt;p&gt;</span></a>
+<a class=m id=cb3-13 title=13>                        Another long paragraph</a>
+<a class=m id=cb3-14 title=14>[div]               <span class=kw>&lt;/p&gt;</span></a>
+<a class=m id=cb3-15 title=15>[]              <span class=kw>&lt;/div&gt;</span></a></code></pre></div><p>L’algorithme est alors très simple : ~~~~~~ {.html} let res be the XML as a string ; read res and each time you encouter a tag: if it is an opening one: push it to the stack else if it is a closing one: pop the stack.<p>remove any malformed/cutted tag in the end of res for each tag in the stack, pop it, and write: res = res + closed tag<p>return res ~~~~~~<p>Et <code>res</code> contiend le XML réparé.<p>Finallement, voici le code en ruby que j’utilise. La variable <code>xml</code> contient le XML coupé.<div class=n id=cb4><pre class="n ruby"><code class="n ruby"><a class=m id=cb4-1 title=1><span class=co># repair cutted XML code by closing the tags</span></a>
+<a class=m id=cb4-2 title=2><span class=co># work even if the XML is cut into a tag.</span></a>
+<a class=m id=cb4-3 title=3><span class=co># example:</span></a>
+<a class=m id=cb4-4 title=4><span class=co>#    transform '&lt;div&gt; &lt;span&gt; toto &lt;/span&gt; &lt;p&gt; hello &lt;a href=&quot;http://tur'</span></a>
+<a class=m id=cb4-5 title=5><span class=co>#    into      '&lt;div&gt; &lt;span&gt; toto &lt;/span&gt; &lt;p&gt; hello &lt;/p&gt;&lt;/div&gt;'</span></a>
+<a class=m id=cb4-6 title=6><span class=kw>def</span> repair_xml( xml )</a>
+<a class=m id=cb4-7 title=7>    parents=[]</a>
+<a class=m id=cb4-8 title=8>    depth=<span class=dv>0</span></a>
+<a class=m id=cb4-9 title=9>    xml.scan(<span class=ot> %r{&lt;(/?)(\w*)[^&gt;]*(/?)&gt;}</span> ).each <span class=kw>do</span> |m|</a>
+<a class=m id=cb4-10 title=10>        <span class=kw>if</span> m[<span class=dv>2</span>] == <span class=st>&quot;/&quot;</span></a>
+<a class=m id=cb4-11 title=11>            <span class=kw>next</span></a>
+<a class=m id=cb4-12 title=12>        <span class=kw>end</span></a>
+<a class=m id=cb4-13 title=13>        <span class=kw>if</span> m[<span class=dv>0</span>] == <span class=st>&quot;&quot;</span> </a>
+<a class=m id=cb4-14 title=14>            parents[depth]=m[<span class=dv>1</span>]</a>
+<a class=m id=cb4-15 title=15>            depth+=<span class=dv>1</span></a>
+<a class=m id=cb4-16 title=16>        <span class=kw>else</span></a>
+<a class=m id=cb4-17 title=17>            depth-=<span class=dv>1</span></a>
+<a class=m id=cb4-18 title=18>        <span class=kw>end</span></a>
+<a class=m id=cb4-19 title=19>    <span class=kw>end</span></a>
+<a class=m id=cb4-20 title=20>    res=xml.sub(<span class=ot>/&lt;[^&gt;]*$/m</span>,<span class=st>''</span>)</a>
+<a class=m id=cb4-21 title=21>    depth-=<span class=dv>1</span></a>
+<a class=m id=cb4-22 title=22>    depth.downto(<span class=dv>0</span>).each { |x| res&lt;&lt;=<span class=ot> %{</span><span class=st>&lt;/</span><span class=ot>#{</span>parents[x]<span class=ot>}</span><span class=st>&gt;</span><span class=ot>}</span> }</a>
+<a class=m id=cb4-23 title=23>    res</a>
+<a class=m id=cb4-24 title=24><span class=kw>end</span></a></code></pre></div><p>Je ne sais pas si ce code pourra vous être utile. Par contre le raisonnement pour y parvenir mérite d’être connu.</div><div id=afterarticle><div id=social><a href=../../../../Scratch/fr/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=ar>RSS</a>
+·
+<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/2010-05-19-How-to-cut-HTML-and-repair-it/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=ar>Tweet</a>
+·
+<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/2010-05-19-How-to-cut-HTML-and-repair-it/" target=_blank rel="noopener noreferrer nofollow" class=ar>FB</a><br><a class=af href=../../../../Scratch/fr/blog/Social-link-the-right-way/>Ces liens sociaux préservent votre vie privée</a></div><div id=navigation><a href=../../../../>Accueil</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/fr/blog>Blog</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/fr/softwares>Logiciels</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/fr/about>Auteur</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2010-05-19</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
+<a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+<a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
+<span class=bz>&</span>
+<a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=at style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
+ADA:</a>
+<code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>

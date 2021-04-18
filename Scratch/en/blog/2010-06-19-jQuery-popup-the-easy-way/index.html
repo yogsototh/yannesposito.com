@@ -1,114 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>YBlog - jQuery popup the easy way</title>
-        <meta name="keywords" content="jQuery, javascript, popup, blog, web" />
-
-        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
-        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/en/blog/feed/feed.xml" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
-        <!--[if lt IE 9]>
-        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
-        <![endif]-->
-        <!-- IndieAuth -->
-        <link href="https://twitter.com/yogsototh" rel="me">
-        <link href="https://github.com/yogsototh" rel="me">
-        <link href="mailto:yann.esposito@gmail.com" rel="me">
-        <link rel="pgpkey" href="../../../../pubkey.txt">
-    </head>
-    <body lang="en" class="article">
-        <div id="content">
-	        			<div id="header">
-			    <div id="choix">
-        	    <span id="choixlang">
-                  <a href="../../../../Scratch/fr/blog/2010-06-19-jQuery-popup-the-easy-way/">French</a> 
-        	    </span>
-              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
-        	    <span class="flush"></span>
-        	</div>
-			</div>
-
-			<div id="titre">
-				<h1>jQuery popup the easy way</h1>
-				
-			</div>
-			<div class="flush"></div>
-      <div id="afterheader" class="article">
-          <div class="corps">
-              <p>Here is a fast and easy way to create jQuery popup.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode javascript"><code class="sourceCode javascript"><a class="sourceLine" id="cb1-1" title="1"><span class="co">// --- code popup ---</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="kw">function</span> <span class="at">openPopup</span>() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-3" title="3">    <span class="at">$</span>(<span class="kw">this</span>).<span class="at">clone</span>(<span class="kw">false</span>).<span class="at">appendTo</span>(<span class="at">$</span>(<span class="st">&quot;#_code&quot;</span>))<span class="op">;</span></a>
-<a class="sourceLine" id="cb1-4" title="4">    <span class="at">$</span>(<span class="st">&quot;#_code&quot;</span>).<span class="at">show</span>()<span class="op">;</span></a>
-<a class="sourceLine" id="cb1-5" title="5"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-6" title="6"></a>
-<a class="sourceLine" id="cb1-7" title="7"><span class="kw">function</span> <span class="at">closePopup</span>() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-8" title="8">    <span class="at">$</span>(<span class="st">&quot;#_code&quot;</span>).<span class="at">html</span>(<span class="st">&quot;&quot;</span>)<span class="op">;</span></a>
-<a class="sourceLine" id="cb1-9" title="9">    <span class="at">$</span>(<span class="st">&quot;#_code&quot;</span>).<span class="at">hide</span>()<span class="op">;</span></a>
-<a class="sourceLine" id="cb1-10" title="10"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-11" title="11"></a>
-<a class="sourceLine" id="cb1-12" title="12"><span class="kw">function</span> <span class="at">initCode</span>() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-13" title="13">    <span class="at">$</span>(<span class="st">&quot;.code&quot;</span>).<span class="at">click</span>(openPopup)<span class="op">;</span></a>
-<a class="sourceLine" id="cb1-14" title="14">    <span class="at">$</span>(<span class="st">&quot;.code&quot;</span>).<span class="at">css</span>(<span class="op">{</span><span class="dt">cursor</span><span class="op">:</span> <span class="st">&quot;pointer&quot;</span><span class="op">}</span>)<span class="op">;</span></a>
-<a class="sourceLine" id="cb1-15" title="15">    <span class="at">$</span>(<span class="st">'body'</span>).<span class="at">append</span>(<span class="st">'&lt;div id=&quot;_code&quot;&gt;&lt;/div&gt;'</span>)<span class="op">;</span></a>
-<a class="sourceLine" id="cb1-16" title="16">    <span class="at">$</span>(<span class="st">'#_code'</span>).<span class="at">css</span>( <span class="op">{</span> <span class="st">'text-align'</span><span class="op">:</span> <span class="st">&quot;justify&quot;</span><span class="op">,</span> <span class="dt">position</span><span class="op">:</span> <span class="st">&quot;fixed&quot;</span><span class="op">,</span> </a>
-<a class="sourceLine" id="cb1-17" title="17">                        <span class="dt">left</span><span class="op">:</span><span class="dv">0</span><span class="op">,</span> <span class="dt">top</span><span class="op">:</span><span class="dv">0</span><span class="op">,</span> <span class="dt">width</span><span class="op">:</span> <span class="st">&quot;100%&quot;</span><span class="op">,</span> <span class="dt">height</span><span class="op">:</span> <span class="st">&quot;100%&quot;</span><span class="op">,</span> </a>
-<a class="sourceLine" id="cb1-18" title="18">                        <span class="st">&quot;background-color&quot;</span><span class="op">:</span> <span class="st">&quot;rgba(0, 0, 0, 0.8)&quot;</span><span class="op">,</span> <span class="st">'z-index'</span><span class="op">:</span><span class="dv">2000</span><span class="op">,</span> <span class="st">'padding'</span><span class="op">:</span><span class="st">'3px'</span><span class="op">}</span> )<span class="op">;</span></a>
-<a class="sourceLine" id="cb1-19" title="19">    <span class="at">$</span>(<span class="st">'#_code'</span>).<span class="at">hide</span>()<span class="op">;</span></a>
-<a class="sourceLine" id="cb1-20" title="20">    <span class="at">$</span>(<span class="st">'#_code'</span>).<span class="at">click</span>(closePopup)<span class="op">;</span></a>
-<a class="sourceLine" id="cb1-21" title="21"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-22" title="22"><span class="co">// --- end of code popup section ---</span></a></code></pre></div>
-<p>What does this code do?</p>
-<p>At the loading of the page, I create a <code>div</code> as wide as the window. This <code>div</code> is a bit transparent. Then I hide it. I also take care to its <code>z-index</code> value to be sure it is behind all elements.</p>
-<p>Then when we click on a <code>div</code> of class <code>code</code>, I copy the content into this new wide <code>div</code>, and I show it. Really simple but really efficient. No need to use a <code>jQuery</code> plugin.</p>
-          </div>
-          <div id="afterarticle">
-              <div id="social">
-                  <a href="../../../../Scratch/en/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
-                  ·
-                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2010-06-19-jQuery-popup-the-easy-way/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
-                  ·
-                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2010-06-19-jQuery-popup-the-easy-way/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
-                  <br />
-                  <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
-              </div>
-              <div id="navigation">
-                  <a href="../../../../">Home</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/en/blog">Blog</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/en/softwares">Softwares</a>
-                  <span class="sep">¦</span>
-                  <a href="../../../../Scratch/en/about">About</a>
-              </div>
-              <div id="totop"><a href="#header">↑ Top ↑</a></div>
-              <div id="bottom">
-                  <div>
-                      Published on 2010-06-19
-                  </div>
-                  <div>
-                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
-                  </div>
-                  <div>
-                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
-                  </div>
-
-                  <div>
-                      Done with
-                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
-                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
-                      <span class="pala">&amp;</span>
-                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
-                  </div>
-              </div>
-          </div>
-      </div>
-
-        </div>
-    </body>
-</html>
+<!doctype html><html lang=en><meta charset=utf-8><title>YBlog - jQuery popup the easy way</title><meta name=keywords content="jQuery,javascript,popup,blog,web"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/en/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=en class=am><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/fr/blog/2010-06-19-jQuery-popup-the-easy-way/>French</a></span>
+<span class=ao><a href=#navigation>↓ Menu ↓</a></span>
+<span class=bn></span></div></div><div id=titre><h1>jQuery popup the easy way</h1></div><div class=bn></div><div id=afterheader class=am><div class=bq><p>Here is a fast and easy way to create jQuery popup.<div class=n id=cb1><pre class="n javascript"><code class="n javascript"><a class=m id=cb1-1 title=1><span class=co>// --- code popup ---</span></a>
+<a class=m id=cb1-2 title=2><span class=kw>function</span> <span class=at>openPopup</span>() <span class=op>{</span></a>
+<a class=m id=cb1-3 title=3>    <span class=at>$</span>(<span class=kw>this</span>).<span class=at>clone</span>(<span class=kw>false</span>).<span class=at>appendTo</span>(<span class=at>$</span>(<span class=st>&quot;#_code&quot;</span>))<span class=op>;</span></a>
+<a class=m id=cb1-4 title=4>    <span class=at>$</span>(<span class=st>&quot;#_code&quot;</span>).<span class=at>show</span>()<span class=op>;</span></a>
+<a class=m id=cb1-5 title=5><span class=op>}</span></a>
+<a class=m id=cb1-6 title=6></a>
+<a class=m id=cb1-7 title=7><span class=kw>function</span> <span class=at>closePopup</span>() <span class=op>{</span></a>
+<a class=m id=cb1-8 title=8>    <span class=at>$</span>(<span class=st>&quot;#_code&quot;</span>).<span class=at>html</span>(<span class=st>&quot;&quot;</span>)<span class=op>;</span></a>
+<a class=m id=cb1-9 title=9>    <span class=at>$</span>(<span class=st>&quot;#_code&quot;</span>).<span class=at>hide</span>()<span class=op>;</span></a>
+<a class=m id=cb1-10 title=10><span class=op>}</span></a>
+<a class=m id=cb1-11 title=11></a>
+<a class=m id=cb1-12 title=12><span class=kw>function</span> <span class=at>initCode</span>() <span class=op>{</span></a>
+<a class=m id=cb1-13 title=13>    <span class=at>$</span>(<span class=st>&quot;.code&quot;</span>).<span class=at>click</span>(openPopup)<span class=op>;</span></a>
+<a class=m id=cb1-14 title=14>    <span class=at>$</span>(<span class=st>&quot;.code&quot;</span>).<span class=at>css</span>(<span class=op>{</span><span class=dt>cursor</span><span class=op>:</span> <span class=st>&quot;pointer&quot;</span><span class=op>}</span>)<span class=op>;</span></a>
+<a class=m id=cb1-15 title=15>    <span class=at>$</span>(<span class=st>'body'</span>).<span class=at>append</span>(<span class=st>'&lt;div id=&quot;_code&quot;&gt;&lt;/div&gt;'</span>)<span class=op>;</span></a>
+<a class=m id=cb1-16 title=16>    <span class=at>$</span>(<span class=st>'#_code'</span>).<span class=at>css</span>( <span class=op>{</span> <span class=st>'text-align'</span><span class=op>:</span> <span class=st>&quot;justify&quot;</span><span class=op>,</span> <span class=dt>position</span><span class=op>:</span> <span class=st>&quot;fixed&quot;</span><span class=op>,</span> </a>
+<a class=m id=cb1-17 title=17>                        <span class=dt>left</span><span class=op>:</span><span class=dv>0</span><span class=op>,</span> <span class=dt>top</span><span class=op>:</span><span class=dv>0</span><span class=op>,</span> <span class=dt>width</span><span class=op>:</span> <span class=st>&quot;100%&quot;</span><span class=op>,</span> <span class=dt>height</span><span class=op>:</span> <span class=st>&quot;100%&quot;</span><span class=op>,</span> </a>
+<a class=m id=cb1-18 title=18>                        <span class=st>&quot;background-color&quot;</span><span class=op>:</span> <span class=st>&quot;rgba(0, 0, 0, 0.8)&quot;</span><span class=op>,</span> <span class=st>'z-index'</span><span class=op>:</span><span class=dv>2000</span><span class=op>,</span> <span class=st>'padding'</span><span class=op>:</span><span class=st>'3px'</span><span class=op>}</span> )<span class=op>;</span></a>
+<a class=m id=cb1-19 title=19>    <span class=at>$</span>(<span class=st>'#_code'</span>).<span class=at>hide</span>()<span class=op>;</span></a>
+<a class=m id=cb1-20 title=20>    <span class=at>$</span>(<span class=st>'#_code'</span>).<span class=at>click</span>(closePopup)<span class=op>;</span></a>
+<a class=m id=cb1-21 title=21><span class=op>}</span></a>
+<a class=m id=cb1-22 title=22><span class=co>// --- end of code popup section ---</span></a></code></pre></div><p>What does this code do?<p>At the loading of the page, I create a <code>div</code> as wide as the window. This <code>div</code> is a bit transparent. Then I hide it. I also take care to its <code>z-index</code> value to be sure it is behind all elements.<p>Then when we click on a <code>div</code> of class <code>code</code>, I copy the content into this new wide <code>div</code>, and I show it. Really simple but really efficient. No need to use a <code>jQuery</code> plugin.</div><div id=afterarticle><div id=social><a href=../../../../Scratch/en/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=ar>RSS</a>
+·
+<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2010-06-19-jQuery-popup-the-easy-way/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=ar>Tweet</a>
+·
+<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2010-06-19-jQuery-popup-the-easy-way/" target=_blank rel="noopener noreferrer nofollow" class=ar>FB</a><br><a class=af href=../../../../Scratch/en/blog/Social-link-the-right-way/>These social sharing links preserve your privacy</a></div><div id=navigation><a href=../../../../>Home</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/en/blog>Blog</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/en/softwares>Softwares</a>
+<span class=cq>¦</span>
+<a href=../../../../Scratch/en/about>About</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2010-06-19</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
+<a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+<a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
+<span class=bz>&</span>
+<a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=at style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
+ADA:</a>
+<code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>
