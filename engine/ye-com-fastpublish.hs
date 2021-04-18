@@ -1,12 +1,4 @@
-#!/usr/bin/env stack
-{- stack
-   --resolver lts-6.12
-   --install-ghc
-   runghc
-   --package turtle
-   --package ansi-terminal
-   --verbosity s
--}
+#!/usr/bin/env runhaskell
 
  {-# LANGUAGE OverloadedStrings #-}
 import Turtle
@@ -15,6 +7,7 @@ import Prelude hiding (FilePath)
 import qualified Control.Foldl as Fold
 import Data.Maybe (fromMaybe)
 import System.Console.ANSI
+import Turtle.Line (unsafeTextToLine)
 import Control.Exception (catches,Handler(..))
 
 main = mainProc `catches` [ Handler handleShellFailed
@@ -24,12 +17,12 @@ main = mainProc `catches` [ Handler handleShellFailed
 handleShellFailed :: ShellFailed -> IO ()
 handleShellFailed (ShellFailed cmdLine _) = do
   setSGR [SetColor Foreground Dull Red]
-  echo $ ("[FAILED]: " <> cmdLine)
+  echo $ ("[FAILED]: " <> unsafeTextToLine  cmdLine)
   setSGR [Reset]
 handleProcFailed :: ProcFailed -> IO ()
 handleProcFailed (ProcFailed procCommand procArgs _) = do
   setSGR [SetColor Foreground Dull Red]
-  echo $ ("[FAILED]: " <> procCommand <> (mconcat procArgs))
+  echo $ unsafeTextToLine ("[FAILED]: " <> procCommand <> (mconcat procArgs))
   setSGR [Reset]
 
 
@@ -39,20 +32,20 @@ mainProc = do
   -- Too bad.
   -- So instead, I'll check I'm in the right directory.
   debug "Checking directory"
-  (hakylldir,pubdir) <- checkDir
+  pubdir <- checkDir
   debug "Retrieving revision number"
   rev <- fold (inshell "git rev-parse --short HEAD" empty) Fold.head
   debug ("Revision number retrieved: " <> fromMaybe "unknow" rev)
-  debug $ "cd " <> (format fp pubdir)
+  debug $ unsafeTextToLine $ "cd " <> (format fp pubdir)
   cd pubdir
-  pwd >>= echo . format fp
+  pwd >>= echo . unsafeTextToLine . format fp
   dshells "git init ."
   dshell ("git remote add upstream " <> mainRepository)
   dshells "git fetch upstream"
   dshells "git reset upstream/gh-pages"
   dshells "git add -A ."
   echo "Commit and publish"
-  dshells ("git commit -m \"publishing at rev " <> (fromMaybe "unknow" rev) <> "\"")
+  dshells ("git commit -m \"publishing at rev " <> lineToText (fromMaybe "unknow" rev) <> "\"")
   echo "Don't `git push` this time"
   dshells "git push -q upstream HEAD:gh-pages"
 
@@ -62,19 +55,19 @@ debug txt = do
   setSGR [Reset]
 
 dshells x = do
-  debug x
+  debug $ unsafeTextToLine x
   shells x empty
 
 dshell x = do
-  debug x
+  debug $ unsafeTextToLine x
   shell x empty
 
-checkDir :: IO (FilePath,FilePath)
+checkDir :: IO FilePath
 checkDir = do
-  toolsExists <- testdir "tools"
+  toolsExists <- testdir "engine"
   if (not toolsExists)
      then exit (ExitFailure 1)
-     else return (".","content/_site")
+     else return "_optim"
 
 mainRepository = "git@github.com:yogsototh/yannesposito.com.git"
 

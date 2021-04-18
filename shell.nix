@@ -9,6 +9,8 @@ let
     protolude
     pkgs1909.haskellPackages.sws
     stache
+    turtle
+    ansi-terminal
   ];
   ghc = pkgs.haskellPackages.ghcWithPackages haskellDeps;
 in
@@ -25,8 +27,8 @@ pkgs.mkShell {
         niv
         git
         direnv
-# ghc
-# haskellPackages.shake
+        ghc
+        haskellPackages.shake
         tmux
         # for emacs dev
         ripgrep
