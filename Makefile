@@ -47,7 +47,7 @@ $(DST_DIR)/%.html: $(SRC_DIR)/%.org $(TEMPLATE)
 HTML_INDEX := $(DST_DIR)/index.html
 MKINDEX := engine/mk-index.sh
 
-$(HTML_INDEX): $(SRC_PANDOC_FILES) $(MKINDEX)
+$(HTML_INDEX): $(DST_PANDOC_FILES) $(MKINDEX)
 	mkdir -p $(DST_DIR)
 	$(MKINDEX)
 
@@ -72,7 +72,7 @@ $(DST_DIR)/%.gmi: $(SRC_DIR)/%.org $(GMI)
 
 OPTIM_DIR ?= _optim
 OPTIM := engine/pre-deploy.sh
-$(OPTIM_DIR)/index.html: $(HTML_INDEX) $(SRC_RAW_FILES) $(OPTIM)
+$(OPTIM_DIR)/index.html:$(DST_RAW_FILES) $(DST_GMI_FILES) $(DST_PANDOC_FILES) $(HTML_INDEX) $(OPTIM)
 	mkdir -p $(OPTIM_DIR)
 	$(OPTIM)
 
@@ -87,5 +87,8 @@ deploy: $(OPTIM_DIR)/index.html
 
 allatend: $(ALL)
 
+.PHONY: clean
+
 clean:
-	rm -rf $(DST_DIR)/*
+	-rm -rf $(DST_DIR)/*
+	-rm -rf $(OPTIM_DIR)/*

@@ -4,12 +4,12 @@ cd "$(git rev-parse --show-toplevel)" || exit 1
 webdir="_optim"
 
 retrieve_classes_in_html () {
-    cat $webdir/**/*.html(N) | \
+    cat $webdir/**/*.html | \
         perl -pe 's/class="?([a-zA-Z0-9_-]*)/\nCLASS: $1\n/g'
 }
 
 retrieve_classes_in_css () {
-    cat $webdir/**/*.css(N) | \
+    cat $webdir/**/*.css | \
         perl -pe 's/ \.([a-zA-Z-_][a-zA-Z0-9-_]*)/\nCLASS:$1\n/g'
 }
 
