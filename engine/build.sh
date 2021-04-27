@@ -1,6 +1,4 @@
-#!/bin/sh
+#!/bin/zsh
 
-# mkdir -p _shake
-# ghc --make app/Shakefile.hs -rtsopts -threaded -with-rtsopts=-I0 -outputdir=_shake -o _shake/build && _shake/build "$@"
-
-cabal v2-run -- her-esy-fun "$@"
+cd "$(git rev-parse --show-toplevel)" || exit 1
+make
