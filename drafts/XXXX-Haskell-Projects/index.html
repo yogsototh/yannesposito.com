@@ -1,92 +1,79 @@
-<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Create a new Haskell Project</title><meta name=author content="Yann Esposito"><meta name=description content><meta name=keywords content><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><input name=t type=radio id=b>
-<input name=t type=radio id=l>
-<input name=t type=radio id=d>
-<input name=t type=radio id=g><div id=labels><div class=ak><label for=b>book</label>&nbsp;
-/&nbsp;
-<label for=l>light</label>&nbsp;
-<span id=logo><a href=/><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="var(--b2)" stroke-width="2" fill="var(--b03)"/><circle cx="32" cy="32" r="12" stroke="var(--r)" stroke-width="2" fill="var(--o)"/><circle cx="32" cy="32" r="6" stroke-width="0" fill="var(--y)"/><ellipse cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="var(--b3)"/></svg></a></span>&nbsp;
-<label for=d>dark</label>&nbsp;
-/&nbsp;
-<label for=g>geek</label></div></div><div class=cc><div id=preamble class=aq><div class=ak><h1>Create a new Haskell Project</h1><div class=ca><span class=am-date>2020-02-10</span> on
-<a href=https://her.esy.fun><span class=bc>Yann Esposito</span>'s blog</a> -
-<a href=/drafts/XXXX-Haskell-Projects/index.org>source</a> -
-<a href=/drafts/XXXX-Haskell-Projects/index.gmi>gmi</a> -
-<a href=/drafts/XXXX-Haskell-Projects/index.pdf>pdf</a> -
-<a class=q href=https://her.esy.fun/drafts/XXXX-Haskell-Projects/index.html>§permalink</a></div><div class=ac></div></div></div><div id=content><nav id=TOC role=doc-toc><ul><li><a href=#haskell-environment-setup>Haskell Environment Setup</a><ul><li><a href=#retrieve-compiler>Retrieve Compiler</a><li><a href=#dependency-management>Dependency Management</a><li><a href=#tooling>Tooling</a></ul><li><a href=#haskell-project-directoy-structure>Haskell Project directoy structure</a><ul><li><a href=#tests>Tests</a><li><a href=#benchmarks>Benchmarks</a><li><a href=#profiling>Profiling</a></ul><li><a href=#haskell-code-architecture>Haskell Code Architecture</a><ul><li><a href=#basic--io>Basic: IO</a><li><a href=#easy--the-handle-pattern>Easy: The Handle Pattern</a><li><a href=#advanced--mtl>Advanced: MTL</a><li><a href=#expert--free-monad>Expert: Free Monad</a></ul></ul></nav><div class=bi><p>Writing a Haskell application can be quite challenging. You must know about:<ul><li>setup your coding environment<ul><li>get the right compiler<li>use libraries<li>handle your Haskell tooling, editor/IDE</ul><li>project directory structure and best practices<ul><li>write tests<li>benchmarks<li>profiling</ul><li>Code architecture<ul><li>encode the data structure<li>manage state and effects</ul></ul><p>This is both a manual and a tutorial. If you follow it, you should be familiar enough with Haskell to be able to write your own applications. I will focus on command line interfaces and REST APIs.</div><h1 id=haskell-environment-setup>Haskell Environment Setup</h1><p>My no brainer solution for it:<ol><li><p>Write this <code class=w>shell.nix</code> file and launch <code class=w>nix-shell</code>:<div class=n id=cb1 data-tangle=shell.nix><pre class="n nix"><code class="n bash"><span id=cb1-1><a href=#cb1-1 aria-hidden=true tabindex=-1></a><span class=kw>{</span> <span class=ex>nixpkgs</span> <span class=pp>?</span> import <span class=er>(</span><span class=ex>fetchGit</span> {</span>
-<span id=cb1-2><a href=#cb1-2 aria-hidden=true tabindex=-1></a>  <span class=ex>name</span> = <span class=st>&quot;nixos-release-19.09&quot;</span><span class=kw>;</span></span>
-<span id=cb1-3><a href=#cb1-3 aria-hidden=true tabindex=-1></a>  <span class=ex>url</span> = <span class=st>&quot;https://github.com/NixOS/nixpkgs&quot;</span><span class=kw>;</span></span>
-<span id=cb1-4><a href=#cb1-4 aria-hidden=true tabindex=-1></a>  <span class=co># obtained via</span></span>
-<span id=cb1-5><a href=#cb1-5 aria-hidden=true tabindex=-1></a>  <span class=co># git ls-remote https://github.com/nixos/nixpkgs master</span></span>
-<span id=cb1-6><a href=#cb1-6 aria-hidden=true tabindex=-1></a>  <span class=ex>ref</span> = <span class=st>&quot;refs/heads/nixpkgs-19.09-darwin&quot;</span><span class=kw>;</span></span>
-<span id=cb1-7><a href=#cb1-7 aria-hidden=true tabindex=-1></a>  <span class=fu>rev</span> = <span class=st>&quot;d5291756487d70bc336e33512a9baf9fa1788faf&quot;</span><span class=kw>;</span></span>
-<span id=cb1-8><a href=#cb1-8 aria-hidden=true tabindex=-1></a><span class=er>}</span><span class=kw>)</span> <span class=kw>{</span> <span class=ex>config</span> = { allowBroken = true<span class=kw>;</span> <span class=kw>};</span> <span class=kw>}</span> <span class=er>}</span><span class=ex>:</span></span>
-<span id=cb1-9><a href=#cb1-9 aria-hidden=true tabindex=-1></a><span class=bu>let</span></span>
-<span id=cb1-10><a href=#cb1-10 aria-hidden=true tabindex=-1></a>  <span class=ex>inherit</span> <span class=er>(</span><span class=ex>nixpkgs</span><span class=kw>)</span> <span class=ex>pkgs</span><span class=kw>;</span></span>
-<span id=cb1-11><a href=#cb1-11 aria-hidden=true tabindex=-1></a>  <span class=ex>inherit</span> <span class=er>(</span><span class=ex>pkgs</span><span class=kw>)</span> <span class=ex>haskellPackages</span><span class=kw>;</span></span>
-<span id=cb1-12><a href=#cb1-12 aria-hidden=true tabindex=-1></a></span>
-<span id=cb1-13><a href=#cb1-13 aria-hidden=true tabindex=-1></a>  <span class=ex>haskellDeps</span> = ps: with ps<span class=kw>;</span> <span class=bu>[</span></span>
-<span id=cb1-14><a href=#cb1-14 aria-hidden=true tabindex=-1></a>    base</span>
-<span id=cb1-15><a href=#cb1-15 aria-hidden=true tabindex=-1></a>    protolude</span>
-<span id=cb1-16><a href=#cb1-16 aria-hidden=true tabindex=-1></a>    containers</span>
-<span id=cb1-17><a href=#cb1-17 aria-hidden=true tabindex=-1></a>  <span class=bu>]</span><span class=er>;</span></span>
-<span id=cb1-18><a href=#cb1-18 aria-hidden=true tabindex=-1></a></span>
-<span id=cb1-19><a href=#cb1-19 aria-hidden=true tabindex=-1></a>  <span class=er>hspkgs</span> <span class=er>=</span> <span class=ex>haskellPackages</span><span class=kw>;</span></span>
-<span id=cb1-20><a href=#cb1-20 aria-hidden=true tabindex=-1></a></span>
-<span id=cb1-21><a href=#cb1-21 aria-hidden=true tabindex=-1></a>  <span class=ex>ghc</span> = hspkgs.ghcWithPackages haskellDeps<span class=kw>;</span></span>
-<span id=cb1-22><a href=#cb1-22 aria-hidden=true tabindex=-1></a></span>
-<span id=cb1-23><a href=#cb1-23 aria-hidden=true tabindex=-1></a>  <span class=ex>nixPackages</span> = [</span>
-<span id=cb1-24><a href=#cb1-24 aria-hidden=true tabindex=-1></a>    <span class=ex>ghc</span></span>
-<span id=cb1-25><a href=#cb1-25 aria-hidden=true tabindex=-1></a>    <span class=ex>pkgs.gdb</span></span>
-<span id=cb1-26><a href=#cb1-26 aria-hidden=true tabindex=-1></a>    <span class=ex>hspkgs.summoner</span></span>
-<span id=cb1-27><a href=#cb1-27 aria-hidden=true tabindex=-1></a>    <span class=ex>hspkgs.summoner-tui</span></span>
-<span id=cb1-28><a href=#cb1-28 aria-hidden=true tabindex=-1></a>    <span class=ex>haskellPackages.cabal-install</span></span>
-<span id=cb1-29><a href=#cb1-29 aria-hidden=true tabindex=-1></a>    <span class=ex>haskellPackages.ghcid</span></span>
-<span id=cb1-30><a href=#cb1-30 aria-hidden=true tabindex=-1></a>  <span class=ex>]</span><span class=kw>;</span></span>
-<span id=cb1-31><a href=#cb1-31 aria-hidden=true tabindex=-1></a><span class=er>in</span></span>
-<span id=cb1-32><a href=#cb1-32 aria-hidden=true tabindex=-1></a><span class=ex>pkgs.stdenv.mkDerivation</span> {</span>
-<span id=cb1-33><a href=#cb1-33 aria-hidden=true tabindex=-1></a>  <span class=ex>name</span> = <span class=st>&quot;env&quot;</span><span class=kw>;</span></span>
-<span id=cb1-34><a href=#cb1-34 aria-hidden=true tabindex=-1></a>  <span class=ex>buildInputs</span> = nixPackages<span class=kw>;</span></span>
-<span id=cb1-35><a href=#cb1-35 aria-hidden=true tabindex=-1></a>  <span class=ex>shellHook</span> = <span class=st>&#39;&#39;</span></span>
-<span id=cb1-36><a href=#cb1-36 aria-hidden=true tabindex=-1></a>        <span class=bu>export</span> <span class=va>PS1=</span><span class=st>&quot;\n\[[hs:\033[1;32m\]\W\[\033[0m\]]&gt; &quot;</span></span>
-<span id=cb1-37><a href=#cb1-37 aria-hidden=true tabindex=-1></a>     <span class=st>&#39;&#39;</span><span class=kw>;</span></span>
-<span id=cb1-38><a href=#cb1-38 aria-hidden=true tabindex=-1></a><span class=er>}</span></span></code></pre></div><li><p>now launch <code class=w>summon-tui</code><li><p>add the following nix files: The first file to create is the one that will pin the versions of all your packages and libraries:<div class=a><div class=al><a href=./my-app/nixpkgs.nix>./my-app/nixpkgs.nix</a></div><div class=n id=cb2 data-tangle=my-app/nixpkgs.nix data-mkdirp=t><pre class="n nix"><code class="n bash"><span id=cb2-1><a href=#cb2-1 aria-hidden=true tabindex=-1></a><span class=ex>import</span> <span class=er>(</span><span class=ex>fetchTarball</span> https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz<span class=kw>)</span> <span class=ex>{}</span></span></code></pre></div></div><p>The second file is the <code class=w>default.nix</code> file:<div class=a><div class=al><a href=./my-app/default.nix>./my-app/default.nix</a></div><div class=n id=cb3 data-tangle=my-app/default.nix data-mkdirp=t><pre class="n nix"><code class="n bash"><span id=cb3-1><a href=#cb3-1 aria-hidden=true tabindex=-1></a><span class=kw>{</span> <span class=ex>nixpkgs</span> <span class=pp>?</span> import ./nixpkgs.nix</span>
-<span id=cb3-2><a href=#cb3-2 aria-hidden=true tabindex=-1></a><span class=ex>,</span> compiler <span class=pp>?</span> <span class=st>&quot;default&quot;</span></span>
-<span id=cb3-3><a href=#cb3-3 aria-hidden=true tabindex=-1></a><span class=ex>,</span> doBenchmark <span class=pp>?</span> false }:</span>
-<span id=cb3-4><a href=#cb3-4 aria-hidden=true tabindex=-1></a><span class=bu>let</span></span>
-<span id=cb3-5><a href=#cb3-5 aria-hidden=true tabindex=-1></a>  <span class=ex>inherit</span> <span class=er>(</span><span class=ex>nixpkgs</span><span class=kw>)</span> <span class=ex>pkgs</span><span class=kw>;</span></span>
-<span id=cb3-6><a href=#cb3-6 aria-hidden=true tabindex=-1></a>  <span class=ex>name</span> = <span class=st>&quot;my-app&quot;</span><span class=kw>;</span></span>
-<span id=cb3-7><a href=#cb3-7 aria-hidden=true tabindex=-1></a>  <span class=ex>haskellPackages</span> = pkgs.haskellPackages<span class=kw>;</span></span>
-<span id=cb3-8><a href=#cb3-8 aria-hidden=true tabindex=-1></a>  <span class=ex>variant</span> = if doBenchmark</span>
-<span id=cb3-9><a href=#cb3-9 aria-hidden=true tabindex=-1></a>            <span class=cf>then</span> <span class=ex>pkgs.haskell.lib.doBenchmark</span></span>
-<span id=cb3-10><a href=#cb3-10 aria-hidden=true tabindex=-1></a>            <span class=cf>else</span> <span class=ex>pkgs.lib.id</span><span class=kw>;</span></span>
-<span id=cb3-11><a href=#cb3-11 aria-hidden=true tabindex=-1></a>  <span class=ex>drv</span> = haskellPackages.callCabal2nix name ./. {}<span class=kw>;</span></span>
-<span id=cb3-12><a href=#cb3-12 aria-hidden=true tabindex=-1></a><span class=er>in</span></span>
-<span id=cb3-13><a href=#cb3-13 aria-hidden=true tabindex=-1></a><span class=kw>{</span></span>
-<span id=cb3-14><a href=#cb3-14 aria-hidden=true tabindex=-1></a>  <span class=ex>my_project</span> = drv<span class=kw>;</span></span>
-<span id=cb3-15><a href=#cb3-15 aria-hidden=true tabindex=-1></a>  <span class=ex>shell</span> = haskellPackages.shellFor {</span>
-<span id=cb3-16><a href=#cb3-16 aria-hidden=true tabindex=-1></a>    <span class=co># generate hoogle doc</span></span>
-<span id=cb3-17><a href=#cb3-17 aria-hidden=true tabindex=-1></a>    <span class=ex>withHoogle</span> = true<span class=kw>;</span></span>
-<span id=cb3-18><a href=#cb3-18 aria-hidden=true tabindex=-1></a>    <span class=ex>packages</span> = p: [drv]<span class=kw>;</span></span>
-<span id=cb3-19><a href=#cb3-19 aria-hidden=true tabindex=-1></a>    <span class=co># packages dependencies (by default haskellPackages)</span></span>
-<span id=cb3-20><a href=#cb3-20 aria-hidden=true tabindex=-1></a>    <span class=ex>buildInputs</span> = with haskellPackages<span class=kw>;</span></span>
-<span id=cb3-21><a href=#cb3-21 aria-hidden=true tabindex=-1></a>      <span class=bu>[</span> hlint</span>
-<span id=cb3-22><a href=#cb3-22 aria-hidden=true tabindex=-1></a>        ghcid</span>
-<span id=cb3-23><a href=#cb3-23 aria-hidden=true tabindex=-1></a>        cabal-install</span>
-<span id=cb3-24><a href=#cb3-24 aria-hidden=true tabindex=-1></a>        <span class=er>cabal2nix</span></span>
-<span id=cb3-25><a href=#cb3-25 aria-hidden=true tabindex=-1></a>        <span class=er>hindent</span></span>
-<span id=cb3-26><a href=#cb3-26 aria-hidden=true tabindex=-1></a>        <span class=er>#</span> <span class=er>#</span> <span class=cf>if</span> <span class=ex>you</span> want to add some system lib like ncurses</span>
-<span id=cb3-27><a href=#cb3-27 aria-hidden=true tabindex=-1></a>        <span class=co># # you could by writing it like:</span></span>
-<span id=cb3-28><a href=#cb3-28 aria-hidden=true tabindex=-1></a>        <span class=co># pkgs.ncurses</span></span>
-<span id=cb3-29><a href=#cb3-29 aria-hidden=true tabindex=-1></a>      <span class=ex>]</span><span class=kw>;</span></span>
-<span id=cb3-30><a href=#cb3-30 aria-hidden=true tabindex=-1></a>    <span class=co># nice prompt for the nix-shell</span></span>
-<span id=cb3-31><a href=#cb3-31 aria-hidden=true tabindex=-1></a>    <span class=ex>shellHook</span> = <span class=st>&#39;&#39;</span></span>
-<span id=cb3-32><a href=#cb3-32 aria-hidden=true tabindex=-1></a>     <span class=bu>export</span> <span class=va>PS1=</span><span class=st>&quot;\n\[[</span><span class=va>${name}</span><span class=st>:\033[1;32m\]\W\[\033[0m\]]&gt; &quot;</span></span>
-<span id=cb3-33><a href=#cb3-33 aria-hidden=true tabindex=-1></a>  <span class=st>&#39;&#39;</span><span class=kw>;</span></span>
-<span id=cb3-34><a href=#cb3-34 aria-hidden=true tabindex=-1></a>  <span class=kw>};</span></span>
-<span id=cb3-35><a href=#cb3-35 aria-hidden=true tabindex=-1></a><span class=er>}</span></span></code></pre></div></div></ol><h2 id=retrieve-compiler>Retrieve Compiler</h2><h2 id=dependency-management>Dependency Management</h2><h2 id=tooling>Tooling</h2><h1 id=haskell-project-directoy-structure>Haskell Project directoy structure</h1><h2 id=tests>Tests</h2><h2 id=benchmarks>Benchmarks</h2><h2 id=profiling>Profiling</h2><h1 id=haskell-code-architecture>Haskell Code Architecture</h1><h2 id=basic--io>Basic: IO</h2><h2 id=easy--the-handle-pattern>Easy: The Handle Pattern</h2><h2 id=advanced--mtl>Advanced: MTL</h2><h2 id=expert--free-monad>Expert: Free Monad</h2><p><footer><i>Any comment? Click on my email below and I'll add it.</i><table><tbody><tr class=ct><td>author<td><span class=bc><a href="mailto:Yann Esposito <yann@esposito.host>?subject=yblog: Create a new Haskell Project" class=bo>Yann Esposito &lt;yann@esposito.host></a></span><tr class=cg><td>gpg<td><a href=files/publickey.txt>CB420F8005F1A662</a><tr class=ct><td>tags<td><tr class=cg><td>date<td>2020-02-10<tr class=ct><td>rss<td><a href=/rss.xml>RSS</a> (<a href="https://validator.w3.org/feed/check.cgi?url=https%3A%2F%2Fher.esy.fun%2Frss.xml">validate</a>)<tr class=cg><td>size<td><span class=web-file-size> 22K (html 16K, css 5.9K)</span><tr class=ct><td>gz<td><span class=gzweb-file-size> 5.7K (html 3.7K, css 2.0K)</span><tr class=cg><td>generated<td>2021-04-18T10:16:08.731443Z</table><p></footer></p><br><a href=gemini://her.esy.fun/drafts/XXXX-Haskell-Projects/index.gmi><code>=> This article is also available on gemini</code></a></div><div id=postamble class=aq><div class=ak><nav><a href=/index.html>Home</a> |
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Create a new Haskell Project</title><meta name=author content="Yann Esposito"><meta name=description content="How to write Haskell application."><meta name=keywords content="Haskell programming functional tutorial"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><div id=labels><div class=al><span id=logo><a href=/><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="var(--b2)" stroke-width="2" fill="var(--b03)"/><circle cx="32" cy="32" r="12" stroke="var(--r)" stroke-width="2" fill="var(--o)"/><circle cx="32" cy="32" r="6" stroke-width="0" fill="var(--y)"/><ellipse cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="var(--b3)"/></svg></a></div></div><div class=cd><div id=preamble class=ar><div class=al><h1>Create a new Haskell Project</h1><div class=cb><span class=yyydate>[2020-02-10 Mon]</span> on
+<a href=https://her.esy.fun><span class=bd>Yann Esposito</span>'s blog</a></div><div class=ac>How to write Haskell application.</div></div></div><div id=content><div class=bj><p>Writing a Haskell application can be quite challenging. You must know about:<ul><li>setup your coding environment<ul><li>get the right compiler<li>use libraries<li>handle your Haskell tooling, editor/IDE</ul><li>project directory structure and best practices<ul><li>write tests<li>benchmarks<li>profiling</ul><li>Code architecture<ul><li>encode the data structure<li>manage state and effects</ul></ul><p>This is both a manual and a tutorial. If you follow it, you should be familiar enough with Haskell to be able to write your own applications. I will focus on command line interfaces and REST APIs.</div><h1 id=haskell-environment-setup>Haskell Environment Setup</h1><p>My no brainer solution for it:<ol><li><p>Write this <code class=w>shell.nix</code> file and launch <code class=w>nix-shell</code>:<div class=n id=cb1 data-tangle=shell.nix><pre class="n nix"><code class="n bash"><span id=cb1-1><a href=#cb1-1 aria-hidden=true tabindex=-1></a><span class=kw>{</span> <span class=ex>nixpkgs</span> <span class=pp>?</span> import <span class=er>(</span><span class=ex>fetchGit</span> {</span>
+                <span id=cb1-2><a href=#cb1-2 aria-hidden=true tabindex=-1></a>  <span class=ex>name</span> = <span class=st>&quot;nixos-release-19.09&quot;</span><span class=kw>;</span></span>
+                <span id=cb1-3><a href=#cb1-3 aria-hidden=true tabindex=-1></a>  <span class=ex>url</span> = <span class=st>&quot;https://github.com/NixOS/nixpkgs&quot;</span><span class=kw>;</span></span>
+                <span id=cb1-4><a href=#cb1-4 aria-hidden=true tabindex=-1></a>  <span class=co># obtained via</span></span>
+                <span id=cb1-5><a href=#cb1-5 aria-hidden=true tabindex=-1></a>  <span class=co># git ls-remote https://github.com/nixos/nixpkgs master</span></span>
+                <span id=cb1-6><a href=#cb1-6 aria-hidden=true tabindex=-1></a>  <span class=ex>ref</span> = <span class=st>&quot;refs/heads/nixpkgs-19.09-darwin&quot;</span><span class=kw>;</span></span>
+                <span id=cb1-7><a href=#cb1-7 aria-hidden=true tabindex=-1></a>  <span class=fu>rev</span> = <span class=st>&quot;d5291756487d70bc336e33512a9baf9fa1788faf&quot;</span><span class=kw>;</span></span>
+                <span id=cb1-8><a href=#cb1-8 aria-hidden=true tabindex=-1></a><span class=er>}</span><span class=kw>)</span> <span class=kw>{</span> <span class=ex>config</span> = { allowBroken = true<span class=kw>;</span> <span class=kw>};</span> <span class=kw>}</span> <span class=er>}</span><span class=ex>:</span></span>
+                <span id=cb1-9><a href=#cb1-9 aria-hidden=true tabindex=-1></a><span class=bu>let</span></span>
+                <span id=cb1-10><a href=#cb1-10 aria-hidden=true tabindex=-1></a>  <span class=ex>inherit</span> <span class=er>(</span><span class=ex>nixpkgs</span><span class=kw>)</span> <span class=ex>pkgs</span><span class=kw>;</span></span>
+                <span id=cb1-11><a href=#cb1-11 aria-hidden=true tabindex=-1></a>  <span class=ex>inherit</span> <span class=er>(</span><span class=ex>pkgs</span><span class=kw>)</span> <span class=ex>haskellPackages</span><span class=kw>;</span></span>
+                <span id=cb1-12><a href=#cb1-12 aria-hidden=true tabindex=-1></a></span>
+                <span id=cb1-13><a href=#cb1-13 aria-hidden=true tabindex=-1></a>  <span class=ex>haskellDeps</span> = ps: with ps<span class=kw>;</span> <span class=bu>[</span></span>
+                <span id=cb1-14><a href=#cb1-14 aria-hidden=true tabindex=-1></a>    base</span>
+                <span id=cb1-15><a href=#cb1-15 aria-hidden=true tabindex=-1></a>    protolude</span>
+                <span id=cb1-16><a href=#cb1-16 aria-hidden=true tabindex=-1></a>    containers</span>
+                <span id=cb1-17><a href=#cb1-17 aria-hidden=true tabindex=-1></a>  <span class=bu>]</span><span class=er>;</span></span>
+                <span id=cb1-18><a href=#cb1-18 aria-hidden=true tabindex=-1></a></span>
+                <span id=cb1-19><a href=#cb1-19 aria-hidden=true tabindex=-1></a>  <span class=er>hspkgs</span> <span class=er>=</span> <span class=ex>haskellPackages</span><span class=kw>;</span></span>
+                <span id=cb1-20><a href=#cb1-20 aria-hidden=true tabindex=-1></a></span>
+                <span id=cb1-21><a href=#cb1-21 aria-hidden=true tabindex=-1></a>  <span class=ex>ghc</span> = hspkgs.ghcWithPackages haskellDeps<span class=kw>;</span></span>
+                <span id=cb1-22><a href=#cb1-22 aria-hidden=true tabindex=-1></a></span>
+                <span id=cb1-23><a href=#cb1-23 aria-hidden=true tabindex=-1></a>  <span class=ex>nixPackages</span> = [</span>
+                <span id=cb1-24><a href=#cb1-24 aria-hidden=true tabindex=-1></a>    <span class=ex>ghc</span></span>
+                <span id=cb1-25><a href=#cb1-25 aria-hidden=true tabindex=-1></a>    <span class=ex>pkgs.gdb</span></span>
+                <span id=cb1-26><a href=#cb1-26 aria-hidden=true tabindex=-1></a>    <span class=ex>hspkgs.summoner</span></span>
+                <span id=cb1-27><a href=#cb1-27 aria-hidden=true tabindex=-1></a>    <span class=ex>hspkgs.summoner-tui</span></span>
+                <span id=cb1-28><a href=#cb1-28 aria-hidden=true tabindex=-1></a>    <span class=ex>haskellPackages.cabal-install</span></span>
+                <span id=cb1-29><a href=#cb1-29 aria-hidden=true tabindex=-1></a>    <span class=ex>haskellPackages.ghcid</span></span>
+                <span id=cb1-30><a href=#cb1-30 aria-hidden=true tabindex=-1></a>  <span class=ex>]</span><span class=kw>;</span></span>
+                <span id=cb1-31><a href=#cb1-31 aria-hidden=true tabindex=-1></a><span class=er>in</span></span>
+                <span id=cb1-32><a href=#cb1-32 aria-hidden=true tabindex=-1></a><span class=ex>pkgs.stdenv.mkDerivation</span> {</span>
+                <span id=cb1-33><a href=#cb1-33 aria-hidden=true tabindex=-1></a>  <span class=ex>name</span> = <span class=st>&quot;env&quot;</span><span class=kw>;</span></span>
+                <span id=cb1-34><a href=#cb1-34 aria-hidden=true tabindex=-1></a>  <span class=ex>buildInputs</span> = nixPackages<span class=kw>;</span></span>
+                <span id=cb1-35><a href=#cb1-35 aria-hidden=true tabindex=-1></a>  <span class=ex>shellHook</span> = <span class=st>&#39;&#39;</span></span>
+                <span id=cb1-36><a href=#cb1-36 aria-hidden=true tabindex=-1></a>        <span class=bu>export</span> <span class=va>PS1=</span><span class=st>&quot;\n\[[hs:\033[1;32m\]\W\[\033[0m\]]&gt; &quot;</span></span>
+                <span id=cb1-37><a href=#cb1-37 aria-hidden=true tabindex=-1></a>     <span class=st>&#39;&#39;</span><span class=kw>;</span></span>
+                <span id=cb1-38><a href=#cb1-38 aria-hidden=true tabindex=-1></a><span class=er>}</span></span></code></pre></div><li><p>now launch <code class=w>summon-tui</code><li><p>add the following nix files: The first file to create is the one that will pin the versions of all your packages and libraries:<div class=a><div class=am><a href=./my-app/nixpkgs.nix>./my-app/nixpkgs.nix</a></div><div class=n id=cb2 data-tangle=my-app/nixpkgs.nix data-mkdirp=t><pre class="n nix"><code class="n bash"><span id=cb2-1><a href=#cb2-1 aria-hidden=true tabindex=-1></a><span class=ex>import</span> <span class=er>(</span><span class=ex>fetchTarball</span> https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz<span class=kw>)</span> <span class=ex>{}</span></span></code></pre></div></div><p>The second file is the <code class=w>default.nix</code> file:<div class=a><div class=am><a href=./my-app/default.nix>./my-app/default.nix</a></div><div class=n id=cb3 data-tangle=my-app/default.nix data-mkdirp=t><pre class="n nix"><code class="n bash"><span id=cb3-1><a href=#cb3-1 aria-hidden=true tabindex=-1></a><span class=kw>{</span> <span class=ex>nixpkgs</span> <span class=pp>?</span> import ./nixpkgs.nix</span>
+                <span id=cb3-2><a href=#cb3-2 aria-hidden=true tabindex=-1></a><span class=ex>,</span> compiler <span class=pp>?</span> <span class=st>&quot;default&quot;</span></span>
+                <span id=cb3-3><a href=#cb3-3 aria-hidden=true tabindex=-1></a><span class=ex>,</span> doBenchmark <span class=pp>?</span> false }:</span>
+                <span id=cb3-4><a href=#cb3-4 aria-hidden=true tabindex=-1></a><span class=bu>let</span></span>
+                <span id=cb3-5><a href=#cb3-5 aria-hidden=true tabindex=-1></a>  <span class=ex>inherit</span> <span class=er>(</span><span class=ex>nixpkgs</span><span class=kw>)</span> <span class=ex>pkgs</span><span class=kw>;</span></span>
+                <span id=cb3-6><a href=#cb3-6 aria-hidden=true tabindex=-1></a>  <span class=ex>name</span> = <span class=st>&quot;my-app&quot;</span><span class=kw>;</span></span>
+                <span id=cb3-7><a href=#cb3-7 aria-hidden=true tabindex=-1></a>  <span class=ex>haskellPackages</span> = pkgs.haskellPackages<span class=kw>;</span></span>
+                <span id=cb3-8><a href=#cb3-8 aria-hidden=true tabindex=-1></a>  <span class=ex>variant</span> = if doBenchmark</span>
+                <span id=cb3-9><a href=#cb3-9 aria-hidden=true tabindex=-1></a>            <span class=cf>then</span> <span class=ex>pkgs.haskell.lib.doBenchmark</span></span>
+                <span id=cb3-10><a href=#cb3-10 aria-hidden=true tabindex=-1></a>            <span class=cf>else</span> <span class=ex>pkgs.lib.id</span><span class=kw>;</span></span>
+                <span id=cb3-11><a href=#cb3-11 aria-hidden=true tabindex=-1></a>  <span class=ex>drv</span> = haskellPackages.callCabal2nix name ./. {}<span class=kw>;</span></span>
+                <span id=cb3-12><a href=#cb3-12 aria-hidden=true tabindex=-1></a><span class=er>in</span></span>
+                <span id=cb3-13><a href=#cb3-13 aria-hidden=true tabindex=-1></a><span class=kw>{</span></span>
+                <span id=cb3-14><a href=#cb3-14 aria-hidden=true tabindex=-1></a>  <span class=ex>my_project</span> = drv<span class=kw>;</span></span>
+                <span id=cb3-15><a href=#cb3-15 aria-hidden=true tabindex=-1></a>  <span class=ex>shell</span> = haskellPackages.shellFor {</span>
+                <span id=cb3-16><a href=#cb3-16 aria-hidden=true tabindex=-1></a>    <span class=co># generate hoogle doc</span></span>
+                <span id=cb3-17><a href=#cb3-17 aria-hidden=true tabindex=-1></a>    <span class=ex>withHoogle</span> = true<span class=kw>;</span></span>
+                <span id=cb3-18><a href=#cb3-18 aria-hidden=true tabindex=-1></a>    <span class=ex>packages</span> = p: [drv]<span class=kw>;</span></span>
+                <span id=cb3-19><a href=#cb3-19 aria-hidden=true tabindex=-1></a>    <span class=co># packages dependencies (by default haskellPackages)</span></span>
+                <span id=cb3-20><a href=#cb3-20 aria-hidden=true tabindex=-1></a>    <span class=ex>buildInputs</span> = with haskellPackages<span class=kw>;</span></span>
+                <span id=cb3-21><a href=#cb3-21 aria-hidden=true tabindex=-1></a>      <span class=bu>[</span> hlint</span>
+                <span id=cb3-22><a href=#cb3-22 aria-hidden=true tabindex=-1></a>        ghcid</span>
+                <span id=cb3-23><a href=#cb3-23 aria-hidden=true tabindex=-1></a>        cabal-install</span>
+                <span id=cb3-24><a href=#cb3-24 aria-hidden=true tabindex=-1></a>        <span class=er>cabal2nix</span></span>
+                <span id=cb3-25><a href=#cb3-25 aria-hidden=true tabindex=-1></a>        <span class=er>hindent</span></span>
+                <span id=cb3-26><a href=#cb3-26 aria-hidden=true tabindex=-1></a>        <span class=er>#</span> <span class=er>#</span> <span class=cf>if</span> <span class=ex>you</span> want to add some system lib like ncurses</span>
+                <span id=cb3-27><a href=#cb3-27 aria-hidden=true tabindex=-1></a>        <span class=co># # you could by writing it like:</span></span>
+                <span id=cb3-28><a href=#cb3-28 aria-hidden=true tabindex=-1></a>        <span class=co># pkgs.ncurses</span></span>
+                <span id=cb3-29><a href=#cb3-29 aria-hidden=true tabindex=-1></a>      <span class=ex>]</span><span class=kw>;</span></span>
+                <span id=cb3-30><a href=#cb3-30 aria-hidden=true tabindex=-1></a>    <span class=co># nice prompt for the nix-shell</span></span>
+                <span id=cb3-31><a href=#cb3-31 aria-hidden=true tabindex=-1></a>    <span class=ex>shellHook</span> = <span class=st>&#39;&#39;</span></span>
+                <span id=cb3-32><a href=#cb3-32 aria-hidden=true tabindex=-1></a>     <span class=bu>export</span> <span class=va>PS1=</span><span class=st>&quot;\n\[[</span><span class=va>${name}</span><span class=st>:\033[1;32m\]\W\[\033[0m\]]&gt; &quot;</span></span>
+                <span id=cb3-33><a href=#cb3-33 aria-hidden=true tabindex=-1></a>  <span class=st>&#39;&#39;</span><span class=kw>;</span></span>
+                <span id=cb3-34><a href=#cb3-34 aria-hidden=true tabindex=-1></a>  <span class=kw>};</span></span>
+                <span id=cb3-35><a href=#cb3-35 aria-hidden=true tabindex=-1></a><span class=er>}</span></span></code></pre></div></div></ol><h2 id=retrieve-compiler>Retrieve Compiler</h2><h2 id=dependency-management>Dependency Management</h2><h2 id=tooling>Tooling</h2><h1 id=haskell-project-directoy-structure>Haskell Project directoy structure</h1><h2 id=tests>Tests</h2><h2 id=benchmarks>Benchmarks</h2><h2 id=profiling>Profiling</h2><h1 id=haskell-code-architecture>Haskell Code Architecture</h1><h2 id=basic--io>Basic: IO</h2><h2 id=easy--the-handle-pattern>Easy: The Handle Pattern</h2><h2 id=advanced--mtl>Advanced: MTL</h2><h2 id=expert--free-monad>Expert: Free Monad</h2></div><div id=postamble class=ar><div class=al><nav><a href=/index.html>Home</a> |
 <a href=/slides.html>Slides</a> |
 <a href=/about-me.html>About</a>
-<span class=ai>(<a href=https://gitea.esy.fun/yogsototh>code</a>
+<span class=aj>(<a href=https://gitea.esy.fun/yogsototh>code</a>
 <a href=https://espial.esy.fun/u:yogsototh>bookmarks</a>
 <a href=https://espial.esy.fun/u:yogsototh/notes>notes</a>)</span> |
 <a href=#preamble>↑ Top ↑</a></nav></div></div></div>

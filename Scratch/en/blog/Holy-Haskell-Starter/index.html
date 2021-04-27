@@ -1,6 +1,6 @@
-<!doctype html><html lang=en><meta charset=utf-8><title>YBlog - Holy Haskell Project Starter</title><meta name=keywords content="programming"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/en/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=en class=am><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/fr/blog/Holy-Haskell-Starter/>French</a></span>
-<span class=ao><a href=#navigation>↓ Menu ↓</a></span>
-<span class=bn></span></div></div><div id=titre><h1>Holy Haskell Project Starter</h1><h2>A Haskell tutorial: from nothing to something useful</h2></div><div class=bn></div><div id=afterheader class=am><div class=bq><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/holy-grail-monty-python.jpg alt="Monty Python Holy Grail"></div><div class=bl><p><span class=sc><abbr title="Too long; didn't read">tl;dr</abbr>:</span> Learn how to start a new Haskell project. Translate a starter tool written in <code>zsh</code> in Haskell using its own result.<blockquote><p>“Good Sir Knight, will you come with me to Camelot, and join us at the Round Table?”</blockquote><p>In order to work properly with Haskell you need to initialize your environment. Typically, you need to use a cabal file, create some test for your code. Both, unit test and propositional testing (random and exhaustive up to a certain depth). You need to use <code>git</code> and generally hosting it on github. Also, it is recommended to use cabal sandboxes. And as bonus, an auto-update tool that recompile and retest on each file save.<p>In this article, we will create such an environment using a zsh script. Then we will write a Haskell project which does the same work as the zsh script. You will then see how to work in such an environment.<p>If you are starting to understand Haskell but consider yourself a beginner, this tutorial will show you how to make a real application using quite surprisingly a lot of features:<ul><li>use colorized output<li>interact with a user in command line<li>read/write files<li>kind of parse a file (in fact, simply split it)<li>use a templating system (mustache: fill a data structure, write files)<li>make a HTTP GET request then parse the JSON answer and use it<li>use random<li>create a cabal package<li>add and use non source files to a cabal package<li>Test your code (both unit testing and property testing)</ul><p><strong>☞</strong> zsh is by its nature more suitable to file manipulation. But the Haskell code is clearly more organized while quite terse for a multi-purpose language.<p><strong>☞</strong> holy-project is on hackage. It can be installed with <code>cabal update && cabal install holy-project</code>.</div><p>I recently read this excellent article: <a href=http://jabberwocky.eu/2013/10/24/how-to-start-a-new-haskell-project/>How to Start a New Haskell Project</a>.<p>While the article is very good, I lacked some minor informations<a href=#fn1 class=h id=fnref1><sup>1</sup></a>. Inspired by it, I created a simple script to initialize a new Haskell project. During the process I improved some things a bit.<p>If you want to use this script, the steps are:<ol type=1><li><a href=http://wwW.haskell.org/platform>Install Haskell</a><li>Make sure you have the latest <code>cabal-install</code> (at least 1.18)</ol><div class=n id=cb1><pre class="n bash"><code class="n bash"><a class=m id=cb1-1 title=1><span class=op>&gt;</span> <span class=ex>cabal</span> install cabal-install</a></code></pre></div><ol start=3 type=1><li>Download and run the script</ol><div class=n id=cb2><pre class="n bash"><code class="n bash"><a class=m id=cb2-1 title=1><span class=co># Download the script</span></a>
+<!doctype html><html lang=en><meta charset=utf-8><title>YBlog - Holy Haskell Project Starter</title><meta name=keywords content="programming"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/en/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=en class=an><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/fr/blog/Holy-Haskell-Starter/>French</a></span>
+<span class=ap><a href=#navigation>↓ Menu ↓</a></span>
+<span class=bo></span></div></div><div id=titre><h1>Holy Haskell Project Starter</h1><h2>A Haskell tutorial: from nothing to something useful</h2></div><div class=bo></div><div id=afterheader class=an><div class=bq><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/holy-grail-monty-python.jpg alt="Monty Python Holy Grail"></div><div class=bm><p><span class=sc><abbr title="Too long; didn't read">tl;dr</abbr>:</span> Learn how to start a new Haskell project. Translate a starter tool written in <code>zsh</code> in Haskell using its own result.<blockquote><p>“Good Sir Knight, will you come with me to Camelot, and join us at the Round Table?”</blockquote><p>In order to work properly with Haskell you need to initialize your environment. Typically, you need to use a cabal file, create some test for your code. Both, unit test and propositional testing (random and exhaustive up to a certain depth). You need to use <code>git</code> and generally hosting it on github. Also, it is recommended to use cabal sandboxes. And as bonus, an auto-update tool that recompile and retest on each file save.<p>In this article, we will create such an environment using a zsh script. Then we will write a Haskell project which does the same work as the zsh script. You will then see how to work in such an environment.<p>If you are starting to understand Haskell but consider yourself a beginner, this tutorial will show you how to make a real application using quite surprisingly a lot of features:<ul><li>use colorized output<li>interact with a user in command line<li>read/write files<li>kind of parse a file (in fact, simply split it)<li>use a templating system (mustache: fill a data structure, write files)<li>make a HTTP GET request then parse the JSON answer and use it<li>use random<li>create a cabal package<li>add and use non source files to a cabal package<li>Test your code (both unit testing and property testing)</ul><p><strong>☞</strong> zsh is by its nature more suitable to file manipulation. But the Haskell code is clearly more organized while quite terse for a multi-purpose language.<p><strong>☞</strong> holy-project is on hackage. It can be installed with <code>cabal update && cabal install holy-project</code>.</div><p>I recently read this excellent article: <a href=http://jabberwocky.eu/2013/10/24/how-to-start-a-new-haskell-project/>How to Start a New Haskell Project</a>.<p>While the article is very good, I lacked some minor informations<a href=#fn1 class=h id=fnref1><sup>1</sup></a>. Inspired by it, I created a simple script to initialize a new Haskell project. During the process I improved some things a bit.<p>If you want to use this script, the steps are:<ol type=1><li><a href=http://wwW.haskell.org/platform>Install Haskell</a><li>Make sure you have the latest <code>cabal-install</code> (at least 1.18)</ol><div class=n id=cb1><pre class="n bash"><code class="n bash"><a class=m id=cb1-1 title=1><span class=op>&gt;</span> <span class=ex>cabal</span> install cabal-install</a></code></pre></div><ol start=3 type=1><li>Download and run the script</ol><div class=n id=cb2><pre class="n bash"><code class="n bash"><a class=m id=cb2-1 title=1><span class=co># Download the script</span></a>
 <a class=m id=cb2-2 title=2><span class=fu>git</span> clone https://github.com/yogsototh/init-haskell-project.git</a>
 <a class=m id=cb2-3 title=3><span class=co># Copy the script in a directory of you PATH variable</span></a>
 <a class=m id=cb2-4 title=4><span class=fu>cp</span> init-haskell-project/holy-haskell.sh ~/bin</a>
@@ -9,21 +9,21 @@
 <a class=m id=cb2-7 title=7><span class=co># Launch thcript</span></a>
 <a class=m id=cb2-8 title=8><span class=ex>holy-haskell.sh</span></a></code></pre></div><p>What does this script do that <code>cabal init</code> doesn’t do?<ul><li>Use cabal sandbox<li>It initialize <code>git</code> with the right <code>.gitignore</code> file.<li>Use <code>tasty</code> to organize your tests (HUnit, QuickCheck and SmallCheck).<li>Use <code>-Wall</code> for <code>ghc</code> compilation.<li>Will make references to Holy Grail<li>Search your default github username via <a href=http://developer.github.com/v3/search/#search-users>github api</a>.</ul><h2 id=zsh-really><code>zsh</code> really?</h2><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/french-insult.jpg alt="French insult"></div><p>Developing the script in <code>zsh</code> was easy. But considering its size, it is worth to rewrite it in Haskell. Furthermore, it will be a good exercise.<h3 id=patricide>Patricide</h3><p>In a first time, we initialize a new Haskell project with <code>holy-haskell.sh</code>:<pre>
 > ./holy-haskell.sh
-<span class=bm>Bridgekeeper: Stop!
+<span class=bn>Bridgekeeper: Stop!
 Bridgekeeper: Who would cross the Bridge of Death
 Bridgekeeper: must answer me these questions three,
 Bridgekeeper: ere the other side he see.</span>
-<span class=an>You: Ask me the questions, bridgekeeper, I am not afraid.</span>
+<span class=ao>You: Ask me the questions, bridgekeeper, I am not afraid.</span>
 
-<span class=bm>Bridgekeeper: What is the name of your project?</span>
+<span class=bn>Bridgekeeper: What is the name of your project?</span>
 > Holy project
-<span class=bm>Bridgekeeper: What is your name?</span> (Yann Esposito (Yogsototh))
+<span class=bn>Bridgekeeper: What is your name?</span> (Yann Esposito (Yogsototh))
 >
-<span class=bm>Bridgekeeper: What is your email?</span> (Yann.Esposito@gmail.com)
+<span class=bn>Bridgekeeper: What is your email?</span> (Yann.Esposito@gmail.com)
 >
-<span class=bm>Bridgekeeper: What is your github user name?</span> (yogsototh)
+<span class=bn>Bridgekeeper: What is your github user name?</span> (yogsototh)
 >
-<span class=bm>Bridgekeeper: What is your project in less than ten words?</span>
+<span class=bn>Bridgekeeper: What is your project in less than ten words?</span>
 > Start your Haskell project with cabal, git and tests.
 Initialize git
 Initialized empty Git repository in .../holy-project/.git/
@@ -50,23 +50,23 @@ Test suite logged to: dist/test/holy-project-0.1.0.0-Tests.log
 1 of 1 test suites (1 of 1 test cases) passed.
 All Tests
   Swallow
-    swallow test:     <span class=bm>OK</span>
+    swallow test:     <span class=bn>OK</span>
   coconut
-    coconut:          <span class=bm>OK</span>
-    coconut property: <span class=bm>OK</span>
+    coconut:          <span class=bn>OK</span>
+    coconut property: <span class=bn>OK</span>
       148 tests completed
 
-<span class=bm>All 3 tests passed</span>
+<span class=bn>All 3 tests passed</span>
 
 
 
-<span class=bm>Bridgekeeper: What... is the air-speed velocity of an unladen swallow?</span>
-<span class=an>You: What do you mean? An African or European swallow?</span>
-<span class=bm>Bridgekeeper: Huh? I... I don't know that.</span>
+<span class=bn>Bridgekeeper: What... is the air-speed velocity of an unladen swallow?</span>
+<span class=ao>You: What do you mean? An African or European swallow?</span>
+<span class=bn>Bridgekeeper: Huh? I... I don't know that.</span>
 [the bridgekeeper is thrown over]
-<span class=bm>Bridgekeeper: Auuuuuuuuuuuugh</span>
+<span class=bn>Bridgekeeper: Auuuuuuuuuuuugh</span>
 Sir Bedevere: How do you know so much about swallows?
-<span class=an>You: Well, you have to know these things when you're a king, you know.</span>
+<span class=ao>You: Well, you have to know these things when you're a king, you know.</span>
 </pre><p>The different steps are:<ul><li>small introduction quotes<li>ask five questions – <em>three question sir…</em><li>create the directory for the project<li>init git<li>create files<li>sandbox cabal<li>cabal install and test<li>run the test directly in the terminal<li>small goodbye quotes</ul><p>Features to note:<ul><li>color in the terminal<li>check some rules on the project name<li>random message if error<li>use <code>~/.gitconfig</code> file in order to provide a default name and email.<li>use the github API which returns JSON to get the default github user name.</ul><p>So, apparently nothing too difficult to achieve.<p>We should now have an initialized Haskell environment for us to work. The first thing you should do, is to go into this new directory and launch ‘./auto-update’ in some terminal. I personally use <code>tmux</code> on Linux or the splits in <code>iTerm 2</code> on Mac OS X. Now, any modification of a source file will relaunch a compilation and a test.<h3 id=the-dialogs>The dialogs</h3><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/bridge-of-death.jpg alt="Bridge of Death"></div><p>To print the introduction text in <code>zsh</code>:<div class=n id=cb3><pre class="n bash"><code class="n bash"><a class=m id=cb3-1 title=1><span class=co># init colors</span></a>
 <a class=m id=cb3-2 title=2><span class=ex>autoload</span> colors</a>
 <a class=m id=cb3-3 title=3><span class=ex>colors</span></a>
@@ -516,19 +516,19 @@ main = do
 <a class=m id=cb45-24 title=24>deeperIdempotent f <span class=ot>=</span> forAll <span class=op>$</span> SC.changeDepth1 (<span class=op>+</span><span class=dv>1</span>) <span class=op>$</span> \s <span class=ot>-&gt;</span> f s <span class=op>==</span> f (f s)</a></code></pre></div><p>The result is here:<pre>
 All Tests
   StringUtils
-    SC projectNameFromString idempotent: <span class=bm>OK</span>
+    SC projectNameFromString idempotent: <span class=bn>OK</span>
       206 tests completed
-    SC capitalize idempotent:            <span class=bm>OK</span>
+    SC capitalize idempotent:            <span class=bn>OK</span>
       1237 tests completed
-    QC projectNameFromString idempotent: <span class=cr>FAIL</span>
+    QC projectNameFromString idempotent: <span class=cs>FAIL</span>
       *** Failed! Falsifiable (after 19 tests and 5 shrinks):
       "a a"
       Use --quickcheck-replay '18 913813783 2147483380' to reproduce.
   GithubAPI
-    Yann:                                <span class=bm>OK</span>
-    Jasper:                              <span class=bm>OK</span>
+    Yann:                                <span class=bn>OK</span>
+    Jasper:                              <span class=bn>OK</span>
 
-<span class=cr>1 out of 5 tests failed</span>
+<span class=cs>1 out of 5 tests failed</span>
 </pre><p>The test fail, but this is not an error. Our <code>capitalize</code> function shouldn’t be idempotent. I simply added this test to show what occurs when a test fail. If you want to look more closely to the error you could do this:<div class=n id=cb46><pre class="n bash"><code class="n bash"><a class=m id=cb46-1 title=1>$ <span class=ex>./interact</span></a>
 <a class=m id=cb46-2 title=2><span class=ex>GHCi</span>, version 7.6.2: http://www.haskell.org/ghc/   :? for help</a>
 <a class=m id=cb46-3 title=3><span class=ex>Loading</span> package ghc-prim ... linking ... done.</a>
@@ -541,21 +541,21 @@ All Tests
 <a class=m id=cb46-10 title=10><span class=dt><span class=r></span><span class=st>&quot;AA&quot;</span><span class=dt></span></span></a>
 <a class=m id=cb46-11 title=11><span class=ex>*HolyProject.StringUtils</span><span class=op>&gt;</span> capitalize (capitalize <span class=st>&quot;a a&quot;</span>)</a>
 <a class=m id=cb46-12 title=12><span class=dt><span class=r></span><span class=st>&quot;Aa&quot;</span><span class=dt></span></span></a>
-<a class=m id=cb46-13 title=13><span class=ex>*HolyProject.StringUtils</span><span class=op>&gt;</span></a></code></pre></div><p>It is important to use <code>./interact</code> instead of <code>ghci</code>. Because we need to tell <code>ghci</code> how to found the package installed.<p>Apparently, SmallCheck didn’t found any counter example. I don’t know how it generates Strings and using deeper search is really long.<h2 id=conclusion>Conclusion</h2><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/a-blessing.jpg alt=Rabbit></div><p>Congratulation!<p>Now you could start programming in Haskell and publish your own cabal package.<section class=u><hr><ol><li id=fn1><p>For example, you have to install the test libraries manually to use <code>cabal test</code>.<a href=#fnref1 class=d>↩</a><li id=fn2><p>There is no easy way to do something like <code>name=$(ask name)</code>. Simply because <code>$(ask name)</code> run in another process which doesn’t get access to the standard input<a href=#fnref2 class=d>↩</a><li id=fn3><p>Having a good level of power in templates is very difficult. <span class=sc><abbr title="In my Humble Opinion">imho</abbr></span> Mustache has made the best compromise.<a href=#fnref3 class=d>↩</a></ol></section></div><div id=afterarticle><div id=social><a href=../../../../Scratch/en/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=ar>RSS</a>
+<a class=m id=cb46-13 title=13><span class=ex>*HolyProject.StringUtils</span><span class=op>&gt;</span></a></code></pre></div><p>It is important to use <code>./interact</code> instead of <code>ghci</code>. Because we need to tell <code>ghci</code> how to found the package installed.<p>Apparently, SmallCheck didn’t found any counter example. I don’t know how it generates Strings and using deeper search is really long.<h2 id=conclusion>Conclusion</h2><div><img src=../../../../Scratch/img/blog/Holy-Haskell-Starter/a-blessing.jpg alt=Rabbit></div><p>Congratulation!<p>Now you could start programming in Haskell and publish your own cabal package.<section class=u><hr><ol><li id=fn1><p>For example, you have to install the test libraries manually to use <code>cabal test</code>.<a href=#fnref1 class=d>↩</a><li id=fn2><p>There is no easy way to do something like <code>name=$(ask name)</code>. Simply because <code>$(ask name)</code> run in another process which doesn’t get access to the standard input<a href=#fnref2 class=d>↩</a><li id=fn3><p>Having a good level of power in templates is very difficult. <span class=sc><abbr title="In my Humble Opinion">imho</abbr></span> Mustache has made the best compromise.<a href=#fnref3 class=d>↩</a></ol></section></div><div id=afterarticle><div id=social><a href=../../../../Scratch/en/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=as>RSS</a>
 ·
-<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Holy-Haskell-Starter/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=ar>Tweet</a>
+<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Holy-Haskell-Starter/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=as>Tweet</a>
 ·
-<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Holy-Haskell-Starter/" target=_blank rel="noopener noreferrer nofollow" class=ar>FB</a><br><a class=af href=../../../../Scratch/en/blog/Social-link-the-right-way/>These social sharing links preserve your privacy</a></div><div id=navigation><a href=../../../../>Home</a>
-<span class=cq>¦</span>
+<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Holy-Haskell-Starter/" target=_blank rel="noopener noreferrer nofollow" class=as>FB</a><br><a class=ag href=../../../../Scratch/en/blog/Social-link-the-right-way/>These social sharing links preserve your privacy</a></div><div id=navigation><a href=../../../../>Home</a>
+<span class=cr>¦</span>
 <a href=../../../../Scratch/en/blog>Blog</a>
-<span class=cq>¦</span>
+<span class=cr>¦</span>
 <a href=../../../../Scratch/en/softwares>Softwares</a>
-<span class=cq>¦</span>
+<span class=cr>¦</span>
 <a href=../../../../Scratch/en/about>About</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2013-11-14</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
 <a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
 <a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
-<span class=bz>&</span>
+<span class=ca>&</span>
 <a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=at style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
+<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=au style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
 ADA:</a>
 <code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>
