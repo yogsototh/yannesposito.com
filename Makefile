@@ -45,10 +45,11 @@ $(DST_DIR)/%.html: $(SRC_DIR)/%.org $(TEMPLATE)
 
 # HTML INDEX
 HTML_INDEX := $(DST_DIR)/index.html
+MKINDEX := engine/mk-index.sh
 
-$(HTML_INDEX): $(SRC_PANDOC_FILES)
+$(HTML_INDEX): $(SRC_PANDOC_FILES) $(MKINDEX)
 	mkdir -p $(DST_DIR)
-	engine/mk-index.sh
+	$(MKINDEX)
 
 ALL += $(HTML_INDEX)
 
@@ -60,10 +61,9 @@ DST_GMI_FILES ?= $(subst $(EXT),.gmi, \
                             $(SRC_GMI_FILES)))
 
 ALL              += $(DST_GMI_FILES)
-
 GMI := engine/org2gemini.sh
 
-$(DST_DIR)/%.gmi: $(SRC_DIR)/%.org
+$(DST_DIR)/%.gmi: $(SRC_DIR)/%.org $(GMI)
 	mkdir -p $(dir $@)
 	$(GMI) "$<" "$@"
 
@@ -71,14 +71,19 @@ $(DST_DIR)/%.gmi: $(SRC_DIR)/%.org
 # OPTIM PHASE
 
 OPTIM_DIR ?= _optim
-$(OPTIM_DIR)/index.html: $(HTML_INDEX) $(SRC_RAW_FILES)
+OPTIM := engine/pre-deploy.sh
+$(OPTIM_DIR)/index.html: $(HTML_INDEX) $(SRC_RAW_FILES) $(OPTIM)
 	mkdir -p $(OPTIM_DIR)
-	engine/pre-deploy.sh
+	$(OPTIM)
 
 optim: $(OPTIM_DIR)/index.html
 
+
+# DEPLOY
+
 deploy: $(OPTIM_DIR)/index.html
-	engine/sync.sh
+	engine/sync.sh # deploy to her.esy.fun
+	engine/ye-com-fastpublish.hs # deploy to yannesposito.com (via github pages)
 
 allatend: $(ALL)
 

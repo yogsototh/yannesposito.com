@@ -7,7 +7,7 @@ postsdir="$webdir/posts"
 indexfile="$webdir/index.html"
 
 # maximal number of articles to put in the RSS file
-maxarticles=10
+maxarticles=100
 
 # RSS Metas
 rsstitle="her.esy.fun"
@@ -69,7 +69,7 @@ for fic in $postsdir/**/*.html; do
     absoluteurl="${websiteurl}/${blogfile}"
     { printf "\\n<li>"
       printf "\\n<a href=\"%s\">%s</a>" "${blogfile}" "$title"
-      printf "\\n<span class=\"pubDate\">%s</span>%s" "$rssdate"
+      printf "\\n<span class=\"pubDate\">%s</span>%s" "$d"
       printf "<span class=\"tags\">%s</span>" "$categories"
       printf "\\n</li>\\n\\n"
     } >>  "$tmpdir/${d}-$(basename $fic).index"
