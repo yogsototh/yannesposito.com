@@ -68,6 +68,18 @@ $(DST_DIR)/%.gmi: $(SRC_DIR)/%.org
 	$(GMI) "$<" "$@"
 
 
+# OPTIM PHASE
+
+OPTIM_DIR ?= _optim
+$(OPTIM_DIR)/index.html: $(HTML_INDEX) $(SRC_RAW_FILES)
+	mkdir -p $(OPTIM_DIR)
+	engine/pre-deploy.sh
+
+optim: $(OPTIM_DIR)/index.html
+
+deploy: $(OPTIM_DIR)/index.html
+	engine/sync.sh
+
 allatend: $(ALL)
 
 clean:
