@@ -1,35 +1,46 @@
 # Generate my website out of org-mode/gemini files
 #
 # maybe check https://themattchan.com/blog/2017-02-28-make-site-generator.html
+# From https://github.com/fcanas/bake/blob/master/Makefile
+# Finally https://www.arsouyes.org/blog/2017/10_Static_website/
 
-source := src
-output := _site
-sources := $(shell find $(source) -name '*.org')
-htmls := $(patsubst %.org,%.html,$(subst $(source),$(output),$(sources)))
+all: allatend
+SRC_DIR ?= src
+DST_DIR ?= _site
+SRC_RAW_FILES := $(shell find $(SRC_DIR) -type f)
+DST_RAW_FILES   := $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%,$(SRC_RAW_FILES))
+ALL             += $(DST_RAW_FILES)
 
-assetssources := $(shell find $(source) -type f ! -path '*.org')
-assets := $(subst $(source),$(output),$(assetssources)) 
+$(DST_DIR)/% : $(SRC_DIR)/%
+	mkdir -p "$(dir $@)"
+	cp "$<" "$@"
 
-all: $(htmls) $(assets)
 
-$(output)/%.css: $(source)/%.css
- 	mkdir -p $(shell dirname $@)
-	cp $< $@
+EXT := .org
+SRC_PANDOC_FILES ?= $(shell find $(SRC_DIR) -type f -name "*$(EXT)")
+DST_PANDOC_FILES ?= $(subst $(EXT),.html, \
+                        $(subst $(SRC_DIR),$(DST_DIR), \
+                            $(SRC_PANDOC_FILES)))
 
-# # recipe for converting an org-mode file into html using Pandoc
-# $(output)/%.html: $(source)/%.org
-# 	mkdir -p $(shell dirname $@)
-# 	pandoc \
-# 		--from org \
-# 		--to html5 \
-# 		--css=/css/y.css \
-# 		--toc \
-# 		-s \
-# 		--standalone \
-# 		$< \
-# 		-o $@
+ALL              += $(DST_PANDOC_FILES)
 
-.PHONY: clean
+
+TEMPLATE ?= templates/post.html
+CSS = /css/y.css
+PANDOC := pandoc \
+			-c $(CSS) \
+			--template=$(TEMPLATE) \
+			--from org \
+			--to html5 \
+			--standalone
+
+
+$(DST_DIR)/%.html: $(SRC_DIR)/%.org $(TEMPLATE)
+	mkdir -p $(dir $@)
+	$(PANDOC) $< \
+		--output $@
+
+allatend: $(ALL)
 
 clean:
-	rm -rf $(output)/*
+	rm -rf $(DST_DIR)/*

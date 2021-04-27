@@ -19,7 +19,7 @@ rssauthor="yann@esposito.host (Yann Esposito)"
 rssimgurl="https://her.esy.fun/img/FlatAvatar.png"
 
 # HTML Accessors (similar to CSS accessors)
-dateaccessor='.article-date'
+dateaccessor='.yyydate'
 contentaccessor='#content'
 # title and keyword shouldn't be changed
 titleaccessor='title'
@@ -27,11 +27,12 @@ keywordsaccessor='meta[name=keywords]::attr(content)'
 
 formatdate() {
     # format the date for RSS
-    local d=$1
+    local d="$1"
+    # echo "DEBUG DATE: $d" >&2
     LC_TIME=en_US date --date $d +'%a, %d %b %Y %H:%M:%S %z'
 }
 
-finddate(){ < $1 hxselect -c $dateaccessor }
+finddate(){ < $1 hxselect -c $dateaccessor | sed 's/\[//g;s/\]//g;s/ .*$//' }
 findtitle(){ < $1 hxselect -c $titleaccessor }
 getcontent(){
     < $1 hxselect $contentaccessor | \

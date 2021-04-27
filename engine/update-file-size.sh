@@ -21,7 +21,7 @@ type -a filelist
 if (($#>0)); then
     filelist=( $* )
 else
-    filelist=( $webdir/**/*.html(.) )
+    filelist=( $webdir/*/*.html(.) $webdir/posts/*.html )
 fi
 
 for fic in $filelist; do
@@ -73,6 +73,6 @@ for fic in $filelist; do
         gzsizeinfos="$gzsizeinfos)"
     fi
     print -- $sizeinfos
-    perl -pi -e 's#(<span class="?web-file-size"?>)[^<]*(</span>)#$1'"$sizeinfos"'$2#;s#(<span class="?gzweb-file-size"?>)[^<]*(</span>)#$1'"$gzsizeinfos"'$2#' $fic
+    perl -pi -e 's#(<span class="?webfilesize"?>)[^<]*(</span>)#$1'"$sizeinfos"'$2#;s#(<span class="?gzwebfilesize"?>)[^<]*(</span>)#$1'"$gzsizeinfos"'$2#' $fic
 done
 rm -rf $tmpdir
