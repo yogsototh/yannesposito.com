@@ -10,4 +10,4 @@ fi
 
 cd $webdir && \
 echo "Serving: $webdir" && \
-sws -d --port 3000 .
+http-server -p 3000

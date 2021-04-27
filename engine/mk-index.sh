@@ -129,9 +129,13 @@ cat <<END
                 </div>
             </div>
             <div id="content">
+            <ul>
 END
 cat $tmpdir/index
 cat <<END
+            </ul>
+            <hr/>
+            <a href="/Scratch/en/blog/">Older articles</a>
             </div>
             <div id="postamble" class="status">
                 <div class="content">
