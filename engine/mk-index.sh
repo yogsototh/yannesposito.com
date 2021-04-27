@@ -6,17 +6,8 @@ webdir="_site"
 postsdir="$webdir/posts"
 indexfile="$webdir/index.html"
 
-# maximal number of articles to put in the RSS file
-maxarticles=100
-
-# RSS Metas
-rsstitle="her.esy.fun"
-rssurl="https://her.esy.fun/rss.xml"
-websiteurl="https://her.esy.fun"
-rssdescription="her.esy.fun articles, mostly random personal thoughts"
-rsslang="en"
-rssauthor="yann@esposito.host (Yann Esposito)"
-rssimgurl="https://her.esy.fun/img/FlatAvatar.png"
+# maximal number of articles to put in the index homepage
+maxarticles=1000
 
 # HTML Accessors (similar to CSS accessors)
 dateaccessor='.yyydate'
@@ -31,7 +22,6 @@ formatdate() {
     # echo "DEBUG DATE: $d" >&2
     LC_TIME=en_US date --date $d +'%a, %d %b %Y %H:%M:%S %z'
 }
-
 finddate(){ < $1 hxselect -c $dateaccessor | sed 's/\[//g;s/\]//g;s/ .*$//' }
 findtitle(){ < $1 hxselect -c $titleaccessor }
 getcontent(){
@@ -45,7 +35,6 @@ mkcategories(){
 }
 
 autoload -U colors && colors
-
 tmpdir=$(mktemp -d)
 typeset -a dates
 dates=( )
@@ -66,7 +55,6 @@ for fic in $postsdir/**/*.html; do
     keywords=( $(findkeywords $xfic) )
     printf ": %-55s" "$title ($keywords)"
     categories=$(mkcategories $keywords)
-    absoluteurl="${websiteurl}/${blogfile}"
     { printf "\\n<li>"
       printf "\\n<a href=\"%s\">%s</a>" "${blogfile}" "$title"
       printf "\\n<span class=\"pubDate\">%s</span>%s" "$d"
@@ -76,84 +64,84 @@ for fic in $postsdir/**/*.html; do
     dates=( $d $dates )
     echo " [${fg[green]}OK${reset_color}]"
 done
+
 echo "Publishing"
+
+# building the body
+
+{ cat <<EOF
+<nav>
+<a href="/index.html">Home</a> |
+<a href="/slides.html">Slides</a> |
+<a href="/about-me.html">About</a>
+<span class="details">
+(<a href="https://gitea.esy.fun/yogsototh">code</a>
+<a href="https://espial.esy.fun/u:yogsototh">bookmarks</a>
+<a href="https://espial.esy.fun/u:yogsototh/notes">notes</a>)
+</span>
+</nav>
+EOF
+} >> $tmpdir/index
+
+previousyear=""
 for fic in $(ls $tmpdir/*.index | sort -r | head -n $maxarticles ); do
     echo "${fic:t}"
+    year=$( echo "${fic:t}" | perl -pe 's#(\d{4})-.*#$1#')
+    if (( year != previousyear )); then
+        echo $year
+        if (( previousyear > 0 )); then
+            echo "</ul>" >> $tmpdir/index
+        fi
+        previousyear=$year
+        echo "<h3 name=\"${year}\" >${year}</h3><ul>" >> $tmpdir/index
+    fi
     cat $fic >> $tmpdir/index
 done
+{ cat <<EOF
+</ul>
+<hr/><a href="/Scratch/en/blog/">Archive of old articles (2008-2016)</a>
+<p>Most popular:</p>
+<ul>
+<li><a href="/Scratch/en/blog/Learn-Vim-Progressively/">Learn Vim Progressively</a>
+    <span class="pubDate">2011-08-25</span>
+    <span class="tags">
+      <span class="tag">vim</span>
+    </span>
+</li>
+<li><a href="/Scratch/en/blog/Haskell-the-Hard-Way/">Learn Haskell Fast and Hard</a>
+    <span class="pubDate">2012-02-08</span>
+    <span class="tags">
+      <span class="tag">haskell</span>
+      <span class="tag">programming</span>
+    </span>
+</li>
+<li><a href="http://yogsototh.github.io/Category-Theory-Presentation/categories.html">Category Theory Presentation</a>
+    <span class="pubDate">2012-12-12</span>
+    <span class="tags">
+      <span class="tag">math</span>
+      <span class="tag">computer science</span>
+      <span class="tag">haskell</span>
+    </span>
+</li>
+</ul>
+EOF
+} >> $tmpdir/index
 
-rssmaxdate=$(formatdate $(for d in $dates; do echo $d; done | sort -r | head -n 1))
-rssbuilddate=$(formatdate $(date))
-title="Index"
-description="Index of latest posts."
+title="Yann Esposito's Posts"
+description="The index of my most recent articles."
 author="Yann Esposito"
+body=$(< $tmpdir/index)
+date=$(LC_TIME=en_US date +'%Y-%m-%d')
+# the pandoc templates use $x$ format, we replace it by just $x
+# to be used with envsubst
+template=$(< templates/post.html | perl -pe 's#(\$[^\$]*)\$#$1#g' )
 {
-cat <<END
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>$title</title>
-        <meta name="author" content="$author">
-        <link rel="stylesheet" href="/css/y.css"/>
-        <link rel="alternate" type="application/rss+xml" href="/rss.xml" />
-        <link rel="icon" href="/favicon.ico">
-    </head>
-    <body>
-        <div id="labels">
-            <div class="content">
-                <span id="logo">
-                    <a href="/">
-                        <svg width="5em" viewBox="0 0 64 64">
-                            <circle cx="32" cy="32" r="30" stroke="var(--b2)" stroke-width="2" fill="var(--b03)"/>
-                            <circle cx="32" cy="32" r="12" stroke="var(--r)" stroke-width="2" fill="var(--o)"/>
-                            <circle cx="32" cy="32" r="6" stroke-width="0" fill="var(--y)"/>
-                            <ellipse cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="var(--b3)"/>
-                        </svg>
-                    </a>
-            </div>
-        </div>
-        <div class="main">
-            <div id="preamble" class="status">
-                <div class="content">
-                    <h1>$title</h1>
-                    <div class="meta">
-                        <span class="yyydate">$date</span> on
-                        <a href="https://her.esy.fun">
-                            <span class="author">$author</span>'s blog</a>
-                    </div>
-                    <div class="abstract">
-                        $description
-                    </div>
-                </div>
-            </div>
-            <div id="content">
-            <ul>
-END
-cat $tmpdir/index
-cat <<END
-            </ul>
-            <hr/>
-            <a href="/Scratch/en/blog/">Older articles</a>
-            </div>
-            <div id="postamble" class="status">
-                <div class="content">
-                    <nav>
-                        <a href="/index.html">Home</a> |
-                        <a href="/slides.html">Slides</a> |
-                        <a href="/about-me.html">About</a>
-                        <span class="details"> (<a href="https://gitea.esy.fun/yogsototh">code</a>
-                            <a href="https://espial.esy.fun/u:yogsototh">bookmarks</a>
-                            <a href="https://espial.esy.fun/u:yogsototh/notes">notes</a>)</span> |
-                        <a href="#preamble">↑ Top ↑</a>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </body>
-</html>
-END
+    export title
+    export author
+    export description
+    export date
+    export body
+    echo ${template} | envsubst
 } > "$indexfile"
 
 rm -rf $tmpdir
