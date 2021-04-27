@@ -11,11 +11,13 @@ SRC_RAW_FILES := $(shell find $(SRC_DIR) -type f)
 DST_RAW_FILES   := $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%,$(SRC_RAW_FILES))
 ALL             += $(DST_RAW_FILES)
 
+# COPY EVERYTHING
 $(DST_DIR)/% : $(SRC_DIR)/%
 	mkdir -p "$(dir $@)"
 	cp "$<" "$@"
 
 
+# ORG -> HTML
 EXT := .org
 SRC_PANDOC_FILES ?= $(shell find $(SRC_DIR) -type f -name "*$(EXT)")
 DST_PANDOC_FILES ?= $(subst $(EXT),.html, \
@@ -39,6 +41,32 @@ $(DST_DIR)/%.html: $(SRC_DIR)/%.org $(TEMPLATE)
 	mkdir -p $(dir $@)
 	$(PANDOC) $< \
 		--output $@
+
+
+# HTML INDEX
+HTML_INDEX := $(DST_DIR)/index.html
+
+$(HTML_INDEX): $(SRC_PANDOC_FILES)
+	mkdir -p $(DST_DIR)
+	engine/mk-index.sh
+
+ALL += $(HTML_INDEX)
+
+# ORG -> GEMINI
+EXT := .org
+SRC_GMI_FILES ?= $(shell find $(SRC_DIR) -type f -name "*$(EXT)")
+DST_GMI_FILES ?= $(subst $(EXT),.gmi, \
+                        $(subst $(SRC_DIR),$(DST_DIR), \
+                            $(SRC_GMI_FILES)))
+
+ALL              += $(DST_GMI_FILES)
+
+GMI := engine/org2gemini.sh
+
+$(DST_DIR)/%.gmi: $(SRC_DIR)/%.org
+	mkdir -p $(dir $@)
+	$(GMI) "$<" "$@"
+
 
 allatend: $(ALL)
 
