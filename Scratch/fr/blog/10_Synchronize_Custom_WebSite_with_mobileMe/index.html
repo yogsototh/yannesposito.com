@@ -1,220 +1,220 @@
-<!doctype html><html lang=fr><meta charset=utf-8><title>YBlog - Héberger son site personnel sur le site mobileMe</title><meta name=keywords content="Apple,mobileme,WebDav,synchronisation,zsh,script"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/fr/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=fr class=an><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/en/blog/10_Synchronize_Custom_WebSite_with_mobileMe/>Anglais</a></span>
-<span class=ap><a href=#navigation>↓ Menu ↓</a></span>
-<span class=bo></span></div></div><div id=titre><h1>Héberger son site personnel sur le site mobileMe</h1></div><div class=bo></div><div id=afterheader class=an><div class=bq><h1 id=mise-à-jour-du-20120111>Mise à jour du <small>(2012/01/11)</small></h1><p>iDisk va bientôt disparaître. Cet article est donc presque complètement obsolète.<h1 id=mise-à-jour-du-28102009>mise à jour du <small>28/10/2009</small></h1><p>J’ai mis à jour mon script <a href=../../../../Scratch/fr/blog/2009-10-28-custom-website-synchronisation-with-mobileme--2->avec une version incrémentale</a> bien plus pratique. En plus depuis l’écriture de cet article Apple(c) semble avoir nettement amélioré la vitesse de ses serveurs en Europe.<hr><h1 id=webdav-terror>WebDav terror</h1><p>En France l’iDisk d’Apple(c) est très lent. La vitesse d’upload me rapelle l’époque des modem 56k, c’est dire. La plupart du temps les opérations telles que lister le contenu d’un répertoire prennent au moins 30 secondes (pour 15 éléments). Renommer un répertoire échoue presque systématiquement.<p>Apple(c) utilise des serveurs WebDav pour héberger les fichiers. Le protocole fonctionne sur le port 80 (comme http). Je me suis rendu compte qu’utiliser WebDav via https fontionne bien mieux (2 à 3 fois plus rapide avec moins d’erreurs). Mais, ça reste quand même très lent et insuffisant.<p>J’<em>uploade</em> mes fichiers à partir de mon Mac et de temps en temps à partir d’un PC sous Ubuntu (iDisk monté avec webdavfs).<h1 id=synchroniser-de-façon-sûre>Synchroniser de façon sûre</h1><p>Voici le script que j’utilise pour synchroniser mon site web (non créé avec iWeb(c)) avec le maximum de sécurité. Chaque opération est répétée jusqu’à ce qu’elle fonctionne.<p>Les idées sont&nbsp;:<ul><li>Synchroniser vers un répertoire temporaire sur le serveur distant, puis “swapper” les noms des répertoires. Ainsi le site ne reste indisponible que le temps du “swap” du nom des deux répertoires.<li>Réitérer toutes les opérations jusqu’à ce qu’elle aient réussi (par exemple pour le renommage)</ul><p>Jusqu’ici j’utilise <code>rsync</code> qui n’est en fait pas plus efficace qu’une simple copie <code>cp</code> avec WebDav. Je devrais utiliser une méthode pour mémoriser les changements entre chaque publication.<p>En réalité quand je suis sur mon Mac j’utilise <a href=http://www.panic.com/transmit>Transmit</a> qui est vraiment très bien et surtout beaucoup plus efficace que le finder pour synchroniser des fichiers. Ensuite, je ne fait que le “swap” des répertoires.<p>Mon script prend un paramètre <code>-s</code> pour ne faire que le “swap”. Il prend aussi une option <code>-a</code> pour envoyer le fichier <code>index.html</code> qui va rediriger vers ma nouvelle page principale (iWeb(c) à la fâcheuse habitude de le remplacer).<p>Pour utiliser le script vous devriez remplacer la valeur de la variable <code>mobileMeUser</code> par votre nom d’utilisateur mobileMe(c).<div class=fr><div class=n id=cb1><pre class="n zsh"><code class="n zsh"><a class=m id=cb1-1 title=1><span class=co>#!/usr/bin/env zsh</span></a>
-<a class=m id=cb1-2 title=2></a>
-<a class=m id=cb1-3 title=3><span class=co># Script synchronisant le site sur me.com</span></a>
-<a class=m id=cb1-4 title=4><span class=co># normalement, le site est indisponible le moins de temps possible</span></a>
-<a class=m id=cb1-5 title=5><span class=co># le temps de deux renommages de répertoire</span></a>
-<a class=m id=cb1-6 title=6></a>
-<a class=m id=cb1-7 title=7><span class=ot>mobileMeUser=</span><span class=st>&quot;yann.esposito&quot;</span></a>
-<a class=m id=cb1-8 title=8><span class=ot>siteName=</span><span class=st>&quot;siteName&quot;</span></a>
-<a class=m id=cb1-9 title=9></a>
-<a class=m id=cb1-10 title=10><span class=co># Depending of my hostname the </span></a>
-<a class=m id=cb1-11 title=11><span class=kw>if [[</span> <span class=ot>$(</span><span class=kw>hostname</span><span class=ot>)</span> <span class=ot>==</span> <span class=st>'ubuntu'</span><span class=kw> ]]</span>; <span class=kw>then</span></a>
-<a class=m id=cb1-12 title=12>    <span class=ot>iDisk=</span><span class=st>'/mnt/iDisk'</span></a>
-<a class=m id=cb1-13 title=13><span class=kw>else</span></a>
-<a class=m id=cb1-14 title=14>    <span class=ot>iDisk=</span><span class=st>&quot;/Volumes/</span><span class=ot>$mobileMeUser</span><span class=st>&quot;</span></a>
-<a class=m id=cb1-15 title=15><span class=kw>fi</span></a>
-<a class=m id=cb1-16 title=16></a>
-<a class=m id=cb1-17 title=17><span class=ot>root=$HOME</span>/Sites/<span class=ot>$siteName</span></a>
-<a class=m id=cb1-18 title=18><span class=ot>destRep=$iDisk</span>/Web/Sites/<span class=ot>$siteName</span></a>
-<a class=m id=cb1-19 title=19></a>
-<a class=m id=cb1-20 title=20><span class=kw>[[</span> <span class=ot>!</span> <span class=ot>-d</span> <span class=ot>$root</span><span class=kw> ]]</span> <span class=kw>&amp;&amp;</span> <span class=kw>{</span> </a>
-<a class=m id=cb1-21 title=21>    <span class=kw>print</span> -- <span class=st>&quot;</span><span class=ot>$root</span><span class=st> n'existe pas ; vérifiez la conf&quot;</span> <span class=kw>&gt;&amp;2</span>; </a>
-<a class=m id=cb1-22 title=22>    <span class=kw>exit</span> 1 </a>
-<a class=m id=cb1-23 title=23><span class=kw>}</span></a>
-<a class=m id=cb1-24 title=24></a>
-<a class=m id=cb1-25 title=25><span class=kw>[[</span> <span class=ot>!</span> <span class=ot>-d</span> <span class=ot>$destRep</span><span class=kw> ]]</span> <span class=kw>&amp;&amp;</span> <span class=kw>{</span> </a>
-<a class=m id=cb1-26 title=26>    <span class=kw>print</span> -- <span class=st>&quot;</span><span class=ot>$destRep</span><span class=st> n'existe pas, veuillez remonter le FS&quot;</span> <span class=kw>&gt;&amp;2</span>; </a>
-<a class=m id=cb1-27 title=27>    <span class=kw>exit</span> 1 </a>
-<a class=m id=cb1-28 title=28><span class=kw>}</span></a>
-<a class=m id=cb1-29 title=29></a>
-<a class=m id=cb1-30 title=30><span class=kw>if [[</span> <span class=ot>$1</span> <span class=ot>==</span> <span class=st>'-h'</span><span class=kw> ]]</span>; <span class=kw>then</span></a>
-<a class=m id=cb1-31 title=31>    <span class=kw>print</span> -- <span class=st>&quot;usage: </span><span class=ot>$0</span><span class=st>:h [-h|-a|-s]&quot;</span></a>
-<a class=m id=cb1-32 title=32>    <span class=kw>print</span> -- <span class=st>&quot;  -a sychronise aussi l'index&quot;</span></a>
-<a class=m id=cb1-33 title=33>    <span class=kw>print</span> -- <span class=st>&quot;  -h affiche l'aide&quot;</span></a>
-<a class=m id=cb1-34 title=34>    <span class=kw>print</span> -- <span class=st>&quot;  -s swappe simplement les répertoires&quot;</span></a>
-<a class=m id=cb1-35 title=35><span class=kw>fi</span></a>
-<a class=m id=cb1-36 title=36></a>
-<a class=m id=cb1-37 title=37><span class=kw>if [[</span> <span class=ot>$1</span> <span class=ot>==</span> <span class=st>'-a'</span><span class=kw> ]]</span>; <span class=kw>then</span></a>
-<a class=m id=cb1-38 title=38>    <span class=kw>print</span> -- <span class=st>&quot;Synchronisation de l'index (</span><span class=ot>${destRep:h}</span><span class=st>)&quot;</span></a>
-<a class=m id=cb1-39 title=39>    rsync -av <span class=ot>$root</span>/index.html <span class=ot>${destRep:h}</span>/index.html</a>
-<a class=m id=cb1-40 title=40><span class=kw>fi</span></a>
-<a class=m id=cb1-41 title=41></a>
-<a class=m id=cb1-42 title=42><span class=kw>print</span> -- <span class=st>&quot;Root = </span><span class=ot>$root</span><span class=st>&quot;</span></a>
-<a class=m id=cb1-43 title=43><span class=kw>print</span> -- <span class=st>&quot;Dest = </span><span class=ot>$destRep</span><span class=st>&quot;</span></a>
-<a class=m id=cb1-44 title=44></a>
-<a class=m id=cb1-45 title=45><span class=kw>if [[</span> <span class=ot>!</span> <span class=ot>$1</span> <span class=ot>=</span> <span class=st>'-s'</span><span class=kw> ]]</span>; <span class=kw>then</span></a>
-<a class=m id=cb1-46 title=46>    [[ ! -d <span class=ot>$destRep</span>.tmp ]] <span class=kw>&amp;&amp;</span> <span class=kw>mkdir</span> <span class=ot>$destRep</span>.tmp</a>
-<a class=m id=cb1-47 title=47>    <span class=kw>print</span> -P -- <span class=st>&quot;%B[Sync =&gt; tmp]%b&quot;</span></a>
-<a class=m id=cb1-48 title=48>    <span class=ot>result=</span>1</a>
-<a class=m id=cb1-49 title=49>    <span class=ot>essai=</span>1</a>
-<a class=m id=cb1-50 title=50>    <span class=kw>while</span> <span class=kw>((</span> <span class=ot>$result</span> &gt; 0 <span class=kw>))</span>; <span class=kw>do</span></a>
-<a class=m id=cb1-51 title=51>        rsync -arv <span class=ot>$root</span>/Scratch/ <span class=ot>$destRep</span>.tmp</a>
-<a class=m id=cb1-52 title=52>        <span class=ot>result=$?</span></a>
-<a class=m id=cb1-53 title=53>        <span class=kw>if</span> <span class=kw>((</span> <span class=ot>$result</span> &gt; 0 <span class=kw>))</span>; <span class=kw>then</span></a>
-<a class=m id=cb1-54 title=54>            <span class=kw>print</span> -P -- <span class=st>&quot;%BEchec du rsync%b (essai n°</span><span class=ot>$essai</span><span class=st>)&quot;</span> <span class=kw>&gt;&amp;2</span></a>
-<a class=m id=cb1-55 title=55>        <span class=kw>fi</span></a>
-<a class=m id=cb1-56 title=56>        <span class=kw>((</span>essai++<span class=kw>))</span></a>
-<a class=m id=cb1-57 title=57>    <span class=kw>done</span></a>
-<a class=m id=cb1-58 title=58><span class=kw>fi</span></a>
-<a class=m id=cb1-59 title=59></a>
-<a class=m id=cb1-60 title=60><span class=co># SWAP</span></a>
-<a class=m id=cb1-61 title=61><span class=kw>print</span> -P -- <span class=st>&quot;%B[Swap des Répertoires (tmp &lt;=&gt; target)]%b&quot;</span></a>
-<a class=m id=cb1-62 title=62><span class=ot>essai=</span>1</a>
-<a class=m id=cb1-63 title=63><span class=kw>while [[</span> <span class=ot>-e</span> <span class=ot>$destRep</span>.old<span class=kw> ]]</span>; <span class=kw>do</span></a>
-<a class=m id=cb1-64 title=64>    <span class=kw>print</span> -n -- <span class=st>&quot;suppression de </span><span class=ot>$destRep</span><span class=st>.old&quot;</span></a>
-<a class=m id=cb1-65 title=65>    <span class=kw>if</span> <span class=kw>((</span>essai&gt;1<span class=kw>))</span>; <span class=kw>then</span> </a>
-<a class=m id=cb1-66 title=66>        <span class=kw>print</span> <span class=st>&quot; (essai n°</span><span class=ot>$essai</span><span class=st>)&quot;</span></a>
-<a class=m id=cb1-67 title=67>    <span class=kw>else</span></a>
-<a class=m id=cb1-68 title=68>        <span class=kw>print</span></a>
-<a class=m id=cb1-69 title=69>    <span class=kw>fi</span></a>
-<a class=m id=cb1-70 title=70>    <span class=kw>((</span>essai++<span class=kw>))</span></a>
-<a class=m id=cb1-71 title=71>    \<span class=kw>rm</span> -rf <span class=ot>$destRep</span>.old</a>
-<a class=m id=cb1-72 title=72><span class=kw>done</span></a>
-<a class=m id=cb1-73 title=73></a>
-<a class=m id=cb1-74 title=74><span class=kw>print</span> -- <span class=st>&quot;  renommage du repertoire sandard vers le .old&quot;</span></a>
-<a class=m id=cb1-75 title=75><span class=ot>essai=</span>1</a>
-<a class=m id=cb1-76 title=76><span class=kw>while [[</span> <span class=ot>-e</span> <span class=ot>$destRep</span><span class=kw> ]]</span>; <span class=kw>do</span></a>
-<a class=m id=cb1-77 title=77>    <span class=kw>mv</span> <span class=ot>$destRep</span> <span class=ot>$destRep</span>.old </a>
-<a class=m id=cb1-78 title=78>    <span class=kw>((</span><span class=ot>$?</span><span class=kw>))</span> <span class=kw>&amp;&amp;</span> <span class=kw>print</span> -- <span class=st>&quot;Echec du renommage (essai n°</span><span class=ot>$essai</span><span class=st>)&quot;</span> <span class=kw>&gt;&amp;2</span></a>
-<a class=m id=cb1-79 title=79>    <span class=kw>((</span>essai++<span class=kw>))</span></a>
-<a class=m id=cb1-80 title=80><span class=kw>done</span></a>
-<a class=m id=cb1-81 title=81></a>
-<a class=m id=cb1-82 title=82><span class=kw>print</span> -- <span class=st>&quot;  renommage du repertoire tmp (nouveau) vers le standard&quot;</span></a>
-<a class=m id=cb1-83 title=83><span class=kw>print</span> -P -- <span class=st>&quot;  %BSite Indisponible%b </span><span class=ot>$(</span><span class=kw>date</span><span class=ot>)</span><span class=st>&quot;</span></a>
-<a class=m id=cb1-84 title=84><span class=ot>essai=</span>1</a>
-<a class=m id=cb1-85 title=85><span class=kw>while [[</span> <span class=ot>!</span> <span class=ot>-e</span> <span class=ot>$destRep</span><span class=kw> ]]</span>; <span class=kw>do</span></a>
-<a class=m id=cb1-86 title=86>    <span class=kw>mv</span> <span class=ot>$destRep</span>.tmp <span class=ot>$destRep</span></a>
-<a class=m id=cb1-87 title=87>    <span class=kw>((</span><span class=ot>$?</span><span class=kw>))</span> <span class=kw>&amp;&amp;</span> <span class=kw>print</span> -P -- <span class=st>&quot;%B[Site Indisponible]%b(essai n°</span><span class=ot>$essai</span><span class=st>) Echec du renommage (mv </span><span class=ot>$destRep</span><span class=st>.tmp </span><span class=ot>$destRep</span><span class=st>)&quot;</span> <span class=kw>&gt;&amp;2</span></a>
-<a class=m id=cb1-88 title=88>    <span class=kw>((</span>essai++<span class=kw>))</span></a>
-<a class=m id=cb1-89 title=89><span class=kw>done</span></a>
-<a class=m id=cb1-90 title=90></a>
-<a class=m id=cb1-91 title=91><span class=kw>print</span> -P -- <span class=st>&quot;\t===\t%BSITE DISPONIBLE%b\t===&quot;</span></a>
-<a class=m id=cb1-92 title=92></a>
-<a class=m id=cb1-93 title=93><span class=kw>print</span> -- <span class=st>&quot;  renommage du repertoire old vers le tmp&quot;</span></a>
-<a class=m id=cb1-94 title=94><span class=ot>essai=</span>1</a>
-<a class=m id=cb1-95 title=95><span class=kw>while [[</span> <span class=ot>!</span> <span class=ot>-e</span> <span class=ot>$destRep</span><span class=kw> ]]</span>; <span class=kw>do</span></a>
-<a class=m id=cb1-96 title=96>    <span class=kw>mv</span> <span class=ot>$destRep</span>.old <span class=ot>$destRep</span>.tmp</a>
-<a class=m id=cb1-97 title=97>    <span class=kw>((</span><span class=ot>$?</span><span class=kw>))</span> <span class=kw>&amp;&amp;</span> <span class=kw>print</span> -P -- <span class=st>&quot;Echec du renommage n°</span><span class=ot>$essai</span><span class=st>&quot;</span> <span class=kw>&gt;&amp;2</span></a>
-<a class=m id=cb1-98 title=98>    <span class=kw>((</span>essai++<span class=kw>))</span></a>
-<a class=m id=cb1-99 title=99><span class=kw>done</span></a>
-<a class=m id=cb1-100 title=100></a>
-<a class=m id=cb1-101 title=101><span class=kw>print</span> -P -- <span class=st>&quot;  publication terminée&quot;</span></a></code></pre></div></div><div class=en><div class=n id=cb2><pre class="n zsh"><code class="n zsh"><a class=m id=cb2-1 title=1><span class=co>#!/usr/bin/env zsh</span></a>
-<a class=m id=cb2-2 title=2></a>
-<a class=m id=cb2-3 title=3><span class=co># Author: Yann Esposito</span></a>
-<a class=m id=cb2-4 title=4><span class=co>#   Mail: yann.esposito@gmail.com</span></a>
-<a class=m id=cb2-5 title=5><span class=co># Synchronize with &quot;mobileMe&quot; iDisk account.</span></a>
-<a class=m id=cb2-6 title=6></a>
-<a class=m id=cb2-7 title=7><span class=ot>mobileMeUser=</span><span class=st>&quot;firstname.lastname&quot;</span></a>
-<a class=m id=cb2-8 title=8><span class=ot>siteName=</span><span class=st>&quot;siteName&quot;</span></a>
-<a class=m id=cb2-9 title=9></a>
-<a class=m id=cb2-10 title=10><span class=co># Depending of my hostname the </span></a>
-<a class=m id=cb2-11 title=11><span class=kw>if [[</span> <span class=ot>$(</span><span class=kw>hostname</span><span class=ot>)</span> <span class=ot>==</span> <span class=st>'ubuntu'</span><span class=kw> ]]</span>; <span class=kw>then</span></a>
-<a class=m id=cb2-12 title=12>    <span class=ot>iDisk=</span><span class=st>'/mnt/iDisk'</span></a>
-<a class=m id=cb2-13 title=13><span class=kw>else</span></a>
-<a class=m id=cb2-14 title=14>    <span class=ot>iDisk=</span><span class=st>&quot;/Volumes/</span><span class=ot>$mobileMeUser</span><span class=st>&quot;</span></a>
-<a class=m id=cb2-15 title=15><span class=kw>fi</span></a>
-<a class=m id=cb2-16 title=16></a>
-<a class=m id=cb2-17 title=17><span class=ot>root=$HOME</span>/Sites/<span class=ot>$siteName</span></a>
-<a class=m id=cb2-18 title=18><span class=ot>destRep=$iDisk</span>/Web/Sites/<span class=ot>$siteName</span></a>
-<a class=m id=cb2-19 title=19></a>
-<a class=m id=cb2-20 title=20><span class=kw>[[</span> <span class=ot>!</span> <span class=ot>-d</span> <span class=ot>$root</span><span class=kw> ]]</span> <span class=kw>&amp;&amp;</span> <span class=kw>{</span> </a>
-<a class=m id=cb2-21 title=21>    <span class=kw>print</span> -- <span class=st>&quot;</span><span class=ot>$root</span><span class=st> does not exist ; please verify the configuration (</span><span class=ot>$0</span><span class=st>)&quot;</span> <span class=kw>&gt;&amp;2</span>; </a>
-<a class=m id=cb2-22 title=22>    <span class=kw>exit</span> 1 </a>
-<a class=m id=cb2-23 title=23><span class=kw>}</span></a>
-<a class=m id=cb2-24 title=24></a>
-<a class=m id=cb2-25 title=25><span class=kw>[[</span> <span class=ot>!</span> <span class=ot>-d</span> <span class=ot>$destRep</span><span class=kw> ]]</span> <span class=kw>&amp;&amp;</span> <span class=kw>{</span> </a>
-<a class=m id=cb2-26 title=26>    <span class=kw>print</span> -- <span class=st>&quot;</span><span class=ot>$destRep</span><span class=st> does not exist, please mount the filesystem&quot;</span> <span class=kw>&gt;&amp;2</span>; </a>
-<a class=m id=cb2-27 title=27>    <span class=kw>exit</span> 1 </a>
-<a class=m id=cb2-28 title=28><span class=kw>}</span></a>
-<a class=m id=cb2-29 title=29></a>
-<a class=m id=cb2-30 title=30><span class=kw>if [[</span> <span class=ot>$1</span> <span class=ot>==</span> <span class=st>'-h'</span><span class=kw> ]]</span>; <span class=kw>then</span></a>
-<a class=m id=cb2-31 title=31>    <span class=kw>print</span> -- <span class=st>&quot;usage: </span><span class=ot>$0</span><span class=st>:h [-h|-a|-s]&quot;</span></a>
-<a class=m id=cb2-32 title=32>    <span class=kw>print</span> -- <span class=st>&quot;  -a sychronize primary index&quot;</span></a>
-<a class=m id=cb2-33 title=33>    <span class=kw>print</span> -- <span class=st>&quot;  -h show this help&quot;</span></a>
-<a class=m id=cb2-34 title=34>    <span class=kw>print</span> -- <span class=st>&quot;  -s only swap directories&quot;</span></a>
-<a class=m id=cb2-35 title=35><span class=kw>fi</span></a>
-<a class=m id=cb2-36 title=36></a>
-<a class=m id=cb2-37 title=37><span class=kw>if [[</span> <span class=ot>$1</span> <span class=ot>==</span> <span class=st>'-a'</span><span class=kw> ]]</span>; <span class=kw>then</span></a>
-<a class=m id=cb2-38 title=38>    <span class=kw>print</span> -- <span class=st>&quot;Index synchronisation (</span><span class=ot>${destRep:h}</span><span class=st>)&quot;</span></a>
-<a class=m id=cb2-39 title=39>    rsync -av <span class=ot>$root</span>/index.html <span class=ot>${destRep:h}</span>/index.html</a>
-<a class=m id=cb2-40 title=40><span class=kw>fi</span></a>
-<a class=m id=cb2-41 title=41></a>
-<a class=m id=cb2-42 title=42><span class=kw>print</span> -- <span class=st>&quot;Root = </span><span class=ot>$root</span><span class=st>&quot;</span></a>
-<a class=m id=cb2-43 title=43><span class=kw>print</span> -- <span class=st>&quot;Dest = </span><span class=ot>$destRep</span><span class=st>&quot;</span></a>
-<a class=m id=cb2-44 title=44></a>
-<a class=m id=cb2-45 title=45><span class=kw>if [[</span> <span class=ot>!</span> <span class=ot>$1</span> <span class=ot>=</span> <span class=st>'-s'</span><span class=kw> ]]</span>; <span class=kw>then</span></a>
-<a class=m id=cb2-46 title=46>    [[ ! -d <span class=ot>$destRep</span>.tmp ]] <span class=kw>&amp;&amp;</span> <span class=kw>mkdir</span> <span class=ot>$destRep</span>.tmp</a>
-<a class=m id=cb2-47 title=47>    <span class=kw>print</span> -P -- <span class=st>&quot;%B[Sync =&gt; tmp]%b&quot;</span></a>
-<a class=m id=cb2-48 title=48>    <span class=ot>result=</span>1</a>
-<a class=m id=cb2-49 title=49>    <span class=ot>essai=</span>1</a>
-<a class=m id=cb2-50 title=50>    <span class=kw>while</span> <span class=kw>((</span> <span class=ot>$result</span> &gt; 0 <span class=kw>))</span>; <span class=kw>do</span></a>
-<a class=m id=cb2-51 title=51>        rsync -arv <span class=ot>$root</span>/Scratch/ <span class=ot>$destRep</span>.tmp</a>
-<a class=m id=cb2-52 title=52>        <span class=ot>result=$?</span></a>
-<a class=m id=cb2-53 title=53>        <span class=kw>if</span> <span class=kw>((</span> <span class=ot>$result</span> &gt; 0 <span class=kw>))</span>; <span class=kw>then</span></a>
-<a class=m id=cb2-54 title=54>            <span class=kw>print</span> -P -- <span class=st>&quot;%Brsync failed%b (try n°</span><span class=ot>$essai</span><span class=st>)&quot;</span> <span class=kw>&gt;&amp;2</span></a>
-<a class=m id=cb2-55 title=55>        <span class=kw>fi</span></a>
-<a class=m id=cb2-56 title=56>        <span class=kw>((</span>essai++<span class=kw>))</span></a>
-<a class=m id=cb2-57 title=57>    <span class=kw>done</span></a>
-<a class=m id=cb2-58 title=58><span class=kw>fi</span></a>
-<a class=m id=cb2-59 title=59></a>
-<a class=m id=cb2-60 title=60><span class=co># SWAP</span></a>
-<a class=m id=cb2-61 title=61><span class=kw>print</span> -P -- <span class=st>&quot;%B[Directory Swap (tmp &lt;=&gt; target)]%b&quot;</span></a>
-<a class=m id=cb2-62 title=62><span class=ot>essai=</span>1</a>
-<a class=m id=cb2-63 title=63><span class=kw>while [[</span> <span class=ot>-e</span> <span class=ot>$destRep</span>.old<span class=kw> ]]</span>; <span class=kw>do</span></a>
-<a class=m id=cb2-64 title=64>    <span class=kw>print</span> -n -- <span class=st>&quot;remove </span><span class=ot>$destRep</span><span class=st>.old&quot;</span></a>
-<a class=m id=cb2-65 title=65>    <span class=kw>if</span> <span class=kw>((</span>essai&gt;1<span class=kw>))</span>; <span class=kw>then</span> </a>
-<a class=m id=cb2-66 title=66>        <span class=kw>print</span> <span class=st>&quot; (try n°</span><span class=ot>$essai</span><span class=st>)&quot;</span></a>
-<a class=m id=cb2-67 title=67>    <span class=kw>else</span></a>
-<a class=m id=cb2-68 title=68>        <span class=kw>print</span></a>
-<a class=m id=cb2-69 title=69>    <span class=kw>fi</span></a>
-<a class=m id=cb2-70 title=70>    <span class=kw>((</span>essai++<span class=kw>))</span></a>
-<a class=m id=cb2-71 title=71>    \<span class=kw>rm</span> -rf <span class=ot>$destRep</span>.old</a>
-<a class=m id=cb2-72 title=72><span class=kw>done</span></a>
-<a class=m id=cb2-73 title=73></a>
-<a class=m id=cb2-74 title=74><span class=kw>print</span> -- <span class=st>&quot;  renommage du repertoire sandard vers le .old&quot;</span></a>
-<a class=m id=cb2-75 title=75><span class=ot>essai=</span>1</a>
-<a class=m id=cb2-76 title=76><span class=kw>while [[</span> <span class=ot>-e</span> <span class=ot>$destRep</span><span class=kw> ]]</span>; <span class=kw>do</span></a>
-<a class=m id=cb2-77 title=77>    <span class=kw>mv</span> <span class=ot>$destRep</span> <span class=ot>$destRep</span>.old </a>
-<a class=m id=cb2-78 title=78>    <span class=kw>((</span><span class=ot>$?</span><span class=kw>))</span> <span class=kw>&amp;&amp;</span> <span class=kw>print</span> -- <span class=st>&quot;Failed to rename (try n°</span><span class=ot>$essai</span><span class=st>)&quot;</span> <span class=kw>&gt;&amp;2</span></a>
-<a class=m id=cb2-79 title=79>    <span class=kw>((</span>essai++<span class=kw>))</span></a>
-<a class=m id=cb2-80 title=80><span class=kw>done</span></a>
-<a class=m id=cb2-81 title=81></a>
-<a class=m id=cb2-82 title=82><span class=kw>print</span> -- <span class=st>&quot;  renaming folder tmp (new) to the standard one&quot;</span></a>
-<a class=m id=cb2-83 title=83><span class=kw>print</span> -P -- <span class=st>&quot;  %BThe WebSite isn't working%b </span><span class=ot>$(</span><span class=kw>date</span><span class=ot>)</span><span class=st>&quot;</span></a>
-<a class=m id=cb2-84 title=84><span class=ot>essai=</span>1</a>
-<a class=m id=cb2-85 title=85><span class=kw>while [[</span> <span class=ot>!</span> <span class=ot>-e</span> <span class=ot>$destRep</span><span class=kw> ]]</span>; <span class=kw>do</span></a>
-<a class=m id=cb2-86 title=86>    <span class=kw>mv</span> <span class=ot>$destRep</span>.tmp <span class=ot>$destRep</span></a>
-<a class=m id=cb2-87 title=87>    <span class=kw>((</span><span class=ot>$?</span><span class=kw>))</span> <span class=kw>&amp;&amp;</span> <span class=kw>print</span> -P -- <span class=st>&quot;%B[WebSite not working]%b(try n°</span><span class=ot>$essai</span><span class=st>) Failed to rename (mv </span><span class=ot>$destRep</span><span class=st>.tmp </span><span class=ot>$destRep</span><span class=st>)&quot;</span> <span class=kw>&gt;&amp;2</span></a>
-<a class=m id=cb2-88 title=88>    <span class=kw>((</span>essai++<span class=kw>))</span></a>
-<a class=m id=cb2-89 title=89><span class=kw>done</span></a>
-<a class=m id=cb2-90 title=90></a>
-<a class=m id=cb2-91 title=91><span class=kw>print</span> -P -- <span class=st>&quot;\t===\t%BWEBSITE SHOULD WORK NOW%b\t===&quot;</span></a>
-<a class=m id=cb2-92 title=92></a>
-<a class=m id=cb2-93 title=93><span class=kw>print</span> -- <span class=st>&quot;  rename old folder to tmp folder&quot;</span></a>
-<a class=m id=cb2-94 title=94><span class=ot>essai=</span>1</a>
-<a class=m id=cb2-95 title=95><span class=kw>while [[</span> <span class=ot>!</span> <span class=ot>-e</span> <span class=ot>$destRep</span><span class=kw> ]]</span>; <span class=kw>do</span></a>
-<a class=m id=cb2-96 title=96>    <span class=kw>mv</span> <span class=ot>$destRep</span>.old <span class=ot>$destRep</span>.tmp</a>
-<a class=m id=cb2-97 title=97>    <span class=kw>((</span><span class=ot>$?</span><span class=kw>))</span> <span class=kw>&amp;&amp;</span> <span class=kw>print</span> -P -- <span class=st>&quot;Failed to rename n°</span><span class=ot>$essai</span><span class=st>&quot;</span> <span class=kw>&gt;&amp;2</span></a>
-<a class=m id=cb2-98 title=98>    <span class=kw>((</span>essai++<span class=kw>))</span></a>
-<a class=m id=cb2-99 title=99><span class=kw>done</span></a>
-<a class=m id=cb2-100 title=100></a>
-<a class=m id=cb2-101 title=101><span class=kw>print</span> -P -- <span class=st>&quot;  Publish terminated&quot;</span></a></code></pre></div></div></div><div id=afterarticle><div id=social><a href=../../../../Scratch/fr/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=as>RSS</a>
+<!doctype html><html lang=fr><meta charset=utf-8><title>YBlog - Héberger son site personnel sur le site mobileMe</title><meta name=keywords content="Apple,mobileme,WebDav,synchronisation,zsh,script"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/fr/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=fr class=aj><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/en/blog/10_Synchronize_Custom_WebSite_with_mobileMe/>Anglais</a></span>
+<span class=al><a href=#navigation>↓ Menu ↓</a></span>
+<span class=bl></span></div></div><div id=titre><h1>Héberger son site personnel sur le site mobileMe</h1></div><div class=bl></div><div id=afterheader class=aj><div class=bn><h1 id=mise-à-jour-du-20120111>Mise à jour du <small>(2012/01/11)</small></h1><p>iDisk va bientôt disparaître. Cet article est donc presque complètement obsolète.<h1 id=mise-à-jour-du-28102009>mise à jour du <small>28/10/2009</small></h1><p>J’ai mis à jour mon script <a href=../../../../Scratch/fr/blog/2009-10-28-custom-website-synchronisation-with-mobileme--2->avec une version incrémentale</a> bien plus pratique. En plus depuis l’écriture de cet article Apple(c) semble avoir nettement amélioré la vitesse de ses serveurs en Europe.<hr><h1 id=webdav-terror>WebDav terror</h1><p>En France l’iDisk d’Apple(c) est très lent. La vitesse d’upload me rapelle l’époque des modem 56k, c’est dire. La plupart du temps les opérations telles que lister le contenu d’un répertoire prennent au moins 30 secondes (pour 15 éléments). Renommer un répertoire échoue presque systématiquement.<p>Apple(c) utilise des serveurs WebDav pour héberger les fichiers. Le protocole fonctionne sur le port 80 (comme http). Je me suis rendu compte qu’utiliser WebDav via https fontionne bien mieux (2 à 3 fois plus rapide avec moins d’erreurs). Mais, ça reste quand même très lent et insuffisant.<p>J’<em>uploade</em> mes fichiers à partir de mon Mac et de temps en temps à partir d’un PC sous Ubuntu (iDisk monté avec webdavfs).<h1 id=synchroniser-de-façon-sûre>Synchroniser de façon sûre</h1><p>Voici le script que j’utilise pour synchroniser mon site web (non créé avec iWeb(c)) avec le maximum de sécurité. Chaque opération est répétée jusqu’à ce qu’elle fonctionne.<p>Les idées sont&nbsp;:<ul><li>Synchroniser vers un répertoire temporaire sur le serveur distant, puis “swapper” les noms des répertoires. Ainsi le site ne reste indisponible que le temps du “swap” du nom des deux répertoires.<li>Réitérer toutes les opérations jusqu’à ce qu’elle aient réussi (par exemple pour le renommage)</ul><p>Jusqu’ici j’utilise <code>rsync</code> qui n’est en fait pas plus efficace qu’une simple copie <code>cp</code> avec WebDav. Je devrais utiliser une méthode pour mémoriser les changements entre chaque publication.<p>En réalité quand je suis sur mon Mac j’utilise <a href=http://www.panic.com/transmit>Transmit</a> qui est vraiment très bien et surtout beaucoup plus efficace que le finder pour synchroniser des fichiers. Ensuite, je ne fait que le “swap” des répertoires.<p>Mon script prend un paramètre <code>-s</code> pour ne faire que le “swap”. Il prend aussi une option <code>-a</code> pour envoyer le fichier <code>index.html</code> qui va rediriger vers ma nouvelle page principale (iWeb(c) à la fâcheuse habitude de le remplacer).<p>Pour utiliser le script vous devriez remplacer la valeur de la variable <code>mobileMeUser</code> par votre nom d’utilisateur mobileMe(c).<div class=fr><div class=m id=cb1><pre class="m zsh"><code class="m zsh"><a class=l id=cb1-1 title=1><span class=co>#!/usr/bin/env zsh</span></a>
+<a class=l id=cb1-2 title=2></a>
+<a class=l id=cb1-3 title=3><span class=co># Script synchronisant le site sur me.com</span></a>
+<a class=l id=cb1-4 title=4><span class=co># normalement, le site est indisponible le moins de temps possible</span></a>
+<a class=l id=cb1-5 title=5><span class=co># le temps de deux renommages de répertoire</span></a>
+<a class=l id=cb1-6 title=6></a>
+<a class=l id=cb1-7 title=7><span class=ot>mobileMeUser=</span><span class=st>&quot;yann.esposito&quot;</span></a>
+<a class=l id=cb1-8 title=8><span class=ot>siteName=</span><span class=st>&quot;siteName&quot;</span></a>
+<a class=l id=cb1-9 title=9></a>
+<a class=l id=cb1-10 title=10><span class=co># Depending of my hostname the </span></a>
+<a class=l id=cb1-11 title=11><span class=kw>if [[</span> <span class=ot>$(</span><span class=kw>hostname</span><span class=ot>)</span> <span class=ot>==</span> <span class=st>'ubuntu'</span><span class=kw> ]]</span>; <span class=kw>then</span></a>
+<a class=l id=cb1-12 title=12>    <span class=ot>iDisk=</span><span class=st>'/mnt/iDisk'</span></a>
+<a class=l id=cb1-13 title=13><span class=kw>else</span></a>
+<a class=l id=cb1-14 title=14>    <span class=ot>iDisk=</span><span class=st>&quot;/Volumes/</span><span class=ot>$mobileMeUser</span><span class=st>&quot;</span></a>
+<a class=l id=cb1-15 title=15><span class=kw>fi</span></a>
+<a class=l id=cb1-16 title=16></a>
+<a class=l id=cb1-17 title=17><span class=ot>root=$HOME</span>/Sites/<span class=ot>$siteName</span></a>
+<a class=l id=cb1-18 title=18><span class=ot>destRep=$iDisk</span>/Web/Sites/<span class=ot>$siteName</span></a>
+<a class=l id=cb1-19 title=19></a>
+<a class=l id=cb1-20 title=20><span class=kw>[[</span> <span class=ot>!</span> <span class=ot>-d</span> <span class=ot>$root</span><span class=kw> ]]</span> <span class=kw>&amp;&amp;</span> <span class=kw>{</span> </a>
+<a class=l id=cb1-21 title=21>    <span class=kw>print</span> -- <span class=st>&quot;</span><span class=ot>$root</span><span class=st> n'existe pas ; vérifiez la conf&quot;</span> <span class=kw>&gt;&amp;2</span>; </a>
+<a class=l id=cb1-22 title=22>    <span class=kw>exit</span> 1 </a>
+<a class=l id=cb1-23 title=23><span class=kw>}</span></a>
+<a class=l id=cb1-24 title=24></a>
+<a class=l id=cb1-25 title=25><span class=kw>[[</span> <span class=ot>!</span> <span class=ot>-d</span> <span class=ot>$destRep</span><span class=kw> ]]</span> <span class=kw>&amp;&amp;</span> <span class=kw>{</span> </a>
+<a class=l id=cb1-26 title=26>    <span class=kw>print</span> -- <span class=st>&quot;</span><span class=ot>$destRep</span><span class=st> n'existe pas, veuillez remonter le FS&quot;</span> <span class=kw>&gt;&amp;2</span>; </a>
+<a class=l id=cb1-27 title=27>    <span class=kw>exit</span> 1 </a>
+<a class=l id=cb1-28 title=28><span class=kw>}</span></a>
+<a class=l id=cb1-29 title=29></a>
+<a class=l id=cb1-30 title=30><span class=kw>if [[</span> <span class=ot>$1</span> <span class=ot>==</span> <span class=st>'-h'</span><span class=kw> ]]</span>; <span class=kw>then</span></a>
+<a class=l id=cb1-31 title=31>    <span class=kw>print</span> -- <span class=st>&quot;usage: </span><span class=ot>$0</span><span class=st>:h [-h|-a|-s]&quot;</span></a>
+<a class=l id=cb1-32 title=32>    <span class=kw>print</span> -- <span class=st>&quot;  -a sychronise aussi l'index&quot;</span></a>
+<a class=l id=cb1-33 title=33>    <span class=kw>print</span> -- <span class=st>&quot;  -h affiche l'aide&quot;</span></a>
+<a class=l id=cb1-34 title=34>    <span class=kw>print</span> -- <span class=st>&quot;  -s swappe simplement les répertoires&quot;</span></a>
+<a class=l id=cb1-35 title=35><span class=kw>fi</span></a>
+<a class=l id=cb1-36 title=36></a>
+<a class=l id=cb1-37 title=37><span class=kw>if [[</span> <span class=ot>$1</span> <span class=ot>==</span> <span class=st>'-a'</span><span class=kw> ]]</span>; <span class=kw>then</span></a>
+<a class=l id=cb1-38 title=38>    <span class=kw>print</span> -- <span class=st>&quot;Synchronisation de l'index (</span><span class=ot>${destRep:h}</span><span class=st>)&quot;</span></a>
+<a class=l id=cb1-39 title=39>    rsync -av <span class=ot>$root</span>/index.html <span class=ot>${destRep:h}</span>/index.html</a>
+<a class=l id=cb1-40 title=40><span class=kw>fi</span></a>
+<a class=l id=cb1-41 title=41></a>
+<a class=l id=cb1-42 title=42><span class=kw>print</span> -- <span class=st>&quot;Root = </span><span class=ot>$root</span><span class=st>&quot;</span></a>
+<a class=l id=cb1-43 title=43><span class=kw>print</span> -- <span class=st>&quot;Dest = </span><span class=ot>$destRep</span><span class=st>&quot;</span></a>
+<a class=l id=cb1-44 title=44></a>
+<a class=l id=cb1-45 title=45><span class=kw>if [[</span> <span class=ot>!</span> <span class=ot>$1</span> <span class=ot>=</span> <span class=st>'-s'</span><span class=kw> ]]</span>; <span class=kw>then</span></a>
+<a class=l id=cb1-46 title=46>    [[ ! -d <span class=ot>$destRep</span>.tmp ]] <span class=kw>&amp;&amp;</span> <span class=kw>mkdir</span> <span class=ot>$destRep</span>.tmp</a>
+<a class=l id=cb1-47 title=47>    <span class=kw>print</span> -P -- <span class=st>&quot;%B[Sync =&gt; tmp]%b&quot;</span></a>
+<a class=l id=cb1-48 title=48>    <span class=ot>result=</span>1</a>
+<a class=l id=cb1-49 title=49>    <span class=ot>essai=</span>1</a>
+<a class=l id=cb1-50 title=50>    <span class=kw>while</span> <span class=kw>((</span> <span class=ot>$result</span> &gt; 0 <span class=kw>))</span>; <span class=kw>do</span></a>
+<a class=l id=cb1-51 title=51>        rsync -arv <span class=ot>$root</span>/Scratch/ <span class=ot>$destRep</span>.tmp</a>
+<a class=l id=cb1-52 title=52>        <span class=ot>result=$?</span></a>
+<a class=l id=cb1-53 title=53>        <span class=kw>if</span> <span class=kw>((</span> <span class=ot>$result</span> &gt; 0 <span class=kw>))</span>; <span class=kw>then</span></a>
+<a class=l id=cb1-54 title=54>            <span class=kw>print</span> -P -- <span class=st>&quot;%BEchec du rsync%b (essai n°</span><span class=ot>$essai</span><span class=st>)&quot;</span> <span class=kw>&gt;&amp;2</span></a>
+<a class=l id=cb1-55 title=55>        <span class=kw>fi</span></a>
+<a class=l id=cb1-56 title=56>        <span class=kw>((</span>essai++<span class=kw>))</span></a>
+<a class=l id=cb1-57 title=57>    <span class=kw>done</span></a>
+<a class=l id=cb1-58 title=58><span class=kw>fi</span></a>
+<a class=l id=cb1-59 title=59></a>
+<a class=l id=cb1-60 title=60><span class=co># SWAP</span></a>
+<a class=l id=cb1-61 title=61><span class=kw>print</span> -P -- <span class=st>&quot;%B[Swap des Répertoires (tmp &lt;=&gt; target)]%b&quot;</span></a>
+<a class=l id=cb1-62 title=62><span class=ot>essai=</span>1</a>
+<a class=l id=cb1-63 title=63><span class=kw>while [[</span> <span class=ot>-e</span> <span class=ot>$destRep</span>.old<span class=kw> ]]</span>; <span class=kw>do</span></a>
+<a class=l id=cb1-64 title=64>    <span class=kw>print</span> -n -- <span class=st>&quot;suppression de </span><span class=ot>$destRep</span><span class=st>.old&quot;</span></a>
+<a class=l id=cb1-65 title=65>    <span class=kw>if</span> <span class=kw>((</span>essai&gt;1<span class=kw>))</span>; <span class=kw>then</span> </a>
+<a class=l id=cb1-66 title=66>        <span class=kw>print</span> <span class=st>&quot; (essai n°</span><span class=ot>$essai</span><span class=st>)&quot;</span></a>
+<a class=l id=cb1-67 title=67>    <span class=kw>else</span></a>
+<a class=l id=cb1-68 title=68>        <span class=kw>print</span></a>
+<a class=l id=cb1-69 title=69>    <span class=kw>fi</span></a>
+<a class=l id=cb1-70 title=70>    <span class=kw>((</span>essai++<span class=kw>))</span></a>
+<a class=l id=cb1-71 title=71>    \<span class=kw>rm</span> -rf <span class=ot>$destRep</span>.old</a>
+<a class=l id=cb1-72 title=72><span class=kw>done</span></a>
+<a class=l id=cb1-73 title=73></a>
+<a class=l id=cb1-74 title=74><span class=kw>print</span> -- <span class=st>&quot;  renommage du repertoire sandard vers le .old&quot;</span></a>
+<a class=l id=cb1-75 title=75><span class=ot>essai=</span>1</a>
+<a class=l id=cb1-76 title=76><span class=kw>while [[</span> <span class=ot>-e</span> <span class=ot>$destRep</span><span class=kw> ]]</span>; <span class=kw>do</span></a>
+<a class=l id=cb1-77 title=77>    <span class=kw>mv</span> <span class=ot>$destRep</span> <span class=ot>$destRep</span>.old </a>
+<a class=l id=cb1-78 title=78>    <span class=kw>((</span><span class=ot>$?</span><span class=kw>))</span> <span class=kw>&amp;&amp;</span> <span class=kw>print</span> -- <span class=st>&quot;Echec du renommage (essai n°</span><span class=ot>$essai</span><span class=st>)&quot;</span> <span class=kw>&gt;&amp;2</span></a>
+<a class=l id=cb1-79 title=79>    <span class=kw>((</span>essai++<span class=kw>))</span></a>
+<a class=l id=cb1-80 title=80><span class=kw>done</span></a>
+<a class=l id=cb1-81 title=81></a>
+<a class=l id=cb1-82 title=82><span class=kw>print</span> -- <span class=st>&quot;  renommage du repertoire tmp (nouveau) vers le standard&quot;</span></a>
+<a class=l id=cb1-83 title=83><span class=kw>print</span> -P -- <span class=st>&quot;  %BSite Indisponible%b </span><span class=ot>$(</span><span class=kw>date</span><span class=ot>)</span><span class=st>&quot;</span></a>
+<a class=l id=cb1-84 title=84><span class=ot>essai=</span>1</a>
+<a class=l id=cb1-85 title=85><span class=kw>while [[</span> <span class=ot>!</span> <span class=ot>-e</span> <span class=ot>$destRep</span><span class=kw> ]]</span>; <span class=kw>do</span></a>
+<a class=l id=cb1-86 title=86>    <span class=kw>mv</span> <span class=ot>$destRep</span>.tmp <span class=ot>$destRep</span></a>
+<a class=l id=cb1-87 title=87>    <span class=kw>((</span><span class=ot>$?</span><span class=kw>))</span> <span class=kw>&amp;&amp;</span> <span class=kw>print</span> -P -- <span class=st>&quot;%B[Site Indisponible]%b(essai n°</span><span class=ot>$essai</span><span class=st>) Echec du renommage (mv </span><span class=ot>$destRep</span><span class=st>.tmp </span><span class=ot>$destRep</span><span class=st>)&quot;</span> <span class=kw>&gt;&amp;2</span></a>
+<a class=l id=cb1-88 title=88>    <span class=kw>((</span>essai++<span class=kw>))</span></a>
+<a class=l id=cb1-89 title=89><span class=kw>done</span></a>
+<a class=l id=cb1-90 title=90></a>
+<a class=l id=cb1-91 title=91><span class=kw>print</span> -P -- <span class=st>&quot;\t===\t%BSITE DISPONIBLE%b\t===&quot;</span></a>
+<a class=l id=cb1-92 title=92></a>
+<a class=l id=cb1-93 title=93><span class=kw>print</span> -- <span class=st>&quot;  renommage du repertoire old vers le tmp&quot;</span></a>
+<a class=l id=cb1-94 title=94><span class=ot>essai=</span>1</a>
+<a class=l id=cb1-95 title=95><span class=kw>while [[</span> <span class=ot>!</span> <span class=ot>-e</span> <span class=ot>$destRep</span><span class=kw> ]]</span>; <span class=kw>do</span></a>
+<a class=l id=cb1-96 title=96>    <span class=kw>mv</span> <span class=ot>$destRep</span>.old <span class=ot>$destRep</span>.tmp</a>
+<a class=l id=cb1-97 title=97>    <span class=kw>((</span><span class=ot>$?</span><span class=kw>))</span> <span class=kw>&amp;&amp;</span> <span class=kw>print</span> -P -- <span class=st>&quot;Echec du renommage n°</span><span class=ot>$essai</span><span class=st>&quot;</span> <span class=kw>&gt;&amp;2</span></a>
+<a class=l id=cb1-98 title=98>    <span class=kw>((</span>essai++<span class=kw>))</span></a>
+<a class=l id=cb1-99 title=99><span class=kw>done</span></a>
+<a class=l id=cb1-100 title=100></a>
+<a class=l id=cb1-101 title=101><span class=kw>print</span> -P -- <span class=st>&quot;  publication terminée&quot;</span></a></code></pre></div></div><div class=en><div class=m id=cb2><pre class="m zsh"><code class="m zsh"><a class=l id=cb2-1 title=1><span class=co>#!/usr/bin/env zsh</span></a>
+<a class=l id=cb2-2 title=2></a>
+<a class=l id=cb2-3 title=3><span class=co># Author: Yann Esposito</span></a>
+<a class=l id=cb2-4 title=4><span class=co>#   Mail: yann.esposito@gmail.com</span></a>
+<a class=l id=cb2-5 title=5><span class=co># Synchronize with &quot;mobileMe&quot; iDisk account.</span></a>
+<a class=l id=cb2-6 title=6></a>
+<a class=l id=cb2-7 title=7><span class=ot>mobileMeUser=</span><span class=st>&quot;firstname.lastname&quot;</span></a>
+<a class=l id=cb2-8 title=8><span class=ot>siteName=</span><span class=st>&quot;siteName&quot;</span></a>
+<a class=l id=cb2-9 title=9></a>
+<a class=l id=cb2-10 title=10><span class=co># Depending of my hostname the </span></a>
+<a class=l id=cb2-11 title=11><span class=kw>if [[</span> <span class=ot>$(</span><span class=kw>hostname</span><span class=ot>)</span> <span class=ot>==</span> <span class=st>'ubuntu'</span><span class=kw> ]]</span>; <span class=kw>then</span></a>
+<a class=l id=cb2-12 title=12>    <span class=ot>iDisk=</span><span class=st>'/mnt/iDisk'</span></a>
+<a class=l id=cb2-13 title=13><span class=kw>else</span></a>
+<a class=l id=cb2-14 title=14>    <span class=ot>iDisk=</span><span class=st>&quot;/Volumes/</span><span class=ot>$mobileMeUser</span><span class=st>&quot;</span></a>
+<a class=l id=cb2-15 title=15><span class=kw>fi</span></a>
+<a class=l id=cb2-16 title=16></a>
+<a class=l id=cb2-17 title=17><span class=ot>root=$HOME</span>/Sites/<span class=ot>$siteName</span></a>
+<a class=l id=cb2-18 title=18><span class=ot>destRep=$iDisk</span>/Web/Sites/<span class=ot>$siteName</span></a>
+<a class=l id=cb2-19 title=19></a>
+<a class=l id=cb2-20 title=20><span class=kw>[[</span> <span class=ot>!</span> <span class=ot>-d</span> <span class=ot>$root</span><span class=kw> ]]</span> <span class=kw>&amp;&amp;</span> <span class=kw>{</span> </a>
+<a class=l id=cb2-21 title=21>    <span class=kw>print</span> -- <span class=st>&quot;</span><span class=ot>$root</span><span class=st> does not exist ; please verify the configuration (</span><span class=ot>$0</span><span class=st>)&quot;</span> <span class=kw>&gt;&amp;2</span>; </a>
+<a class=l id=cb2-22 title=22>    <span class=kw>exit</span> 1 </a>
+<a class=l id=cb2-23 title=23><span class=kw>}</span></a>
+<a class=l id=cb2-24 title=24></a>
+<a class=l id=cb2-25 title=25><span class=kw>[[</span> <span class=ot>!</span> <span class=ot>-d</span> <span class=ot>$destRep</span><span class=kw> ]]</span> <span class=kw>&amp;&amp;</span> <span class=kw>{</span> </a>
+<a class=l id=cb2-26 title=26>    <span class=kw>print</span> -- <span class=st>&quot;</span><span class=ot>$destRep</span><span class=st> does not exist, please mount the filesystem&quot;</span> <span class=kw>&gt;&amp;2</span>; </a>
+<a class=l id=cb2-27 title=27>    <span class=kw>exit</span> 1 </a>
+<a class=l id=cb2-28 title=28><span class=kw>}</span></a>
+<a class=l id=cb2-29 title=29></a>
+<a class=l id=cb2-30 title=30><span class=kw>if [[</span> <span class=ot>$1</span> <span class=ot>==</span> <span class=st>'-h'</span><span class=kw> ]]</span>; <span class=kw>then</span></a>
+<a class=l id=cb2-31 title=31>    <span class=kw>print</span> -- <span class=st>&quot;usage: </span><span class=ot>$0</span><span class=st>:h [-h|-a|-s]&quot;</span></a>
+<a class=l id=cb2-32 title=32>    <span class=kw>print</span> -- <span class=st>&quot;  -a sychronize primary index&quot;</span></a>
+<a class=l id=cb2-33 title=33>    <span class=kw>print</span> -- <span class=st>&quot;  -h show this help&quot;</span></a>
+<a class=l id=cb2-34 title=34>    <span class=kw>print</span> -- <span class=st>&quot;  -s only swap directories&quot;</span></a>
+<a class=l id=cb2-35 title=35><span class=kw>fi</span></a>
+<a class=l id=cb2-36 title=36></a>
+<a class=l id=cb2-37 title=37><span class=kw>if [[</span> <span class=ot>$1</span> <span class=ot>==</span> <span class=st>'-a'</span><span class=kw> ]]</span>; <span class=kw>then</span></a>
+<a class=l id=cb2-38 title=38>    <span class=kw>print</span> -- <span class=st>&quot;Index synchronisation (</span><span class=ot>${destRep:h}</span><span class=st>)&quot;</span></a>
+<a class=l id=cb2-39 title=39>    rsync -av <span class=ot>$root</span>/index.html <span class=ot>${destRep:h}</span>/index.html</a>
+<a class=l id=cb2-40 title=40><span class=kw>fi</span></a>
+<a class=l id=cb2-41 title=41></a>
+<a class=l id=cb2-42 title=42><span class=kw>print</span> -- <span class=st>&quot;Root = </span><span class=ot>$root</span><span class=st>&quot;</span></a>
+<a class=l id=cb2-43 title=43><span class=kw>print</span> -- <span class=st>&quot;Dest = </span><span class=ot>$destRep</span><span class=st>&quot;</span></a>
+<a class=l id=cb2-44 title=44></a>
+<a class=l id=cb2-45 title=45><span class=kw>if [[</span> <span class=ot>!</span> <span class=ot>$1</span> <span class=ot>=</span> <span class=st>'-s'</span><span class=kw> ]]</span>; <span class=kw>then</span></a>
+<a class=l id=cb2-46 title=46>    [[ ! -d <span class=ot>$destRep</span>.tmp ]] <span class=kw>&amp;&amp;</span> <span class=kw>mkdir</span> <span class=ot>$destRep</span>.tmp</a>
+<a class=l id=cb2-47 title=47>    <span class=kw>print</span> -P -- <span class=st>&quot;%B[Sync =&gt; tmp]%b&quot;</span></a>
+<a class=l id=cb2-48 title=48>    <span class=ot>result=</span>1</a>
+<a class=l id=cb2-49 title=49>    <span class=ot>essai=</span>1</a>
+<a class=l id=cb2-50 title=50>    <span class=kw>while</span> <span class=kw>((</span> <span class=ot>$result</span> &gt; 0 <span class=kw>))</span>; <span class=kw>do</span></a>
+<a class=l id=cb2-51 title=51>        rsync -arv <span class=ot>$root</span>/Scratch/ <span class=ot>$destRep</span>.tmp</a>
+<a class=l id=cb2-52 title=52>        <span class=ot>result=$?</span></a>
+<a class=l id=cb2-53 title=53>        <span class=kw>if</span> <span class=kw>((</span> <span class=ot>$result</span> &gt; 0 <span class=kw>))</span>; <span class=kw>then</span></a>
+<a class=l id=cb2-54 title=54>            <span class=kw>print</span> -P -- <span class=st>&quot;%Brsync failed%b (try n°</span><span class=ot>$essai</span><span class=st>)&quot;</span> <span class=kw>&gt;&amp;2</span></a>
+<a class=l id=cb2-55 title=55>        <span class=kw>fi</span></a>
+<a class=l id=cb2-56 title=56>        <span class=kw>((</span>essai++<span class=kw>))</span></a>
+<a class=l id=cb2-57 title=57>    <span class=kw>done</span></a>
+<a class=l id=cb2-58 title=58><span class=kw>fi</span></a>
+<a class=l id=cb2-59 title=59></a>
+<a class=l id=cb2-60 title=60><span class=co># SWAP</span></a>
+<a class=l id=cb2-61 title=61><span class=kw>print</span> -P -- <span class=st>&quot;%B[Directory Swap (tmp &lt;=&gt; target)]%b&quot;</span></a>
+<a class=l id=cb2-62 title=62><span class=ot>essai=</span>1</a>
+<a class=l id=cb2-63 title=63><span class=kw>while [[</span> <span class=ot>-e</span> <span class=ot>$destRep</span>.old<span class=kw> ]]</span>; <span class=kw>do</span></a>
+<a class=l id=cb2-64 title=64>    <span class=kw>print</span> -n -- <span class=st>&quot;remove </span><span class=ot>$destRep</span><span class=st>.old&quot;</span></a>
+<a class=l id=cb2-65 title=65>    <span class=kw>if</span> <span class=kw>((</span>essai&gt;1<span class=kw>))</span>; <span class=kw>then</span> </a>
+<a class=l id=cb2-66 title=66>        <span class=kw>print</span> <span class=st>&quot; (try n°</span><span class=ot>$essai</span><span class=st>)&quot;</span></a>
+<a class=l id=cb2-67 title=67>    <span class=kw>else</span></a>
+<a class=l id=cb2-68 title=68>        <span class=kw>print</span></a>
+<a class=l id=cb2-69 title=69>    <span class=kw>fi</span></a>
+<a class=l id=cb2-70 title=70>    <span class=kw>((</span>essai++<span class=kw>))</span></a>
+<a class=l id=cb2-71 title=71>    \<span class=kw>rm</span> -rf <span class=ot>$destRep</span>.old</a>
+<a class=l id=cb2-72 title=72><span class=kw>done</span></a>
+<a class=l id=cb2-73 title=73></a>
+<a class=l id=cb2-74 title=74><span class=kw>print</span> -- <span class=st>&quot;  renommage du repertoire sandard vers le .old&quot;</span></a>
+<a class=l id=cb2-75 title=75><span class=ot>essai=</span>1</a>
+<a class=l id=cb2-76 title=76><span class=kw>while [[</span> <span class=ot>-e</span> <span class=ot>$destRep</span><span class=kw> ]]</span>; <span class=kw>do</span></a>
+<a class=l id=cb2-77 title=77>    <span class=kw>mv</span> <span class=ot>$destRep</span> <span class=ot>$destRep</span>.old </a>
+<a class=l id=cb2-78 title=78>    <span class=kw>((</span><span class=ot>$?</span><span class=kw>))</span> <span class=kw>&amp;&amp;</span> <span class=kw>print</span> -- <span class=st>&quot;Failed to rename (try n°</span><span class=ot>$essai</span><span class=st>)&quot;</span> <span class=kw>&gt;&amp;2</span></a>
+<a class=l id=cb2-79 title=79>    <span class=kw>((</span>essai++<span class=kw>))</span></a>
+<a class=l id=cb2-80 title=80><span class=kw>done</span></a>
+<a class=l id=cb2-81 title=81></a>
+<a class=l id=cb2-82 title=82><span class=kw>print</span> -- <span class=st>&quot;  renaming folder tmp (new) to the standard one&quot;</span></a>
+<a class=l id=cb2-83 title=83><span class=kw>print</span> -P -- <span class=st>&quot;  %BThe WebSite isn't working%b </span><span class=ot>$(</span><span class=kw>date</span><span class=ot>)</span><span class=st>&quot;</span></a>
+<a class=l id=cb2-84 title=84><span class=ot>essai=</span>1</a>
+<a class=l id=cb2-85 title=85><span class=kw>while [[</span> <span class=ot>!</span> <span class=ot>-e</span> <span class=ot>$destRep</span><span class=kw> ]]</span>; <span class=kw>do</span></a>
+<a class=l id=cb2-86 title=86>    <span class=kw>mv</span> <span class=ot>$destRep</span>.tmp <span class=ot>$destRep</span></a>
+<a class=l id=cb2-87 title=87>    <span class=kw>((</span><span class=ot>$?</span><span class=kw>))</span> <span class=kw>&amp;&amp;</span> <span class=kw>print</span> -P -- <span class=st>&quot;%B[WebSite not working]%b(try n°</span><span class=ot>$essai</span><span class=st>) Failed to rename (mv </span><span class=ot>$destRep</span><span class=st>.tmp </span><span class=ot>$destRep</span><span class=st>)&quot;</span> <span class=kw>&gt;&amp;2</span></a>
+<a class=l id=cb2-88 title=88>    <span class=kw>((</span>essai++<span class=kw>))</span></a>
+<a class=l id=cb2-89 title=89><span class=kw>done</span></a>
+<a class=l id=cb2-90 title=90></a>
+<a class=l id=cb2-91 title=91><span class=kw>print</span> -P -- <span class=st>&quot;\t===\t%BWEBSITE SHOULD WORK NOW%b\t===&quot;</span></a>
+<a class=l id=cb2-92 title=92></a>
+<a class=l id=cb2-93 title=93><span class=kw>print</span> -- <span class=st>&quot;  rename old folder to tmp folder&quot;</span></a>
+<a class=l id=cb2-94 title=94><span class=ot>essai=</span>1</a>
+<a class=l id=cb2-95 title=95><span class=kw>while [[</span> <span class=ot>!</span> <span class=ot>-e</span> <span class=ot>$destRep</span><span class=kw> ]]</span>; <span class=kw>do</span></a>
+<a class=l id=cb2-96 title=96>    <span class=kw>mv</span> <span class=ot>$destRep</span>.old <span class=ot>$destRep</span>.tmp</a>
+<a class=l id=cb2-97 title=97>    <span class=kw>((</span><span class=ot>$?</span><span class=kw>))</span> <span class=kw>&amp;&amp;</span> <span class=kw>print</span> -P -- <span class=st>&quot;Failed to rename n°</span><span class=ot>$essai</span><span class=st>&quot;</span> <span class=kw>&gt;&amp;2</span></a>
+<a class=l id=cb2-98 title=98>    <span class=kw>((</span>essai++<span class=kw>))</span></a>
+<a class=l id=cb2-99 title=99><span class=kw>done</span></a>
+<a class=l id=cb2-100 title=100></a>
+<a class=l id=cb2-101 title=101><span class=kw>print</span> -P -- <span class=st>&quot;  Publish terminated&quot;</span></a></code></pre></div></div></div><div id=afterarticle><div id=social><a href=../../../../Scratch/fr/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=ao>RSS</a>
 ·
-<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/10_Synchronize_Custom_WebSite_with_mobileMe/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=as>Tweet</a>
+<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/10_Synchronize_Custom_WebSite_with_mobileMe/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=ao>Tweet</a>
 ·
-<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/10_Synchronize_Custom_WebSite_with_mobileMe/" target=_blank rel="noopener noreferrer nofollow" class=as>FB</a><br><a class=ag href=../../../../Scratch/fr/blog/Social-link-the-right-way/>Ces liens sociaux préservent votre vie privée</a></div><div id=navigation><a href=../../../../>Accueil</a>
-<span class=cr>¦</span>
+<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/10_Synchronize_Custom_WebSite_with_mobileMe/" target=_blank rel="noopener noreferrer nofollow" class=ao>FB</a><br><a class=ad href=../../../../Scratch/fr/blog/Social-link-the-right-way/>Ces liens sociaux préservent votre vie privée</a></div><div id=navigation><a href=../../../../>Accueil</a>
+<span class=co>¦</span>
 <a href=../../../../Scratch/fr/blog>Blog</a>
-<span class=cr>¦</span>
+<span class=co>¦</span>
 <a href=../../../../Scratch/fr/softwares>Logiciels</a>
-<span class=cr>¦</span>
+<span class=co>¦</span>
 <a href=../../../../Scratch/fr/about>Auteur</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2009-09-11</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
 <a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
 <a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
-<span class=ca>&</span>
+<span class=bx>&</span>
 <a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=au style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
+<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=aq style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
 ADA:</a>
 <code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>

@@ -1,31 +1,31 @@
-<!doctype html><html lang=fr><meta charset=utf-8><title>YBlog - Création de branches externe avec Git</title><meta name=keywords content="git,branch,local,remote"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/fr/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=fr class=an><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/en/blog/05_git_create_remote_branch/>Anglais</a></span>
-<span class=ap><a href=#navigation>↓ Menu ↓</a></span>
-<span class=bo></span></div></div><div id=titre><h1>Création de branches externe avec Git</h1></div><div class=bo></div><div id=afterheader class=an><div class=bq><p><em>Edit: Maintenant j’utilise <code>git push -u</code></em><h2 id=créer-une-branche-git-externe-facilement>Créer une branche Git externe facilement</h2><p>J’utilise Git pour synchroniser des projets personnels. C’est pourquoi quand je crée une branche locale je souhaite quasiment toujours qu’elle soit aussi créée en <em>externe</em> (remote).<p>Voici le script que j’utilise pour accomplir cette tâche&nbsp;:<div class=n id=cb1><pre class="n zsh"><code class="n zsh"><a class=m id=cb1-1 title=1><span class=co>#!/usr/bin/env zsh</span></a>
-<a class=m id=cb1-2 title=2></a>
-<a class=m id=cb1-3 title=3><span class=kw>if</span> <span class=kw>((</span><span class=ot>$#</span>&lt;1<span class=kw>))</span>; <span class=kw>then</span></a>
-<a class=m id=cb1-4 title=4>    <span class=kw>print</span> -- <span class=st>&quot;usage: </span><span class=ot>$0</span><span class=st>:t branch_name&quot;</span> <span class=kw>&gt;&amp;2</span></a>
-<a class=m id=cb1-5 title=5>    <span class=kw>exit</span> 1</a>
-<a class=m id=cb1-6 title=6><span class=kw>fi</span></a>
-<a class=m id=cb1-7 title=7></a>
-<a class=m id=cb1-8 title=8><span class=ot>branch=$1</span></a>
-<a class=m id=cb1-9 title=9>git br <span class=ot>${branch}</span></a>
-<a class=m id=cb1-10 title=10>git <span class=kw>co</span> <span class=ot>${branch}</span></a>
-<a class=m id=cb1-11 title=11>git config branch.<span class=ot>${branch}</span>.remote origin</a>
-<a class=m id=cb1-12 title=12>git config branch.<span class=ot>${branch}</span>.merge refs/heads/<span class=ot>${branch}</span></a></code></pre></div><p>Bien sûr, je suppose qu’<code>origin</code> est déjà configurée.</div><div id=afterarticle><div id=social><a href=../../../../Scratch/fr/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=as>RSS</a>
+<!doctype html><html lang=fr><meta charset=utf-8><title>YBlog - Création de branches externe avec Git</title><meta name=keywords content="git,branch,local,remote"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/fr/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=fr class=aj><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/en/blog/05_git_create_remote_branch/>Anglais</a></span>
+<span class=al><a href=#navigation>↓ Menu ↓</a></span>
+<span class=bl></span></div></div><div id=titre><h1>Création de branches externe avec Git</h1></div><div class=bl></div><div id=afterheader class=aj><div class=bn><p><em>Edit: Maintenant j’utilise <code>git push -u</code></em><h2 id=créer-une-branche-git-externe-facilement>Créer une branche Git externe facilement</h2><p>J’utilise Git pour synchroniser des projets personnels. C’est pourquoi quand je crée une branche locale je souhaite quasiment toujours qu’elle soit aussi créée en <em>externe</em> (remote).<p>Voici le script que j’utilise pour accomplir cette tâche&nbsp;:<div class=m id=cb1><pre class="m zsh"><code class="m zsh"><a class=l id=cb1-1 title=1><span class=co>#!/usr/bin/env zsh</span></a>
+<a class=l id=cb1-2 title=2></a>
+<a class=l id=cb1-3 title=3><span class=kw>if</span> <span class=kw>((</span><span class=ot>$#</span>&lt;1<span class=kw>))</span>; <span class=kw>then</span></a>
+<a class=l id=cb1-4 title=4>    <span class=kw>print</span> -- <span class=st>&quot;usage: </span><span class=ot>$0</span><span class=st>:t branch_name&quot;</span> <span class=kw>&gt;&amp;2</span></a>
+<a class=l id=cb1-5 title=5>    <span class=kw>exit</span> 1</a>
+<a class=l id=cb1-6 title=6><span class=kw>fi</span></a>
+<a class=l id=cb1-7 title=7></a>
+<a class=l id=cb1-8 title=8><span class=ot>branch=$1</span></a>
+<a class=l id=cb1-9 title=9>git br <span class=ot>${branch}</span></a>
+<a class=l id=cb1-10 title=10>git <span class=kw>co</span> <span class=ot>${branch}</span></a>
+<a class=l id=cb1-11 title=11>git config branch.<span class=ot>${branch}</span>.remote origin</a>
+<a class=l id=cb1-12 title=12>git config branch.<span class=ot>${branch}</span>.merge refs/heads/<span class=ot>${branch}</span></a></code></pre></div><p>Bien sûr, je suppose qu’<code>origin</code> est déjà configurée.</div><div id=afterarticle><div id=social><a href=../../../../Scratch/fr/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=ao>RSS</a>
 ·
-<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/05_git_create_remote_branch/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=as>Tweet</a>
+<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/05_git_create_remote_branch/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=ao>Tweet</a>
 ·
-<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/05_git_create_remote_branch/" target=_blank rel="noopener noreferrer nofollow" class=as>FB</a><br><a class=ag href=../../../../Scratch/fr/blog/Social-link-the-right-way/>Ces liens sociaux préservent votre vie privée</a></div><div id=navigation><a href=../../../../>Accueil</a>
-<span class=cr>¦</span>
+<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/05_git_create_remote_branch/" target=_blank rel="noopener noreferrer nofollow" class=ao>FB</a><br><a class=ad href=../../../../Scratch/fr/blog/Social-link-the-right-way/>Ces liens sociaux préservent votre vie privée</a></div><div id=navigation><a href=../../../../>Accueil</a>
+<span class=co>¦</span>
 <a href=../../../../Scratch/fr/blog>Blog</a>
-<span class=cr>¦</span>
+<span class=co>¦</span>
 <a href=../../../../Scratch/fr/softwares>Logiciels</a>
-<span class=cr>¦</span>
+<span class=co>¦</span>
 <a href=../../../../Scratch/fr/about>Auteur</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2009-08-17</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
 <a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
 <a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
-<span class=ca>&</span>
+<span class=bx>&</span>
 <a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=au style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
+<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=aq style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
 ADA:</a>
 <code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>

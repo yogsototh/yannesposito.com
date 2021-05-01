@@ -1,61 +1,61 @@
-<!doctype html><html lang=en><meta charset=utf-8><title>YBlog - Git for self</title><meta name=keywords content="git,svn,workflow"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/en/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=en class=an><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/fr/blog/06_How_I_use_git/>French</a></span>
-<span class=ap><a href=#navigation>↓ Menu ↓</a></span>
-<span class=bo></span></div></div><div id=titre><h1>Git for self</h1></div><div class=bo></div><div id=afterheader class=an><div class=bq><div><img src=../../../../Scratch/img/blog/06_How_I_use_git/central_architecture.png alt="central architecture"></div><p>I use <a href=http://www.git-scm.org/>Git</a> to manage my personnal projects. I have a centralized repository which all my computer should synchronize with. Unfortunately I didn’t find clearly what I needed on the official Git documentation.<p>In two words, if you want to use an SVN workflow with Git (and all its advantages) here is how to proceed.<hr><h2 id=initialisation>Initialisation</h2><p>Suppose I’ve got a directory on my local computer containing a project I want to manage via Git. Here what to do:<div><div class=n id=cb1><pre class="n zsh"><code class="n zsh"><a class=m id=cb1-1 title=1><span class=kw>cd</span> to/project/directory/</a>
-<a class=m id=cb1-2 title=2>git init</a>
-<a class=m id=cb1-3 title=3>git add</a>
-<a class=m id=cb1-4 title=4>git commit</a></code></pre></div></div><p>Now all files in the <code>to/project/directory/</code> are versionned. If you want not to follow some just edit the file <code>.gitignore</code><p>for example mine is:<div><div class=n id=cb2><pre class="n zsh"><code class="n zsh"><a class=m id=cb2-1 title=1>*.swp</a>
-<a class=m id=cb2-2 title=2>.DS_Store</a>
-<a class=m id=cb2-3 title=3>ikog.py.bak</a>
-<a class=m id=cb2-4 title=4>output/Scratch/assets</a>
-<a class=m id=cb2-5 title=5>output/Scratch/en</a>
-<a class=m id=cb2-6 title=6>output/Scratch/fr</a>
-<a class=m id=cb2-7 title=7>output/Scratch/multi</a></code></pre></div></div><p>Next, you want to put your project on a directory accessible from the web:<div><div class=n id=cb3><pre class="n zsh"><code class="n zsh"><a class=m id=cb3-1 title=1>git <span class=kw>clone</span> --bare <span class=kw>.</span> /path/to/repository</a></code></pre></div></div><p>Now on any computer you can do:<div><div class=n id=cb4><pre class="n zsh"><code class="n zsh"><a class=m id=cb4-1 title=1>git <span class=kw>clone</span> protocol://path/to/repository local_directory</a></code></pre></div></div><p>and <code>local_directory</code> will contain an up-to-date project.<div class=ai><p><em>You should make this operation also on the computer used to create the repository. Just to verify all will be okay.<p></em></div><hr><h2 id=the-workflow>The workflow</h2><p>To resume you now have one repository on the Internet, and one or many computer associated with it. Now, what you want is to synchronize everything.<p>Before begining your work, the first thing to do is to get all modification from the Internet to your local host:<div><div class=n id=cb5><pre class="n zsh"><code class="n zsh"><a class=m id=cb5-1 title=1>git pull</a></code></pre></div></div><p>After that you can do (many times):<div><div class=n id=cb6><pre class="n zsh"><code class="n zsh"><a class=m id=cb6-1 title=1>hack, hack, hack...</a>
-<a class=m id=cb6-2 title=2>git add some files</a>
-<a class=m id=cb6-3 title=3>git commit</a></code></pre></div></div><p>When you want your local modification to be on the Internet just do a simple:<div><div class=n id=cb7><pre class="n zsh"><code class="n zsh"><a class=m id=cb7-1 title=1>git push</a></code></pre></div></div><p>All should be ok.<p>If you have some trouble with the <code>push</code> and <code>pull</code> verify your <code>.git/config</code> file ; it should contain the following lines:<div><div class=n id=cb8><pre class="n zsh"><code class="n zsh"><a class=m id=cb8-1 title=1>...</a>
-<a class=m id=cb8-2 title=2>[remote <span class=st>&quot;origin&quot;</span>]</a>
-<a class=m id=cb8-3 title=3>	url = protocol://url/of/the/repository</a>
-<a class=m id=cb8-4 title=4>	fetch = +refs/heads/*:refs/remotes/origin/*</a>
-<a class=m id=cb8-5 title=5>[branch <span class=st>&quot;master&quot;</span>]</a>
-<a class=m id=cb8-6 title=6>	remote = origin</a>
-<a class=m id=cb8-7 title=7>	merge = refs/heads/master</a>
-<a class=m id=cb8-8 title=8>...</a></code></pre></div></div><h2 id=branches-synchronisation>Branches Synchronisation</h2><p>Well, now, all seems ok, but you have to worry about two little things. Git is all about decentralisation and branches. It is very easy to manage one branch, or many branches on the same host. But synchronize branches on many hosts is not a natural operation.<p>This is why I created two simple scripts to automate this. One for creating a branch locally and remotely. And one to get remotely created branched on your local host.<p>Then when you want to create a new branch (locally and remotely) ; you simply have to do a:<div><code class=cm>git-create-new-branch branch_name</code></div><p>and when you are on another computer and want to get locally all the remote branches you execute:<div><code class=cm>git-get-remote-branches</code></div><p>Here are the code of theese two scripts:<div><div class=n id=cb9><pre class="n zsh"><code class="n zsh"><a class=m id=cb9-1 title=1><span class=co>#!/usr/bin/env zsh</span></a>
-<a class=m id=cb9-2 title=2></a>
-<a class=m id=cb9-3 title=3><span class=kw>if</span> <span class=kw>((</span><span class=ot>$#</span>&lt;1<span class=kw>))</span>; <span class=kw>then</span></a>
-<a class=m id=cb9-4 title=4>    <span class=kw>print</span> -- <span class=st>&quot;usage: </span><span class=ot>$0</span><span class=st>:t branch_name&quot;</span> <span class=kw>&gt;&amp;2</span></a>
-<a class=m id=cb9-5 title=5>    <span class=kw>exit</span> 1</a>
-<a class=m id=cb9-6 title=6><span class=kw>fi</span></a>
-<a class=m id=cb9-7 title=7></a>
-<a class=m id=cb9-8 title=8><span class=ot>branch=$1</span></a>
-<a class=m id=cb9-9 title=9>git br <span class=ot>${branch}</span></a>
-<a class=m id=cb9-10 title=10>git <span class=kw>co</span> <span class=ot>${branch}</span></a>
-<a class=m id=cb9-11 title=11>git config branch.<span class=ot>${branch}</span>.remote origin</a>
-<a class=m id=cb9-12 title=12>git config branch.<span class=ot>${branch}</span>.merge refs/heads/<span class=ot>${branch}</span></a></code></pre></div></div><div><div class=n id=cb10><pre class="n zsh"><code class="n zsh"><a class=m id=cb10-1 title=1><span class=co>#!/usr/bin/env zsh</span></a>
-<a class=m id=cb10-2 title=2></a>
-<a class=m id=cb10-3 title=3><span class=co># recup branches not on local</span></a>
-<a class=m id=cb10-4 title=4><span class=ot>localbranches=(</span> <span class=ot>$(</span>git br <span class=kw>|</span> <span class=kw>sed</span> <span class=st>'s/\*/ /'</span><span class=ot>)</span> <span class=ot>)</span></a>
-<a class=m id=cb10-5 title=5><span class=ot>remoteMissingBranches=(</span> <span class=ot>$(</span>git br -r <span class=kw>|</span> <span class=kw>\</span></a>
-<a class=m id=cb10-6 title=6>    <span class=kw>egrep</span> -v <span class=st>&quot;origin/HEAD|(${(j:|:)localbranches})&quot;</span> <span class=ot>)</span> <span class=ot>)</span></a>
-<a class=m id=cb10-7 title=7><span class=kw>for</span> br <span class=kw>in</span> <span class=ot>$remoteMissingBranches</span>; <span class=kw>do</span></a>
-<a class=m id=cb10-8 title=8>  <span class=ot>branch=${br#</span>origin/<span class=ot>}</span></a>
-<a class=m id=cb10-9 title=9>  <span class=kw>print</span> <span class=st>&quot;get remote branch </span><span class=ot>$branch</span><span class=st>&quot;</span></a>
-<a class=m id=cb10-10 title=10>  git br <span class=ot>${branch}</span></a>
-<a class=m id=cb10-11 title=11>  git config branch.<span class=ot>${branch}</span>.remote origin</a>
-<a class=m id=cb10-12 title=12>  git config branch.<span class=ot>${branch}</span>.merge refs/heads/<span class=ot>${branch}</span></a>
-<a class=m id=cb10-13 title=13><span class=kw>done</span></a></code></pre></div></div></div><div id=afterarticle><div id=social><a href=../../../../Scratch/en/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=as>RSS</a>
+<!doctype html><html lang=en><meta charset=utf-8><title>YBlog - Git for self</title><meta name=keywords content="git,svn,workflow"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/en/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=en class=aj><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/fr/blog/06_How_I_use_git/>French</a></span>
+<span class=al><a href=#navigation>↓ Menu ↓</a></span>
+<span class=bl></span></div></div><div id=titre><h1>Git for self</h1></div><div class=bl></div><div id=afterheader class=aj><div class=bn><div><img src=../../../../Scratch/img/blog/06_How_I_use_git/central_architecture.png alt="central architecture"></div><p>I use <a href=http://www.git-scm.org/>Git</a> to manage my personnal projects. I have a centralized repository which all my computer should synchronize with. Unfortunately I didn’t find clearly what I needed on the official Git documentation.<p>In two words, if you want to use an SVN workflow with Git (and all its advantages) here is how to proceed.<hr><h2 id=initialisation>Initialisation</h2><p>Suppose I’ve got a directory on my local computer containing a project I want to manage via Git. Here what to do:<div><div class=m id=cb1><pre class="m zsh"><code class="m zsh"><a class=l id=cb1-1 title=1><span class=kw>cd</span> to/project/directory/</a>
+<a class=l id=cb1-2 title=2>git init</a>
+<a class=l id=cb1-3 title=3>git add</a>
+<a class=l id=cb1-4 title=4>git commit</a></code></pre></div></div><p>Now all files in the <code>to/project/directory/</code> are versionned. If you want not to follow some just edit the file <code>.gitignore</code><p>for example mine is:<div><div class=m id=cb2><pre class="m zsh"><code class="m zsh"><a class=l id=cb2-1 title=1>*.swp</a>
+<a class=l id=cb2-2 title=2>.DS_Store</a>
+<a class=l id=cb2-3 title=3>ikog.py.bak</a>
+<a class=l id=cb2-4 title=4>output/Scratch/assets</a>
+<a class=l id=cb2-5 title=5>output/Scratch/en</a>
+<a class=l id=cb2-6 title=6>output/Scratch/fr</a>
+<a class=l id=cb2-7 title=7>output/Scratch/multi</a></code></pre></div></div><p>Next, you want to put your project on a directory accessible from the web:<div><div class=m id=cb3><pre class="m zsh"><code class="m zsh"><a class=l id=cb3-1 title=1>git <span class=kw>clone</span> --bare <span class=kw>.</span> /path/to/repository</a></code></pre></div></div><p>Now on any computer you can do:<div><div class=m id=cb4><pre class="m zsh"><code class="m zsh"><a class=l id=cb4-1 title=1>git <span class=kw>clone</span> protocol://path/to/repository local_directory</a></code></pre></div></div><p>and <code>local_directory</code> will contain an up-to-date project.<div class=af><p><em>You should make this operation also on the computer used to create the repository. Just to verify all will be okay.<p></em></div><hr><h2 id=the-workflow>The workflow</h2><p>To resume you now have one repository on the Internet, and one or many computer associated with it. Now, what you want is to synchronize everything.<p>Before begining your work, the first thing to do is to get all modification from the Internet to your local host:<div><div class=m id=cb5><pre class="m zsh"><code class="m zsh"><a class=l id=cb5-1 title=1>git pull</a></code></pre></div></div><p>After that you can do (many times):<div><div class=m id=cb6><pre class="m zsh"><code class="m zsh"><a class=l id=cb6-1 title=1>hack, hack, hack...</a>
+<a class=l id=cb6-2 title=2>git add some files</a>
+<a class=l id=cb6-3 title=3>git commit</a></code></pre></div></div><p>When you want your local modification to be on the Internet just do a simple:<div><div class=m id=cb7><pre class="m zsh"><code class="m zsh"><a class=l id=cb7-1 title=1>git push</a></code></pre></div></div><p>All should be ok.<p>If you have some trouble with the <code>push</code> and <code>pull</code> verify your <code>.git/config</code> file ; it should contain the following lines:<div><div class=m id=cb8><pre class="m zsh"><code class="m zsh"><a class=l id=cb8-1 title=1>...</a>
+<a class=l id=cb8-2 title=2>[remote <span class=st>&quot;origin&quot;</span>]</a>
+<a class=l id=cb8-3 title=3>	url = protocol://url/of/the/repository</a>
+<a class=l id=cb8-4 title=4>	fetch = +refs/heads/*:refs/remotes/origin/*</a>
+<a class=l id=cb8-5 title=5>[branch <span class=st>&quot;master&quot;</span>]</a>
+<a class=l id=cb8-6 title=6>	remote = origin</a>
+<a class=l id=cb8-7 title=7>	merge = refs/heads/master</a>
+<a class=l id=cb8-8 title=8>...</a></code></pre></div></div><h2 id=branches-synchronisation>Branches Synchronisation</h2><p>Well, now, all seems ok, but you have to worry about two little things. Git is all about decentralisation and branches. It is very easy to manage one branch, or many branches on the same host. But synchronize branches on many hosts is not a natural operation.<p>This is why I created two simple scripts to automate this. One for creating a branch locally and remotely. And one to get remotely created branched on your local host.<p>Then when you want to create a new branch (locally and remotely) ; you simply have to do a:<div><code class=cj>git-create-new-branch branch_name</code></div><p>and when you are on another computer and want to get locally all the remote branches you execute:<div><code class=cj>git-get-remote-branches</code></div><p>Here are the code of theese two scripts:<div><div class=m id=cb9><pre class="m zsh"><code class="m zsh"><a class=l id=cb9-1 title=1><span class=co>#!/usr/bin/env zsh</span></a>
+<a class=l id=cb9-2 title=2></a>
+<a class=l id=cb9-3 title=3><span class=kw>if</span> <span class=kw>((</span><span class=ot>$#</span>&lt;1<span class=kw>))</span>; <span class=kw>then</span></a>
+<a class=l id=cb9-4 title=4>    <span class=kw>print</span> -- <span class=st>&quot;usage: </span><span class=ot>$0</span><span class=st>:t branch_name&quot;</span> <span class=kw>&gt;&amp;2</span></a>
+<a class=l id=cb9-5 title=5>    <span class=kw>exit</span> 1</a>
+<a class=l id=cb9-6 title=6><span class=kw>fi</span></a>
+<a class=l id=cb9-7 title=7></a>
+<a class=l id=cb9-8 title=8><span class=ot>branch=$1</span></a>
+<a class=l id=cb9-9 title=9>git br <span class=ot>${branch}</span></a>
+<a class=l id=cb9-10 title=10>git <span class=kw>co</span> <span class=ot>${branch}</span></a>
+<a class=l id=cb9-11 title=11>git config branch.<span class=ot>${branch}</span>.remote origin</a>
+<a class=l id=cb9-12 title=12>git config branch.<span class=ot>${branch}</span>.merge refs/heads/<span class=ot>${branch}</span></a></code></pre></div></div><div><div class=m id=cb10><pre class="m zsh"><code class="m zsh"><a class=l id=cb10-1 title=1><span class=co>#!/usr/bin/env zsh</span></a>
+<a class=l id=cb10-2 title=2></a>
+<a class=l id=cb10-3 title=3><span class=co># recup branches not on local</span></a>
+<a class=l id=cb10-4 title=4><span class=ot>localbranches=(</span> <span class=ot>$(</span>git br <span class=kw>|</span> <span class=kw>sed</span> <span class=st>'s/\*/ /'</span><span class=ot>)</span> <span class=ot>)</span></a>
+<a class=l id=cb10-5 title=5><span class=ot>remoteMissingBranches=(</span> <span class=ot>$(</span>git br -r <span class=kw>|</span> <span class=kw>\</span></a>
+<a class=l id=cb10-6 title=6>    <span class=kw>egrep</span> -v <span class=st>&quot;origin/HEAD|(${(j:|:)localbranches})&quot;</span> <span class=ot>)</span> <span class=ot>)</span></a>
+<a class=l id=cb10-7 title=7><span class=kw>for</span> br <span class=kw>in</span> <span class=ot>$remoteMissingBranches</span>; <span class=kw>do</span></a>
+<a class=l id=cb10-8 title=8>  <span class=ot>branch=${br#</span>origin/<span class=ot>}</span></a>
+<a class=l id=cb10-9 title=9>  <span class=kw>print</span> <span class=st>&quot;get remote branch </span><span class=ot>$branch</span><span class=st>&quot;</span></a>
+<a class=l id=cb10-10 title=10>  git br <span class=ot>${branch}</span></a>
+<a class=l id=cb10-11 title=11>  git config branch.<span class=ot>${branch}</span>.remote origin</a>
+<a class=l id=cb10-12 title=12>  git config branch.<span class=ot>${branch}</span>.merge refs/heads/<span class=ot>${branch}</span></a>
+<a class=l id=cb10-13 title=13><span class=kw>done</span></a></code></pre></div></div></div><div id=afterarticle><div id=social><a href=../../../../Scratch/en/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=ao>RSS</a>
 ·
-<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/06_How_I_use_git/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=as>Tweet</a>
+<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/06_How_I_use_git/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=ao>Tweet</a>
 ·
-<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/06_How_I_use_git/" target=_blank rel="noopener noreferrer nofollow" class=as>FB</a><br><a class=ag href=../../../../Scratch/en/blog/Social-link-the-right-way/>These social sharing links preserve your privacy</a></div><div id=navigation><a href=../../../../>Home</a>
-<span class=cr>¦</span>
+<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/06_How_I_use_git/" target=_blank rel="noopener noreferrer nofollow" class=ao>FB</a><br><a class=ad href=../../../../Scratch/en/blog/Social-link-the-right-way/>These social sharing links preserve your privacy</a></div><div id=navigation><a href=../../../../>Home</a>
+<span class=co>¦</span>
 <a href=../../../../Scratch/en/blog>Blog</a>
-<span class=cr>¦</span>
+<span class=co>¦</span>
 <a href=../../../../Scratch/en/softwares>Softwares</a>
-<span class=cr>¦</span>
+<span class=co>¦</span>
 <a href=../../../../Scratch/en/about>About</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2009-08-18</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
 <a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
 <a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
-<span class=ca>&</span>
+<span class=bx>&</span>
 <a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=au style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
+<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=aq style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
 ADA:</a>
 <code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>
