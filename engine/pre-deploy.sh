@@ -10,8 +10,8 @@ echo "Optim HTML size"
 # ./engine/dup-for-themes.sh
 echo "Optim Classes accross CSS/HTML"
 ./engine/optim-classes.sh
-echo "Update file size"
-./engine/update-file-size.sh
+# echo "Update file size"
+# ./engine/update-file-size.sh
 echo "Building RSS"
 ./engine/mkrss.sh
 echo "Building Gemini Atom"
