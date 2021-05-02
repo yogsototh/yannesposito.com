@@ -68,6 +68,15 @@ $(DST_DIR)/%.gmi: $(SRC_DIR)/%.org $(GMI) engine/org2gemini_step1.sh
 	mkdir -p $(dir $@)
 	$(GMI) "$<" "$@"
 
+# GEMINI INDEX
+GMI_INDEX := $(DST_DIR)/index.gmi
+MK_GMI_INDEX := engine/mk-gemini-index.sh
+
+$(GMI_INDEX): $(DST_GMI_FILES) $(MK_GMI_INDEX)
+	mkdir -p $(DST_DIR)
+	$(MK_GMI_INDEX)
+
+ALL += $(GMI_INDEX)
 
 # OPTIM PHASE
 
