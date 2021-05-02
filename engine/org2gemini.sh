@@ -12,6 +12,7 @@ dst="$2"
   perl -pe 's#=> file:([^ ]*)#=> $1#g;' | \
   perl -pe 's#\[\[(file:)?([^]]*)\]\]#=> $2#g;' | \
   perl -pe 's#^\* *\n\n##' | \
+  perl -pe 's#^\s*[-\*\+\.]\s*$##' | \ # remove lines with a single special char
   perl -pe 's#^\**[ ]*:.*:$##' | \
   perl -pe 's#^\s[- ]*$#\n#;' > "$dst"
 
