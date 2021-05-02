@@ -14,5 +14,7 @@ echo "Optim Classes accross CSS/HTML"
 # ./engine/update-file-size.sh
 echo "Building RSS"
 ./engine/mkrss.sh
+echo "Building Gemini Index"
+./engine/mk-gemini-index.sh
 echo "Building Gemini Atom"
 ./engine/mk-gemini-atom.sh

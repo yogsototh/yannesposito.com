@@ -7,13 +7,13 @@ dst="$2"
 
 ./engine/org2gemini_step1.sh "$src" | \
   perl -pe 's#^email:\s+yann\@esposito.host\s*#$&=> /files/publickey.txt gpg\n#g;' | \
-  perl -pe 's#\[\[([^]]*)\]\[([^]]*)\]\]#\n=> $1 $2#g;' | \
+  perl -pe 's# ?\[\[([^]]*)\]\[([^]]*)\]\]#\n\n=> $1 $2\n#g;' | \
   perl -pe 's#=> file:([^ ]*)\.org#=> $1.gmi#g;' | \
   perl -pe 's#=> file:([^ ]*)#=> $1#g;' | \
   perl -pe 's#\[\[(file:)?([^]]*)\]\]#=> $2#g;' | \
-  perl -pe 's#^\* *\n##' | \
+  perl -pe 's#^\* *\n\n##' | \
   perl -pe 's#^\**[ ]*:.*:$##' | \
-  perl -pe 's#^\s[- ]*$##;' > "$dst"
+  perl -pe 's#^\s[- ]*$#\n#;' > "$dst"
 
 { echo ""
   echo "=> /index.gmi Home"

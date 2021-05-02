@@ -13,6 +13,8 @@ BEGIN { IGNORECASE=1; }
 
 /^#\+TITLE: / { gsub(/^#[^:]*: /,"# "); }
 /^ *:[a-zA-Z_0-9]*:/ { skip=1; }
+
+# title
 /^\* / { gsub(/^\* /,"# "); }
 /^\*\* / { gsub(/^\*\* /,"## "); }
 /^\*\*\* / { gsub(/^\*\*\* /,"### "); }
@@ -27,7 +29,7 @@ BEGIN { IGNORECASE=1; }
    $0=x" "$0;
 }
 /^- / { gsub(/^- /,"* "); }
-!skip && !htmlskip{ 
+!skip && !htmlskip{
   print;
 }
 /@@/ && !/@@html:/ { htmlskip = 0; }

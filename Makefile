@@ -7,7 +7,8 @@
 all: allatend
 SRC_DIR ?= src
 DST_DIR ?= _site
-SRC_RAW_FILES := $(shell find $(SRC_DIR) -type f)
+NO_DRAFT := -not -path '$(SRC_DIR)/drafts/*'
+SRC_RAW_FILES := $(shell find $(SRC_DIR) -type f $(NO_DRAFT))
 DST_RAW_FILES   := $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%,$(SRC_RAW_FILES))
 ALL             += $(DST_RAW_FILES)
 
@@ -19,7 +20,7 @@ $(DST_DIR)/% : $(SRC_DIR)/%
 
 # ORG -> HTML
 EXT := .org
-SRC_PANDOC_FILES ?= $(shell find $(SRC_DIR) -type f -name "*$(EXT)")
+SRC_PANDOC_FILES ?= $(shell find $(SRC_DIR) -type f -name "*$(EXT)" $(NO_DRAFT))
 DST_PANDOC_FILES ?= $(subst $(EXT),.html, \
                         $(subst $(SRC_DIR),$(DST_DIR), \
                             $(SRC_PANDOC_FILES)))
@@ -55,7 +56,7 @@ ALL += $(HTML_INDEX)
 
 # ORG -> GEMINI
 EXT := .org
-SRC_GMI_FILES ?= $(shell find $(SRC_DIR) -type f -name "*$(EXT)")
+SRC_GMI_FILES ?= $(shell find $(SRC_DIR) -type f -name "*$(EXT)" $(NO_DRAFT))
 DST_GMI_FILES ?= $(subst $(EXT),.gmi, \
                         $(subst $(SRC_DIR),$(DST_DIR), \
                             $(SRC_GMI_FILES)))
@@ -63,7 +64,7 @@ DST_GMI_FILES ?= $(subst $(EXT),.gmi, \
 ALL              += $(DST_GMI_FILES)
 GMI := engine/org2gemini.sh
 
-$(DST_DIR)/%.gmi: $(SRC_DIR)/%.org $(GMI)
+$(DST_DIR)/%.gmi: $(SRC_DIR)/%.org $(GMI) engine/org2gemini_step1.sh
 	mkdir -p $(dir $@)
 	$(GMI) "$<" "$@"
 
