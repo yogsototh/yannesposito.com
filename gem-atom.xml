@@ -39,79 +39,130 @@ email:  yann@esposito.host
 date:  [2021-05-01 Sat]
 keywords:  blog static
 description:  Minimal and fast static website builder with make.
+
 As someone on the Internet said not so far ago.
 Building its own static building system is a rite of passage for many developers.
 It has a lot of nice features.
 It gives a goal with a feeling of accomplishment.
 It is simple enough so most developers could build their own system.
 But it could also become very complex when you go down the rabbit hole.
+
 Along the years I used different tools and used and wrote of few static
 website systems:
-=> https://nanoc.app nanoc (in Ruby), at that time it looked like this: 
+
+*
+
+=> https://nanoc.app nanoc
+ (in Ruby), at that time it looked like this:
+
 => https://web.archive.org/web/20081002071448/http://nanoc.stoneship.org/ old nanoc 2 website
-=> https://jaspervdj.be/hakyll/ hakyll (haskell static website generator)
-=> https://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html org-publish (emacs package in conjunction with org-mode)
-=> https://shakebuild.com shake (haskell again)
+
+*
+
+=> https://jaspervdj.be/hakyll/ hakyll
+ (haskell static website generator)
+*
+
+=> https://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html org-publish
+ (emacs package in conjunction with org-mode)
+*
+
+=> https://shakebuild.com shake
+ (haskell again)
+
 So if you look at the progression, I first used nanoc because I used ruby
 and it was a very new solution, the website looked really great.
-Also the main developer 
-=> https://denisdefreyne.com Denis Defreyne was really helpful.
+Also the main developer
+
+=> https://denisdefreyne.com Denis Defreyne
+ was really helpful.
 Ruby was really great at dealing with regular expressions for hacking my
 documents.
+
 Then I was interested in Haskell, and I switched to a Haskell-made
 solution.
-I used hakyll, and I wrote a bit about it in 
-=> http://yannesposito.com/Scratch/en/blog/Hakyll-setup/ Hakyll Setup.
-As a side note, the author of Hakyll 
-=> https://jaspervdj.be/hakyll/ Jasper Van der Jeugt is apparently a
+I used hakyll, and I wrote a bit about it in
+
+=> http://yannesposito.com/Scratch/en/blog/Hakyll-setup/ Hakyll Setup
+.
+As a side note, the author of Hakyll
+
+=> https://jaspervdj.be/hakyll/ Jasper Van der Jeugt
+ is apparently a
 friend of the author of nanoc.
 They both wrote a static site generators with their preferred programming
 language.
 I added a lot of personal features to my own site builder.
 It was a nice toy project.
+
 Then, due to a major disruption in my professional and private life I
 stopped to take care of my website.
+
 And a few years ago, I wanted to start a new website from scratch.
 In the meantime I switched my editor of choice from vim to Emacs.
 I started to work in Clojure and emacs is generally a natural choice
 because you can configure it with LISP.
-I discovered 
-=> https://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html org-mode (I don't think the homepage of org mode makes justice
+I discovered
+
+=> https://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html org-mode
+ (I don't think the homepage of org mode makes justice
 to how incredible it is).
 So org-mode comes with an export system.
 Thus I switched to org-publish.
-Again 
-=> https://her.esy.fun/posts/0001-new-blog/index.html I wrote a bit about it.
+Again
+
+=> https://her.esy.fun/posts/0001-new-blog/index.html I wrote a bit about it
+.
+
 It was nice, but very slow.
 I improved a few things like writing a short script to
+
+
 => https://her.esy.fun/posts/0005-rss-gen/index.html Generate RSS from a tree of html files.
+
 But I still had the feeling it was too slow.
+
 Static site building is a specific usage of a build system.
 And as I knew I could use =pandoc= to build HTML out of org-mode files
-and still versed in the Haskell culture I decided to try 
-=> https://shakebuild.com shake.
+and still versed in the Haskell culture I decided to try
+
+=> https://shakebuild.com shake
+.
 You can learn more by reading this excellent paper about it, I
-think all developer should read it: 
-=> https://github.com/snowleopard/build-systems/releases/download/icfp-submission/build-systems.pdf Build System à la carte.
-As a bonus, 
-=> https://pandoc.org pandoc is written in Haskell.
-I could then directly use the 
-=> https://pandoc.org pandoc library in my build program.
+think all developer should read it:
+
+=> https://github.com/snowleopard/build-systems/releases/download/icfp-submission/build-systems.pdf Build System à la carte
+.
+
+As a bonus,
+
+=> https://pandoc.org pandoc
+ is written in Haskell.
+I could then directly use the
+
+=> https://pandoc.org pandoc
+ library in my build program.
 It worked like a charm and it was *very fast* as compared to other
 solutions I tried.
 So really let me tell you shake is a great build system.
+
 But it was not perfect.
 While it was very fast, and I was able to use pandoc API directly.
 It made me dependent on Haskell.
 The best way I found to have Haskell reproducible build environment is to
-use 
-=> https://nixos.org/nix nix.
+use
+
+=> https://nixos.org/nix nix
+.
 This was great until the Big Sur update.
 To keep it short, nix stopped working on my computers after I upgraded my
 to Big Sur.
 Gosh, it was painful to fix.
-Concurrently I discovered 
-=> /posts/0016-gemini/index.html gemini and wanted to duplicate my website into
+
+Concurrently I discovered
+
+=> /posts/0016-gemini/index.html gemini
+ and wanted to duplicate my website into
 gemini sphere.
 So I tried to update my build system but my code was to oriented to use
 pandoc and it was painful to have gemini in the middle of it.
@@ -121,10 +172,12 @@ gemini sphere.
 Because gemini is a lot smaller web where you could feel a bit more
 protected from what the Web has become along the years.
 Whatever, in the end, I just had two problems to tackles.
+
 1. Haskell became difficult to trust as very stable tool. Stable in the
    sense that I would not have any support work to do in order to keep just
    using it and not fixing/tweaking it.
 2. Simplify the overall system to have a simpler build description
+
 So a very stable tool that I am pretty sure will still work almost exactly
 as today in 10 years is *=make=* (more precisely gnumake).
 I expected a lot of people had already come to the same conclusion and
@@ -134,18 +187,24 @@ website with make.
 I only found solutions a bit too specific for my need.
 This is why I would like to give you a more generic starting point
 solution.
+
 # The =Makefile=
+
 Instead of copy/pasting my current =Makefile= entirely let me give you a
 more generic one.
 It should be a great start.
+
 The first part will be used to simply copy the files from =src/= to
 =_site/=.
+
 ```makefile
 all: website
+
 # directory containing my org files as well as my assets files
 SRC_DIR ?= src
 # directory where I will but the files for my website (HTML + assets)
 DST_DIR ?= _site
+
 # list all files in src
 # if you want to exclude .org files use the exclude from the find command
 SRC_RAW_FILES := $(shell find $(SRC_DIR) -type f)
@@ -153,13 +212,16 @@ SRC_RAW_FILES := $(shell find $(SRC_DIR) -type f)
 # For my site, I want to publish my source files along the HTML files
 DST_RAW_FILES   := $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%,$(SRC_RAW_FILES))
 ALL             += $(DST_RAW_FILES)
+
 # COPY EVERYTHING (.org file included)
 $(DST_DIR)/% : $(SRC_DIR)/%
 	mkdir -p "$(dir $@)"
 	cp "$<" "$@"
 ```
+
 This part is about running the =pandoc= command for all =org= files in =src/=
 so they generate a html file in =_site/=.
+
 ```makefile
 # ORG -> HTML, If you prefer markdown replace .org by .md
 EXT := .org
@@ -170,6 +232,7 @@ DST_PANDOC_FILES ?= $(subst $(EXT),.html, \
                         $(subst $(SRC_DIR),$(DST_DIR), \
                             $(SRC_PANDOC_FILES)))
 ALL              += $(DST_PANDOC_FILES)
+
 # use a template (you should use one)
 TEMPLATE ?= templates/post.html
 # URL of the CSS put yours
@@ -181,16 +244,20 @@ PANDOC := pandoc \
 			--from org \
 			--to html5 \
 			--standalone
+
 # Generate all html if the org file change or the template change
 $(DST_DIR)/%.html: $(SRC_DIR)/%.org $(TEMPLATE)
 	mkdir -p $(dir $@)
 	$(PANDOC) $< \
 		--output $@
+
 ```
+
 A missing part is often the part where you would like to generate
 an index page to list the latest posts.
 Here you are a bit alone, you need to make one yourself.
 There is not generic way to do this one.
+
 ```makefile
 # Generating an index page is not difficult but not trivial either
 HTML_INDEX := $(DST_DIR)/index.html
@@ -200,31 +267,40 @@ $(HTML_INDEX): $(DST_PANDOC_FILES) $(MKINDEX)
 	$(MKINDEX)
 ALL += $(HTML_INDEX)
 ```
+
 Finally, a few useful make commands. =make clean= and =make deploy=.
+
 ```makefile
 # make deploy will deploy the files to my website write your own script
 deploy: $(ALL)
 	engine/deploy.sh
+
 website: $(ALL)
+
 .PHONY: clean
+
 clean:
 	-rm -rf $(DST_DIR)/*
 ```
+
 Limitation: =make= is old.
 So it really does not support spaces in filenames.
 Take care of that.
+
 But let me tell you.
 While this is quite a minimalist approach (<100 lines) it is nevertheless *very fast*.
 It will only generate the minimal amount of work to generate your website.
 I have a nice watcher script that update the website every time I save a
 file.
 It is almost instantaneous.
+
 The only risky dependencies for my website now is =pandoc=.
 Perhaps, they will change how they generate an HTML from the same org file
 in the future.
 I still use =nix= to pin my pandoc version.
 But the static site builder itself is very simple, very stable and still
 very efficient.
+
 As a conclusion, if you want to write your own static site builder that's great.
 There are plenty of things to learn along the way.
 Still if you want something stable for a long time, with a minimal amount
@@ -257,22 +333,27 @@ email:  yann@esposito.host
 date:  [2020-11-09 Mon]
 keywords:  internet gopher gemini
 description:  How I discovered gemini
+
 This weekend I read an article about gopher and gemini.
 I already seen articles about gemini pass.
 Somehow, it was more appealing to me than gopher space for totally
 subjective reasons I think.
 Anyway this time I really dug into it, and I loved the experience.
+
 At first sight gemini is like a parallel web for nerds.
 It has fundamental changes that I would have really liked to see from the
 modern web.
 The client decide the design, no user tracking, calm, minimalist, simple.
+
 Right now, on the web, most news website make the experience terrible to
 read the article.
 The page is bloated with a lot of animations, popin asking you to accept
 the cookies, ads with videos, strange fonts or design, plenty of
 javascript, trackers, etc...
+
 Gemini make those kind of anti-design impractical.
 In gemini space there is no:
+
 * CSS: the client decide the look of the page, the fonts, the colors, the
   width of the columns, etc...
 * inline image: you can still link to images, but images should not be
@@ -283,28 +364,54 @@ In gemini space there is no:
 * HTTP headers used to track users
 * scripts on the client side
 * hard to parse format (no HTML, XHTML, etc...)
+
 Another strength of Gemini is its protocol's simplicity.
 It is easy to write your own gemini server as well as your own gemini
 client within a few hours of work in your programming language of choice.
+
 And last but not least, gemini is unfit to serve "big" files.
 So we should not experience people going to gemini for music/movie piracy.
 If you want to serve "big" files you should use another protocol.
+
 Personally I started to browse gemini directly from emacs with elpher.
 But I know there are a lot of clients.
+
 I liked gemini so much I hacked my blog to also publish in the gemini sphere.
 I serve my pages with a rust based server.
 And I hacked a quick script to transform my org mode files to gemini format.
 Gemini file format is a kind of super simplified markdown.
 I really like the simplicity of it.
+
 Here are a few links to get you started.
+
 Web:
+
+*
+
 => https://gemini.circumlunar.space gemini homepage
+
+*
+
 => https://thelambdalab.xyz/elpher/ elpher emacs gopher and gemini client
+
+*
+
 => https://portal.mozz.us/gemini/gemini.circumlunar.space/ Explore gemini from the web
+
+
 Gopher:
+
+*
+
 => gopher://thelambdalab.xyz/1/projects/elpher/ elpher
+
+
 Gemini:
+
+*
+
 => gemini://her.esy.fun my website in gemini
+
 
 => /index.gmi Home
 => /gem-atom.xml Feed
@@ -331,14 +438,20 @@ email:  yann@esposito.host
 date:  [2020-10-29 Thu]
 keywords:  org-mode
 description:  How I use org-mode
+
 ______
-In this article I'll try to give an overview of my current use of 
-=> https://orgmode.org org mode.
+In this article I'll try to give an overview of my current use of
+
+=> https://orgmode.org org mode
+.
 I use org mode for:
+
 * tasks management & time tracking
 * writing documents (articles, book, etc...)
 * note taking ; which I consider slightly different from just writing documents
+
 TL;DR:
+
 * =SPC y a=  ⇒ Show agenda view for today
 * =SPC X=  ⇒ Capture a new task, write a description, then =C-c C-c=, save
   that in =tracker.org= (or =inbox.org= depending of the capture template)
@@ -348,17 +461,23 @@ TL;DR:
 * =SPC y o r=  ⇒ =org-refile=, meaning move that task somewhere else
 * =SPC q= ⇒ add/remove tags to that task
 ______
+
 In this article I would like to share a tool that was a real life changer
-to me: 
-=> http://orgmode.org org mode.
+to me:
+
+=> http://orgmode.org org mode
+.
+
 In my opinion emacs is worth learning just for org-mode.
 This is by far the best solution I ever used to manage my tasks.
 I tried a lot of differents tools before it, and this is the only one I
 really stick with.
 It is so versatile that it can adapt to your very specific needs.
+
 The major difficulty faced by tasks management application is the wrong
 level of complexity facing the user.
 This is a very hard problem to tackle.
+
 If your system is too simple, the users will not be able to manage the
 tasks how they would like.
 If your system is too complex, the user will be faced with too much
@@ -368,33 +487,43 @@ the need of their users.
 And org mode is exactly like that.
 Not only starting with org mode can be extremely simple but also there are
 mostly no complexity limit.
+
 Either org mode already handle one of your need, or most of the time you
 will find a package to fulfill your need.
 And if not, it is easy to write your own.
+
 Here is the result of a few years of improving my use of org mode.
 Today I can say that org mode is part of my day to day life.
 I still invest a bit of time to improve minor details of my workflow time
 to time.
 But now my daily workflow is mostly stable.
 So I think I can share it.
+
 ## Overview
+
 ### daily routine
+
 The first thing I do in the morning is to open =org-agenda= view for today.
 It shows me the tasks planned for today.
 What are urgent tasks, deadlines, tasks that have deadlines in a few days, etc...
 I also have a glimpse of my habits, tasks that I should start at some hour
 in the day, etc...
+
 attr_org:  :width 560
 caption:  Org super calendar view
 name:  fig:org-super-agenda
 => ./img/org-super-agenda.png
+
 I then start to track (/clock/) the tasks I'm currently working on.
+
 Often during the day, I need to create new tasks.
 Most of the time I create a task and I add either a deadline or a schedule
 date.
+
 Sometime I also need to deal with interruptions.
 In that case, I /capture/ the interruption that will also create a new task
 being clocked.
+
 At the end of the day, every tasks I worked on are saved in a =tracker.org=
 file.
 That file look like a date tree.
@@ -402,95 +531,127 @@ And I generally generate a /report/ that tell me how much hours I worked
 today.
 Some tasks are tagged =work=.
 The report filter only on the =work= tagged tasks.
+
 Also I have some repeating tasks like review memory cards using a spaced
 repetition plugin.
 I start it, and it shows me a few =cards= with questions that I review.
 So mainly those cards contain info I want to keep in my mind and not only
 in my notes.
+
 ### document writing
+
 Writing documents with org mode and in particular technical document is
 just incredible.
 Org mode feels a lot like markdown.
+
 But org mode shine with its use of *org-babel*.
 *org-babel* is used to execute code inside your document.
 So you can execute block of code and get their result in block of code.
 For technical writing this is extremely useful.
+
 For example, I wrote most part of an OAuth2 provider in Clojure.
 And to generate a documentation to some of our advanced users it is very
 nice to provide the full HTTP request along the response.
+
 But I also often need to play a few tricks in the doc and directly use our
 Clojure code to generate JWT for example.
 The great part is the ability to use those JWT generated from Clojure code
 in the following code block making HTTP call.
+
 That plus the natural ability to fold/unfold the tree structure of the org
 mode file is great.
+
 ### note taking
+
 Time to time, I need to really take the time write note on a technical
 subject or sometime about articles I read about anything.
-For that I use 
-=> https://github.com/org-roam/org-roam org roam.
+For that I use
+
+=> https://github.com/org-roam/org-roam org roam
+.
 I only started to use it a few months ago.
 But this is a great addition to my previous workflow that used =deft= (that
 I still use).
 But I must say, this is pretty perfect as a note taking app.
+
 Mainly you capture notes quite easily and put links about the subject, but
 also tags.
 In the end that generate a graph of notes that you could use later to dig
 into your own notes.
 ### journal
+
 Along with note taking.
 I also try to write a journal note everyday.
 For that I use org-journal (another org mode related package).
 I have a default template which take care of a few metrics I want to focus on.
 And I guess it is different for anyone of us.
+
 ## Task Management
+
 So here is a more detailed description about my org mode usage.
+
 ### Workflow 1; planned tasks : org-agenda + clock
+
 1. look at the current tasks planned for today
 2. select a task, clock it
 3. work on the task
 4. back to the task and clock it out.
+
 I work most of my using emacs[fn:emacs-digression].
 Generally the first thing I do in the morning is opening `org-calendar`.
 It looks like this:
+
 attr_org:  :width 560
 caption:  Org super calendar view
 name:  fig:org-super-agenda
 => ./img/org-super-agenda.png
+
 Pretty brutalist interface which is a great thing to me.
 Distraction free interface going to the essential.
+
 With this view, I see what I planned to do today.
 I also see a few "Due Soon" tasks in case I have the time to handle those.
+
 When I start working on a task I start a clock on it (I simply type =I=
 when my cursor is on the TODO line).
 When I finished some task I change its status from TODO to something else.
 Mainly I'm prompted when doing so:
+
 ```
 { [t] TODO   [p] IN-PROGRESS   [h] HOLD   [w] WAITING
   [d] DONE   [c] CANCELLED     [l] HANDLED }
 ```
+
 And that's it.
 The time spent on the task as been clocked I can work on another task.
+
 Looking at the agenda view you could notice habits.
 They start to become green when you are doing them correctly.
+
 But generally, I don't use much direct clocking from the agenda.
 Most of the time I prefer the capture mechanism.
 Which bring us to "Workflow 2".
+
 ### Workflow 2: Tracking; org-capture
+
 Most of the tasks I perform on the day are not planned.
 I have a generic routine + some prepared events and tasks to performs.
 But during the day you have multiple interruptions, and part of my job is
 to write code reviews too.
 I cannot plan those.
+
 In that case I use =org-capture= along =org-refile=.
 Mainly =org-capture= helps you create a new TODO entry.
 And =org-refile= will help you move that TODO entry to the correct place.
+
 So let say I get a direct message in the chat asking me to do something.
 I generally start org capture (for me it's =SPC X=).
 I am presented with the following choice:
+
 ```
 Select a capture template
 =========================
+
 [t] todo
 [c] chat
 [e] email
@@ -503,17 +664,21 @@ Select a capture template
 ---------------------------------------------------------------------------
 [q] Abort
 ```
+
 In my example it was a chat interruption.
 So I type =i= that presents me with this
+
 ```
   **** IN-PROGRESS |  :interruption:
   [2020-09-23 Wed 08:01]
   ref :: [link-to-where-I-was-in-emacs-when-captured]
 ```
+
 My cursor placed where the =|= is displayed.
 Here I add the tag =chat= and a small description, "dm from John about X" for example.
 Then I type =C-c C-c= and the TODO is placed in a =tracker.org= file under
 a date tree that looks like this:
+
 ```org-mode
   * 2020
   ** 2020-W39
@@ -525,21 +690,26 @@ a date tree that looks like this:
   ref ::
   ...
 ```
+
 So the clock for this task started at the moment at made the capture.
 In my workflow, I prefer to finish the capture and stop clock later.
 So after I finished the capture, the clock is still running while the task
 is put in my tracker file.
+
 Once I finished with that task.
 I can:
+
 1. Jump to the tasks with =SPC n o= (=org-clock-goto=), and stop the
    clock =SPC m c o= (=clock-out=).
 2. Jump to the task and change its status to =DONE= which will stop the clock.
 3. Capture another tasks which will stop the clock on the current task and
    will start on the new one.
+
 By the end of the day, my tracker file will contain a date tree with all
 the tasks I done in the day.
 All tasks nicely clocked.
 I generally create a clock report that look like this:
+
 ```
   #+BEGIN: clocktable :scope subtree :maxlevel 4 :timestamp t :narrow 36! :match "work"
   #+CAPTION: Clock summary at [2020-09-23 Wed 08:20]
@@ -561,25 +731,35 @@ I generally create a clock report that look like this:
   | [2020-09-21 Mon 16:49] | \_      check another PR             |        |   |      | 0:33 |
   | [2020-09-21 Mon 17:03] | \_      answer email                 |        |   |      | 0:55 |
   | [2020-09-21 Mon 17:58] | \_      Chat John about X            |        |   |      | 0:28 |
+
 ```
+
 And that's mostly it for TODOs and tasks handling.
+
 ### Workflow 3: Add new tasks; org-capture / org-refile
 Another thing I do quite often.
 I need to add new task to be done.
 Be it for today or another day.
+
 In that case, I generally use org-capture again.
 This time I choose =t= for TODO and I generally detail the task to be done.
 I add either a SCHEDULE (when I plan to start) or a DEADLINE (when this
 must be finished) and I refile it.
+
 So refile will start a fuzzy search to put this task under some subtree.
 So instead of going to my =tracker.org= file, this goes to my =inbox.org=
 file.
+
 And it will appear in my agenda.
+
 ### Configuration
+
 So to have all of that, I added a lot of configuration over time.
 But here is the most important part.
+
 Most of that config is what I personally think are better defaults.
 And a minor part of it only is about how I organize myself.
+
 ```emacs-lisp
 (defun org-mode-config ()
   "Org-mode."
@@ -594,24 +774,31 @@ And a minor part of it only is about how I organize myself.
                     "CANCELED(c@/!)"
                     "HANDLED(l@/!)")
           (sequence "|" "PAUSE(p)" "CHAT(c)" "EMAIL(e)" "MEETING(m)" "REVIEW(r)" "GEEK(g)")))
+
   ;;; Look & Feel
+
   ;; I like to have something different than ellipsis because I often use them
   ;; myself.
   (setq org-ellipsis " [+]")
   (custom-set-faces '(org-ellipsis ((t (:foreground "gray40" :underline nil)))))
+
   (defun my-org-settings ()
     (org-display-inline-images)
     (setq fill-column 75)
     (abbrev-mode)
     (org-indent-mode)
     nil)
+
   (add-hook 'org-mode-hook #'my-org-settings)
+
   (setq org-tags-column 69)
+
   ;; src block indentation / editing / syntax highlighting
   (setq org-src-fontify-natively t
         org-src-window-setup 'current-window ;; edit in current window
         org-src-preserve-indentation t ;; do not put two spaces on the left
         org-src-tab-acts-natively t)
+
   ;; *** Templates
   ;; the %a refer to the place you are in emacs when you make the capture
   ;; that's very neat when you do that in an email for example.
@@ -646,23 +833,30 @@ And a minor part of it only is about how I organize myself.
           ("f" "chore"        entry (file "~/.org/inbox.org")
            "* IN-PROGRESS %?  :chore:\n%U\n"
            :clock-in t :clock-keep t)))
+
   ;; How to create default clocktable
   (setq org-clock-clocktable-default-properties
         '(:scope subtree :maxlevel 4 :timestamp t :link t :tags t :narrow 36! :match "work"))
+
   ;; How to display default clock report in agenda view
   (setq org-agenda-clockreport-parameter-plist
         '(:lang "en" :maxlevel 4 :fileskip0 t :link t :indent t :narrow 80!))
+
   ;; *** Projectile; default TODO file to create in your projects
   (setq org-projectile-file "inbox.org")
+
   ;; *** Refile mapped to SPC y o r
   (map! :leader :desc "org-refile" "y o r" #'org-refile)
+
   ;; Refile to either the =refile.org= file or to =agenda.org= org =standup.org=
   (setq org-refile-target-files
         '("~/.org/tracker.org"
           "~/.org/inbox.org"))
+
   (setq org-refile-targets
         '((nil :maxlevel . 5)
           (org-refile-target-files :maxlevel . 5)))
+
   ;; *** Agenda
   (setq org-log-into-drawer t) ;; hide the log state change history a bit better
   (setq org-agenda-files org-refile-target-files)
@@ -684,6 +878,7 @@ And a minor part of it only is about how I organize myself.
             (org-agenda-entry-types '(:deadline))
             (org-agenda-overriding-header "Today's Deadlines ")))))
   (setq org-agenda-window-setup 'only-window)
+
   (defun y/go-to-today-agenda ()
     (interactive)
     (org-agenda nil "a"))
@@ -691,17 +886,22 @@ And a minor part of it only is about how I organize myself.
   (map! :leader
         :desc "Today's agenda"
         "y a" #'y/go-to-today-agenda)
+
   ;; ** Org Annotate
+
   ;; Ability to take annotate some files, can of double usage with org-capture.
   ;; Still, I keep that keyboard shortcut here.
   ;; (evil-leader/set-key "oa" 'org-annotate-file)
   (setq org-annotate-file-storage-file "~/.org/annotations.org")
+
+
   ;; ** Org colums
   ;; Can be nice sometime to have that column view
   ;; give a felling of Excel view
   (setq org-columns-default-format
         "%TODO %3PRIORITY %40ITEM(Task) %17Effort(Estimated Effort){:} %CLOCKSUM %8TAGS(TAG)")
   (map! :leader "y o c" #'org-columns)
+
   ;; ** Deft
   ;; useful to find files and jump to them
   (setq deft-extensions '("org" "gpg" "md" "txt"))
@@ -709,6 +909,8 @@ And a minor part of it only is about how I organize myself.
   (setq deft-use-filter-string-for-filename t)
   (setq deft-default-extension "org")
   (setq deft-directory "~/.org")
+
+
   ;; Org Babel
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -720,10 +922,13 @@ And a minor part of it only is about how I organize myself.
      (plantuml . t) ;; UML graphs
      (gnuplot . t)))
   (setq org-plantuml-jar-path "~/bin/plantuml.jar"))
+
 (use-package! org
   :config (org-mode-config))
 ```
+
 And also
+
 ```emacs-lisp
 (use-package! org-super-agenda
   :after org-agenda
@@ -747,13 +952,18 @@ And also
   (setq org-super-agenda-header-map nil)
   (org-super-agenda-mode t))
 ```
+
 ## Conclusions
+
 That article is already quite long.
 But if you intend to dig into org mode, this can be a nice default starting point.
+
 I haven't really dig into some details but only given you the ability to
 start not completely from scratch and with decent default values for an
 already advanced usage.
+
 To resume:
+
 * =SPC y a=  ⇒ Show agenda view for today
 * =SPC X=  ⇒ Capture a new task, write a description, then =C-c C-c=, save
   that in =tracker.org= (or =inbox.org= depending of the capture template)
@@ -762,7 +972,10 @@ To resume:
   tracking tasks you don't need to clock-out
 * =SPC y o r=  ⇒ =org-refile=, meaning move that task somewhere else
 * =SPC q= ⇒ add/remove tags to that task
+
 ## Footnotes
+
+
 [fn:emacs-digression]
 /Short digression/:
 Historically, I coded using different IDEs.
@@ -776,6 +989,7 @@ So learning vim is a bit like learning a new music instrument.
 You need to construct some muscle memory and integrate one after one new
 tricks.
 Once learned your personal editing power start to become overwhelming.
+
 After a few years of vim, I wanted to try to explore new editor tooling.
 So I switched to emacs using the spacemacs distribution.
 So mainly it's vim but with even better keybindgs, helpers and within
@@ -786,12 +1000,17 @@ Emacs use emacs-LISP.
 For editor customization a LISP looked perfect to me.
 LISP is still one of the most powerful and easy to use programming language
 to date.
+
 And recently, as my personal configuration started to grow so much I
-switched to 
-=> https://github.com/hlissner/doom-emacs doom-emacs.
+switched to
+
+=> https://github.com/hlissner/doom-emacs doom-emacs
+.
 I was quite hesitant to do the switch but so far its been a pleasure.
-IMHO using 
-=> https://github.com/hlissner/doom-emacs doom-emacs is a lot better than using my own personal
+IMHO using
+
+=> https://github.com/hlissner/doom-emacs doom-emacs
+ is a lot better than using my own personal
 configuration from scratch because I wouldn't be able to end up with so
 much configuration quality.
 
@@ -820,28 +1039,34 @@ email:  yann@esposito.host
 date:  [2020-09-22 Tue]
 keywords:  emacs
 description:  A small snippet to automatically change theme in emacs.
+
 One thing I kind of like is the ability to change emacs theme depending of
 the hour.
 There are two possibilities.
 One would be to sync with the sun using the current location.
 There is an emacs package for that.
-It's called 
-=> https://github.com/hadronzoo/theme-changer theme-changer which at the time of writing those lines is
+It's called
+
+=> https://github.com/hadronzoo/theme-changer theme-changer
+ which at the time of writing those lines is
 asking for a new maintainer.
 This theme changer is very elegant because like macOS use the location to
 determine if it is day or night.
 But I wanted to have more themes from morning to night:
+
 1. early morning: deep yellow (gruvbox-light),
 2. morning: light yellow (solarized-light),
 3. day: grey/blueish during the day (nord-light),
 4. evening: deep yellow again (gruvbox-light)
 5. night: dark theme (oceanic-next)
 6. sleep time: neon-like (laserwave)
+
 And also, I wanted that to follow my working hours and not really the sun.
 I might change my mind and use the code of theme-changer to follow the
 curve of the sun.
 But for now, just using straight hours should be good enough.
 So here is my piece of code I added to my doom-emacs =config.el=:
+
 ```emacs-lisp
 (defun y/auto-update-theme ()
   "depending on time use different theme"
@@ -858,8 +1083,10 @@ So here is my piece of code I added to my doom-emacs =config.el=:
       (load-theme doom-theme t))
     ;; run that function again next hour
     (run-at-time (format "%02d:%02d" (+ hour 1) 0) nil 'y/auto-update-theme)))
+
 (y/auto-update-theme)
 ```
+
 I'm still playing with it.
 So there still might be a bug.
 Use at your own risk.
@@ -893,52 +1120,78 @@ keywords:  emacs softwares
 description:  Modern tools tend to disappear.
 description:  An app on the web will change, and could break for the worst.
 description:  Quite often it is worth investing into tools with steep learning curve.
+
 This week I didn't take a look at HN to grab some news.
 And this week-end, in the morning I read those:
+
+*
+
 => https://news.ycombinator.com/item?id=23102430 Zoom acquires keybase
+
+*
+
 => https://news.ycombinator.com/item?id=23107123 Making Emacs popular again
+
+*
+
 => https://news.ycombinator.com/item?id=23092904 Github Codespace
+
+
 attr_org:  :width 560
 attr_html:  :alt Midsommar Welcome
 name:  Welcome to Halsingland
 caption:  Welcome to Halsingland
 => Welcome-to-Halsingland.jpg
+
 Similar articles have existed for years on different products.
 What is their common point?
 /Software tooling and their potential change and disappearance/.
+
 Across the years, too many times I saw tools disappear.
 By tools I mean applications, web applications, web sites.
 I think we can also include programming languages, control versioning
 tools, building tools, package manager, etc...
+
 The story can be quite different.
 Sometimes the disappearance of a tool is positive, because I found a better
 one (from cvs to svn to git).
 But, too often, the tool simply disappears or worse downgrade its quality.
 I think we can find different names for those softwares:
+
 * /bloatware/: remember digg, stumbleupon, windows?
 * /downgradeware/: Swagger-UI v3 (v2 is neat), reddit new redesign (looks better, but slow)
 * /payware/: Useful free service ask for money now. Or cost a lot more.
 * /crapware/: Stop to works, quality degrate unless you pay: Twitter streaming API?
 * /dieware/: Remember Friendfeed, Google Reader™, etc...
 * etc...
+
 This is often quite frustrating because you lose a lot of your investment
 with that tool.
+
 Regarding Github Codespace; the integration of VSCode™ inside GitHub™ can
 be even worse.
 This is what I would call a /trapware/.
+
 ______
 /trapware/:
 A software that is intended to put you inside a closed ecosystem.
 By slowly but surely add features that while looking great for the user at
 first sight will prevent interoperability with other tools.
 ______
+
 Furthermore, the fact that Microsoft is involved give this story a taste of
-=> https://en.wikipedia.org/wiki/Embrace,_extend,_and_extinguish Embrace, Extend and Extinguish.
+
+
+=> https://en.wikipedia.org/wiki/Embrace,_extend,_and_extinguish Embrace, Extend and Extinguish
+.
+
 My real concern is that it could become a /work framework/.
 This could impose the full tooling on a lot of developers without giving
 them the freedom of choice.
+
 For a startup CTO/CEO this GitHub™ Codespace™ could offer the following
 advantages:
+
 * /security/: impossible or very hard to steal the source code by a single dev.
 * /homogeneity/: all dev must use the same development environment. Thus
   the integration of new dev is faster.
@@ -949,18 +1202,25 @@ advantages:
   How much bugs involved which part of the code and thus which dev to blame?
   How much time the dev is typing, moving its mouse, how much copy/paste is
   involved, etc...
+
 For the single developers and open source developers this offer:
+
 * /homogeneity/: if I learn how to work in this environment, I'll be easier
   to recruit and I'll know how to work fast.
 * /lower barrier to entry/: for an opensource repository, it will become much
   easier for anyone to propose a PR to fix some issue. No need to local
   clone the project, no need to download all the dependencies to test it
   locally, etc...
+
 But the price to pay is hidden.
+
 attr_org:  :width 560
 attr_html:  :alt Midsommar Sorrow
 caption:  Midsommar Sorrow
 => midsommar-cry.jpg
+
+
+
 1. First, you are now, not able to choose your local working environment on
    your machine.
 2. GitHub™ can still change so much to become one of the previously
@@ -981,15 +1241,22 @@ caption:  Midsommar Sorrow
    Human are very good to play those kind of games.
    So people really working hard for the best will certainly perform badly
    compared to other people that simply trick the system.
+
 So as good as Codespace can be, I think this warning is good to keep that in mind.
 Don't put yourself in a trap.
-The 
-=> https://news.ycombinator.com/item?id=23102430 Zoom acquires keybase is just another story of a dying product.
+
+The
+
+=> https://news.ycombinator.com/item?id=23102430 Zoom acquires keybase
+ is just another story of a dying product.
 Apparently the keybase team will probably stop maintaining keybase.
 The idea behind keybase was pretty nice.
 And they filled a gap in the current open source world.
-The last article I mentionned was 
-=> https://news.ycombinator.com/item?id=23107123 Making Emacs popular again.
+
+The last article I mentionned was
+
+=> https://news.ycombinator.com/item?id=23107123 Making Emacs popular again
+.
 The first comment in HN was about how VSCode is easy to start with as
 compared to Emacs that need a lot more time to configure correctly for your
 needs.
@@ -1001,16 +1268,21 @@ will keep its currently quality.
 Emacs on the other hand is 44 year old and was designed so that it adapts
 to you.
 You are the one using libs and customizing it.
+
 The argument to chose VSCode instead of Emacs look similar to me to the
 debate "Frameworks vs Libraries".
 Frameworks are easier to start with, but soon you find corner cases were
 you start to fight against them.
+
 A Library on the other hand, is just a bunch of helpers you can use.
 And if you need another functionality, just make it using the libraries.
 But you have a lot more work to do yourself.
+
 The common pattern I see during choice decision is often reducible to:
+
 1. Easy now, but less extensible and harder in the long run.
 2. Harder now, but more extensible and easier in the long run.
+
 As a conclustion I would state that when you need to choose between
 different tools.
 Take the time to think about the investment costs.
@@ -1019,21 +1291,30 @@ In particular if you are going to use this tool every days for many hours
 during the following years.
 If on the other hand you don't plan to use that tool much.
 Going with the easy option is certainly the best choice.
+
 I consider Emacs to be of the 2nd option when compared to VSCode.
 Harder to start, but with a lot more control and potential power that you
 will probably never be able to get with most modern IDE/Editor.
 Also choosing a Free Software[fn:1] gives you a lot more control about its
 future.
+
 [fn:1] note I said /free software/ and not /open source/; c.f
 
+
+
 => https://www.gnu.org/philosophy/open-source-misses-the-point.en.html Why Open Source misses the point of Free Software
+
+
 ## Post-conclusion -- Emacs is awesome
+
 attr_org:  :width 560
 attr_html:  :alt Midsommar Joy
 caption:  Midsommar Joy
 => ./midsommar-joy.jpg
+
 To go beyond my opinion, I'd like to share my experience with editors and
 emacs.
+
 When I started to be serious about coding, I was taught to use vi, not vim,
 vi.
 I only knew a few survival vi commands: =i=, =a=, =dd= and =cw=.
@@ -1046,6 +1327,7 @@ And I saw the benefits only after a few weeks.
 They were tremendous.
 No more wrist pain.
 And an incredible edition power at the tip of my fingers[fn:vim].
+
 Then, I started a new job where we decided to code in Clojure.
 Of course Clojure being a LISP and emacs using also a LISP as script
 language, it sound natural to try Emacs even though I loved Vim.
@@ -1056,6 +1338,7 @@ work.
 It did after just a few days or maybe weeks.
 I used Emacs superficially for years.
 This was already quite efficient, at least as much as vim.
+
 Recently I dug deeper.
 I heard much praise about org-mode and I became curious.
 I discovered why it is so great.
@@ -1063,47 +1346,67 @@ Basic org-mode is already quite valuable.
 But if you dig, it starts to be awesome.
 Unfortunately this is a bit hard to describe how org-mode is great
 without really digging a bit.
+
 You can think of org-mode as an extremely versatile todo-list and note
 taker with agenda and time tracking integration.
 You are in deep control of your workflow.
 But mainly here are a few example of usages that are really worth it:
+
 * note taker
 * documentation; this is a far better than markdown
 * interactive document; run code inside the doc, keep track of the results
 * export to HMTL/PDF
 * time tracking
 * reminders
+
 Recently there is also org-roam that is a step further to make orgmode a
 nice place to keep track of all your knowledge in one place.
-You can take a look at this 
-=> https://www.youtube.com/watch?v=Lg61ocfxk3c great video by Matt Williams.
+You can take a look at this
+
+=> https://www.youtube.com/watch?v=Lg61ocfxk3c great video
+ by Matt Williams.
+
 Emacs changed my workflow by making me more productive.
 It improved not only my coding workflow, but my full work environment.
 I started with the editor, a few plugins, and slowly, I integrated more
 aspect of my day to day tasks in emacs.
 Emacs is designed to adapt to your own needs.
 As such it is a lot easier to automate a lot of small tasks.
+
 I really love Emacs and if you want to joyfully join the Emacs users here
 are my advices:
-Start by using either 
-=> https://www.spacemacs.org spacemacs or 
-=> https://github.com/hlissner/doom-emacs doom-emacs.
+
+Start by using either
+
+=> https://www.spacemacs.org spacemacs
+ or
+
+=> https://github.com/hlissner/doom-emacs doom-emacs
+.
 It will take a few weeks to absorb vim keybindings.
 Slowly you'll start to learn how to configure it for your needs.
+
 I really advise you to take a look at org-mode.
 Mastering it could change your carrier.
-Im my opinion 
-=> https://orgmode.org org-mode alone is a good reason enough to use emacs.
+Im my opinion
+
+=> https://orgmode.org org-mode
+ alone is a good reason enough to use emacs.
 But there are a lot more to discover.
+
 However, if you are used to tools from startups, with nice UI/UX.
 Almost no configuration cost.
 Be aware that digging in Free Softwares is a lot different.
 Instead of having a big bundle with everything prepared to work you you
 will need to take the time to configure each part of a big system
 separately.
+
 Howevery I'm deeply convinced the investment is really worth it.
-[fn:vim] 
-=> http://yannesposito.com/Scratch/en/blog/Learn-Vim-Progressively/ Lear Vim Progressively is an old "popular" blog post of mine.
+
+[fn:vim]
+
+=> http://yannesposito.com/Scratch/en/blog/Learn-Vim-Progressively/ Lear Vim Progressively
+ is an old "popular" blog post of mine.
 
 => /index.gmi Home
 => /gem-atom.xml Feed
@@ -1131,29 +1434,47 @@ email:  yann@esposito.host
 keywords:  colorscheme
 description:  A generalization of solarized.
 description:  I tried to keep the same fundamentals and to free some variables.
-After many years using 
-=> https://ethanschoonover.com/solarized/ Solarized I changed to a new one.
+
+After many years using
+
+=> https://ethanschoonover.com/solarized/ Solarized
+ I changed to a new one.
 I use it for my terminal, emacs and most of my tools.
-This is inspired by both 
-=> https://ethanschoonover.com/solarized/ Solarized and 
-=> https://nordtheme.com Nord.
+
+This is inspired by both
+
+=> https://ethanschoonover.com/solarized/ Solarized
+ and
+
+=> https://nordtheme.com Nord
+.
 I switched because I wanted a greyer theme.
+
 Ethan Shoovnover the creator of Solarized gave plenty of information about
 the creation of his colorscheme.
-And I stumbled upon the 
-=> https://nordtheme.com Nord theme.
+And I stumbled upon the
+
+=> https://nordtheme.com Nord
+ theme.
 And I really liked it.
 But while the colors are great, it is not as easy to switch from light to
 dark theme than with solarized because Solarized has a lot of nice
 properties.
+
 So I kept the main principle used to create Solarized but freed a few parameters.
 The tint of the dark and light colors for the background and the text, as
 well as the contrast of the colors.
+
 And I created this minimal application in Purescript:
+
 https://solaryzed.esy.fun
+
 It is still not perfect, because the real theme I use for my website as a
 slightly bigger contrast for text.
+
 Here is the CSS you could use:
+
+
 ______html
 <style>#colors div {
   display: inline-block;
@@ -1186,6 +1507,7 @@ ______
 ______html
 </div>
 ______
+
 ```css :tangle solaryzed.css
 :root {
     color-scheme: light dark; /* support color scheme */
@@ -1205,6 +1527,7 @@ ______
     --b:   #5679a4;
     --c:   #4c8493;
     --g:   #728b5c;
+
     --bg:  var(--b3);
     --fg:  var(--b02);
     --fg0: var(--b0);  /* lower contrast */
@@ -1212,6 +1535,7 @@ ______
     --fg2: var(--b01); /* second color block foreground */
     --acc: var(--o);   /* accent color */
 }
+
 @media (prefers-color-scheme: dark) {
     :root {
         /* Dark */
@@ -1223,6 +1547,7 @@ ______
         --acc: var(--g);   /* accent color */
     }
 }
+
 body,.main {
     background: var(--bg);
     color: var(--fg);
@@ -1255,38 +1580,50 @@ email:  yann@esposito.host
 => /files/publickey.txt gpg
 keywords:  org-mode blog
 description:  Add links to code block during orgmode export.
+
 I wanted to add a link to the file I export with org tangle.
 And it was surprisingly difficult to find.
 Apparently I am one of the few people that use orgmode the way I do.
+
 Using orgmode file as markdown to blog.
 And exporting to a different file some code block.
 So I often endup writing something like:
+
 ```org
 ..begin_src elisp :tangle foo.el
 ```
+
 I tangle the source code that export the code block to an external file.
 Then I use this hook during HTML export to add a caption with the link the
 file I tangled:
+
 ```elisp :tangle org_html_export_show_tangle.el
 (defun my-add-link-to-tangled-files (backend)
   "Add a link just before source code block with tangled files.
 BACKEND is the export backend. Used as symbol."
   (while ;; (re-search-forward )
       (re-search-forward "^\\( *\\)#\\+begin_src .*:tangle \\([^\s\n]*\\)" nil t)
-    (replace-match "\\1#+CAPTION: 
-=> ./\\2 =\\2=\n\\&")))
+    (replace-match "\\1#+CAPTION:
+
+=> ./\\2 =\\2=
+\n\\&")))
+
 (add-hook 'org-export-before-processing-hook
           'my-add-link-to-tangled-files)
 ```
+
 And this article is an example of the result.
 The link with the listing is generated automatically for me.
+
 A small note regarding CSS.
 My =pre= have a =margin-top=.
 But I wanted to get rid of it when the previous block was a =label=.
 This is achievable with:
+
 ```css
 label + pre {margin-top: 0;}
 ```
+
 That's it.
 It took me really a long time to just think about using caption, and not
 trying something smarter like injecting html code, etc...
@@ -1321,8 +1658,10 @@ email:  yann@esposito.host
 => /files/publickey.txt gpg
 keywords:  Haskell programming functional tutorial
 description:  A short and intense introduction to Haskell. This is an update of my old (2012) article. A lot of things have changed since then. Mostly I changed my approach about the easiest way to install a Haskell playground. I removed the not as important part, and added a short introduction about starting a new project.
+
 ______
 *Prelude*
+
 In 2012, I really believed that every developer should learn Haskell.
 This is why I wrote my old article.
 This is the end of 2019 and I still strongly believe that.
@@ -1332,7 +1671,9 @@ There are some features in Haskell that I really miss in most programming
 languages and that would not appear to be difficult to provide.
 Typically sum types.
 A concept so simple yet so helpful.
+
 Since I wrote my article the Haskell ecosystem has evolved:
+
 1. Project building has different existing solutions.
    When I wrote this article I made some web applications that I can no
    longer build today.
@@ -1365,15 +1706,18 @@ Since I wrote my article the Haskell ecosystem has evolved:
    A lot more big projects uses Haskell.
    Haskell proved its utility to write succesful complex entreprise
    projects.
+
 While the ecosystem evolved I believe that I myself have certainly matured.
 Since 2013 I'm paid to develop in Clojure.
 I write most of my personal side projects in Haskell or in some
 Haskell-inspired language.
+
 As such I can follow two functional programming communities growth and
 evolution.
 I am kind of confident that my Haskell understanding is a lot better than
 before.
 But I still think, the ability to learn new Haskell subject is infinite.
+
 Someday I would like to write a post about my current team philosophy about
 programming.
 Our main rule is to use as few features of a programming language as
@@ -1385,8 +1729,10 @@ features, I generally program without those.
 With just a very few amount of Haskell features you will already be in
 enviromnent with a *lot* of benefits as compared to many programming
 languages.
+
 So enough talk, here is my updated article.
 I added a section about how to create a new project template with nix.
+
 I will try to write other articles about how to write a real program in
 Haskell.
 I tried to add those to this already long article, but, it occurs to be
@@ -1394,68 +1740,93 @@ more work than expected.
 So I preferred stop at this point for now and provide separate articles in
 the future related to Haskell application development.
 ______
+
 # Introduction
+
 I really believe that every developer should learn Haskell.
 I don't think every dev needs to be a super Haskell ninja, but they should
 at least discover what Haskell has to offer.
 Learning Haskell opens your mind.
+
 Mainstream languages share the same foundations:
+
 * variables
 * loops
 * pointers[fn:1]
 * data structures, objects and classes (for most)
+
 Haskell is very different.
 The language uses a lot of concepts I had never heard about before.
 Many of those concepts will help you become a better programmer.
+
 But learning Haskell can be (and will certainly be) hard.
 It was for me.
 In this article I try to provide as much help as possible to accelerate
 your learning.
+
 This article will certainly be hard to follow.
 This is on purpose.
 There is no shortcut to learning Haskell.
 It is hard and challenging.
 But I believe this is a good thing.
 It is because it is hard that Haskell is interesting and rewarding.
+
 Today, I could not really provide a conventional path to learn Haskell.
-So I think the best I can do is point you to the 
-=> https://www.haskell.org/documentation/ haskell.org documentation
+So I think the best I can do is point you to the
+
+=> https://www.haskell.org/documentation/ haskell.org
+ documentation
 website.
 And you will see that most path involve a long learning process.
 By that, I mean that you should read a long book and invest a lot of hours
 and certainly days before having a good idea about what Haskell is all about.
+
 In contrast, this article is a brief and dense overview of all
 major aspects of Haskell.
 I also added some information I lacked while I learned Haskell.
+
 The article contains five parts:
+
 * *Essential Haskell*: Haskell syntax, and some essential notions.
 * *First Dive*:
+
   - Functional style; a progressive example, from imperative to
     functional style
   - Types; types and a standard binary tree example
   - Infinite Structure; manipulate an infinite binary tree!
+
 * *Dive into the impure*:
+
   - Deal with IO; A minimal example
   - IO trick explained; the hidden detail I lacked to understand IO
   - Monads; incredible how we can generalize
+
 * *Start swimming*: Start a new project.
+
 ## Install
+
 caption:  Haskell logo
 => ./Haskell-logo.png
+
 If you are not using either Linux nor macOS, you should look here:
 https://www.haskell.org/downloads/.
 Otherwise, you can follow my advice to use nix:
-1. Install 
-=> https://nixos.org/nix nix (The version I used while writting this article was
+
+1. Install
+
+=> https://nixos.org/nix nix
+ (The version I used while writting this article was
    nix (Nix) 2.3.1, future 2.X.X versions should work with the 
    examples in this article)
 3. create a new empty directory =hsenv= somewhere
 4. Put the following =shell.nix= file inside it
+
    ```nix :tangle shell.nix
    { nixpkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {} }:
    let
      inherit (nixpkgs) pkgs;
      inherit (pkgs) haskellPackages;
+
 
      haskellDeps = ps: with ps; [
        base
@@ -1463,7 +1834,9 @@ Otherwise, you can follow my advice to use nix:
        containers
      ];
 
+
      ghc = haskellPackages.ghcWithPackages haskellDeps;
+
 
      nixPackages = [
        ghc
@@ -1479,6 +1852,7 @@ Otherwise, you can follow my advice to use nix:
      '';
    }
    ```
+
 5. In the =hsenv= directory, in a terminal, run =nix-shell --pure=.
    You should wait a lot of time for everything to download.
    And you should be ready.
@@ -1490,6 +1864,7 @@ Otherwise, you can follow my advice to use nix:
    - the Haskell libraries =protolude= and =containers=.
 6. To test your env, rung =ghci= and type =import Protolude= you should see
    something like this:
+
    ```
    ~/hsenv> nix-shell
    [nix-shell:~/hsenv]$ ghci
@@ -1497,12 +1872,16 @@ Otherwise, you can follow my advice to use nix:
    Prelude> import Protolude
    Prelude Protolude>
    ```
+
 Congratulations you should be ready to start now.
+
 ______
 * There are multiple ways to install Haskell and I don't think there is a
   full consensus between developer about what is the best method.
-  If you whish to use another method take a look at 
-=> http://haskell.org haskell.org.
+  If you whish to use another method take a look at
+
+=> http://haskell.org haskell.org
+.
 * This install method is only suitable for using as a playground and I
   think perfectly adapted to run code example from this article.
   I do not recommend it for serious development.
@@ -1511,25 +1890,35 @@ ______
   really a lot of other kind of packages.
   This can be helpful if you need to depends on a Haskell package that
   itself depends on a system library, for example =ncurses=.
-* I use 
-=> http://nixos.org/nix =nix= for other projects unrelated to Haskell.
+* I use
+
+=> http://nixos.org/nix =nix=
+ for other projects unrelated to Haskell.
   For example, I use the nix-shell bang pattern for shell script for which
   I can assume the executable I want are present.
 ______
+
 ______
-*BONUS*: use 
+*BONUS*: use
+
 => https://direnv.net =direnv=
+
+
 ```
 ~ cd hsenv
 ~ echo "use nix" > .envrc
 ~ direnv allow
 ```
+
 Now each time you'll cd into your hsenv directory you'll get the
 environment set for you.
 ______
+
 ## Don't be afraid
+
 caption:  The Scream
 => ./munch_TheScream.jpg
+
 Many books/articles about Haskell start by introducing some esoteric
 formula (quick sort, Fibonacci, etc...).
 I will do the exact opposite.
@@ -1537,35 +1926,43 @@ At first I won't show you any Haskell super power.
 I will start with similarities between Haskell and other programming
 languages.
 Let's jump to the mandatory "Hello World".
+
 ```haskell :tangle hello.hs
 main = putStrLn "Hello World!"
 ```
+
 ______
 ~ runghc hello.hs
 Hello World!
 ______
+
 Now, a program asking your name and replying "Hello" using the name you
 entered:
+
 ```haskell :tangle name.hs
 main = do
     print "What is your name?"
     name <- getLine
     print ("Hello " ++ name ++ "!")
 ```
+
 First, let us compare this with similar programs in a few imperative
 languages:
+
 ```python
 # Python
 print "What is your name?"
 name = raw_input()
 print "Hello %s!" % name
 ```
+
 ```ruby
 # Ruby
 puts "What is your name?"
 name = gets.chomp
 puts "Hello #{name}!"
 ```
+
 ```C
 // In C
 #include <stdio.h>
@@ -1578,28 +1975,40 @@ int main (int argc, char **argv) {
     return 0;
 }
 ```
+
 The structure is the same, but there are some syntax differences.
 The main part of this tutorial will be dedicated to explaining why.
+
 In Haskell there is a =main= function and every object has a type.
 The type of =main= is =IO ()=.
 This means =main= will cause side effects.
+
 Just remember that Haskell can look a lot like mainstream imperative
 languages.
+
 ## Very basic Haskell
+
 caption:  Picasso minimal owl
 => ./picasso_owl.jpg
+
 Before continuing you need to be warned about some essential properties
 of Haskell.
+
 /Functional/
+
 Haskell is a functional language.
 If you have an imperative language background, you'll have to learn a lot
 of new things.
 Hopefully many of these new concepts will help you to program even in
 imperative languages.
+
 /Advanced Static Typing/
+
 Instead of being in your way like in =C=, =C++= or =Java=, the type system
 is here to help you.
+
 /Purity/
+
 Generally your functions won't modify anything in the outside world.
 This means they can't modify the value of a variable, can't get user input,
 can't write on the screen, can't launch a missile.
@@ -1607,15 +2016,20 @@ On the other hand, parallelism will be very easy to achieve.
 Haskell makes it clear where effects occur and where your code is pure.
 Also, it will be far easier to reason about your program.
 Most bugs will be prevented in the pure parts of your program.
+
 Furthermore, pure functions follow a fundamental law in Haskell:
+
 ______
 Applying a function with the same parameters always returns the same value.
 ______
+
 /Laziness/
+
 Laziness by default is an uncommon language design.
 By default, Haskell evaluates something only when it is needed.
 In consequence, it provides an elegant way to manipulate infinite
 structures, for example.
+
 A last warning about how you should read Haskell code.
 For me, it is like reading scientific papers.
 Some parts are clear, but when you see a formula, just focus and read
@@ -1624,70 +2038,98 @@ Also, while learning Haskell, it /really/ doesn't matter much if you don't
 understand syntax details.
 If you meet a =>>==, =<$>=, =<-= or any other weird symbol, just ignore
 them and follows the flow of the code.
+
 ### Function declaration
+
 You might be used to declaring functions like this:
+
 In =C=:
+
 ```C
 int f(int x, int y) {
     return x*x + y*y;
 }
 ```
+
 In JavaScript:
+
 ```javascript
 function f(x,y) {
     return x*x + y*y;
 }
 ```
+
 in Python:
+
 ```python
 def f(x,y):
     return x*x + y*y
 ```
+
 in Ruby:
+
 ```ruby
 def f(x,y)
     x*x + y*y
 end
 ```
+
 In Scheme:
+
 ```scheme
 (define (f x y)
     (+ (* x x) (* y y)))
 ```
+
 Finally, the Haskell way is:
+
 ```haskell
 f x y = x*x + y*y
 ```
+
 Very clean. No parenthesis, no =def=.
+
 Don't forget, Haskell uses functions and types a lot.
 It is thus very easy to define them.
 The syntax was particularly well thought out for these objects.
+
 ### A Type Example
+
 Although it is not mandatory, type information for functions is usually
 made explicit.
 It's not mandatory because the compiler is smart enough to infer it for
 you.
 It's a good idea because it indicates intent and understanding.
+
 Let's play a little.
 We declare the type using =::=
+
 ```haskell :tangle basic.hs
 f :: Int -> Int -> Int
 f x y = x*x + y*y
+
 main = print (f 2 3)
 ```
+
 ______
 [nix-shell:~/hsenv]$ runghc basic.hs
 13
 ______
+
 Now try
+
 ```haskell :tangle error_basic.hs
 f :: Int -> Int -> Int
 f x y = x*x + y*y
+
 main = print (f 2.3 4.2)
 ```
+
 You should get this error:
+
 ______
 [nix-shell:~/hsenv]$ runghc error_basic.hs
+
 error_basic.hs:4:17: error:
     • No instance for (Fractional Int) arising from the literal ‘2.3’
     • In the first argument of ‘f’, namely ‘2.3’
@@ -1697,23 +2139,31 @@ error_basic.hs:4:17: error:
 4 | main = print (f 2.3 4.2)
   |                 ^^^
 ______
+
 The problem: =4.2= isn't an Int.
+
 The solution: don't declare a type for =f= for the moment and let Haskell
 infer the most general type for us:
+
 ```haskell :tangle float_basic.hs
 f x y = x*x + y*y
+
 main = print (f 2.3 4.2)
 ```
+
 ______
 [nix-shell:~/hsenv]$ runghc float_basic.hs
 22.93
 ______
+
 It works!
 Luckily, we don't have to declare a new function for every single type.
 For example, in =C=, you'll have to declare a function for =int=, for
 =float=, for =long=, for =double=, etc...
+
 But, what type should we declare?
 To discover the type Haskell has found for us, just launch ghci:
+
 ______
 % ghci
 GHCi, version 7.0.4: http://www.haskell.org/ghc/  :? for help
@@ -1725,12 +2175,16 @@ Prelude> let f x y = x*x + y*y
 Prelude> :type f
 f :: Num a => a -> a -> a
 ______
+
 Uh? What is this strange type?
+
 ```haskell
 Num a => a -> a -> a
 ```
+
 First, let's focus on the right part =a -> a -> a=.
 To understand it, just look at a list of progressive examples:
+
 | The written type   | Its meaning                                                               |
 |--------------------+---------------------------------------------------------------------------|
 | =Int=              | the type =Int=                                                            |
@@ -1739,71 +2193,95 @@ To understand it, just look at a list of progressive examples:
 | =a -> Int=         | the type function from any type to =Int=                                  |
 | =a -> a=           | the type function from any type =a= to the same type =a=                  |
 | =a -> a -> a=      | the type function of two arguments of any type =a= to the same type =a=   |
+
 In the type =a -> a -> a=, the letter =a= is a /type variable/.
 It means =f= is a function with two arguments and both arguments and the
 result have the same type.
 The type variable =a= could take many different type values.
 For example =Int=, =Integer=, =Float=...
+
 So instead of having a forced type like in =C= and having to declare a
 function for =int=, =long=, =float=, =double=, etc., we declare only one
 function like in a dynamically typed language.
+
 This is sometimes called parametric polymorphism.
 It's also called having your cake and eating it too.
+
 Generally =a= can be any type, for example a =String= or an =Int=, but also
 more complex types, like =Trees=, other functions, etc...
 But here our type is prefixed with =Num a =>=.
+
 =Num= is a /type class/.
 A type class can be understood as a set of types.
 =Num= contains only types which behave like numbers.
 More precisely, =Num= is class containing types which implement a specific
 list of functions, and in particular =(+)= and =(*)=.
+
 Type classes are a very powerful language construct.
 We can do some incredibly powerful stuff with this.
 More on this later.
+
 Finally, =Num a => a -> a -> a= means:
+
 Let =a= be a type belonging to the =Num= type class.
 This is a function from type =a= to (=a -> a=).
+
 Yes, strange.
 In fact, in Haskell no function really has two arguments.
 Instead all functions have only one argument.
 But we will note that taking two arguments is equivalent to taking one
 argument and returning a function taking the second argument as a
 parameter.
+
 More precisely =f 3 4= is equivalent to =(f 3) 4=.
 Note =f 3= is a function:
+
 ```haskell
 f :: Num a => a -> a -> a
+
 g :: Num a => a -> a
 g = f 3
+
 g y ⇔ 3*3 + y*y
 ```
+
 Another notation exists for functions.
 The lambda notation allows us to create functions without assigning them a
 name.
 We call them anonymous functions.
 We could also have written:
+
 ```haskell
   g = \y -> 3*3 + y*y
 ```
+
 The =\= is used because it looks like =λ= and is ASCII.
+
 If you are not used to functional programming your brain should be starting
 to heat up.
 It is time to make a real application.
+
 But just before that, we should verify the type system works as
 expected:
+
 ```haskell :tangle typed_float_basic.hs
 f :: Num a => a -> a -> a
 f x y = x*x + y*y
+
 main = print (f 3 2.4)
 ```
+
 It works, because, =3= is a valid representation both for Fractional
 numbers like Float and for Integer.
 As =2.4= is a Fractional number, =3= is then interpreted as being also a
 Fractional number.
+
 If we force our function to work with different types, it will fail:
+
 ```haskell
 f :: Num a => a -> a -> a
 f x y = x*x + y*y
+
 x :: Int
 x = 3
 y :: Float
@@ -1811,47 +2289,66 @@ y = 2.4
 -- won't work because type x ≠ type y
 main = print (f x y)
 ```
+
 The compiler complains.
 The two parameters must have the same type.
+
 If you believe that this is a bad idea, and that the compiler should make
 the transformation from one type to another for you, you should really
-watch this great (and funny) video: 
+watch this great (and funny) video:
+
 => https://www.destroyallsoftware.com/talks/wat WAT
+
+
 # Essential Haskell
+
 caption:  Kandinsky Gugg
 => ./kandinsky_gugg.jpg
+
 I suggest that you skim this part.
 Think of it as a reference.
 Haskell has a lot of features.
 A lot of information is missing here.
 Come back here if the notation feels strange.
+
 I use the =⇔= symbol to state that two expression are equivalent.
 It is a meta notation, =⇔= does not exists in Haskell.
 I will also use =⇒= to show what the return value of an expression is.
+
 ## Notations
+
 **** Arithmetic
+
 ```
 3 + 2 * 6 / 3 ⇔ 3 + ((2*6)/3)
 ```
+
 **** Logic
+
 ```
 True || False ⇒ True
 True && False ⇒ False
 True == False ⇒ False
 True /= False ⇒ True  (/=) is the operator for different
 ```
+
 **** Powers
+
 ```
 x^n     for n an integral (understand Int or Integer)
 x**y    for y any kind of number (Float for example)
 ```
+
 =Integer= has no limit except the capacity of your machine:
+
 ______
 4^103
 102844034832575377634685573909834406561420991602098741459288064
 ______
+
 Yeah! And also rational numbers FTW! But you need to import the module
 =Data.Ratio=:
+
 ______
 $ ghci
 ....
@@ -1859,7 +2356,9 @@ Prelude> :m Data.Ratio
 Data.Ratio> (11 % 15) * (5 % 3)
 11 % 9
 ______
+
 **** Lists
+
 ______
 []                      ⇔ empty list
 [1,2,3]                 ⇔ List of integral
@@ -1873,8 +2372,11 @@ ______
 [2,3,5,7,11..100]       ⇔ ERROR! I am not so smart!
 [10,9..1]               ⇔ [10,9,8,7,6,5,4,3,2,1]
 ______
+
 **** Strings
+
 In Haskell strings are list of =Char=.
+
 ______
 'a' :: Char
 "a" :: [Char]
@@ -1882,41 +2384,55 @@ ______
 "ab" ⇔ ['a','b'] ⇔  'a':"b" ⇔ 'a':['b'] ⇔ 'a':'b':[]
 "abc" ⇔ "ab"++"c"
 ______
+
 ______
 /Remark/: In real code you shouldn't use list of char to represent text.
 You should mostly use =Data.Text= instead.
 If you want to represent a stream of ASCII char, you should use
 =Data.ByteString=.
 ______
+
 **** Tuples
+
 The type of couple is =(a,b)=.
 Elements in a tuple can have different types.
+
 ______
 -- All these tuples are valid
 (2,"foo")
 (3,'a',[2,3])
 ((2,"a"),"c",3)
+
 fst (x,y)       ⇒  x
 snd (x,y)       ⇒  y
+
 fst (x,y,z)     ⇒  ERROR: fst :: (a,b) -> a
 snd (x,y,z)     ⇒  ERROR: snd :: (a,b) -> b
 ______
+
 **** Deal with parentheses
+
 To remove some parentheses you can use two functions: =($)= and =(.)=.
+
 ______
 -- By default:
 f g h x         ⇔  (((f g) h) x)
+
 -- the $ replace parenthesis from the $
 -- to the end of the expression
 f g $ h x       ⇔  f g (h x) ⇔ (f g) (h x)
 f $ g h x       ⇔  f (g h x) ⇔ f ((g h) x)
 f $ g $ h x     ⇔  f (g (h x))
+
 -- (.) the composition function
 (f . g) x       ⇔  f (g x)
 (f . g . h) x   ⇔  f (g (h x))
 ______
+
 ## Useful notations for functions
+
 Just a reminder:
+
 ______
 x :: Int            ⇔ x is of type Int
 x :: a              ⇔ x can be of any type
@@ -1926,56 +2442,76 @@ f :: a -> b         ⇔ f is a function from a to b
 f :: a -> b -> c    ⇔ f is a function from a to (b→c)
 f :: (a -> b) -> c  ⇔ f is a function from (a→b) to c
 ______
+
 Remember that defining the type of a function before its declaration isn't
 mandatory.
 Haskell infers the most general type for you.
 But it is considered a good practice to do so.
+
 /Infix notation/
+
 ```haskell :tangle functions.hs
 square :: Num a => a -> a
 square x = x^2
 ```
+
 Note =^= uses infix notation.
 For each infix operator there its associated prefix notation.
 You just have to put it inside parenthesis.
+
 ```haskell :tangle functions.hs
 square' x = (^) x 2
+
 square'' x = (^2) x
 ```
+
 We can remove =x= in the left and right side!
 It's called η-reduction.
+
 ```haskell :tangle functions.hs
 square''' = (^2)
 ```
+
 Note we can declare functions with ='= in their name.
 Here:
+
 ______
 =square= ⇔ =square'= ⇔ =square''= ⇔ =square'''=
 ______
+
 Note for each prefix notation you can transform it to infix notation with
 =`= like this:
+
 ______
 foo x y ↔ x `foo` y
 ______
+
 /Tests/
+
 An implementation of the absolute function.
+
 ```haskell :tangle functions.hs
 absolute :: (Ord a, Num a) => a -> a
 absolute x = if x >= 0 then x else -x
 ```
+
 Note: the =if .. then .. else= Haskell notation is more like the =¤?¤:¤=
 C operator.
 You cannot forget the =else=.
+
 Another equivalent version:
+
 ```haskell :tangle functions.hs
 absolute' x
     | x >= 0 = x
     | otherwise = -x
 ```
+
 ______
 Notation warning: indentation is /important/ in Haskell.
 Like in Python, bad indentation can break your code!
 ______
+
 ```haskell :tangle functions.hs
 main = do
       print $ square 10
@@ -1987,6 +2523,7 @@ main = do
       print $ absolute' 10
       print $ absolute' (-10)
 ```
+
 ______
 ~/t/hsenv> runghc functions.hs
 100
@@ -1998,24 +2535,34 @@ ______
 10
 10
 ______
+
 # First dive
+
 In this part, you will be introduced to functional style, types and
 infinite structures manipulation.
+
 ## Functional style
+
 caption:  Biomechanical Landscape by H.R. Giger
 => ./hr_giger_biomechanicallandscape_500.jpg
+
 In this section, I will give a short example of the impressive refactoring
 ability provided by Haskell.
 We will select a problem and solve it in a standard imperative way.
 Then I will make the code evolve.
 The end result will be both more elegant and easier to adapt.
+
 Let's solve the following problem:
+
 ______
 Given a list of integers, return the sum of the even numbers in the list.
+
 example: =[1,2,3,4,5] ⇒  2 + 4 ⇒  6=
 ______
+
 To show differences between functional and imperative approaches, I'll
 start by providing an imperative solution (in javascript):
+
 ```javascript
 function evenSum(list) {
     var result = 0;
@@ -2027,20 +2574,25 @@ function evenSum(list) {
     return result;
 }
 ```
+
 In Haskell, by contrast, we don't have variables or a for loop.
 One solution to achieve the same result without loops is to use recursion.
+
 ______
 /Remark/: Recursion is generally perceived as slow in imperative languages.
 But this is generally not the case in functional programming.
 Most of the time Haskell will handle recursive functions efficiently.
 ______
+
 Here is a =C= version of the recursive function.
 Note that for simplicity I assume the int list ends with the first =0=
 value.
+
 ```C
 int evenSum(int *list) {
     return accumSum(0,list);
 }
+
 int accumSum(int n, int *list) {
     int x;
     int *xs;
@@ -2057,37 +2609,48 @@ int accumSum(int n, int *list) {
     }
 }
 ```
+
 Keep this code in mind.
 We will translate it into Haskell.
 First, however, I need to introduce three simple but useful functions we
 will use:
+
 ```haskell
 even :: Integral a => a -> Bool
 head :: [a] -> a
 tail :: [a] -> [a]
 ```
+
 =even= verifies if a number is even.
+
 ```haskell
 even :: Integral a => a -> Bool
 even 3  ⇒ False
 even 2  ⇒ True
 ```
+
 =head= returns the first element of a list:
+
 ```haskell
 head :: [a] -> a
 head [1,2,3] ⇒ 1
 head []      ⇒ ERROR
 ```
+
 =tail= returns all elements of a list, except the first:
+
 ```haskell
 tail :: [a] -> [a]
 tail [1,2,3] ⇒ [2,3]
 tail [3]     ⇒ []
 tail []      ⇒ ERROR
 ```
+
 Note that for any non empty list =l=, =l ⇔ (head l):(tail l)=
+
 The first Haskell solution.
 The function =evenSum= returns the sum of all even numbers in a list:
+
 ```haskell :tangle evenSum_v1.hs
 -- Version 1
 evenSum :: [Integer] -> Integer
@@ -2100,7 +2663,9 @@ accumSum n l = if l == []
                               then accumSum (n+x) xs
                               else accumSum n xs
 ```
+
 To test a function you can use =ghci=:
+
 ______
 ~/t/hsenv> ghci
 GHCi, version 8.6.5: http://www.haskell.org/ghc/  :? for help
@@ -2110,7 +2675,9 @@ Ok, one module loaded.
 *Main> evenSum [1..5]
 6
 ______
+
 Here is an example of execution[fn:2]:
+
 ______
 *Main> evenSum [1..5]
 accumSum 0 [1,2,3,4,5]
@@ -2129,15 +2696,19 @@ l == []
 0+6
 6
 ______
+
 Coming from an imperative language all should seem right.
 In fact, many things can be improved here.
 First, we can generalize the type.
+
 ```haskell
 evenSum :: Integral a => [a] -> a
 ```
+
 Next, we can use sub functions using =where= or =let=.
 This way our =accumSum= function will not pollute the namespace of our
 module.
+
 ```haskell :tangle evenSum_v2.hs
 -- Version 2
 evenSum :: Integral a => [a] -> a
@@ -2151,7 +2722,9 @@ evenSum l = accumSum 0 l
                             then accumSum (n+x) xs
                             else accumSum n xs
 ```
+
 Next, we can use pattern matching.
+
 ```haskell :tangle evenSum_v3.hs
 -- Version 3
 evenSum l = accumSum 0 l
@@ -2162,16 +2735,21 @@ evenSum l = accumSum 0 l
                 then accumSum (n+x) xs
                 else accumSum n xs
 ```
+
 What is pattern matching?
 Use values instead of general parameter names[fn:3].
+
 Instead of saying: =foo l = if l == [] then <x> else <y>= you simply state:
+
 ```haskell
 foo [] =  <x>
 foo l  =  <y>
 ```
+
 But pattern matching goes even further.
 It is also able to inspect the inner data of a complex value.
 We can replace
+
 ```haskell
 foo l =  let x  = head l
              xs = tail l
@@ -2179,24 +2757,33 @@ foo l =  let x  = head l
              then foo (n+x) xs
              else foo n xs
 ```
+
 with
+
 ```haskell
 foo (x:xs) = if even x
                  then foo (n+x) xs
                  else foo n xs
 ```
+
 This is a very useful feature.
 It makes our code both terser and easier to read.
+
 In Haskell you can simplify function definitions by η-reducing them.
 For example, instead of writing:
+
 ```haskell
 f x = (some expresion) x
 ```
+
 you can simply write
+
 ```haskell
 f = (some expression)
 ```
+
 We use this method to remove the =l=:
+
 ```haskell :tangle evenSum_v4.hs
 -- Version 4
 evenSum :: Integral a => [a] -> a
@@ -2208,19 +2795,26 @@ evenSum = accumSum 0
                 then accumSum (n+x) xs
                 else accumSum n xs
 ```
+
 ### Higher Order Functions
+
 caption:  Escher
 => ./escher_polygon.png
+
 To make things even better we should use higher order functions.
 What are these beasts?
 Higher order functions are functions taking functions as parameters.
+
 Here are some examples:
+
 ```haskell
 filter :: (a -> Bool) -> [a] -> [a]
 map :: (a -> b) -> [a] -> [b]
 foldl :: (a -> b -> a) -> a -> [b] -> a
 ```
+
 Let's proceed by small steps.
+
 ```haskell :tangle evenSum_v5.hs
 -- Version 5
 evenSum l = mysum 0 (filter even l)
@@ -2228,45 +2822,58 @@ evenSum l = mysum 0 (filter even l)
       mysum n [] = n
       mysum n (x:xs) = mysum (n+x) xs
 ```
+
 where
+
 ```haskell
 filter even [1..10] ⇔  [2,4,6,8,10]
 ```
+
 The function =filter= takes a function of type (=a -> Bool=) and a list of
 type =[a]=.
 It returns a list containing only elements for which the function returned
 =True=.
+
 Our next step is to use another technique to accomplish the same thing as a
 loop.
 We will use the =foldl= function to accumulate a value as we pass through
 the list.
 The function =foldl= captures a general coding pattern:
+
 ```haskell
 myfunc list = foo initialValue list
 foo accumulated []     = accumulated
 foo tmpValue    (x:xs) = foo (bar tmpValue x) xs
 ```
+
 Which can be replaced by:
+
 ```haskell
 myfunc list = foldl bar initialValue list
 ```
+
 If you really want to know how the magic works, here is the definition of
 =foldl=:
+
 ```haskell
 foldl f z [] = z
 foldl f z (x:xs) = foldl f (f z x) xs
 ```
+
 ```haskell
 foldl f z [x1,...xn]
 ⇔  f (... (f (f z x1) x2) ...) xn
 ```
+
 But as Haskell is lazy, it doesn't evaluate =(f z x)= and simply pushes it
 onto the stack.
 This is why we generally use =foldl'= instead of =foldl=; =foldl'= is a
 /strict/ version of =foldl=.
 If you don't understand what lazy and strict means, don't worry, just
 follow the code as if =foldl= and =foldl'= were identical.
+
 Now our new version of =evenSum= becomes:
+
 ```haskell :tangle evenSum_v6.hs
 -- Version 6
 -- foldl' isn't accessible by default
@@ -2275,8 +2882,10 @@ import Data.List
 evenSum l = foldl' mysum 0 (filter even l)
   where mysum acc value = acc + value
 ```
+
 We can also simplify this by using directly a lambda notation.
 This way we don't have to create the temporary name =mysum=.
+
 ```haskell :tangle evenSum_v7.hs
 -- Version 7
 -- Generally it is considered a good practice
@@ -2284,21 +2893,28 @@ This way we don't have to create the temporary name =mysum=.
 import Data.List (foldl')
 evenSum l = foldl' (\x y -> x+y) 0 (filter even l)
 ```
+
 And of course, we note that
+
 ```haskell
 (\x y -> x+y) ⇔ (+)
 ```
+
 Finally
+
 ```haskell :tangle evenSum_v8.hs
 -- Version 8
 import Data.List (foldl')
 evenSum :: Integral a => [a] -> a
 evenSum l = foldl' (+) 0 (filter even l)
 ```
+
 =foldl'= isn't the easiest function to grasp.
 If you are not used to it, you should study it a bit.
+
 To help you understand what's going on here, let's look at a step by step
 evaluation:
+
 ```haskell
   evenSum [1,2,3,4]
 ⇒ foldl' (+) 0 (filter even [1,2,3,4])
@@ -2309,19 +2925,25 @@ evaluation:
 ⇒ foldl' (+) 6 []
 ⇒ 6
 ```
+
 Another useful higher order function is =(.)=.
 The =(.)= function corresponds to mathematical composition.
+
 ```haskell
 (f . g . h) x ⇔  f ( g (h x))
 ```
+
 We can take advantage of this operator to η-reduce our function:
+
 ```haskell :tangle evenSum_v9.hs
 -- Version 9
 import Data.List (foldl')
 evenSum :: Integral a => [a] -> a
 evenSum = (foldl' (+) 0) . (filter even)
 ```
+
 Also, we could rename some parts to make it clearer:
+
 ```haskell :tangle evenSum_v10.hs
 -- Version 10
 import Data.List (foldl')
@@ -2330,32 +2952,43 @@ sum' = foldl' (+) 0
 evenSum :: Integral a => [a] -> a
 evenSum = sum' . (filter even)
 ```
+
 It is time to discuss the direction our code has moved as we introduced
 more functional idioms.
 What did we gain by using higher order functions?
+
 At first, you might think the main difference is terseness.
 But in fact, it has more to do with better thinking.
 Suppose we want to modify our function slightly, for example, to get the
 sum of all even squares of elements of the list.
+
 ______
 [1,2,3,4] ▷ [1,4,9,16] ▷ [4,16] ▷ 20
 ______
+
 Updating version 10 is extremely easy:
+
 ```haskell
 squareEvenSum = sum' . (filter even) . (map (^2))
 squareEvenSum' = evenSum . (map (^2))
 ```
+
 We just had to add another "transformation function".
+
 ______
 map (^2) [1,2,3,4] ⇔ [1,4,9,16]
 ______
+
 The =map= function simply applies a function to all the elements of a list.
+
 We didn't have to modify anything /inside/ the function definition.
 This makes the code more modular.
 But in addition you can think more mathematically about your functions.
 You can also use your functions interchangeably with others, as needed.
 That is, you can /compose/, map, fold, filter using your new function.
+
 Modifying version 1 is left as an exercise to the reader ☺.
+
 If you believe we have reached the end of generalization, then know you are
 very wrong.
 For example, there is a way to not only use this function on lists but on
@@ -2363,12 +2996,15 @@ any recursive type.
 If you want to know how, I suggest you to read this quite fun article:
 [[http://eprints.eemcs.utwente.nl/7281/01/db-utwente-40501F46.pdf][Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire by
 Meijer, Fokkinga and Paterson]].
+
 This example should show you how great pure functional programming is.
 Unfortunately, using pure functional programming isn't well suited to all
 usages.
 Or at least such a language hasn't been found yet.
+
 One of the great powers of Haskell is the ability to create DSL (Domain
 Specific Language) making it easy to change the programming paradigm.
+
 In fact, Haskell is also great when you want to write imperative style
 programming.
 Understanding this was really hard for me to grasp when first learning
@@ -2377,38 +3013,52 @@ A lot of effort tends to go into explaining the superiority of the
 functional approach.
 Then when you start using an imperative style with Haskell, it can be hard
 to understand when and how to use it.
+
 But before talking about this Haskell super-power, we must talk about
 another essential aspect of Haskell: /Types/.
+
 ## Types
+
 caption:  Dali, the madonna of port Lligat
 => ./salvador-dali-the-madonna-of-port-lligat.jpg
+
+
 ______
 {{{tldr}}}
+
   - =type Name = AnotherType= is just an alias and the compiler doesn't
     mark any difference between =Name= and =AnotherType=.
   - =data Name = NameConstructor AnotherType= does mark a difference.
   - =data= can construct structures which can be recursives.
   - =deriving= is magic and creates functions for you.
 ______
+
 In Haskell, types are strong and static.
+
 Why is this important?
 It will help you /greatly/ to avoid mistakes.
 In Haskell, most bugs are caught during the compilation of your program.
 And the main reason is because of the type checking during compilation.
 Type checking makes it easy to detect where you used the wrong parameter
 at the wrong place, for example.
+
 ### Type inference
+
 Static typing is generally essential for fast execution.
 But most statically typed languages are bad at generalizing concepts.
 Haskell's saving grace is that it can /infer/ types.
+
 Here is a simple example, the =square= function in Haskell:
+
 ```haskell
 square x = x * x
 ```
+
 This function can =square= any Numeral type.
 You can provide =square= with an =Int=, an =Integer=, a =Float= a
 =Fractional= and even =Complex=.
 Proof by example:
+
 ______
 ~/t/hsenv> ghci
 GHCi, version 8.6.5: http://www.haskell.org/ghc/  :? for help
@@ -2421,8 +3071,11 @@ Prelude> :m Data.Complex
 Prelude Data.Complex> square (2 :+ 1)
 3.0 :+ 4.0
 ______
+
 =x :+ y= is the notation for the complex (x + iy).
+
 Now compare with the amount of code necessary in C:
+
 ```C
 int     int_square(int x) { return x*x; }
 float   float_square(float x) {return x*x; }
@@ -2434,19 +3087,23 @@ complex complex_square (complex z) {
 complex x,y;
 y = complex_square(x);
 ```
+
 For each type, you need to write a new function.
 The only way to work around this problem is to use some meta-programming
 trick, for example using the pre-processor.
 In C++ there is a better way, C++ templates:
+
 ```cpp
 #include <iostream>
 #include <complex>
 using namespace std;
+
 template<typename T>
 T square(T x)
 {
     return x*x;
 }
+
 int main() {
     // int
     int sqr_of_five = square(5);
@@ -2459,26 +3116,37 @@ int main() {
     return 0;
 }
 ```
+
 C++ does a far better job than C in this regard.
 But for more complex functions the syntax can be hard to follow: see
-=> http://bartoszmilewski.com/2009/10/21/what-does-haskell-have-to-do-with-c/ this article for example.
+
+
+=> http://bartoszmilewski.com/2009/10/21/what-does-haskell-have-to-do-with-c/ this article
+ for example.
+
 In C++ you must declare that a function can work with different types.
 In Haskell, the opposite is the case.
 The function will be as general as possible by default.
+
 Type inference gives Haskell the feeling of freedom that dynamically typed
 languages provide.
 But unlike dynamically typed languages, most errors are caught before run
 time.
 Generally, in Haskell:
+
 ______
   "if it compiles it certainly does what you intended"
 ______
+
 ### Type construction
+
 You can construct your own types.
 First, you can use aliases or type synonyms.
+
 ```haskell :tangle type_constr_1.hs
 type Name   = String
 type Color  = String
+
 showInfos :: Name ->  Color -> String
 showInfos name color =  "Name: " ++ name
                         ++ ", Color: " ++ color
@@ -2488,46 +3156,63 @@ color :: Color
 color = "Blue"
 main = putStrLn $ showInfos name color
 ```
+
 But it doesn't protect you much.
 Try to swap the two parameter of =showInfos= and run the program:
+
 ```haskell
 putStrLn $ showInfos color name
 ```
+
 It will compile and execute.
 In fact you can replace Name, Color and String everywhere.
 The compiler will treat them as completely identical.
+
 Another method is to create your own types using the keyword =data=.
+
 ```haskell
 data Name   = NameConstr String
 data Color  = ColorConstr String
+
 showInfos :: Name ->  Color -> String
 showInfos (NameConstr name) (ColorConstr color) =
       "Name: " ++ name ++ ", Color: " ++ color
+
 name  = NameConstr "Robin"
 color = ColorConstr "Blue"
 main = putStrLn $ showInfos name color
 ```
+
 Now if you switch parameters of =showInfos=, the compiler complains!
 So this is a potential mistake you will never make again and the only price
 is to be a bit more verbose.
+
 Also notice that constructors are functions:
+
 ```haskell
 NameConstr  :: String -> Name
 ColorConstr :: String -> Color
 ```
+
 The syntax of =data= is mainly:
+
 ```haskell
 data TypeName =   ConstructorName  [types]
                 | ConstructorName2 [types]
                 | ...
 ```
+
 Generally the usage is to use the same name for the DataTypeName and
 DataTypeConstructor.
+
 Example:
+
 ```haskell
 data Complex a = Num a => Complex a a
 ```
+
 Also you can use the record syntax:
+
 ```haskell
 data DataTypeName = DataConstructor {
                       field1 :: [type of field1]
@@ -2535,9 +3220,12 @@ data DataTypeName = DataConstructor {
                     ...
                     , fieldn :: [type of fieldn] }
 ```
+
 And many accessors are made for you.
 Furthermore you can use another order when setting values.
+
 Example:
+
 ```haskell
 data Complex a = Num a => Complex { real :: a, img :: a}
 c = Complex 1.0 2.0
@@ -2545,90 +3233,121 @@ z = Complex { real = 3, img = 4 }
 real c ⇒ 1.0
 img z ⇒ 4
 ```
+
 ### Recursive type
+
 You already encountered a recursive type: lists.
 You can re-create lists, but with a more verbose syntax:
+
 ```haskell
 data List a = Empty | Cons a (List a)
 ```
+
 If you really want to use an easier syntax you can use an infix name for
 constructors.
+
 ```haskell
 infixr 5 :::
 data List a = Nil | a ::: (List a)
 ```
+
 The number after =infixr= gives the precedence.
+
 If you want to be able to print (=Show=), read (=Read=), test equality
 (=Eq=) and compare (=Ord=) your new data structure you can tell Haskell to
 derive the appropriate functions for you.
+
 ```haskell :tangle list.hs
 infixr 5 :::
 data List a = Nil | a ::: (List a)
               deriving (Show,Read,Eq,Ord)
 ```
+
 When you add =deriving (Show)= to your data declaration, Haskell creates a
 =show= function for you.
 We'll see soon how you can use your own =show= function.
+
 ```haskell :tangle list.hs
 convertList [] = Nil
 convertList (x:xs) = x ::: convertList xs
 ```
+
 ```haskell :tangle list.hs
 main = do
       print (0 ::: 1 ::: Nil)
       print (convertList [0,1])
 ```
+
 This prints:
+
 ______
 0 ::: (1 ::: Nil)
 0 ::: (1 ::: Nil)
 ______
+
 ### Trees
+
 caption:  Magritte, l'Arbre
 => ./magritte-l-arbre.jpg
+
 We'll just give another standard example: binary trees.
+
 ```haskell :tangle tree.hs
 data BinTree a = Empty
                  | Node a (BinTree a) (BinTree a)
                               deriving (Show)
 ```
+
 We will also create a function which turns a list into an ordered binary
 tree.
+
 ```haskell :tangle tree.hs
 treeFromList :: (Ord a) => [a] -> BinTree a
 treeFromList [] = Empty
 treeFromList (x:xs) = Node x (treeFromList (filter (<x) xs))
                              (treeFromList (filter (>x) xs))
 ```
+
 Look at how elegant this function is. In plain English:
+
 * an empty list will be converted to an empty tree.
 * a list =(x:xs)= will be converted to a tree where:
+
   - The root is =x=
   - Its left subtree is the tree created from members of the list =xs=
     which are strictly inferior to =x= and
   - the right subtree is the tree created from members of the list =xs=
     which are strictly superior to =x=.
+
 ```haskell :tangle tree.hs
 main = print $ treeFromList [7,2,4,8]
 ```
+
 You should obtain the following:
+
 ______
 Node 7 (Node 2 Empty (Node 4 Empty Empty)) (Node 8 Empty Empty)
 ______
+
 This is an informative but quite unpleasant representation of our tree.
+
 I've added the =containers= package in the =shell.nix= file, it is time to
 use this library which contain functions to show trees and list of trees
 (forest) named =drawTree= and =drawForest=.
+
 ```haskell :tangle pretty_tree.hs
 import           Data.Tree (Tree,Forest(..))
 import qualified Data.Tree as Tree
+
 data BinTree a = Empty
                | Node a (BinTree a) (BinTree a)
                deriving (Eq,Ord,Show)
+
 treeFromList :: (Ord a) => [a] -> BinTree a
 treeFromList [] = Empty
 treeFromList (x:xs) = Node x (treeFromList (filter (<x) xs))
                       (treeFromList (filter (>x) xs))
+
 -- | Function to transform our internal BinTree type to the
 -- type of Tree declared in Data.Tree (from containers package)
 -- so that the function Tree.drawForest can use
@@ -2636,9 +3355,11 @@ binTreeToForestString :: (Show a) => BinTree a -> Forest String
 binTreeToForestString Empty = []
 binTreeToForestString (Node x left right) =
   [Tree.Node (show x) ((binTreeToForestString left) ++ (binTreeToForestString right))]
+
 -- | Function that given a BinTree print a representation of it in the console
 prettyPrintTree :: (Show a) => BinTree a -> IO ()
 prettyPrintTree = putStrLn . Tree.drawForest . binTreeToForestString
+
 main = do
   putStrLn "Int binary tree:"
   prettyPrintTree $ treeFromList [7,2,4,8,1,3,6,21,12,23]
@@ -2651,6 +3372,7 @@ main = do
   prettyPrintTree (treeFromList
                     (map treeFromList ["foo","bar","zara","baz","foo"]))
 ```
+
 ______
 ~/t/hsenv> runghc pretty_tree.hs
 Int binary tree:
@@ -2673,7 +3395,9 @@ Int binary tree:
       +- 12
       |
       `- 23
+
 Note we could also use another type
+
 String binary tree:
 "foo"
 |
@@ -2684,7 +3408,9 @@ String binary tree:
 `- "gor"
    |
    `- "yog"
+
 As we can test equality and order trees, we can make tree of trees!
+
 Binary tree of Char binary trees:
 Node 'f' Empty (Node 'o' Empty Empty)
 |
@@ -2694,6 +3420,7 @@ Node 'f' Empty (Node 'o' Empty Empty)
 |
 `- Node 'z' (Node 'a' Empty (Node 'r' Empty Empty)) Empty
 ______
+
 Notice how duplicate elements aren't inserted in trees.
 For exemple the Char BinTree constructed from the list =foo= is
 just =f -> o=.
@@ -2702,46 +3429,61 @@ But more importantly it works also for our own =BinTree= notice how the
 tree for =foo= is inserted only once.
 We have this for (almost) free, because we have declared Tree to be an
 instance of =Eq=.
+
 See how awesome this structure is: we can make trees containing not only
 integers, strings and chars, but also other trees.
 And we can even make a tree containing a tree of trees!
+
 ### More Advanced Types
+
 So far we have presented types that are close to types we can see in most
 typed programming languages.
 But the real strength of Haskell is its type system.
 So I will try to give you an idea about what makes the Haskell type system
 more advanced than in most languages.
+
 So as comparison, classical types/schemas, etc... are about products of
 different sub-types:
+
 ```haskell
 data ProductType = P Int String
 data PersonRecord = Person { age :: Int, name :: String }
 ```
+
 Haskell has also a notion of =sum types= that I often lack a lot in other
 programming languages I use.
+
 You can define your type as a sum:
+
 ```haskell
 data Point = D1 Int | D2 Int Int | D3 Int Int Int
 ```
+
 So far so good.
 Sum types are already a nice thing to have, in particular within Haskell
 because now the compiler can warn you if you miss a case.
 For example if you write:
+
 ```haskell
 case point of
   D1 x -> ...
   D2 x y -> ...
 ```
+
 If you compile with the =-Wall= flag (as you should always do for serious
 development) then the compiler will warn you that you are forgetting some
 possible value.
+
 Those are still not really advanced types.
 Advanced type are higher order types.
 Those are the one that help with making your code more polymorphic.
+
 We will start with example I alreday provided, lists:
+
 ```haskell
 data MyList a = Cons a (MyList a) | Nil
 ```
+
 As you can see =MyList= takes a type parameter.
 So =MyList= is a higher order type.
 Generally, the intuition behind type is that a type is a data structure or
@@ -2750,15 +3492,18 @@ But in fact, Haskell types can be or can contain functions.
 This is for example the case for =IO=.
 And this is why it can be confusing to read the type of some functions.
 I will take as example =sequenceA=:
+
 ```haskell
 sequenceA :: Applicative f => t (f a) -> f (t a)
 ```
+
 So if you read this, it can be quite difficult to grasp what is the
 intended use of this function.
 A simple technique for example, is to try to replace the higher order types
 (here =t= and =f=) by a type you can have some intuition about.
 For example consider =t= to be the higher order type =Tree= and =f= to be
 the higher order type =[]= (list).
+
 Now you can see that =sequenceA= sill take a Tree of lists and will return
 a list of trees.
 For it to work =[]= need to be part of the =Applicative= class type (which
@@ -2767,48 +3512,69 @@ I will not enter into the details about what =Applicative= type class is
 here.
 But just with this, you should start to have a better intuition about what
 =sequenceA= is about.
+
 ## Infinite Structures
+
 caption:  Escher
 => ./escher_infinite_lizards.jpg
+
 It is often said that Haskell is /lazy/.
+
 In fact, if you are a bit pedantic, you should say that [[http://www.haskell.org/haskellwiki/Lazy_vs._non-strict][Haskell is
 /non-strict/]].
 Laziness is just a common implementation for non-strict languages.
+
 Then what does "not-strict" mean? From the Haskell wiki:
+
 ______
 Reduction (the mathematical term for evaluation) proceeds from the
 outside in.
+
 so if you have =(a+(b*c))= then you first reduce =+= first, then you
 reduce the inner =(b*c)=
 ______
+
 For example in Haskell you can do:
+
 ```haskell
 -- numbers = [1,2,..]
 numbers :: [Integer]
 numbers = 0:map (1+) numbers
+
 take' n [] = []
 take' 0 l = []
 take' n (x:xs) = x:take' (n-1) xs
+
 main = print $ take' 10 numbers
 ```
+
 And it stops.
+
 How?
+
 Instead of trying to evaluate =numbers= entirely, it evaluates elements
 only when needed.
+
 Also, note in Haskell there is a notation for infinite lists
+
 ______
 [1..]   ⇔ [1,2,3,4...]
 [1,3..] ⇔ [1,3,5,7,9,11...]
 ______
+
 and most functions will work with them. Also, there is a built-in
 function =take= which is equivalent to our =take'=.
+
 ### Infinite Trees
+
 ```haskell :tangle infinite_tree.hs :exports none
   import           Data.Tree (Tree,Forest(..))
   import qualified Data.Tree as Tree
+
   data BinTree a = Empty
                  | Node a (BinTree a) (BinTree a)
                  deriving (Eq,Ord,Show)
+
   -- | Function to transform our internal BinTree type to the
   -- type of Tree declared in Data.Tree (from containers package)
   -- so that the function Tree.drawForest can use
@@ -2816,18 +3582,24 @@ function =take= which is equivalent to our =take'=.
   binTreeToForestString Empty = []
   binTreeToForestString (Node x left right) =
     [Tree.Node (show x) ((binTreeToForestString left) ++ (binTreeToForestString right))]
+
   -- | Function that given a BinTree print a representation of it in the console
   prettyPrintTree :: (Show a) => BinTree a -> IO ()
   prettyPrintTree = putStrLn . Tree.drawForest . binTreeToForestString
 ```
+
+
 Suppose we don't mind having an ordered binary tree.
 Here is an infinite binary tree:
+
 ```haskell :tangle infinite_tree.hs
 nullTree = Node 0 nullTree nullTree
 ```
+
 A complete binary tree where each node is equal to 0.
 Now I will prove you can manipulate this object using the following
 function:
+
 ```haskell :tangle infinite_tree.hs
 -- take all element of a BinTree
 -- up to some depth
@@ -2839,11 +3611,15 @@ treeTakeDepth n (Node x left right) = let
           in
               Node x nl nr
 ```
+
 See what occurs for this program:
+
 ```haskell :tangle infinite_tree.hs
 main = prettyPrintTree (treeTakeDepth 4 nullTree)
 ```
+
 This code compiles, runs and stops giving the following result:
+
 ______
 [hs:hsenv]> runghc infinite_tree.hs
 0
@@ -2875,15 +3651,21 @@ ______
       +- 0
       |
       `- 0
+
 ______
+
 Just to heat up your neurones a bit more, let's make a slightly more
 interesting tree:
+
+
 ```haskell :tangle infinite_tree_2.hs :exports none
   import           Data.Tree (Tree,Forest(..))
   import qualified Data.Tree as Tree
+
   data BinTree a = Empty
                  | Node a (BinTree a) (BinTree a)
                  deriving (Eq,Ord,Show)
+
   -- | Function to transform our internal BinTree type to the
   -- type of Tree declared in Data.Tree (from containers package)
   -- so that the function Tree.drawForest can use
@@ -2891,9 +3673,11 @@ interesting tree:
   binTreeToForestString Empty = []
   binTreeToForestString (Node x left right) =
     [Tree.Node (show x) ((binTreeToForestString left) ++ (binTreeToForestString right))]
+
   -- | Function that given a BinTree print a representation of it in the console
   prettyPrintTree :: (Show a) => BinTree a -> IO ()
   prettyPrintTree = putStrLn . Tree.drawForest . binTreeToForestString
+
   -- | take all element of a BinTree up to some depth
   treeTakeDepth _ Empty = Empty
   treeTakeDepth 0 _     = Empty
@@ -2903,16 +3687,20 @@ interesting tree:
             in
                 Node x nl nr
 ```
+
+
 ```haskell :tangle infinite_tree_2.hs
 iTree = Node 0 (dec iTree) (inc iTree)
         where
            dec (Node x l r) = Node (x-1) (dec l) (dec r)
            inc (Node x l r) = Node (x+1) (inc l) (inc r)
 ```
+
 Another way to create this tree is to use a higher order function.
 This function should be similar to =map=, but should work on =BinTree=
 instead of list.
 Here is such a function:
+
 ```haskell :tangle infinite_tree_2.hs
 -- apply a function to each node of Tree
 treeMap :: (a -> b) -> BinTree a -> BinTree b
@@ -2921,19 +3709,25 @@ treeMap f (Node x left right) = Node (f x)
                                      (treeMap f left)
                                      (treeMap f right)
 ```
+
 /Hint/: I won't talk more about this here.
 If you are interested in the generalization of =map= to other data
 structures, search for functor and =fmap=.
+
 Our definition is now:
+
 ```haskell :tangle infinite_tree_2.hs
 infTreeTwo :: BinTree Int
 infTreeTwo = Node 0 (treeMap (\x -> x-1) infTreeTwo)
                     (treeMap (\x -> x+1) infTreeTwo)
 ```
+
 Look at the result for
+
 ```haskell :tangle infinite_tree_2.hs
 main = prettyPrintTree $ treeTakeDepth 4 infTreeTwo
 ```
+
 ______
 [hs:hsenv]> runghc infinite_tree_2.hs
 0
@@ -2966,26 +3760,35 @@ ______
       |
       `- 3
 ______
+
 ### Fibonnacci infinite list
+
 The important things to remember.
 Haskell handle infinite structures naturally mostly because it is not strict.
+
 So you can write, infinite tree, but also, you can generate infinite list
 like this common example:
+
 ```haskell :tangle fib_lazy.hs
 fib :: [Integer]
 fib = 1:1:zipWith (+) fib (tail fib)
+
 main = traverse print (take 20 (drop 200 fib))
 ```
+
 Many new details in this small code. Don't worry if you do not get all details:
+
 * =fib= is a list of Integer, not a function
 * =drop n= remove n element of a list
 * =take n= keep the first n elements of a list
 * =zipWith op [a1,a2,a3,...] [b1,b2,b3,...]= will generate the list
   =[op a1 b1,op a2 b2,op a3 b3, .... ]=
 * =traverse= is like map but for performing effects (in this case print)
+
 This progam print all fibonnacci numbers from 201 to 221 instantaneously.
 Because, =fib= is a list that will be used as "cache" to compute each
 number even considering the code looks a bit like a double recursion.
+
 ______
 [hs:0010-Haskell-Now]> time runghc fib_lazy.hs
 453973694165307953197296969697410619233826
@@ -3008,21 +3811,28 @@ ______
 1621140188992194444701881625761731807571877809
 2623059926317798754175087863660165740874359106
 4244200115309993198876969489421897548446236915
+
 real	0m1.000s
 user	0m0.192s
 sys	0m0.058s
 ______
+
 Let's see how this work using =Debug.Trace=:
+
 ```haskell :tangle fib_lazy_trace.hs
 import Debug.Trace
+
 -- like + but each time this is evaluated print a trace
 tracedPlus x y = trace ("> " ++ show x ++ " + " ++ show y) (x + y)
+
 fib :: [Integer]
 fib = 1:1:zipWith tracedPlus fib (tail fib)
+
 main = do
   print (fib !! 10)
   print (fib !! 12)
 ```
+
 ______
 [hs:hsenv]> runghc fib_lazy_trace.hs
 > 1 + 1
@@ -3039,6 +3849,7 @@ ______
 > 89 + 144
 233
 ______
+
 Notice how, once computed, the list is kept in memory.
 This is why when the second time we ask for the 12th element of fib we only
 perform two more additions.
@@ -3046,34 +3857,47 @@ This is both a blessing and a curse.
 A blessing if you know when to use this as in this example.
 And a curse as if do not take care about lazyness it will come back at you
 with memory leaks.
+
 After a bit of experience, most Haskellers can avoid memory leaks naturally.
+
 # Dive into the impure
+
 Congratulations for getting so far!
+
 You have been introduced to the functional style and how to deal with
 /pure/ code.
 Understand code that is only evaluated without changing the state of the
 external world.
+
 If you are like me, you should get the functional style.
 You should also understand a bit more the advantages of laziness by
 default.
 But you also don't really understand where to start in order to make a real
 program.
 And in particular:
+
 * How do you deal with effects?
 * Why is there a strange imperative-like notation for dealing with IO?
+
 Be prepared, the answers might be complex.
 But they are all very rewarding.
+
 In this section you will first introduced about how to /use/ IO.
 That should not be that hard.
 Then, a harder section should explain how IO works.
 And the last part will talk about how we can generalize why we learned so
 far with IO to many different types.
+
 ## Deal With IO
+
 caption:  Magritte, Carte blanche
 => ./magritte_carte_blanche.jpg
+
 ______
 {{{tldr}}}
+
 A typical function doing =IO= looks a lot like an imperative program:
+
 ```haskell
 f :: IO a
 f = do
@@ -3082,8 +3906,10 @@ f = do
   y <- action3
   action4 x y
 ```
+
 * To set a value to an object we use =<-= .
 * The type of each line is =IO *=; in this example:
+
   ```haskell
   - action1     :: IO b
   - x           :: b
@@ -3092,105 +3918,136 @@ f = do
   - y           :: c
   - action4 x y :: IO a
   ```
+
 * Few objects have the type =IO a=, this should help you choose. In
   particular you cannot use pure functions directly here. To use pure
   functions you could do =action2 (purefunction x)= for example.
 ______
+
 In this section, I will explain how to use IO, not how it works.
 You'll see how Haskell separates the pure from the impure parts of the
 program.
+
 Don't stop because you're trying to understand the details of the syntax.
 Answers will come in the next section.
+
 What to achieve?
+
 ______
 Ask a user to enter a list of numbers.
 Print the sum of the numbers.
 ______
+
 ```haskell :tangle io_sum.hs
 toList :: String -> [Integer]
 toList input = read ("[" ++ input ++ "]")
+
 main = do
   putStrLn "Enter a list of numbers (separated by comma):"
   input <- getLine
   print $ sum (toList input)
 ```
+
 It should be straightforward to understand the behavior of this program.
 Let's analyze the types in more detail.
+
 ```haskell
 putStrLn :: String -> IO ()
 getLine  :: IO String
 print    :: Show a => a -> IO ()
 ```
+
 Or more interestingly, we note that each expression in the =do= block has a
 type of =IO a=.
+
 ```haskell
 main = do
   putStrLn "Enter ... " :: IO ()
   getLine               :: IO String
   print Something       :: IO ()
 ```
+
 We should also pay attention to the effect of the =<-= symbol.
+
 ```haskell
 do
   x <- something
 ```
+
 If =something :: IO a= then =x :: a=.
+
 Another important note about using =IO=: all lines in a do block must be of
 one of the two forms:
+
 ```haskell
   action1 :: IO a
           -- in this case, generally a = ()
 ```
+
 or
+
 ```haskell
   value <- action2    -- where
                       -- action2 :: IO b
                       -- value   :: b
 ```
+
 These two kinds of line will correspond to two different ways of sequencing
 actions.
 The meaning of this sentence should be clearer by the end of the next
 section.
+
 Now let's see how this program behaves.
 For example, what happens if the user enters something strange?
 Let's try:
+
 ______
 [hs:hsenv]> runghc io_sum.hs
 Enter a list of numbers (separated by comma):
 foo
 Prelude.read: no parse
 ______
+
 Argh!
 An evil error message and a crash!
 Our first improvement will simply be to answer with a more friendly
 message.
+
 In order to do this, we must detect that something went wrong.
 Here is one way to do this: use the type =Maybe=.
 This is a very common type in Haskell.
+
 ```haskell :tangle io_sum_safe.hs
 import Data.Maybe
 import Text.Read (readMaybe)
 ```
+
 What is this thing?
 =Maybe= is a type which takes one parameter.
 Its definition is:
+
 ```haskell
 data Maybe a = Nothing | Just a
 ```
+
 This is a nice way to tell there was an error while trying to
 create/compute a value.
 The =readMaybe= function is a great example of this.
 This is a function similar to the function =read=[fn:4], but if something
 goes wrong the returned value is =Nothing=.
 If the value is right, it returns =Just <the value>=.
+
 Now to be a bit more readable, we define a function which goes like this:
 If the string has the wrong format, it will return =Nothing=.
 Otherwise, for example for "1,2,3", it will return =Just [1,2,3]=.
+
 ```haskell :tangle io_sum_safe.hs
 getListFromString :: String -> Maybe [Integer]
 getListFromString str = readMaybe $ "[" ++ str ++ "]"
 ```
+
 We simply have to test the value in our main function.
+
 ```haskell :tangle io_sum_safe.hs
 main :: IO ()
 main = do
@@ -3201,9 +4058,12 @@ main = do
     Just l  -> print (sum l)
     Nothing -> putStrLn "Bad format. Good Bye."
 ```
+
 In case of error, we display a nice error message.
+
 Note that the type of each expression in the main's =do= block remains of
 the form =IO a=.
+
 One very important thing to note is the type of all the functions defined
 so far.
 There is only one function which contains =IO= in its type: =main=.
@@ -3211,25 +4071,34 @@ This means main is impure.
 But main uses =getListFromString= which is pure.
 So it's clear just by looking at declared types which functions are pure
 and which are impure.
+
 Why does purity matter? Among the many advantages, here are three:
+
 * It is far easier to think about pure code than impure code.
 * Purity protects you from all the hard-to-reproduce bugs that are due
   to side effects.
 * You can evaluate pure functions in any order or in parallel without
   risk.
+
 This is why you should generally put as most code as possible inside pure
 functions.
+
 Our next iteration will be to prompt the user again and again until she
 enters a valid answer.
+
 We keep the first part:
+
 ```haskell :tangle io_sum_ask.hs
 import Data.Maybe
 import Text.Read (readMaybe)
+
 getListFromString :: String -> Maybe [Integer]
 getListFromString str = readMaybe $ "[" ++ str ++ "]"
 ```
+
 Now we create a function which will ask the user for an list of integers
 until the input is right.
+
 ```haskell :tangle io_sum_ask.hs
 askUser :: IO [Integer]
 askUser = do
@@ -3240,27 +4109,34 @@ askUser = do
       Just l  -> return l
       Nothing -> askUser
 ```
+
 This function is of type =IO [Integer]=.
 Such a type means that we retrieved a value of type =[Integer]= through
 some IO actions.
 Some people might explain while waving their hands:
+
 ______
   «This is an =[Integer]= inside an =IO=.»
 ______
+
 If you want to understand the details behind all of this, you'll have to
 read the next section.
 But really, if you just want to /use/ IO just practice a little and
 remember to think about the type.
+
 Finally our main function is much simpler:
+
 ```haskell :tangle io_sum_ask.hs
 main :: IO ()
 main = do
   list <- askUser
   print $ sum list
 ```
+
 We have finished with our introduction to =IO=.
 This was quite fast.
 Here are the main things to remember:
+
 * in the =do= block, each expression must have the type =IO a=. You are
   then limited with regard to the range of expressions available. For
   example, =getLine=, =print=, =putStrLn=, etc...
@@ -3268,24 +4144,34 @@ Here are the main things to remember:
 * the =IO a= type means: an IO /action/ which returns an element of type
   =a=. =IO= represents actions; under the hood, =IO a= is the type of a
   function. Read the next section if you are curious.
+
 If you practice a bit, you should be able to /use/ =IO=.
+
 ______
 /Exercises/:
+
 * Make a program that sums all of its arguments. Hint: use the
   function =getArgs=.
 ______
+
 ## IO trick explained
+
 caption:  Magritte, ceci n'est pas une pipe
 => ./magritte_pipe.jpg
+
 ______
 {{{tldr}}}
+
 To separate pure and impure parts, =main= is defined as a function which
 modifies the state of the world.
+
 ______
 main :: World -> World
 ______
+
 A function is guaranteed to have side effects only if it has this type.
 But look at a typical main function:
+
 ```haskell
 main w0 =
     let (v1,w1) = action1 w0 in
@@ -3293,15 +4179,20 @@ main w0 =
     let (v3,w3) = action3 v2 w2 in
     action4 v3 w3
 ```
+
 We have a lot of temporary elements (here =w1=, =w2= and =w3=) which must
 be passed on to the next action.
+
 We create a function =bind= or ~(>>=)~.
 With =bind= we don't need temporary names anymore.
+
 ```haskell
 main =
   action1 >>= action2 >>= action3 >>= action4
 ```
+
 Bonus: Haskell has syntactical sugar for us:
+
 ```haskell
 main = do
   v1 <- action1
@@ -3310,10 +4201,13 @@ main = do
   action4 v3
 ```
 ______
+
 Why did we use this strange syntax, and what exactly is this =IO= type?
 It looks a bit like magic.
+
 For now let's just forget all about the pure parts of our program, and
 focus on the impure parts:
+
 ```haskell
 askUser :: IO [Integer]
 askUser = do
@@ -3323,76 +4217,101 @@ askUser = do
   case maybeList of
       Just l  -> return l
       Nothing -> askUser
+
 main :: IO ()
 main = do
   list <- askUser
   print $ sum list
 ```
+
 First remark: this looks imperative.
 Haskell is powerful enough to make impure code look imperative.
 For example, if you wish you could create a =while= in Haskell.
 In fact, for dealing with =IO=, an imperative style is generally more
 appropriate.
+
 But you should have noticed that the notation is a bit unusual.
 Here is why, in detail.
+
 In an impure language, the state of the world can be seen as a huge hidden
 global variable.
 This hidden variable is accessible by all functions of your language.
 For example, you can read and write a file in any function.
 Whether a file exists or not is a difference in the possible states that
 the world can take.
+
 In Haskell the current state of the world is not hidden.
 Rather, it is /explicitly/ said that =main= is a function that
 /potentially/ changes the state of the world.
 Its type is then something like:
+
 ```haskell
 main :: World -> World
 ```
+
 Not all functions may access this variable.
 Those which have access to this variable are impure.
 Functions to which the world variable isn't provided are pure[fn:5].
+
 Haskell considers the state of the world as an input variable to =main=.
 But the real type of main is closer to this one[fn:6]:
+
 ```haskell
 main :: World -> ((),World)
 ```
+
 The =()= type is the unit type. Nothing to see here.
+
 Now let's rewrite our main function with this in mind:
+
 ```haskell
 main w0 =
     let (list,w1) = askUser w0 in
     let (x,w2) = print (sum list,w1) in
     x
 ```
+
 First, we note that all functions which have side effects must have the
 type:
+
 ```haskell
 World -> (a,World)
 ```
+
 where =a= is the type of the result.
 For example, a =getChar= function should have the type =World -> (Char,
 World)=.
+
 Another thing to note is the trick to fix the order of evaluation.
 In Haskell, in order to evaluate =f a b=, you have many choices:
+
 * first eval =a= then =b= then =f a b=
 * first eval =b= then =a= then =f a b=.
 * eval =a= and =b= in parallel then =f a b=
+
 This is true because we're working in a pure part of the language.
+
 Now, if you look at the main function, it is clear you must eval the first
 line before the second one since to evaluate the second line you have to
 get a parameter given by the evaluation of the first line.
+
 This trick works like a charm.
 The compiler will at each step provide a pointer to a new real world id.
 Under the hood, =print= will evaluate as:
+
 * print something on the screen
 * modify the id of the world
 * evaluate as =((),new world id)=.
+
 Now, if you look at the style of the main function, it is clearly awkward.
 Let's try to do the same to the =askUser= function:
+
 ```haskell
 askUser :: World -> ([Integer],World)
 ```
+
 Before:
+
 ```haskell
 askUser :: IO [Integer]
 askUser = do
@@ -3403,7 +4322,9 @@ askUser = do
           Just l  -> return l
           Nothing -> askUser
 ```
+
 After:
+
 ```haskell
 askUser w0 =
     let (_,w1)     = putStrLn "Enter a list of numbers:" in
@@ -3414,78 +4335,103 @@ askUser w0 =
     in
         (l,w3)
 ```
+
 This is similar, but awkward. Look at all these temporary =w?= names.
+
 The lesson is: naive IO implementation in Pure functional languages is
 awkward!
+
 Fortunately, there is a better way to handle this problem.
 We see a pattern.
 Each line is of the form:
+
 ```haskell
   let (y,w') = action x w in
 ```
+
 Even if for some lines the first =x= argument isn't needed.
 The output type is a couple, =(answer, newWorldValue)=.
 Each function =f= must have a type similar to:
+
 ```haskell
 f :: World -> (a,World)
 ```
+
 Not only this, but we can also note that we always follow the same usage
 pattern:
+
 ```haskell
   let (y,w1) = action1 w0 in
   let (z,w2) = action2 w1 in
   let (t,w3) = action3 w2 in
   ...
 ```
+
 Each action can take from 0 to n parameters.
 And in particular, each action can take a parameter from the result of a
 line above.
+
 For example, we could also have:
+
 ```haskell
   let (_,w1) = action1 x w0   in
   let (z,w2) = action2 w1     in
   let (_,w3) = action3 z w2 in
   ...
 ```
+
 With, of course: =actionN w :: (World) -> (a,World)=.
+
 ______
 *IMPORTANT*: there are only two important patterns to consider:
+
 ```haskell
   let (x,w1) = action1 w0 in
   let (y,w2) = action2 x w1 in
 ```
+
 and
+
 ```haskell
   let (_,w1) = action1 w0 in
   let (y,w2) = action2 w1 in
 ```
 ______
+
 caption:  Slave Market with the disappearing bust of Voltaire
 => ./slave-market-with-the-disappearing-bust-of-voltaire.jpg
+
 Now, we will do a magic trick.
 We will make the temporary world symbols /disappear/.
 We will =bind= the two lines.
 Let's define the =bind= function.
 Its type is quite intimidating at first:
+
 ```haskell
 bind :: (World -> (a,World))
         -> (a -> (World -> (b,World)))
         -> (World -> (b,World))
 ```
+
 But remember that =(World -> (a,World))= is the type for an IO action.
 Now let's rename it for clarity:
+
 ```haskell
 type IO a = World -> (a, World)
 ```
+
 Some examples of functions:
+
 ```haskell
 getLine :: IO String
 print :: Show a => a -> IO ()
 ```
+
 =getLine= is an IO action which takes world as a parameter and returns a
 couple =(String, World)=.
 This can be summarized as: =getLine= is of type =IO String=, which we also
 see as an IO action which will return a String "embeded inside an IO".
+
 The function =print= is also interesting.
 It takes one argument which can be shown.
 In fact it takes two arguments.
@@ -3493,75 +4439,97 @@ The first is the value to print and the other is the state of world.
 It then returns a couple of type =((), World)=.
 This means that it changes the state of the world, but doesn't yield any
 more data.
+
 This new =IO a= type helps us simplify the type of =bind=:
+
 ```haskell
     bind :: IO a
             -> (a -> IO b)
             -> IO b
 ```
+
 It says that =bind= takes two IO actions as parameters and returns another
 IO action.
+
 Now, remember the /important/ patterns.
 The first was:
+
 ```haskell
 pattern1 w0 =
   let (x,w1) = action1 w0 in
   let (y,w2) = action2 x w1 in
   (y,w2)
 ```
+
 Look at the types:
+
 ```haskell
 action1  :: IO a
 action2  :: a -> IO b
 pattern1 :: IO b
 ```
+
 Doesn't it seem familiar?
+
 ```haskell
 (bind action1 action2) w0 =
     let (x, w1) = action1 w0
         (y, w2) = action2 x w1
     in  (y, w2)
 ```
+
 The idea is to hide the World argument with this function.
 As an example imagine if we wanted to simulate:
+
 ```haskell
 let (line1, w1) = getLine w0 in
 let ((), w2) = print line1 in
 ((), w2)
 ```
+
 Now, using the =bind= function:
+
 ```haskell
 (res, w2) = (bind getLine print) w0
 ```
+
 As print is of type ~Show a => a -> (World -> ((), World))~, we know
 ~res = ()~ (=unit= type).
 If you didn't see what was magic here, let's try with three lines this
 time.
+
 ```haskell
   let (line1,w1) = getLine w0 in
   let (line2,w2) = getLine w1 in
   let ((),w3) = print (line1 ++ line2) in
   ((),w3)
 ```
+
 Which is equivalent to:
+
 ```haskell
 (res,w3) = (bind getLine (\line1 ->
              (bind getLine (\line2 ->
                print (line1 ++ line2))))) w0
 ```
+
 Didn't you notice something?
 Yes, no temporary World variables are used anywhere!
 This is /MA/. /GIC/.
+
 We can use a better notation.
 Let's use ~(>>=)~ instead of =bind=.
 ~(>>=)~ is an infix function like ~(+)~; reminder ~3 + 4 ⇔ (+) 3 4~
+
 ```haskell
 (res,w3) = (getLine >>=
            (\line1 -> getLine >>=
            (\line2 -> print (line1 ++ line2)))) w0
 ```
+
 Merry Christmas Everyone!
 Haskell has made syntactical sugar for us:
+
 ```haskell
   do
     x <- action1
@@ -3569,7 +4537,9 @@ Haskell has made syntactical sugar for us:
     z <- action3
     ...
 ```
+
 Is replaced by:
+
 ```haskell
   action1 >>= (\x ->
   action2 >>= (\y ->
@@ -3577,40 +4547,53 @@ Is replaced by:
   ...
   )))
 ```
+
 Note that you can use =x= in =action2= and =x= and =y= in =action3=.
+
 But what about the lines not using the ~<-~?
 Easy, another function =blindBind=:
+
 ```haskell
 blindBind :: IO a -> IO b -> IO b
 blindBind action1 action2 w0 =
     bind action (\_ -> action2) w0
 ```
+
 I didn't simplify this definition for the purposes of clarity.
 Of course, we can use a better notation: we'll use the =(>>)= operator.
+
 And
+
 ```haskell
 do
     action1
     action2
     action3
 ```
+
 Is transformed into
+
 ```haskell
 action1 >>
 action2 >>
 action3
 ```
+
 Also, another function is quite useful.
+
 ```haskell
 putInIO :: a -> IO a
 putInIO x = IO (\w -> (x,w))
 ```
+
 This is the general way to put pure values inside the "IO context".
 The general name for =putInIO= is =pure= but you also see very often =return=.
 Historically =pure= was called =return=.
 This is quite a bad name when you learn Haskell.
 =return= is very different from what you might be used to.
+
 To finish, let's translate our example:
+
 ```haskell
 askUser :: IO [Integer]
 askUser = do
@@ -3620,15 +4603,19 @@ askUser = do
       case maybeList of
           Just l  -> return l
           Nothing -> askUser
+
 main :: IO ()
 main = do
   list <- askUser
   print $ sum list
 ```
+
 Is translated into:
+
 ```haskell :tangle io_bind.hs
 import Data.Maybe
 import Text.Read (readMaybe)
+
 getListFromString :: String -> Maybe [Integer]
 getListFromString str = readMaybe $ "[" ++ str ++ "]"
 askUser :: IO [Integer]
@@ -3639,53 +4626,69 @@ askUser =
       case maybeList of
         Just l -> return l
         Nothing -> askUser
+
 main :: IO ()
 main = askUser >>=
   \list -> print $ sum list
 ```
+
 You can compile this code to verify that it works.
+
 Imagine what it would look like without the =(>>)= and =(>>=)=.
+
 ## Monads
+
 ______
 caption:  Dali, reve. It represents a weapon out of the
 mouth of a tiger, itself out of the mouth of another tiger, itself out
 of the mouth of a fish itself out of a grenade.
 => ./dali_reve.jpg
 ______
+
 Now the secret can be revealed: =IO= is a /monad/.
 Being a monad means you have access to some syntactical sugar with the =do=
 notation.
 But mainly, you have access to a coding pattern which will ease the flow of
 your code.
+
 ______
 *Important remarks*:
+
 * Monad are not necessarily about effects! There are a lot of /pure/
   monads.
 * Monad are more about sequencing
 ______
+
 In Haskell, =Monad= is a type class.
 To be an instance of this type class, you must provide the functions
 ~(>>=)~ and ~return~.
 The function ~(>>)~ is derived from ~(>>=)~.
-Here is how the type class =Monad= is declared (from 
-=> https://hackage.haskell.org/package/base-4.12.0.0/docs/src/GHC.Base.html#Monad hackage GHC.Base):
+Here is how the type class =Monad= is declared (from
+
+=> https://hackage.haskell.org/package/base-4.12.0.0/docs/src/GHC.Base.html#Monad hackage GHC.Base
+):
+
 ```haskell
 class Applicative m => Monad m where
     -- | Sequentially compose two actions, passing any value produced
     -- by the first as an argument to the second.
     (>>=)       :: forall a b. m a -> (a -> m b) -> m b
+
     -- | Sequentially compose two actions, discarding any value produced
     -- by the first, like sequencing operators (such as the semicolon)
     -- in imperative languages.
     (>>)        :: forall a b. m a -> m b -> m b
     m >> k = m >>= \_ -> k -- See Note [Recursive bindings for Applicative/Monad]
     {-# INLINE (>>) #-}
+
     -- | Inject a value into the monadic type.
     return      :: a -> m a
     return      = pure
+
     -- | Fail with a message.  This operation is not part of the
     -- mathematical definition of a monad, but is invoked on pattern-match
     -- failure in a @do@ expression.
+
 
     -- As part of the MonadFail proposal (MFP), this function is moved
     -- to its own class 'MonadFail' (see "Control.Monad.Fail" for more
@@ -3694,8 +4697,10 @@ class Applicative m => Monad m where
     fail        :: String -> m a
     fail s      = errorWithoutStackTrace s
 ```
+
 ______
 Remarks:
+
 * the keyword =class= is not your friend. A Haskell class is /not/ a
   class of the kind you will find in object-oriented programming.
   A Haskell class has a lot of similarities with Java interfaces.
@@ -3723,39 +4728,49 @@ Remarks:
   (>>) = (*>)
   ```
 ______
+
 ### Monad Intuition
+
 I explained how to use the IO Monad.
 In the previous chapter I explained how it works behind the scene.
 Notice there is a huge difference between be a client of the Monad API and
 be an architect of the Monad API but also have an intuition about what is
 really a Monad.
+
 So to try to give you an intuition, just remember a Monad is a construction
 that has to do with /composition/ into higher order type constructors
 (types with a parameter).
 So if we consider ~(<=<)~ and ~(>=>)~ (Kleisli arrow composition) which are
 defined (simplified for the purpose of this article) as
+
 ```haskell
 f >=> g = \x -> f x >>= g
 g <=< f = f >=> g
 ```
+
 Those operation constructed with the bind operator ~(>>=)~ are a
 generalisation of ~(.)~ and  ~(>>>)~ where ~f >>> g = g . f~.
 If you can look at the type this become visible, simply compare:
+
 ```haskell
 f :: a -> b
 g :: b -> c
 g . f :: a -> c
 f >>> g :: a -> c
 ```
+
 with
+
 ```haskell
 f :: a -> m b
 g :: b -> m c
 g <=< f :: a -> m c
 f >=> g :: a -> m c
 ```
+
 As I said, this is a generalisation of the composition operation to
 functions that returns types within a higher order type constructor.
+
 To give you better example, consider:
 * ~m = []~; ~[]~ is a higher order type constructor as it takes a type
   parameter, the /kind/ of this type is ~* -> *~.
@@ -3774,42 +4789,56 @@ To give you better example, consider:
 * ~a~, ~b~ to be ~Int~ and ~c~ to be ~String~
 * ~f n = [n, n+1]~
 * ~g n = [show n,">"++show (n+1)]~
+
 So
+
 ```haskell
 f 2 = [2,3]
 g 2 = ["2",">3"]
 g 3 = ["3",">4"]
 ```
+
 One would expect to /combine/ ~f~ and ~g~ such that
 ~(combine f g) 0 ⇒ ["2",">3","3",">4"]~.
 Unfortunately ~(.)~ will not work directly and this would be cumbersome to
 write.
 But thanks to the Monad abstraction we can write:
+
 ```haskell
 (f >=> g) 2 ⇒ ["2",">3","3",">4"]
 ```
+
 ```haskell :tangle monad_composition.hs
 import Control.Monad ((>=>))
+
 f :: Int -> [Int]
 f n = [n, n+1]
+
 g :: Int -> [String]
 g n = [show n,">"++show (n+1)]
+
 main = print $ (f >=> g) 2
 ```
+
 The next chapters are simply about providing some examples of useful Monads.
+
 ### Maybe is a monad
+
 There are a lot of different types that are instances of =Monad=.
 One of the easiest to describe is =Maybe=.
 If you have a sequence of =Maybe= values, you can use monads to manipulate
 them.
 It is particularly useful to remove very deep =if..then..else..=
 constructions.
+
 Imagine a complex bank operation.
 You are eligible to gain about 700€ only if you can afford to follow a list
 of operations without your balance dipping below zero.
+
 ```haskell :tangle maybe_monad_1.hs
 deposit  value account = account + value
 withdraw value account = account - value
+
 eligible :: (Num a,Ord a) => a -> Bool
 eligible account =
   let account1 = deposit 100 account in
@@ -3833,18 +4862,23 @@ eligible account =
             then False
             else
               True
+
 main = do
   print $ eligible 300 -- True
   print $ eligible 299 -- False
 ```
+
 Now, let's make it better using Maybe and the fact that it is a Monad.
+
 ```haskell :tangle maybe_monad_2.hs
 deposit :: (Num a) => a -> a -> Maybe a
 deposit value account = Just (account + value)
+
 withdraw :: (Num a,Ord a) => a -> a -> Maybe a
 withdraw value account = if (account < value)
                          then Nothing
                          else Just (account - value)
+
 eligible :: (Num a, Ord a) => a -> Maybe Bool
 eligible account = do
   account1 <- deposit 100 account
@@ -3853,18 +4887,23 @@ eligible account = do
   account4 <- withdraw 300 account3
   account5 <- deposit 1000 account4
   Just True
+
 main = do
   print $ eligible 300 -- Just True
   print $ eligible 299 -- Nothing
 ```
+
 Not bad, but we can make it even better:
+
 ```haskell :tangle maybe_monad_3.hs
 deposit :: (Num a) => a -> a -> Maybe a
 deposit value account = Just (account + value)
+
 withdraw :: (Num a,Ord a) => a -> a -> Maybe a
 withdraw value account = if (account < value) 
                          then Nothing 
                          else Just (account - value)
+
 eligible :: (Num a, Ord a) => a -> Maybe Bool
 eligible account =
   deposit 100 account >>=
@@ -3873,40 +4912,54 @@ eligible account =
   withdraw 300 >>=
   deposit 1000 >>
   return True
+
 main = do
   print $ eligible 300 -- Just True
   print $ eligible 299 -- Nothing
 ```
+
 We have proven that Monads are a good way to make our code more elegant.
 Note this idea of code organization, in particular for =Maybe= can be used
 in most imperative languages.
 In fact, this is the kind of construction we make naturally.
+
 ______
 An important remark:
+
 The first element in the sequence being evaluated to =Nothing= will
 stop the complete evaluation. This means you don't execute all lines.
 You get this for free, thanks to laziness.
 ______
+
 You could also replay these example with the definition of ~(>>=)~ for
 =Maybe= in mind:
+
 ```haskell
 instance Monad Maybe where
     (>>=) :: Maybe a -> (a -> Maybe b) -> Maybe b
     Nothing  >>= _  = Nothing
     (Just x) >>= f  = f x
+
     return x = Just x
 ```
+
 The =Maybe= monad proved to be useful while being a very simple example.
 We saw the utility of the =IO= monad.
 But now for a cooler example, lists.
+
 ### The list monad
+
 caption:  Golconde de Magritte
 => ./golconde.jpg
+
 The list monad helps us to simulate non-deterministic computations.
 Here we go:
+
 ```haskell :tangle list_monad.hs
 import Control.Monad (guard)
+
 allCases = [1..10]
+
 resolve :: [(Int,Int,Int)]
 resolve = do
               x <- allCases
@@ -3914,45 +4967,60 @@ resolve = do
               z <- allCases
               guard $ 4*x + 2*y < z
               return (x,y,z)
+
 main = do
   print resolve
 ```
+
 MA. GIC. :
+
 ______
 [(1,1,7),(1,1,8),(1,1,9),(1,1,10),(1,2,9),(1,2,10)]
 ______
+
 For the list monad, there is also this syntactic sugar (à la Python):
+
 ```haskell
   print $ [ (x,y,z) | x <- allCases,
                       y <- allCases,
                       z <- allCases,
                       4*x + 2*y < z ]
 ```
+
 I won't list all the monads, since there are many of them.
 Using monads simplifies the manipulation of several notions in pure
 languages.
 In particular, monads are very useful for:
+
 * IO,
 * non-deterministic computation,
 * generating pseudo random numbers,
 * keeping configuration state,
 * writing state,
 * ...
+
 If you have followed me until here, then you've done it! You know
 monads[fn:7]!
+
 # Start swimming
+
 If you come this far, you can really congratulate yourself.
 This is already what I would personnaly call a tremendous achievement.
+
 This chapter will focus on how to build applications with Haskell.
 How to use libraries inside your project.
+
 Note application development is easier to introduce than library development.
 Mostly because dependency management will be a lot easier.
+
 I first intended to provide a lot more informations about how to create a
 project and provide a few project examples.
 But it occurs this is harder than I first expected.
 So I will just provide the introduction about how to create a starting
 point with many pointers for other possible options.
+
 ## Start a new project
+
 There are multiple starting options to create a new project.
 The most common one is certainly to use =cabal-install=.
 Another popular option is to use =stack=.
@@ -3964,24 +5032,32 @@ That final choice is often considered as the most complex and difficult for
 beginners.
 Still this is the one I find the most elegant.
 This is the method I will use in this article.
+
 Still, you shall not be intimidated. Look:
+
 * To create a new project the steps will be:
   1. run =nix-shell= (to have =cabal= executable in your PATH)
   2. run =cabal install -i= and answer a few questions
   3. copy a few =.nix= files in your project directory
   4. run another =nix-shell= in your new directory this time to enter in the
      local dev env of your new project.
+
 * To add a new library:
   1. Just add it in the =.cabal= file, and enter again in your =nix-shell=.
+
 I will just walk you through all the steps in detail.
 And mostly I will tell you not to take care about most warning messages.
 For our end-goal, those are mostly noise.
 I am aware of the level of complexity that it looks like at first.
 But really most of the apparent complexity is due to poor naming convention
 and not to any fundenmental core difficulty.
+
 ### Bootstrap a project template files
-1. put the 
-=> shell.nix shell.nix file in some directory
+
+1. put the
+
+=> shell.nix shell.nix
+ file in some directory
 2. start =nix-shell --pure=
 3. in the nix shell create a new directory and then
 4. =cabal init -i=
@@ -3992,11 +5068,16 @@ and not to any fundenmental core difficulty.
    4. Application directory choose =app= (choice 3)
    5. Library directory choose =lib= (choice 3)
    6. Add informative comments, choose yes.
+
 Here is a full interaction:
+
 ```
 ~/dev/hsenv> nix-shell
+
 [hs:hsenv]> mkdir my-app
+
 [hs:hsenv]> cd my-app/
+
 [hs:my-app]> cabal init -i
 Warning: The package list for 'hackage.haskell.org' does not exist. Run 'cabal
 update' to download it.
@@ -4084,7 +5165,9 @@ What base language is the package written in:
    3) Other (specify)
 Your choice? [default: Haskell2010]
 Add informative comments to each field in the cabal file (y/n)? [default: n] y
+
 Guessing dependencies...
+
 Generating LICENSE...
 Generating Setup.hs...
 Generating CHANGELOG.md...
@@ -4092,20 +5175,27 @@ Generating src/MyLib.hs...
 Generating app/Main.hs...
 Generating test/MyLibTest.hs...
 Generating my-app.cabal...
+
 Warning: no synopsis given. You should edit the .cabal file and add one.
 You may want to edit the .cabal file and add a Description field.
+
 [hs:my-app]>
 ```
+
 ______
 Please ignore the following warning:
+
 ______
 Warning: The package list for 'hackage.haskell.org' does not exist. Run 'cabal
 update' to download it.
 ______
+
 Nix should take care of handling Haskell libraries not =cabal-install=.
 No need to run =cabal update=.
 ______
+
 After this step you should end up with the following set of files:
+
 ______
 [hs:my-app]> tree
 .
@@ -4119,9 +5209,12 @@ ______
 ├── my-app.cabal
 └── test
     └── MyLibTest.hs
+
 3 directories, 7 files
 ______
+
 ### Create a few nix files
+
 ______
 The goal of this tutorial is not to make you learn =nix= because it is a
 bit complex, but to explain you a bit, =nix= use a a /configuration language/
@@ -4131,12 +5224,16 @@ in this /nix language/.
 And thus you can call the content of one nix-file in another one for
 example, or use variables.
 ______
+
 The first file to create is the one that will pin the versions of all your
 packages and libraries:
+
 ```nix :tangle my-app/nixpkgs.nix :mkdirp t
 import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {}
 ```
+
 The second file is the =default.nix= file:
+
 ```nix :tangle my-app/default.nix :mkdirp t
 { nixpkgs ? import ./nixpkgs.nix
 , compiler ? "default"
@@ -4174,11 +5271,13 @@ in
   };
 }
 ```
+
 It uses the =nixpkgs.nix= file.
 But also you can configure it to enable/disable benchmarks while building
 your application.
 I do not expect you to understand what is really going on here, but a short
 explanation is this file take cares of:
+
 1. use the pinned version of nixpkgs and should provide a working set of
    haskell libraries.
 2. read you =.cabal= file and find the set of libraries you depends on so
@@ -4188,29 +5287,41 @@ explanation is this file take cares of:
    I will talk about those tools later.
 4. take care of handling the =nix-shell= prompt so you should see the name
    of your project.
+
 The only things you should manipulate for a new fresh project should be the
 =name= and perhaps the =buildInputs= list to add a few more libraries that
 could be either Haskell libraries or any library =nix= know about (for
 example =ncurses=, in that case you should write it =pkgs.ncurses=).
+
 The two last file simply use the =default.nix= file:
+
 The =shell.nix= file:
+
 ```nix :tangle my-app/shell.nix :mkdirp t
 (import ./. {}).shell
 ```
+
 And =release.nix=:
+
 ```nix :tangle my-app/release.nix :mkdirp t
 let
   def = import ./. {};
 in
  { my_project = def.my_project; }
 ```
+
 So download those files as well as this =.gitignore= file:
+
+
 ```gitignore :tangle my-app/.gitignore :mkdirp t
 dist-newstyle/
 result
 ```
+
 ### Checking your environment
+
 Now you should see those files in your project:
+
 ______
 [hs:my-app]> tree
 .
@@ -4228,9 +5339,12 @@ ______
 ├── shell.nix
 └── test
     └── MyLibTest.hs
+
 3 directories, 11 files
 ______
+
 You shall now enter =nix-shell= again, but in your =my-app= directory this time.
+
 ______
 [hs:my-app]> nix-shell
 warning: Nix search path entry '/nix/var/nix/profiles/per-user/root/channels' does not exist, ignoring
@@ -4238,8 +5352,10 @@ building '/nix/store/j3hi4wm9996wfga61arc2917klfgspwr-cabal2nix-my-app.drv'...
 installing
 warning: Nix search path entry '/nix/var/nix/profiles/per-user/root/channels/nixpkgs' does not exist, ignoring
 warning: file 'nixpkgs' was not found in the Nix search path (add it using $NIX_PATH or -I), at (string):1:9; will use bash from your environment
+
 [my-app:my-app]> which ghcid
 /nix/store/ckps9wgbmpckxdvs42p6sqz64dfqiv35-ghcid-0.7.5-bin/bin/ghcid
+
 [my-app:my-app]> cabal run my-app
 Build profile: -w ghc-8.6.5 -O1
 In order, the following will be built (use -v for more details):
@@ -4257,33 +5373,42 @@ Linking /Users/y/hs-env/my-app/dist-newstyle/build/x86_64-osx/ghc-8.6.5/my-app-0
 Hello, Haskell!
 someFunc
 ______
+
 Great! It works!
 Try to run it again:
+
 ______
 [my-app:my-app]> cabal run my-app
 Up to date
 Hello, Haskell!
 someFunc
 ______
+
 This time, the compilation is not done again.
 =cabal= is smart enough not to repeat the compilation again.
+
 ______
 You could also use =nix-build= to compile your app.
 I think this is nice to do for releases.
 But for development, you should use =cabal=.
 ______
+
 ### Add a library
+
 ______
 {{{tldr}}} do not be afraid by the lenght of this section in fact, this is
 straightforward.
 I just take a lot of time to go through all intermediate steps.
+
 1. add the library in the =build-depends= inside your =.cabal= file.
 2. restart =nix-shell= to download the new dependencies.
 ______
+
 If you open the =my-app.cabal= file in an editor you should see a =library=
 section and and =executable my-app= section.
 In particular for each section you can see a =build-depends= sub-section as
 this one:
+
 ```cabal
 ...
 library
@@ -4295,6 +5420,7 @@ executable my-app
   build-depends:       base ^>=4.12.0.0, my-app
   ...
 ```
+
 ______
 The =^>=4.12.0.0= means that it should use the latest non breaking version
 of the haskell package =base=. The author of the =base= package are
@@ -4303,12 +5429,16 @@ Haskell libs uses a 4 number versionning quite similar to the semantic
 versionning scheme with just another minor number for non visible changes.
 I will not argue much, but mainly, semantic versionning and Haskell
 versionning are just a "right to break things to your users".
+
 I don't want to talk a lot more about this, but, it would be nice if more
 people would watch this talk[fn:8] related to versionning.
+
 If you want to know more about Haskell versionning convention:
 https://pvp.haskell.org
 ______
+
 Add the =protolude= lib in the library build-depends like this:
+
 ```cabal
 ...
 library
@@ -4321,6 +5451,7 @@ executable my-app
   build-depends:       base ^>=4.12.0.0, my-app
   ...
 ```
+
 ______
 I did not include a version constraint here.
 This is ok if you do not deploy your library publicly.
@@ -4336,23 +5467,30 @@ Do not think too much about this.
 This is generally quite trivial work to do to maintain your lib into a
 working lib set.
 ______
+
 Now that you have added =protolude= modify slightly the code of your app to
 use it.
 Change the code inside =src/MyLib.hs=:
+
 ```haskell :tangle my-app/src/MyLib.hs :mkdirp t
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 module MyLib (someFunc) where
+
 import Protolude
+
 someFunc :: IO ()
 someFunc = putText "someFunc"
 ```
+
 Please do not try to search right now about what this change is doing.
 It should work mostly as before.
 The goal here is just to check that you can use another library easily.
+
 So now you should get out of the =nix-shell= because =nix= dependencies
 changed.
 Generally just type =^D= (=Ctrl-d=) then launch =nix-shell --pure=.
+
 ______
 [my-app:my-app]> cabal build
 Warning: The package list for 'hackage.haskell.org' does not exist. Run 'cabal
@@ -4364,11 +5502,15 @@ cabal: Could not resolve dependencies:
 [__1] fail (backjumping, conflict set: my-app, protolude)
 After searching the rest of the dependency tree exhaustively, these were the
 goals I've had most trouble fulfilling: my-app, protolude
+
+
 [my-app:my-app]> exit
+
 [hs:my-app]> nix-shell
 warning: Nix search path entry '/nix/var/nix/profiles/per-user/root/channels' does not exist, ignoring
 building '/nix/store/sr4838rnmzn30j3qc5ray4i2n6n0p8pq-cabal2nix-my-app.drv'...
 installing
+
 [my-app:my-app]> cabal build
 Build profile: -w ghc-8.6.5 -O1
 In order, the following will be built (use -v for more details):
@@ -4382,17 +5524,22 @@ Preprocessing executable 'my-app' for my-app-0.1.0.0..
 Building executable 'my-app' for my-app-0.1.0.0..
 [1 of 1] Compiling Main             ( app/Main.hs, .../my-app/dist-newstyle/build/x86_64-osx/ghc-8.6.5/my-app-0.1.0.0/x/my-app/build/my-app/my-app-tmp/Main.o ) [MyLib changed]
 Linking .../my-app/dist-newstyle/build/x86_64-osx/ghc-8.6.5/my-app-0.1.0.0/x/my-app/build/my-app/my-app ...
+
 [my-app:my-app]> cabal run my-app
 Up to date
 Hello, Haskell!
 someFunc
 ______
+
 Yes!
+
 ### Better defaults
+
 Some of the default values in the cabal file are not the best for a
 professional and serious application development unfortunately.
 First, let create a new block called =common professional-properties=
 that will help us not repeat ourselve much and show more warning during compilation.
+
 ```cabal
 common professional-properties
   default-language: Haskell2010
@@ -4407,16 +5554,19 @@ common professional-properties
     -- -Werror
     -- -O2
 ```
+
 This should then be used with import in all other sections (=library=,
 =executable= and =test=).
 Also add the =ghc-options= to enable the use of all core by default.
 This might not always be a good idea.
 But I think this is generally a better default for most modern application.
+
 ```cabal
 library
   import: professional-properties
   build-depends: protolude
   ...
+
 executable my-app
   import: professional-properties
   ghc-options:
@@ -4424,74 +5574,111 @@ executable my-app
     -threaded
     "-with-rtsopts=-N"
   ...
+
 test-suite my-app-test
   import: professional-properties
   ...
 ```
-You can download the final cabal file: 
+
+You can download the final cabal file:
+
 => my-app/my-app.cabal my-app.cabal
+
+
 # Conclusion
+
 This was a re-written fast Haskell tutorial.
 I will certainly complete this with more advanced tutorial explaining how
 to write a few Haskell projects.
+
 Thanks for reading it.
+
 # Thanks
-Thanks to 
-=> http://reddit.com/r/haskell =/r/haskell= and 
-=> http://reddit.com/r/programming =/r/programming=.
+
+Thanks to
+
+=> http://reddit.com/r/haskell =/r/haskell=
+ and
+
+=> http://reddit.com/r/programming =/r/programming=
+.
 Your comment were most than welcome.
-Particularly, I want to thank 
-=> https://github.com/Emm Emm a thousand times for the time he spent on
+
+Particularly, I want to thank
+
+=> https://github.com/Emm Emm
+ a thousand times for the time he spent on
 correcting my English.
 Thank you man.
+
 [fn:1] Even if most recent languages try to hide them, they are present.
+
 [fn:2] I know I'm cheating. But I will talk about non-strictness later.
+
 [fn:3] For the brave, a more complete explanation of pattern matching
        can be found
 
-=> http://www.cs.auckland.ac.nz/references/haskell/haskell-intro-html/patterns.html here.
+
+
+=> http://www.cs.auckland.ac.nz/references/haskell/haskell-intro-html/patterns.html here
+.
+
 [fn:4] Which is itself very similar to the javascript =eval= function,
        that is applied to a string containing JSON.
+
 [fn:5] There are some /unsafe/ exceptions to this rule. But you
        shouldn't see such use in a real application except maybe for
        debugging purposes.
+
 [fn:6] For the curious ones, the real type looks like
        =data IO a = IO {unIO :: State# RealWorld -> (# State# RealWorld, a #)}=.
        All the =#= has to do with optimisation.
        I swapped the fields in my example.
        But this is the basic idea.
        As of today, the definition of =IO= is no more visible into =base=.
-       We have the following explanation in 
-=> http://hackage.haskell.org/package/base-4.12.0.0/docs/src/GHC.IO.html =GHC.IO.hs=:
+       We have the following explanation in
+
+=> http://hackage.haskell.org/package/base-4.12.0.0/docs/src/GHC.IO.html =GHC.IO.hs=
+:
        ______
        ```
        The IO Monad is just an instance of the ST monad, where the state is
        the real world.  We use the exception mechanism (in GHC.Exception) to
        implement IO exceptions.
 
+
        NOTE: The IO representation is deeply wired in to various parts of the
        system.  The following list may or may not be exhaustive:
 
+
        Compiler  - types of various primitives in PrimOp.hs
+
 
        RTS       - forceIO (StgStartup.cmm)
                  - catchzh_fast, (un)?blockAsyncExceptionszh_fast, raisezh_fast
                    (Exception.cmm)
                  - raiseAsync (RaiseAsync.c)
 
+
        Prelude   - GHC.IO.hs, and several other places including
                    GHC.Exception.hs.
 
+
        Libraries - parts of hslibs/lang.
+
 
        --SDM
        ```
        ______
+
 [fn:7] Well, you'll certainly need to practice a bit to get used to them
        and to understand when you can use them and create your own. But
        you already made a big step in this direction.
-[fn:8] 
+
+[fn:8]
+
 => https://www.youtube.com/watch?v=oyLBGkS5ICk Spec-ulation Keynote - Rich Hickey
+
 
 => /index.gmi Home
 => /gem-atom.xml Feed
@@ -4521,6 +5708,7 @@ date:  [2019-12-06 Fri]
 keywords:  blog shell script
 description:  Optimize the size of a full static website by taking advantage
 description:  of information found in both HTML and CSS.
+
 One of the major problem with CSS and HTML is that they are highly
 dependent from each other.
 For example, if you want to minimize your CSS, you are still forced to use
@@ -4528,60 +5716,83 @@ the same class names even if they are long.
 Because the HTML uses them.
 And the same problem arise when you want to minimize the size of your HTML
 files.
+
 It means that if you want to minimize a full website you must take care at
 the same time of HTML pages as well as CSS pages.
 And this is totally impossible to achieve if JS is involved because there
 is always the risk the JS code generate class names to manipulate the DOM.
+
 So here is a small script I wanted to write from a long time that do the following:
+
 1. retrieve all class names in the HTML and in the CSS
 2. create a map from those long names to shorter names
 3. replace the class names in the HTML and CSS files.
+
 So if you have multiple HTML files with:
+
 ```html
 <div class="long-org-class-generated-by-org-mode">...</div>
 ```
+
 and CSS files with:
+
 ```css
 pre .long-org-class-generated-by-org-mode { ... }
 ```
+
 Those will be replaced by something like:
+
 ```html
 <div class="av">...</div>
 ```
+
 and CSS files with:
+
 ```css
 pre .av { ... }
 ```
+
 And thus removing many superfluous bytes.
+
 In my personal website, I run this script after minifying my HTML and CSS
 with classical tools.
 And I still get up to 32% smaller HTML and 22% smaller CSS.
+
 Many 25% smaller HTML if there are a lot of code, because org-mode use very
 long class names when generating the code.
+
 Not bad for a very basic solution.
+
 If you want to try it; here is the quick and dirty script I use:
+
 name:  optim-classes.sh
 ```bash
 #!/usr/bin/env zsh
+
 webdir="_site"
+
 retrieve_classes_in_html () {
     cat $webdir/**/*.html(N) | \
         perl -pe 's/class="?([a-zA-Z0-9_-]*)/\nCLASS: $1\n/g'
 }
+
 retrieve_classes_in_css () {
     cat $webdir/**/*.css(N) | \
         perl -pe 's/\.([a-zA-Z-_][a-zA-Z0-9-_]*)/\nCLASS: $1\n/g'
 }
+
 classes=( $( {retrieve_classes_in_html; retrieve_classes_in_css}| \
                  egrep "^CLASS: [^ ]*$" |\
                  sort -u | \
                  awk 'length($2)>2 {print length($2),$2}'|\
                  sort -rn | \
                  awk '{print $2}') )
+
 chr() {
     [ "$1" -lt 26 ] || return 1
     printf "\\$(printf '%03o' $(( 97 + $1 )))"
 }
+
 shortName() {
     if [ "$1" -gt 25 ]; then
         print -- $(shortName $(( ( $1 / 26 ) - 1 )))$(shortName $(( $1 % 26 )))
@@ -4589,6 +5800,7 @@ shortName() {
         chr $1
     fi
 }
+
 i=0;
 typeset -A assoc
 for c in $classes; do
@@ -4597,15 +5809,18 @@ for c in $classes; do
     assoc[$c]=$sn
     ((i++))
 done
+
 htmlreplacer=''
 cssreplacer=''
 for long in $classes; do
     htmlreplacer=$htmlreplacer's#class=("?)'${long}'#class=$1'${assoc[$long]}'#g;'
     cssreplacer=$cssreplacer's#\.'${long}'#.'${assoc[$long]}'#g;'
 done
+
 sizeof() {
     stat --format="%s" "$*"
 }
+
 for fic in $webdir/**/*.{html,xml}(N); do
     before=$(sizeof $fic)
     print -n -- "$fic ($before"
@@ -4621,7 +5836,9 @@ for fic in $webdir/**/*.css(N); do
     print -- " => $after [$(( ((before - after) * 100) / before  ))])"
 done
 ```
+
 A few remarks:
+
 * to prevent doing the work twice, the script only takes care for classe
   names longer or equal to 3 chars. (=awk 'length($2)>2 {print
   length($2),$2}'=). As consequence take care that your website does not
@@ -4632,6 +5849,7 @@ A few remarks:
   bug if one class name is a prefix of another one.
 * We generate a long perl script to launch perl just once, this make the
   full find and replace way faster.
+
 Of course this could be improved by providing the shortest name to the most
 used classes, and also by using a better =shortName= function that could
 use more chars.
@@ -4663,12 +5881,16 @@ email:  yann@esposito.host
 date:  [2019-11-30 Sat]
 keywords:  blog
 description:  About recent changes on my blog system.
+
 When I started this new blog, I wanted to find something minimal to be able
 to minimize my natural tendency to hack my blogging system.
+
 Clearly it was a failure :), =org-publish= ecosystem is not easy enough to
 handle all my needs, so I had to hack a few external scripts.
 In particular regarding RSS.
+
 Here are a few recent changes I did in my system:
+
 1. I changed how I reduce the size of the images.
 2. I do not merge all CSS styles in the same CSS file, I splitted 4
    different CSS each supporting light/dark theme.
@@ -4676,7 +5898,9 @@ Here are a few recent changes I did in my system:
 3. I added an HTML minimize step. I could optimize this a lot I think.
 4. I added a script that show the size of each webpage (HTML + CSS +
    Images). There is an example in all the footers of the pages of my website.
+
 So to compress the images I use:
+
 ```bash
 convert src.jpg \
         -resize 400x400\> \
@@ -4684,26 +5908,33 @@ convert src.jpg \
         -ordered-dither o8x8,8 \
         dst.jpg
 ```
+
 Somehow, I made 4 themes.
 This is too much, but, I don't know I guess I felt inspired.
 I'm particularly proud of the matrix theme (sci dark, try it by selecting
 sci and then choose dark theme).
 It takes care of making the images green, and inspired by this one I also
 added this trick to all other themes.
+
 To note, one of the theme is a minimal one.
 It is used to minimize the size of the CSS, while I'm writting those lines,
 the css size is 728 bytes.
+
 I'll certainly be able to optimize a lot more the size of my HTML files too.
 But I haven't invested much time in it yet. I just use the =minify= command
 line tool for them.
+
 So right now to build my website here is the script I use:
+
 name:  build.sh
 ```bash
 #!/usr/bin/env bash
+
 # build the files via emacs
 emacs \
   --load project.el \
   --eval "(progn (org-publish \"blog\" t) (evil-quit))"
+
 echo "Optim HTML size"
 ./optim-html.sh
 echo "Gen themes clones"
@@ -4714,16 +5945,21 @@ echo "Building RSS"
 ./mkrss.sh
 echo "RSS Built"
 ```
+
 Where
+
 name:  optim-html.sh
 ```bash
 #!/usr/bin/env nix-shell
 #!nix-shell -i zsh
 #!nix-shell -I nixpkgs="https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz"
+
 webdir="_site"
+
 debug () {
  print -- $* >/dev/null
 }
+
 type -a filelist
 setopt extendedglob
 if (($#>0)); then
@@ -4731,7 +5967,9 @@ if (($#>0)); then
 else
     filelist=( $webdir/**/*.html(.) )
 fi
+
 tmp=$(mktemp)
+
 for fic in $filelist; do
     if echo $fic|egrep -- '-(mk|min|sci|modern).html$'>/dev/null; then
         continue
@@ -4741,25 +5979,31 @@ for fic in $filelist; do
     print "[OK]"
 done
 ```
+
 name:  dup-for-themes.sh
 ```bash
 #!/usr/bin/env nix-shell
 #!nix-shell -i zsh
 #!nix-shell -I nixpkgs="https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz"
+
 webdir="_site"
+
 debug () {
  print -- $* >/dev/null
 }
+
 if (($#>0)); then
     filelist=( $* )
 else
     filelist=( $webdir/**/*.html(.) )
 fi
+
 trans(){
    local suff=$1;
    local fic=$2;
    cat $fic | perl -p -e 's#href="?/css/mk.css"?#href=/css/'$suff'.css#;s#(/?(index|archive|slides|about-me)).html#$1-'$suff'.html#g;s#(posts/[a-zA-Z0-9_-]*).html#$1-'$suff'.html#g;s#-'$suff'.html>mk#.html>mk#g' > ${fic:r}-${suff}.html
 }
+
 for fic in $filelist; do
     if echo $fic|egrep -- '-(mk|min|sci|modern).html$'>/dev/null; then
         continue
@@ -4771,36 +6015,48 @@ for fic in $filelist; do
     print "[OK]"
 done
 ```
+
 and the script to write the size of the file inside the file:
+
 name:  update-file-size.sh
 ```bash
 #!/usr/bin/env nix-shell
 #!nix-shell -i zsh
 #!nix-shell -I nixpkgs="https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz"
+
 webdir="_site"
+
 sizeof() {
     stat --format="%s" "$*"
 }
+
 debug () {
  print -- $* >/dev/null
 }
+
 toh () {
     numfmt --to=iec $*
 }
+
 tmpdir=$(mktemp -d)
+
 type -a filelist
 if (($#>0)); then
     filelist=( $* )
 else
     filelist=( $webdir/**/*.html(.) )
 fi
+
 for fic in $filelist; do
     print -n -- "$fic   "
+
     htmlsize=$(sizeof $fic)
     debug HTML: $htmlsize
+
     xfic=$tmpdir/$fic
     mkdir -p $(dirname $xfic)
     hxclean $fic > $xfic
+
     images=( $( < $xfic hxselect -i -c -s '\n' 'img::attr(src)' | sed 's/^\.\.\///' ) )
     imgsize=0
     nbimg=0
@@ -4811,6 +6067,7 @@ for fic in $filelist; do
         (( imgsize += isize ))
     done
     debug IMG: $imgsize
+
     css=( $( < $xfic hxselect -i -c -s '\n' 'link[rel=stylesheet]::attr(href)'))
     csssize=0
     for i in $css; do

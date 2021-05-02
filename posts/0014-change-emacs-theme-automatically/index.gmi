@@ -5,28 +5,34 @@ email:  yann@esposito.host
 date:  [2020-09-22 Tue]
 keywords:  emacs
 description:  A small snippet to automatically change theme in emacs.
+
 One thing I kind of like is the ability to change emacs theme depending of
 the hour.
 There are two possibilities.
 One would be to sync with the sun using the current location.
 There is an emacs package for that.
-It's called 
-=> https://github.com/hadronzoo/theme-changer theme-changer which at the time of writing those lines is
+It's called
+
+=> https://github.com/hadronzoo/theme-changer theme-changer
+ which at the time of writing those lines is
 asking for a new maintainer.
 This theme changer is very elegant because like macOS use the location to
 determine if it is day or night.
 But I wanted to have more themes from morning to night:
+
 1. early morning: deep yellow (gruvbox-light),
 2. morning: light yellow (solarized-light),
 3. day: grey/blueish during the day (nord-light),
 4. evening: deep yellow again (gruvbox-light)
 5. night: dark theme (oceanic-next)
 6. sleep time: neon-like (laserwave)
+
 And also, I wanted that to follow my working hours and not really the sun.
 I might change my mind and use the code of theme-changer to follow the
 curve of the sun.
 But for now, just using straight hours should be good enough.
 So here is my piece of code I added to my doom-emacs =config.el=:
+
 ```emacs-lisp
 (defun y/auto-update-theme ()
   "depending on time use different theme"
@@ -43,8 +49,10 @@ So here is my piece of code I added to my doom-emacs =config.el=:
       (load-theme doom-theme t))
     ;; run that function again next hour
     (run-at-time (format "%02d:%02d" (+ hour 1) 0) nil 'y/auto-update-theme)))
+
 (y/auto-update-theme)
 ```
+
 I'm still playing with it.
 So there still might be a bug.
 Use at your own risk.
