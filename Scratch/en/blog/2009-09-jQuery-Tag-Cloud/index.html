@@ -1,150 +1,150 @@
-<!doctype html><html lang=en><meta charset=utf-8><title>YBlog - jQuery Tag Cloud</title><meta name=keywords content="jQuery,javascript,web,ruby"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/en/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=en class=al><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/fr/blog/2009-09-jQuery-Tag-Cloud/>French</a></span>
-<span class=an><a href=#navigation>↓ Menu ↓</a></span>
-<span class=bm></span></div></div><div id=titre><h1>jQuery Tag Cloud</h1></div><div class=bm></div><div id=afterheader class=al><div class=bo><p>Here is how I done the tag cloud of my blog. It is done mostly in jQuery. All my site is static and pages are generated with <a href=http://nanoc.stoneship.org>nanoc</a>. It is (in my humble opinion) the modern geek way to make a website. The tagcloud should work for machine with and without javascript.<p>This is why I’ll give only a Ruby Generator, not a full javascript generator. But you can easily translate from Ruby to Javascript.<p>Here is what you should obtain:<hr><div><p>&lt;%= tagCloud %></div><hr><h1 id=jquery>jQuery</h1><p>Here is the simple jQuery code:<div><div class=m id=cb1><pre class="m javascript"><code class="m javascript"><a class=l id=cb1-1 title=1>    <span class=at>$</span>(document).<span class=at>ready</span>( <span class=kw>function</span>()<span class=op>{</span><span class=at>$</span>(<span class=st>'.list'</span>).<span class=at>hide</span>()<span class=op>;}</span> )<span class=op>;</span></a>
-<a class=l id=cb1-2 title=2>    <span class=kw>function</span> <span class=at>tagSelected</span>(id) <span class=op>{</span></a>
-<a class=l id=cb1-3 title=3>        <span class=at>$</span>(<span class=st>'.list'</span>).<span class=at>hide</span>()<span class=op>;</span></a>
-<a class=l id=cb1-4 title=4>        <span class=at>$</span>(<span class=st>'#'</span><span class=op>+</span>id).<span class=at>fadeIn</span>()<span class=op>;</span></a>
-<a class=l id=cb1-5 title=5>        <span class=at>$</span>(<span class=st>'.tag.selected'</span>).<span class=at>removeClass</span>(<span class=st>'selected'</span>)<span class=op>;</span></a>
-<a class=l id=cb1-6 title=6>        <span class=at>$</span>(<span class=st>'#tag_'</span><span class=op>+</span>id).<span class=at>addClass</span>(<span class=st>'selected'</span>)<span class=op>;</span></a>
-<a class=l id=cb1-7 title=7>    <span class=op>}</span></a></code></pre></div></div><p>This code will hide all the div containing links to articles containing the tag. And create a function do show the div containing the tag.<p>For each tag I create a span element:<div><div class=m id=cb2><pre class="m html"><code class="m html"><a class=l id=cb2-1 title=1>    <span class=kw>&lt;span</span><span class=ot>   style=</span><span class=st>&quot;font-size: 1.0em;&quot;</span></a>
-<a class=l id=cb2-2 title=2><span class=ot>            class=</span><span class=st>&quot;tag&quot;</span></a>
-<a class=l id=cb2-3 title=3><span class=ot>            onClick=</span><span class=st>&quot;tagSelected('[TAG]')&quot;</span></a>
-<a class=l id=cb2-4 title=4><span class=ot>            id=</span><span class=st>&quot;tag_[TAG]&quot;</span><span class=kw>&gt;</span></a>
-<a class=l id=cb2-5 title=5>        [TAG]</a>
-<a class=l id=cb2-6 title=6>    <span class=kw>&lt;/span&gt;</span></a></code></pre></div></div><p>and a div containing links associtated to this tag:<div><div class=m id=cb3><pre class="m html"><code class="m html"><a class=l id=cb3-1 title=1>    <span class=kw>&lt;div</span><span class=ot> id=</span><span class=st>&quot;[TAG]&quot;</span><span class=kw>&gt;</span></a>
-<a class=l id=cb3-2 title=2>        <span class=kw>&lt;h4&gt;</span>[TAG]<span class=kw>&lt;/h4&gt;</span></a>
-<a class=l id=cb3-3 title=3>        <span class=kw>&lt;ul&gt;</span></a>
-<a class=l id=cb3-4 title=4>            <span class=kw>&lt;li&gt;</span> LINK 1 <span class=kw>&lt;/li&gt;</span></a>
-<a class=l id=cb3-5 title=5>            <span class=kw>&lt;li&gt;</span> LINK 2 <span class=kw>&lt;/li&gt;</span></a>
-<a class=l id=cb3-6 title=6>        <span class=kw>&lt;/ul&gt;</span></a>
-<a class=l id=cb3-7 title=7>    <span class=kw>&lt;/div&gt;</span></a></code></pre></div></div><hr><h1 id=nanoc>nanoc</h1><p>Here is how I generate this using nanoc 2.<p>If you want to make it fully jQuery one, it shouldn’t be too difficult, to use my ruby code and translate it into javascript.<p>In a first time <code>tags</code> correpond of the list of all tags.<div><div class=m id=cb4><pre class="m ruby"><code class="m ruby"><a class=l id=cb4-1 title=1><span class=kw>def</span> tags</a>
-<a class=l id=cb4-2 title=2>    <span class=kw>return</span> <span class=ot>@items</span>.tags.join(<span class=st>', '</span>)</a>
-<a class=l id=cb4-3 title=3><span class=kw>end</span></a></code></pre></div></div><p>A function to create a data structure associating to each tag its occurence.<div><div class=m id=cb5><pre class="m ruby"><code class="m ruby"><a class=l id=cb5-1 title=1><span class=co># generate an hash tag =&gt; number of occurence of tag</span></a>
-<a class=l id=cb5-2 title=2><span class=kw>def</span> tagNumber</a>
-<a class=l id=cb5-3 title=3>    tags={}</a>
-<a class=l id=cb5-4 title=4>    <span class=ot>@items</span>.each <span class=kw>do</span> |p|</a>
-<a class=l id=cb5-5 title=5>        <span class=kw>if</span> p.tags.nil?</a>
-<a class=l id=cb5-6 title=6>            <span class=kw>next</span></a>
-<a class=l id=cb5-7 title=7>        <span class=kw>end</span></a>
-<a class=l id=cb5-8 title=8>        p.tags.each <span class=kw>do</span> |t|</a>
-<a class=l id=cb5-9 title=9>            <span class=kw>if</span> tags[t]</a>
-<a class=l id=cb5-10 title=10>                tags[t]+=<span class=dv>1</span></a>
-<a class=l id=cb5-11 title=11>            <span class=kw>else</span></a>
-<a class=l id=cb5-12 title=12>                tags[t]=<span class=dv>1</span></a>
-<a class=l id=cb5-13 title=13>            <span class=kw>end</span></a>
-<a class=l id=cb5-14 title=14>        <span class=kw>end</span></a>
-<a class=l id=cb5-15 title=15>    <span class=kw>end</span></a>
-<a class=l id=cb5-16 title=16>    <span class=kw>return</span> tags</a>
-<a class=l id=cb5-17 title=17><span class=kw>end</span></a></code></pre></div></div><p>I also need a data structure who associate to each tag a list of pages (at least url and title).<div><div class=m id=cb6><pre class="m ruby"><code class="m ruby"><a class=l id=cb6-1 title=1><span class=co># generate an hash tag =&gt; [ page1, page2 ... ]</span></a>
-<a class=l id=cb6-2 title=2><span class=kw>def</span> tagRefs</a>
-<a class=l id=cb6-3 title=3>    tagLinks={}</a>
-<a class=l id=cb6-4 title=4>    <span class=ot>@items</span>.each <span class=kw>do</span> |p|</a>
-<a class=l id=cb6-5 title=5>        <span class=kw>if</span> p.tags.nil?</a>
-<a class=l id=cb6-6 title=6>            <span class=kw>next</span></a>
-<a class=l id=cb6-7 title=7>        <span class=kw>end</span></a>
-<a class=l id=cb6-8 title=8>        p.tags.each <span class=kw>do</span> |t|</a>
-<a class=l id=cb6-9 title=9>            <span class=kw>if</span> tagLinks[t].nil?</a>
-<a class=l id=cb6-10 title=10>                tagLinks[t]=[ p ]</a>
-<a class=l id=cb6-11 title=11>            <span class=kw>else</span></a>
-<a class=l id=cb6-12 title=12>                tagLinks[t] &lt;&lt;= p</a>
-<a class=l id=cb6-13 title=13>            <span class=kw>end</span></a>
-<a class=l id=cb6-14 title=14>        <span class=kw>end</span></a>
-<a class=l id=cb6-15 title=15>    <span class=kw>end</span></a>
-<a class=l id=cb6-16 title=16>    <span class=kw>return</span> tagLinks</a>
-<a class=l id=cb6-17 title=17><span class=kw>end</span></a></code></pre></div></div><p>Calculate the real size of each tag to be displayed.<p>I choosen not to use the full range of size for all the tag. Because if no tag has more than <code>n</code> (here 10) occurences, then it doesn’t deserve to be of the maximal size.<div><div class=m id=cb7><pre class="m ruby"><code class="m ruby"><a class=l id=cb7-1 title=1><span class=kw>def</span> tagRealSize</a>
-<a class=l id=cb7-2 title=2>    tags=tagNumber</a>
-<a class=l id=cb7-3 title=3>    max=tags.values.max</a>
-<a class=l id=cb7-4 title=4>    min=tags.values.min</a>
-<a class=l id=cb7-5 title=5>    <span class=co># size in CSS em.</span></a>
-<a class=l id=cb7-6 title=6>    minSize=<span class=fl>1.0</span></a>
-<a class=l id=cb7-7 title=7>    maxSize=<span class=fl>2.5</span></a>
-<a class=l id=cb7-8 title=8>    tagSize={}</a>
-<a class=l id=cb7-9 title=9>    tags.each <span class=kw>do</span> |t,n|</a>
-<a class=l id=cb7-10 title=10>        <span class=kw>if</span> ( max == min )</a>
-<a class=l id=cb7-11 title=11>            tagSize[t]=minSize</a>
-<a class=l id=cb7-12 title=12>        <span class=kw>else</span></a>
-<a class=l id=cb7-13 title=13>            <span class=co># normalized value between 0 and 1</span></a>
-<a class=l id=cb7-14 title=14>            <span class=co># if not tag appear more than 10 times,</span></a>
-<a class=l id=cb7-15 title=15>            <span class=co># then it cannot have the maximal size</span></a>
-<a class=l id=cb7-16 title=16>            tagSize[t]=[ ( n - min + <span class=fl>0.0</span> ) / ( max - min ) ,</a>
-<a class=l id=cb7-17 title=17>                         (n - min) / <span class=fl>10.0</span> ].min</a>
-<a class=l id=cb7-18 title=18>            <span class=co># from normalized size to real size</span></a>
-<a class=l id=cb7-19 title=19>            tagSize[t]=( tagSize[t] ) * (maxSize - minSize) + minSize</a>
-<a class=l id=cb7-20 title=20>        <span class=kw>end</span></a>
-<a class=l id=cb7-21 title=21>    <span class=kw>end</span></a>
-<a class=l id=cb7-22 title=22>    <span class=kw>return</span> tagSize</a>
-<a class=l id=cb7-23 title=23><span class=kw>end</span></a></code></pre></div></div><p>Finaly a function to generate the XHTML/jQuery code<div><div class=m id=cb8><pre class="m ruby"><code class="m ruby"><a class=l id=cb8-1 title=1><span class=co># generate an XHTML/jQuery code for tag cloud</span></a>
-<a class=l id=cb8-2 title=2><span class=kw>def</span> tagCloud</a>
-<a class=l id=cb8-3 title=3>    tagLinks=tagRefs</a>
-<a class=l id=cb8-4 title=4>    tagSize=tagRealSize</a>
-<a class=l id=cb8-5 title=5></a>
-<a class=l id=cb8-6 title=6>    <span class=co># begin to write the code</span></a>
-<a class=l id=cb8-7 title=7>    tagCloud=<span class=ot>%{</span><span class=st>&lt;script type=&quot;text/javascript&quot;&gt;</span></a>
-<a class=l id=cb8-8 title=8><span class=st>        $(document).ready( function(){$('.list').hide();} );</span></a>
-<a class=l id=cb8-9 title=9><span class=st>        function tagSelected(id) {</span></a>
-<a class=l id=cb8-10 title=10><span class=st>            $('.list').hide();</span></a>
-<a class=l id=cb8-11 title=11><span class=st>            $('#'+id).fadeIn();</span></a>
-<a class=l id=cb8-12 title=12><span class=st>            $('.tag.selected').removeClass('selected');</span></a>
-<a class=l id=cb8-13 title=13><span class=st>            $('#tag_'+id).addClass('selected');</span></a>
-<a class=l id=cb8-14 title=14><span class=st>        }</span></a>
-<a class=l id=cb8-15 title=15><span class=st>    &lt;/script&gt;&lt;div id=&quot;tagcloud&quot;&gt;</span><span class=ot>}</span></a>
-<a class=l id=cb8-16 title=16>    <span class=co># Creation of the tags &lt;span&gt;</span></a>
-<a class=l id=cb8-17 title=17>    tagSize.sort{|a,b| a[<span class=dv>0</span>].downcase &lt;=&gt; b[<span class=dv>0</span>].downcase}.each <span class=kw>do</span> |t,s|</a>
-<a class=l id=cb8-18 title=18>        tag_in_id=t.gsub(<span class=ot>/\W/</span>,<span class=ch>'_'</span>)</a>
-<a class=l id=cb8-19 title=19>        <span class=co># HTML protected version of the tag</span></a>
-<a class=l id=cb8-20 title=20>        <span class=co># for example, replace ' ' by '&amp;nbsp;'</span></a>
-<a class=l id=cb8-21 title=21>        <span class=kw>protected</span>=t.gsub(<span class=ot>/&amp;/</span>,<span class=st>'&amp;amp;'</span>).gsub(<span class=ot>/ /</span>,<span class=st>'&amp;nbsp;'</span>).gsub(<span class=ot>/&lt;/</span>,<span class=st>'&amp;lt;'</span>).gsub(<span class=ot>/&gt;/</span>,<span class=st>'&amp;gt;'</span>)</a>
-<a class=l id=cb8-22 title=22>        tagCloud &lt;&lt;=<span class=ot> %{</span></a>
-<a class=l id=cb8-23 title=23><span class=st>            &lt;span style=&quot;font-size: </span><span class=ot>#{</span>s<span class=ot>}</span><span class=st>em;&quot;</span></a>
-<a class=l id=cb8-24 title=24><span class=st>                  class=&quot;tag&quot;</span></a>
-<a class=l id=cb8-25 title=25><span class=st>                  onClick=&quot;tagSelected('</span><span class=ot>#{</span>tag_in_id<span class=ot>}</span><span class=st>')&quot;</span></a>
-<a class=l id=cb8-26 title=26><span class=st>                  id=&quot;tag_</span><span class=ot>#{</span>tag_in_id<span class=ot>}</span><span class=st>&quot;&gt;</span></a>
-<a class=l id=cb8-27 title=27><span class=st>                </span><span class=ot>#{</span><span class=kw>protected</span><span class=ot>}</span></a>
-<a class=l id=cb8-28 title=28><span class=st>            &lt;/span&gt; </span><span class=ot>}</span></a>
-<a class=l id=cb8-29 title=29>    <span class=kw>end</span></a>
-<a class=l id=cb8-30 title=30>    tagCloud &lt;&lt;=<span class=ot> %{</span><span class=st>&lt;/div&gt;&lt;div id=&quot;hiddenDivs&quot; &gt;</span><span class=ot>}</span></a>
-<a class=l id=cb8-31 title=31>    <span class=co># Creation of the divs containing links associated to a tag.</span></a>
-<a class=l id=cb8-32 title=32>    tagLinks.each <span class=kw>do</span> |t,l|</a>
-<a class=l id=cb8-33 title=33>        tag_in_id=t.gsub(<span class=ot>/\W/</span>,<span class=ch>'_'</span>)</a>
-<a class=l id=cb8-34 title=34>        tagCloud &lt;&lt;=<span class=ot> %{</span></a>
-<a class=l id=cb8-35 title=35><span class=st>            &lt;div id=&quot;</span><span class=ot>#{</span>tag_in_id<span class=ot>}</span><span class=st>&quot; class=&quot;list&quot;&gt;</span></a>
-<a class=l id=cb8-36 title=36><span class=st>                &lt;h4&gt;</span><span class=ot>#{</span>t<span class=ot>}</span><span class=st>&lt;/h4&gt;&lt;ul&gt;</span><span class=ot>}</span></a>
-<a class=l id=cb8-37 title=37>        <span class=co># generate the link list</span></a>
-<a class=l id=cb8-38 title=38>        l.each <span class=kw>do</span> |p|</a>
-<a class=l id=cb8-39 title=39>            tagCloud &lt;&lt;=<span class=ot> %{</span><span class=st>&lt;li&gt;&lt;a href=&quot;</span><span class=ot>#{</span>p.path<span class=ot>}</span><span class=st>&quot;&gt;</span><span class=ot>#{</span>p.title<span class=ot>}</span><span class=st>&lt;/a&gt;&lt;/li&gt;</span><span class=ot>}</span></a>
-<a class=l id=cb8-40 title=40>        <span class=kw>end</span></a>
-<a class=l id=cb8-41 title=41>        tagCloud &lt;&lt;=<span class=ot> %{</span><span class=st>&lt;/ul&gt;&lt;/div&gt;</span><span class=ot>}</span></a>
-<a class=l id=cb8-42 title=42>    <span class=kw>end</span></a>
-<a class=l id=cb8-43 title=43>    tagCloud &lt;&lt;=<span class=ot> %{</span><span class=st>&lt;/div&gt;</span><span class=ot>}</span></a>
-<a class=l id=cb8-44 title=44>    <span class=kw>return</span> tagCloud <span class=co># yeah I know it is not necessary</span></a>
-<a class=l id=cb8-45 title=45><span class=kw>end</span></a></code></pre></div></div><p>You can <a href=../../../../Scratch/en/blog/2009-09-jQuery-Tag-Cloud/code/tag.rb>download the complete file</a> to put in your ‘lib’ directory.<p>Of course to be nice you need the associated CSS<div><div class=m id=cb9><pre class="m css"><code class="m css"><a class=l id=cb9-1 title=1></a>
-<a class=l id=cb9-2 title=2><span class=er>// Change the color when mouse over</span></a>
-<a class=l id=cb9-3 title=3><span class=fu>.tag</span><span class=in>:hover</span> {</a>
-<a class=l id=cb9-4 title=4>  <span class=kw>color</span>: <span class=cn>#cc0000</span><span class=op>;</span> }</a>
-<a class=l id=cb9-5 title=5></a>
-<a class=l id=cb9-6 title=6><span class=er>// Change the color when tag selected</span></a>
-<a class=l id=cb9-7 title=7><span class=fu>.tag.selected</span> {</a>
-<a class=l id=cb9-8 title=8>  <span class=kw>color</span>: <span class=cn>#6c0000</span><span class=op>;</span> }</a>
-<a class=l id=cb9-9 title=9></a>
-<a class=l id=cb9-10 title=10><span class=er>// a bit of space and pointer cursor</span></a>
-<a class=l id=cb9-11 title=11><span class=fu>.tag</span> {</a>
-<a class=l id=cb9-12 title=12>  <span class=kw>cursor</span>: <span class=dv>pointer</span><span class=op>;</span></a>
-<a class=l id=cb9-13 title=13>  <span class=kw>margin-left</span>: <span class=dv>.5</span><span class=dt>em</span><span class=op>;</span></a>
-<a class=l id=cb9-14 title=14>  <span class=kw>margin-right</span>: <span class=dv>.5</span><span class=dt>em</span><span class=op>;</span> }</a></code></pre></div></div><p>That’s all folks.</div><div id=afterarticle><div id=social><a href=../../../../Scratch/en/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=aq>RSS</a>
+<!doctype html><html lang=en><meta charset=utf-8><title>YBlog - jQuery Tag Cloud</title><meta name=keywords content="jQuery,javascript,web,ruby"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/en/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=en class=article><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/fr/blog/2009-09-jQuery-Tag-Cloud/>French</a></span>
+<span class=tomenu><a href=#navigation>↓ Menu ↓</a></span>
+<span class=flush></span></div></div><div id=titre><h1>jQuery Tag Cloud</h1></div><div class=flush></div><div id=afterheader class=article><div class=corps><p>Here is how I done the tag cloud of my blog. It is done mostly in jQuery. All my site is static and pages are generated with <a href=http://nanoc.stoneship.org>nanoc</a>. It is (in my humble opinion) the modern geek way to make a website. The tagcloud should work for machine with and without javascript.<p>This is why I’ll give only a Ruby Generator, not a full javascript generator. But you can easily translate from Ruby to Javascript.<p>Here is what you should obtain:<hr><div><p>&lt;%= tagCloud %></div><hr><h1 id=jquery>jQuery</h1><p>Here is the simple jQuery code:<div><div class=sourceCode id=cb1><pre class="sourceCode javascript"><code class="sourceCode javascript"><a class=sourceLine id=cb1-1 title=1>    <span class=at>$</span>(document).<span class=at>ready</span>( <span class=kw>function</span>()<span class=op>{</span><span class=at>$</span>(<span class=st>'.list'</span>).<span class=at>hide</span>()<span class=op>;}</span> )<span class=op>;</span></a>
+<a class=sourceLine id=cb1-2 title=2>    <span class=kw>function</span> <span class=at>tagSelected</span>(id) <span class=op>{</span></a>
+<a class=sourceLine id=cb1-3 title=3>        <span class=at>$</span>(<span class=st>'.list'</span>).<span class=at>hide</span>()<span class=op>;</span></a>
+<a class=sourceLine id=cb1-4 title=4>        <span class=at>$</span>(<span class=st>'#'</span><span class=op>+</span>id).<span class=at>fadeIn</span>()<span class=op>;</span></a>
+<a class=sourceLine id=cb1-5 title=5>        <span class=at>$</span>(<span class=st>'.tag.selected'</span>).<span class=at>removeClass</span>(<span class=st>'selected'</span>)<span class=op>;</span></a>
+<a class=sourceLine id=cb1-6 title=6>        <span class=at>$</span>(<span class=st>'#tag_'</span><span class=op>+</span>id).<span class=at>addClass</span>(<span class=st>'selected'</span>)<span class=op>;</span></a>
+<a class=sourceLine id=cb1-7 title=7>    <span class=op>}</span></a></code></pre></div></div><p>This code will hide all the div containing links to articles containing the tag. And create a function do show the div containing the tag.<p>For each tag I create a span element:<div><div class=sourceCode id=cb2><pre class="sourceCode html"><code class="sourceCode html"><a class=sourceLine id=cb2-1 title=1>    <span class=kw>&lt;span</span><span class=ot>   style=</span><span class=st>&quot;font-size: 1.0em;&quot;</span></a>
+<a class=sourceLine id=cb2-2 title=2><span class=ot>            class=</span><span class=st>&quot;tag&quot;</span></a>
+<a class=sourceLine id=cb2-3 title=3><span class=ot>            onClick=</span><span class=st>&quot;tagSelected('[TAG]')&quot;</span></a>
+<a class=sourceLine id=cb2-4 title=4><span class=ot>            id=</span><span class=st>&quot;tag_[TAG]&quot;</span><span class=kw>&gt;</span></a>
+<a class=sourceLine id=cb2-5 title=5>        [TAG]</a>
+<a class=sourceLine id=cb2-6 title=6>    <span class=kw>&lt;/span&gt;</span></a></code></pre></div></div><p>and a div containing links associtated to this tag:<div><div class=sourceCode id=cb3><pre class="sourceCode html"><code class="sourceCode html"><a class=sourceLine id=cb3-1 title=1>    <span class=kw>&lt;div</span><span class=ot> id=</span><span class=st>&quot;[TAG]&quot;</span><span class=kw>&gt;</span></a>
+<a class=sourceLine id=cb3-2 title=2>        <span class=kw>&lt;h4&gt;</span>[TAG]<span class=kw>&lt;/h4&gt;</span></a>
+<a class=sourceLine id=cb3-3 title=3>        <span class=kw>&lt;ul&gt;</span></a>
+<a class=sourceLine id=cb3-4 title=4>            <span class=kw>&lt;li&gt;</span> LINK 1 <span class=kw>&lt;/li&gt;</span></a>
+<a class=sourceLine id=cb3-5 title=5>            <span class=kw>&lt;li&gt;</span> LINK 2 <span class=kw>&lt;/li&gt;</span></a>
+<a class=sourceLine id=cb3-6 title=6>        <span class=kw>&lt;/ul&gt;</span></a>
+<a class=sourceLine id=cb3-7 title=7>    <span class=kw>&lt;/div&gt;</span></a></code></pre></div></div><hr><h1 id=nanoc>nanoc</h1><p>Here is how I generate this using nanoc 2.<p>If you want to make it fully jQuery one, it shouldn’t be too difficult, to use my ruby code and translate it into javascript.<p>In a first time <code>tags</code> correpond of the list of all tags.<div><div class=sourceCode id=cb4><pre class="sourceCode ruby"><code class="sourceCode ruby"><a class=sourceLine id=cb4-1 title=1><span class=kw>def</span> tags</a>
+<a class=sourceLine id=cb4-2 title=2>    <span class=kw>return</span> <span class=ot>@items</span>.tags.join(<span class=st>', '</span>)</a>
+<a class=sourceLine id=cb4-3 title=3><span class=kw>end</span></a></code></pre></div></div><p>A function to create a data structure associating to each tag its occurence.<div><div class=sourceCode id=cb5><pre class="sourceCode ruby"><code class="sourceCode ruby"><a class=sourceLine id=cb5-1 title=1><span class=co># generate an hash tag =&gt; number of occurence of tag</span></a>
+<a class=sourceLine id=cb5-2 title=2><span class=kw>def</span> tagNumber</a>
+<a class=sourceLine id=cb5-3 title=3>    tags={}</a>
+<a class=sourceLine id=cb5-4 title=4>    <span class=ot>@items</span>.each <span class=kw>do</span> |p|</a>
+<a class=sourceLine id=cb5-5 title=5>        <span class=kw>if</span> p.tags.nil?</a>
+<a class=sourceLine id=cb5-6 title=6>            <span class=kw>next</span></a>
+<a class=sourceLine id=cb5-7 title=7>        <span class=kw>end</span></a>
+<a class=sourceLine id=cb5-8 title=8>        p.tags.each <span class=kw>do</span> |t|</a>
+<a class=sourceLine id=cb5-9 title=9>            <span class=kw>if</span> tags[t]</a>
+<a class=sourceLine id=cb5-10 title=10>                tags[t]+=<span class=dv>1</span></a>
+<a class=sourceLine id=cb5-11 title=11>            <span class=kw>else</span></a>
+<a class=sourceLine id=cb5-12 title=12>                tags[t]=<span class=dv>1</span></a>
+<a class=sourceLine id=cb5-13 title=13>            <span class=kw>end</span></a>
+<a class=sourceLine id=cb5-14 title=14>        <span class=kw>end</span></a>
+<a class=sourceLine id=cb5-15 title=15>    <span class=kw>end</span></a>
+<a class=sourceLine id=cb5-16 title=16>    <span class=kw>return</span> tags</a>
+<a class=sourceLine id=cb5-17 title=17><span class=kw>end</span></a></code></pre></div></div><p>I also need a data structure who associate to each tag a list of pages (at least url and title).<div><div class=sourceCode id=cb6><pre class="sourceCode ruby"><code class="sourceCode ruby"><a class=sourceLine id=cb6-1 title=1><span class=co># generate an hash tag =&gt; [ page1, page2 ... ]</span></a>
+<a class=sourceLine id=cb6-2 title=2><span class=kw>def</span> tagRefs</a>
+<a class=sourceLine id=cb6-3 title=3>    tagLinks={}</a>
+<a class=sourceLine id=cb6-4 title=4>    <span class=ot>@items</span>.each <span class=kw>do</span> |p|</a>
+<a class=sourceLine id=cb6-5 title=5>        <span class=kw>if</span> p.tags.nil?</a>
+<a class=sourceLine id=cb6-6 title=6>            <span class=kw>next</span></a>
+<a class=sourceLine id=cb6-7 title=7>        <span class=kw>end</span></a>
+<a class=sourceLine id=cb6-8 title=8>        p.tags.each <span class=kw>do</span> |t|</a>
+<a class=sourceLine id=cb6-9 title=9>            <span class=kw>if</span> tagLinks[t].nil?</a>
+<a class=sourceLine id=cb6-10 title=10>                tagLinks[t]=[ p ]</a>
+<a class=sourceLine id=cb6-11 title=11>            <span class=kw>else</span></a>
+<a class=sourceLine id=cb6-12 title=12>                tagLinks[t] &lt;&lt;= p</a>
+<a class=sourceLine id=cb6-13 title=13>            <span class=kw>end</span></a>
+<a class=sourceLine id=cb6-14 title=14>        <span class=kw>end</span></a>
+<a class=sourceLine id=cb6-15 title=15>    <span class=kw>end</span></a>
+<a class=sourceLine id=cb6-16 title=16>    <span class=kw>return</span> tagLinks</a>
+<a class=sourceLine id=cb6-17 title=17><span class=kw>end</span></a></code></pre></div></div><p>Calculate the real size of each tag to be displayed.<p>I choosen not to use the full range of size for all the tag. Because if no tag has more than <code>n</code> (here 10) occurences, then it doesn’t deserve to be of the maximal size.<div><div class=sourceCode id=cb7><pre class="sourceCode ruby"><code class="sourceCode ruby"><a class=sourceLine id=cb7-1 title=1><span class=kw>def</span> tagRealSize</a>
+<a class=sourceLine id=cb7-2 title=2>    tags=tagNumber</a>
+<a class=sourceLine id=cb7-3 title=3>    max=tags.values.max</a>
+<a class=sourceLine id=cb7-4 title=4>    min=tags.values.min</a>
+<a class=sourceLine id=cb7-5 title=5>    <span class=co># size in CSS em.</span></a>
+<a class=sourceLine id=cb7-6 title=6>    minSize=<span class=fl>1.0</span></a>
+<a class=sourceLine id=cb7-7 title=7>    maxSize=<span class=fl>2.5</span></a>
+<a class=sourceLine id=cb7-8 title=8>    tagSize={}</a>
+<a class=sourceLine id=cb7-9 title=9>    tags.each <span class=kw>do</span> |t,n|</a>
+<a class=sourceLine id=cb7-10 title=10>        <span class=kw>if</span> ( max == min )</a>
+<a class=sourceLine id=cb7-11 title=11>            tagSize[t]=minSize</a>
+<a class=sourceLine id=cb7-12 title=12>        <span class=kw>else</span></a>
+<a class=sourceLine id=cb7-13 title=13>            <span class=co># normalized value between 0 and 1</span></a>
+<a class=sourceLine id=cb7-14 title=14>            <span class=co># if not tag appear more than 10 times,</span></a>
+<a class=sourceLine id=cb7-15 title=15>            <span class=co># then it cannot have the maximal size</span></a>
+<a class=sourceLine id=cb7-16 title=16>            tagSize[t]=[ ( n - min + <span class=fl>0.0</span> ) / ( max - min ) ,</a>
+<a class=sourceLine id=cb7-17 title=17>                         (n - min) / <span class=fl>10.0</span> ].min</a>
+<a class=sourceLine id=cb7-18 title=18>            <span class=co># from normalized size to real size</span></a>
+<a class=sourceLine id=cb7-19 title=19>            tagSize[t]=( tagSize[t] ) * (maxSize - minSize) + minSize</a>
+<a class=sourceLine id=cb7-20 title=20>        <span class=kw>end</span></a>
+<a class=sourceLine id=cb7-21 title=21>    <span class=kw>end</span></a>
+<a class=sourceLine id=cb7-22 title=22>    <span class=kw>return</span> tagSize</a>
+<a class=sourceLine id=cb7-23 title=23><span class=kw>end</span></a></code></pre></div></div><p>Finaly a function to generate the XHTML/jQuery code<div><div class=sourceCode id=cb8><pre class="sourceCode ruby"><code class="sourceCode ruby"><a class=sourceLine id=cb8-1 title=1><span class=co># generate an XHTML/jQuery code for tag cloud</span></a>
+<a class=sourceLine id=cb8-2 title=2><span class=kw>def</span> tagCloud</a>
+<a class=sourceLine id=cb8-3 title=3>    tagLinks=tagRefs</a>
+<a class=sourceLine id=cb8-4 title=4>    tagSize=tagRealSize</a>
+<a class=sourceLine id=cb8-5 title=5></a>
+<a class=sourceLine id=cb8-6 title=6>    <span class=co># begin to write the code</span></a>
+<a class=sourceLine id=cb8-7 title=7>    tagCloud=<span class=ot>%{</span><span class=st>&lt;script type=&quot;text/javascript&quot;&gt;</span></a>
+<a class=sourceLine id=cb8-8 title=8><span class=st>        $(document).ready( function(){$('.list').hide();} );</span></a>
+<a class=sourceLine id=cb8-9 title=9><span class=st>        function tagSelected(id) {</span></a>
+<a class=sourceLine id=cb8-10 title=10><span class=st>            $('.list').hide();</span></a>
+<a class=sourceLine id=cb8-11 title=11><span class=st>            $('#'+id).fadeIn();</span></a>
+<a class=sourceLine id=cb8-12 title=12><span class=st>            $('.tag.selected').removeClass('selected');</span></a>
+<a class=sourceLine id=cb8-13 title=13><span class=st>            $('#tag_'+id).addClass('selected');</span></a>
+<a class=sourceLine id=cb8-14 title=14><span class=st>        }</span></a>
+<a class=sourceLine id=cb8-15 title=15><span class=st>    &lt;/script&gt;&lt;div id=&quot;tagcloud&quot;&gt;</span><span class=ot>}</span></a>
+<a class=sourceLine id=cb8-16 title=16>    <span class=co># Creation of the tags &lt;span&gt;</span></a>
+<a class=sourceLine id=cb8-17 title=17>    tagSize.sort{|a,b| a[<span class=dv>0</span>].downcase &lt;=&gt; b[<span class=dv>0</span>].downcase}.each <span class=kw>do</span> |t,s|</a>
+<a class=sourceLine id=cb8-18 title=18>        tag_in_id=t.gsub(<span class=ot>/\W/</span>,<span class=ch>'_'</span>)</a>
+<a class=sourceLine id=cb8-19 title=19>        <span class=co># HTML protected version of the tag</span></a>
+<a class=sourceLine id=cb8-20 title=20>        <span class=co># for example, replace ' ' by '&amp;nbsp;'</span></a>
+<a class=sourceLine id=cb8-21 title=21>        <span class=kw>protected</span>=t.gsub(<span class=ot>/&amp;/</span>,<span class=st>'&amp;amp;'</span>).gsub(<span class=ot>/ /</span>,<span class=st>'&amp;nbsp;'</span>).gsub(<span class=ot>/&lt;/</span>,<span class=st>'&amp;lt;'</span>).gsub(<span class=ot>/&gt;/</span>,<span class=st>'&amp;gt;'</span>)</a>
+<a class=sourceLine id=cb8-22 title=22>        tagCloud &lt;&lt;=<span class=ot> %{</span></a>
+<a class=sourceLine id=cb8-23 title=23><span class=st>            &lt;span style=&quot;font-size: </span><span class=ot>#{</span>s<span class=ot>}</span><span class=st>em;&quot;</span></a>
+<a class=sourceLine id=cb8-24 title=24><span class=st>                  class=&quot;tag&quot;</span></a>
+<a class=sourceLine id=cb8-25 title=25><span class=st>                  onClick=&quot;tagSelected('</span><span class=ot>#{</span>tag_in_id<span class=ot>}</span><span class=st>')&quot;</span></a>
+<a class=sourceLine id=cb8-26 title=26><span class=st>                  id=&quot;tag_</span><span class=ot>#{</span>tag_in_id<span class=ot>}</span><span class=st>&quot;&gt;</span></a>
+<a class=sourceLine id=cb8-27 title=27><span class=st>                </span><span class=ot>#{</span><span class=kw>protected</span><span class=ot>}</span></a>
+<a class=sourceLine id=cb8-28 title=28><span class=st>            &lt;/span&gt; </span><span class=ot>}</span></a>
+<a class=sourceLine id=cb8-29 title=29>    <span class=kw>end</span></a>
+<a class=sourceLine id=cb8-30 title=30>    tagCloud &lt;&lt;=<span class=ot> %{</span><span class=st>&lt;/div&gt;&lt;div id=&quot;hiddenDivs&quot; &gt;</span><span class=ot>}</span></a>
+<a class=sourceLine id=cb8-31 title=31>    <span class=co># Creation of the divs containing links associated to a tag.</span></a>
+<a class=sourceLine id=cb8-32 title=32>    tagLinks.each <span class=kw>do</span> |t,l|</a>
+<a class=sourceLine id=cb8-33 title=33>        tag_in_id=t.gsub(<span class=ot>/\W/</span>,<span class=ch>'_'</span>)</a>
+<a class=sourceLine id=cb8-34 title=34>        tagCloud &lt;&lt;=<span class=ot> %{</span></a>
+<a class=sourceLine id=cb8-35 title=35><span class=st>            &lt;div id=&quot;</span><span class=ot>#{</span>tag_in_id<span class=ot>}</span><span class=st>&quot; class=&quot;list&quot;&gt;</span></a>
+<a class=sourceLine id=cb8-36 title=36><span class=st>                &lt;h4&gt;</span><span class=ot>#{</span>t<span class=ot>}</span><span class=st>&lt;/h4&gt;&lt;ul&gt;</span><span class=ot>}</span></a>
+<a class=sourceLine id=cb8-37 title=37>        <span class=co># generate the link list</span></a>
+<a class=sourceLine id=cb8-38 title=38>        l.each <span class=kw>do</span> |p|</a>
+<a class=sourceLine id=cb8-39 title=39>            tagCloud &lt;&lt;=<span class=ot> %{</span><span class=st>&lt;li&gt;&lt;a href=&quot;</span><span class=ot>#{</span>p.path<span class=ot>}</span><span class=st>&quot;&gt;</span><span class=ot>#{</span>p.title<span class=ot>}</span><span class=st>&lt;/a&gt;&lt;/li&gt;</span><span class=ot>}</span></a>
+<a class=sourceLine id=cb8-40 title=40>        <span class=kw>end</span></a>
+<a class=sourceLine id=cb8-41 title=41>        tagCloud &lt;&lt;=<span class=ot> %{</span><span class=st>&lt;/ul&gt;&lt;/div&gt;</span><span class=ot>}</span></a>
+<a class=sourceLine id=cb8-42 title=42>    <span class=kw>end</span></a>
+<a class=sourceLine id=cb8-43 title=43>    tagCloud &lt;&lt;=<span class=ot> %{</span><span class=st>&lt;/div&gt;</span><span class=ot>}</span></a>
+<a class=sourceLine id=cb8-44 title=44>    <span class=kw>return</span> tagCloud <span class=co># yeah I know it is not necessary</span></a>
+<a class=sourceLine id=cb8-45 title=45><span class=kw>end</span></a></code></pre></div></div><p>You can <a href=../../../../Scratch/en/blog/2009-09-jQuery-Tag-Cloud/code/tag.rb>download the complete file</a> to put in your ‘lib’ directory.<p>Of course to be nice you need the associated CSS<div><div class=sourceCode id=cb9><pre class="sourceCode css"><code class="sourceCode css"><a class=sourceLine id=cb9-1 title=1></a>
+<a class=sourceLine id=cb9-2 title=2><span class=er>// Change the color when mouse over</span></a>
+<a class=sourceLine id=cb9-3 title=3><span class=fu>.tag</span><span class=in>:hover</span> {</a>
+<a class=sourceLine id=cb9-4 title=4>  <span class=kw>color</span>: <span class=cn>#cc0000</span><span class=op>;</span> }</a>
+<a class=sourceLine id=cb9-5 title=5></a>
+<a class=sourceLine id=cb9-6 title=6><span class=er>// Change the color when tag selected</span></a>
+<a class=sourceLine id=cb9-7 title=7><span class=fu>.tag.selected</span> {</a>
+<a class=sourceLine id=cb9-8 title=8>  <span class=kw>color</span>: <span class=cn>#6c0000</span><span class=op>;</span> }</a>
+<a class=sourceLine id=cb9-9 title=9></a>
+<a class=sourceLine id=cb9-10 title=10><span class=er>// a bit of space and pointer cursor</span></a>
+<a class=sourceLine id=cb9-11 title=11><span class=fu>.tag</span> {</a>
+<a class=sourceLine id=cb9-12 title=12>  <span class=kw>cursor</span>: <span class=dv>pointer</span><span class=op>;</span></a>
+<a class=sourceLine id=cb9-13 title=13>  <span class=kw>margin-left</span>: <span class=dv>.5</span><span class=dt>em</span><span class=op>;</span></a>
+<a class=sourceLine id=cb9-14 title=14>  <span class=kw>margin-right</span>: <span class=dv>.5</span><span class=dt>em</span><span class=op>;</span> }</a></code></pre></div></div><p>That’s all folks.</div><div id=afterarticle><div id=social><a href=../../../../Scratch/en/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=social>RSS</a>
 ·
-<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2009-09-jQuery-Tag-Cloud/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=aq>Tweet</a>
+<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2009-09-jQuery-Tag-Cloud/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=social>Tweet</a>
 ·
-<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2009-09-jQuery-Tag-Cloud/" target=_blank rel="noopener noreferrer nofollow" class=aq>FB</a><br><a class=af href=../../../../Scratch/en/blog/Social-link-the-right-way/>These social sharing links preserve your privacy</a></div><div id=navigation><a href=../../../../>Home</a>
-<span class=cp>¦</span>
+<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2009-09-jQuery-Tag-Cloud/" target=_blank rel="noopener noreferrer nofollow" class=social>FB</a><br><a class=message href=../../../../Scratch/en/blog/Social-link-the-right-way/>These social sharing links preserve your privacy</a></div><div id=navigation><a href=../../../../>Home</a>
+<span class=sep>¦</span>
 <a href=../../../../Scratch/en/blog>Blog</a>
-<span class=cp>¦</span>
+<span class=sep>¦</span>
 <a href=../../../../Scratch/en/softwares>Softwares</a>
-<span class=cp>¦</span>
+<span class=sep>¦</span>
 <a href=../../../../Scratch/en/about>About</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2009-09-23</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
 <a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
 <a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
-<span class=by>&</span>
+<span class=pala>&</span>
 <a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=as style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
+<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=simple style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
 ADA:</a>
 <code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>
