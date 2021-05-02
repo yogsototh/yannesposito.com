@@ -30,7 +30,7 @@ finddate(){ < $1 | awk '/^date: /' | head -n1 | perl -pe 's/^.*\[//;s/ .*$//;' }
 findtitle(){ < $1 | head -n1 | perl -pe 's/^# //' }
 getcontent(){
     < $1 perl -pe 'use URI; $base="'$2'"; s# (href|src)="((?!https?://)[^"]*)"#" ".$1."=\"".URI->new_abs($2,$base)->as_string."\""#eig' }
-findkeywords(){ < $1 | awk '/^keywords: /' | head -n1 | perl -pe 's/^[^:]\s+//' }
+findkeywords(){ < $1 | awk '/^keywords: /' | head -n1 | sed 's/keywords: //' }
 mkcategories(){
     for keyword in $*; do
         printf "\\n<category>%s</category>" $keyword

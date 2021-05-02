@@ -71,8 +71,10 @@ $(DST_DIR)/%.gmi: $(SRC_DIR)/%.org $(GMI)
 # OPTIM PHASE
 
 OPTIM_DIR ?= _optim
+ENGINE_DIR ?= engine
+ENGINE_SCRIPTS := $(shell find $(ENGINE_DIR) -type f)
 OPTIM := engine/pre-deploy.sh
-$(OPTIM_DIR)/index.html:$(DST_RAW_FILES) $(DST_GMI_FILES) $(DST_PANDOC_FILES) $(HTML_INDEX) $(OPTIM)
+$(OPTIM_DIR)/index.html:$(DST_RAW_FILES) $(DST_GMI_FILES) $(DST_PANDOC_FILES) $(HTML_INDEX) $(ENGINE_SCRIPTS) $(OPTIM)
 	mkdir -p $(OPTIM_DIR)
 	$(OPTIM)
 

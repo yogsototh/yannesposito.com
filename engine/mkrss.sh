@@ -121,5 +121,11 @@ cat <<END
 END
 } > "$rssfile"
 
+# HACK TO UPDATE OLD RSS FEEDS
+legacyenrss="$webdir/Scratch/en/blog/feed/feed.xml"
+legacyfrrss="$webdir/Scratch/fr/blog/feed/feed.xml"
+cp -f "$rssfile" "$legacyenrss"
+cp -f "$rssfile" "$legacyfrrss"
+
 rm -rf $tmpdir
 echo "* RSS [done]"
