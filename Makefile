@@ -7,7 +7,7 @@
 all: allatend
 SRC_DIR ?= src
 DST_DIR ?= _site
-NO_DRAFT := -not -path '$(SRC_DIR)/drafts/*'
+NO_DRAFT := -not -path '$(SRC_DIR)/drafts/*' ! -name '*.jpg' ! -name '*.png'
 SRC_RAW_FILES := $(shell find $(SRC_DIR) -type f $(NO_DRAFT))
 DST_RAW_FILES   := $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%,$(SRC_RAW_FILES))
 ALL             += $(DST_RAW_FILES)
@@ -43,7 +43,6 @@ $(DST_DIR)/%.html: $(SRC_DIR)/%.org $(TEMPLATE)
 	$(PANDOC) $< \
 		--output $@
 
-
 # HTML INDEX
 HTML_INDEX := $(DST_DIR)/index.html
 MKINDEX := engine/mk-index.sh
@@ -77,6 +76,25 @@ $(GMI_INDEX): $(DST_GMI_FILES) $(MK_GMI_INDEX)
 	$(MK_GMI_INDEX)
 
 ALL += $(GMI_INDEX)
+
+
+# Images
+SRC_IMG_FILES ?= $(shell find $(SRC_DIR) -type f -name "*.jpg" -or -name "*.gif" -or -name "*.png")
+DST_IMG_FILES ?= $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%, $(SRC_IMG_FILES))
+
+ALL += $(DST_IMG_FILES)
+
+$(DST_DIR)/%.jpg: $(SRC_DIR)/%.jpg
+	mkdir -p $(dir $@)
+	convert "$<" -quality 50 -resize 800x800\> "$@"
+
+$(DST_DIR)/%.gif: $(SRC_DIR)/%.gif
+	mkdir -p $(dir $@)
+	convert "$<" -quality 50 -resize 800x800\> "$@"
+
+$(DST_DIR)/%.png: $(SRC_DIR)/%.png
+	mkdir -p $(dir $@)
+	convert "$<" -quality 50 -resize 800x800\> "$@"
 
 # OPTIM PHASE
 
