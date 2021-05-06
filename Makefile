@@ -27,7 +27,7 @@ ALL += $(DST_RAW_FILES)
 EXT := .org
 SRC_PANDOC_FILES ?= $(shell find $(SRC_DIR) -type f -name "*$(EXT)" $(NO_DRAFT))
 DST_PANDOC_FILES ?= $(subst $(EXT),.html, \
-                        $(subst $(SRC_DIR),$(DST_DIR), \
+                        $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%, \
                             $(SRC_PANDOC_FILES)))
 TEMPLATE ?= templates/post.html
 CSS = /css/y.css
@@ -77,8 +77,6 @@ ALL += $(GMI_INDEX)
 SRC_IMG_FILES ?= $(shell find $(SRC_DIR) -type f -name "*.jpg" -or -name "*.jpeg" -or -name "*.gif" -or -name "*.png")
 DST_IMG_FILES ?= $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%, $(SRC_IMG_FILES))
 
-ALL += $(DST_IMG_FILES)
-
 $(DST_DIR)/%.jpg: $(SRC_DIR)/%.jpg
 	@mkdir -p $(dir $@)
 	convert "$<" -quality 50 -resize 800x800\> "$@"
@@ -94,6 +92,8 @@ $(DST_DIR)/%.gif: $(SRC_DIR)/%.gif
 $(DST_DIR)/%.png: $(SRC_DIR)/%.png
 	@mkdir -p $(dir $@)
 	convert "$<" -quality 50 -resize 800x800\> "$@"
+
+ALL += $(DST_IMG_FILES)
 
 # OPTIM PHASE
 
