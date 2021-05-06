@@ -1,66 +1,168 @@
-<!doctype html><html lang=en><meta charset=utf-8><title>YBlog - Now hosted by heroku</title><meta name=keywords content="blog"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/en/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=en class=article><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/fr/blog/2010-08-23-Now-heberged-on-heroku/>French</a></span>
-<span class=tomenu><a href=#navigation>↓ Menu ↓</a></span>
-<span class=flush></span></div></div><div id=titre><h1>Now hosted by heroku</h1><h2>Host static website on Heroku</h2></div><div class=flush></div><div id=afterheader class=article><div class=corps><h1 id=now-on-heroku>Now on <a href=http://heroku.com>Heroku</a></h1><p>I now changed my hosting to <a href=http://heroku.com>Heroku</a>. I believe it will be far more reliable.<p>But as you should know my website is completely static. I use <a href=http://nanoc.stoneship.org/>nanoc</a> to generate it. But here is the conf to make it work on heroku.<p>The root of my files is <code>/output</code>. You only need to create a <code>config.ru</code><a href=#fn1 class=footnote-ref id=fnref1><sup>1</sup></a> file:<div class=sourceCode id=cb1><pre class="sourceCode ruby"><code class="sourceCode ruby"><a class=sourceLine id=cb1-1 title=1>require <span class=st>'rubygems'</span></a>
-<a class=sourceLine id=cb1-2 title=2>require <span class=st>'rack'</span></a>
-<a class=sourceLine id=cb1-3 title=3>require <span class=st>'rack/contrib'</span></a>
-<a class=sourceLine id=cb1-4 title=4>require <span class=st>'rack-rewrite'</span></a>
-<a class=sourceLine id=cb1-5 title=5>require <span class=st>'mime/types'</span></a>
-<a class=sourceLine id=cb1-6 title=6></a>
-<a class=sourceLine id=cb1-7 title=7>use <span class=dt>Rack</span>::<span class=dt>ETag</span></a>
-<a class=sourceLine id=cb1-8 title=8><span class=kw>module</span> ::<span class=dt>Rack</span></a>
-<a class=sourceLine id=cb1-9 title=9>    <span class=kw>class</span> <span class=dt>TryStatic</span> &lt; <span class=dt>Static</span></a>
-<a class=sourceLine id=cb1-10 title=10></a>
-<a class=sourceLine id=cb1-11 title=11>        <span class=kw>def</span> initialize(app, options)</a>
-<a class=sourceLine id=cb1-12 title=12>            <span class=dv>super</span></a>
-<a class=sourceLine id=cb1-13 title=13>            <span class=ot>@try</span> = ([<span class=st>''</span>] + <span class=dt>Array</span>(options.delete(<span class=st>:try</span>)) + [<span class=st>''</span>])</a>
-<a class=sourceLine id=cb1-14 title=14>        <span class=kw>end</span></a>
-<a class=sourceLine id=cb1-15 title=15></a>
-<a class=sourceLine id=cb1-16 title=16>        <span class=kw>def</span> call(env)</a>
-<a class=sourceLine id=cb1-17 title=17>            <span class=ot>@next</span> = <span class=dv>0</span></a>
-<a class=sourceLine id=cb1-18 title=18>            <span class=kw>while</span> <span class=ot>@next</span> &lt; <span class=ot>@try</span>.size &amp;&amp; <span class=dv>404</span> == (resp = <span class=dv>super</span>(try_next(env)))[<span class=dv>0</span>] </a>
-<a class=sourceLine id=cb1-19 title=19>                <span class=ot>@next</span> += <span class=dv>1</span></a>
-<a class=sourceLine id=cb1-20 title=20>            <span class=kw>end</span></a>
-<a class=sourceLine id=cb1-21 title=21>            <span class=dv>404</span> == resp[<span class=dv>0</span>] ? <span class=ot>@app</span>.call : resp</a>
-<a class=sourceLine id=cb1-22 title=22>        <span class=kw>end</span></a>
-<a class=sourceLine id=cb1-23 title=23></a>
-<a class=sourceLine id=cb1-24 title=24>        <span class=kw>private</span></a>
-<a class=sourceLine id=cb1-25 title=25>        <span class=kw>def</span> try_next(env)</a>
-<a class=sourceLine id=cb1-26 title=26>            env.merge(<span class=st>'PATH_INFO'</span> =&gt; env[<span class=st>'PATH_INFO'</span>] + <span class=ot>@try</span>[<span class=ot>@next</span>])</a>
-<a class=sourceLine id=cb1-27 title=27>        <span class=kw>end</span></a>
-<a class=sourceLine id=cb1-28 title=28></a>
-<a class=sourceLine id=cb1-29 title=29>    <span class=kw>end</span></a>
-<a class=sourceLine id=cb1-30 title=30><span class=kw>end</span></a>
-<a class=sourceLine id=cb1-31 title=31></a>
-<a class=sourceLine id=cb1-32 title=32>use <span class=dt>Rack</span>::<span class=dt>TryStatic</span>, </a>
-<a class=sourceLine id=cb1-33 title=33>    <span class=st>:root</span> =&gt; <span class=st>&quot;output&quot;</span>,                              <span class=co># static files root dir</span></a>
-<a class=sourceLine id=cb1-34 title=34>    <span class=st>:urls</span> =&gt;<span class=ot> %w[</span><span class=st>/</span><span class=ot>]</span>,                                 <span class=co># match all requests </span></a>
-<a class=sourceLine id=cb1-35 title=35>    <span class=st>:try</span> =&gt; [<span class=st>'.html'</span>, <span class=st>'index.html'</span>, <span class=st>'/index.html'</span>]  <span class=co># try these postfixes sequentially</span></a>
-<a class=sourceLine id=cb1-36 title=36></a>
-<a class=sourceLine id=cb1-37 title=37>errorFile=<span class=st>'output/Scratch/en/error/404-not_found/index.html'</span></a>
-<a class=sourceLine id=cb1-38 title=38>run lambda { [<span class=dv>404</span>, {</a>
-<a class=sourceLine id=cb1-39 title=39>                <span class=st>&quot;Last-Modified&quot;</span>  =&gt; <span class=dt>File</span>.mtime(errorFile).httpdate,</a>
-<a class=sourceLine id=cb1-40 title=40>                <span class=st>&quot;Content-Type&quot;</span>   =&gt; <span class=st>&quot;text/html&quot;</span>,</a>
-<a class=sourceLine id=cb1-41 title=41>                <span class=st>&quot;Content-Length&quot;</span> =&gt; <span class=dt>File</span>.size(errorFile).to_s</a>
-<a class=sourceLine id=cb1-42 title=42>            }, <span class=dt>File</span>.read(errorFile)] }</a></code></pre></div><p>and the <code>.gems</code> file needed to install <code>rack</code> middlewares.<div class=sourceCode id=cb2><pre class="sourceCode ruby"><code class="sourceCode ruby"><a class=sourceLine id=cb2-1 title=1>rack</a>
-<a class=sourceLine id=cb2-2 title=2>rack-rewrite</a>
-<a class=sourceLine id=cb2-3 title=3>rack-contrib</a></code></pre></div><p>Now, just follow the heroku tutorial to create an application&nbsp;:<div class=sourceCode id=cb3><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class=sourceLine id=cb3-1 title=1>git init</a>
-<a class=sourceLine id=cb3-2 title=2>git add <span class=kw>.</span></a>
-<a class=sourceLine id=cb3-3 title=3>heroku create</a>
-<a class=sourceLine id=cb3-4 title=4>git push heroku master</a></code></pre></div><p>Now I’ll should be able to redirect properly to my own 404 page for example. I hope it is helpful.<section class=footnotes><hr><ol><li id=fn1><p>I was inspired by this <a href=http://gmarik.info/blog/2010/05/10/blogging-with-jekyll-and-heroku-for-free>article</a>.<a href=#fnref1 class=footnote-back>↩</a></ol></section></div><div id=afterarticle><div id=social><a href=../../../../Scratch/en/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=social>RSS</a>
-·
-<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2010-08-23-Now-heberged-on-heroku/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=social>Tweet</a>
-·
-<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2010-08-23-Now-heberged-on-heroku/" target=_blank rel="noopener noreferrer nofollow" class=social>FB</a><br><a class=message href=../../../../Scratch/en/blog/Social-link-the-right-way/>These social sharing links preserve your privacy</a></div><div id=navigation><a href=../../../../>Home</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/en/blog>Blog</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/en/softwares>Softwares</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/en/about>About</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2010-08-23</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
-<a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
-<a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
-<span class=pala>&</span>
-<a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=simple style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
-ADA:</a>
-<code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>YBlog - Now hosted by heroku</title>
+        <meta name="keywords" content="blog" />
+
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/en/blog/feed/feed.xml" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+        <!-- IndieAuth -->
+        <link href="https://twitter.com/yogsototh" rel="me">
+        <link href="https://github.com/yogsototh" rel="me">
+        <link href="mailto:yann.esposito@gmail.com" rel="me">
+        <link rel="pgpkey" href="../../../../pubkey.txt">
+    </head>
+    <body lang="en" class="article">
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	    <span id="choixlang">
+                  <a href="../../../../Scratch/fr/blog/2010-08-23-Now-heberged-on-heroku/">French</a> 
+        	    </span>
+              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
+        	    <span class="flush"></span>
+        	</div>
+			</div>
+
+			<div id="titre">
+				<h1>Now hosted by heroku</h1>
+				<h2>Host static website on Heroku</h2>
+
+			</div>
+			<div class="flush"></div>
+      <div id="afterheader" class="article">
+          <div class="corps">
+              <h1 id="now-on-heroku">Now on <a href="http://heroku.com">Heroku</a></h1>
+<p>I now changed my hosting to <a href="http://heroku.com">Heroku</a>. I believe it will be far more reliable.</p>
+<p>But as you should know my website is completely static. I use <a href="http://nanoc.stoneship.org/">nanoc</a> to generate it. But here is the conf to make it work on heroku.</p>
+<p>The root of my files is <code>/output</code>. You only need to create a <code>config.ru</code><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> file:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode ruby"><code class="sourceCode ruby"><a class="sourceLine" id="cb1-1" title="1">require <span class="st">'rubygems'</span></a>
+<a class="sourceLine" id="cb1-2" title="2">require <span class="st">'rack'</span></a>
+<a class="sourceLine" id="cb1-3" title="3">require <span class="st">'rack/contrib'</span></a>
+<a class="sourceLine" id="cb1-4" title="4">require <span class="st">'rack-rewrite'</span></a>
+<a class="sourceLine" id="cb1-5" title="5">require <span class="st">'mime/types'</span></a>
+<a class="sourceLine" id="cb1-6" title="6"></a>
+<a class="sourceLine" id="cb1-7" title="7">use <span class="dt">Rack</span>::<span class="dt">ETag</span></a>
+<a class="sourceLine" id="cb1-8" title="8"><span class="kw">module</span> ::<span class="dt">Rack</span></a>
+<a class="sourceLine" id="cb1-9" title="9">    <span class="kw">class</span> <span class="dt">TryStatic</span> &lt; <span class="dt">Static</span></a>
+<a class="sourceLine" id="cb1-10" title="10"></a>
+<a class="sourceLine" id="cb1-11" title="11">        <span class="kw">def</span> initialize(app, options)</a>
+<a class="sourceLine" id="cb1-12" title="12">            <span class="dv">super</span></a>
+<a class="sourceLine" id="cb1-13" title="13">            <span class="ot">@try</span> = ([<span class="st">''</span>] + <span class="dt">Array</span>(options.delete(<span class="st">:try</span>)) + [<span class="st">''</span>])</a>
+<a class="sourceLine" id="cb1-14" title="14">        <span class="kw">end</span></a>
+<a class="sourceLine" id="cb1-15" title="15"></a>
+<a class="sourceLine" id="cb1-16" title="16">        <span class="kw">def</span> call(env)</a>
+<a class="sourceLine" id="cb1-17" title="17">            <span class="ot">@next</span> = <span class="dv">0</span></a>
+<a class="sourceLine" id="cb1-18" title="18">            <span class="kw">while</span> <span class="ot">@next</span> &lt; <span class="ot">@try</span>.size &amp;&amp; <span class="dv">404</span> == (resp = <span class="dv">super</span>(try_next(env)))[<span class="dv">0</span>] </a>
+<a class="sourceLine" id="cb1-19" title="19">                <span class="ot">@next</span> += <span class="dv">1</span></a>
+<a class="sourceLine" id="cb1-20" title="20">            <span class="kw">end</span></a>
+<a class="sourceLine" id="cb1-21" title="21">            <span class="dv">404</span> == resp[<span class="dv">0</span>] ? <span class="ot">@app</span>.call : resp</a>
+<a class="sourceLine" id="cb1-22" title="22">        <span class="kw">end</span></a>
+<a class="sourceLine" id="cb1-23" title="23"></a>
+<a class="sourceLine" id="cb1-24" title="24">        <span class="kw">private</span></a>
+<a class="sourceLine" id="cb1-25" title="25">        <span class="kw">def</span> try_next(env)</a>
+<a class="sourceLine" id="cb1-26" title="26">            env.merge(<span class="st">'PATH_INFO'</span> =&gt; env[<span class="st">'PATH_INFO'</span>] + <span class="ot">@try</span>[<span class="ot">@next</span>])</a>
+<a class="sourceLine" id="cb1-27" title="27">        <span class="kw">end</span></a>
+<a class="sourceLine" id="cb1-28" title="28"></a>
+<a class="sourceLine" id="cb1-29" title="29">    <span class="kw">end</span></a>
+<a class="sourceLine" id="cb1-30" title="30"><span class="kw">end</span></a>
+<a class="sourceLine" id="cb1-31" title="31"></a>
+<a class="sourceLine" id="cb1-32" title="32">use <span class="dt">Rack</span>::<span class="dt">TryStatic</span>, </a>
+<a class="sourceLine" id="cb1-33" title="33">    <span class="st">:root</span> =&gt; <span class="st">&quot;output&quot;</span>,                              <span class="co"># static files root dir</span></a>
+<a class="sourceLine" id="cb1-34" title="34">    <span class="st">:urls</span> =&gt;<span class="ot"> %w[</span><span class="st">/</span><span class="ot">]</span>,                                 <span class="co"># match all requests </span></a>
+<a class="sourceLine" id="cb1-35" title="35">    <span class="st">:try</span> =&gt; [<span class="st">'.html'</span>, <span class="st">'index.html'</span>, <span class="st">'/index.html'</span>]  <span class="co"># try these postfixes sequentially</span></a>
+<a class="sourceLine" id="cb1-36" title="36"></a>
+<a class="sourceLine" id="cb1-37" title="37">errorFile=<span class="st">'output/Scratch/en/error/404-not_found/index.html'</span></a>
+<a class="sourceLine" id="cb1-38" title="38">run lambda { [<span class="dv">404</span>, {</a>
+<a class="sourceLine" id="cb1-39" title="39">                <span class="st">&quot;Last-Modified&quot;</span>  =&gt; <span class="dt">File</span>.mtime(errorFile).httpdate,</a>
+<a class="sourceLine" id="cb1-40" title="40">                <span class="st">&quot;Content-Type&quot;</span>   =&gt; <span class="st">&quot;text/html&quot;</span>,</a>
+<a class="sourceLine" id="cb1-41" title="41">                <span class="st">&quot;Content-Length&quot;</span> =&gt; <span class="dt">File</span>.size(errorFile).to_s</a>
+<a class="sourceLine" id="cb1-42" title="42">            }, <span class="dt">File</span>.read(errorFile)] }</a></code></pre></div>
+<p>and the <code>.gems</code> file needed to install <code>rack</code> middlewares.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode ruby"><code class="sourceCode ruby"><a class="sourceLine" id="cb2-1" title="1">rack</a>
+<a class="sourceLine" id="cb2-2" title="2">rack-rewrite</a>
+<a class="sourceLine" id="cb2-3" title="3">rack-contrib</a></code></pre></div>
+<p>Now, just follow the heroku tutorial to create an application&nbsp;:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb3-1" title="1">git init</a>
+<a class="sourceLine" id="cb3-2" title="2">git add <span class="kw">.</span></a>
+<a class="sourceLine" id="cb3-3" title="3">heroku create</a>
+<a class="sourceLine" id="cb3-4" title="4">git push heroku master</a></code></pre></div>
+<p>Now I’ll should be able to redirect properly to my own 404 page for example. I hope it is helpful.</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>I was inspired by this <a href="http://gmarik.info/blog/2010/05/10/blogging-with-jekyll-and-heroku-for-free">article</a>.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+          </div>
+          <div id="afterarticle">
+              <div id="social">
+                  <a href="../../../../Scratch/en/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
+                  ·
+                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2010-08-23-Now-heberged-on-heroku/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
+                  ·
+                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2010-08-23-Now-heberged-on-heroku/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
+                  <br />
+                  <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
+              </div>
+              <div id="navigation">
+                  <a href="../../../../">Home</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/blog">Blog</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/softwares">Softwares</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/about">About</a>
+              </div>
+              <div id="totop"><a href="#header">↑ Top ↑</a></div>
+              <div id="bottom">
+                  <div>
+                      Published on 2010-08-23
+                  </div>
+                  <div>
+                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+                  </div>
+                  <div>
+                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+                  </div>
+
+                  <div>
+                      Done with
+                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
+                      <span class="pala">&amp;</span>
+                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
+                  </div>
+                  <hr />
+                  <div style="max-width: 100%">
+                      <a href="https://cardanohub.org">
+                          <img src="../../../../Scratch/img/ada-logo.png" class="simple" style="height: 16px;
+                                    border-radius: 50%;
+                                    vertical-align:middle;
+                                    display:inline-block;" />
+                          ADA:
+                      </a>
+                          <code style="display:inline-block;
+                                       word-wrap:break-word;
+                                       text-align: left;
+                                       vertical-align: top;
+                                       max-width: 85%;">
+                              DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp
+                          </code>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+        </div>
+    </body>
+</html>

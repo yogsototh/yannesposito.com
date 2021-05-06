@@ -1,21 +1,165 @@
-<!doctype html><html lang=en><meta charset=utf-8><title>YBlog - Typography and the Web</title><meta name=keywords content="web,design,typography"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/en/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=en class=article><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/fr/blog/Typography-and-the-Web/>French</a></span>
-<span class=tomenu><a href=#navigation>↓ Menu ↓</a></span>
-<span class=flush></span></div></div><div id=titre><h1>Typography and the Web</h1></div><div class=flush></div><div id=afterheader class=article><div class=corps><div><img src=../../../../Scratch/img/blog/Typography-and-the-Web/first_sc_screenshot.png alt></div><div class=intro><p><span class=sc><abbr title="Too long; didn't read">tl;dr</abbr>:</span> Web typography sucks and we’ll have to wait forever before it will be fixed.</div><p>I stumbled upon <a href=http://opentypography.org/>open typography</a>. Their main message is:<blockquote><p>«There is no reason to wait for browser development to catch up. We can all create better web typography ourselves, today.»</blockquote><p>As somebody who tried to make my website using some nice typography features and in particular <em>ligatures</em>, I believe this is wrong.<p>I already made an automatic system which will detect and replace text by their ligatures in my blog. But this I never published this on the web and this is why.<p>First, what is a ligatures?<div><img src=../../../../Scratch/img/blog/Typography-and-the-Web/ligatures.png alt></div><p>What is the problem between the Web and ligatures? The first one is: you cannot search them. For example, try to search the word “first”:<ul><li>first ← No ligature, no problem<a href=#fn1 class=footnote-ref id=fnref1><sup>1</sup></a><li><span class=red>ﬁ</span>r<span class=red>ﬆ</span> ← ligature nice but unsearchable</ul><p>The second one is the rendering, for example, try to use a ligature character with small caps:<ul><li><sc>first</sc><li><sc><span class=red>ﬁ</span>r<span class=red>ﬆ</span></sc></ul><p>Here is a screenshot of what I see:<div><img src=../../../../Scratch/img/blog/Typography-and-the-Web/first_sc_screenshot.png alt></div><p>The browser isn’t able to understand that the ligature character “<span class=red>ﬁ</span>” should render as <sc>fi</sc> when rendered in small caps. And one part of the problem is you should choose to display a character in small caps using <span class=sc>css</span>.<p>This way, how could you use a ligature Unicode character on a site on which you could change the <span class=sc>css</span>?<p>Let’s compare to <span style=text-transform:uppercase>L<sup style=vertical-align:.15em;margin-left:-.36em;margin-right:-.15em;font-size:.85em>a</sup>T<sub style=vertical-align:-.5ex;margin-left:-.1667em;margin-right:-.125em;font-size:1em>e</sub>X</span>.<div><img src=../../../../Scratch/img/blog/Typography-and-the-Web/first_latex_screenshot.png alt></div><p>If you take attention to detail, you’ll see the first “first” contains a ligature. Of course the second render nicely. The code I used were:<div class=sourceCode id=cb1><pre class="sourceCode latex"><code class="sourceCode latex"><a class=sourceLine id=cb1-1 title=1><span class=fu>\item</span> first</a>
-<a class=sourceLine id=cb1-2 title=2><span class=fu>\item</span> {<span class=fu>\sc</span> first}</a></code></pre></div><p><span style=text-transform:uppercase>L<sup style=vertical-align:.15em;margin-left:-.36em;margin-right:-.15em;font-size:.85em>a</sup>T<sub style=vertical-align:-.5ex;margin-left:-.1667em;margin-right:-.125em;font-size:1em>e</sub>X</span> was intelligent enough to create himself the ligatures when needed.<p>The “<span class=red>ﬆ</span>” ligature is rare and not rendered in <span style=text-transform:uppercase>L<sup style=vertical-align:.15em;margin-left:-.36em;margin-right:-.15em;font-size:.85em>a</sup>T<sub style=vertical-align:-.5ex;margin-left:-.1667em;margin-right:-.125em;font-size:1em>e</sub>X</span> by default. But if you want you could also render rare ligature using <span style=text-transform:uppercase>X<sub style=vertical-align:-.5ex;margin-left:-.1667em;margin-right:-.125em;font-size:1em>Ǝ</sub>L<sup style=vertical-align:.15em;margin-left:-.36em;margin-right:-.15em;font-size:.85em>a</sup>T<sub style=vertical-align:-.5ex;margin-left:-.1667em;margin-right:-.125em;font-size:1em>e</sub>X</span>:<div><img src=../../../../Scratch/img/blog/Typography-and-the-Web/xelatex_ligatures.jpg alt="XeLaTeX ligatures"></div><p>I took this image from the excellent article of <a href=http://nitens.org/taraborelli/latex#rare>Dario Taraborelli</a>.<p>Clearly fix the rendering of ligature in a browser is a difficult task. Simply imagine the number of strange little exceptions:<ul><li>The text is rendered in small caps, I cannot use ligature.<li>The current word contains a ligature unicode character, I should search for ligature in this one.<li>The current font does not defined the ligature unicode character, we shouldn’t use it, etc<li>A javascript command changed the CSS, I should verify if I had to revert the insertion of ligatures characters<li>etc…</ul><p>Nonetheless if someone has a solution, I would be happy to hear about it.<section class=footnotes><hr><ol><li id=fn1><p>In fact, you might see a ligature and the search works because I now use some CSS ninja skills: <code>text-rendering: optimizelegibility</code>. But it also works because I use the right font; Computer Modern. Steal my CSS at will.<a href=#fnref1 class=footnote-back>↩</a></ol></section></div><div id=afterarticle><div id=social><a href=../../../../Scratch/en/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=social>RSS</a>
-·
-<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Typography-and-the-Web/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=social>Tweet</a>
-·
-<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Typography-and-the-Web/" target=_blank rel="noopener noreferrer nofollow" class=social>FB</a><br><a class=message href=../../../../Scratch/en/blog/Social-link-the-right-way/>These social sharing links preserve your privacy</a></div><div id=navigation><a href=../../../../>Home</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/en/blog>Blog</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/en/softwares>Softwares</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/en/about>About</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2012-02-02</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
-<a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
-<a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
-<span class=pala>&</span>
-<a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=simple style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
-ADA:</a>
-<code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>YBlog - Typography and the Web</title>
+        <meta name="keywords" content="web, design, typography" />
+
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/en/blog/feed/feed.xml" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+        <!-- IndieAuth -->
+        <link href="https://twitter.com/yogsototh" rel="me">
+        <link href="https://github.com/yogsototh" rel="me">
+        <link href="mailto:yann.esposito@gmail.com" rel="me">
+        <link rel="pgpkey" href="../../../../pubkey.txt">
+    </head>
+    <body lang="en" class="article">
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	    <span id="choixlang">
+                  <a href="../../../../Scratch/fr/blog/Typography-and-the-Web/">French</a> 
+        	    </span>
+              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
+        	    <span class="flush"></span>
+        	</div>
+			</div>
+
+			<div id="titre">
+				<h1>Typography and the Web</h1>
+				
+			</div>
+			<div class="flush"></div>
+      <div id="afterheader" class="article">
+          <div class="corps">
+              <div>
+<img src="../../../../Scratch/img/blog/Typography-and-the-Web/first_sc_screenshot.png" alt />
+</div>
+<div class="intro">
+<p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span> Web typography sucks and we’ll have to wait forever before it will be fixed.</p>
+</div>
+<p>I stumbled upon <a href="http://opentypography.org/">open typography</a>. Their main message is:</p>
+<blockquote>
+<p>«There is no reason to wait for browser development to catch up. We can all create better web typography ourselves, today.»</p>
+</blockquote>
+<p>As somebody who tried to make my website using some nice typography features and in particular <em>ligatures</em>, I believe this is wrong.</p>
+<p>I already made an automatic system which will detect and replace text by their ligatures in my blog. But this I never published this on the web and this is why.</p>
+<p>First, what is a ligatures?</p>
+<div>
+<img src="../../../../Scratch/img/blog/Typography-and-the-Web/ligatures.png" alt />
+</div>
+<p>What is the problem between the Web and ligatures? The first one is: you cannot search them. For example, try to search the word “first”:</p>
+<ul>
+<li>first ← No ligature, no problem<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></li>
+<li><span class="red">ﬁ</span>r<span class="red">ﬆ </span> ← ligature nice but unsearchable</li>
+</ul>
+<p>The second one is the rendering, for example, try to use a ligature character with small caps:</p>
+<ul>
+<li><sc>first</sc></li>
+<li><sc><span class="red">ﬁ</span>r<span class="red">ﬆ</span></sc></li>
+</ul>
+<p>Here is a screenshot of what I see:</p>
+<div>
+<img src="../../../../Scratch/img/blog/Typography-and-the-Web/first_sc_screenshot.png" alt />
+</div>
+<p>The browser isn’t able to understand that the ligature character “<span class="red">ﬁ</span>” should render as <sc>fi</sc> when rendered in small caps. And one part of the problem is you should choose to display a character in small caps using <span class="sc">css</span>.</p>
+<p>This way, how could you use a ligature Unicode character on a site on which you could change the <span class="sc">css</span>?</p>
+<p>Let’s compare to <span style="text-transform: uppercase">L<sup style="vertical-align: 0.15em; margin-left: -0.36em; margin-right: -0.15em; font-size: .85em">a</sup>T<sub style="vertical-align: -0.5ex; margin-left: -0.1667em; margin-right: -0.125em; font-size: 1em">e</sub>X</span>.</p>
+<div>
+<img src="../../../../Scratch/img/blog/Typography-and-the-Web/first_latex_screenshot.png" alt />
+</div>
+<p>If you take attention to detail, you’ll see the first “first” contains a ligature. Of course the second render nicely. The code I used were:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode latex"><code class="sourceCode latex"><a class="sourceLine" id="cb1-1" title="1"><span class="fu">\item</span> first</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="fu">\item</span> {<span class="fu">\sc</span> first}</a></code></pre></div>
+<p><span style="text-transform: uppercase">L<sup style="vertical-align: 0.15em; margin-left: -0.36em; margin-right: -0.15em; font-size: .85em">a</sup>T<sub style="vertical-align: -0.5ex; margin-left: -0.1667em; margin-right: -0.125em; font-size: 1em">e</sub>X</span> was intelligent enough to create himself the ligatures when needed.</p>
+<p>The “<span class="red">ﬆ</span>” ligature is rare and not rendered in <span style="text-transform: uppercase">L<sup style="vertical-align: 0.15em; margin-left: -0.36em; margin-right: -0.15em; font-size: .85em">a</sup>T<sub style="vertical-align: -0.5ex; margin-left: -0.1667em; margin-right: -0.125em; font-size: 1em">e</sub>X</span> by default. But if you want you could also render rare ligature using <span style="text-transform: uppercase">X<sub style="vertical-align: -0.5ex; margin-left: -0.1667em; margin-right: -0.125em; font-size: 1em">Ǝ</sub>L<sup style="vertical-align: 0.15em; margin-left: -0.36em; margin-right: -0.15em; font-size: .85em">a</sup>T<sub style="vertical-align: -0.5ex; margin-left: -0.1667em; margin-right: -0.125em; font-size: 1em">e</sub>X</span>:</p>
+<div>
+<img src="../../../../Scratch/img/blog/Typography-and-the-Web/xelatex_ligatures.jpg" alt="XeLaTeX ligatures" />
+</div>
+<p>I took this image from the excellent article of <a href="http://nitens.org/taraborelli/latex#rare">Dario Taraborelli</a>.</p>
+<p>Clearly fix the rendering of ligature in a browser is a difficult task. Simply imagine the number of strange little exceptions:</p>
+<ul>
+<li>The text is rendered in small caps, I cannot use ligature.</li>
+<li>The current word contains a ligature unicode character, I should search for ligature in this one.</li>
+<li>The current font does not defined the ligature unicode character, we shouldn’t use it, etc</li>
+<li>A javascript command changed the CSS, I should verify if I had to revert the insertion of ligatures characters</li>
+<li>etc…</li>
+</ul>
+<p>Nonetheless if someone has a solution, I would be happy to hear about it.</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>In fact, you might see a ligature and the search works because I now use some CSS ninja skills: <code>text-rendering: optimizelegibility</code>. But it also works because I use the right font; Computer Modern. Steal my CSS at will.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+          </div>
+          <div id="afterarticle">
+              <div id="social">
+                  <a href="../../../../Scratch/en/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
+                  ·
+                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Typography-and-the-Web/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
+                  ·
+                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Typography-and-the-Web/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
+                  <br />
+                  <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
+              </div>
+              <div id="navigation">
+                  <a href="../../../../">Home</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/blog">Blog</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/softwares">Softwares</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/about">About</a>
+              </div>
+              <div id="totop"><a href="#header">↑ Top ↑</a></div>
+              <div id="bottom">
+                  <div>
+                      Published on 2012-02-02
+                  </div>
+                  <div>
+                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+                  </div>
+                  <div>
+                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+                  </div>
+
+                  <div>
+                      Done with
+                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
+                      <span class="pala">&amp;</span>
+                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
+                  </div>
+                  <hr />
+                  <div style="max-width: 100%">
+                      <a href="https://cardanohub.org">
+                          <img src="../../../../Scratch/img/ada-logo.png" class="simple" style="height: 16px;
+                                    border-radius: 50%;
+                                    vertical-align:middle;
+                                    display:inline-block;" />
+                          ADA:
+                      </a>
+                          <code style="display:inline-block;
+                                       word-wrap:break-word;
+                                       text-align: left;
+                                       vertical-align: top;
+                                       max-width: 85%;">
+                              DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp
+                          </code>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+        </div>
+    </body>
+</html>

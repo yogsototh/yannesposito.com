@@ -1,63 +1,157 @@
-<!doctype html><html lang=fr><meta charset=utf-8><title>YBlog - Se cacher de ses statistiques web</title><meta name=keywords content="analytics,statistiques,cacher,blog,jQuery,javascript"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/fr/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=fr class=article><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/en/blog/2010-06-17-hide-yourself-to-analytics/>Anglais</a></span>
-<span class=tomenu><a href=#navigation>↓ Menu ↓</a></span>
-<span class=flush></span></div></div><div id=titre><h1>Se cacher de ses statistiques web</h1></div><div class=flush></div><div id=afterheader class=article><div class=corps><p>Voici un moyen très simple de ne plus être comptabilisé dans les visites de son propre site. Tout d’abord, vous devriez jeter un coup d’œil sur comment <a href=../../../../Scratch/fr/blog/2010-06-17-track-events-with-google-analytics>je gère les systèmes de récupération de statistiques</a>. Je centralise tout dans un seul fichier javascript ce qui facilite le travail.<p>Cette méthode nécessite l’utilisation de <code>jquery-cookie</code>.<p>Avant de comptabiliser les visites, je vérifie que la clé <code>admin</code> n’est pas utilisée dans mes cookies.<div class=sourceCode id=cb1><pre class="sourceCode javascript"><code class="sourceCode javascript"><a class=sourceLine id=cb1-1 title=1>    <span class=kw>var</span> admin <span class=op>=</span> <span class=va>$</span>.<span class=at>cookie</span>(<span class=st>'admin'</span>)<span class=op>;</span></a>
-<a class=sourceLine id=cb1-2 title=2>    <span class=cf>if</span> (<span class=op>!</span> admin) <span class=op>{</span></a>
-<a class=sourceLine id=cb1-3 title=3>        <span class=co>// put your analytics code here</span></a>
-<a class=sourceLine id=cb1-4 title=4>    <span class=op>}</span> <span class=cf>else</span> <span class=op>{</span></a>
-<a class=sourceLine id=cb1-5 title=5>        <span class=va>console</span>.<span class=at>log</span>(<span class=st>&quot;[WARNING] you're HIDDEN to analytics&quot;</span>)<span class=op>;</span></a>
-<a class=sourceLine id=cb1-6 title=6>    <span class=op>}</span></a></code></pre></div><p>et il suffit de créer deux fichier <sc>html</sc>. Un pour se cacher&nbsp;:<div class=sourceCode id=cb2><pre class="sourceCode html"><code class="sourceCode html"><a class=sourceLine id=cb2-1 title=1><span class=kw>&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;utf-8&quot;<span class=kw>?&gt;</span></a>
-<a class=sourceLine id=cb2-2 title=2><span class=dt>&lt;!DOCTYPE </span>html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot;</a>
-<a class=sourceLine id=cb2-3 title=3>        &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;<span class=dt>&gt;</span></a>
-<a class=sourceLine id=cb2-4 title=4><span class=kw>&lt;html</span><span class=ot> xmlns=</span><span class=st>&quot;http://www.w3.org/1999/xhtml&quot;</span><span class=ot> lang=</span><span class=st>&quot;fr&quot;</span><span class=ot> xml:lang=</span><span class=st>&quot;fr&quot;</span><span class=kw>&gt;</span></a>
-<a class=sourceLine id=cb2-5 title=5>    <span class=kw>&lt;head&gt;</span></a>
-<a class=sourceLine id=cb2-6 title=6>        <span class=kw>&lt;meta</span><span class=ot> http-equiv=</span><span class=st>&quot;Content-Type&quot;</span><span class=ot> content=</span><span class=st>&quot;text/html; charset=UTF-8&quot;</span> <span class=kw>/&gt;</span></a>
-<a class=sourceLine id=cb2-7 title=7>        <span class=kw>&lt;script</span><span class=ot> type=</span><span class=st>&quot;text/javascript&quot;</span><span class=ot> src=</span><span class=st>&quot;jquery.js&quot;</span><span class=kw>&gt;&lt;/script&gt;</span></a>
-<a class=sourceLine id=cb2-8 title=8>        <span class=kw>&lt;script</span><span class=ot> type=</span><span class=st>&quot;text/javascript&quot;</span><span class=ot> src=</span><span class=st>&quot;jquery.cookie.js&quot;</span><span class=kw>&gt;&lt;/script&gt;</span></a>
-<a class=sourceLine id=cb2-9 title=9>        <span class=kw>&lt;script&gt;</span></a>
-<a class=sourceLine id=cb2-10 title=10>            <span class=at>$</span>(document).<span class=at>ready</span>(<span class=kw>function</span>()<span class=op>{</span></a>
-<a class=sourceLine id=cb2-11 title=11>                <span class=va>$</span>.<span class=at>cookie</span>(<span class=st>'admin'</span><span class=op>,</span><span class=dv>1</span>)<span class=op>;</span></a>
-<a class=sourceLine id=cb2-12 title=12>                <span class=at>$</span>(<span class=st>'#info'</span>).<span class=at>html</span>(<span class=st>'Analytics can no more see you.'</span>)</a>
-<a class=sourceLine id=cb2-13 title=13>            <span class=op>}</span>)<span class=op>;</span></a>
-<a class=sourceLine id=cb2-14 title=14>        <span class=kw>&lt;/script&gt;</span></a>
-<a class=sourceLine id=cb2-15 title=15>        <span class=kw>&lt;title&gt;</span>Hide to analytics<span class=kw>&lt;/title&gt;</span></a>
-<a class=sourceLine id=cb2-16 title=16>    <span class=kw>&lt;/head&gt;</span></a>
-<a class=sourceLine id=cb2-17 title=17>    <span class=kw>&lt;body&gt;</span></a>
-<a class=sourceLine id=cb2-18 title=18>        <span class=kw>&lt;div</span><span class=ot> id=</span><span class=st>&quot;info&quot;</span><span class=kw>&gt;&lt;/div&gt;</span> </a>
-<a class=sourceLine id=cb2-19 title=19>    <span class=kw>&lt;/body&gt;</span></a>
-<a class=sourceLine id=cb2-20 title=20><span class=kw>&lt;/html&gt;</span></a></code></pre></div><p>et un autre pour redevenir visible (ça peut être utile)&nbsp;:<div class=sourceCode id=cb3><pre class="sourceCode html"><code class="sourceCode html"><a class=sourceLine id=cb3-1 title=1><span class=kw>&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;utf-8&quot;<span class=kw>?&gt;</span></a>
-<a class=sourceLine id=cb3-2 title=2><span class=dt>&lt;!DOCTYPE </span>html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot;</a>
-<a class=sourceLine id=cb3-3 title=3>        &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;<span class=dt>&gt;</span></a>
-<a class=sourceLine id=cb3-4 title=4><span class=kw>&lt;html</span><span class=ot> xmlns=</span><span class=st>&quot;http://www.w3.org/1999/xhtml&quot;</span><span class=ot> lang=</span><span class=st>&quot;fr&quot;</span><span class=ot> xml:lang=</span><span class=st>&quot;fr&quot;</span><span class=kw>&gt;</span></a>
-<a class=sourceLine id=cb3-5 title=5>    <span class=kw>&lt;head&gt;</span></a>
-<a class=sourceLine id=cb3-6 title=6>        <span class=kw>&lt;meta</span><span class=ot> http-equiv=</span><span class=st>&quot;Content-Type&quot;</span><span class=ot> content=</span><span class=st>&quot;text/html; charset=UTF-8&quot;</span> <span class=kw>/&gt;</span></a>
-<a class=sourceLine id=cb3-7 title=7>        <span class=kw>&lt;script</span><span class=ot> type=</span><span class=st>&quot;text/javascript&quot;</span><span class=ot> src=</span><span class=st>&quot;jquery.js&quot;</span><span class=kw>&gt;&lt;/script&gt;</span></a>
-<a class=sourceLine id=cb3-8 title=8>        <span class=kw>&lt;script</span><span class=ot> type=</span><span class=st>&quot;text/javascript&quot;</span><span class=ot> src=</span><span class=st>&quot;jquery.cookie.js&quot;</span><span class=kw>&gt;&lt;/script&gt;</span></a>
-<a class=sourceLine id=cb3-9 title=9>        <span class=kw>&lt;script&gt;</span></a>
-<a class=sourceLine id=cb3-10 title=10>            <span class=at>$</span>(document).<span class=at>ready</span>(<span class=kw>function</span>()<span class=op>{</span></a>
-<a class=sourceLine id=cb3-11 title=11>                <span class=va>$</span>.<span class=at>cookie</span>(<span class=st>'admin'</span><span class=op>,</span><span class=kw>null</span>)<span class=op>;</span></a>
-<a class=sourceLine id=cb3-12 title=12>                <span class=at>$</span>(<span class=st>'#info'</span>).<span class=at>html</span>(<span class=st>'Analytics can see you.'</span>)</a>
-<a class=sourceLine id=cb3-13 title=13>            <span class=op>}</span>)<span class=op>;</span></a>
-<a class=sourceLine id=cb3-14 title=14>        <span class=kw>&lt;/script&gt;</span></a>
-<a class=sourceLine id=cb3-15 title=15>        <span class=kw>&lt;title&gt;</span>Hide to analytics<span class=kw>&lt;/title&gt;</span></a>
-<a class=sourceLine id=cb3-16 title=16>    <span class=kw>&lt;/head&gt;</span></a>
-<a class=sourceLine id=cb3-17 title=17>    <span class=kw>&lt;body&gt;</span></a>
-<a class=sourceLine id=cb3-18 title=18>        <span class=kw>&lt;div</span><span class=ot> id=</span><span class=st>&quot;info&quot;</span><span class=kw>&gt;&lt;/div&gt;</span> </a>
-<a class=sourceLine id=cb3-19 title=19>    <span class=kw>&lt;/body&gt;</span></a>
-<a class=sourceLine id=cb3-20 title=20><span class=kw>&lt;/html&gt;</span></a></code></pre></div><p>Maintenant en accédant à ces fichiers depuis votre navigateur vous pouvez <em>disparaître</em> des systèmes d’analyses ou bien être considéré comme tous les autres individus. Pensez à accéder à ces fichiers depuis tous les navigateurs que vous utilisez et vos visites ne seront plus comptabilisées.</div><div id=afterarticle><div id=social><a href=../../../../Scratch/fr/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=social>RSS</a>
-·
-<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/2010-06-17-hide-yourself-to-analytics/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=social>Tweet</a>
-·
-<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/2010-06-17-hide-yourself-to-analytics/" target=_blank rel="noopener noreferrer nofollow" class=social>FB</a><br><a class=message href=../../../../Scratch/fr/blog/Social-link-the-right-way/>Ces liens sociaux préservent votre vie privée</a></div><div id=navigation><a href=../../../../>Accueil</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/fr/blog>Blog</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/fr/softwares>Logiciels</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/fr/about>Auteur</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2010-06-17</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
-<a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
-<a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
-<span class=pala>&</span>
-<a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=simple style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
-ADA:</a>
-<code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <title>YBlog - Se cacher de ses statistiques web</title>
+        <meta name="keywords" content="analytics, statistiques, cacher, blog, jQuery, javascript" />
+
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/fr/blog/feed/feed.xml" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+        <!-- IndieAuth -->
+        <link href="https://twitter.com/yogsototh" rel="me">
+        <link href="https://github.com/yogsototh" rel="me">
+        <link href="mailto:yann.esposito@gmail.com" rel="me">
+        <link rel="pgpkey" href="../../../../pubkey.txt">
+    </head>
+    <body lang="fr" class="article">
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	    <span id="choixlang">
+                  <a href="../../../../Scratch/en/blog/2010-06-17-hide-yourself-to-analytics/">Anglais</a> 
+        	    </span>
+              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
+        	    <span class="flush"></span>
+        	</div>
+			</div>
+
+			<div id="titre">
+				<h1>Se cacher de ses statistiques web</h1>
+				
+			</div>
+			<div class="flush"></div>
+      <div id="afterheader" class="article">
+          <div class="corps">
+              <p>Voici un moyen très simple de ne plus être comptabilisé dans les visites de son propre site. Tout d’abord, vous devriez jeter un coup d’œil sur comment <a href="../../../../Scratch/fr/blog/2010-06-17-track-events-with-google-analytics">je gère les systèmes de récupération de statistiques</a>. Je centralise tout dans un seul fichier javascript ce qui facilite le travail.</p>
+<p>Cette méthode nécessite l’utilisation de <code>jquery-cookie</code>.</p>
+<p>Avant de comptabiliser les visites, je vérifie que la clé <code>admin</code> n’est pas utilisée dans mes cookies.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode javascript"><code class="sourceCode javascript"><a class="sourceLine" id="cb1-1" title="1">    <span class="kw">var</span> admin <span class="op">=</span> <span class="va">$</span>.<span class="at">cookie</span>(<span class="st">'admin'</span>)<span class="op">;</span></a>
+<a class="sourceLine" id="cb1-2" title="2">    <span class="cf">if</span> (<span class="op">!</span> admin) <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-3" title="3">        <span class="co">// put your analytics code here</span></a>
+<a class="sourceLine" id="cb1-4" title="4">    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-5" title="5">        <span class="va">console</span>.<span class="at">log</span>(<span class="st">&quot;[WARNING] you're HIDDEN to analytics&quot;</span>)<span class="op">;</span></a>
+<a class="sourceLine" id="cb1-6" title="6">    <span class="op">}</span></a></code></pre></div>
+<p>et il suffit de créer deux fichier <sc>html</sc>. Un pour se cacher&nbsp;:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode html"><code class="sourceCode html"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;utf-8&quot;<span class="kw">?&gt;</span></a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="dt">&lt;!DOCTYPE </span>html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot;</a>
+<a class="sourceLine" id="cb2-3" title="3">        &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;<span class="dt">&gt;</span></a>
+<a class="sourceLine" id="cb2-4" title="4"><span class="kw">&lt;html</span><span class="ot"> xmlns=</span><span class="st">&quot;http://www.w3.org/1999/xhtml&quot;</span><span class="ot"> lang=</span><span class="st">&quot;fr&quot;</span><span class="ot"> xml:lang=</span><span class="st">&quot;fr&quot;</span><span class="kw">&gt;</span></a>
+<a class="sourceLine" id="cb2-5" title="5">    <span class="kw">&lt;head&gt;</span></a>
+<a class="sourceLine" id="cb2-6" title="6">        <span class="kw">&lt;meta</span><span class="ot"> http-equiv=</span><span class="st">&quot;Content-Type&quot;</span><span class="ot"> content=</span><span class="st">&quot;text/html; charset=UTF-8&quot;</span> <span class="kw">/&gt;</span></a>
+<a class="sourceLine" id="cb2-7" title="7">        <span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span><span class="ot"> src=</span><span class="st">&quot;jquery.js&quot;</span><span class="kw">&gt;&lt;/script&gt;</span></a>
+<a class="sourceLine" id="cb2-8" title="8">        <span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span><span class="ot"> src=</span><span class="st">&quot;jquery.cookie.js&quot;</span><span class="kw">&gt;&lt;/script&gt;</span></a>
+<a class="sourceLine" id="cb2-9" title="9">        <span class="kw">&lt;script&gt;</span></a>
+<a class="sourceLine" id="cb2-10" title="10">            <span class="at">$</span>(document).<span class="at">ready</span>(<span class="kw">function</span>()<span class="op">{</span></a>
+<a class="sourceLine" id="cb2-11" title="11">                <span class="va">$</span>.<span class="at">cookie</span>(<span class="st">'admin'</span><span class="op">,</span><span class="dv">1</span>)<span class="op">;</span></a>
+<a class="sourceLine" id="cb2-12" title="12">                <span class="at">$</span>(<span class="st">'#info'</span>).<span class="at">html</span>(<span class="st">'Analytics can no more see you.'</span>)</a>
+<a class="sourceLine" id="cb2-13" title="13">            <span class="op">}</span>)<span class="op">;</span></a>
+<a class="sourceLine" id="cb2-14" title="14">        <span class="kw">&lt;/script&gt;</span></a>
+<a class="sourceLine" id="cb2-15" title="15">        <span class="kw">&lt;title&gt;</span>Hide to analytics<span class="kw">&lt;/title&gt;</span></a>
+<a class="sourceLine" id="cb2-16" title="16">    <span class="kw">&lt;/head&gt;</span></a>
+<a class="sourceLine" id="cb2-17" title="17">    <span class="kw">&lt;body&gt;</span></a>
+<a class="sourceLine" id="cb2-18" title="18">        <span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;info&quot;</span><span class="kw">&gt;&lt;/div&gt;</span> </a>
+<a class="sourceLine" id="cb2-19" title="19">    <span class="kw">&lt;/body&gt;</span></a>
+<a class="sourceLine" id="cb2-20" title="20"><span class="kw">&lt;/html&gt;</span></a></code></pre></div>
+<p>et un autre pour redevenir visible (ça peut être utile)&nbsp;:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode html"><code class="sourceCode html"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;utf-8&quot;<span class="kw">?&gt;</span></a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="dt">&lt;!DOCTYPE </span>html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot;</a>
+<a class="sourceLine" id="cb3-3" title="3">        &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;<span class="dt">&gt;</span></a>
+<a class="sourceLine" id="cb3-4" title="4"><span class="kw">&lt;html</span><span class="ot"> xmlns=</span><span class="st">&quot;http://www.w3.org/1999/xhtml&quot;</span><span class="ot"> lang=</span><span class="st">&quot;fr&quot;</span><span class="ot"> xml:lang=</span><span class="st">&quot;fr&quot;</span><span class="kw">&gt;</span></a>
+<a class="sourceLine" id="cb3-5" title="5">    <span class="kw">&lt;head&gt;</span></a>
+<a class="sourceLine" id="cb3-6" title="6">        <span class="kw">&lt;meta</span><span class="ot"> http-equiv=</span><span class="st">&quot;Content-Type&quot;</span><span class="ot"> content=</span><span class="st">&quot;text/html; charset=UTF-8&quot;</span> <span class="kw">/&gt;</span></a>
+<a class="sourceLine" id="cb3-7" title="7">        <span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span><span class="ot"> src=</span><span class="st">&quot;jquery.js&quot;</span><span class="kw">&gt;&lt;/script&gt;</span></a>
+<a class="sourceLine" id="cb3-8" title="8">        <span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span><span class="ot"> src=</span><span class="st">&quot;jquery.cookie.js&quot;</span><span class="kw">&gt;&lt;/script&gt;</span></a>
+<a class="sourceLine" id="cb3-9" title="9">        <span class="kw">&lt;script&gt;</span></a>
+<a class="sourceLine" id="cb3-10" title="10">            <span class="at">$</span>(document).<span class="at">ready</span>(<span class="kw">function</span>()<span class="op">{</span></a>
+<a class="sourceLine" id="cb3-11" title="11">                <span class="va">$</span>.<span class="at">cookie</span>(<span class="st">'admin'</span><span class="op">,</span><span class="kw">null</span>)<span class="op">;</span></a>
+<a class="sourceLine" id="cb3-12" title="12">                <span class="at">$</span>(<span class="st">'#info'</span>).<span class="at">html</span>(<span class="st">'Analytics can see you.'</span>)</a>
+<a class="sourceLine" id="cb3-13" title="13">            <span class="op">}</span>)<span class="op">;</span></a>
+<a class="sourceLine" id="cb3-14" title="14">        <span class="kw">&lt;/script&gt;</span></a>
+<a class="sourceLine" id="cb3-15" title="15">        <span class="kw">&lt;title&gt;</span>Hide to analytics<span class="kw">&lt;/title&gt;</span></a>
+<a class="sourceLine" id="cb3-16" title="16">    <span class="kw">&lt;/head&gt;</span></a>
+<a class="sourceLine" id="cb3-17" title="17">    <span class="kw">&lt;body&gt;</span></a>
+<a class="sourceLine" id="cb3-18" title="18">        <span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;info&quot;</span><span class="kw">&gt;&lt;/div&gt;</span> </a>
+<a class="sourceLine" id="cb3-19" title="19">    <span class="kw">&lt;/body&gt;</span></a>
+<a class="sourceLine" id="cb3-20" title="20"><span class="kw">&lt;/html&gt;</span></a></code></pre></div>
+<p>Maintenant en accédant à ces fichiers depuis votre navigateur vous pouvez <em>disparaître</em> des systèmes d’analyses ou bien être considéré comme tous les autres individus. Pensez à accéder à ces fichiers depuis tous les navigateurs que vous utilisez et vos visites ne seront plus comptabilisées.</p>
+          </div>
+          <div id="afterarticle">
+              <div id="social">
+                  <a href="../../../../Scratch/fr/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
+                  ·
+                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/2010-06-17-hide-yourself-to-analytics/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
+                  ·
+                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/2010-06-17-hide-yourself-to-analytics/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
+                  <br />
+                  <a class="message" href="../../../../Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
+              </div>
+              <div id="navigation">
+                  <a href="../../../../">Accueil</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/blog">Blog</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/softwares">Logiciels</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/about">Auteur</a>
+              </div>
+              <div id="totop"><a href="#header">↑ Top ↑</a></div>
+              <div id="bottom">
+                  <div>
+                      Published on 2010-06-17
+                  </div>
+                  <div>
+                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+                  </div>
+                  <div>
+                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+                  </div>
+
+                  <div>
+                      Done with
+                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
+                      <span class="pala">&amp;</span>
+                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
+                  </div>
+                  <hr />
+                  <div style="max-width: 100%">
+                      <a href="https://cardanohub.org">
+                          <img src="../../../../Scratch/img/ada-logo.png" class="simple" style="height: 16px;
+                                    border-radius: 50%;
+                                    vertical-align:middle;
+                                    display:inline-block;" />
+                          ADA:
+                      </a>
+                          <code style="display:inline-block;
+                                       word-wrap:break-word;
+                                       text-align: left;
+                                       vertical-align: top;
+                                       max-width: 85%;">
+                              DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp
+                          </code>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+        </div>
+    </body>
+</html>

@@ -1,26 +1,177 @@
-<!doctype html><html lang=en><meta charset=utf-8><title>YBlog - Yesod excellent ideas</title><meta name=keywords content="yesod,framework,web,haskell,ideas"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/en/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=en class=article><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/fr/blog/Yesod-excellent-ideas/>French</a></span>
-<span class=tomenu><a href=#navigation>↓ Menu ↓</a></span>
-<span class=flush></span></div></div><div id=titre><h1>Yesod excellent ideas</h1></div><div class=flush></div><div id=afterheader class=article><div class=corps><div><img src=../../../../Scratch/img/blog/Yesod-excellent-ideas/main.png alt="Title image"></div><div class=intro><p><span class=sc><abbr title="Too long; didn't read">tl;dr</abbr>:</span><p><a href=http://www.yesodweb.com>Yesod</a> is a framework which has recently matured to the point where you should consider using it. Before telling you why you should learn Haskell and use Yesod, I will illustrate the many features Yesod introduces which are missing in other frameworks.</div><h2 id=type-safety>Type safety</h2><p>Let’s start by an obligatory link from <a href=http://xkcd.com>xkcd</a>:<figure><img src=http://imgs.xkcd.com/comics/exploits_of_a_mom.png alt="SQL injection by a mom"><figcaption>SQL injection by a mom</figcaption></figure><p>When you create a web application, a lot of time is spent dealing with strings. Strings for URL, HTML, JavaScript, CSS, SQL, etc… To prevent malicious usage you have to protect each strings to be sure, no script will pass from one point to another. Suppose a user enter this user name:<div class=sourceCode id=cb1><pre class="sourceCode javascript"><code class="sourceCode javascript"><a class=sourceLine id=cb1-1 title=1>Newton<span class=op>&lt;</span>script<span class=op>&gt;</span><span class=at>alert</span>(<span class=st>&quot;An apple fall&quot;</span>)&lt;/script<span class=op>&gt;</span></a></code></pre></div><p>You must transform each <code>&lt;</code> into <code>&amp;lt;</code>. Without this transformation alert will appear each time you try to display this user name. Safe types associate with each string what kind of string it is. Is it a string for URL? For javascript? For HTML? And the right protection is made by default to prevent problems.<p>Yesod does its best to handle cross scripting issues. Both between the client and the server and between the server and your DB. Here is an example:<div class=sourceCode id=cb2><pre class="sourceCode html"><code class="sourceCode html"><a class=sourceLine id=cb2-1 title=1><span class=kw>&lt;a</span><span class=ot> href=</span><span class=st>@[AnotherPageR]</span><span class=kw>&gt;</span>Go to another page</a></code></pre></div><p>As <code>AnotherPageR</code> is of type URL and it could not contains something nefarious. It will be an URL safe. Not something like:<div class=sourceCode id=cb3><pre class="sourceCode html"><code class="sourceCode html"><a class=sourceLine id=cb3-1 title=1>falselink&quot;&gt;<span class=kw>&lt;script&gt;</span> <span class=at>bad_code</span>()<span class=op>;</span> <span class=kw>&lt;/script&gt;&lt;a</span><span class=ot> href=</span><span class=st>&quot;pipo</span></a></code></pre></div><h2 id=widgets>Widgets</h2><p>Yesod’s widgets are different from javascript widget. For yesod, widgets are sets of small parts of a web application. If you want to use many widgets in a same page yesod do the work. Some examples of widget are:<ul><li>the footer of a webpage,<li>the header of a webpage with a menu,<li>a button which appears only when scrolling down,<li>etc…</ul><p>For each of this part, you might need,<ul><li>a bit of HTML,<li>a bit of CSS and<li>a bit of javascript.</ul><p>Some in the header, some in the body.<p>You can declare a widget as this (note I use a very high meta-language):<pre><code>htmlheader = ...
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>YBlog - Yesod excellent ideas</title>
+        <meta name="keywords" content="yesod, framework, web, haskell, ideas" />
+
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/en/blog/feed/feed.xml" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+        <!-- IndieAuth -->
+        <link href="https://twitter.com/yogsototh" rel="me">
+        <link href="https://github.com/yogsototh" rel="me">
+        <link href="mailto:yann.esposito@gmail.com" rel="me">
+        <link rel="pgpkey" href="../../../../pubkey.txt">
+    </head>
+    <body lang="en" class="article">
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	    <span id="choixlang">
+                  <a href="../../../../Scratch/fr/blog/Yesod-excellent-ideas/">French</a> 
+        	    </span>
+              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
+        	    <span class="flush"></span>
+        	</div>
+			</div>
+
+			<div id="titre">
+				<h1>Yesod excellent ideas</h1>
+				
+			</div>
+			<div class="flush"></div>
+      <div id="afterheader" class="article">
+          <div class="corps">
+              <div>
+<img src="../../../../Scratch/img/blog/Yesod-excellent-ideas/main.png" alt="Title image" />
+</div>
+<div class="intro">
+<p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span></p>
+<p><a href="http://www.yesodweb.com">Yesod</a> is a framework which has recently matured to the point where you should consider using it. Before telling you why you should learn Haskell and use Yesod, I will illustrate the many features Yesod introduces which are missing in other frameworks.</p>
+</div>
+<h2 id="type-safety">Type safety</h2>
+<p>Let’s start by an obligatory link from <a href="http://xkcd.com">xkcd</a>:</p>
+<figure>
+<img src="http://imgs.xkcd.com/comics/exploits_of_a_mom.png" alt="SQL injection by a mom" /><figcaption>SQL injection by a mom</figcaption>
+</figure>
+<p>When you create a web application, a lot of time is spent dealing with strings. Strings for URL, HTML, JavaScript, CSS, SQL, etc… To prevent malicious usage you have to protect each strings to be sure, no script will pass from one point to another. Suppose a user enter this user name:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode javascript"><code class="sourceCode javascript"><a class="sourceLine" id="cb1-1" title="1">Newton<span class="op">&lt;</span>script<span class="op">&gt;</span><span class="at">alert</span>(<span class="st">&quot;An apple fall&quot;</span>)&lt;/script<span class="op">&gt;</span></a></code></pre></div>
+<p>You must transform each <code>&lt;</code> into <code>&amp;lt;</code>. Without this transformation alert will appear each time you try to display this user name. Safe types associate with each string what kind of string it is. Is it a string for URL? For javascript? For HTML? And the right protection is made by default to prevent problems.</p>
+<p>Yesod does its best to handle cross scripting issues. Both between the client and the server and between the server and your DB. Here is an example:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode html"><code class="sourceCode html"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">@[AnotherPageR]</span><span class="kw">&gt;</span>Go to another page</a></code></pre></div>
+<p>As <code>AnotherPageR</code> is of type URL and it could not contains something nefarious. It will be an URL safe. Not something like:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode html"><code class="sourceCode html"><a class="sourceLine" id="cb3-1" title="1">falselink&quot;&gt;<span class="kw">&lt;script&gt;</span> <span class="at">bad_code</span>()<span class="op">;</span> <span class="kw">&lt;/script&gt;&lt;a</span><span class="ot"> href=</span><span class="st">&quot;pipo</span></a></code></pre></div>
+<h2 id="widgets">Widgets</h2>
+<p>Yesod’s widgets are different from javascript widget. For yesod, widgets are sets of small parts of a web application. If you want to use many widgets in a same page yesod do the work. Some examples of widget are:</p>
+<ul>
+<li>the footer of a webpage,</li>
+<li>the header of a webpage with a menu,</li>
+<li>a button which appears only when scrolling down,</li>
+<li>etc…</li>
+</ul>
+<p>For each of this part, you might need,</p>
+<ul>
+<li>a bit of HTML,</li>
+<li>a bit of CSS and</li>
+<li>a bit of javascript.</li>
+</ul>
+<p>Some in the header, some in the body.</p>
+<p>You can declare a widget as this (note I use a very high meta-language):</p>
+<pre><code>htmlheader = ...
 cssheader = ...
 javascriptheader = ...
-htmlbody = ...</code></pre><p>The real syntax is:<div class=sourceCode id=cb5><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class=sourceLine id=cb5-1 title=1>toWidgetHeader cassiusFile <span class=st>&quot;button.cassius&quot;</span></a>
-<a class=sourceLine id=cb5-2 title=2>toWidgetHeader juliusFile <span class=st>&quot;button.julius&quot;</span></a>
-<a class=sourceLine id=cb5-3 title=3>toWidget       hamletFile <span class=st>&quot;buttonTemplate.hamlet&quot;</span></a></code></pre></div><p>Note the awesome Shakespearean inspired name convention. Another good reason to use yesod.<ul><li>Cassius <em>&</em> Lucius of CSS (a lot similar to SASS and SCSS),<li>Julius for JavaScript (note a CoffeeScript is somewhere in the source of yesod),<li>Hamlet for HTML (similar to haml)</ul><p>And when your page render, yesod makes it easy to render everything nicely:<div class=sourceCode id=cb6><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class=sourceLine id=cb6-1 title=1>myBigWidget <span class=ot>=</span>  menuWidget <span class=op>&gt;&gt;</span> contentWidget <span class=op>&gt;&gt;</span> footerWidget</a></code></pre></div><p>Furthermore, if you use say 10 widgets each with a bit of CSS, yesod will create a unique and compressed CSS file. Except if you expressed a need to change the header by using different CSS.<p>This is just awesome!<h2 id=optimized-routing>Optimized routing</h2><p>In standard routing system you have for each entry a couple: regexp → handler<p>The only way to discover the right rules is to match each regexp to the current URL. Then you can see behaviour such as, if you change the order of the rules you can lose or win time.<p>On the other hand yesod compiles the routes. Therefore it can optimize it. Of course two routes must not interfere.<div class=sourceCode id=cb7><pre class="sourceCode html"><code class="sourceCode html"><a class=sourceLine id=cb7-1 title=1>/blog/2003  Date2003R</a>
-<a class=sourceLine id=cb7-2 title=2>/blog/$DATE DateR</a></code></pre></div><p>is invalid by default (you can make it valid, but I don’t think it is a good idea).<p>You’d better<div class=sourceCode id=cb8><pre class="sourceCode html"><code class="sourceCode html"><a class=sourceLine id=cb8-1 title=1>/blog/$DATE DateR</a></code></pre></div><p>and test if <code>date = 2003</code> inside the handler.<h2 id=why-yesod>Why yesod?</h2><ol type=1><li><em>Speed</em>. This is just astounding. Look at <a href=http://snapframework.com/blog/2010/11/17/snap-0.3-benchmarks>this</a> and then to <a href=http://www.yesodweb.com/blog/2011/02/warp-speed-ahead>this</a>.<li><em>Haskell</em>. This is certainly hard to learn but also incredibly awesome. If you want to make you a favor. Just learn Haskell. It will be difficult, far more than you can imagine. It is very different from all other languages I used. But it will blow your mind and learn you a bunch of new programming concepts.<li><em>Good ideas, excellent community</em>. I follow yesod from some month now and the speed at which the project progress is incredible.</ol><p>If you are a haskeller, I believe you shouldn’t fear the special syntax imposed by the standard yesod way of doing things. Just try it more than the firsts basic tutorials.<p>Until here I believe it goes in the right direction. Even if I believe the real future is by generating HTML pages from the client (using javascript) and server limited to serve JSON (or XML, or any object representation system).<p>To conclude, Yesod is awesome. Just overcome the difficulties about learning a bit of haskell and try it!</div><div id=afterarticle><div id=social><a href=../../../../Scratch/en/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=social>RSS</a>
-·
-<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Yesod-excellent-ideas/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=social>Tweet</a>
-·
-<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Yesod-excellent-ideas/" target=_blank rel="noopener noreferrer nofollow" class=social>FB</a><br><a class=message href=../../../../Scratch/en/blog/Social-link-the-right-way/>These social sharing links preserve your privacy</a></div><div id=navigation><a href=../../../../>Home</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/en/blog>Blog</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/en/softwares>Softwares</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/en/about>About</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2011-10-04</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
-<a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
-<a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
-<span class=pala>&</span>
-<a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=simple style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
-ADA:</a>
-<code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>
+htmlbody = ...</code></pre>
+<p>The real syntax is:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb5-1" title="1">toWidgetHeader cassiusFile <span class="st">&quot;button.cassius&quot;</span></a>
+<a class="sourceLine" id="cb5-2" title="2">toWidgetHeader juliusFile <span class="st">&quot;button.julius&quot;</span></a>
+<a class="sourceLine" id="cb5-3" title="3">toWidget       hamletFile <span class="st">&quot;buttonTemplate.hamlet&quot;</span></a></code></pre></div>
+<p>Note the awesome Shakespearean inspired name convention. Another good reason to use yesod.</p>
+<ul>
+<li>Cassius <em>&amp;</em> Lucius of CSS (a lot similar to SASS and SCSS),</li>
+<li>Julius for JavaScript (note a CoffeeScript is somewhere in the source of yesod),</li>
+<li>Hamlet for HTML (similar to haml)</li>
+</ul>
+<p>And when your page render, yesod makes it easy to render everything nicely:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb6-1" title="1">myBigWidget <span class="ot">=</span>  menuWidget <span class="op">&gt;&gt;</span> contentWidget <span class="op">&gt;&gt;</span> footerWidget</a></code></pre></div>
+<p>Furthermore, if you use say 10 widgets each with a bit of CSS, yesod will create a unique and compressed CSS file. Except if you expressed a need to change the header by using different CSS.</p>
+<p>This is just awesome!</p>
+<h2 id="optimized-routing">Optimized routing</h2>
+<p>In standard routing system you have for each entry a couple: regexp → handler</p>
+<p>The only way to discover the right rules is to match each regexp to the current URL. Then you can see behaviour such as, if you change the order of the rules you can lose or win time.</p>
+<p>On the other hand yesod compiles the routes. Therefore it can optimize it. Of course two routes must not interfere.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode html"><code class="sourceCode html"><a class="sourceLine" id="cb7-1" title="1">/blog/2003  Date2003R</a>
+<a class="sourceLine" id="cb7-2" title="2">/blog/$DATE DateR</a></code></pre></div>
+<p>is invalid by default (you can make it valid, but I don’t think it is a good idea).</p>
+<p>You’d better</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode html"><code class="sourceCode html"><a class="sourceLine" id="cb8-1" title="1">/blog/$DATE DateR</a></code></pre></div>
+<p>and test if <code>date = 2003</code> inside the handler.</p>
+<h2 id="why-yesod">Why yesod?</h2>
+<ol type="1">
+<li><em>Speed</em>. This is just astounding. Look at <a href="http://snapframework.com/blog/2010/11/17/snap-0.3-benchmarks">this</a> and then to <a href="http://www.yesodweb.com/blog/2011/02/warp-speed-ahead">this</a>.</li>
+<li><em>Haskell</em>. This is certainly hard to learn but also incredibly awesome. If you want to make you a favor. Just learn Haskell. It will be difficult, far more than you can imagine. It is very different from all other languages I used. But it will blow your mind and learn you a bunch of new programming concepts.</li>
+<li><em>Good ideas, excellent community</em>. I follow yesod from some month now and the speed at which the project progress is incredible.</li>
+</ol>
+<p>If you are a haskeller, I believe you shouldn’t fear the special syntax imposed by the standard yesod way of doing things. Just try it more than the firsts basic tutorials.</p>
+<p>Until here I believe it goes in the right direction. Even if I believe the real future is by generating HTML pages from the client (using javascript) and server limited to serve JSON (or XML, or any object representation system).</p>
+<p>To conclude, Yesod is awesome. Just overcome the difficulties about learning a bit of haskell and try it!</p>
+          </div>
+          <div id="afterarticle">
+              <div id="social">
+                  <a href="../../../../Scratch/en/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
+                  ·
+                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Yesod-excellent-ideas/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
+                  ·
+                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Yesod-excellent-ideas/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
+                  <br />
+                  <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
+              </div>
+              <div id="navigation">
+                  <a href="../../../../">Home</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/blog">Blog</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/softwares">Softwares</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/about">About</a>
+              </div>
+              <div id="totop"><a href="#header">↑ Top ↑</a></div>
+              <div id="bottom">
+                  <div>
+                      Published on 2011-10-04
+                  </div>
+                  <div>
+                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+                  </div>
+                  <div>
+                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+                  </div>
+
+                  <div>
+                      Done with
+                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
+                      <span class="pala">&amp;</span>
+                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
+                  </div>
+                  <hr />
+                  <div style="max-width: 100%">
+                      <a href="https://cardanohub.org">
+                          <img src="../../../../Scratch/img/ada-logo.png" class="simple" style="height: 16px;
+                                    border-radius: 50%;
+                                    vertical-align:middle;
+                                    display:inline-block;" />
+                          ADA:
+                      </a>
+                          <code style="display:inline-block;
+                                       word-wrap:break-word;
+                                       text-align: left;
+                                       vertical-align: top;
+                                       max-width: 85%;">
+                              DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp
+                          </code>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+        </div>
+    </body>
+</html>

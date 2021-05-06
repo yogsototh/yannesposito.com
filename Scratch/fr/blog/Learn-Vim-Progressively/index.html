@@ -1,20 +1,379 @@
-<!doctype html><html lang=fr><meta charset=utf-8><title>YBlog - Apprenez Vim Progressivement</title><meta name=keywords content="vi,vim,editor,tutoriel,apprendre"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/fr/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=fr class=article><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/en/blog/Learn-Vim-Progressively/>Anglais</a></span>
-<span class=tomenu><a href=#navigation>↓ Menu ↓</a></span>
-<span class=flush></span></div></div><div id=titre><h1>Apprenez Vim Progressivement</h1></div><div class=flush></div><div id=afterheader class=article><div class=corps><div><img src=../../../../Scratch/img/blog/Learn-Vim-Progressively/uber_leet_use_vim.jpg alt="Über leet use vim!"></div><div class=intro><p><span class=sc><abbr title="Trop long; pas lu">tlpl</abbr>:</span> Vous désirez apprendre vim (le meilleur editeur de texte connu à ce jour) le plus rapidement possible. Voici mes conseils pour vous aider. Commencez à apprendre le minimum vital, puis apprenez doucement de nouvelles commandes.</div><p><a href=http://www.vim.org>Vim</a> ou l’éditeur qui vallait 3 milliards&nbsp;:<blockquote><p>Meilleur, plus fort, plus rapide.</blockquote><p>Apprenez <a href=http://www.vim.org>vim</a> et ce sera votre dernier éditeur. Aucun éditeur que je connaisse ne le surpasse. Sa prise en mais est difficile, mais payante.<p>Je vous conseille de l’apprendre en 4 étapes&nbsp;:<ol type=1><li>La survie<li>Se sentir à son aise<li>Se sentir meilleur, plus fort et plus rapide<li>Tirer parti des super-pouvoirs de vim</ol><p>À la fin de ces leçons vous serez transformé.<p>Avant de commencer, un message pour vous prévenir. Apprendre vim sera difficile au début. Ça prendra du temps. Vous devrez vous entraîner. Apprendre vim ressemble beaucoup à apprendre un instrument de musique. N’espérez pas être plus efficace avec vim qu’avec un autre éditeur avant au moins trois jours. En fait ça sera certainement plus 2 semaines que 3 jours.<h2 id=er-niveau-survivre>1er Niveau – Survivre</h2><ol start=0 type=1><li>Installez <a href=http://www.vim.org>vim</a><li>Lancez vim<li>NE TOUCHEZ A RIEN! Lisez</ol><p>Dans un éditeur normal, il suffit de taper sur une touche du clavier et la lettre s’affiche à l’écran. Pas ici. Vim est en mode <em>Normal</em>. Commençons par placer vim en mode <em>Insert</em>. Tapez sur la touche <code>i</code>.<p>Voilà, c’est magique. Vous pouvez tapez comme dans un éditeur standard. Pour repasser en mode Normal tapez sur la touche <code>Echap</code>.<p>Maintenant que vous savez passer du mode <em>Normal</em> au mode <em>Insert</em>. Voici les commandes de survie (toutes en mode <em>Normal</em>)&nbsp;:<blockquote><ul><li><code>i</code> → Passer en mode insértion. Taper <code>Echap</code> pour repasser en mode Normal.<li><code>x</code> → Supprimer le caractère sous le curseur<li><code>:wq</code> → Sauvegarder et quitter (<code>:w</code> sauvegarde, <code>:q&lt;enter></code> quitter)<li><code>dd</code> → Supprimer (et copier) la ligne courante<li><code>p</code> → Coller</ul><p>Récommandées&nbsp;:<ul><li><code>hjkl</code> (optionnel) → se déplacer (&lt;-↓↑→). Souvenez vous <code>j</code> ressemble à une flèche vers le bas.<li><code>:help &lt;commande></code> → Affiche l’aide pour <code>&lt;commande></code>. Vous pouvez aussi écrire <code>:help</code> pour atterir sur l’aide générale.</ul></blockquote><p>Seulement 5 commandes. Voilà, c’est tout pour un début. Essayez d’éditer vos fichiers comme ça pendant une petite journée. Lorsque ces commandes vous sembleront naturelles, vous pourrez passer à l’étape d’après.<p>Mais avant un petit mot sur le mode Normal. Dans un éditeur normal pour copier il faut utiliser une combinaison de touches (<code>Ctrl-c</code>). En fait, lorsque vous appuyez sur la touche <code>Ctrl</code>, c’est un peu comme si toutes les touches du clavier avaient un autre usage. Dans vim, lorsque vous êtes en mode Normal, c’est comme si vous mainteniez <code>Ctrl</code> enfoncé.<p>Quelques mots concernant les notations&nbsp;:<ul><li>Au lieu d’écrire <code>Ctrl-λ</code>, j’écrirai <code>&lt;C-λ></code>.<li>Les commandes qui commencent par <code>:</code> ont un retour à la ligne implicite à la fin. Par exemple lorsque que j’écris, <code>:q</code> celà signifi qu’il faut taper <code>:</code>, suivi de <code>q</code>, suivi de <code>&lt;Return></code>.</ul><h2 id=ème-niveau-se-sentir-à-son-aise>2ème Niveau – Se sentir à son aise</h2><p>Vous connaissez les commandes de survie. Passons à des commandes pour être un peu plus à notre aise. Je vous suggère&nbsp;:<ol type=1><li><p>Les variantes de l’insertion<blockquote><ul><li><code>a</code> → Comme <code>i</code>, mais après la position du curseur.<li><code>o</code> → Comme <code>i</code>, mais à la ligne suivante.<li><code>O</code> → Comme <code>o</code> mais ajoute la ligne avant.<li><code>cw</code> → Remplacer la fin du mot.</ul></blockquote><li><p>Déplacements basiques<blockquote><ul><li><code>0</code> → Aller à la première colonne.<li><code>^</code> → Aller au premier caractère de la ligne.<li><code>$</code> → Aller à la fin de la ligne.<li><code>g_</code> → Aller au dernier caractère de la ligne.<li><code>/pattern</code> → Rechercher <code>pattern</code> dans le fichier.</ul></blockquote><li><p>Copier/Coller<blockquote><ul><li><code>P</code> → Coller avant. Souvenez vous, <code>p</code> colle après la position du curseur.<li><code>yy</code> → Copier la ligne courante. C’est plus simple et équivalent à <code>ddP</code></ul></blockquote><li><p>Annuler/Refaire<blockquote><ul><li><code>u</code> → Annuler (undo)<li><code>&lt;C-r></code> → Refaire</ul></blockquote><li><p>Ouvrir/Sauvegarder/Quitter/Changer de fichier (buffer)<blockquote><ul><li><code>:e &lt;path/to/file></code> → Ouvrir.<li><code>:w</code> → Sauvegarder.<li><code>:saveas &lt;path/to/file></code> → Sauvegarder sous …<li><code>:x</code>, <code>ZZ</code> ou <code>:wq</code> → Sauvegarder et quitter (<code>:x</code> sauvegarde seulement si nécessaire).<li><code>:q!</code> → Quitter sans sauvegarder. De même <code>:qa!</code> quitte même si d’autres fichiers (buffers) ont des modifications non sauvegardées.<li><code>:bn</code> (resp. <code>:bp</code>) → Affiche le fichier suivant (resp. précédent).</ul></blockquote></ol><p>Prenez le temps de bien intégrer ces commandes. Une fois fait, vous devriez être capable de faire tout ce qu’on peut attendre d’un éditeur de texte classique.<h2 id=ième-niveau-meilleur.-plus-fort.-plus-rapide.>3ième Niveau – Meilleur. Plus fort. Plus rapide.</h2><p>Bravo ! Si vous êtes arrivé jusqu’ici nous allons pouvoir commencer à apprendre les choses vraiment intéressantes. Pour cette section, je vais seulement parler de commandes disponible dans vi et vim. Vim est la contraction de “vi improved”, ou en Français, “vi amélioré”.<h3 id=meilleur>Meilleur</h3><p>Voyons comment nous pouvons éviter les répétitions avec vi&nbsp;:<ol type=1><li><code>.</code> → Le caractère point répètera la dernière commande. Très utile.<li>N<code>&lt;commande></code> → répètera la commande N fois.</ol><p>Quelques exemples, ouvrez un fichier (non vide) avec vim et tapez&nbsp;:<blockquote><ul><li><code>2dd</code> → Supprimera 2 lignes<li><code>3p</code> → copiera 3 fois d’affiler le texte copié<li><code>100idesu [ESC]</code> → écrira “desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu”<li><code>.</code> → Juste après la dernière commande réécrira les 100 “desu”.<li><code>3.</code> → Écrira 3 “desu” et non pas 300. Bien vu n’est-ce pas ?</ul></blockquote><h3 id=plus-fort>Plus fort</h3><p>Savoir se déplacer efficacement avec vim est <em>très</em> important. Ne sautez pas cette section.<ol type=1><li>N<code>G</code> → Aller à la ligne N<li><code>gg</code> → raccourci pour <code>1G</code>, retourner au début du fichier<li><code>G</code> → Aller à la dernière ligne.<li><p>Déplacement autour des mots:<blockquote><ol type=1><li><code>w</code> → aller au début du mot suivant<li><code>e</code> → aller à la fin du mot courant</ol><p>Par défaut les mots sont seulement composés de lettres (et du caractère souligné <code>_</code>). Appelons un MOT un ensemble de lettre séparé par des caractères blancs (espaces, tabulation). Si vous voulez considérer des MOTS alors il suffit d’utiliser les majuscules.<ol type=1><li><code>W</code> → aller au début du MOT suivant<li><code>E</code> → aller à la fin du MOT courant</ol><div><img src=../../../../Scratch/img/blog/Learn-Vim-Progressively/word_moves.jpg alt="Word moves example"></div></blockquote></ol><p>Passons aux commandes de déplacement les plus efficaces&nbsp;:<blockquote><ul><li><code>%</code> : Aller à la parenthèse, accolade, crochet correspondante.<li><code>*</code> (resp. <code>#</code>) : Aller à la prochaine (resp. précédente) occurrence du mot sous le curseur</ul></blockquote><p>Croyez moi, ces trois dernières commandes valent de l’or. Retenez les et vous gagnerez beaucoup de temps.<h3 id=plus-rapide>Plus rapide</h3><p>Vous vous souvenez que j’ai dit que les déplacements étaient très importants en vi. Voilà pourquoi. Une façon de travailler avec vim est de se dire que l’on fait des “phrases”. Le verbe étant la commande et les compléments définissent la zone d’action. De façon générale&nbsp;:<p><code>&lt;position de depart>&lt;commande>&lt;position d'arrivee></code><p>Par exemple : <code>0y$</code> signifie&nbsp;:<ul><li><code>0</code> → Aller au début de la ligne,<li><code>y</code> → copie à partir d’ici,<li><code>$</code> → jusqu’à la fin de cette ligne.</ul><p>On peut donc faire des choses comme <code>ye</code>, copie à partir de la position courante du curseur jusqu’à là fin du mot. Mais aussi: <code>y2/toto</code> copie jusqu’à la seconde prochaine occurrence de “toto”.<p>Ce qui est vrai pour <code>y</code> (yank → copier), est aussi vrai pour <code>d</code> (delete → supprimer), <code>v</code> (sélection visuelle), <code>gU</code> (uppercase → majuscule),<code>gu</code> (lowercase → minuscule), etc…<h2 id=ième-niveau-les-super-pouvoirs-de-vim>4ième Niveau – Les super pouvoirs de Vim</h2><p>Jusqu’ici vous avez appris les commandes les plus courantes. Mais voici les killer features de vim. Celles que je n’ai retrouvé que dans vim (ou presque).<h3 id=déplacement-sur-la-ligne-0-g_-f-f-t-t>Déplacement sur la ligne : <code>0</code> <code>^</code> <code>$</code> <code>g_</code> <code>f</code> <code>F</code> <code>t</code> <code>T</code> <code>,</code> <code>;</code></h3><blockquote><ul><li><code>0</code> → aller à la colonne 0,<li><code>^</code> → aller au premier caractère de la ligne<li><code>$</code> → aller à la dernière colonne de la ligne<li><code>g_</code> → aller au dernier caractère de la ligne<li><code>fa</code> → vous amène à la prochaine occurrence de a sur la ligne courante. <code>,</code> (resp. <code>;</code>) recherche l’occurrence suivante (resp. précédente).<li><code>t,</code> → vous amène juste avant le <code>,</code>.<li><code>3fa</code> → recherche la 3ième occurrence de <code>a</code>.<li><code>F</code> et <code>T</code> → comme <code>f</code> et <code>t</code> mais en arrière.<div><img src=../../../../Scratch/img/blog/Learn-Vim-Progressively/line_moves.jpg alt="Line moves"></div></ul></blockquote><p>Un truc pratique : <code>dt"</code> → supprime tout jusqu’au prochain <code>"</code>.<h3 id=selection-de-zone-actionaobject-ou-actioniobject>Selection de zone <code>&lt;action>a&lt;object></code> ou <code>&lt;action>i&lt;object></code></h3><p>Ces commandes sont utilisable seulement en mode visuel ou après un “opérateur”. Mais elles sont très puissantes. Leur forme générale est:<p><code>&lt;action>a&lt;objet></code> et <code>&lt;action>i&lt;objet></code><p>Où action peut être par exemple <code>d</code> (delete), <code>y</code> (yank), <code>v</code> (select in visual mode), etc… Un objet peut être: <code>w</code> un mot, <code>W</code> un MOT (mot étendu), <code>s</code> une phrase, <code>p</code> un paragraphe. Mais aussi des caractère plus naturels comme <code>"</code>, <code>'</code>, <code>)</code>, <code>}</code>, <code>]</code>.<p>Supposons que le curseur soit positionné sur le premier <code>o</code> dans <code>(map (+) ("foo"))</code>.<blockquote><ul><li><code>vi"</code> → sélectionnera <code>foo</code>.<li><code>va"</code> → sélectionnera <code>"foo"</code>.<li><code>vi)</code> → sélectionnera <code>"foo"</code>.<li><code>va)</code> → sélectionnera <code>("foo")</code>.<li><code>v2i)</code> → sélectionnera <code>map (+) ("foo")</code><li><code>v2a)</code> → sélectionnera <code>(map (+) ("foo"))</code></ul></blockquote><div><img src=../../../../Scratch/img/blog/Learn-Vim-Progressively/textobjects.png alt="Text objects selection"></div><h3 id=sélection-de-blocs-rectangulaires-c-v.>Sélection de blocs rectangulaires : <code>&lt;C-V></code>.</h3><p>Les blocs rectangulaires sont très commodes pour commenter plusieurs lignes de codes. Typiquement: <code>^&lt;C-V>&lt;C-d>I-- [ESC]</code><ul><li><code>^</code> → aller au premier caractère de la ligne<li><code>&lt;C-V></code> → Commencer la sélection du bloc<li><code>&lt;C-d></code> → se déplacer vers le bas (pourrait être <code>jjj</code> ou <code>%</code> etc…)<li><code>I-- [ESC]</code> → écrit <code>--</code> pour commenter le reste de la ligne.</ul><div><img src=../../../../Scratch/img/blog/Learn-Vim-Progressively/rectangular-blocks.gif alt="Rectangular blocks"></div><p>Remarquez que sous windows, vous devez utiliser <code>&lt;C-q></code> plutôt que <code>&lt;C-v></code> si votre “presse papier” n’est pas vide.<h3 id=complétion-c-n-et-c-p.>Complétion : <code>&lt;C-n></code> et <code>&lt;C-p></code>.</h3><p>En mode Insert, commencez à écrire le début d’un mot déjà présent dans l’un des buffers (fichers) ouvert et tapes <code>&lt;C-p></code>. Magique.<div><img src=../../../../Scratch/img/blog/Learn-Vim-Progressively/completion.gif alt=Completion></div><h3 id=macros-qa-faire-quelque-chose-q-a>Macros : <code>qa</code> faire quelque chose <code>q</code>, <code>@a</code>, <code>@@</code></h3><p><code>qa</code> enregistre tout ce que vous faite et enregistre le tout dans le <em>registre</em> <code>a</code>. Ensuite <code>@a</code> va rejouer la macro enregistrée dans le registre <code>a</code> comme si c’est vous qui tapiez au clavier. <code>@@</code> est un raccourci pour rejouer la dernière macro exécutée.<blockquote><p>Exemple : Sur une ligne contenant seulement un 1 tapez&nbsp;:<ul><li><code>qaYp&lt;C-a>q</code> →<ul><li><code>qa</code> → début de l’enregistrement.<li><code>Yp</code> → copier cette ligne.<li><code>&lt;C-a></code> → incrémente le nombre.<li><code>q</code> → arrête d’enregistrer.</ul><li><code>@a</code> → écrit un 2 sous le 1.<li>Écrivez <code>100@@</code>. Cela va créer une liste de nombre croissants jusqu’à 103.</ul></blockquote><div><img src=../../../../Scratch/img/blog/Learn-Vim-Progressively/macros.gif alt=Macros></div><h3 id=sélection-visuelle-vvc-v>Sélection visuelle : <code>v</code>,<code>V</code>,<code>&lt;C-v></code></h3><p>On a déjà vu un exemple avec <code>&lt;C-V></code>. Mais il y a aussi, <code>v</code> et <code>V</code>. Et une fois la sélection visuelle faite vous pouvez par exemple:<ul><li><code>J</code> → joindre toutes les lignes pour en faire une seule<li><code>&lt;</code> (resp. <code>></code>) → indenter à gauche (resp. à droite).<li><code>=</code> → auto indenter</ul><div><img src=../../../../Scratch/img/blog/Learn-Vim-Progressively/autoindent.gif alt=Autoindent></div><p>Ajouter quelque chose à la fin de toutes les lignes sélectionnées visuellement&nbsp;:<ul><li><code>&lt;C-v></code><li>aller jusqu’à la ligne désirée (<code>jjj</code> ou <code>&lt;C-d></code> ou <code>/pattern</code> ou <code>%</code> etc…)<li><code>$</code> aller à la fin<li><code>A</code>, écrire le texte, <code>Echap</code>.</ul><div><img src=../../../../Scratch/img/blog/Learn-Vim-Progressively/append-to-many-lines.gif alt="Ajouter à la fin de plusieurs lignes"></div><h3 id=splits-split-et-vsplit.>Splits : <code>:split</code> et <code>vsplit</code>.</h3><p>Je vous conseille de faire un <code>:help split</code>. Celà permet de manipuler plusieurs buffer sur la même fenêtre. Voici les commandes principales&nbsp;:<blockquote><ul><li><code>:split</code> → crée un split (<code>:vsplit</code> crée un split vertical)<li><code>&lt;C-w>&lt;dir></code> → où dir est l’un de <code>hjkl</code> ou ←↓↑→ permet de changer de split.<li><code>&lt;C-w>_</code> (resp. <code>&lt;C-w>|</code>) → Maximise la taille du split (resp. split vertical)<li><code>&lt;C-w>+</code> (resp. <code>&lt;C-w>-</code>) → Agrandi (resp. diminue) le split</ul></blockquote><div><img src=../../../../Scratch/img/blog/Learn-Vim-Progressively/split.gif alt=Split></div><h2 id=conclusion>Conclusion</h2><p>Voilà, je vous ai donné 90% des commandes que j’utilise tous les jours. N’essayez pas de toutes les apprendre en une journée. Il faut le temps de s’habituer à chaque nouvelle commande. Je vous conseille de ne pas apprendre plus d’une ou deux commandes par jour.<p>Apprendre Vim est plus une question d’entraînement que de mémorisation. Heureusement vim est founi avec un très bon tutoriel et une excellente documentation. Lancez vimtutor jusqu’à ce que vous vous sentiez à l’aise avec les commandes basiques. De plus, vous devriez aussi lire en détail la page suivate : <code>:help usr_02.txt</code>.<p>Ensuite vous découvrirez <code>!</code>, les folds, les registres, les plugins et tout un tas d’autres choses. Apprenez vim comme vous apprendriez le piano et vous devriez très bien vous en sortir.</p><script>$(document).ready(function(){$('code').css({'border':'solid 1px #CCC','padding':'3px'});});</script></div><div id=afterarticle><div id=social><a href=../../../../Scratch/fr/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=social>RSS</a>
-·
-<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/Learn-Vim-Progressively/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=social>Tweet</a>
-·
-<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/Learn-Vim-Progressively/" target=_blank rel="noopener noreferrer nofollow" class=social>FB</a><br><a class=message href=../../../../Scratch/fr/blog/Social-link-the-right-way/>Ces liens sociaux préservent votre vie privée</a></div><div id=navigation><a href=../../../../>Accueil</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/fr/blog>Blog</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/fr/softwares>Logiciels</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/fr/about>Auteur</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2011-08-25</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
-<a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
-<a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
-<span class=pala>&</span>
-<a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=simple style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
-ADA:</a>
-<code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <title>YBlog - Apprenez Vim Progressivement</title>
+        <meta name="keywords" content="vi, vim, editor, tutoriel, apprendre" />
+
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/fr/blog/feed/feed.xml" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+        <!-- IndieAuth -->
+        <link href="https://twitter.com/yogsototh" rel="me">
+        <link href="https://github.com/yogsototh" rel="me">
+        <link href="mailto:yann.esposito@gmail.com" rel="me">
+        <link rel="pgpkey" href="../../../../pubkey.txt">
+    </head>
+    <body lang="fr" class="article">
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	    <span id="choixlang">
+                  <a href="../../../../Scratch/en/blog/Learn-Vim-Progressively/">Anglais</a> 
+        	    </span>
+              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
+        	    <span class="flush"></span>
+        	</div>
+			</div>
+
+			<div id="titre">
+				<h1>Apprenez Vim Progressivement</h1>
+				
+			</div>
+			<div class="flush"></div>
+      <div id="afterheader" class="article">
+          <div class="corps">
+              <div>
+<img src="../../../../Scratch/img/blog/Learn-Vim-Progressively/uber_leet_use_vim.jpg" alt="Über leet use vim!" />
+</div>
+<div class="intro">
+<p><span class="sc"><abbr title="Trop long; pas lu">tlpl</abbr>: </span> Vous désirez apprendre vim (le meilleur editeur de texte connu à ce jour) le plus rapidement possible. Voici mes conseils pour vous aider. Commencez à apprendre le minimum vital, puis apprenez doucement de nouvelles commandes.</p>
+</div>
+<p><a href="http://www.vim.org">Vim</a> ou l’éditeur qui vallait 3 milliards&nbsp;:</p>
+<blockquote>
+<p>Meilleur, plus fort, plus rapide.</p>
+</blockquote>
+<p>Apprenez <a href="http://www.vim.org">vim</a> et ce sera votre dernier éditeur. Aucun éditeur que je connaisse ne le surpasse. Sa prise en mais est difficile, mais payante.</p>
+<p>Je vous conseille de l’apprendre en 4 étapes&nbsp;:</p>
+<ol type="1">
+<li>La survie</li>
+<li>Se sentir à son aise</li>
+<li>Se sentir meilleur, plus fort et plus rapide</li>
+<li>Tirer parti des super-pouvoirs de vim</li>
+</ol>
+<p>À la fin de ces leçons vous serez transformé.</p>
+<p>Avant de commencer, un message pour vous prévenir. Apprendre vim sera difficile au début. Ça prendra du temps. Vous devrez vous entraîner. Apprendre vim ressemble beaucoup à apprendre un instrument de musique. N’espérez pas être plus efficace avec vim qu’avec un autre éditeur avant au moins trois jours. En fait ça sera certainement plus 2 semaines que 3 jours.</p>
+<h2 id="er-niveau-survivre">1er Niveau – Survivre</h2>
+<ol start="0" type="1">
+<li>Installez <a href="http://www.vim.org">vim</a></li>
+<li>Lancez vim</li>
+<li>NE TOUCHEZ A RIEN! Lisez</li>
+</ol>
+<p>Dans un éditeur normal, il suffit de taper sur une touche du clavier et la lettre s’affiche à l’écran. Pas ici. Vim est en mode <em>Normal</em>. Commençons par placer vim en mode <em>Insert</em>. Tapez sur la touche <code>i</code>.</p>
+<p>Voilà, c’est magique. Vous pouvez tapez comme dans un éditeur standard. Pour repasser en mode Normal tapez sur la touche <code>Echap</code>.</p>
+<p>Maintenant que vous savez passer du mode <em>Normal</em> au mode <em>Insert</em>. Voici les commandes de survie (toutes en mode <em>Normal</em>)&nbsp;:</p>
+<blockquote>
+<ul>
+<li><code>i</code> → Passer en mode insértion. Taper <code>Echap</code> pour repasser en mode Normal.</li>
+<li><code>x</code> → Supprimer le caractère sous le curseur</li>
+<li><code>:wq</code> → Sauvegarder et quitter (<code>:w</code> sauvegarde, <code>:q&lt;enter&gt;</code> quitter)</li>
+<li><code>dd</code> → Supprimer (et copier) la ligne courante</li>
+<li><code>p</code> → Coller</li>
+</ul>
+<p>Récommandées&nbsp;:</p>
+<ul>
+<li><code>hjkl</code> (optionnel) → se déplacer (&lt;-↓↑→). Souvenez vous <code>j</code> ressemble à une flèche vers le bas.</li>
+<li><code>:help &lt;commande&gt;</code> → Affiche l’aide pour <code>&lt;commande&gt;</code>. Vous pouvez aussi écrire <code>:help</code> pour atterir sur l’aide générale.</li>
+</ul>
+</blockquote>
+<p>Seulement 5 commandes. Voilà, c’est tout pour un début. Essayez d’éditer vos fichiers comme ça pendant une petite journée. Lorsque ces commandes vous sembleront naturelles, vous pourrez passer à l’étape d’après.</p>
+<p>Mais avant un petit mot sur le mode Normal. Dans un éditeur normal pour copier il faut utiliser une combinaison de touches (<code>Ctrl-c</code>). En fait, lorsque vous appuyez sur la touche <code>Ctrl</code>, c’est un peu comme si toutes les touches du clavier avaient un autre usage. Dans vim, lorsque vous êtes en mode Normal, c’est comme si vous mainteniez <code>Ctrl</code> enfoncé.</p>
+<p>Quelques mots concernant les notations&nbsp;:</p>
+<ul>
+<li>Au lieu d’écrire <code>Ctrl-λ</code>, j’écrirai <code>&lt;C-λ&gt;</code>.</li>
+<li>Les commandes qui commencent par <code>:</code> ont un retour à la ligne implicite à la fin. Par exemple lorsque que j’écris, <code>:q</code> celà signifi qu’il faut taper <code>:</code>, suivi de <code>q</code>, suivi de <code>&lt;Return&gt;</code>.</li>
+</ul>
+<h2 id="ème-niveau-se-sentir-à-son-aise">2ème Niveau – Se sentir à son aise</h2>
+<p>Vous connaissez les commandes de survie. Passons à des commandes pour être un peu plus à notre aise. Je vous suggère&nbsp;:</p>
+<ol type="1">
+<li><p>Les variantes de l’insertion</p>
+<blockquote>
+<ul>
+<li><code>a</code> → Comme <code>i</code>, mais après la position du curseur.</li>
+<li><code>o</code> → Comme <code>i</code>, mais à la ligne suivante.</li>
+<li><code>O</code> → Comme <code>o</code> mais ajoute la ligne avant.</li>
+<li><code>cw</code> → Remplacer la fin du mot.</li>
+</ul>
+</blockquote></li>
+<li><p>Déplacements basiques</p>
+<blockquote>
+<ul>
+<li><code>0</code> → Aller à la première colonne.</li>
+<li><code>^</code> → Aller au premier caractère de la ligne.</li>
+<li><code>$</code> → Aller à la fin de la ligne.</li>
+<li><code>g_</code> → Aller au dernier caractère de la ligne.</li>
+<li><code>/pattern</code> → Rechercher <code>pattern</code> dans le fichier.</li>
+</ul>
+</blockquote></li>
+<li><p>Copier/Coller</p>
+<blockquote>
+<ul>
+<li><code>P</code> → Coller avant. Souvenez vous, <code>p</code> colle après la position du curseur.</li>
+<li><code>yy</code> → Copier la ligne courante. C’est plus simple et équivalent à <code>ddP</code></li>
+</ul>
+</blockquote></li>
+<li><p>Annuler/Refaire</p>
+<blockquote>
+<ul>
+<li><code>u</code> → Annuler (undo)</li>
+<li><code>&lt;C-r&gt;</code> → Refaire</li>
+</ul>
+</blockquote></li>
+<li><p>Ouvrir/Sauvegarder/Quitter/Changer de fichier (buffer)</p>
+<blockquote>
+<ul>
+<li><code>:e &lt;path/to/file&gt;</code> → Ouvrir.</li>
+<li><code>:w</code> → Sauvegarder.</li>
+<li><code>:saveas &lt;path/to/file&gt;</code> → Sauvegarder sous …</li>
+<li><code>:x</code>, <code>ZZ</code> ou <code>:wq</code> → Sauvegarder et quitter (<code>:x</code> sauvegarde seulement si nécessaire).</li>
+<li><code>:q!</code> → Quitter sans sauvegarder. De même <code>:qa!</code> quitte même si d’autres fichiers (buffers) ont des modifications non sauvegardées.</li>
+<li><code>:bn</code> (resp. <code>:bp</code>) → Affiche le fichier suivant (resp. précédent).</li>
+</ul>
+</blockquote></li>
+</ol>
+<p>Prenez le temps de bien intégrer ces commandes. Une fois fait, vous devriez être capable de faire tout ce qu’on peut attendre d’un éditeur de texte classique.</p>
+<h2 id="ième-niveau-meilleur.-plus-fort.-plus-rapide.">3ième Niveau – Meilleur. Plus fort. Plus rapide.</h2>
+<p>Bravo ! Si vous êtes arrivé jusqu’ici nous allons pouvoir commencer à apprendre les choses vraiment intéressantes. Pour cette section, je vais seulement parler de commandes disponible dans vi et vim. Vim est la contraction de “vi improved”, ou en Français, “vi amélioré”.</p>
+<h3 id="meilleur">Meilleur</h3>
+<p>Voyons comment nous pouvons éviter les répétitions avec vi&nbsp;:</p>
+<ol type="1">
+<li><code>.</code> → Le caractère point répètera la dernière commande. Très utile.</li>
+<li>N<code>&lt;commande&gt;</code> → répètera la commande N fois.</li>
+</ol>
+<p>Quelques exemples, ouvrez un fichier (non vide) avec vim et tapez&nbsp;:</p>
+<blockquote>
+<ul>
+<li><code>2dd</code> → Supprimera 2 lignes</li>
+<li><code>3p</code> → copiera 3 fois d’affiler le texte copié</li>
+<li><code>100idesu [ESC]</code> → écrira “desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu”</li>
+<li><code>.</code> → Juste après la dernière commande réécrira les 100 “desu”.</li>
+<li><code>3.</code> → Écrira 3 “desu” et non pas 300. Bien vu n’est-ce pas ?</li>
+</ul>
+</blockquote>
+<h3 id="plus-fort">Plus fort</h3>
+<p>Savoir se déplacer efficacement avec vim est <em>très</em> important. Ne sautez pas cette section.</p>
+<ol type="1">
+<li>N<code>G</code> → Aller à la ligne N</li>
+<li><code>gg</code> → raccourci pour <code>1G</code>, retourner au début du fichier</li>
+<li><code>G</code> → Aller à la dernière ligne.</li>
+<li><p>Déplacement autour des mots:</p>
+<blockquote>
+<ol type="1">
+<li><code>w</code> → aller au début du mot suivant</li>
+<li><code>e</code> → aller à la fin du mot courant</li>
+</ol>
+<p>Par défaut les mots sont seulement composés de lettres (et du caractère souligné <code>_</code>). Appelons un MOT un ensemble de lettre séparé par des caractères blancs (espaces, tabulation). Si vous voulez considérer des MOTS alors il suffit d’utiliser les majuscules.</p>
+<ol type="1">
+<li><code>W</code> → aller au début du MOT suivant</li>
+<li><code>E</code> → aller à la fin du MOT courant</li>
+</ol>
+<div>
+<img src="../../../../Scratch/img/blog/Learn-Vim-Progressively/word_moves.jpg" alt="Word moves example" />
+</div>
+</blockquote></li>
+</ol>
+<p>Passons aux commandes de déplacement les plus efficaces&nbsp;:</p>
+<blockquote>
+<ul>
+<li><code>%</code> : Aller à la parenthèse, accolade, crochet correspondante.</li>
+<li><code>*</code> (resp. <code>#</code>) : Aller à la prochaine (resp. précédente) occurrence du mot sous le curseur</li>
+</ul>
+</blockquote>
+<p>Croyez moi, ces trois dernières commandes valent de l’or. Retenez les et vous gagnerez beaucoup de temps.</p>
+<h3 id="plus-rapide">Plus rapide</h3>
+<p>Vous vous souvenez que j’ai dit que les déplacements étaient très importants en vi. Voilà pourquoi. Une façon de travailler avec vim est de se dire que l’on fait des “phrases”. Le verbe étant la commande et les compléments définissent la zone d’action. De façon générale&nbsp;:</p>
+<p><code>&lt;position de depart&gt;&lt;commande&gt;&lt;position d'arrivee&gt;</code></p>
+<p>Par exemple : <code>0y$</code> signifie&nbsp;:</p>
+<ul>
+<li><code>0</code> → Aller au début de la ligne,</li>
+<li><code>y</code> → copie à partir d’ici,</li>
+<li><code>$</code> → jusqu’à la fin de cette ligne.</li>
+</ul>
+<p>On peut donc faire des choses comme <code>ye</code>, copie à partir de la position courante du curseur jusqu’à là fin du mot. Mais aussi: <code>y2/toto</code> copie jusqu’à la seconde prochaine occurrence de “toto”.</p>
+<p>Ce qui est vrai pour <code>y</code> (yank → copier), est aussi vrai pour <code>d</code> (delete → supprimer), <code>v</code> (sélection visuelle), <code>gU</code> (uppercase → majuscule),<code>gu</code> (lowercase → minuscule), etc…</p>
+<h2 id="ième-niveau-les-super-pouvoirs-de-vim">4ième Niveau – Les super pouvoirs de Vim</h2>
+<p>Jusqu’ici vous avez appris les commandes les plus courantes. Mais voici les killer features de vim. Celles que je n’ai retrouvé que dans vim (ou presque).</p>
+<h3 id="déplacement-sur-la-ligne-0-g_-f-f-t-t">Déplacement sur la ligne : <code>0</code> <code>^</code> <code>$</code> <code>g_</code> <code>f</code> <code>F</code> <code>t</code> <code>T</code> <code>,</code> <code>;</code></h3>
+<blockquote>
+<ul>
+<li><code>0</code> → aller à la colonne 0,</li>
+<li><code>^</code> → aller au premier caractère de la ligne</li>
+<li><code>$</code> → aller à la dernière colonne de la ligne</li>
+<li><code>g_</code> → aller au dernier caractère de la ligne</li>
+<li><code>fa</code> → vous amène à la prochaine occurrence de a sur la ligne courante. <code>,</code> (resp. <code>;</code>) recherche l’occurrence suivante (resp. précédente).</li>
+<li><code>t,</code> → vous amène juste avant le <code>,</code>.</li>
+<li><code>3fa</code> → recherche la 3ième occurrence de <code>a</code>.</li>
+<li><code>F</code> et <code>T</code> → comme <code>f</code> et <code>t</code> mais en arrière.
+<div>
+<img src="../../../../Scratch/img/blog/Learn-Vim-Progressively/line_moves.jpg" alt="Line moves" />
+</div></li>
+</ul>
+</blockquote>
+<p>Un truc pratique : <code>dt"</code> → supprime tout jusqu’au prochain <code>"</code>.</p>
+<h3 id="selection-de-zone-actionaobject-ou-actioniobject">Selection de zone <code>&lt;action&gt;a&lt;object&gt;</code> ou <code>&lt;action&gt;i&lt;object&gt;</code></h3>
+<p>Ces commandes sont utilisable seulement en mode visuel ou après un “opérateur”. Mais elles sont très puissantes. Leur forme générale est:</p>
+<p><code>&lt;action&gt;a&lt;objet&gt;</code> et <code>&lt;action&gt;i&lt;objet&gt;</code></p>
+<p>Où action peut être par exemple <code>d</code> (delete), <code>y</code> (yank), <code>v</code> (select in visual mode), etc… Un objet peut être: <code>w</code> un mot, <code>W</code> un MOT (mot étendu), <code>s</code> une phrase, <code>p</code> un paragraphe. Mais aussi des caractère plus naturels comme <code>"</code>, <code>'</code>, <code>)</code>, <code>}</code>, <code>]</code>.</p>
+<p>Supposons que le curseur soit positionné sur le premier <code>o</code> dans <code>(map (+) ("foo"))</code>.</p>
+<blockquote>
+<ul>
+<li><code>vi"</code> → sélectionnera <code>foo</code>.</li>
+<li><code>va"</code> → sélectionnera <code>"foo"</code>.</li>
+<li><code>vi)</code> → sélectionnera <code>"foo"</code>.</li>
+<li><code>va)</code> → sélectionnera <code>("foo")</code>.</li>
+<li><code>v2i)</code> → sélectionnera <code>map (+) ("foo")</code></li>
+<li><code>v2a)</code> → sélectionnera <code>(map (+) ("foo"))</code></li>
+</ul>
+</blockquote>
+<div>
+<img src="../../../../Scratch/img/blog/Learn-Vim-Progressively/textobjects.png" alt="Text objects selection" />
+</div>
+<h3 id="sélection-de-blocs-rectangulaires-c-v.">Sélection de blocs rectangulaires : <code>&lt;C-V&gt;</code>.</h3>
+<p>Les blocs rectangulaires sont très commodes pour commenter plusieurs lignes de codes. Typiquement: <code>^&lt;C-V&gt;&lt;C-d&gt;I-- [ESC]</code></p>
+<ul>
+<li><code>^</code> → aller au premier caractère de la ligne</li>
+<li><code>&lt;C-V&gt;</code> → Commencer la sélection du bloc</li>
+<li><code>&lt;C-d&gt;</code> → se déplacer vers le bas (pourrait être <code>jjj</code> ou <code>%</code> etc…)</li>
+<li><code>I-- [ESC]</code> → écrit <code>--</code> pour commenter le reste de la ligne.</li>
+</ul>
+<div>
+<img src="../../../../Scratch/img/blog/Learn-Vim-Progressively/rectangular-blocks.gif" alt="Rectangular blocks" />
+</div>
+<p>Remarquez que sous windows, vous devez utiliser <code>&lt;C-q&gt;</code> plutôt que <code>&lt;C-v&gt;</code> si votre “presse papier” n’est pas vide.</p>
+<h3 id="complétion-c-n-et-c-p.">Complétion : <code>&lt;C-n&gt;</code> et <code>&lt;C-p&gt;</code>.</h3>
+<p>En mode Insert, commencez à écrire le début d’un mot déjà présent dans l’un des buffers (fichers) ouvert et tapes <code>&lt;C-p&gt;</code>. Magique.</p>
+<div>
+<img src="../../../../Scratch/img/blog/Learn-Vim-Progressively/completion.gif" alt="Completion" />
+</div>
+<h3 id="macros-qa-faire-quelque-chose-q-a">Macros : <code>qa</code> faire quelque chose <code>q</code>, <code>@a</code>, <code>@@</code></h3>
+<p><code>qa</code> enregistre tout ce que vous faite et enregistre le tout dans le <em>registre</em> <code>a</code>. Ensuite <code>@a</code> va rejouer la macro enregistrée dans le registre <code>a</code> comme si c’est vous qui tapiez au clavier. <code>@@</code> est un raccourci pour rejouer la dernière macro exécutée.</p>
+<blockquote>
+<p>Exemple : Sur une ligne contenant seulement un 1 tapez&nbsp;:</p>
+<ul>
+<li><code>qaYp&lt;C-a&gt;q</code> →
+<ul>
+<li><code>qa</code> → début de l’enregistrement.</li>
+<li><code>Yp</code> → copier cette ligne.</li>
+<li><code>&lt;C-a&gt;</code> → incrémente le nombre.</li>
+<li><code>q</code> → arrête d’enregistrer.</li>
+</ul></li>
+<li><code>@a</code> → écrit un 2 sous le 1.</li>
+<li>Écrivez <code>100@@</code>. Cela va créer une liste de nombre croissants jusqu’à 103.</li>
+</ul>
+</blockquote>
+<div>
+<img src="../../../../Scratch/img/blog/Learn-Vim-Progressively/macros.gif" alt="Macros" />
+</div>
+<h3 id="sélection-visuelle-vvc-v">Sélection visuelle : <code>v</code>,<code>V</code>,<code>&lt;C-v&gt;</code></h3>
+<p>On a déjà vu un exemple avec <code>&lt;C-V&gt;</code>. Mais il y a aussi, <code>v</code> et <code>V</code>. Et une fois la sélection visuelle faite vous pouvez par exemple:</p>
+<ul>
+<li><code>J</code> → joindre toutes les lignes pour en faire une seule</li>
+<li><code>&lt;</code> (resp. <code>&gt;</code>) → indenter à gauche (resp. à droite).</li>
+<li><code>=</code> → auto indenter</li>
+</ul>
+<div>
+<img src="../../../../Scratch/img/blog/Learn-Vim-Progressively/autoindent.gif" alt="Autoindent" />
+</div>
+<p>Ajouter quelque chose à la fin de toutes les lignes sélectionnées visuellement&nbsp;:</p>
+<ul>
+<li><code>&lt;C-v&gt;</code></li>
+<li>aller jusqu’à la ligne désirée (<code>jjj</code> ou <code>&lt;C-d&gt;</code> ou <code>/pattern</code> ou <code>%</code> etc…)</li>
+<li><code>$</code> aller à la fin</li>
+<li><code>A</code>, écrire le texte, <code>Echap</code>.</li>
+</ul>
+<div>
+<img src="../../../../Scratch/img/blog/Learn-Vim-Progressively/append-to-many-lines.gif" alt="Ajouter à la fin de plusieurs lignes" />
+</div>
+<h3 id="splits-split-et-vsplit.">Splits : <code>:split</code> et <code>vsplit</code>.</h3>
+<p>Je vous conseille de faire un <code>:help split</code>. Celà permet de manipuler plusieurs buffer sur la même fenêtre. Voici les commandes principales&nbsp;:</p>
+<blockquote>
+<ul>
+<li><code>:split</code> → crée un split (<code>:vsplit</code> crée un split vertical)</li>
+<li><code>&lt;C-w&gt;&lt;dir&gt;</code> → où dir est l’un de <code>hjkl</code> ou ←↓↑→ permet de changer de split.</li>
+<li><code>&lt;C-w&gt;_</code> (resp. <code>&lt;C-w&gt;|</code>) → Maximise la taille du split (resp. split vertical)</li>
+<li><code>&lt;C-w&gt;+</code> (resp. <code>&lt;C-w&gt;-</code>) → Agrandi (resp. diminue) le split</li>
+</ul>
+</blockquote>
+<div>
+<img src="../../../../Scratch/img/blog/Learn-Vim-Progressively/split.gif" alt="Split" />
+</div>
+<h2 id="conclusion">Conclusion</h2>
+<p>Voilà, je vous ai donné 90% des commandes que j’utilise tous les jours. N’essayez pas de toutes les apprendre en une journée. Il faut le temps de s’habituer à chaque nouvelle commande. Je vous conseille de ne pas apprendre plus d’une ou deux commandes par jour.</p>
+<p>Apprendre Vim est plus une question d’entraînement que de mémorisation. Heureusement vim est founi avec un très bon tutoriel et une excellente documentation. Lancez vimtutor jusqu’à ce que vous vous sentiez à l’aise avec les commandes basiques. De plus, vous devriez aussi lire en détail la page suivate : <code>:help usr_02.txt</code>.</p>
+<p>Ensuite vous découvrirez <code>!</code>, les folds, les registres, les plugins et tout un tas d’autres choses. Apprenez vim comme vous apprendriez le piano et vous devriez très bien vous en sortir.</p>
+<script>
+// Style the keywords
+$(document).ready(function() {
+    $('code').css({ 'border': 'solid 1px #CCC', 'padding':'3px'});
+});
+</script>
+          </div>
+          <div id="afterarticle">
+              <div id="social">
+                  <a href="../../../../Scratch/fr/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
+                  ·
+                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/Learn-Vim-Progressively/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
+                  ·
+                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/Learn-Vim-Progressively/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
+                  <br />
+                  <a class="message" href="../../../../Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
+              </div>
+              <div id="navigation">
+                  <a href="../../../../">Accueil</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/blog">Blog</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/softwares">Logiciels</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/about">Auteur</a>
+              </div>
+              <div id="totop"><a href="#header">↑ Top ↑</a></div>
+              <div id="bottom">
+                  <div>
+                      Published on 2011-08-25
+                  </div>
+                  <div>
+                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+                  </div>
+                  <div>
+                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+                  </div>
+
+                  <div>
+                      Done with
+                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
+                      <span class="pala">&amp;</span>
+                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
+                  </div>
+                  <hr />
+                  <div style="max-width: 100%">
+                      <a href="https://cardanohub.org">
+                          <img src="../../../../Scratch/img/ada-logo.png" class="simple" style="height: 16px;
+                                    border-radius: 50%;
+                                    vertical-align:middle;
+                                    display:inline-block;" />
+                          ADA:
+                      </a>
+                          <code style="display:inline-block;
+                                       word-wrap:break-word;
+                                       text-align: left;
+                                       vertical-align: top;
+                                       max-width: 85%;">
+                              DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp
+                          </code>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+        </div>
+    </body>
+</html>

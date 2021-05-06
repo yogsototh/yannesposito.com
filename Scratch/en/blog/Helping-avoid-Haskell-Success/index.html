@@ -1,97 +1,292 @@
-<!doctype html><html lang=en><meta charset=utf-8><title>YBlog - Tips in avoiding Haskell Success at all cost</title><meta name=keywords content="programming"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/en/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=en class=article><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/fr/blog/Helping-avoid-Haskell-Success/>French</a></span>
-<span class=tomenu><a href=#navigation>↓ Menu ↓</a></span>
-<span class=flush></span></div></div><div id=titre><h1>Tips in avoiding Haskell Success at all cost</h1></div><div class=flush></div><div id=afterheader class=article><div class=corps><div><img src=../../../../Scratch/img/blog/Helping-avoid-Haskell-Success/main.jpg alt="Main image"></div><div class=intro><p><span class=sc><abbr title="Too long; didn't read">tl;dr</abbr>:</span> Few days ago there were about 20 job offer for Haskell. In only one day! How is that possible? As a <strong>real</strong> haskeller, I find this situation unbearable!<p>After all, we must <em>avoid success at all cost</em>. And I’ll help SPJ achieve this honorable goal.</div><h2 id=prevent-interest-from-beginner>Prevent Interest from beginner</h2><p>Imagine a situation were you see people demonstrating some interest in learning Haskell.<p>Quick! Prevent them from going further.<p>If they come from the dynamic (uni-typed) languages like Python, Javascript…:<blockquote><p>Haskell? A statically typed language??? Hmm… You mean like C and Java?</blockquote><p>Such a remark should immediately shut down any interest in Haskell.<p>If they want to produce application with them:<blockquote><p>Haskell? Isn’t it only a language for student! I don’t think it is useful for <em>REAL WORLD</em> applications!</blockquote><p>If they just want to learn something new:<blockquote><p>Haskell? Ah yes, I remember, mostly they only have the equivalent of Java interfaces and they stopped there. They don’t even have classes!!!! Can you imagine? I don’t even speak about class inheritance.<p>We’re in 2016! And they don’t even support basic Object Oriented Programming. What a joke!</blockquote><p>If they love low level programming:<blockquote><p>Haskell? Ah yes, I heard that lazyness make it impossible to think about code complexity and generally cause lot of space leaks.</blockquote><p>And if it is not enough:<blockquote><p>Haskell? Ah yes. I’m not fan of their Stop the World GC.</blockquote><p>If they come from LISP and the statically typed language remark wasn’t enough. Try to mention the lack of macros in Haskell. Don’t mention template Haskell or even less Generics and all recent progress in GHC.<h2 id=make-it-difficult-to-install>Make it difficult to install</h2><p>Many hints there:<ul><li>Send them on another compiler than GHC<li>Explain that they should never use a binary distribution of GHC! And they must compile it manually! It might not stop them but it will make the installation process much more tedious.<li>Lie! Explain there is a severe security issue with latest tools. Explain they must use cabal-install 1.18 or older.<li>Also explain them that in order to be able to handle lib dependencies correctly they <strong>MUST</strong> first learn Nix! Never talk about <code>stack</code>, <code>cabal freeze</code>, … While Nix is great, forcing new user completely alien to all these concepts to first learn it before starting to write their first line of code can greatly reduce their enthusiasm. Bonus point if you make them believe you can only program in Haskell on NixOS.</ul><h2 id=make-it-difficult-to-learn>Make it difficult to learn</h2><h3 id=make-new-comers-feel-dumb>Make new comers feel dumb</h3><p>The very first thing to do is to explain how Haskell is so easy to learn. How natural it is for everybody you know. And except someone you always considered very dumb, everybody was very productive in Haskell in few hours.<p>Use vocabulary alien to them as much as possible. Here is a list of terms you should use in the very first minutes of your description of Haskell:<ul><li>catamorphism (bonus if you mention that the word come from the Greek κατα for catastrophe, that way you’ll look like a snob and you also use the word catastrophe in a Haskell context).<li>Monad! Of course you should use it ASAP! And explain they are exactly like potatoes or bananas shaped chairs. Double bonus if you explain that monad are really simple as they are just a monoid in the category of endofunctors.<li>GADTs<li>Yoneda Lemma<li>Homotopy Type Theory<li>…</ul><p>Each of this term will hopefully be intimidating.<h3 id=tutorial-authors>Tutorial authors</h3><p>Please don’t provide an obvious first example like:<div class=sourceCode id=cb1><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class=sourceLine id=cb1-1 title=1>main <span class=ot>=</span> <span class=fu>putStrLn</span> <span class=st>&quot;Hello World!&quot;</span></a></code></pre></div><p>Instead prefer a fully servant example:<div class=sourceCode id=cb2><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class=sourceLine id=cb2-1 title=1><span class=ot>{-# LANGUAGE DataKinds #-}</span></a>
-<a class=sourceLine id=cb2-2 title=2><span class=ot>{-# LANGUAGE DeriveGeneric #-}</span></a>
-<a class=sourceLine id=cb2-3 title=3><span class=ot>{-# LANGUAGE LambdaCase #-}</span></a>
-<a class=sourceLine id=cb2-4 title=4><span class=ot>{-# LANGUAGE TypeOperators #-}</span></a>
-<a class=sourceLine id=cb2-5 title=5></a>
-<a class=sourceLine id=cb2-6 title=6><span class=kw>module</span> <span class=dt>App</span> <span class=kw>where</span></a>
-<a class=sourceLine id=cb2-7 title=7></a>
-<a class=sourceLine id=cb2-8 title=8><span class=kw>import</span>           <span class=dt>Control.Monad.Trans.Except</span></a>
-<a class=sourceLine id=cb2-9 title=9><span class=kw>import</span>           <span class=dt>Data.Aeson</span></a>
-<a class=sourceLine id=cb2-10 title=10><span class=kw>import</span>           <span class=dt>GHC.Generics</span></a>
-<a class=sourceLine id=cb2-11 title=11><span class=kw>import</span>           <span class=dt>Network.Wai</span></a>
-<a class=sourceLine id=cb2-12 title=12><span class=kw>import</span>           <span class=dt>Network.Wai.Handler.Warp</span></a>
-<a class=sourceLine id=cb2-13 title=13><span class=kw>import</span>           <span class=dt>Servant</span></a>
-<a class=sourceLine id=cb2-14 title=14><span class=kw>import</span>           <span class=dt>System.IO</span></a>
-<a class=sourceLine id=cb2-15 title=15></a>
-<a class=sourceLine id=cb2-16 title=16><span class=kw>type</span> <span class=dt>ItemApi</span> <span class=ot>=</span></a>
-<a class=sourceLine id=cb2-17 title=17>  <span class=st>&quot;item&quot;</span> <span class=op>:&gt;</span> <span class=dt>Get</span> '[<span class=dt>JSON</span>] [<span class=dt>Item</span>] <span class=op>:&lt;|&gt;</span></a>
-<a class=sourceLine id=cb2-18 title=18>  <span class=st>&quot;item&quot;</span> <span class=op>:&gt;</span> <span class=dt>Capture</span> <span class=st>&quot;itemId&quot;</span> <span class=dt>Integer</span> <span class=op>:&gt;</span> <span class=dt>Get</span> '[<span class=dt>JSON</span>] <span class=dt>Item</span></a>
-<a class=sourceLine id=cb2-19 title=19></a>
-<a class=sourceLine id=cb2-20 title=20><span class=ot>itemApi ::</span> <span class=dt>Proxy</span> <span class=dt>ItemApi</span></a>
-<a class=sourceLine id=cb2-21 title=21>itemApi <span class=ot>=</span> <span class=dt>Proxy</span></a>
-<a class=sourceLine id=cb2-22 title=22></a>
-<a class=sourceLine id=cb2-23 title=23><span class=ot>run ::</span> <span class=dt>IO</span> ()</a>
-<a class=sourceLine id=cb2-24 title=24>run <span class=ot>=</span> <span class=kw>do</span></a>
-<a class=sourceLine id=cb2-25 title=25>  <span class=kw>let</span> port <span class=ot>=</span> <span class=dv>3000</span></a>
-<a class=sourceLine id=cb2-26 title=26>      settings <span class=ot>=</span></a>
-<a class=sourceLine id=cb2-27 title=27>        setPort port <span class=op>$</span></a>
-<a class=sourceLine id=cb2-28 title=28>        setBeforeMainLoop (hPutStrLn stderr (<span class=st>&quot;listening on port &quot;</span> <span class=op>++</span> <span class=fu>show</span> port)) <span class=op>$</span></a>
-<a class=sourceLine id=cb2-29 title=29>        defaultSettings</a>
-<a class=sourceLine id=cb2-30 title=30>  runSettings settings <span class=op>=&lt;&lt;</span> mkApp</a>
-<a class=sourceLine id=cb2-31 title=31></a>
-<a class=sourceLine id=cb2-32 title=32><span class=ot>mkApp ::</span> <span class=dt>IO</span> <span class=dt>Application</span></a>
-<a class=sourceLine id=cb2-33 title=33>mkApp <span class=ot>=</span> <span class=fu>return</span> <span class=op>$</span> serve itemApi server</a>
-<a class=sourceLine id=cb2-34 title=34></a>
-<a class=sourceLine id=cb2-35 title=35><span class=ot>server ::</span> <span class=dt>Server</span> <span class=dt>ItemApi</span></a>
-<a class=sourceLine id=cb2-36 title=36>server <span class=ot>=</span></a>
-<a class=sourceLine id=cb2-37 title=37>  getItems <span class=op>:&lt;|&gt;</span></a>
-<a class=sourceLine id=cb2-38 title=38>  getItemById</a>
-<a class=sourceLine id=cb2-39 title=39></a>
-<a class=sourceLine id=cb2-40 title=40><span class=kw>type</span> <span class=dt>Handler</span> <span class=ot>=</span> <span class=dt>ExceptT</span> <span class=dt>ServantErr</span> <span class=dt>IO</span></a>
-<a class=sourceLine id=cb2-41 title=41></a>
-<a class=sourceLine id=cb2-42 title=42><span class=ot>getItems ::</span> <span class=dt>Handler</span> [<span class=dt>Item</span>]</a>
-<a class=sourceLine id=cb2-43 title=43>getItems <span class=ot>=</span> <span class=fu>return</span> [exampleItem]</a>
-<a class=sourceLine id=cb2-44 title=44></a>
-<a class=sourceLine id=cb2-45 title=45><span class=ot>getItemById ::</span> <span class=dt>Integer</span> <span class=ot>-&gt;</span> <span class=dt>Handler</span> <span class=dt>Item</span></a>
-<a class=sourceLine id=cb2-46 title=46>getItemById <span class=ot>=</span> \ <span class=kw>case</span></a>
-<a class=sourceLine id=cb2-47 title=47>  <span class=dv>0</span> <span class=ot>-&gt;</span> <span class=fu>return</span> exampleItem</a>
-<a class=sourceLine id=cb2-48 title=48>  _ <span class=ot>-&gt;</span> throwE err404</a>
-<a class=sourceLine id=cb2-49 title=49></a>
-<a class=sourceLine id=cb2-50 title=50><span class=ot>exampleItem ::</span> <span class=dt>Item</span></a>
-<a class=sourceLine id=cb2-51 title=51>exampleItem <span class=ot>=</span> <span class=dt>Item</span> <span class=dv>0</span> <span class=st>&quot;example item&quot;</span></a>
-<a class=sourceLine id=cb2-52 title=52></a>
-<a class=sourceLine id=cb2-53 title=53><span class=kw>data</span> <span class=dt>Item</span></a>
-<a class=sourceLine id=cb2-54 title=54>  <span class=ot>=</span> <span class=dt>Item</span> {</a>
-<a class=sourceLine id=cb2-55 title=55><span class=ot>    itemId ::</span> <span class=dt>Integer</span>,</a>
-<a class=sourceLine id=cb2-56 title=56><span class=ot>    itemText ::</span> <span class=dt>String</span></a>
-<a class=sourceLine id=cb2-57 title=57>  }</a>
-<a class=sourceLine id=cb2-58 title=58>  <span class=kw>deriving</span> (<span class=dt>Eq</span>, <span class=dt>Show</span>, <span class=dt>Generic</span>)</a>
-<a class=sourceLine id=cb2-59 title=59></a>
-<a class=sourceLine id=cb2-60 title=60><span class=kw>instance</span> <span class=dt>ToJSON</span> <span class=dt>Item</span></a>
-<a class=sourceLine id=cb2-61 title=61><span class=kw>instance</span> <span class=dt>FromJSON</span> <span class=dt>Item</span></a></code></pre></div><p>This nice example should overflow the number of new concepts a Haskell newcomer should deal with:<ul><li>Language extensions. Each extension can take a lot of time to be explained.<li>Strange notations:<ul><li><code>:&lt;|></code><li><code>'[]</code> instead of <code>[]</code></ul><li><code>Proxy</code><li>Immediate usage of <code>$</code><li><code>deriving</code> ha ha! You’ll need to explain typeclasses first!<li>the definition for <code>getItemById</code></ul><p>Of course use the most of your energy explaining the language extensions first. Use a great deal of details and if possible use as much as possible references to Category Theory. You’ll get bonus points if you mention HoTT! Double bonus points if you explain that understanding all details in HoTT is essential to use Haskell on a daily basis.<p>Explain that what this does is incredible but for the wrong reasons. For example don’t mention why <code>instance ToJSON Item</code> is great. But insist that we achieved to serve a JSON with extreme elegance and simplicity. Keep insisting on the simplicity and forgot to mention type safety which is one of the main benefit of Servant.<p>If you’re afraid that this example might be too close to a real world product, you can simply use some advanced lenses examples:<div class=sourceCode id=cb3><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class=sourceLine id=cb3-1 title=1><span class=ot>{-# LANGUAGE DeriveGeneric   #-}</span></a>
-<a class=sourceLine id=cb3-2 title=2><span class=ot>{-# LANGUAGE TemplateHaskell #-}</span></a>
-<a class=sourceLine id=cb3-3 title=3></a>
-<a class=sourceLine id=cb3-4 title=4><span class=kw>import</span> <span class=dt>Control.Lens.TH</span> (makePrisms)</a>
-<a class=sourceLine id=cb3-5 title=5><span class=kw>import</span> <span class=dt>GHC.Generics</span> (<span class=dt>Generic</span>)</a>
-<a class=sourceLine id=cb3-6 title=6><span class=kw>import</span> <span class=dt>Lens.Family.Total</span></a>
-<a class=sourceLine id=cb3-7 title=7></a>
-<a class=sourceLine id=cb3-8 title=8><span class=kw>data</span> <span class=dt>Example</span> a b c <span class=ot>=</span> <span class=dt>C1</span> a <span class=op>|</span> <span class=dt>C2</span> b <span class=op>|</span> <span class=dt>C3</span> c <span class=kw>deriving</span> (<span class=dt>Generic</span>)</a>
-<a class=sourceLine id=cb3-9 title=9></a>
-<a class=sourceLine id=cb3-10 title=10>makePrisms '<span class=dt>'Example</span></a>
-<a class=sourceLine id=cb3-11 title=11></a>
-<a class=sourceLine id=cb3-12 title=12><span class=kw>instance</span> (<span class=dt>Empty</span> a, <span class=dt>Empty</span> b, <span class=dt>Empty</span> c) <span class=ot>=&gt;</span> <span class=dt>Empty</span> (<span class=dt>Example</span> a b c)</a>
-<a class=sourceLine id=cb3-13 title=13></a>
-<a class=sourceLine id=cb3-14 title=14><span class=ot>example ::</span> <span class=dt>Example</span> <span class=dt>String</span> <span class=dt>Char</span> <span class=dt>Int</span> <span class=ot>-&gt;</span> <span class=dt>String</span></a>
-<a class=sourceLine id=cb3-15 title=15>example <span class=ot>=</span> _case</a>
-<a class=sourceLine id=cb3-16 title=16>    <span class=op>&amp;</span> on _C1 (\s <span class=ot>-&gt;</span> s              )</a>
-<a class=sourceLine id=cb3-17 title=17>    <span class=op>&amp;</span> on _C2 (\c <span class=ot>-&gt;</span> <span class=fu>replicate</span> <span class=dv>3</span>  c )</a>
-<a class=sourceLine id=cb3-18 title=18>    <span class=op>&amp;</span> on _C3 (\n <span class=ot>-&gt;</span> <span class=fu>replicate</span> n <span class=ch>'!'</span>)</a></code></pre></div><p>Certainly a great example to start a new language with.<h3 id=library-authors>Library authors</h3><ol type=1><li>Do your best not to respect versioning number policy to maximize the probability to break things.<li>Don’t write any documentation, type are enough!<li>Even better, add mistakes to your documentation<li>Each time you can use a meaningful notation, make it wrong. For example, if you have a symmetric relation use an asymmetric symbol to represent it.<li>If possible remove all function names and only use symbols of at least 5 letters: For example you can replace your function <code>log :: Level -> String -> IO ()</code> by <code>(&lt;=.=$$.)</code>.</ol><p>If the the trends continue toward growth, then we might need to go further at the risk of breaking our own ecosystem:<ul><li>Split your libs as much as possible. The best would be to use one lib by symbol<li>Use <code>unsafePerformIO</code> as much as possible<li>Push to Hackage a version not accessible on your public repository<li>modify the package on Hackage using the same version but with incompatible API<li>Add memory leaks<li>Add bugs<li>Add back doors and publish how to use them</ul><p>Yes we said, <em>at all cost</em>!<h2 id=conclusion-mistake>Conclusion & Mistake</h2><p>So with all of this I believe we should be on the right track to avoid success at all cost!<p>Sorry? What?<p>Oh… Apparently I made a precedence mistake!<p>SPJ didn’t asked to <code>avoid success $ at all cost</code> but to <code>avoid $ success at all cost</code><a href=#fn1 class=footnote-ref id=fnref1><sup>1</sup></a>.<p>Sorry! My bad! Forget about all of this. Keep the good work everybody! Haskell is certainly one of the most awesome language in the world! Its community is also just great.<p>I’m really happy to see it growth every year. Thanks to all contributors making it possible to still have a lot of fun after many years using Haskell!<p>And the fact that in Haskell the <em>right</em> choice is preferred to the easiest choice, certainly helped.<section class=footnotes><hr><ol><li id=fn1><p>A good point to use more LISP syntax.<a href=#fnref1 class=footnote-back>↩</a></ol></section></div><div id=afterarticle><div id=social><a href=../../../../Scratch/en/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=social>RSS</a>
-·
-<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Helping-avoid-Haskell-Success/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=social>Tweet</a>
-·
-<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Helping-avoid-Haskell-Success/" target=_blank rel="noopener noreferrer nofollow" class=social>FB</a><br><a class=message href=../../../../Scratch/en/blog/Social-link-the-right-way/>These social sharing links preserve your privacy</a></div><div id=navigation><a href=../../../../>Home</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/en/blog>Blog</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/en/softwares>Softwares</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/en/about>About</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2016-10-01</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
-<a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
-<a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
-<span class=pala>&</span>
-<a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=simple style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
-ADA:</a>
-<code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>YBlog - Tips in avoiding Haskell Success at all cost</title>
+        <meta name="keywords" content="programming" />
+
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/en/blog/feed/feed.xml" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+        <!-- IndieAuth -->
+        <link href="https://twitter.com/yogsototh" rel="me">
+        <link href="https://github.com/yogsototh" rel="me">
+        <link href="mailto:yann.esposito@gmail.com" rel="me">
+        <link rel="pgpkey" href="../../../../pubkey.txt">
+    </head>
+    <body lang="en" class="article">
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	    <span id="choixlang">
+                  <a href="../../../../Scratch/fr/blog/Helping-avoid-Haskell-Success/">French</a> 
+        	    </span>
+              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
+        	    <span class="flush"></span>
+        	</div>
+			</div>
+
+			<div id="titre">
+				<h1>Tips in avoiding Haskell Success at all cost</h1>
+				
+			</div>
+			<div class="flush"></div>
+      <div id="afterheader" class="article">
+          <div class="corps">
+              <div>
+<img src="../../../../Scratch/img/blog/Helping-avoid-Haskell-Success/main.jpg" alt="Main image" />
+</div>
+<div class="intro">
+<p><span class="sc"><abbr title="Too long; didn't read">tl;dr</abbr>: </span> Few days ago there were about 20 job offer for Haskell. In only one day! How is that possible? As a <strong>real</strong> haskeller, I find this situation unbearable!</p>
+<p>After all, we must <em>avoid success at all cost</em>. And I’ll help SPJ achieve this honorable goal.</p>
+</div>
+<h2 id="prevent-interest-from-beginner">Prevent Interest from beginner</h2>
+<p>Imagine a situation were you see people demonstrating some interest in learning Haskell.</p>
+<p>Quick! Prevent them from going further.</p>
+<p>If they come from the dynamic (uni-typed) languages like Python, Javascript…:</p>
+<blockquote>
+<p>Haskell? A statically typed language??? Hmm… You mean like C and Java?</p>
+</blockquote>
+<p>Such a remark should immediately shut down any interest in Haskell.</p>
+<p>If they want to produce application with them:</p>
+<blockquote>
+<p>Haskell? Isn’t it only a language for student! I don’t think it is useful for <em>REAL WORLD</em> applications!</p>
+</blockquote>
+<p>If they just want to learn something new:</p>
+<blockquote>
+<p>Haskell? Ah yes, I remember, mostly they only have the equivalent of Java interfaces and they stopped there. They don’t even have classes!!!! Can you imagine? I don’t even speak about class inheritance.</p>
+<p>We’re in 2016! And they don’t even support basic Object Oriented Programming. What a joke!</p>
+</blockquote>
+<p>If they love low level programming:</p>
+<blockquote>
+<p>Haskell? Ah yes, I heard that lazyness make it impossible to think about code complexity and generally cause lot of space leaks.</p>
+</blockquote>
+<p>And if it is not enough:</p>
+<blockquote>
+<p>Haskell? Ah yes. I’m not fan of their Stop the World GC.</p>
+</blockquote>
+<p>If they come from LISP and the statically typed language remark wasn’t enough. Try to mention the lack of macros in Haskell. Don’t mention template Haskell or even less Generics and all recent progress in GHC.</p>
+<h2 id="make-it-difficult-to-install">Make it difficult to install</h2>
+<p>Many hints there:</p>
+<ul>
+<li>Send them on another compiler than GHC</li>
+<li>Explain that they should never use a binary distribution of GHC! And they must compile it manually! It might not stop them but it will make the installation process much more tedious.</li>
+<li>Lie! Explain there is a severe security issue with latest tools. Explain they must use cabal-install 1.18 or older.</li>
+<li>Also explain them that in order to be able to handle lib dependencies correctly they <strong>MUST</strong> first learn Nix! Never talk about <code>stack</code>, <code>cabal freeze</code>, … While Nix is great, forcing new user completely alien to all these concepts to first learn it before starting to write their first line of code can greatly reduce their enthusiasm. Bonus point if you make them believe you can only program in Haskell on NixOS.</li>
+</ul>
+<h2 id="make-it-difficult-to-learn">Make it difficult to learn</h2>
+<h3 id="make-new-comers-feel-dumb">Make new comers feel dumb</h3>
+<p>The very first thing to do is to explain how Haskell is so easy to learn. How natural it is for everybody you know. And except someone you always considered very dumb, everybody was very productive in Haskell in few hours.</p>
+<p>Use vocabulary alien to them as much as possible. Here is a list of terms you should use in the very first minutes of your description of Haskell:</p>
+<ul>
+<li>catamorphism (bonus if you mention that the word come from the Greek κατα for catastrophe, that way you’ll look like a snob and you also use the word catastrophe in a Haskell context).</li>
+<li>Monad! Of course you should use it ASAP! And explain they are exactly like potatoes or bananas shaped chairs. Double bonus if you explain that monad are really simple as they are just a monoid in the category of endofunctors.</li>
+<li>GADTs</li>
+<li>Yoneda Lemma</li>
+<li>Homotopy Type Theory</li>
+<li>…</li>
+</ul>
+<p>Each of this term will hopefully be intimidating.</p>
+<h3 id="tutorial-authors">Tutorial authors</h3>
+<p>Please don’t provide an obvious first example like:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb1-1" title="1">main <span class="ot">=</span> <span class="fu">putStrLn</span> <span class="st">&quot;Hello World!&quot;</span></a></code></pre></div>
+<p>Instead prefer a fully servant example:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb2-1" title="1"><span class="ot">{-# LANGUAGE DataKinds #-}</span></a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="ot">{-# LANGUAGE DeriveGeneric #-}</span></a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="ot">{-# LANGUAGE LambdaCase #-}</span></a>
+<a class="sourceLine" id="cb2-4" title="4"><span class="ot">{-# LANGUAGE TypeOperators #-}</span></a>
+<a class="sourceLine" id="cb2-5" title="5"></a>
+<a class="sourceLine" id="cb2-6" title="6"><span class="kw">module</span> <span class="dt">App</span> <span class="kw">where</span></a>
+<a class="sourceLine" id="cb2-7" title="7"></a>
+<a class="sourceLine" id="cb2-8" title="8"><span class="kw">import</span>           <span class="dt">Control.Monad.Trans.Except</span></a>
+<a class="sourceLine" id="cb2-9" title="9"><span class="kw">import</span>           <span class="dt">Data.Aeson</span></a>
+<a class="sourceLine" id="cb2-10" title="10"><span class="kw">import</span>           <span class="dt">GHC.Generics</span></a>
+<a class="sourceLine" id="cb2-11" title="11"><span class="kw">import</span>           <span class="dt">Network.Wai</span></a>
+<a class="sourceLine" id="cb2-12" title="12"><span class="kw">import</span>           <span class="dt">Network.Wai.Handler.Warp</span></a>
+<a class="sourceLine" id="cb2-13" title="13"><span class="kw">import</span>           <span class="dt">Servant</span></a>
+<a class="sourceLine" id="cb2-14" title="14"><span class="kw">import</span>           <span class="dt">System.IO</span></a>
+<a class="sourceLine" id="cb2-15" title="15"></a>
+<a class="sourceLine" id="cb2-16" title="16"><span class="kw">type</span> <span class="dt">ItemApi</span> <span class="ot">=</span></a>
+<a class="sourceLine" id="cb2-17" title="17">  <span class="st">&quot;item&quot;</span> <span class="op">:&gt;</span> <span class="dt">Get</span> '[<span class="dt">JSON</span>] [<span class="dt">Item</span>] <span class="op">:&lt;|&gt;</span></a>
+<a class="sourceLine" id="cb2-18" title="18">  <span class="st">&quot;item&quot;</span> <span class="op">:&gt;</span> <span class="dt">Capture</span> <span class="st">&quot;itemId&quot;</span> <span class="dt">Integer</span> <span class="op">:&gt;</span> <span class="dt">Get</span> '[<span class="dt">JSON</span>] <span class="dt">Item</span></a>
+<a class="sourceLine" id="cb2-19" title="19"></a>
+<a class="sourceLine" id="cb2-20" title="20"><span class="ot">itemApi ::</span> <span class="dt">Proxy</span> <span class="dt">ItemApi</span></a>
+<a class="sourceLine" id="cb2-21" title="21">itemApi <span class="ot">=</span> <span class="dt">Proxy</span></a>
+<a class="sourceLine" id="cb2-22" title="22"></a>
+<a class="sourceLine" id="cb2-23" title="23"><span class="ot">run ::</span> <span class="dt">IO</span> ()</a>
+<a class="sourceLine" id="cb2-24" title="24">run <span class="ot">=</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb2-25" title="25">  <span class="kw">let</span> port <span class="ot">=</span> <span class="dv">3000</span></a>
+<a class="sourceLine" id="cb2-26" title="26">      settings <span class="ot">=</span></a>
+<a class="sourceLine" id="cb2-27" title="27">        setPort port <span class="op">$</span></a>
+<a class="sourceLine" id="cb2-28" title="28">        setBeforeMainLoop (hPutStrLn stderr (<span class="st">&quot;listening on port &quot;</span> <span class="op">++</span> <span class="fu">show</span> port)) <span class="op">$</span></a>
+<a class="sourceLine" id="cb2-29" title="29">        defaultSettings</a>
+<a class="sourceLine" id="cb2-30" title="30">  runSettings settings <span class="op">=&lt;&lt;</span> mkApp</a>
+<a class="sourceLine" id="cb2-31" title="31"></a>
+<a class="sourceLine" id="cb2-32" title="32"><span class="ot">mkApp ::</span> <span class="dt">IO</span> <span class="dt">Application</span></a>
+<a class="sourceLine" id="cb2-33" title="33">mkApp <span class="ot">=</span> <span class="fu">return</span> <span class="op">$</span> serve itemApi server</a>
+<a class="sourceLine" id="cb2-34" title="34"></a>
+<a class="sourceLine" id="cb2-35" title="35"><span class="ot">server ::</span> <span class="dt">Server</span> <span class="dt">ItemApi</span></a>
+<a class="sourceLine" id="cb2-36" title="36">server <span class="ot">=</span></a>
+<a class="sourceLine" id="cb2-37" title="37">  getItems <span class="op">:&lt;|&gt;</span></a>
+<a class="sourceLine" id="cb2-38" title="38">  getItemById</a>
+<a class="sourceLine" id="cb2-39" title="39"></a>
+<a class="sourceLine" id="cb2-40" title="40"><span class="kw">type</span> <span class="dt">Handler</span> <span class="ot">=</span> <span class="dt">ExceptT</span> <span class="dt">ServantErr</span> <span class="dt">IO</span></a>
+<a class="sourceLine" id="cb2-41" title="41"></a>
+<a class="sourceLine" id="cb2-42" title="42"><span class="ot">getItems ::</span> <span class="dt">Handler</span> [<span class="dt">Item</span>]</a>
+<a class="sourceLine" id="cb2-43" title="43">getItems <span class="ot">=</span> <span class="fu">return</span> [exampleItem]</a>
+<a class="sourceLine" id="cb2-44" title="44"></a>
+<a class="sourceLine" id="cb2-45" title="45"><span class="ot">getItemById ::</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Handler</span> <span class="dt">Item</span></a>
+<a class="sourceLine" id="cb2-46" title="46">getItemById <span class="ot">=</span> \ <span class="kw">case</span></a>
+<a class="sourceLine" id="cb2-47" title="47">  <span class="dv">0</span> <span class="ot">-&gt;</span> <span class="fu">return</span> exampleItem</a>
+<a class="sourceLine" id="cb2-48" title="48">  _ <span class="ot">-&gt;</span> throwE err404</a>
+<a class="sourceLine" id="cb2-49" title="49"></a>
+<a class="sourceLine" id="cb2-50" title="50"><span class="ot">exampleItem ::</span> <span class="dt">Item</span></a>
+<a class="sourceLine" id="cb2-51" title="51">exampleItem <span class="ot">=</span> <span class="dt">Item</span> <span class="dv">0</span> <span class="st">&quot;example item&quot;</span></a>
+<a class="sourceLine" id="cb2-52" title="52"></a>
+<a class="sourceLine" id="cb2-53" title="53"><span class="kw">data</span> <span class="dt">Item</span></a>
+<a class="sourceLine" id="cb2-54" title="54">  <span class="ot">=</span> <span class="dt">Item</span> {</a>
+<a class="sourceLine" id="cb2-55" title="55"><span class="ot">    itemId ::</span> <span class="dt">Integer</span>,</a>
+<a class="sourceLine" id="cb2-56" title="56"><span class="ot">    itemText ::</span> <span class="dt">String</span></a>
+<a class="sourceLine" id="cb2-57" title="57">  }</a>
+<a class="sourceLine" id="cb2-58" title="58">  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>, <span class="dt">Generic</span>)</a>
+<a class="sourceLine" id="cb2-59" title="59"></a>
+<a class="sourceLine" id="cb2-60" title="60"><span class="kw">instance</span> <span class="dt">ToJSON</span> <span class="dt">Item</span></a>
+<a class="sourceLine" id="cb2-61" title="61"><span class="kw">instance</span> <span class="dt">FromJSON</span> <span class="dt">Item</span></a></code></pre></div>
+<p>This nice example should overflow the number of new concepts a Haskell newcomer should deal with:</p>
+<ul>
+<li>Language extensions. Each extension can take a lot of time to be explained.</li>
+<li>Strange notations:
+<ul>
+<li><code>:&lt;|&gt;</code></li>
+<li><code>'[]</code> instead of <code>[]</code></li>
+</ul></li>
+<li><code>Proxy</code></li>
+<li>Immediate usage of <code>$</code></li>
+<li><code>deriving</code> ha ha! You’ll need to explain typeclasses first!</li>
+<li>the definition for <code>getItemById</code></li>
+</ul>
+<p>Of course use the most of your energy explaining the language extensions first. Use a great deal of details and if possible use as much as possible references to Category Theory. You’ll get bonus points if you mention HoTT! Double bonus points if you explain that understanding all details in HoTT is essential to use Haskell on a daily basis.</p>
+<p>Explain that what this does is incredible but for the wrong reasons. For example don’t mention why <code>instance ToJSON Item</code> is great. But insist that we achieved to serve a JSON with extreme elegance and simplicity. Keep insisting on the simplicity and forgot to mention type safety which is one of the main benefit of Servant.</p>
+<p>If you’re afraid that this example might be too close to a real world product, you can simply use some advanced lenses examples:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb3-1" title="1"><span class="ot">{-# LANGUAGE DeriveGeneric   #-}</span></a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="ot">{-# LANGUAGE TemplateHaskell #-}</span></a>
+<a class="sourceLine" id="cb3-3" title="3"></a>
+<a class="sourceLine" id="cb3-4" title="4"><span class="kw">import</span> <span class="dt">Control.Lens.TH</span> (makePrisms)</a>
+<a class="sourceLine" id="cb3-5" title="5"><span class="kw">import</span> <span class="dt">GHC.Generics</span> (<span class="dt">Generic</span>)</a>
+<a class="sourceLine" id="cb3-6" title="6"><span class="kw">import</span> <span class="dt">Lens.Family.Total</span></a>
+<a class="sourceLine" id="cb3-7" title="7"></a>
+<a class="sourceLine" id="cb3-8" title="8"><span class="kw">data</span> <span class="dt">Example</span> a b c <span class="ot">=</span> <span class="dt">C1</span> a <span class="op">|</span> <span class="dt">C2</span> b <span class="op">|</span> <span class="dt">C3</span> c <span class="kw">deriving</span> (<span class="dt">Generic</span>)</a>
+<a class="sourceLine" id="cb3-9" title="9"></a>
+<a class="sourceLine" id="cb3-10" title="10">makePrisms '<span class="dt">'Example</span></a>
+<a class="sourceLine" id="cb3-11" title="11"></a>
+<a class="sourceLine" id="cb3-12" title="12"><span class="kw">instance</span> (<span class="dt">Empty</span> a, <span class="dt">Empty</span> b, <span class="dt">Empty</span> c) <span class="ot">=&gt;</span> <span class="dt">Empty</span> (<span class="dt">Example</span> a b c)</a>
+<a class="sourceLine" id="cb3-13" title="13"></a>
+<a class="sourceLine" id="cb3-14" title="14"><span class="ot">example ::</span> <span class="dt">Example</span> <span class="dt">String</span> <span class="dt">Char</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">String</span></a>
+<a class="sourceLine" id="cb3-15" title="15">example <span class="ot">=</span> _case</a>
+<a class="sourceLine" id="cb3-16" title="16">    <span class="op">&amp;</span> on _C1 (\s <span class="ot">-&gt;</span> s              )</a>
+<a class="sourceLine" id="cb3-17" title="17">    <span class="op">&amp;</span> on _C2 (\c <span class="ot">-&gt;</span> <span class="fu">replicate</span> <span class="dv">3</span>  c )</a>
+<a class="sourceLine" id="cb3-18" title="18">    <span class="op">&amp;</span> on _C3 (\n <span class="ot">-&gt;</span> <span class="fu">replicate</span> n <span class="ch">'!'</span>)</a></code></pre></div>
+<p>Certainly a great example to start a new language with.</p>
+<h3 id="library-authors">Library authors</h3>
+<ol type="1">
+<li>Do your best not to respect versioning number policy to maximize the probability to break things.</li>
+<li>Don’t write any documentation, type are enough!</li>
+<li>Even better, add mistakes to your documentation</li>
+<li>Each time you can use a meaningful notation, make it wrong. For example, if you have a symmetric relation use an asymmetric symbol to represent it.</li>
+<li>If possible remove all function names and only use symbols of at least 5 letters: For example you can replace your function <code>log :: Level -&gt; String -&gt; IO ()</code> by <code>(&lt;=.=$$.)</code>.</li>
+</ol>
+<p>If the the trends continue toward growth, then we might need to go further at the risk of breaking our own ecosystem:</p>
+<ul>
+<li>Split your libs as much as possible. The best would be to use one lib by symbol</li>
+<li>Use <code>unsafePerformIO</code> as much as possible</li>
+<li>Push to Hackage a version not accessible on your public repository</li>
+<li>modify the package on Hackage using the same version but with incompatible API</li>
+<li>Add memory leaks</li>
+<li>Add bugs</li>
+<li>Add back doors and publish how to use them</li>
+</ul>
+<p>Yes we said, <em>at all cost</em>!</p>
+<h2 id="conclusion-mistake">Conclusion &amp; Mistake</h2>
+<p>So with all of this I believe we should be on the right track to avoid success at all cost!</p>
+<p>Sorry? What?</p>
+<p>Oh… Apparently I made a precedence mistake!</p>
+<p>SPJ didn’t asked to <code>avoid success $ at all cost</code> but to <code>avoid $ success at all cost</code><a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
+<p>Sorry! My bad! Forget about all of this. Keep the good work everybody! Haskell is certainly one of the most awesome language in the world! Its community is also just great.</p>
+<p>I’m really happy to see it growth every year. Thanks to all contributors making it possible to still have a lot of fun after many years using Haskell!</p>
+<p>And the fact that in Haskell the <em>right</em> choice is preferred to the easiest choice, certainly helped.</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>A good point to use more LISP syntax.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+          </div>
+          <div id="afterarticle">
+              <div id="social">
+                  <a href="../../../../Scratch/en/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
+                  ·
+                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Helping-avoid-Haskell-Success/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
+                  ·
+                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/Helping-avoid-Haskell-Success/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
+                  <br />
+                  <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
+              </div>
+              <div id="navigation">
+                  <a href="../../../../">Home</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/blog">Blog</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/softwares">Softwares</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/about">About</a>
+              </div>
+              <div id="totop"><a href="#header">↑ Top ↑</a></div>
+              <div id="bottom">
+                  <div>
+                      Published on 2016-10-01
+                  </div>
+                  <div>
+                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+                  </div>
+                  <div>
+                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+                  </div>
+
+                  <div>
+                      Done with
+                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
+                      <span class="pala">&amp;</span>
+                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
+                  </div>
+                  <hr />
+                  <div style="max-width: 100%">
+                      <a href="https://cardanohub.org">
+                          <img src="../../../../Scratch/img/ada-logo.png" class="simple" style="height: 16px;
+                                    border-radius: 50%;
+                                    vertical-align:middle;
+                                    display:inline-block;" />
+                          ADA:
+                      </a>
+                          <code style="display:inline-block;
+                                       word-wrap:break-word;
+                                       text-align: left;
+                                       vertical-align: top;
+                                       max-width: 85%;">
+                              DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp
+                          </code>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+        </div>
+    </body>
+</html>

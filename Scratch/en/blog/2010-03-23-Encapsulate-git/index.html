@@ -1,20 +1,158 @@
-<!doctype html><html lang=en><meta charset=utf-8><title>YBlog - Encapsulate git</title><meta name=keywords content="git,protection,branches,diverged"><link rel="shortcut icon" type=image/x-icon href=../../../../Scratch/img/favicon.ico><link rel=stylesheet href=../../../../Scratch/css/brutalist.css><link rel=stylesheet href=../../../../Scratch/css/pandoc-solarized.css><link rel=alternate type=application/rss+xml title=RSS href=../../../../Scratch/en/blog/feed/feed.xml><meta name=viewport content="width=device-width,initial-scale=1"><link rel=apple-touch-icon href=../../../../Scratch/img/about/FlatAvatar@2x.png><link href=https://twitter.com/yogsototh rel=me><link href=https://github.com/yogsototh rel=me><link href=mailto:yann.esposito@gmail.com rel=me><link rel=pgpkey href=../../../../pubkey.txt><body lang=en class=article><div id=content><div id=header><div id=choix><span id=choixlang><a href=../../../../Scratch/fr/blog/2010-03-23-Encapsulate-git/>French</a></span>
-<span class=tomenu><a href=#navigation>↓ Menu ↓</a></span>
-<span class=flush></span></div></div><div id=titre><h1>Encapsulate git</h1></div><div class=flush></div><div id=afterheader class=article><div class=corps><div class=intro><p>Here is a solution to maintain divergent branches in git. Because it is easy to merge by mistake. I give a script that encapsulate git in order to forbid some merge and warn you some merge should be dangerous.</div><h2 id=how-to-protect-against-your-own-dumb>how to protect against your own dumb</h2><p>I work on a project in which some of my git branches should remain divergent. And divergences should grow.<p>I also use some branch to contain what is common between projects.<p>Say I have some branches:<p>master: common to all branches dev: branch devoted to unstable development client: branch with features for all client but not general enough for master clientA: project adapted for client A clientB: project adapted for client B<p>Here how I want to work:<div><img src=../../../../Scratch/img/blog/2010-03-23-Encapsulate-git/dynamic_branching.png alt="Dynamic branching"></div><p>And more precisely the branch hierarchy:<div><img src=../../../../Scratch/img/blog/2010-03-23-Encapsulate-git/branch_hierarchy.png alt="Branch hierarchy"></div><p>An arrow from A to B means, you can merge A in B. If there is no arrow from A to B that means it is <em>forbidden</em> to merge A in B. Here is the corresponding rubycode:<div><code class=ruby>$architecture={ :master => [ :dev, :client ], :dev => [ :master ], :client => [ :clientA, :clientB ] }</code></div><p>Having a <code>:master => [ :dev, :client ]</code> means you can merge <code>master</code> branch into <code>dev</code> and <code>client</code>.<p>If by mistake I make a <code>git checkout master && git merge clientA</code>, I made a mistake. This is why I made a script which encapsulate the git behaviour to dodge this kind of mistake.<p>But this script do far more than that. It also merge from top to down. The action <code>allmerges</code> will do:<div><code class=zsh>git co dev && git merge master git co client && git merge master git co clientA && git merge client git co clientB && git merge client</code></div><p>That means, I can update all branches. The algorithm will not make loop even if there is a cycle in the branch hierarchy.<p>Here it is:<div class=small><p><code class=ruby file=eng>#!/usr/bin/env ruby # encoding: utf-8<h1 id=architecture>architecture</h1><h1 id=section></h1><h1 id=master---dev>master &lt;-> dev</h1><h1 id=master---client>master -> client</h1><h1 id=clien---clienta-clientb>clien -> clientA | clientB</h1><h1 id=section-1></h1><h1 id=merge-using-two-of-these-branches-should-be>merge using two of these branches should be</h1><h1 id=restricted-to-these-rules>restricted to these rules</h1><h1 id=merge-to-one-of-these-branch-and-an-unknown-one-should>merge to one of these branch and an unknown one should</h1><h1 id=raise-a-warning-and-may-the-option-to-add-this-new-branch>raise a warning, and may the option to add this new branch</h1><h1 id=to-the-hierarchy>to the hierarchy</h1><p>$architecture={ :master => [ :dev, :client ], :dev => [ :master ], :client => [ :clientA, :clientB ] }<p>def get_current_branch() (<code>git branch --no-color | awk '$1 == "*" {print $2}'</code>).chop.intern end<p>if ARGV.length == 0 puts %{usage: $0:t [git_command or local_command]<p>local commands: allmerges: merge from top to down} exit 0 end<p>require ‘set’ $known_branches=Set.new $architecture.each do |k,v| $known_branches.add(k) v.each { |b| $known_branches.add(b) } end<p>def rec_merge(branch) if $architecture[branch].nil? return end $architecture[branch].each do |b| if $flag.has_key?(b.to_s + branch.to_s) next end flagname=branch.to_s + b.to_s if $flag.has_key?(flagname) next end if system %{eng checkout #{b}} if get_current_branch != b puts “Can’t checkout to #{b}” exit 2 end if system %{eng merge #{branch}} $flag[flagname]=true rec_merge(b) else exit 1 end else exit 1 end end end<p>def do_all_merges puts ‘Will merge from father to sons’ current_branch=get_current_branch $flag={} rec_merge(:master) system %{git co #{current_branch}} end<p>def do_merge current_branch=get_current_branch src_branch=ARGV[1].intern puts %{do_merge: #{src_branch} => #{current_branch}} if $known_branches.include?(current_branch) if $known_branches.include?(src_branch) if $architecture.has_key?(src_branch) and $architecture[src_branch].include?(current_branch) system %{git merge #{src_branch}} else puts %{Forbidden merge: #{src_branch} => #{current_branch}} end else puts %{Warning! #{src_branch} not mentionned in rb configuration} sleep 2 system %{git merge #{src_branch}} puts %{Warning! #{src_branch} not mentionned in rb configuration} end end end</p>case ARGV[0] when ‘allmerges’ then do_all_merges when ‘merge’ then do_merge else system %{git #{ARGV.join(’ ’)}} end</code></div><p>All you need to do to make it work is simply to copy eng in a directory contained in your PATH.<p>Of course try to use as few as possible <code>cherry-pick</code> and <code>rebase</code>. This script was intended to work with workflow using <code>pull</code> and <code>merge</code>.</div><div id=afterarticle><div id=social><a href=../../../../Scratch/en/blog/feed/feed.xml target=_blank rel="noopener noreferrer nofollow" class=social>RSS</a>
-·
-<a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2010-03-23-Encapsulate-git/%20via%20@yogsototh" target=_blank rel="noopener noreferrer nofollow" class=social>Tweet</a>
-·
-<a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2010-03-23-Encapsulate-git/" target=_blank rel="noopener noreferrer nofollow" class=social>FB</a><br><a class=message href=../../../../Scratch/en/blog/Social-link-the-right-way/>These social sharing links preserve your privacy</a></div><div id=navigation><a href=../../../../>Home</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/en/blog>Blog</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/en/softwares>Softwares</a>
-<span class=sep>¦</span>
-<a href=../../../../Scratch/en/about>About</a></div><div id=totop><a href=#header>↑ Top ↑</a></div><div id=bottom><div>Published on 2010-03-23</div><div><a href=https://twitter.com/yogsototh>Follow @yogsototh</a></div><div><a rel=license href=http://creativecommons.org/licenses/by/3.0/deed.en_US>Yann Esposito©</a></div><div>Done with
-<a href=http://www.vim.org target=_blank rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
-<a href=http://spacemacs.org target=_blank rel="noopener noreferrer nofollow">spacemacs</a>
-<span class=pala>&</span>
-<a href=http://nanoc.ws target=_blank rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
-<a href=http://jaspervdj.be/hakyll target=_blank rel="noopener noreferrer nofollow">Hakyll</a></div><hr><div style=max-width:100%><a href=https://cardanohub.org><img src=../../../../Scratch/img/ada-logo.png class=simple style=height:16px;border-radius:50%;vertical-align:middle;display:inline-block>
-ADA:</a>
-<code style=display:inline-block;word-wrap:break-word;text-align:left;vertical-align:top;max-width:85%>DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp</code></div></div></div></div></div>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>YBlog - Encapsulate git</title>
+        <meta name="keywords" content="git, protection, branches, diverged" />
+
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/en/blog/feed/feed.xml" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+        <!-- IndieAuth -->
+        <link href="https://twitter.com/yogsototh" rel="me">
+        <link href="https://github.com/yogsototh" rel="me">
+        <link href="mailto:yann.esposito@gmail.com" rel="me">
+        <link rel="pgpkey" href="../../../../pubkey.txt">
+    </head>
+    <body lang="en" class="article">
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	    <span id="choixlang">
+                  <a href="../../../../Scratch/fr/blog/2010-03-23-Encapsulate-git/">French</a> 
+        	    </span>
+              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
+        	    <span class="flush"></span>
+        	</div>
+			</div>
+
+			<div id="titre">
+				<h1>Encapsulate git</h1>
+				
+			</div>
+			<div class="flush"></div>
+      <div id="afterheader" class="article">
+          <div class="corps">
+              <div class="intro">
+<p>Here is a solution to maintain divergent branches in git. Because it is easy to merge by mistake. I give a script that encapsulate git in order to forbid some merge and warn you some merge should be dangerous.</p>
+</div>
+<h2 id="how-to-protect-against-your-own-dumb">how to protect against your own dumb</h2>
+<p>I work on a project in which some of my git branches should remain divergent. And divergences should grow.</p>
+<p>I also use some branch to contain what is common between projects.</p>
+<p>Say I have some branches:</p>
+<p>master: common to all branches dev: branch devoted to unstable development client: branch with features for all client but not general enough for master clientA: project adapted for client A clientB: project adapted for client B</p>
+<p>Here how I want to work:</p>
+<div>
+<img src="../../../../Scratch/img/blog/2010-03-23-Encapsulate-git/dynamic_branching.png" alt="Dynamic branching" />
+</div>
+<p>And more precisely the branch hierarchy:</p>
+<div>
+<img src="../../../../Scratch/img/blog/2010-03-23-Encapsulate-git/branch_hierarchy.png" alt="Branch hierarchy" />
+</div>
+<p>An arrow from A to B means, you can merge A in B. If there is no arrow from A to B that means it is <em>forbidden</em> to merge A in B. Here is the corresponding rubycode:</p>
+<div>
+<code class="ruby"> $architecture={ :master =&gt; [ :dev, :client ], :dev =&gt; [ :master ], :client =&gt; [ :clientA, :clientB ] } </code>
+</div>
+<p>Having a <code>:master =&gt; [ :dev, :client ]</code> means you can merge <code>master</code> branch into <code>dev</code> and <code>client</code>.</p>
+<p>If by mistake I make a <code>git checkout master &amp;&amp; git merge clientA</code>, I made a mistake. This is why I made a script which encapsulate the git behaviour to dodge this kind of mistake.</p>
+<p>But this script do far more than that. It also merge from top to down. The action <code>allmerges</code> will do:</p>
+<div>
+<code class="zsh"> git co dev &amp;&amp; git merge master git co client &amp;&amp; git merge master git co clientA &amp;&amp; git merge client git co clientB &amp;&amp; git merge client </code>
+</div>
+<p>That means, I can update all branches. The algorithm will not make loop even if there is a cycle in the branch hierarchy.</p>
+<p>Here it is:</p>
+<div class="small">
+<p><code class="ruby" file="eng"> #!/usr/bin/env ruby # encoding: utf-8</p>
+<h1 id="architecture">architecture</h1>
+<h1 id="section"></h1>
+<h1 id="master---dev">master &lt;-&gt; dev</h1>
+<h1 id="master---client">master -&gt; client</h1>
+<h1 id="clien---clienta-clientb">clien -&gt; clientA | clientB</h1>
+<h1 id="section-1"></h1>
+<h1 id="merge-using-two-of-these-branches-should-be">merge using two of these branches should be</h1>
+<h1 id="restricted-to-these-rules">restricted to these rules</h1>
+<h1 id="merge-to-one-of-these-branch-and-an-unknown-one-should">merge to one of these branch and an unknown one should</h1>
+<h1 id="raise-a-warning-and-may-the-option-to-add-this-new-branch">raise a warning, and may the option to add this new branch</h1>
+<h1 id="to-the-hierarchy">to the hierarchy</h1>
+<p>$architecture={ :master =&gt; [ :dev, :client ], :dev =&gt; [ :master ], :client =&gt; [ :clientA, :clientB ] }</p>
+<p>def get_current_branch() (<code>git branch --no-color | awk '$1 == "*" {print $2}'</code>).chop.intern end</p>
+<p>if ARGV.length == 0 puts %{usage: $0:t [git_command or local_command]</p>
+<p>local commands: allmerges: merge from top to down} exit 0 end</p>
+<p>require ‘set’ $known_branches=Set.new $architecture.each do |k,v| $known_branches.add(k) v.each { |b| $known_branches.add(b) } end</p>
+<p>def rec_merge(branch) if $architecture[branch].nil? return end $architecture[branch].each do |b| if $flag.has_key?(b.to_s + branch.to_s) next end flagname=branch.to_s + b.to_s if $flag.has_key?(flagname) next end if system %{eng checkout #{b}} if get_current_branch != b puts “Can’t checkout to #{b}” exit 2 end if system %{eng merge #{branch}} $flag[flagname]=true rec_merge(b) else exit 1 end else exit 1 end end end</p>
+<p>def do_all_merges puts ‘Will merge from father to sons’ current_branch=get_current_branch $flag={} rec_merge(:master) system %{git co #{current_branch}} end</p>
+<p>def do_merge current_branch=get_current_branch src_branch=ARGV[1].intern puts %{do_merge: #{src_branch} =&gt; #{current_branch}} if $known_branches.include?(current_branch) if $known_branches.include?(src_branch) if $architecture.has_key?(src_branch) and $architecture[src_branch].include?(current_branch) system %{git merge #{src_branch}} else puts %{Forbidden merge: #{src_branch} =&gt; #{current_branch}} end else puts %{Warning! #{src_branch} not mentionned in rb configuration} sleep 2 system %{git merge #{src_branch}} puts %{Warning! #{src_branch} not mentionned in rb configuration} end end end</p>
+case ARGV[0] when ‘allmerges’ then do_all_merges when ‘merge’ then do_merge else system %{git #{ARGV.join(’ ’)}} end </code>
+</div>
+<p>All you need to do to make it work is simply to copy eng in a directory contained in your PATH.</p>
+<p>Of course try to use as few as possible <code>cherry-pick</code> and <code>rebase</code>. This script was intended to work with workflow using <code>pull</code> and <code>merge</code>.</p>
+          </div>
+          <div id="afterarticle">
+              <div id="social">
+                  <a href="../../../../Scratch/en/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
+                  ·
+                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2010-03-23-Encapsulate-git/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
+                  ·
+                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/en/blog/2010-03-23-Encapsulate-git/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
+                  <br />
+                  <a class="message" href="../../../../Scratch/en/blog/Social-link-the-right-way/">These social sharing links preserve your privacy</a>
+              </div>
+              <div id="navigation">
+                  <a href="../../../../">Home</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/blog">Blog</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/softwares">Softwares</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/en/about">About</a>
+              </div>
+              <div id="totop"><a href="#header">↑ Top ↑</a></div>
+              <div id="bottom">
+                  <div>
+                      Published on 2010-03-23
+                  </div>
+                  <div>
+                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+                  </div>
+                  <div>
+                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+                  </div>
+
+                  <div>
+                      Done with
+                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
+                      <span class="pala">&amp;</span>
+                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
+                  </div>
+                  <hr />
+                  <div style="max-width: 100%">
+                      <a href="https://cardanohub.org">
+                          <img src="../../../../Scratch/img/ada-logo.png" class="simple" style="height: 16px;
+                                    border-radius: 50%;
+                                    vertical-align:middle;
+                                    display:inline-block;" />
+                          ADA:
+                      </a>
+                          <code style="display:inline-block;
+                                       word-wrap:break-word;
+                                       text-align: left;
+                                       vertical-align: top;
+                                       max-width: 85%;">
+                              DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp
+                          </code>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+        </div>
+    </body>
+</html>
