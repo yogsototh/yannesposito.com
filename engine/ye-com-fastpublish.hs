@@ -67,7 +67,7 @@ checkDir = do
   toolsExists <- testdir "engine"
   if (not toolsExists)
      then exit (ExitFailure 1)
-     else return "_optim"
+     else return "_site"
 
 mainRepository = "git@github.com:yogsototh/yannesposito.com.git"
 

@@ -39,8 +39,9 @@ PANDOC := pandoc \
 			--standalone
 $(DST_DIR)/%.html: $(SRC_DIR)/%.org $(TEMPLATE)
 	@mkdir -p $(dir $@)
-	$(PANDOC) $< \
-		--output $@
+	$(PANDOC) $< --output $@.tmp
+	minify --mime text/html $@.tmp > $@
+	@rm $@.tmp
 ALL += $(DST_PANDOC_FILES)
 
 # HTML INDEX
@@ -50,6 +51,13 @@ $(HTML_INDEX): $(DST_PANDOC_FILES) $(MKINDEX)
 	@mkdir -p $(DST_DIR)
 	$(MKINDEX)
 ALL += $(HTML_INDEX)
+
+# RSS
+RSS := $(DST_DIR)/rss.xml
+MKRSS := engine/mkrss.sh
+$(RSS): $(DST_PANDOC_FILES) $(MKRSS)
+	$(MKRSS)
+ALL += $(RSS)
 
 # ORG -> GEMINI
 EXT := .org
@@ -71,7 +79,12 @@ $(GMI_INDEX): $(DST_GMI_FILES) $(MK_GMI_INDEX)
 	$(MK_GMI_INDEX)
 ALL += $(GMI_INDEX)
 
-
+# RSS
+GEM_ATOM := $(DST_DIR)/gem-atom.xml
+MK_GEMINI_ATOM := engine/mk-gemini-atom.sh
+$(GEM_ATOM): $(DST_GMI_FILES) $(MK_GEMINI_ATOM)
+	$(MK_GEMINI_ATOM)
+ALL += $(GEM_ATOM)
 
 # Images
 SRC_IMG_FILES ?= $(shell find $(SRC_DIR) -type f -name "*.jpg" -or -name "*.jpeg" -or -name "*.gif" -or -name "*.png")
@@ -94,23 +107,9 @@ $(DST_DIR)/%.png: $(SRC_DIR)/%.png
 	convert "$<" -quality 50 -resize 800x800\> "$@"
 
 ALL += $(DST_IMG_FILES)
-
-# OPTIM PHASE
-
-OPTIM_DIR ?= _optim
-ENGINE_DIR ?= engine
-ENGINE_SCRIPTS := $(shell find $(ENGINE_DIR) -type f)
-OPTIM := engine/pre-deploy.sh
-$(OPTIM_DIR)/index.html:$(DST_RAW_FILES) $(DST_GMI_FILES) $(DST_PANDOC_FILES) $(HTML_INDEX) $(ENGINE_SCRIPTS) $(OPTIM)
-	@mkdir -p $(OPTIM_DIR)
-	$(OPTIM)
-
-optim: $(OPTIM_DIR)/index.html
-
-
 # DEPLOY
 
-deploy: $(OPTIM_DIR)/index.html
+deploy: $(ALL)
 	engine/sync.sh # deploy to her.esy.fun
 	engine/ye-com-fastpublish.hs # deploy to yannesposito.com (via github pages)
 
@@ -119,5 +118,4 @@ fast: $(ALL)
 .PHONY: clean
 
 clean:
-	-rm -rf $(DST_DIR)/*
-	-rm -rf $(OPTIM_DIR)/*
+	-[ ! -z "$(DST_DIR)" ] && rm -rf $(DST_DIR)/*

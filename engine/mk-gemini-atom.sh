@@ -2,7 +2,7 @@
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
 # Directory
-webdir="_optim"
+webdir="_site"
 postsdir="$webdir/posts"
 rssfile="$webdir/gem-atom.xml"
 
