@@ -5,6 +5,7 @@ cd "$(git rev-parse --show-toplevel)" || exit 1
 webdir="_site"
 postsdir="$webdir/posts"
 rssfile="$webdir/rss.xml"
+indexdir=".cache/rss"
 
 # maximal number of articles to put in the RSS file
 maxarticles=10
@@ -19,11 +20,7 @@ rssauthor="yann@esposito.host (Yann Esposito)"
 rssimgurl="https://her.esy.fun/img/FlatAvatar.png"
 
 # HTML Accessors (similar to CSS accessors)
-dateaccessor='.yyydate'
-contentaccessor='#content'
-# title and keyword shouldn't be changed
-titleaccessor='title'
-keywordsaccessor='meta[name=keywords]::attr(content)'
+dateaccessor='pubDate'
 
 formatdate() {
     # format the date for RSS
@@ -32,51 +29,27 @@ formatdate() {
     LC_TIME=en_US date --date $d +'%a, %d %b %Y %H:%M:%S %z'
 }
 
-finddate(){ < $1 hxselect -c $dateaccessor | sed 's/\[//g;s/\]//g;s/ .*$//' }
-findtitle(){ < $1 hxselect -c $titleaccessor }
-getcontent(){
-    < $1 hxselect $contentaccessor | \
-                  perl -pe 'use URI; $base="'$2'"; s# (href|src)="((?!https?://)[^"]*)"#" ".$1."=\"".URI->new_abs($2,$base)->as_string."\""#eig' }
-findkeywords(){ < $1 hxselect -c $keywordsaccessor | sed 's/,/ /g' }
-mkcategories(){
-    for keyword in $*; do
-        printf "\\n<category>%s</category>" $keyword
-    done
+isodate() {
+    # format the date for sorting
+    local d="$1"
+    # echo "DEBUG DATE: $d" >&2
+    LC_TIME=en_US date --date $d +'%Y-%m-%dT%H:%M:%S'
 }
+
+finddate(){ < $1 hxselect -c $dateaccessor | sed 's/\[//g;s/\]//g;s/ .*$//' }
 
 autoload -U colors && colors
 
-tmpdir=$(mktemp -d)
 typeset -a dates
 dates=( )
-for fic in $postsdir/**/*.html; do
-    if echo $fic|egrep -- '-(mk|min|sci|modern).html$'>/dev/null; then
-        continue
-    fi
-    postfile="$(echo "$fic"|sed 's#^'$postsdir'/##')"
-    blogfile="$(echo "$fic"|sed 's#^'$webdir'/##')"
-    printf "%-30s" $postfile
-    xfic="$tmpdir/$fic.xml"
-    mkdir -p $(dirname $xfic)
-    hxclean $fic > $xfic
-    d=$(finddate $xfic)
-    echo -n " [$d]"
-    rssdate=$(formatdate $d)
-    title=$(findtitle $xfic)
-    keywords=( $(findkeywords $xfic) )
-    printf ": %-55s" "$title ($keywords)"
-    categories=$(mkcategories $keywords)
-    absoluteurl="${websiteurl}/${blogfile}"
-    { printf "\\n<item>"
-      printf "\\n<title>%s</title>" "$title"
-      printf "\\n<guid>%s</guid>" "$absoluteurl"
-      printf "\\n<pubDate>%s</pubDate>%s" "$rssdate"
-      printf "%s" "$categories"
-      printf "\\n<description><![CDATA[\\n%s\\n]]></description>" "$(getcontent "$xfic" "$absoluteurl")"
-      printf "\\n</item>\\n\\n"
-    } >>  "$tmpdir/${d}-$(basename $fic).rss"
+tmpdir=$(mktemp -d)
+for fic in $indexdir/*.rss; do
+    rssdate=$(finddate $xfic)
+    echo -n "${fic:t} [$d]"
+    d=$(isodate $rssdate)
     dates=( $d $dates )
     echo " [${fg[green]}OK${reset_color}]"
+    cp $fic $tmpdir/$d-${fic:t}.rss
 done
 echo "Publishing"
 for fic in $(ls $tmpdir/*.rss | sort -r | head -n $maxarticles ); do

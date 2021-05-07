@@ -7,6 +7,7 @@
 all: fast
 SRC_DIR ?= src
 DST_DIR ?= _site
+CACHE_DIR ?= .cache
 
 # we don't want to publish files in drafts
 NO_DRAFT := -not -path '$(SRC_DIR)/drafts/*'
@@ -44,6 +45,8 @@ $(DST_DIR)/%.html: $(SRC_DIR)/%.org $(TEMPLATE)
 	@rm $@.tmp
 ALL += $(DST_PANDOC_FILES)
 
+
+
 # HTML INDEX
 HTML_INDEX := $(DST_DIR)/index.html
 MKINDEX := engine/mk-index.sh
@@ -53,9 +56,21 @@ $(HTML_INDEX): $(DST_PANDOC_FILES) $(MKINDEX)
 ALL += $(HTML_INDEX)
 
 # RSS
+
+SRC_POSTS_DIR ?= $(SRC_DIR)/posts
+SRC_POST_FILES ?= $(shell find $(SRC_POSTS_DIR) -type f -name "*$(EXT)")
+RSS_CACHE_DIR ?= $(CACHE_DIR)/rss
+DST_RSS_FILES ?= $(subst .$(EXT),.rss, \
+                        $(patsubst $(SRC_POSTS_DIR)/%,$(RSS_CACHE_DIR)/%, \
+                            $(SRC_POSTS_FILES)))
+MK_RSS_ENTRY := ./engine/mk-rss-entry.sh
+$(RSS_CACHE_DIR)/%.rss: $(DST_DIR)/posts/%.html $(MK_RSS_ENTRY)
+	@mkdir -p $(RSS_CACHE_DIR)
+	$(MK_RSS_ENTRY) $@
+
 RSS := $(DST_DIR)/rss.xml
 MKRSS := engine/mkrss.sh
-$(RSS): $(DST_PANDOC_FILES) $(MKRSS)
+$(RSS): $(DST_RSS_FILES) $(MKRSS)
 	$(MKRSS)
 ALL += $(RSS)
 
@@ -119,3 +134,4 @@ fast: $(ALL)
 
 clean:
 	-[ ! -z "$(DST_DIR)" ] && rm -rf $(DST_DIR)/*
+	-[ ! -z "$(CACHE_DIR)" ] && rm -rf $(CACHE_DIR)/*
