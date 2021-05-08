@@ -4,7 +4,7 @@
 # From https://github.com/fcanas/bake/blob/master/Makefile
 # Finally https://www.arsouyes.org/blog/2017/10_Static_website/
 
-all: fast
+all: site
 SRC_DIR ?= src
 DST_DIR ?= _site
 CACHE_DIR ?= .cache
@@ -44,16 +44,18 @@ $(DST_DIR)/%.html: $(SRC_DIR)/%.org $(TEMPLATE)
 	minify --mime text/html $@.tmp > $@
 	@rm $@.tmp
 ALL += $(DST_PANDOC_FILES)
-
+html: $(DST_PANDOC_FILES)
 
 
 # HTML INDEX
 HTML_INDEX := $(DST_DIR)/index.html
 MKINDEX := engine/mk-index.sh
-$(HTML_INDEX): $(DST_PANDOC_FILES) $(MKINDEX)
+$(HTML_INDEX): $(DST_PANDOC_FILES) $(MKINDEX) $(TEMPLATE)
 	@mkdir -p $(DST_DIR)
 	$(MKINDEX)
 ALL += $(HTML_INDEX)
+
+index: $(HTML_INDEX)
 
 # RSS
 SRC_POSTS_DIR ?= $(SRC_DIR)/posts
@@ -89,6 +91,7 @@ $(DST_DIR)/%.gmi: $(SRC_DIR)/%.org $(GMI) engine/org2gemini_step1.sh
 	@mkdir -p $(dir $@)
 	$(GMI) "$<" "$@"
 ALL += $(DST_GMI_FILES)
+gmi: $(DST_GMI_FILES)
 
 # GEMINI INDEX
 GMI_INDEX := $(DST_DIR)/index.gmi
@@ -97,6 +100,7 @@ $(GMI_INDEX): $(DST_GMI_FILES) $(MK_GMI_INDEX)
 	@mkdir -p $(DST_DIR)
 	$(MK_GMI_INDEX)
 ALL += $(GMI_INDEX)
+gmi-index: $(GMI_INDEX)
 
 # RSS
 GEM_ATOM := $(DST_DIR)/gem-atom.xml
@@ -104,6 +108,7 @@ MK_GEMINI_ATOM := engine/mk-gemini-atom.sh
 $(GEM_ATOM): $(DST_GMI_FILES) $(MK_GEMINI_ATOM)
 	$(MK_GEMINI_ATOM)
 ALL += $(GEM_ATOM)
+gmi-atom: $(GMI_ATOM)
 
 gemini: $(DST_GMI_FILES) $(GMI_INDEX) $(GEM_ATOM)
 
@@ -128,13 +133,14 @@ $(DST_DIR)/%.png: $(SRC_DIR)/%.png
 	convert "$<" -quality 50 -resize 800x800\> "$@"
 
 ALL += $(DST_IMG_FILES)
+img: $(DST_IMG_FILES)
+
 # DEPLOY
+site: $(ALL)
 
 deploy: $(ALL)
 	engine/sync.sh # deploy to her.esy.fun
 	engine/ye-com-fastpublish.hs # deploy to yannesposito.com (via github pages)
-
-fast: $(ALL)
 
 .PHONY: clean
 

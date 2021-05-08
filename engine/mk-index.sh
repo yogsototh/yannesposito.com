@@ -134,7 +134,7 @@ body=$(< $tmpdir/index)
 date=$(LC_TIME=en_US date +'%Y-%m-%d')
 # the pandoc templates use $x$ format, we replace it by just $x
 # to be used with envsubst
-template=$(< templates/post.html | perl -pe 's#(\$[^\$]*)\$#$1#g' )
+template=$(< templates/post.html | sed 's/\$header-includes\$//' | perl -pe 's#(\$[^\$]*)\$#$1#g' )
 {
     export title
     export author
