@@ -45,8 +45,7 @@ autoload -U colors && colors
 postfile="$(echo "$fic"|sed 's#^'$postsdir'/##')"
 blogfile="$(echo "$fic"|sed 's#^'$webdir'/##')"
 printf "%-30s" $postfile
-xfic="${dst:r}.xml"
-hxclean $fic > $xfic
+xfic="$fic"
 d=$(finddate $xfic)
 echo -n " [$d]"
 rssdate=$(formatdate $d)

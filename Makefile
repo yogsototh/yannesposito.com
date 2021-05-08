@@ -62,14 +62,21 @@ SRC_POSTS_DIR ?= $(SRC_DIR)/posts
 DST_POSTS_DIR ?= $(DST_DIR)/posts
 SRC_POSTS_FILES ?= $(shell find $(SRC_POSTS_DIR) -type f -name "*$(EXT)")
 RSS_CACHE_DIR ?= $(CACHE_DIR)/rss
-DST_RSS_FILES ?= $(patsubst %.org,%.rss, \
+DST_XML_FILES ?= $(patsubst %.org,%.xml, \
                         $(patsubst $(SRC_POSTS_DIR)/%,$(RSS_CACHE_DIR)/%, \
                             $(SRC_POSTS_FILES)))
+ALL += $(DST_XML_FILES)
+$(RSS_CACHE_DIR)/%.xml: $(DST_POSTS_DIR)/%.html
+	@mkdir -p "$(dir $@)"
+	hxclean "$<" > "$@"
+
+DST_RSS_FILES ?= $(patsubst %.xml,%.rss, $(DST_XML_FILES))
+ALL += $(DST_RSS_FILES)
+
 MK_RSS_ENTRY := ./engine/mk-rss-entry.sh
-$(RSS_CACHE_DIR)/%.rss: $(DST_POSTS_DIR)/%.html $(MK_RSS_ENTRY)
+$(RSS_CACHE_DIR)/%.rss: $(RSS_CACHE_DIR)/%.xml $(MK_RSS_ENTRY)
 	@mkdir -p $(RSS_CACHE_DIR)
 	$(MK_RSS_ENTRY) "$<" "$@"
-ALL += $(DST_RSS_FILES)
 
 RSS := $(DST_DIR)/rss.xml
 MKRSS := engine/mkrss.sh
