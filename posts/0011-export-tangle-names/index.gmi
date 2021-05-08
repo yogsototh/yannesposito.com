@@ -1,0 +1,64 @@
+# Add links to code block during orgmode export
+date:  [2020-02-29 Sat]
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+keywords:  org-mode blog
+description:  Add links to code block during orgmode export.
+
+I wanted to add a link to the file I export with org tangle.
+And it was surprisingly difficult to find.
+Apparently I am one of the few people that use orgmode the way I do.
+
+Using orgmode file as markdown to blog.
+And exporting to a different file some code block.
+So I often endup writing something like:
+
+```org
+..begin_src elisp :tangle foo.el
+```
+
+I tangle the source code that export the code block to an external file.
+Then I use this hook during HTML export to add a caption with the link the
+file I tangled:
+
+```elisp :tangle org_html_export_show_tangle.el
+(defun my-add-link-to-tangled-files (backend)
+  "Add a link just before source code block with tangled files.
+BACKEND is the export backend. Used as symbol."
+  (while ;; (re-search-forward )
+      (re-search-forward "^\\( *\\)#\\+begin_src .*:tangle \\([^\s\n]*\\)" nil t)
+    (replace-match "\\1#+CAPTION:
+
+=> ./\\2 =\\2=
+\n\\&")))
+
+(add-hook 'org-export-before-processing-hook
+          'my-add-link-to-tangled-files)
+```
+
+And this article is an example of the result.
+The link with the listing is generated automatically for me.
+
+A small note regarding CSS.
+My =pre= have a =margin-top=.
+But I wanted to get rid of it when the previous block was a =label=.
+This is achievable with:
+
+```css
+label + pre {margin-top: 0;}
+```
+
+That's it.
+It took me really a long time to just think about using caption, and not
+trying something smarter like injecting html code, etc...
+So I hope it could help someone.
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes

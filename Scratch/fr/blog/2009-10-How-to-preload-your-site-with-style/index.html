@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <title>YBlog - Charger une page web avec style</title>
+        <meta name="keywords" content="web, jQuery, webdesign" />
+
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/fr/blog/feed/feed.xml" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+        <!-- IndieAuth -->
+        <link href="https://twitter.com/yogsototh" rel="me">
+        <link href="https://github.com/yogsototh" rel="me">
+        <link href="mailto:yann.esposito@gmail.com" rel="me">
+        <link rel="pgpkey" href="../../../../pubkey.txt">
+    </head>
+    <body lang="fr" class="article">
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	    <span id="choixlang">
+                  <a href="../../../../Scratch/en/blog/2009-10-How-to-preload-your-site-with-style/">Anglais</a> 
+        	    </span>
+              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
+        	    <span class="flush"></span>
+        	</div>
+			</div>
+
+			<div id="titre">
+				<h1>Charger une page web avec style</h1>
+				
+			</div>
+			<div class="flush"></div>
+      <div id="afterheader" class="article">
+          <div class="corps">
+              <h2 id="exemple">Exemple</h2>
+<p>Voici comment apparaissent mes pages pendant leur chargement.</p>
+<div id="demo" style="width:45%; position: relative; height: 8em; background: #333; background-position: 50% 50%; color: #fff; text-align: center; padding-top: 1em; margin-left: auto; margin-right: auto; border: solid 10px rgba(255,255,255,0.7); -webkit-border-radius: 1em; -moz-border-radius: 1em; border-radius: 1em; cursor: pointer; ">
+<pre><code>&lt;p&gt;Voilà ! Je suis chargée !&lt;/p&gt;
+&lt;p&gt;Cliquez-moi dessus pour recommencer.&lt;/p&gt;
+&lt;div id=&quot;todisapear&quot; style=&quot;color: #000; position:absolute;top:0;left:0;text-align: center; padding-top: 1em; width: 100%; background-color: #eee; height: 8em;&quot;&gt;
+Loading...
+&lt;img style=&quot;border: none; background-color: none; background: none&quot; src=&quot;/Scratch/img/loading.gif&quot; alt=&quot;loading logo&quot;/&gt;
+&lt;/div&gt;
+&lt;script&gt;
+function Rabbit(){
+    $('#todisapear')
+        .show()
+        .animate({opacity: 1.0},3000)
+        .fadeOut();
+}
+$(document).ready(function(){
+    $('#todisapear').animate({opacity: 1.0},3000).fadeOut();
+    $('#demo').click(Rabbit);
+});
+&lt;/script&gt;</code></pre>
+</div>
+<p>J’ai d’abord essayé d’intégrer <a href="http://www.gayadesign.com/diy/queryloader-preload-your-website-in-style/">queryLoader</a>, mais il ne comblait pas mes besoins.</p>
+<p>Ce plugin ajoutait un ‘div’ noir pour cacher le contenu du site. Cependant, comme le script doit être lancé à la fin du code source. Pendant un petit moment, on peut voir mon site en train de se mettre à jour.</p>
+<p>Pour cacher ce petit ‘artefact’, voici comment je m’y suis pris.</p>
+<h2 id="code">Code</h2>
+<p>D’abort il faut ajouter tout en haut du body cette fois un div qui va être le voile noir qui va tout cacher.</p>
+<div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode html"><code class="sourceCode html"><a class="sourceLine" id="cb2-1" title="1">...</a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="kw">&lt;body&gt;</span></a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="kw">&lt;div</span><span class="ot"> id=</span><span class="st">&quot;blackpage&quot;</span><span class="kw">&gt;</span></a>
+<a class="sourceLine" id="cb2-4" title="4">    content to display during the loading.</a>
+<a class="sourceLine" id="cb2-5" title="5"><span class="kw">&lt;/div&gt;</span></a>
+<a class="sourceLine" id="cb2-6" title="6">...</a></code></pre></div>
+</div>
+<p>et le CSS correspondant au div <code>#blackpage</code>&nbsp;:</p>
+<div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode css"><code class="sourceCode css"><a class="sourceLine" id="cb3-1" title="1"><span class="pp">#blackpage</span></a>
+<a class="sourceLine" id="cb3-2" title="2">  top<span class="in">: 0 </span></a>
+<a class="sourceLine" id="cb3-3" title="3">  left<span class="in">: 0 </span></a>
+<a class="sourceLine" id="cb3-4" title="4">  width<span class="in">: 100%</span></a>
+<a class="sourceLine" id="cb3-5" title="5">  height<span class="in">: 100%</span></a>
+<a class="sourceLine" id="cb3-6" title="6">  margin-left<span class="in">: 0</span></a>
+<a class="sourceLine" id="cb3-7" title="7">  margin-right<span class="in">: 0</span></a>
+<a class="sourceLine" id="cb3-8" title="8">  margin-top<span class="in">: 0</span></a>
+<a class="sourceLine" id="cb3-9" title="9">  margin-bottom<span class="in">: 0</span></a>
+<a class="sourceLine" id="cb3-10" title="10">  position<span class="in">: absolute</span></a>
+<a class="sourceLine" id="cb3-11" title="11">  text-align<span class="in">: center</span></a>
+<a class="sourceLine" id="cb3-12" title="12">  color<span class="in">: #666</span></a>
+<a class="sourceLine" id="cb3-13" title="13">  padding-top<span class="in">: 10em</span></a>
+<a class="sourceLine" id="cb3-14" title="14">  background-color<span class="in">: #eee</span></a>
+<a class="sourceLine" id="cb3-15" title="15">  z-index<span class="in">: 9000</span></a></code></pre></div>
+</div>
+<p>ainsi que le code jQuery associé&nbsp;:</p>
+<div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode javascript"><code class="sourceCode javascript"><a class="sourceLine" id="cb4-1" title="1"><span class="at">$</span>(document).<span class="at">ready</span>(<span class="kw">function</span>()<span class="op">{</span></a>
+<a class="sourceLine" id="cb4-2" title="2">    <span class="at">$</span>(<span class="st">'#blackpage'</span>).<span class="at">fadeOut</span>()<span class="op">;</span></a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="op">}</span>)<span class="op">;</span></a></code></pre></div>
+</div>
+<p>Oui, c’est aussi simple que ça. Maintenant ajouter le <code>#blackpage</code> tout en haut de ma page me permet d’être certain de tout cacher pendant le chargement de la page.</p>
+<p>J’espère que ça a pu vous être utile !</p>
+          </div>
+          <div id="afterarticle">
+              <div id="social">
+                  <a href="../../../../Scratch/fr/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
+                  ·
+                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/2009-10-How-to-preload-your-site-with-style/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
+                  ·
+                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/2009-10-How-to-preload-your-site-with-style/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
+                  <br />
+                  <a class="message" href="../../../../Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
+              </div>
+              <div id="navigation">
+                  <a href="../../../../">Accueil</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/blog">Blog</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/softwares">Logiciels</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/about">Auteur</a>
+              </div>
+              <div id="totop"><a href="#header">↑ Top ↑</a></div>
+              <div id="bottom">
+                  <div>
+                      Published on 2009-10-03
+                  </div>
+                  <div>
+                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+                  </div>
+                  <div>
+                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+                  </div>
+
+                  <div>
+                      Done with
+                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
+                      <span class="pala">&amp;</span>
+                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
+                  </div>
+                  <hr />
+                  <div style="max-width: 100%">
+                      <a href="https://cardanohub.org">
+                          <img src="../../../../Scratch/img/ada-logo.png" class="simple" style="height: 16px;
+                                    border-radius: 50%;
+                                    vertical-align:middle;
+                                    display:inline-block;" />
+                          ADA:
+                      </a>
+                          <code style="display:inline-block;
+                                       word-wrap:break-word;
+                                       text-align: left;
+                                       vertical-align: top;
+                                       max-width: 85%;">
+                              DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp
+                          </code>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+        </div>
+    </body>
+</html>

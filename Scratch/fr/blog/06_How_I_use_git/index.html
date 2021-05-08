@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <title>YBlog - Git en solo</title>
+        <meta name="keywords" content="git, svn, workflow" />
+
+        <link rel="shortcut icon" type="image/x-icon" href="../../../../Scratch/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/brutalist.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../Scratch/css/pandoc-solarized.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="../../../../Scratch/fr/blog/feed/feed.xml" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="apple-touch-icon" href="../../../../Scratch/img/about/FlatAvatar@2x.png" />
+        <!--[if lt IE 9]>
+        <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+        <![endif]-->
+        <!-- IndieAuth -->
+        <link href="https://twitter.com/yogsototh" rel="me">
+        <link href="https://github.com/yogsototh" rel="me">
+        <link href="mailto:yann.esposito@gmail.com" rel="me">
+        <link rel="pgpkey" href="../../../../pubkey.txt">
+    </head>
+    <body lang="fr" class="article">
+        <div id="content">
+	        			<div id="header">
+			    <div id="choix">
+        	    <span id="choixlang">
+                  <a href="../../../../Scratch/en/blog/06_How_I_use_git/">Anglais</a> 
+        	    </span>
+              <span class="tomenu"><a href="#navigation">↓ Menu ↓</a></span>
+        	    <span class="flush"></span>
+        	</div>
+			</div>
+
+			<div id="titre">
+				<h1>Git en solo</h1>
+				
+			</div>
+			<div class="flush"></div>
+      <div id="afterheader" class="article">
+          <div class="corps">
+              <div>
+<img src="../../../../Scratch/img/blog/06_How_I_use_git/central_architecture.png" alt="central architecture" />
+</div>
+<div class="encadre">
+<p><em>Màj</em> : Actuellement j’utilise github avec des repository privés. Je paye une somme très raisonnable pour ce service. Si vous voulez être complètement autonome, je vous conseille d’utiliser <a href="https://github.com/sitaramc/gitolite">gitolite</a> sur votre propre serveur accessible sur le web.</p>
+</div>
+<p>J’utilise <a href="http://www.git-scm.org/">Git</a> pour gérer mes projets personnels. J’ai un <em>repository</em> centralisé et tous mes ordinateurs se synchronisent avec lui. Cependant, dans la documentation officielle, je n’ai pas trouvé clairement ce que je souhaitais.</p>
+<p>En d’autres termes, si vous souhaitez utiliser le type de <em>workflow</em> que SVN proposait avec Git (et ses avantages), voici comment procéder.</p>
+<hr />
+<h2 id="initialisation">Initialisation</h2>
+<p>Disons que j’ai déjà un projet et que je veuille en créer un nouveau.</p>
+<div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">cd</span> to/project/directory/</a>
+<a class="sourceLine" id="cb1-2" title="2">git init</a>
+<a class="sourceLine" id="cb1-3" title="3">git add</a>
+<a class="sourceLine" id="cb1-4" title="4">git commit</a></code></pre></div>
+</div>
+<p>Maintenant tous les fichiers du répertoire <code>to/project/directory/</code> sont <em>versionnés</em>. Si vous voulez ignorer certains fichiers il suffit de modifier le fichier <code>.gitignore</code>.</p>
+Par exemple voici le mien :
+<div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb2-1" title="1">*.swp</a>
+<a class="sourceLine" id="cb2-2" title="2">.DS_Store</a>
+<a class="sourceLine" id="cb2-3" title="3">ikog.py.bak</a>
+<a class="sourceLine" id="cb2-4" title="4">output/Scratch/assets</a>
+<a class="sourceLine" id="cb2-5" title="5">output/Scratch/en</a>
+<a class="sourceLine" id="cb2-6" title="6">output/Scratch/fr</a>
+<a class="sourceLine" id="cb2-7" title="7">output/Scratch/multi</a></code></pre></div>
+</div>
+<p>Ensuite, il faut placer ce projet dans un répertoire accessible via Internet.</p>
+<div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb3-1" title="1">git <span class="kw">clone</span> --bare <span class="kw">.</span> /path/to/repository</a></code></pre></div>
+</div>
+<div class="encadre">
+<p><em> Màj: La meilleure solution est d’installer <a href="https://github.com/sitaramc/gitolite">gitolite</a> pour installer un serveur git sur sa machine. Gitolite permet de gérer la gestion des droits d’utilisateurs, ceux-ci n’ayant pas accès à un shell sur la machine. </em></p>
+</div>
+<p>Maintenant à partir de n’importe quel ordinateur, voici ce que vous pouvez faire&nbsp;:</p>
+<div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb4-1" title="1">git <span class="kw">clone</span> protocol://path/to/repository local_directory</a></code></pre></div>
+</div>
+<p>et <code>local_directory</code> contiendra un projet à jour.</p>
+<div class="encadre">
+<p><em></p>
+<p>Je vous conseille de faire la même opération sur l’ordinateur qui à servi à créer le projet de façon à vérifier que tout fonctionne correctement. </em></p>
+</div>
+<hr />
+<h2 id="lutilisation-courante">L’utilisation courante</h2>
+<p>Pour résumer vous avez maintenant un repository sur Internet et un ou plusieurs ordinateurs lui sont associés. Maintenant il faut que tout soit toujours synchronisé.</p>
+<p>Avant de commencer à travailler, la première chose à faire est de récupérer les modification à partir d’Internet vers votre poste local&nbsp;:</p>
+<div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb5-1" title="1">git pull</a></code></pre></div>
+</div>
+<p>Ensuit vous pouvez travailler en faisant (plusieurs fois)&nbsp;:</p>
+<div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb6-1" title="1">hack, hack, hack...</a>
+<a class="sourceLine" id="cb6-2" title="2">git add some files</a>
+<a class="sourceLine" id="cb6-3" title="3">git commit</a></code></pre></div>
+</div>
+<p>Quang vous voulez envoyez les modifications locales sur Internet, il suffit de faire&nbsp;:</p>
+<div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb7-1" title="1">git push</a></code></pre></div>
+</div>
+<p>Tout devrait être bon.</p>
+<p>Si vous avez des problèmes avec le <code>push</code> et le <code>pull</code> ; vérifiez votre fichier <code>.git/config</code>. Il devrait contenir les lignes suivantes&nbsp;:</p>
+<div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb8-1" title="1">...</a>
+<a class="sourceLine" id="cb8-2" title="2">[remote <span class="st">&quot;origin&quot;</span>]</a>
+<a class="sourceLine" id="cb8-3" title="3">	url = protocol://url/of/the/repository</a>
+<a class="sourceLine" id="cb8-4" title="4">	fetch = +refs/heads/*:refs/remotes/origin/*</a>
+<a class="sourceLine" id="cb8-5" title="5">[branch <span class="st">&quot;master&quot;</span>]</a>
+<a class="sourceLine" id="cb8-6" title="6">	remote = origin</a>
+<a class="sourceLine" id="cb8-7" title="7">	merge = refs/heads/master</a>
+<a class="sourceLine" id="cb8-8" title="8">...</a></code></pre></div>
+</div>
+<h2 id="synchronisation-des-branches">Synchronisation des branches</h2>
+<p>Bien, maintenant que tout semble bon, il faut encore s’occuper de quelques petites choses (sinon, SVN suffirait). Git est complètement orienté sur la décentralisation et la création de nouvelles branches sur le même poste. Synchroniser des branches sur plusieurs serveurs différent n’est pas une opération naturelle.</p>
+<p>C’est pourquoi j’ai créé deux simples scripts pour automatiser cette opération. Un script pour créer un branche localement et en ligne. Un autre script pour récupérer les branches en lignes qui ne sont pas présente localement.</p>
+<p>Ainsi, lorsque je veux créer une nouvelle branche (localement et ligne) ; je lance le script&nbsp;:</p>
+<div>
+<code class="zsh">git-create-new-branch branch_name</code>
+</div>
+<p>et quand je suis sur un autre ordinateur et que je veux récupérer les branches crées sur un autre poste, j’exécute&nbsp;:</p>
+<div>
+<code class="zsh">git-get-remote-branches</code>
+</div>
+<p>Voici le code des deux script (en zsh)&nbsp;:</p>
+<div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb9-1" title="1"><span class="co">#!/usr/bin/env zsh</span></a>
+<a class="sourceLine" id="cb9-2" title="2"></a>
+<a class="sourceLine" id="cb9-3" title="3"><span class="kw">if</span> <span class="kw">((</span><span class="ot">$#</span>&lt;1<span class="kw">))</span>; <span class="kw">then</span></a>
+<a class="sourceLine" id="cb9-4" title="4">    <span class="kw">print</span> -- <span class="st">&quot;usage: </span><span class="ot">$0</span><span class="st">:t branch_name&quot;</span> <span class="kw">&gt;&amp;2</span></a>
+<a class="sourceLine" id="cb9-5" title="5">    <span class="kw">exit</span> 1</a>
+<a class="sourceLine" id="cb9-6" title="6"><span class="kw">fi</span></a>
+<a class="sourceLine" id="cb9-7" title="7"></a>
+<a class="sourceLine" id="cb9-8" title="8"><span class="ot">branch=$1</span></a>
+<a class="sourceLine" id="cb9-9" title="9">git br <span class="ot">${branch}</span></a>
+<a class="sourceLine" id="cb9-10" title="10">git <span class="kw">co</span> <span class="ot">${branch}</span></a>
+<a class="sourceLine" id="cb9-11" title="11">git config branch.<span class="ot">${branch}</span>.remote origin</a>
+<a class="sourceLine" id="cb9-12" title="12">git config branch.<span class="ot">${branch}</span>.merge refs/heads/<span class="ot">${branch}</span></a></code></pre></div>
+</div>
+<div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode zsh"><code class="sourceCode zsh"><a class="sourceLine" id="cb10-1" title="1"><span class="co">#!/usr/bin/env zsh</span></a>
+<a class="sourceLine" id="cb10-2" title="2"></a>
+<a class="sourceLine" id="cb10-3" title="3"><span class="co"># recup branches not on local</span></a>
+<a class="sourceLine" id="cb10-4" title="4"><span class="ot">localbranches=(</span> <span class="ot">$(</span>git br <span class="kw">|</span> <span class="kw">sed</span> <span class="st">'s/\*/ /'</span><span class="ot">)</span> <span class="ot">)</span></a>
+<a class="sourceLine" id="cb10-5" title="5"><span class="ot">remoteMissingBranches=(</span> <span class="ot">$(</span>git br -r <span class="kw">|</span> <span class="kw">\</span></a>
+<a class="sourceLine" id="cb10-6" title="6">    <span class="kw">egrep</span> -v <span class="st">&quot;origin/HEAD|(${(j:|:)localbranches})&quot;</span> <span class="ot">)</span> <span class="ot">)</span></a>
+<a class="sourceLine" id="cb10-7" title="7"><span class="kw">for</span> br <span class="kw">in</span> <span class="ot">$remoteMissingBranches</span>; <span class="kw">do</span></a>
+<a class="sourceLine" id="cb10-8" title="8">  <span class="ot">branch=${br#</span>origin/<span class="ot">}</span></a>
+<a class="sourceLine" id="cb10-9" title="9">  <span class="kw">print</span> <span class="st">&quot;get remote branch </span><span class="ot">$branch</span><span class="st">&quot;</span></a>
+<a class="sourceLine" id="cb10-10" title="10">  git br <span class="ot">${branch}</span></a>
+<a class="sourceLine" id="cb10-11" title="11">  git config branch.<span class="ot">${branch}</span>.remote origin</a>
+<a class="sourceLine" id="cb10-12" title="12">  git config branch.<span class="ot">${branch}</span>.merge refs/heads/<span class="ot">${branch}</span></a>
+<a class="sourceLine" id="cb10-13" title="13"><span class="kw">done</span></a></code></pre></div>
+</div>
+          </div>
+          <div id="afterarticle">
+              <div id="social">
+                  <a href="../../../../Scratch/fr/blog/feed/feed.xml" target="_blank" rel="noopener noreferrer nofollow" class="social">RSS</a>
+                  ·
+                  <a href="https://twitter.com/home?status=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/06_How_I_use_git/%20via%20@yogsototh" target="_blank" rel="noopener noreferrer nofollow" class="social">Tweet</a>
+                  ·
+                  <a href="http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fyannesposito.com/Scratch/fr/blog/06_How_I_use_git/" target="_blank" rel="noopener noreferrer nofollow" class="social">FB</a>
+                  <br />
+                  <a class="message" href="../../../../Scratch/fr/blog/Social-link-the-right-way/">Ces liens sociaux préservent votre vie privée</a>
+              </div>
+              <div id="navigation">
+                  <a href="../../../../">Accueil</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/blog">Blog</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/softwares">Logiciels</a>
+                  <span class="sep">¦</span>
+                  <a href="../../../../Scratch/fr/about">Auteur</a>
+              </div>
+              <div id="totop"><a href="#header">↑ Top ↑</a></div>
+              <div id="bottom">
+                  <div>
+                      Published on 2009-08-18
+                  </div>
+                  <div>
+                      <a href="https://twitter.com/yogsototh">Follow @yogsototh</a>
+                  </div>
+                  <div>
+                      <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Yann Esposito©</a>
+                  </div>
+
+                  <div>
+                      Done with
+                      <a href="http://www.vim.org" target="_blank" rel="noopener noreferrer nofollow"><strike>Vim</strike></a>
+                      <a href="http://spacemacs.org" target="_blank" rel="noopener noreferrer nofollow">spacemacs</a>
+                      <span class="pala">&amp;</span>
+                      <a href="http://nanoc.ws" target="_blank" rel="noopener noreferrer nofollow"><strike>nanoc</strike></a>
+                      <a href="http://jaspervdj.be/hakyll" target="_blank" rel="noopener noreferrer nofollow">Hakyll</a>
+                  </div>
+                  <hr />
+                  <div style="max-width: 100%">
+                      <a href="https://cardanohub.org">
+                          <img src="../../../../Scratch/img/ada-logo.png" class="simple" style="height: 16px;
+                                    border-radius: 50%;
+                                    vertical-align:middle;
+                                    display:inline-block;" />
+                          ADA:
+                      </a>
+                          <code style="display:inline-block;
+                                       word-wrap:break-word;
+                                       text-align: left;
+                                       vertical-align: top;
+                                       max-width: 85%;">
+                              DdzFFzCqrhtAvdkmATx5Fm8NPJViDy85ZBw13p4XcNzVzvQg8e3vWLXq23JQWFxPEXK6Kvhaxxe7oJt4VMYHxpA2vtCFiP8fziohN6Yp
+                          </code>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+        </div>
+    </body>
+</html>
