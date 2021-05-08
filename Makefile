@@ -56,17 +56,18 @@ $(HTML_INDEX): $(DST_PANDOC_FILES) $(MKINDEX)
 ALL += $(HTML_INDEX)
 
 # RSS
-
 SRC_POSTS_DIR ?= $(SRC_DIR)/posts
-SRC_POST_FILES ?= $(shell find $(SRC_POSTS_DIR) -type f -name "*$(EXT)")
+DST_POSTS_DIR ?= $(DST_DIR)/posts
+SRC_POSTS_FILES ?= $(shell find $(SRC_POSTS_DIR) -type f -name "*$(EXT)")
 RSS_CACHE_DIR ?= $(CACHE_DIR)/rss
-DST_RSS_FILES ?= $(subst .$(EXT),.rss, \
+DST_RSS_FILES ?= $(patsubst %.org,%.rss, \
                         $(patsubst $(SRC_POSTS_DIR)/%,$(RSS_CACHE_DIR)/%, \
                             $(SRC_POSTS_FILES)))
 MK_RSS_ENTRY := ./engine/mk-rss-entry.sh
-$(RSS_CACHE_DIR)/%.rss: $(DST_DIR)/posts/%.html $(MK_RSS_ENTRY)
+$(RSS_CACHE_DIR)/%.rss: $(DST_POSTS_DIR)/%.html $(MK_RSS_ENTRY)
 	@mkdir -p $(RSS_CACHE_DIR)
-	$(MK_RSS_ENTRY) $@
+	$(MK_RSS_ENTRY) "$<" "$@"
+ALL += $(DST_RSS_FILES)
 
 RSS := $(DST_DIR)/rss.xml
 MKRSS := engine/mkrss.sh
@@ -74,11 +75,14 @@ $(RSS): $(DST_RSS_FILES) $(MKRSS)
 	$(MKRSS)
 ALL += $(RSS)
 
+rss: $(DST_RSS_FILES) $(RSS)
+
+
 # ORG -> GEMINI
 EXT := .org
 SRC_GMI_FILES ?= $(shell find $(SRC_DIR) -type f -name "*$(EXT)" $(NO_DRAFT))
 DST_GMI_FILES ?= $(subst $(EXT),.gmi, \
-                        $(subst $(SRC_DIR),$(DST_DIR), \
+                        $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%, \
                             $(SRC_GMI_FILES)))
 GMI := engine/org2gemini.sh
 $(DST_DIR)/%.gmi: $(SRC_DIR)/%.org $(GMI) engine/org2gemini_step1.sh
@@ -100,6 +104,8 @@ MK_GEMINI_ATOM := engine/mk-gemini-atom.sh
 $(GEM_ATOM): $(DST_GMI_FILES) $(MK_GEMINI_ATOM)
 	$(MK_GEMINI_ATOM)
 ALL += $(GEM_ATOM)
+
+gemini: $(DST_GMI_FILES) $(GMI_INDEX) $(GEM_ATOM)
 
 # Images
 SRC_IMG_FILES ?= $(shell find $(SRC_DIR) -type f -name "*.jpg" -or -name "*.jpeg" -or -name "*.gif" -or -name "*.png")

@@ -32,28 +32,29 @@ formatdate() {
 isodate() {
     # format the date for sorting
     local d="$1"
-    # echo "DEBUG DATE: $d" >&2
-    LC_TIME=en_US date --date $d +'%Y-%m-%dT%H:%M:%S'
+    echo "DEBUG DATE: $d" >&2
+    LC_TIME=en_US date --date "$d" +'%Y-%m-%dT%H:%M:%S'
 }
 
-finddate(){ < $1 hxselect -c $dateaccessor | sed 's/\[//g;s/\]//g;s/ .*$//' }
+finddate(){ < $1 hxselect -c $dateaccessor }
 
 autoload -U colors && colors
 
 typeset -a dates
 dates=( )
 tmpdir=$(mktemp -d)
-for fic in $indexdir/*.rss; do
-    rssdate=$(finddate $xfic)
-    echo -n "${fic:t} [$d]"
+for fic in $indexdir/**/*.rss; do
+    rssdate=$(finddate $fic)
+    echo -n "${fic:r} [$d]"
     d=$(isodate $rssdate)
     dates=( $d $dates )
     echo " [${fg[green]}OK${reset_color}]"
-    cp $fic $tmpdir/$d-${fic:t}.rss
+    cp $fic $tmpdir/$d-${${fic:h}:t}.rss
 done
 echo "Publishing"
+n=1
 for fic in $(ls $tmpdir/*.rss | sort -r | head -n $maxarticles ); do
-    echo "${fic:t}"
+    echo "$((n++)) ${fic:t}"
     cat $fic >> $tmpdir/rss
 done
 
@@ -97,6 +98,8 @@ END
 # HACK TO UPDATE OLD RSS FEEDS
 legacyenrss="$webdir/Scratch/en/blog/feed/feed.xml"
 legacyfrrss="$webdir/Scratch/fr/blog/feed/feed.xml"
+mkdir -p "${legacyenrss:h}"
+mkdir -p "${legacyfrrss:h}"
 cp -f "$rssfile" "$legacyenrss"
 cp -f "$rssfile" "$legacyfrrss"
 

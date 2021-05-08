@@ -145,4 +145,4 @@ template=$(< templates/post.html | perl -pe 's#(\$[^\$]*)\$#$1#g' )
 } > "$indexfile"
 
 rm -rf $tmpdir
-echo "* RSS [done]"
+echo "* HTML INDEX [done]"

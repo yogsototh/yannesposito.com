@@ -8,6 +8,7 @@ indexdir=".cache/rss"
 
 # file to handle
 fic="$1"
+dst="$2"
 
 # RSS Metas
 websiteurl="https://her.esy.fun"
@@ -41,15 +42,10 @@ mkcategories(){
 
 autoload -U colors && colors
 
-if echo $fic|egrep -- '-(mk|min|sci|modern).html$'>/dev/null; then
-    continue
-fi
-
 postfile="$(echo "$fic"|sed 's#^'$postsdir'/##')"
 blogfile="$(echo "$fic"|sed 's#^'$webdir'/##')"
 printf "%-30s" $postfile
-xfic="$indexdir/$fic.xml"
-mkdir -p $(dirname $xfic)
+xfic="${dst:r}.xml"
 hxclean $fic > $xfic
 d=$(finddate $xfic)
 echo -n " [$d]"
@@ -59,7 +55,6 @@ keywords=( $(findkeywords $xfic) )
 printf ": %-55s" "$title ($keywords)"
 categories=$(mkcategories $keywords)
 absoluteurl="${websiteurl}/${blogfile}"
-dst="$indexdir/$fic.rss"
 mkdir -p $(dirname $dst)
 { printf "\\n<item>"
   printf "\\n<title>%s</title>" "$title"
@@ -68,5 +63,5 @@ mkdir -p $(dirname $dst)
   printf "%s" "$categories"
   printf "\\n<description><![CDATA[\\n%s\\n]]></description>" "$(getcontent "$xfic" "$absoluteurl")"
   printf "\\n</item>\\n\\n"
-} >>  "$dst"
+} >  "$dst"
 echo " [${fg[green]}OK${reset_color}]"
