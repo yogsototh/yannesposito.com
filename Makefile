@@ -46,18 +46,7 @@ $(DST_DIR)/%.html: $(SRC_DIR)/%.org $(TEMPLATE)
 ALL += $(DST_PANDOC_FILES)
 html: $(DST_PANDOC_FILES)
 
-
-# HTML INDEX
-HTML_INDEX := $(DST_DIR)/index.html
-MKINDEX := engine/mk-index.sh
-$(HTML_INDEX): $(DST_PANDOC_FILES) $(MKINDEX) $(TEMPLATE)
-	@mkdir -p $(DST_DIR)
-	$(MKINDEX)
-ALL += $(HTML_INDEX)
-
-index: $(HTML_INDEX)
-
-# RSS
+# INDEXES
 SRC_POSTS_DIR ?= $(SRC_DIR)/posts
 DST_POSTS_DIR ?= $(DST_DIR)/posts
 SRC_POSTS_FILES ?= $(shell find $(SRC_POSTS_DIR) -type f -name "*$(EXT)")
@@ -70,6 +59,17 @@ $(RSS_CACHE_DIR)/%.xml: $(DST_POSTS_DIR)/%.html
 	@mkdir -p "$(dir $@)"
 	hxclean "$<" > "$@"
 
+# HTML INDEX
+HTML_INDEX := $(DST_DIR)/index.html
+MKINDEX := engine/mk-index.sh
+$(HTML_INDEX): $(DST_XML_FILES) $(MKINDEX) $(TEMPLATE)
+	@mkdir -p $(DST_DIR)
+	$(MKINDEX)
+ALL += $(HTML_INDEX)
+
+index: $(HTML_INDEX)
+
+# RSS
 DST_RSS_FILES ?= $(patsubst %.xml,%.rss, $(DST_XML_FILES))
 ALL += $(DST_RSS_FILES)
 

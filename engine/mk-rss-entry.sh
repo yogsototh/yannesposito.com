@@ -42,10 +42,10 @@ mkcategories(){
 
 autoload -U colors && colors
 
-postfile="$(echo "$fic"|sed 's#^'$postsdir'/##')"
-blogfile="$(echo "$fic"|sed 's#^'$webdir'/##')"
-printf "%-30s" $postfile
 xfic="$fic"
+postfile="$(echo "$fic"|sed 's#^'$postsdir'/##')"
+blogfile="$(echo "$fic"|sed 's#.xml$#.html#;s#^'$indexdir'/#posts/#')"
+printf "%-30s" $postfile
 d=$(finddate $xfic)
 echo -n " [$d]"
 rssdate=$(formatdate $d)

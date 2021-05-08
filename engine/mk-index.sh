@@ -5,6 +5,7 @@ cd "$(git rev-parse --show-toplevel)" || exit 1
 webdir="_site"
 postsdir="$webdir/posts"
 indexfile="$webdir/index.html"
+indexdir=".cache/rss"
 
 # maximal number of articles to put in the index homepage
 maxarticles=1000
@@ -38,16 +39,10 @@ autoload -U colors && colors
 tmpdir=$(mktemp -d)
 typeset -a dates
 dates=( )
-for fic in $postsdir/**/*.html; do
-    if echo $fic|egrep -- '-(mk|min|sci|modern).html$'>/dev/null; then
-        continue
-    fi
-    postfile="$(echo "$fic"|sed 's#^'$postsdir'/##')"
-    blogfile="$(echo "$fic"|sed 's#^'$webdir'/##')"
+for xfic in $indexdir/**/*.xml; do
+    postfile="$(echo "$xfic"|sed 's#^'$postsdir'/##')"
+    blogfile="$(echo "$xfic"|sed 's#.xml$#.html#;s#^'$indexdir'/#posts/#')"
     printf "%-30s" $postfile
-    xfic="$tmpdir/$fic.xml"
-    mkdir -p $(dirname $xfic)
-    hxclean $fic > $xfic
     d=$(finddate $xfic)
     echo -n " [$d]"
     rssdate=$(formatdate $d)
@@ -60,7 +55,7 @@ for fic in $postsdir/**/*.html; do
       printf "\\n<span class=\"pubDate\">%s</span>%s" "$d"
       printf "<span class=\"tags\">%s</span>" "$categories"
       printf "\\n</li>\\n\\n"
-    } >>  "$tmpdir/${d}-$(basename $fic).index"
+    } >>  "$tmpdir/${d}-$(basename $xfic).index"
     dates=( $d $dates )
     echo " [${fg[green]}OK${reset_color}]"
 done
