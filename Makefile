@@ -32,15 +32,11 @@ DST_PANDOC_FILES ?= $(subst $(EXT),.html, \
                             $(SRC_PANDOC_FILES)))
 TEMPLATE ?= templates/post.html
 CSS = /css/y.css
-PANDOC := pandoc \
-			-c $(CSS) \
-			--template=$(TEMPLATE) \
-			--from org \
-			--to html5 \
-			--standalone
-$(DST_DIR)/%.html: $(SRC_DIR)/%.org $(TEMPLATE)
+MK_HTML := engine/mk-html.sh
+PANDOC := $(MK_HTML) $(CSS) $(TEMPLATE)
+$(DST_DIR)/%.html: $(SRC_DIR)/%.org $(TEMPLATE) $(MK_HTML)
 	@mkdir -p $(dir $@)
-	$(PANDOC) $< --output $@.tmp
+	$(PANDOC) $< $@.tmp
 	minify --mime text/html $@.tmp > $@
 	@rm $@.tmp
 ALL += $(DST_PANDOC_FILES)
