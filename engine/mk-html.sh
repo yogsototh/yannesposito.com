@@ -2,10 +2,9 @@
 set -eu
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
-css="$1"
-template="$2"
-orgfile="$3"
-htmlfile="$4"
+template="$1"
+orgfile="$2"
+htmlfile="$3"
 
 tocoption=""
 if grep -ie '^#+options:' "$orgfile" | grep 'toc:t'>/dev/null; then
@@ -13,7 +12,7 @@ if grep -ie '^#+options:' "$orgfile" | grep 'toc:t'>/dev/null; then
 fi
 
 set -x
-pandoc -c "$css" $tocoption \
+pandoc $tocoption \
        --template="$template" \
        --mathml \
        --from org \

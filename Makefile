@@ -35,13 +35,12 @@ css: $(DST_CSS_FILES)
 # ORG -> HTML
 EXT ?= .org
 SRC_PANDOC_FILES ?= $(shell find $(SRC_DIR) -type f -name "*$(EXT)" $(NO_DRAFT))
-DST_PANDOC_FILES ?= $(subst $(EXT),.html, \
+DST_PANDOC_FILES ?= $(patsubst %$(EXT),%.html, \
                         $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%, \
                             $(SRC_PANDOC_FILES)))
 PANDOC_TEMPLATE ?= templates/post.html
-PANDOC_CSS ?= /css/y.css
 MK_HTML := engine/mk-html.sh
-PANDOC := $(MK_HTML) $(PANDOC_CSS) $(PANDOC_TEMPLATE)
+PANDOC := $(MK_HTML) $(PANDOC_TEMPLATE)
 $(DST_DIR)/%.html: $(SRC_DIR)/%.org $(PANDOC_TEMPLATE) $(MK_HTML)
 	@mkdir -p "$(dir $@)"
 	$(PANDOC) "$<" "$@.tmp"
