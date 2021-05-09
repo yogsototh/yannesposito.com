@@ -11,34 +11,42 @@ CACHE_DIR ?= .cache
 
 # we don't want to publish files in drafts
 NO_DRAFT := -not -path '$(SRC_DIR)/drafts/*'
-# we don't copy source files, nor images, they are transformed
-NO_SRC_FILE := ! -name '*.org' ! -name '*.jpg' ! -name '*.png' ! -name '*.jpeg' ! -name '*.gif'
-
+# we don't copy source files
+NO_SRC_FILE := ! -name '*.org'
 
 # ASSETS
 SRC_RAW_FILES := $(shell find $(SRC_DIR) -type f $(NO_DRAFT) $(NO_SRC_FILE))
 DST_RAW_FILES   := $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%,$(SRC_RAW_FILES))
+ALL += $(DST_RAW_FILES)
 $(DST_DIR)/% : $(SRC_DIR)/%
 	@mkdir -p "$(dir $@)"
 	cp "$<" "$@"
-ALL += $(DST_RAW_FILES)
+assets: $(DST_RAW_FILES)
 
+# CSS
+SRC_CSS_FILES := $(shell find $(SRC_DIR) -type f -name '*.css')
+DST_CSS_FILES   := $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%,$(SRC_RAW_FILES))
+ALL += $(DST_CSS_FILES)
+$(DST_DIR)/%.css : $(SRC_DIR)/%.css
+	@mkdir -p "$(dir $@)"
+	minify "$<" > "$@"
+css: $(DST_CSS_FILES)
 
 # ORG -> HTML
-EXT := .org
+EXT ?= .org
 SRC_PANDOC_FILES ?= $(shell find $(SRC_DIR) -type f -name "*$(EXT)" $(NO_DRAFT))
 DST_PANDOC_FILES ?= $(subst $(EXT),.html, \
                         $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%, \
                             $(SRC_PANDOC_FILES)))
-TEMPLATE ?= templates/post.html
-CSS = /css/y.css
+PANDOC_TEMPLATE ?= templates/post.html
+PANDOC_CSS ?= /css/y.css
 MK_HTML := engine/mk-html.sh
-PANDOC := $(MK_HTML) $(CSS) $(TEMPLATE)
-$(DST_DIR)/%.html: $(SRC_DIR)/%.org $(TEMPLATE) $(MK_HTML)
-	@mkdir -p $(dir $@)
-	$(PANDOC) $< $@.tmp
-	minify --mime text/html $@.tmp > $@
-	@rm $@.tmp
+PANDOC := $(MK_HTML) $(PANDOC_CSS) $(PANDOC_TEMPLATE)
+$(DST_DIR)/%.html: $(SRC_DIR)/%.org $(PANDOC_TEMPLATE) $(MK_HTML)
+	@mkdir -p "$(dir $@)"
+	$(PANDOC) "$<" "$@.tmp"
+	minify --mime text/html "$@.tmp" > "$@"
+	@rm "$@.tmp"
 ALL += $(DST_PANDOC_FILES)
 html: $(DST_PANDOC_FILES)
 
@@ -54,6 +62,7 @@ ALL += $(DST_XML_FILES)
 $(RSS_CACHE_DIR)/%.xml: $(DST_POSTS_DIR)/%.html
 	@mkdir -p "$(dir $@)"
 	hxclean "$<" > "$@"
+indexcache: $(DST_XML_FILES)
 
 # HTML INDEX
 HTML_INDEX := $(DST_DIR)/index.html
@@ -62,7 +71,6 @@ $(HTML_INDEX): $(DST_XML_FILES) $(MKINDEX) $(TEMPLATE)
 	@mkdir -p $(DST_DIR)
 	$(MKINDEX)
 ALL += $(HTML_INDEX)
-
 index: $(HTML_INDEX)
 
 # RSS
@@ -79,7 +87,6 @@ MKRSS := engine/mkrss.sh
 $(RSS): $(DST_RSS_FILES) $(MKRSS)
 	$(MKRSS)
 ALL += $(RSS)
-
 rss: $(DST_RSS_FILES) $(RSS)
 
 
