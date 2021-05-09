@@ -1,6 +1,7 @@
 #!/usr/bin/env zsh
 cd "$(git rev-parse --show-toplevel)" || exit 1
 direnv reload
+./engine/build.sh
 echo "Watching $PWD/{src,templates}"
 # fswatch --exclude='\\.#' src | while read event; do
 fswatch --exclude='^.*\.#.*$' src templates | while read event; do

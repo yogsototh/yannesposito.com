@@ -130,7 +130,7 @@ date=$(LC_TIME=en_US date +'%Y-%m-%d')
 # the pandoc templates use $x$ format, we replace it by just $x
 # to be used with envsubst
 template=$(< templates/post.html | \
-    sed 's/\$(header-includes|table-of-content)\$//' | \
+    sed 's/\$\(header-includes\|table-of-content\)\$//' | \
     sed 's/\$if.*\$//' | \
     perl -pe 's#(\$[^\$]*)\$#$1#g' )
 {
