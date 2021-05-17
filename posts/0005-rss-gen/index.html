@@ -22,7 +22,7 @@
 <span id=cb2-5><a href=#cb2-5 aria-hidden=true tabindex=-1></a><span class=va>titleaccessor</span><span class=op>=</span><span class=st>&#39;title&#39;</span></span>
 <span id=cb2-6><a href=#cb2-6 aria-hidden=true tabindex=-1></a><span class=va>keywordsaccessor</span><span class=op>=</span><span class=st>&#39;meta[name=keywords]::attr(content)&#39;</span></span></code></pre></div><p>A few helper functions:<div class=sourceCode id=cb3><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb3-1><a href=#cb3-1 aria-hidden=true tabindex=-1></a><span class=fu>formatdate()</span> <span class=kw>{</span></span>
 <span id=cb3-2><a href=#cb3-2 aria-hidden=true tabindex=-1></a>    <span class=co># format the date for RSS</span></span>
-<span id=cb3-3><a href=#cb3-3 aria-hidden=true tabindex=-1></a>    <span class=bu>local</span> <span class=va>d=$1</span></span>
+<span id=cb3-3><a href=#cb3-3 aria-hidden=true tabindex=-1></a>    <span class=bu>local</span> <span class=va>d</span><span class=op>=</span><span class=va>$1</span></span>
 <span id=cb3-4><a href=#cb3-4 aria-hidden=true tabindex=-1></a>    <span class=va>LC_TIME</span><span class=op>=</span>en_US <span class=fu>date</span> <span class=at>--date</span> <span class=va>$d</span> +<span class=st>&#39;%a, %d %b %Y %H:%M:%S %z&#39;</span></span>
 <span id=cb3-5><a href=#cb3-5 aria-hidden=true tabindex=-1></a><span class=kw>}</span></span>
 <span id=cb3-6><a href=#cb3-6 aria-hidden=true tabindex=-1></a></span>
@@ -38,7 +38,7 @@
 <span id=cb3-16><a href=#cb3-16 aria-hidden=true tabindex=-1></a>        <span class=bu>printf</span> <span class=st>&quot;</span><span class=dt>\\</span><span class=st>n&lt;category&gt;%s&lt;/category&gt;&quot;</span> <span class=va>$keyword</span></span>
 <span id=cb3-17><a href=#cb3-17 aria-hidden=true tabindex=-1></a>    <span class=cf>done</span></span>
 <span id=cb3-18><a href=#cb3-18 aria-hidden=true tabindex=-1></a><span class=kw>}</span></span></code></pre></div><p>The <code class=verbatim>mkcategories</code> will be used to add an RSS category for each keyword. And finally the real loop doing the work:<div class=sourceCode id=cb4><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb4-1><a href=#cb4-1 aria-hidden=true tabindex=-1></a><span class=va>tmpdir</span><span class=op>=</span><span class=va>$(</span><span class=fu>mktemp</span> <span class=at>-d</span><span class=va>)</span> <span class=co># create a temporary work dir</span></span>
-<span id=cb4-2><a href=#cb4-2 aria-hidden=true tabindex=-1></a><span class=bu>typeset</span> <span class=at>-a</span> <span class=va>dates</span>    # <span class=va>an</span> <span class=va>array</span> <span class=va>to</span> <span class=va>save</span> <span class=va>dates</span> <span class=va>of</span> <span class=va>all</span> <span class=va>articles</span></span>
+<span id=cb4-2><a href=#cb4-2 aria-hidden=true tabindex=-1></a><span class=bu>typeset</span> <span class=at>-a</span> <span class=va>dates</span>    <span class=co># an array to save dates of all articles</span></span>
 <span id=cb4-3><a href=#cb4-3 aria-hidden=true tabindex=-1></a><span class=va>dates</span><span class=op>=</span><span class=va>(</span> <span class=va>)</span></span>
 <span id=cb4-4><a href=#cb4-4 aria-hidden=true tabindex=-1></a></span>
 <span id=cb4-5><a href=#cb4-5 aria-hidden=true tabindex=-1></a><span class=co># for each HTML file we generate the XML for the item in a file</span></span>
@@ -124,7 +124,7 @@
 <span id=cb4-85><a href=#cb4-85 aria-hidden=true tabindex=-1></a><span class=st>&lt;/channel&gt;</span></span>
 <span id=cb4-86><a href=#cb4-86 aria-hidden=true tabindex=-1></a><span class=st>&lt;/rss&gt;</span></span>
 <span id=cb4-87><a href=#cb4-87 aria-hidden=true tabindex=-1></a><span class=op>END</span></span>
-<span id=cb4-88><a href=#cb4-88 aria-hidden=true tabindex=-1></a><span class=er>}</span> <span class=op>&gt;</span> <span class=st>&quot;</span><span class=va>$rssfile</span><span class=st>&quot;</span></span>
+<span id=cb4-88><a href=#cb4-88 aria-hidden=true tabindex=-1></a><span class=kw>}</span> <span class=op>&gt;</span> <span class=st>&quot;</span><span class=va>$rssfile</span><span class=st>&quot;</span></span>
 <span id=cb4-89><a href=#cb4-89 aria-hidden=true tabindex=-1></a></span>
 <span id=cb4-90><a href=#cb4-90 aria-hidden=true tabindex=-1></a><span class=co># cleanup temporary directory</span></span>
 <span id=cb4-91><a href=#cb4-91 aria-hidden=true tabindex=-1></a><span class=fu>rm</span> <span class=at>-rf</span> <span class=va>$tmpdir</span></span>
