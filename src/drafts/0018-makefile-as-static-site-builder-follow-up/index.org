@@ -10,27 +10,26 @@
 
 After many different tools, I recently switched to a simple Makefile to
 generate my static website.
-In [[https://her.esy.fun/posts/0017-static-blog-builder/index.html][Static Blog Builder]] I give a starter pack.
-Along the way I had to learn about Makefiles.
-So here are a few pointers and helpers.
+In previous article [[https://her.esy.fun/posts/0017-static-blog-builder/index.html][Static Blog Builder]] I give a starter pack.
+In this post I provide more detail about my specific Makefile.
 
-So an important one.
+A Makefile is constitued of rules.
 The first rule of your Makefile will be the default rule.
-I called mine =all= which will depends on another rule call =site=.
-Why?
-Because, the rule format is generally something like:
+The first rule of my Makefile is called =all=.
+
+A rule as the following format:
 
 #+begin_src makefile
-file_to_generate: file_to_use another_file_to_use
-	build --input file_to_use another_file_to_user \
-		--output file_to_generate
+target: file1 file2
+	cmd --input file1 file2 \
+		--output target
 #+end_src
 
-if =file_to_generate= does not exists, then =make= will look at its
+if =target= does not exists, then =make= will look at its
 dependencies.
 If any of its dependency need to be updated, it will run all the rules in
 the correct order to rebuild them, and finally run the script to build
-=file_to_generate=.
+=target=.
 A file need to be updated if one of its dependency need to be updated or is
 newer.
 

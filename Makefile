@@ -1,8 +1,5 @@
 # Generate my website out of org-mode/gemini files
-#
-# maybe check https://themattchan.com/blog/2017-02-28-make-site-generator.html
-# From https://github.com/fcanas/bake/blob/master/Makefile
-# Finally https://www.arsouyes.org/blog/2017/10_Static_website/
+
 
 all: site
 SRC_DIR ?= src
@@ -17,20 +14,21 @@ NO_SRC_FILE := ! -name '*.org'
 # ASSETS
 SRC_RAW_FILES := $(shell find $(SRC_DIR) -type f $(NO_DRAFT) $(NO_SRC_FILE))
 DST_RAW_FILES   := $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%,$(SRC_RAW_FILES))
-ALL += $(DST_RAW_FILES)
-$(DST_DIR)/% : $(SRC_DIR)/%
+$(DST_DIR)/%: $(SRC_DIR)/%
 	@mkdir -p "$(dir $@)"
 	cp "$<" "$@"
+.PHONY: assets
 assets: $(DST_RAW_FILES)
+ALL += assets
 
 # CSS
 SRC_CSS_FILES := $(shell find $(SRC_DIR) -type f -name '*.css')
 DST_CSS_FILES   := $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%,$(SRC_RAW_FILES))
-ALL += $(DST_CSS_FILES)
-$(DST_DIR)/%.css : $(SRC_DIR)/%.css
+$(DST_DIR)/%.css: $(SRC_DIR)/%.css
 	@mkdir -p "$(dir $@)"
 	minify "$<" > "$@"
 css: $(DST_CSS_FILES)
+ALL += css
 
 # ORG -> HTML
 EXT ?= .org
@@ -46,8 +44,9 @@ $(DST_DIR)/%.html: $(SRC_DIR)/%.org $(PANDOC_TEMPLATE) $(MK_HTML)
 	$(PANDOC) "$<" "$@.tmp"
 	minify --mime text/html "$@.tmp" > "$@"
 	@rm "$@.tmp"
-ALL += $(DST_PANDOC_FILES)
+.PHONY: html
 html: $(DST_PANDOC_FILES)
+ALL += html
 
 # INDEXES
 SRC_POSTS_DIR ?= $(SRC_DIR)/posts
@@ -57,11 +56,12 @@ RSS_CACHE_DIR ?= $(CACHE_DIR)/rss
 DST_XML_FILES ?= $(patsubst %.org,%.xml, \
                         $(patsubst $(SRC_POSTS_DIR)/%,$(RSS_CACHE_DIR)/%, \
                             $(SRC_POSTS_FILES)))
-ALL += $(DST_XML_FILES)
 $(RSS_CACHE_DIR)/%.xml: $(DST_POSTS_DIR)/%.html
 	@mkdir -p "$(dir $@)"
 	hxclean "$<" > "$@"
+.PHONY: indexcache
 indexcache: $(DST_XML_FILES)
+ALL += indexcache
 
 # HTML INDEX
 HTML_INDEX := $(DST_DIR)/index.html
@@ -69,13 +69,12 @@ MKINDEX := engine/mk-index.sh
 $(HTML_INDEX): $(DST_XML_FILES) $(MKINDEX) $(TEMPLATE)
 	@mkdir -p $(DST_DIR)
 	$(MKINDEX)
-ALL += $(HTML_INDEX)
+.PHONY: index
 index: $(HTML_INDEX)
+ALL += index
 
 # RSS
 DST_RSS_FILES ?= $(patsubst %.xml,%.rss, $(DST_XML_FILES))
-ALL += $(DST_RSS_FILES)
-
 MK_RSS_ENTRY := ./engine/mk-rss-entry.sh
 $(RSS_CACHE_DIR)/%.rss: $(RSS_CACHE_DIR)/%.xml $(MK_RSS_ENTRY)
 	@mkdir -p $(RSS_CACHE_DIR)
@@ -86,7 +85,9 @@ MKRSS := engine/mkrss.sh
 $(RSS): $(DST_RSS_FILES) $(MKRSS)
 	$(MKRSS)
 ALL += $(RSS)
+.PHONY: rss
 rss: $(DST_RSS_FILES) $(RSS)
+ALL += rss
 
 
 # ORG -> GEMINI
@@ -100,6 +101,7 @@ $(DST_DIR)/%.gmi: $(SRC_DIR)/%.org $(GMI) engine/org2gemini_step1.sh
 	@mkdir -p $(dir $@)
 	$(GMI) "$<" "$@"
 ALL += $(DST_GMI_FILES)
+.PHONY: gmi
 gmi: $(DST_GMI_FILES)
 
 # GEMINI INDEX
@@ -109,6 +111,7 @@ $(GMI_INDEX): $(DST_GMI_FILES) $(MK_GMI_INDEX)
 	@mkdir -p $(DST_DIR)
 	$(MK_GMI_INDEX)
 ALL += $(GMI_INDEX)
+.PHONY: gmi-index
 gmi-index: $(GMI_INDEX)
 
 # RSS
@@ -117,8 +120,10 @@ MK_GEMINI_ATOM := engine/mk-gemini-atom.sh
 $(GEM_ATOM): $(DST_GMI_FILES) $(MK_GEMINI_ATOM)
 	$(MK_GEMINI_ATOM)
 ALL += $(GEM_ATOM)
+.PHONY: gmi-atom
 gmi-atom: $(GMI_ATOM)
 
+.PHONY: gemini
 gemini: $(DST_GMI_FILES) $(GMI_INDEX) $(GEM_ATOM)
 
 # Images
@@ -141,18 +146,20 @@ $(DST_DIR)/%.png: $(SRC_DIR)/%.png
 	@mkdir -p $(dir $@)
 	convert "$<" -quality 50 -resize 800x800\> "$@"
 
-ALL += $(DST_IMG_FILES)
+.PHONY: img
 img: $(DST_IMG_FILES)
+ALL += $(DST_IMG_FILES)
 
 # DEPLOY
+.PHONY: site
 site: $(ALL)
 
+.PHONY: deploy
 deploy: $(ALL)
 	engine/sync.sh # deploy to her.esy.fun
 	engine/ye-com-fastpublish.hs # deploy to yannesposito.com (via github pages)
 
 .PHONY: clean
-
 clean:
 	-[ ! -z "$(DST_DIR)" ] && rm -rf $(DST_DIR)/*
 	-[ ! -z "$(CACHE_DIR)" ] && rm -rf $(CACHE_DIR)/*

@@ -62,5 +62,9 @@ mkdir -p $(dirname $dst)
   printf "%s" "$categories"
   printf "\\n<description><![CDATA[\\n%s\\n]]></description>" "$(getcontent "$xfic" "$absoluteurl")"
   printf "\\n</item>\\n\\n"
-} >  "$dst"
+} >  "${dst}.tmp"
+# overwrite only if the value in the index are different
+if ! cmp -s ${dst} ${dst}.tmp; then
+  mv -f ${dst}.tmp ${dst}
+fi
 echo " [${fg[green]}OK${reset_color}]"
