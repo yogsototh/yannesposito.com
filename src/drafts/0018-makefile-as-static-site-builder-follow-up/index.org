@@ -1,5 +1,5 @@
-#+TITLE: Makefile as static site builder
-#+DESCRIPTION: A few Makefile features tutorial
+#+TITLE: Efficient Static Site builder
+#+DESCRIPTION: A deeper view of my static site builder via Makefile
 #+KEYWORDS: blog static
 #+AUTHOR: Yann Esposito
 #+EMAIL: yann@esposito.host
@@ -11,7 +11,25 @@
 After many different tools, I recently switched to a simple Makefile to
 generate my static website.
 In previous article [[https://her.esy.fun/posts/0017-static-blog-builder/index.html][Static Blog Builder]] I give a starter pack.
-In this post I provide more detail about my specific Makefile.
+In this post I provide more detail about my specific Makefile and the
+feature I would like to have.
+
+Features:
+
+1. Source file format agnostic. You can use markdown, org-mode or even
+   directly writing html.
+2. Support gemini
+3. Minify HTML
+4. Minify CSS
+3. Compress images for the web
+5. Generate indexes (for both gemini and html)
+6. Generate RSS/atom feed (for both gemini and http)
+
+
+* The =Makefile=
+:PROPERTIES:
+:CUSTOM_ID: the--makefile-
+:END:
 
 A Makefile is constitued of rules.
 The first rule of your Makefile will be the default rule.
@@ -44,10 +62,12 @@ all: site
 
 # build a list of files that will need to be build
 DST_FILES := ....
+# RULES TO GENERATE DST_FILES
 ALL += $(DST_FILES)
 
 # another list of files
 DST_FILES_2 := ....
+# RULES TO GENERATE DST_FILES_2
 ALL += $(DST_FILES_2)
 
 site: $(ALL)
@@ -70,7 +90,19 @@ So I have a block for:
 - =rss.xml= file containing a list of my posts
 - =gemini-atom.xml= file containing a list of my posts
 
-So to go further, let's take a look at a simplified raw assets copy block:
+** Block Pattern Example
+:PROPERTIES:
+:CUSTOM_ID: block-pattern-example
+:END:
+
+I have a bunch of similar block in my Makefile.
+A good example is the block taking care of assets.
+Mainly the rule is:
+
+1. find all assets in =src/= directory
+2. generate all assets from these file in =_site/= directory
+3. make this rule a dependency on the =all= rule.
+
 
 #+begin_src makefile
 SRC_ASSETS := $(shell find src -type f)
@@ -78,18 +110,22 @@ DST_ASSETS := $(patsubst src/%,_site/%,$(SRC_ASSETS))
 _site/% : src/%
 	@mkdir -p "$(dir $@)"
 	cp "$<" "$@"
-ALL += $(DST_ASSETS)
+.PHONY: assets
+assets: $(DST_ASSETS)
+ALL += assets
 #+end_src
 
 OK, this looks terrible.
 But mainly:
 
-1. ~SRC_ASSETS~ will contains the result of the command ~find~.
-2. We replace all =src/= prefix of all those files by the =_site/= prefix.
-3. We create a rule, if you are asked to build =_site/<something>= look at
-   =src/<something>= and
-   - create the directory to put =_site/<something>= in
-   - copy the file
+- ~SRC_ASSETS~ will contains the result of the command ~find~.
+- ~DST_ASSETS~ will contains the files of ~SRC_ASSETS~  but we replace the
+  =src/= by =_site/=.
+- We create a generic rule; for all files matching the following pattern
+  =_site/%=, look for the file =src/%= and if it is newer (in our case)
+  then execute the following commmands:
+  - create the directory to put =_site/%= in
+  - copy the file
 
 About the line ~@mkdir -p "$(dir $@)"~:
 - the =@= at the start of the command simply means that we make this execution silent.
@@ -99,24 +135,41 @@ About the line ~@mkdir -p "$(dir $@)"~:
 For the line with ~cp~ you just need to know that =$<= will represent the
 first dependency.
 
-Once you have this pattern in mind.
-Adding new block become a bit natural.
-You will also like to use some variables for repetitive names.
+So my Makefile is composed of similar blocks, where I replace the first
+find command to match specific files and where I use different building rule.
+An important point, is that the rule must be the most specific possible
+because make will use the most specific rule in case of ambiguity.
+So for example, the matching rule `_site/%: src/%` will match all files in
+the `src/` dir.
+But if we want to treat css file with another rule we could write:
+
+#+begin_src makefile
+_site/%.css: src/%.css
+	minify "$<" "$@"
+#+end_src
+
+And if the selected file is a css file, this rule will be selected.
 
 ** Prelude
 :PROPERTIES:
 :CUSTOM_ID: prelude
 :END:
 
+So to start I have a few predefined useful variables.
+
 #+begin_src makefile
 all: site
+# directory containing the source files
 SRC_DIR ?= src
+# directory that will contain the site files
 DST_DIR ?= _site
+# a directory that will contain a cache to speedup indexing
 CACHE_DIR ?= .cache
 
-# we don't want to publish files in drafts
+# options to pass to find to prevent matching files in the src/drafts
+# directory
 NO_DRAFT := -not -path '$(SRC_DIR)/drafts/*'
-# we don't copy source files
+# option to pass to find to not match  org files
 NO_SRC_FILE := ! -name '*.org'
 #+end_src
 
@@ -125,21 +178,23 @@ NO_SRC_FILE := ! -name '*.org'
 :CUSTOM_ID: css
 :END:
 
+So here we go, the same simple pattern for CSS files.
+
 #+begin_src makefile
 # CSS
 SRC_CSS_FILES := $(shell find $(SRC_DIR) -type f -name '*.css')
 DST_CSS_FILES := $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%,$(SRC_RAW_FILES))
-ALL += $(DST_CSS_FILES)
 $(DST_DIR)/%.css : $(SRC_DIR)/%.css
 	@mkdir -p "$(dir $@)"
 	minify "$<" > "$@"
+.PHONY: css
 css: $(DST_CSS_FILES)
+ALL += css
 #+end_src
 
 This is very similar to the block for raw assets.
 The difference is just that instead of using =cp= we use the =minify=
 command.
-And also I use global constants (=SRC_DIR= and =DST_DIR=).
 
 ** ORG -> HTML
 :PROPERTIES:
@@ -157,14 +212,15 @@ DST_PANDOC_FILES ?= $(patsubst %$(EXT),%.html, \
                             $(SRC_PANDOC_FILES)))
 PANDOC_TEMPLATE ?= templates/post.html
 MK_HTML := engine/mk-html.sh
-PANDOC := $(MK_HTML) $(PANDOC_CSS) $(PANDOC_TEMPLATE)
+PANDOC := $(MK_HTML) $(PANDOC_TEMPLATE)
 $(DST_DIR)/%.html: $(SRC_DIR)/%.org $(PANDOC_TEMPLATE) $(MK_HTML)
 	@mkdir -p "$(dir $@)"
 	$(PANDOC) "$<" "$@.tmp"
 	minify --mime text/html "$@.tmp" > "$@"
 	@rm "$@.tmp"
-ALL += $(DST_PANDOC_FILES)
+.PHONY: html
 html: $(DST_PANDOC_FILES)
+ALL += html
 #+end_src
 
 So to construct =DST_PANDOC_FILES= this time we also need to change the
@@ -213,3 +269,173 @@ Once generated I also minify the html file.
 And, that's it.
 But the important part is that now, if I change my script or the template
 or the file, it will generate the dependencies.
+** Indexes
+:PROPERTIES:
+:CUSTOM_ID: indexes
+:END:
+
+One of the goal I have is to be as agnostic as possible regarding format.
+I know that the main destination format will be html.
+So as much as possible, I would like to use this format.
+So for every generated html file I will generate a clean XML file (via
+hxclean) so I will be able to get specific node of my HTML files.
+These XML files will constitute my "index".
+Of course this is not the most optimized index (I could have used sqlite
+for example) but it will already be quite helpful as the same index files
+will be used to build the homepage with the list of articles, and the RSS
+file.
+
+#+begin_src makefile
+# INDEXES
+SRC_POSTS_DIR ?= $(SRC_DIR)/posts
+DST_POSTS_DIR ?= $(DST_DIR)/posts
+SRC_POSTS_FILES ?= $(shell find $(SRC_POSTS_DIR) -type f -name "*$(EXT)")
+RSS_CACHE_DIR ?= $(CACHE_DIR)/rss
+DST_XML_FILES ?= $(patsubst %.org,%.xml, \
+                        $(patsubst $(SRC_POSTS_DIR)/%,$(RSS_CACHE_DIR)/%, \
+                            $(SRC_POSTS_FILES)))
+$(RSS_CACHE_DIR)/%.xml: $(DST_POSTS_DIR)/%.html
+	@mkdir -p "$(dir $@)"
+	hxclean "$<" > "$@"
+.PHONY: indexcache
+indexcache: $(DST_XML_FILES)
+ALL += indexcache
+#+end_src
+
+So to resume this rule will generate for every file in =site/posts/*.html=
+a corresponding =xml= file (=hxclean= takes an HTML an try its best to make
+an XML out of it).
+** HTML Index
+:PROPERTIES:
+:CUSTOM_ID: html-index
+:END:
+
+So now we just want to generate the main =index.html= page at the root of
+the site.
+This page should list all articles by date in reverse order.
+To achieve this I wrote a short shell script but here is the corresponding
+rule in the Makefile:
+
+#+begin_src makefile
+# HTML INDEX
+HTML_INDEX := $(DST_DIR)/index.html
+MKINDEX := engine/mk-index.sh
+$(HTML_INDEX): $(DST_XML_FILES) $(MKINDEX) $(TEMPLATE)
+	@mkdir -p $(DST_DIR)
+	$(MKINDEX)
+.PHONY: index
+index: $(HTML_INDEX)
+ALL += index
+#+end_src
+
+My =mk-index.sh= script takes advantage of the index files we constructed
+before with =hxclean=.
+Mainly I use =hxselect= to find the information I want to find, the
+title, the date and the keywords.
+
+#+begin_src bash
+#!/usr/bin/env zsh
+
+cd "$(git rev-parse --show-toplevel)" || exit 1
+# Directory
+webdir="_site"
+postsdir="$webdir/posts"
+indexfile="$webdir/index.html"
+indexdir=".cache/rss"
+
+# maximal number of articles to put in the index homepage
+maxarticles=1000
+
+# HTML Accessors (similar to CSS accessors)
+dateaccessor='.yyydate'
+# title and keyword shouldn't be changed
+titleaccessor='title'
+keywordsaccessor='meta[name=keywords]::attr(content)'
+
+formatdate() {
+    # format the date for RSS
+    local d="$1"
+    # echo "DEBUG DATE: $d" >&2
+    LC_TIME=en_US date --date $d +'%a, %d %b %Y %H:%M:%S %z'
+}
+finddate(){ < $1 hxselect -c $dateaccessor | sed 's/\[//g;s/\]//g;s/ .*$//' }
+findtitle(){ < $1 hxselect -c $titleaccessor }
+findkeywords(){ < $1 hxselect -c $keywordsaccessor | sed 's/,/ /g' }
+mktaglist(){
+    for keyword in $*; do
+        printf "\\n<span class=\"tag\">%s</span>" $keyword
+    done
+}
+
+autoload -U colors && colors
+tmpdir=$(mktemp -d)
+typeset -a dates
+dates=( )
+for xfic in $indexdir/**/*.xml; do
+    postfile="$(echo "$xfic"|sed 's#^'$postsdir'/##')"
+    blogfile="$(echo "$xfic"|sed 's#.xml$#.html#;s#^'$indexdir'/#posts/#')"
+    printf "%-30s" $postfile
+    d=$(finddate $xfic)
+    echo -n " [$d]"
+    rssdate=$(formatdate $d)
+    title=$(findtitle $xfic)
+    keywords=( $(findkeywords $xfic) )
+    printf ": %-55s" "$title ($keywords)"
+    taglist=$(mktaglist $keywords)
+    { printf "\\n<li>"
+      printf "\\n<a href=\"%s\">%s</a>" "${blogfile}" "$title"
+      printf "\\n<span class=\"pubDate\">%s</span>%s" "$d"
+      printf "<span class=\"tags\">%s</span>" "$taglist"
+      printf "\\n</li>\\n\\n"
+    } >>  "$tmpdir/${d}-$(basename $xfic).index"
+    dates=( $d $dates )
+    echo " [${fg[green]}OK${reset_color}]"
+done
+
+echo "Publishing"
+
+# building the body
+
+cat templates/index-preamble.html  >> $tmpdir/index
+
+previousyear=""
+for fic in $(ls $tmpdir/*.index | sort -r | head -n $maxarticles ); do
+    echo "${fic:t}"
+    year=$( echo "${fic:t}" | perl -pe 's#(\d{4})-.*#$1#')
+    if (( year != previousyear )); then
+        echo $year
+        if (( previousyear > 0 )); then
+            echo "</ul>" >> $tmpdir/index
+        fi
+        previousyear=$year
+        echo "<h3 name=\"${year}\" >${year}</h3><ul>" >> $tmpdir/index
+    fi
+    cat $fic >> $tmpdir/index
+done
+cat templates/index-postamble.html  >> $tmpdir/index
+
+title="Yann Esposito's Posts"
+description="The index of my most recent articles."
+author="Yann Esposito"
+body=$(< $tmpdir/index)
+date=$(LC_TIME=en_US date +'%Y-%m-%d')
+
+# A neat trick to use pandoc template within a shell script
+# the pandoc templates use $x$ format, we replace it by just $x
+# to be used with envsubst
+template=$(< templates/post.html | \
+    sed 's/\$\(header-includes\|table-of-content\)\$//' | \
+    sed 's/\$if.*\$//' | \
+    perl -pe 's#(\$[^\$]*)\$#$1#g' )
+{
+    export title
+    export author
+    export description
+    export date
+    export body
+    echo ${template} | envsubst
+} > "$indexfile"
+
+rm -rf $tmpdir
+echo "* HTML INDEX [done]"
+#+end_src
