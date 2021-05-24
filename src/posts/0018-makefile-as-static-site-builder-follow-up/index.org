@@ -1,5 +1,5 @@
-#+TITLE: Efficient Static Site builder
-#+DESCRIPTION: A deeper view of my static site builder via Makefile
+#+TITLE: Efficient Static Site Build with make
+#+DESCRIPTION: A deeper view of my static site builder Makefile
 #+KEYWORDS: blog static
 #+AUTHOR: Yann Esposito
 #+EMAIL: yann@esposito.host
@@ -8,27 +8,31 @@
 #+OPTIONS: auto-id:t
 #+STARTUP: showeverything
 
-After many different tools, I recently switched to a simple Makefile to
-generate my static website.
-In previous article [[https://her.esy.fun/posts/0017-static-blog-builder/index.html][Static Blog Builder]] I give a starter pack.
-In this post I provide more detail about my specific Makefile and the
-feature I would like to have.
+This article will dig a bit deeper about how I generate my static website.
+In a [[https://her.esy.fun/posts/0017-static-blog-builder/index.html][previous article]] I just gave the rationale and an overview to do it
+yourself.
 
-Features:
+A few goal reached by my current build system are:
 
 1. Source file format agnostic. You can use markdown, org-mode or even
    directly writing html.
 2. Support gemini
-3. Minify HTML
-4. Minify CSS
-3. Compress images for the web
-5. Generate indexes (for both gemini and html)
-6. Generate RSS/atom feed (for both gemini and http)
+3. Optimize size: minify HTML, CSS, images
+4. Generate an index page listing the posts
+5. Generate RSS/atom feed (for both gemini and http)
 
+So make will just take care of handling the dependency graph to minimize
+the amount of effort when a change occurs in the sources.
+But for some features, I built specifics tools.
+For example to be absolutely agnostic in the source format for my articles
+I generate the RSS out of a tree of HTML files.
+But taking advantage of Make, I generate an index cache to transform those
+HTML into XML which will be faster to use to build different indexes.
+To make those transformations I use very short a shell scripts.
 
-* The =Makefile=
+* =Makefile= overview
 :PROPERTIES:
-:CUSTOM_ID: the--makefile-
+:CUSTOM_ID: -makefile--overview
 :END:
 
 A Makefile is constitued of rules.
@@ -80,24 +84,22 @@ In my =Makefile= I have many similar block with the same pattern.
 3. I declare a rule to construct these destination files
 4. I add the destination files to the =ALL= variable.
 
-So I have a block for:
+I have a block for:
 - raw assets I just want copied
 - images I would like to compress for the web
-- =html= I would like to generate from org mode files
+- =html= I would like to generate from org mode files via pandoc
 - =gmi= I would like to generate from org mode files
 - =xml= files I use as cache to build different index files
 - =index.html= file containing a list of my posts
 - =rss.xml= file containing a list of my posts
 - =gemini-atom.xml= file containing a list of my posts
 
-** Block Pattern Example
+** Assets
 :PROPERTIES:
-:CUSTOM_ID: block-pattern-example
+:CUSTOM_ID: assets
 :END:
 
-I have a bunch of similar block in my Makefile.
-A good example is the block taking care of assets.
-Mainly the rule is:
+The rules to copy assets will be a good first example.
 
 1. find all assets in =src/= directory
 2. generate all assets from these file in =_site/= directory
@@ -139,8 +141,8 @@ So my Makefile is composed of similar blocks, where I replace the first
 find command to match specific files and where I use different building rule.
 An important point, is that the rule must be the most specific possible
 because make will use the most specific rule in case of ambiguity.
-So for example, the matching rule `_site/%: src/%` will match all files in
-the `src/` dir.
+So for example, the matching rule =_site/%: src/%= will match all files in
+the =src/= dir.
 But if we want to treat css file with another rule we could write:
 
 #+begin_src makefile
@@ -196,7 +198,7 @@ This is very similar to the block for raw assets.
 The difference is just that instead of using =cp= we use the =minify=
 command.
 
-** ORG -> HTML
+** ORG → HTML
 :PROPERTIES:
 :CUSTOM_ID: org----html
 :END:
@@ -233,8 +235,9 @@ But importantly *not* at the first place. Because we use =$<= that will be
 the first dependency.
 
 I also have a short script instead of directly using =pandoc=.
-Because I would like to handle the =toc= depending on the metadatas in the
-file.
+It is easier to handle =toc= using the metadatas in the file.
+And if someday I want to put the template in the metas, this will be the
+right place to put that.
 
 The =mk-html.sh= is quite straightforward:
 
