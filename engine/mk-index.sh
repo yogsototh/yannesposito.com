@@ -47,8 +47,8 @@ for xfic in $indexdir/**/*.xml; do
     printf ": %-55s" "$title ($keywords)"
     taglist=$(mktaglist $keywords)
     { printf "\\n<li>"
-      printf "\\n<a href=\"%s\">%s</a>" "${blogfile}" "$title"
       printf "\\n<span class=\"pubDate\">%s</span>%s" "$d"
+      printf "\\n<a href=\"%s\">%s</a>" "${blogfile}" "$title"
       printf "<span class=\"tags\">%s</span>" "$taglist"
       printf "\\n</li>\\n\\n"
     } >>  "$tmpdir/${d}-$(basename $xfic).index"
