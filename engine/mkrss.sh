@@ -32,7 +32,7 @@ formatdate() {
 isodate() {
     # format the date for sorting
     local d="$1"
-    echo "DEBUG DATE: $d" >&2
+    # echo "DEBUG DATE: $d" >&2
     LC_TIME=en_US date --date "$d" +'%Y-%m-%dT%H:%M:%S'
 }
 
@@ -45,7 +45,7 @@ dates=( )
 tmpdir=$(mktemp -d)
 for fic in $indexdir/**/*.rss; do
     rssdate=$(finddate $fic)
-    echo -n "${fic:r} [$d]"
+    echo -n "${${fic:h}:t} [$rssdate]"
     d=$(isodate $rssdate)
     dates=( $d $dates )
     echo " [${fg[green]}OK${reset_color}]"

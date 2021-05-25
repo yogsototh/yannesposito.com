@@ -33,36 +33,27 @@ mktaglist(){
 
 autoload -U colors && colors
 tmpdir=$(mktemp -d)
-typeset -a dates
-dates=( )
-for xfic in $indexdir/**/*.xml; do
-    postfile="$(echo "$xfic"|sed 's#^'$postsdir'/##')"
-    blogfile="$(echo "$xfic"|sed 's#.xml$#.html#;s#^'$indexdir'/#posts/#')"
-    printf "%-30s" $postfile
-    d=$(finddate $xfic)
-    echo -n " [$d]"
-    rssdate=$(formatdate $d)
-    title=$(findtitle $xfic)
-    keywords=( $(findkeywords $xfic) )
-    printf ": %-55s" "$title ($keywords)"
-    taglist=$(mktaglist $keywords)
-    { printf "\\n<li>"
-      printf "\\n<span class=\"pubDate\">%s</span>" "$d"
-      printf "\\n<a href=\"%s\">%s</a>" "${blogfile}" "$title"
-      printf "\\n</li>\\n\\n"
-    } >>  "$tmpdir/${d}-$(basename $xfic).index"
-    dates=( $d $dates )
-    echo " [${fg[green]}OK${reset_color}]"
-done
 
 echo "Publishing"
 
 # building the body
 
+
+dateaccessor='.pubDate'
+finddate(){ < $1 hxselect -c $dateaccessor }
+
 previousyear=""
-for fic in $(ls $tmpdir/*.index | sort -r | head -n $maxarticles ); do
+for fic in $indexdir/**/*.index; do
+    d=$(finddate $fic)
+    echo "${${fic:h}:t} [$d]"
+    cp $fic $tmpdir/$d-${${fic:h}:t}.index
+done
+
+previousyear=""
+for fic in $(ls $tmpdir/*.index | sort -r); do
+    d=$(finddate $fic)
     echo "${fic:t}"
-    year=$( echo "${fic:t}" | perl -pe 's#(\d{4})-.*#$1#')
+    year=$( echo "$d" | perl -pe 's#(\d{4})-.*#$1#')
     if (( year != previousyear )); then
         echo $year
         if (( previousyear > 0 )); then

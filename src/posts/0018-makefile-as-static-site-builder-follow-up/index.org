@@ -308,6 +308,7 @@ ALL += indexcache
 So to resume this rule will generate for every file in =site/posts/*.html=
 a corresponding =xml= file (=hxclean= takes an HTML an try its best to make
 an XML out of it).
+
 ** HTML Index
 :PROPERTIES:
 :CUSTOM_ID: html-index
@@ -335,6 +336,11 @@ My =mk-index.sh= script takes advantage of the index files we constructed
 before with =hxclean=.
 Mainly I use =hxselect= to find the information I want to find, the
 title, the date and the keywords.
+So my script is composed of three parts:
+
+1. declare the accessors (think CSS-like accessor)
+2. for all files in the cache retrieve the metas, and sort them by date
+3. compose the content
 
 #+begin_src bash
 #!/usr/bin/env zsh

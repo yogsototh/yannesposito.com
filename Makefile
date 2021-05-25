@@ -64,10 +64,17 @@ indexcache: $(DST_XML_FILES)
 ALL += indexcache
 
 # HTML INDEX
+DST_INDEX_FILES ?= $(patsubst %.xml,%.index, $(DST_XML_FILES))
+MK_INDEX_ENTRY := ./engine/mk-index-entry.sh
+INDEX_CACHE_DIR ?= $(CACHE_DIR)/rss
+$(INDEX_CACHE_DIR)/%.index: $(INDEX_CACHE_DIR)/%.xml $(MK_INDEX_ENTRY)
+	@mkdir -p $(INDEX_CACHE_DIR)
+	$(MK_INDEX_ENTRY) "$<" "$@"
+
 HTML_INDEX := $(DST_DIR)/index.html
 MKINDEX := engine/mk-index.sh
 INDEX_TEMPLATE ?= templates/index.html
-$(HTML_INDEX): $(DST_XML_FILES) $(MKINDEX) $(INDEX_TEMPLATE)
+$(HTML_INDEX): $(DST_INDEX_FILES) $(MKINDEX) $(INDEX_TEMPLATE)
 	@mkdir -p $(DST_DIR)
 	$(MKINDEX)
 .PHONY: index
@@ -85,10 +92,9 @@ RSS := $(DST_DIR)/rss.xml
 MKRSS := engine/mkrss.sh
 $(RSS): $(DST_RSS_FILES) $(MKRSS)
 	$(MKRSS)
-ALL += $(RSS)
 
 .PHONY: rss
-rss: $(DST_RSS_FILES) $(RSS)
+rss: $(RSS)
 ALL += rss
 
 
