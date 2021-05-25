@@ -4,7 +4,7 @@ direnv reload
 ./engine/build.sh
 echo "Watching $PWD/{src,templates}"
 # fswatch --exclude='\\.#' src | while read event; do
-fswatch --exclude='^.*\.#.*$' src templates | while read event; do
+fswatch --exclude='^.*\.#.*$' src engine templates | while read event; do
     echo "$event"
     ./engine/build.sh
 done

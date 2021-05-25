@@ -27,8 +27,8 @@ findtitle(){ < $1 hxselect -c $titleaccessor }
 findkeywords(){ < $1 hxselect -c $keywordsaccessor | sed 's/,/ /g' }
 mktaglist(){
     for keyword in $*; do
-        printf "\\n<span class=\"tag\">%s</span>" $keyword
-    done
+        printf "<span class=\"tag\">%s</span>" $keyword
+    done | sed 's#><#>, <#g'
 }
 
 autoload -U colors && colors
@@ -47,9 +47,8 @@ for xfic in $indexdir/**/*.xml; do
     printf ": %-55s" "$title ($keywords)"
     taglist=$(mktaglist $keywords)
     { printf "\\n<li>"
-      printf "\\n<span class=\"pubDate\">%s</span>%s" "$d"
+      printf "\\n<span class=\"pubDate\">%s</span>" "$d"
       printf "\\n<a href=\"%s\">%s</a>" "${blogfile}" "$title"
-      printf "<span class=\"tags\">%s</span>" "$taglist"
       printf "\\n</li>\\n\\n"
     } >>  "$tmpdir/${d}-$(basename $xfic).index"
     dates=( $d $dates )
@@ -59,8 +58,6 @@ done
 echo "Publishing"
 
 # building the body
-
-cat templates/index-preamble.html  >> $tmpdir/index
 
 previousyear=""
 for fic in $(ls $tmpdir/*.index | sort -r | head -n $maxarticles ); do
@@ -76,10 +73,10 @@ for fic in $(ls $tmpdir/*.index | sort -r | head -n $maxarticles ); do
     fi
     cat $fic >> $tmpdir/index
 done
-cat templates/index-postamble.html  >> $tmpdir/index
+echo "</ul>" >> $tmpdir/index
 
-title="Yann Esposito's Posts"
-description="The index of my most recent articles."
+title="Y"
+description="Most recent articles"
 author="Yann Esposito"
 body=$(< $tmpdir/index)
 date=$(LC_TIME=en_US date +'%Y-%m-%d')
@@ -87,7 +84,7 @@ date=$(LC_TIME=en_US date +'%Y-%m-%d')
 # A neat trick to use pandoc template within a shell script
 # the pandoc templates use $x$ format, we replace it by just $x
 # to be used with envsubst
-template=$(< templates/post.html | \
+template=$(< templates/index.html | \
     sed 's/\$\(header-includes\|table-of-content\)\$//' | \
     sed 's/\$if.*\$//' | \
     perl -pe 's#(\$[^\$]*)\$#$1#g' )

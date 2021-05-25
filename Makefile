@@ -66,7 +66,8 @@ ALL += indexcache
 # HTML INDEX
 HTML_INDEX := $(DST_DIR)/index.html
 MKINDEX := engine/mk-index.sh
-$(HTML_INDEX): $(DST_XML_FILES) $(MKINDEX) $(TEMPLATE)
+INDEX_TEMPLATE ?= templates/index.html
+$(HTML_INDEX): $(DST_XML_FILES) $(MKINDEX) $(INDEX_TEMPLATE)
 	@mkdir -p $(DST_DIR)
 	$(MKINDEX)
 .PHONY: index
@@ -85,6 +86,7 @@ MKRSS := engine/mkrss.sh
 $(RSS): $(DST_RSS_FILES) $(MKRSS)
 	$(MKRSS)
 ALL += $(RSS)
+
 .PHONY: rss
 rss: $(DST_RSS_FILES) $(RSS)
 ALL += rss
