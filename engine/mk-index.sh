@@ -1,61 +1,31 @@
 #!/usr/bin/env zsh
 
+autoload -U colors && colors
 cd "$(git rev-parse --show-toplevel)" || exit 1
 # Directory
 webdir="_site"
-postsdir="$webdir/posts"
 indexfile="$webdir/index.html"
 indexdir=".cache/rss"
-
-# maximal number of articles to put in the index homepage
-maxarticles=1000
-
-# HTML Accessors (similar to CSS accessors)
-dateaccessor='.yyydate'
-# title and keyword shouldn't be changed
-titleaccessor='title'
-keywordsaccessor='meta[name=keywords]::attr(content)'
-
-formatdate() {
-    # format the date for RSS
-    local d="$1"
-    # echo "DEBUG DATE: $d" >&2
-    LC_TIME=en_US date --date $d +'%a, %d %b %Y %H:%M:%S %z'
-}
-finddate(){ < $1 hxselect -c $dateaccessor | sed 's/\[//g;s/\]//g;s/ .*$//' }
-findtitle(){ < $1 hxselect -c $titleaccessor }
-findkeywords(){ < $1 hxselect -c $keywordsaccessor | sed 's/,/ /g' }
-mktaglist(){
-    for keyword in $*; do
-        printf "<span class=\"tag\">%s</span>" $keyword
-    done | sed 's#><#>, <#g'
-}
-
-autoload -U colors && colors
 tmpdir=$(mktemp -d)
 
 echo "Publishing"
 
-# building the body
-
-
 dateaccessor='.pubDate'
 finddate(){ < $1 hxselect -c $dateaccessor }
-
-previousyear=""
+# generate files with <DATE>-<FILENAME>.index
 for fic in $indexdir/**/*.index; do
     d=$(finddate $fic)
     echo "${${fic:h}:t} [$d]"
     cp $fic $tmpdir/$d-${${fic:h}:t}.index
 done
 
+# for every post in reverse order
+# generate the body (there is some logic to group by year)
 previousyear=""
 for fic in $(ls $tmpdir/*.index | sort -r); do
     d=$(finddate $fic)
-    echo "${fic:t}"
     year=$( echo "$d" | perl -pe 's#(\d{4})-.*#$1#')
     if (( year != previousyear )); then
-        echo $year
         if (( previousyear > 0 )); then
             echo "</ul>" >> $tmpdir/index
         fi

@@ -3,7 +3,7 @@
 #+KEYWORDS: blog static
 #+AUTHOR: Yann Esposito
 #+EMAIL: yann@esposito.host
-#+DATE: [2021-05-09 Sun]
+#+DATE: [2021-05-25 Tue]
 #+LANG: en
 #+OPTIONS: auto-id:t
 #+STARTUP: showeverything
@@ -11,6 +11,7 @@
 This article will dig a bit deeper about how I generate my static website.
 In a [[https://her.esy.fun/posts/0017-static-blog-builder/index.html][previous article]] I just gave the rationale and an overview to do it
 yourself.
+Mainly it is very fast and portable.
 
 A few goal reached by my current build system are:
 
@@ -317,14 +318,71 @@ an XML out of it).
 So now we just want to generate the main =index.html= page at the root of
 the site.
 This page should list all articles by date in reverse order.
-To achieve this I wrote a short shell script but here is the corresponding
-rule in the Makefile:
+
+So the first step is to take advantage of the cache index.
+For every XML file I generated before I should generate the small HTML
+block I want for every entry.
+For this I use a script =mk-index-entry.sh=.
+He will use =hxclean= to retrieve the date and the title from the cached
+XML files.
+Then generate a small file just containing the date and the link.
+
+Here is the block in the Makefile:
 
 #+begin_src makefile
-# HTML INDEX
+DST_INDEX_FILES ?= $(patsubst %.xml,%.index, $(DST_XML_FILES))
+MK_INDEX_ENTRY := ./engine/mk-index-entry.sh
+INDEX_CACHE_DIR ?= $(CACHE_DIR)/rss
+$(INDEX_CACHE_DIR)/%.index: $(INDEX_CACHE_DIR)/%.xml $(MK_INDEX_ENTRY)
+	@mkdir -p $(INDEX_CACHE_DIR)
+	$(MK_INDEX_ENTRY) "$<" "$@"
+#+end_src
+
+which reads, for every =.xml= file generate a =.index= file with
+=mk-index-entry.sh=.
+
+#+begin_src sh
+#!/usr/bin/env zsh
+
+# prelude
+cd "$(git rev-parse --show-toplevel)" || exit 1
+xfic="$1"
+dst="$2"
+indexdir=".cache/rss"
+
+# HTML Accessors (similar to CSS accessors)
+dateaccessor='.yyydate'
+# title and keyword shouldn't be changed
+titleaccessor='title'
+finddate(){ < $1 hxselect -c $dateaccessor | sed 's/\[//g;s/\]//g;s/ .*$//' }
+findtitle(){ < $1 hxselect -c $titleaccessor }
+
+autoload -U colors && colors
+
+blogfile="$(echo "$xfic"|sed 's#.xml$#.html#;s#^'$indexdir'/#posts/#')"
+printf "%-30s" $blogfile
+d=$(finddate $xfic)
+echo -n " [$d]"
+rssdate=$(formatdate $d)
+title=$(findtitle $xfic)
+keywords=( $(findkeywords $xfic) )
+printf ": %-55s" "$title ($keywords)"
+{ printf "\\n<li>"
+  printf "\\n<span class=\"pubDate\">%s</span>" "$d"
+  printf "\\n<a href=\"%s\">%s</a>" "${blogfile}" "$title"
+  printf "\\n</li>\\n\\n"
+} >> ${dst}
+
+echo " [${fg[green]}OK${reset_color}]"
+#+end_src
+
+Then I use these intermediate file to generate a single bigger index file.
+
+#+begin_src makefile
 HTML_INDEX := $(DST_DIR)/index.html
 MKINDEX := engine/mk-index.sh
-$(HTML_INDEX): $(DST_XML_FILES) $(MKINDEX) $(TEMPLATE)
+INDEX_TEMPLATE ?= templates/index.html
+$(HTML_INDEX): $(DST_INDEX_FILES) $(MKINDEX) $(INDEX_TEMPLATE)
 	@mkdir -p $(DST_DIR)
 	$(MKINDEX)
 .PHONY: index
@@ -332,87 +390,49 @@ index: $(HTML_INDEX)
 ALL += index
 #+end_src
 
-My =mk-index.sh= script takes advantage of the index files we constructed
-before with =hxclean=.
-Mainly I use =hxselect= to find the information I want to find, the
-title, the date and the keywords.
-So my script is composed of three parts:
+This script is a big one, but it is not that complex.
+For every file, I generate a new file =DATE-dirname=, I sort them in
+reverse order and put their content in the middle of an HTML file.
 
-1. declare the accessors (think CSS-like accessor)
-2. for all files in the cache retrieve the metas, and sort them by date
-3. compose the content
+The important part is that it is only generated if the index change.
+So first part of the script handle the creation of file using the date in
+their file name which will help us sort them later.
 
-#+begin_src bash
+
+#+begin_src sh
 #!/usr/bin/env zsh
 
+autoload -U colors && colors
 cd "$(git rev-parse --show-toplevel)" || exit 1
 # Directory
 webdir="_site"
-postsdir="$webdir/posts"
 indexfile="$webdir/index.html"
 indexdir=".cache/rss"
-
-# maximal number of articles to put in the index homepage
-maxarticles=1000
-
-# HTML Accessors (similar to CSS accessors)
-dateaccessor='.yyydate'
-# title and keyword shouldn't be changed
-titleaccessor='title'
-keywordsaccessor='meta[name=keywords]::attr(content)'
-
-formatdate() {
-    # format the date for RSS
-    local d="$1"
-    # echo "DEBUG DATE: $d" >&2
-    LC_TIME=en_US date --date $d +'%a, %d %b %Y %H:%M:%S %z'
-}
-finddate(){ < $1 hxselect -c $dateaccessor | sed 's/\[//g;s/\]//g;s/ .*$//' }
-findtitle(){ < $1 hxselect -c $titleaccessor }
-findkeywords(){ < $1 hxselect -c $keywordsaccessor | sed 's/,/ /g' }
-mktaglist(){
-    for keyword in $*; do
-        printf "\\n<span class=\"tag\">%s</span>" $keyword
-    done
-}
-
-autoload -U colors && colors
 tmpdir=$(mktemp -d)
-typeset -a dates
-dates=( )
-for xfic in $indexdir/**/*.xml; do
-    postfile="$(echo "$xfic"|sed 's#^'$postsdir'/##')"
-    blogfile="$(echo "$xfic"|sed 's#.xml$#.html#;s#^'$indexdir'/#posts/#')"
-    printf "%-30s" $postfile
-    d=$(finddate $xfic)
-    echo -n " [$d]"
-    rssdate=$(formatdate $d)
-    title=$(findtitle $xfic)
-    keywords=( $(findkeywords $xfic) )
-    printf ": %-55s" "$title ($keywords)"
-    taglist=$(mktaglist $keywords)
-    { printf "\\n<li>"
-      printf "\\n<a href=\"%s\">%s</a>" "${blogfile}" "$title"
-      printf "\\n<span class=\"pubDate\">%s</span>%s" "$d"
-      printf "<span class=\"tags\">%s</span>" "$taglist"
-      printf "\\n</li>\\n\\n"
-    } >>  "$tmpdir/${d}-$(basename $xfic).index"
-    dates=( $d $dates )
-    echo " [${fg[green]}OK${reset_color}]"
-done
 
 echo "Publishing"
 
-# building the body
+dateaccessor='.pubDate'
+finddate(){ < $1 hxselect -c $dateaccessor }
+# generate files with <DATE>-<FILENAME>.index
+for fic in $indexdir/**/*.index; do
+    d=$(finddate $fic)
+    echo "${${fic:h}:t} [$d]"
+    cp $fic $tmpdir/$d-${${fic:h}:t}.index
+done
+#+end_src
 
-cat templates/index-preamble.html  >> $tmpdir/index
+Then I use these files to generate a file that will contain the =body= of
+the HTML.
 
+#+begin_src sh
+# for every post in reverse order
+# generate the body (there is some logic to group by year)
 previousyear=""
-for fic in $(ls $tmpdir/*.index | sort -r | head -n $maxarticles ); do
-    echo "${fic:t}"
-    year=$( echo "${fic:t}" | perl -pe 's#(\d{4})-.*#$1#')
+for fic in $(ls $tmpdir/*.index | sort -r); do
+    d=$(finddate $fic)
+    year=$( echo "$d" | perl -pe 's#(\d{4})-.*#$1#')
     if (( year != previousyear )); then
-        echo $year
         if (( previousyear > 0 )); then
             echo "</ul>" >> $tmpdir/index
         fi
@@ -421,10 +441,14 @@ for fic in $(ls $tmpdir/*.index | sort -r | head -n $maxarticles ); do
     fi
     cat $fic >> $tmpdir/index
 done
-cat templates/index-postamble.html  >> $tmpdir/index
+echo "</ul>" >> $tmpdir/index
+#+end_src
 
-title="Yann Esposito's Posts"
-description="The index of my most recent articles."
+And finally, I render the HTML using a template within a shell script:
+
+#+begin_src sh
+title="Y"
+description="Most recent articles"
 author="Yann Esposito"
 body=$(< $tmpdir/index)
 date=$(LC_TIME=en_US date +'%Y-%m-%d')
@@ -432,7 +456,7 @@ date=$(LC_TIME=en_US date +'%Y-%m-%d')
 # A neat trick to use pandoc template within a shell script
 # the pandoc templates use $x$ format, we replace it by just $x
 # to be used with envsubst
-template=$(< templates/post.html | \
+template=$(< templates/index.html | \
     sed 's/\$\(header-includes\|table-of-content\)\$//' | \
     sed 's/\$if.*\$//' | \
     perl -pe 's#(\$[^\$]*)\$#$1#g' )
@@ -447,4 +471,132 @@ template=$(< templates/post.html | \
 
 rm -rf $tmpdir
 echo "* HTML INDEX [done]"
+#+end_src
+
+** RSS
+:PROPERTIES:
+:CUSTOM_ID: rss
+:END:
+
+So for my RSS generation this is quite similar to the system I use to
+generate my index file.
+I just slightly improved the rules.
+
+The makefile blocks look like:
+
+#+begin_src makefile
+# RSS
+DST_RSS_FILES ?= $(patsubst %.xml,%.rss, $(DST_XML_FILES))
+MK_RSS_ENTRY := ./engine/mk-rss-entry.sh
+$(RSS_CACHE_DIR)/%.rss: $(RSS_CACHE_DIR)/%.xml $(MK_RSS_ENTRY)
+	@mkdir -p $(RSS_CACHE_DIR)
+	$(MK_RSS_ENTRY) "$<" "$@"
+
+RSS := $(DST_DIR)/rss.xml
+MKRSS := engine/mkrss.sh
+$(RSS): $(DST_RSS_FILES) $(MKRSS)
+	$(MKRSS)
+
+.PHONY: rss
+rss: $(RSS)
+ALL += rss
+#+end_src
+** Gemini
+:PROPERTIES:
+:CUSTOM_ID: gemini
+:END:
+
+I wrote a minimal script to transform my org files to gemini files.
+I also need to generate an index and an atom file for gemini:
+
+#+begin_src makefile
+# ORG -> GEMINI
+EXT := .org
+SRC_GMI_FILES ?= $(shell find $(SRC_DIR) -type f -name "*$(EXT)" $(NO_DRAFT))
+DST_GMI_FILES ?= $(subst $(EXT),.gmi, \
+                        $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%, \
+                            $(SRC_GMI_FILES)))
+GMI := engine/org2gemini.sh
+$(DST_DIR)/%.gmi: $(SRC_DIR)/%.org $(GMI) engine/org2gemini_step1.sh
+	@mkdir -p $(dir $@)
+	$(GMI) "$<" "$@"
+ALL += $(DST_GMI_FILES)
+.PHONY: gmi
+gmi: $(DST_GMI_FILES)
+
+# GEMINI INDEX
+GMI_INDEX := $(DST_DIR)/index.gmi
+MK_GMI_INDEX := engine/mk-gemini-index.sh
+$(GMI_INDEX): $(DST_GMI_FILES) $(MK_GMI_INDEX)
+	@mkdir -p $(DST_DIR)
+	$(MK_GMI_INDEX)
+ALL += $(GMI_INDEX)
+.PHONY: gmi-index
+gmi-index: $(GMI_INDEX)
+
+# RSS
+GEM_ATOM := $(DST_DIR)/gem-atom.xml
+MK_GEMINI_ATOM := engine/mk-gemini-atom.sh
+$(GEM_ATOM): $(DST_GMI_FILES) $(MK_GEMINI_ATOM)
+	$(MK_GEMINI_ATOM)
+ALL += $(GEM_ATOM)
+.PHONY: gmi-atom
+gmi-atom: $(GMI_ATOM)
+
+.PHONY: gemini
+gemini: $(DST_GMI_FILES) $(GMI_INDEX) $(GEM_ATOM)
+#+end_src
+** Images
+:PROPERTIES:
+:CUSTOM_ID: images
+:END:
+
+For images, I try to convert all of them with imagemagick to compress them.
+
+#+begin_src makefile
+# Images
+SRC_IMG_FILES ?= $(shell find $(SRC_DIR) -type f -name "*.jpg" -or -name "*.jpeg" -or -name "*.gif" -or -name "*.png")
+DST_IMG_FILES ?= $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%, $(SRC_IMG_FILES))
+
+$(DST_DIR)/%.jpg: $(SRC_DIR)/%.jpg
+	@mkdir -p $(dir $@)
+	convert "$<" -quality 50 -resize 800x800\> "$@"
+
+$(DST_DIR)/%.jpg: $(SRC_DIR)/%.jpeg
+	@mkdir -p $(dir $@)
+	convert "$<" -quality 50 -resize 800x800\> "$@"
+
+$(DST_DIR)/%.gif: $(SRC_DIR)/%.gif
+	@mkdir -p $(dir $@)
+	convert "$<" -quality 50 -resize 800x800\> "$@"
+
+$(DST_DIR)/%.png: $(SRC_DIR)/%.png
+	@mkdir -p $(dir $@)
+	convert "$<" -quality 50 -resize 800x800\> "$@"
+
+.PHONY: img
+img: $(DST_IMG_FILES)
+ALL += $(DST_IMG_FILES)
+#+end_src
+** Deploy
+:PROPERTIES:
+:CUSTOM_ID: deploy
+:END:
+
+A nice bonus is that I also deploy my website using make.
+And note I protect myself from Makefile temporary bugs for the =clean= rule.
+
+#+begin_src makefile
+# DEPLOY
+.PHONY: site
+site: $(ALL)
+
+.PHONY: deploy
+deploy: $(ALL)
+	engine/sync.sh
+
+.PHONY: clean
+clean:
+	-[ ! -z "$(DST_DIR)" ] && rm -rf $(DST_DIR)/*
+	-[ ! -z "$(CACHE_DIR)" ] && rm -rf $(CACHE_DIR)/*
 #+end_src
