@@ -28,6 +28,6 @@ printf ": %-55s" "$title ($keywords)"
   printf "\\n<span class=\"pubDate\">%s</span>" "$d"
   printf "\\n<a href=\"%s\">%s</a>" "${blogfile}" "$title"
   printf "\\n</li>\\n\\n"
-} >> ${dst}
+} > ${dst}
 
 echo " [${fg[green]}OK${reset_color}]"
