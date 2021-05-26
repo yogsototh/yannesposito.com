@@ -1,4 +1,4 @@
-#+TITLE: Efficient Static Site Build with make
+#+TITLE: Fast Static Site with make
 #+DESCRIPTION: A deeper view of my static site builder Makefile
 #+KEYWORDS: blog static
 #+AUTHOR: Yann Esposito
@@ -15,19 +15,21 @@ Mainly it is very fast and portable.
 
 A few goal reached by my current build system are:
 
-1. Source file format agnostic. You can use markdown, org-mode or even
+1. Be fast, try to make as few work as possible.
+   I don't want to rebuild all the html pages if I only change one file.
+2. Source file format agnostic. You can use markdown, org-mode or even
    directly writing html.
-2. Support gemini
-3. Optimize size: minify HTML, CSS, images
-4. Generate an index page listing the posts
-5. Generate RSS/atom feed (for both gemini and http)
+3. Support gemini
+4. Optimize size: minify HTML, CSS, images
+5. Generate an index page listing the posts
+6. Generate RSS/atom feed (for both gemini and http)
 
-So make will just take care of handling the dependency graph to minimize
+=make= will take care of handling the dependency graph to minimize
 the amount of effort when a change occurs in the sources.
-But for some features, I built specifics tools.
+For some features, I built specifics small shell scripts.
 For example to be absolutely agnostic in the source format for my articles
 I generate the RSS out of a tree of HTML files.
-But taking advantage of Make, I generate an index cache to transform those
+But taking advantage of =make=, I generate an index cache to transform those
 HTML into XML which will be faster to use to build different indexes.
 To make those transformations I use very short a shell scripts.
 
