@@ -20,9 +20,9 @@ handleShellFailed (ShellFailed cmdLine _) = do
   echo $ ("[FAILED]: " <> unsafeTextToLine  cmdLine)
   setSGR [Reset]
 handleProcFailed :: ProcFailed -> IO ()
-handleProcFailed (ProcFailed procCommand procArgs _) = do
+handleProcFailed (ProcFailed procCmd procArgs _) = do
   setSGR [SetColor Foreground Dull Red]
-  echo $ unsafeTextToLine ("[FAILED]: " <> procCommand <> (mconcat procArgs))
+  echo $ unsafeTextToLine ("[FAILED]: " <> procCmd <> (mconcat procArgs))
   setSGR [Reset]
 
 
@@ -39,9 +39,10 @@ mainProc = do
   debug $ unsafeTextToLine $ "cd " <> (format fp pubdir)
   cd pubdir
   pwd >>= echo . unsafeTextToLine . format fp
+  dshells "rm -rf .git"
   dshells "git init ."
   dshell ("git remote add upstream " <> mainRepository)
-  dshells "git fetch upstream"
+  dshells "git fetch --depth 1 upstream gh-pages"
   dshells "git reset upstream/gh-pages"
   dshells "git add -A ."
   echo "Commit and publish"
@@ -49,15 +50,18 @@ mainProc = do
   echo "Don't `git push` this time"
   dshells "git push -q upstream HEAD:gh-pages"
 
+debug :: Line -> IO ()
 debug txt = do
   setSGR [SetColor Foreground Dull Yellow]
   echo txt
   setSGR [Reset]
 
+dshells :: Text -> IO ()
 dshells x = do
   debug $ unsafeTextToLine x
   shells x empty
 
+dshell :: Text -> IO ExitCode
 dshell x = do
   debug $ unsafeTextToLine x
   shell x empty
@@ -69,6 +73,7 @@ checkDir = do
      then exit (ExitFailure 1)
      else return "_site"
 
+mainRepository :: Text
 mainRepository = "git@github.com:yogsototh/yannesposito.com.git"
 
 cloneIfNeeded :: FilePath -> IO ()
