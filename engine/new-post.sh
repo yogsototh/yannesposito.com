@@ -1,5 +1,10 @@
 #!/usr/bin/env zsh
 
+(( $# < 1 )) && {
+   print -- "usage: ${0:t} title"
+   exit 1
+}
+
 postsdir=src/posts
 title="$*"
 scrub=$(echo "$title" | tr '[:upper:]' '[:lower:]' | perl -pe 's/[^a-z0-9_]+/-/g;s/-+$//')
