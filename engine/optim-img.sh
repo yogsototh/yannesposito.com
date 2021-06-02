@@ -2,21 +2,18 @@
 
 src="$1"
 dst="$2"
-convert "$src" -quality 50 -resize 800x800\> "$dst"
 
-# mogrify -path "$dst" \
-#     -filter Triangle \
-#     -define filter:support=2 \
-#     -thumbnail 800 \
-#     -unsharp 0.25x0.25+8+0.065 \
-#     -dither None \
-#     -posterize 136 \
-#     -quality 82 \
-#     -define jpeg:fancy-upsampling=off \
-#     -define png:compression-filter=5 \
-#     -define png:compression-level=9 \
-#     -define png:compression-strategy=1 \
-#     -define png:exclude-chunk=all \
-#     -interlace none \
-#     -colorspace sRGB \
-#     -strip "$src"
+sizeof() {
+    stat --format="%s" "$*"
+}
+
+amount=0.33
+s1=$( echo "100 * $amount" | bc -l )
+s2=$( echo "100 / $amount" | bc -l )
+# convert "$src" -resize 800x800\> -scale $s1% -scale $s2% -quality 50 "$dst"
+convert "$src" -resize 800x800\> -ordered-dither o8x8,6 -colors 15 -quality 50 "$dst"
+
+before=$(sizeof $src)
+after=$(sizeof $dst)
+gain=$(( ( (before - after) * 100 ) / before ))
+print -- "$before => $after [$gain%])"
