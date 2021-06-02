@@ -137,22 +137,23 @@ gemini: $(DST_GMI_FILES) $(GMI_INDEX) $(GEM_ATOM)
 # Images
 SRC_IMG_FILES ?= $(shell find $(SRC_DIR) -type f -name "*.jpg" -or -name "*.jpeg" -or -name "*.gif" -or -name "*.png")
 DST_IMG_FILES ?= $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%, $(SRC_IMG_FILES))
+OPTIM_IMG := engine/optim-img.sh
 
-$(DST_DIR)/%.jpg: $(SRC_DIR)/%.jpg
+$(DST_DIR)/%.jpg: $(SRC_DIR)/%.jpg $(OPTIM_IMG)
 	@mkdir -p $(dir $@)
-	convert "$<" -quality 50 -resize 800x800\> "$@"
+	$(OPTIM_IMG) "$<" "$@"
 
-$(DST_DIR)/%.jpg: $(SRC_DIR)/%.jpeg
+$(DST_DIR)/%.jpg: $(SRC_DIR)/%.jpeg $(OPTIM_IMG)
 	@mkdir -p $(dir $@)
-	convert "$<" -quality 50 -resize 800x800\> "$@"
+	$(OPTIM_IMG) "$<" "$@"
 
-$(DST_DIR)/%.gif: $(SRC_DIR)/%.gif
+$(DST_DIR)/%.gif: $(SRC_DIR)/%.gif $(OPTIM_IMG)
 	@mkdir -p $(dir $@)
-	convert "$<" -quality 50 -resize 800x800\> "$@"
+	$(OPTIM_IMG) "$<" "$@"
 
-$(DST_DIR)/%.png: $(SRC_DIR)/%.png
+$(DST_DIR)/%.png: $(SRC_DIR)/%.png $(OPTIM_IMG)
 	@mkdir -p $(dir $@)
-	convert "$<" -quality 50 -resize 800x800\> "$@"
+	$(OPTIM_IMG) "$<" "$@"
 
 .PHONY: img
 img: $(DST_IMG_FILES)
