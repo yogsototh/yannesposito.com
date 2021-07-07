@@ -7,7 +7,7 @@ BEGIN { IGNORECASE=1; }
 /^#\+(BEGIN|END)_SRC ?/i { gsub(/#\+(BEGIN|END)_SRC ?/,"```"); }
 /^#\+(BEGIN|END)_[^ ]* ?/i { gsub(/#\+(BEGIN|END)_([^ ]*) ?/,"______"); }
 
-/^#\+(macro|lang|language|options|startup):/ { skip=1; }
+/^#\+(macro|lang|language|options|startup|html_head|html_head_extra):/ { skip=1; }
 /{{{br}}}/ { gsub(/{{{br}}}/,""); }
 /{{{pemail}}}/ { gsub(/{{{pemail}}}/,"yann@esposito.host"); }
 
