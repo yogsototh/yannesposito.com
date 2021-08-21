@@ -84,7 +84,7 @@ ALL += index
 ENV_VARS := ./engine/envvars.sh
 NIX_FILES := ./shell.nix  $(shell find nix -type f)
 $(ENV_VARS): $(NIX_FILES)
-	echo "export PATH=\"${PATH}\"" >> ./engine/envvars.sh
+	@echo "export PATH=\"${PATH}\"" >> ./engine/envvars.sh
 ALL += ./engine/envvars.sh
 
 # RSS
@@ -176,5 +176,6 @@ deploy: $(ALL)
 
 .PHONY: clean
 clean:
+	-[ -f $(ENV_VARS) ] && rm $(ENV_VARS)
 	-[ ! -z "$(DST_DIR)" ] && rm -rf $(DST_DIR)/*
 	-[ ! -z "$(CACHE_DIR)" ] && rm -rf $(CACHE_DIR)/*
