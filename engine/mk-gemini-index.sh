@@ -1,6 +1,7 @@
 #!/usr/bin/env zsh
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
+source ./engine/envvars.sh
 # Directory
 webdir="_site"
 postsdir="$webdir/posts"

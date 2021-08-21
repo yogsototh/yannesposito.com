@@ -2,6 +2,7 @@
 
 autoload -U colors && colors
 cd "$(git rev-parse --show-toplevel)" || exit 1
+source ./engine/envvars.sh
 # Directory
 webdir="_site"
 indexfile="$webdir/index.html"

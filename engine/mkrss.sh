@@ -1,6 +1,7 @@
-#!/usr/bin/env zsh
+#! /usr/bin/env zsh
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
+source ./engine/envvars.sh
 # Directory
 webdir="_site"
 postsdir="$webdir/posts"
@@ -104,4 +105,4 @@ cp -f "$rssfile" "$legacyenrss"
 cp -f "$rssfile" "$legacyfrrss"
 
 rm -rf $tmpdir
-echo "* RSS [done]"
+echo "\* RSS [done]"

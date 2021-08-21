@@ -67,7 +67,7 @@ ALL += indexcache
 DST_INDEX_FILES ?= $(patsubst %.xml,%.index, $(DST_XML_FILES))
 MK_INDEX_ENTRY := ./engine/mk-index-entry.sh
 INDEX_CACHE_DIR ?= $(CACHE_DIR)/rss
-$(INDEX_CACHE_DIR)/%.index: $(INDEX_CACHE_DIR)/%.xml $(MK_INDEX_ENTRY)
+$(INDEX_CACHE_DIR)/%.index: $(INDEX_CACHE_DIR)/%.xml $(MK_INDEX_ENTRY) $(ENV_VARS)
 	@mkdir -p $(INDEX_CACHE_DIR)
 	$(MK_INDEX_ENTRY) "$<" "$@"
 
@@ -81,8 +81,14 @@ $(HTML_INDEX): $(DST_INDEX_FILES) $(MKINDEX) $(INDEX_TEMPLATE)
 index: $(HTML_INDEX)
 ALL += index
 
+ENV_VARS := ./engine/envvars.sh
+NIX_FILES := ./shell.nix  $(shell find nix -type f)
+$(ENV_VARS): $(NIX_FILES)
+	echo "export PATH=\"${PATH}\"" >> ./engine/envvars.sh
+ALL += ./engine/envvars.sh
+
 # RSS
-DST_RSS_FILES ?= $(patsubst %.xml,%.rss, $(DST_XML_FILES))
+DST_RSS_FILES ?= $(patsubst %.xml,%.rss, $(DST_XML_FILES)) $(ENV_VARS)
 MK_RSS_ENTRY := ./engine/mk-rss-entry.sh
 $(RSS_CACHE_DIR)/%.rss: $(RSS_CACHE_DIR)/%.xml $(MK_RSS_ENTRY)
 	@mkdir -p $(RSS_CACHE_DIR)
@@ -90,7 +96,7 @@ $(RSS_CACHE_DIR)/%.rss: $(RSS_CACHE_DIR)/%.xml $(MK_RSS_ENTRY)
 
 RSS := $(DST_DIR)/rss.xml
 MKRSS := engine/mkrss.sh
-$(RSS): $(DST_RSS_FILES) $(MKRSS)
+$(RSS): $(DST_RSS_FILES) $(MKRSS) $(ENV_VARS)
 	$(MKRSS)
 
 .PHONY: rss
@@ -115,7 +121,7 @@ gmi: $(DST_GMI_FILES)
 # GEMINI INDEX
 GMI_INDEX := $(DST_DIR)/index.gmi
 MK_GMI_INDEX := engine/mk-gemini-index.sh
-$(GMI_INDEX): $(DST_GMI_FILES) $(MK_GMI_INDEX)
+$(GMI_INDEX): $(DST_GMI_FILES) $(MK_GMI_INDEX) $(ENV_VARS)
 	@mkdir -p $(DST_DIR)
 	$(MK_GMI_INDEX)
 ALL += $(GMI_INDEX)

@@ -13,7 +13,8 @@ pkgs.mkShell {
       [ cacert
         coreutils
         entr
-        html-xml-utils
+        pandoc
+        html-xml-utils # hxselect
         zsh
         perl
         perlPackages.URI

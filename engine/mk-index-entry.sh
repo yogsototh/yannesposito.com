@@ -1,5 +1,6 @@
 #!/usr/bin/env zsh
 cd "$(git rev-parse --show-toplevel)" || exit 1
+source ./engine/envvars.sh
 xfic="$1"
 dst="$2"
 
@@ -10,9 +11,11 @@ indexdir=".cache/rss"
 dateaccessor='.yyydate'
 # title and keyword shouldn't be changed
 titleaccessor='title'
+keywordsaccessor='meta[name=keywords]::attr(content)'
 
 finddate(){ < $1 hxselect -c $dateaccessor | sed 's/\[//g;s/\]//g;s/ .*$//' }
 findtitle(){ < $1 hxselect -c $titleaccessor }
+findkeywords(){ < $1 hxselect -c $keywordsaccessor | sed 's/,/ /g' }
 
 autoload -U colors && colors
 
@@ -20,7 +23,6 @@ blogfile="$(echo "$xfic"|sed 's#.xml$#.html#;s#^'$indexdir'/#posts/#')"
 printf "%-30s" $blogfile
 d=$(finddate $xfic)
 echo -n " [$d]"
-rssdate=$(formatdate $d)
 title=$(findtitle $xfic)
 keywords=( $(findkeywords $xfic) )
 printf ": %-55s" "$title ($keywords)"
