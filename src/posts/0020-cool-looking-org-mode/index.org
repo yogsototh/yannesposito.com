@@ -1,5 +1,5 @@
 #+title: Cool looking org-mode
-#+description:
+#+description: A configuration to make org-mode look even better.
 #+keywords: org-mode emacs
 #+author: Yann Esposito
 #+email: yann@esposito.host
@@ -21,27 +21,65 @@ At the end of this article there is a long digression about why I ended up here.
 But instead of bothering you with the why here is a what it looks like, and
 how to achieve it.
 
+First you need to install some dependencies.
+
+1. Install nerdfonts[fn:nerdfonts]
+2. Tell org-mode to use =variable-pitch-mode= (Non monospaced font)
+3. Use ~(setq org-hide-emphasis-markers t)~
+4. Configure a lot of org-mode specific faces to still use a monospaced font.
+
+Here are a few images of the result.
+Notice one important factor of the feel is that I work on a mac with retina
+display.
+Often font rendering feel too bold by default.
+But this is perfect to have a writing environment even if screenshot does
+not look as slick as other ones, the usage is superior.
+
 #+ATTR_ORG: :width 560
-#+ATTR_HTML: nano-emacs look (light theme)
-#+CAPTION: GNU Emacs / N Λ N O Look (light theme)
+#+ATTR_HTML: top
+#+CAPTION: org-mode headers
+#+NAME: fig:top
+[[./top.png]]
+
+
+#+ATTR_ORG: :width 560
+#+ATTR_HTML: text
+#+CAPTION: org-mode some text
+#+NAME: fig:text
+[[./text.png]]
+
+#+ATTR_ORG: :width 560
+#+ATTR_HTML: img-with-caption
+#+CAPTION: org-mode some inline image
+#+NAME: fig:img-with-caption
+[[./img-with-caption.png]]
+
+#+ATTR_ORG: :width 560
+#+ATTR_HTML: code
+#+CAPTION: org-mode with some code block
+#+NAME: fig:img-with-caption
+[[./code.png]]
+
+#+ATTR_ORG: :width 560
+#+ATTR_HTML: Org mode with a light theme
+#+CAPTION: Org mode with a light theme
 #+NAME: fig:nano-emacs
 [[./y-org-mode.png]]
 
 The main trick is to change org-mode to use different font depending on the
 kind of bloc.
-I use two fonts; an iA Writer clone as well as a Source Code Pro thin font.
+I use two fonts variant which are an iA Writer clone fonts; iM Writing Nerd Font.
 
-All with a solarized-light alternative. Same as solarized, but with gray background.
-
-So first you need to install nerd-fonts.
-You will get that =iMWriting= font, for both Mono and non monospaced fonts.
-In fact if you look at my config, I support also the case where the font is
-not installed on the computer and use Georgia or PT Serif if this is the case.
-One nice little bonus is to make the monospaced fonts smaller.
+So first you need to install nerd-fonts[fn:nerdfonts].
+You will get that =iMWritingDuoS Nerd Font=.
+If you look at the code block; I support the case when the font is
+not installed and fall back to Georgia or PT Serif.
+One nice little bonus of the config is to make the fixed width fonts smaller.
 This is often something I like when writing in org-mode.
 
 There is a minor dependency on =doom= as I use =doom-color= for the color of
 the links.
+But you could easily use any color you like if you do not use doom.
 
 #+begin_src emacs-lisp
 (setq org-ellipsis " [+]")
@@ -91,6 +129,8 @@ the links.
    '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))))
 #+end_src
 
+[fn:nerdfonts] https://www.nerdfonts.com
+
 ** Digression about why I did that;
 :PROPERTIES:
 :CUSTOM_ID: digression-about-why-i-did-that-
@@ -121,23 +161,31 @@ See
 #+NAME: fig:nano-emacs
 [[./nano-emacs-dark.png]]
 
-OK so... I just tried to match the theme colors.
-It was easy to create a theme with matching colors, BUT, to make it really
-looks like anyone would expect, I mean very few colors, and mostly
-monochromatic, means a lot more work than anyone could expect.
+OK so...
+I just tried to match the theme colors.
+It was easy to create a theme with matching colors.
+*But*, to make it really looks like nano; almost monochrome with a few accent
+colors; it would mean a lot more work than anyone could expect.
 Every emacs mode need to be tweaked.
 Most doom themes expect either a classical, many colors, or a totally
 monochromatic, but not this generic idea of ; everything is monochromatic
 with very few exceptions.
 This choice is also what makes nano looks so good too.
 This is not just about the color, but about a lot more details than that.
-Use the good colors, but at the right place is a lot harder to achieve.
+Using the good colors only at the right place is difficult to achieve.
 And not only the colors, but also, the correct fonts, the spacing of text
 elements etc...
 
 Unfortunately if you want the nano look and feel in doom, it is much more
 work than just copying the nano theme.
 
+But this research of look and feel opened the door to using thin fonts in
+emacs.
+And also tweaking the fonts which really improve the look & feel of emacs.
+
+With this conf, I do not use the same font for coding and for writing
+prose or a blog post with code blocks.
+So far, I like this new look and feel.
 
 [fn:doom-emacs] https://github.com/hlissner/doom-emacs
 [fn:nano-emacs] https://github.com/rougier/nano-emacs
