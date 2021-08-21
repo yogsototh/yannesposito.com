@@ -1,5 +1,6 @@
 #!/usr/bin/env zsh
 cd "$(git rev-parse --show-toplevel)" || exit 1
+source ./engine/envvars.sh
 direnv reload
 ./engine/build.sh
 echo "Watching $PWD/{src,templates}"

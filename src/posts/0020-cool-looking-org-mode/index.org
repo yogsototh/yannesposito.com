@@ -1,0 +1,143 @@
+#+title: Cool looking org-mode
+#+description:
+#+keywords: org-mode emacs
+#+author: Yann Esposito
+#+email: yann@esposito.host
+#+date: [2021-08-21 Sat]
+#+lang: en
+#+options: auto-id:t
+#+startup: showeverything
+
+#+begin_notes
+TL;DR: My tweaked configuration to make org-mode even more pleasant to use.
+#+end_notes
+
+** The code
+:PROPERTIES:
+:CUSTOM_ID: the-code
+:END:
+
+At the end of this article there is a long digression about why I ended up here.
+But instead of bothering you with the why here is a what it looks like, and
+how to achieve it.
+
+#+ATTR_ORG: :width 560
+#+ATTR_HTML: nano-emacs look (light theme)
+#+CAPTION: GNU Emacs / N Λ N O Look (light theme)
+#+NAME: fig:nano-emacs
+[[./y-org-mode.png]]
+
+The main trick is to change org-mode to use different font depending on the
+kind of bloc.
+I use two fonts; an iA Writer clone as well as a Source Code Pro thin font.
+
+All with a solarized-light alternative. Same as solarized, but with gray background.
+
+So first you need to install nerd-fonts.
+You will get that =iMWriting= font, for both Mono and non monospaced fonts.
+In fact if you look at my config, I support also the case where the font is
+not installed on the computer and use Georgia or PT Serif if this is the case.
+One nice little bonus is to make the monospaced fonts smaller.
+This is often something I like when writing in org-mode.
+
+There is a minor dependency on =doom= as I use =doom-color= for the color of
+the links.
+
+#+begin_src emacs-lisp
+(setq org-ellipsis " [+]")
+(add-hook 'org-mode-hook 'variable-pitch-mode)
+(let* ((variable-tuple
+        (cond
+         ((x-list-fonts "iMWritingDuoS Nerd Font")   '(:family "iMWritingDuoS Nerd Font"))
+         ((x-list-fonts "Georgia")   '(:family "Georgia"))
+         ((x-list-fonts "PT Serif")  '(:family "PT Serif"))))
+       (fixed-tuple
+        (cond
+         ((x-list-fonts "iMWritingDuoS Nerd Font Mono")   '(:family "iMWritingDuoS Nerd Font Mono"   :height 160))
+         ((x-list-fonts "Menlo")               '(:family "Menlo"    :height 120))
+         ((x-list-fonts "PT Mono")             '(:family "PT Mono"  :height 120))))
+       (headline `(:inherit default :weight bold)))
+  (custom-theme-set-faces
+   'user
+   `(org-level-1 ((t (,@headline ,@variable-tuple))))
+   `(org-level-2 ((t (,@headline ,@variable-tuple))))
+   `(org-level-3 ((t (,@headline ,@variable-tuple))))
+   `(org-level-4 ((t (,@headline ,@variable-tuple))))
+   `(org-level-5 ((t (,@headline ,@variable-tuple))))
+   `(org-level-6 ((t (,@headline ,@variable-tuple))))
+   `(org-level-7 ((t (,@headline ,@variable-tuple))))
+   `(org-level-8 ((t (,@headline ,@variable-tuple))))
+   `(org-document-title ((t (,@headline ,@variable-tuple))))
+   `(variable-pitch ((t ,@variable-tuple)))
+   `(fixed-pitch ((t ,@fixed-tuple)))
+   '(org-ellipsis ((t (:inherit fixed-pitch :foreground "gray40" :underline nil))))
+   '(org-block ((t (:inherit fixed-pitch))))
+   '(org-block-begin-line ((t (:inherit fixed-pitch))))
+   '(org-block-end-line ((t (:inherit fixed-pitch))))
+   '(org-src ((t (:inherit fixed-pitch))))
+   '(org-properties ((t (:inherit fixed-pitch))))
+   '(org-code ((t (:inherit (shadow fixed-pitch)))))
+   '(org-date ((t (:inherit (shadow fixed-pitch)))))
+   '(org-document-info ((t (:inherit (shadow fixed-pitch)))))
+   '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+   '(org-drawer ((t (:inherit (shadow fixed-pitch)))))
+   '(org-indent ((t (:inherit (org-hide fixed-pitch)))))
+   `(org-link ((t (:inherit fixed-pitch :foreground ,(doom-color 'blue) :underline t))))
+   '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+   '(org-property-value ((t (:inherit fixed-pitch))) t)
+   '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+   '(org-table ((t (:inherit fixed-pitch))))
+   '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+   '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))))
+#+end_src
+
+** Digression about why I did that;
+:PROPERTIES:
+:CUSTOM_ID: digression-about-why-i-did-that-
+:END:
+
+For some reason a went to the rabbit hole of tweaking my emacs.
+In fact, it first started as; let's try to switch from
+=doom-emacs=[fn:doom-emacs] to =nano-emacs=[fn:nano-emacs].
+But, doing so, I realized I wouldn't be able to reach the quality and
+optimization provided by doom-emacs myself.
+So instead of doing this, I first tried to copy the theme of nano.
+Then I realized one of the biggest factor of nano look & feel was
+its usage of "Roboto Mono" but with weight light (or Thin).
+
+See
+
+#+ATTR_ORG: :width 560
+#+ATTR_HTML: nano-emacs look (light theme)
+#+CAPTION: GNU Emacs / N Λ N O Look (light theme)
+#+NAME: fig:nano-emacs
+[[./nano-emacs-light.png]]
+
+
+
+#+ATTR_ORG: :width 560
+#+ATTR_HTML: nano-emacs look (dark theme)
+#+CAPTION: GNU Emacs / N Λ N O Look (dark theme)
+#+NAME: fig:nano-emacs
+[[./nano-emacs-dark.png]]
+
+OK so... I just tried to match the theme colors.
+It was easy to create a theme with matching colors, BUT, to make it really
+looks like anyone would expect, I mean very few colors, and mostly
+monochromatic, means a lot more work than anyone could expect.
+Every emacs mode need to be tweaked.
+Most doom themes expect either a classical, many colors, or a totally
+monochromatic, but not this generic idea of ; everything is monochromatic
+with very few exceptions.
+This choice is also what makes nano looks so good too.
+This is not just about the color, but about a lot more details than that.
+Use the good colors, but at the right place is a lot harder to achieve.
+And not only the colors, but also, the correct fonts, the spacing of text
+elements etc...
+
+Unfortunately if you want the nano look and feel in doom, it is much more
+work than just copying the nano theme.
+
+
+[fn:doom-emacs] https://github.com/hlissner/doom-emacs
+[fn:nano-emacs] https://github.com/rougier/nano-emacs
