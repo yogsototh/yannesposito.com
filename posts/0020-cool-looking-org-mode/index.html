@@ -1,0 +1,257 @@
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Cool looking org-mode</title><meta name=author content="Yann Esposito"><meta name=description content="A configuration to make org-mode look even better."><meta name=keywords content="org-mode emacs"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><div class=main><div id=logo><a href=/><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="#a3aec2" stroke-width="1" fill="#2e3440"/><circle cx="32" cy="32" r="12" stroke="#800" stroke-width="1" fill="#c20"/><circle cx="32" cy="32" r="5" stroke-width="1" stroke="#f60" fill="#fa0"/><ellipse cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="#fff"/></svg></a></div><div id=preamble class=status><div class=content><h1>Cool looking org-mode</h1><div class=meta><span class=yyydate>[2021-08-21 Sat]</span> on
+<a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract>A configuration to make org-mode look even better.</div></div></div><div id=content><div class=notes><p>TL;DR: My tweaked configuration to make org-mode even more pleasant to use.</div><h2 id=the-code>The code</h2><p>At the end of this article there is a long digression about why I ended up here. But instead of bothering you with the why here is a what it looks like, and how to achieve it.<p>First you need to install some dependencies.<ol><li>Install nerdfonts<a href=#fn1 class=footnote-ref id=fnref1 role=doc-noteref><sup>1</sup></a><li>Tell org-mode to use <code class=verbatim>variable-pitch-mode</code> (variable width font)<li>Use <code>(setq org-hide-emphasis-markers t)</code><li>Configure a lot of org-mode specific faces to still use a monospaced font.</ol><p>Here are some images of the result. Notice one important factor of the feel is that I work on a mac with retina display. Often font rendering feel too bold by default. But this is perfect to have a writing environment even if screenshot does not look as slick as other ones, the usage is superior.<figure><img src=./top.png title=top alt="org-mode headers"><figcaption aria-hidden=true>org-mode headers</figcaption></figure><figure><img src=./img-with-caption.png title=img-with-caption alt="org-mode some inline image"><figcaption aria-hidden=true>org-mode some inline image</figcaption></figure><figure><img src=./code.png title=img-with-caption alt="org-mode with some code block"><figcaption aria-hidden=true>org-mode with some code block</figcaption></figure><figure><img src=./y-org-mode.png title=nano-emacs alt="Org mode with a modified doom-solarized light theme (use a grey background)"><figcaption aria-hidden=true>Org mode with a modified doom-solarized light theme (use a grey background)</figcaption></figure><p>The main trick is to change org-mode to use different font depending on the kind of bloc. I use two fonts variant which are an iA Writer clone fonts; iM Writing Nerd Font.<p>First you need to install nerd-fonts<a href=#fn2 class=footnote-ref id=fnref2 role=doc-noteref><sup>2</sup></a>. You will get that <code class=verbatim>iMWritingDuoS Nerd Font</code>. If you look at the code block; I support the case when the font is not installed and fall back to Georgia or PT Serif. One nice little bonus of the config is to make the fixed width fonts smaller. This is often something I like when writing in org-mode.<p>There is a minor dependency on <code class=verbatim>doom</code> as I use <code class=verbatim>doom-color</code> for the color of the links. But you could easily use any color you like if you do not use doom.<div class=sourceCode id=cb1 data-org-language=emacs-lisp><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id=cb1-1><a href=#cb1-1 aria-hidden=true tabindex=-1></a>(<span class=kw>setq</span> org-ellipsis <span class=st>&quot; [+]&quot;</span>)</span>
+<span id=cb1-2><a href=#cb1-2 aria-hidden=true tabindex=-1></a>(add-hook &#39;org-mode-hook &#39;variable-pitch-mode)</span>
+<span id=cb1-3><a href=#cb1-3 aria-hidden=true tabindex=-1></a>(<span class=kw>let*</span> ((variable-tuple</span>
+<span id=cb1-4><a href=#cb1-4 aria-hidden=true tabindex=-1></a>        (<span class=kw>cond</span></span>
+<span id=cb1-5><a href=#cb1-5 aria-hidden=true tabindex=-1></a>         ((x-list-fonts <span class=st>&quot;iMWritingDuoS Nerd Font&quot;</span>)   &#39;(:family <span class=st>&quot;iMWritingDuoS Nerd Font&quot;</span>))</span>
+<span id=cb1-6><a href=#cb1-6 aria-hidden=true tabindex=-1></a>         ((x-list-fonts <span class=st>&quot;Georgia&quot;</span>)   &#39;(:family <span class=st>&quot;Georgia&quot;</span>))</span>
+<span id=cb1-7><a href=#cb1-7 aria-hidden=true tabindex=-1></a>         ((x-list-fonts <span class=st>&quot;PT Serif&quot;</span>)  &#39;(:family <span class=st>&quot;PT Serif&quot;</span>))))</span>
+<span id=cb1-8><a href=#cb1-8 aria-hidden=true tabindex=-1></a>       (fixed-tuple</span>
+<span id=cb1-9><a href=#cb1-9 aria-hidden=true tabindex=-1></a>        (<span class=kw>cond</span></span>
+<span id=cb1-10><a href=#cb1-10 aria-hidden=true tabindex=-1></a>         ((x-list-fonts <span class=st>&quot;iMWritingDuoS Nerd Font Mono&quot;</span>)   &#39;(:family <span class=st>&quot;iMWritingDuoS Nerd Font Mono&quot;</span>   :height <span class=dv>160</span>))</span>
+<span id=cb1-11><a href=#cb1-11 aria-hidden=true tabindex=-1></a>         ((x-list-fonts <span class=st>&quot;Menlo&quot;</span>)               &#39;(:family <span class=st>&quot;Menlo&quot;</span>    :height <span class=dv>120</span>))</span>
+<span id=cb1-12><a href=#cb1-12 aria-hidden=true tabindex=-1></a>         ((x-list-fonts <span class=st>&quot;PT Mono&quot;</span>)             &#39;(:family <span class=st>&quot;PT Mono&quot;</span>  :height <span class=dv>120</span>))))</span>
+<span id=cb1-13><a href=#cb1-13 aria-hidden=true tabindex=-1></a>       (headline `(:inherit default :weight bold)))</span>
+<span id=cb1-14><a href=#cb1-14 aria-hidden=true tabindex=-1></a>  (custom-theme-set-faces</span>
+<span id=cb1-15><a href=#cb1-15 aria-hidden=true tabindex=-1></a>   &#39;user</span>
+<span id=cb1-16><a href=#cb1-16 aria-hidden=true tabindex=-1></a>   `(org-level<span class=dv>-1</span> ((<span class=kw>t</span> (,@headline ,@variable-tuple))))</span>
+<span id=cb1-17><a href=#cb1-17 aria-hidden=true tabindex=-1></a>   `(org-level<span class=dv>-2</span> ((<span class=kw>t</span> (,@headline ,@variable-tuple))))</span>
+<span id=cb1-18><a href=#cb1-18 aria-hidden=true tabindex=-1></a>   `(org-level<span class=dv>-3</span> ((<span class=kw>t</span> (,@headline ,@variable-tuple))))</span>
+<span id=cb1-19><a href=#cb1-19 aria-hidden=true tabindex=-1></a>   `(org-level<span class=dv>-4</span> ((<span class=kw>t</span> (,@headline ,@variable-tuple))))</span>
+<span id=cb1-20><a href=#cb1-20 aria-hidden=true tabindex=-1></a>   `(org-level<span class=dv>-5</span> ((<span class=kw>t</span> (,@headline ,@variable-tuple))))</span>
+<span id=cb1-21><a href=#cb1-21 aria-hidden=true tabindex=-1></a>   `(org-level<span class=dv>-6</span> ((<span class=kw>t</span> (,@headline ,@variable-tuple))))</span>
+<span id=cb1-22><a href=#cb1-22 aria-hidden=true tabindex=-1></a>   `(org-level<span class=dv>-7</span> ((<span class=kw>t</span> (,@headline ,@variable-tuple))))</span>
+<span id=cb1-23><a href=#cb1-23 aria-hidden=true tabindex=-1></a>   `(org-level<span class=dv>-8</span> ((<span class=kw>t</span> (,@headline ,@variable-tuple))))</span>
+<span id=cb1-24><a href=#cb1-24 aria-hidden=true tabindex=-1></a>   `(org-document-title ((<span class=kw>t</span> (,@headline ,@variable-tuple))))</span>
+<span id=cb1-25><a href=#cb1-25 aria-hidden=true tabindex=-1></a></span>
+<span id=cb1-26><a href=#cb1-26 aria-hidden=true tabindex=-1></a>   `(variable-pitch     ((<span class=kw>t</span> ,@variable-tuple)))</span>
+<span id=cb1-27><a href=#cb1-27 aria-hidden=true tabindex=-1></a>   `(fixed-pitch        ((<span class=kw>t</span> ,@fixed-tuple)))</span>
+<span id=cb1-28><a href=#cb1-28 aria-hidden=true tabindex=-1></a></span>
+<span id=cb1-29><a href=#cb1-29 aria-hidden=true tabindex=-1></a>   &#39;(org-ellipsis ((<span class=kw>t</span> (:inherit fixed-pitch :foreground <span class=st>&quot;gray40&quot;</span> :underline <span class=kw>nil</span>))))</span>
+<span id=cb1-30><a href=#cb1-30 aria-hidden=true tabindex=-1></a>   &#39;(org-block            ((<span class=kw>t</span> (:inherit fixed-pitch))))</span>
+<span id=cb1-31><a href=#cb1-31 aria-hidden=true tabindex=-1></a>   &#39;(org-block-begin-line ((<span class=kw>t</span> (:inherit fixed-pitch))))</span>
+<span id=cb1-32><a href=#cb1-32 aria-hidden=true tabindex=-1></a>   &#39;(org-block-end-line   ((<span class=kw>t</span> (:inherit fixed-pitch))))</span>
+<span id=cb1-33><a href=#cb1-33 aria-hidden=true tabindex=-1></a>   &#39;(org-src              ((<span class=kw>t</span> (:inherit fixed-pitch))))</span>
+<span id=cb1-34><a href=#cb1-34 aria-hidden=true tabindex=-1></a>   &#39;(org-properties       ((<span class=kw>t</span> (:inherit fixed-pitch))))</span>
+<span id=cb1-35><a href=#cb1-35 aria-hidden=true tabindex=-1></a>   &#39;(org-code             ((<span class=kw>t</span> (:inherit (<span class=kw>shadow</span> fixed-pitch)))))</span>
+<span id=cb1-36><a href=#cb1-36 aria-hidden=true tabindex=-1></a>   &#39;(org-date             ((<span class=kw>t</span> (:inherit (<span class=kw>shadow</span> fixed-pitch)))))</span>
+<span id=cb1-37><a href=#cb1-37 aria-hidden=true tabindex=-1></a>   &#39;(org-document-info    ((<span class=kw>t</span> (:inherit (<span class=kw>shadow</span> fixed-pitch)))))</span>
+<span id=cb1-38><a href=#cb1-38 aria-hidden=true tabindex=-1></a>   &#39;(org-document-info-keyword ((<span class=kw>t</span> (:inherit (<span class=kw>shadow</span> fixed-pitch)))))</span>
+<span id=cb1-39><a href=#cb1-39 aria-hidden=true tabindex=-1></a>   &#39;(org-drawer           ((<span class=kw>t</span> (:inherit (<span class=kw>shadow</span> fixed-pitch)))))</span>
+<span id=cb1-40><a href=#cb1-40 aria-hidden=true tabindex=-1></a>   &#39;(org-indent           ((<span class=kw>t</span> (:inherit (org-hide fixed-pitch)))))</span>
+<span id=cb1-41><a href=#cb1-41 aria-hidden=true tabindex=-1></a>   `(org-link             ((<span class=kw>t</span> (:inherit fixed-pitch :foreground ,(doom-color &#39;blue) :underline <span class=kw>t</span>))))</span>
+<span id=cb1-42><a href=#cb1-42 aria-hidden=true tabindex=-1></a>   &#39;(org-meta-line        ((<span class=kw>t</span> (:inherit (font-lock-comment-face fixed-pitch)))))</span>
+<span id=cb1-43><a href=#cb1-43 aria-hidden=true tabindex=-1></a>   &#39;(org-property-value   ((<span class=kw>t</span> (:inherit fixed-pitch))) <span class=kw>t</span>)</span>
+<span id=cb1-44><a href=#cb1-44 aria-hidden=true tabindex=-1></a>   &#39;(org-special-keyword  ((<span class=kw>t</span> (:inherit (font-lock-comment-face fixed-pitch)))))</span>
+<span id=cb1-45><a href=#cb1-45 aria-hidden=true tabindex=-1></a>   &#39;(org-table            ((<span class=kw>t</span> (:inherit fixed-pitch))))</span>
+<span id=cb1-46><a href=#cb1-46 aria-hidden=true tabindex=-1></a>   &#39;(org-tag              ((<span class=kw>t</span> (:inherit (<span class=kw>shadow</span> fixed-pitch) :weight bold :height <span class=fl>0.8</span>))))</span>
+<span id=cb1-47><a href=#cb1-47 aria-hidden=true tabindex=-1></a>   &#39;(org-verbatim         ((<span class=kw>t</span> (:inherit (<span class=kw>shadow</span> fixed-pitch)))))))</span></code></pre></div><h2 id=digression-about-why-i-did-that->Digression about why I did that;</h2><p>For some reason a went to the rabbit hole of tweaking my emacs. In fact, it first started as; let's try to switch from <code class=verbatim>doom-emacs</code><a href=#fn3 class=footnote-ref id=fnref3 role=doc-noteref><sup>3</sup></a> to <code class=verbatim>nano-emacs</code><a href=#fn4 class=footnote-ref id=fnref4 role=doc-noteref><sup>4</sup></a>. But, doing so, I realized I wouldn't be able to reach the quality and optimization provided by doom-emacs myself. So instead of doing this, I first tried to copy the theme of nano. Then I realized one of the biggest factor of nano look & feel was its usage of "Roboto Mono" but with weight light (or Thin).<p>See<figure><img src=./nano-emacs-light.png title=nano-emacs alt="GNU Emacs / N Λ N O Look (light theme)"><figcaption aria-hidden=true>GNU Emacs / N Λ N O Look (light theme)</figcaption></figure><figure><img src=./nano-emacs-dark.png title=nano-emacs alt="GNU Emacs / N Λ N O Look (dark theme)"><figcaption aria-hidden=true>GNU Emacs / N Λ N O Look (dark theme)</figcaption></figure><p>OK so… I just tried to match the theme colors. It was easy to create a theme with matching colors. <strong>But</strong>, to make it really looks like nano; almost monochrome with two accent colors; it would mean a lot more work than anyone could expect. For most emacs mode you probably need to add a set of specific font faces. This choice is also what makes nano looks so good too. This is not just about the color, but about a lot more details than that. Using the good colors only at the right place is difficult to achieve. And not only the colors, but also, the correct fonts, the spacing of text elements etc…<p>Unfortunately if you want the nano look and feel in doom, it is much more work than just copying the nano theme.<p>But this research of look and feel opened the door to using thin fonts in emacs. And also tweaking the fonts which really improve the look & feel of emacs.<p>With this conf, I do not use the same font for coding and for writing prose or a blog post with code blocks. So far, I like this new look and feel.<h2 id=bonuses>Bonuses</h2><h3 id=thin-code-fonts>Thin Code fonts</h3><p>After lot of try, I finally switched my default coding font to SauceCodePro Nerd Font Mono with weight <code>semi-light</code>. This is a clone of Adobe <code class=verbatim>SourceCode Pro</code>. And on a retina display it is really nice to use.<div class=sourceCode id=cb2 data-org-language=emacs-lisp><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id=cb2-1><a href=#cb2-1 aria-hidden=true tabindex=-1></a>(<span class=kw>setq</span> doom-font (font-spec :family <span class=st>&quot;SauceCodePro Nerd Font Mono&quot;</span> :size <span class=dv>12</span> :weight &#39;semi-light)</span>
+<span id=cb2-2><a href=#cb2-2 aria-hidden=true tabindex=-1></a>      doom-variable-pitch-font (font-spec :family <span class=st>&quot;iMWritingDuoS Nerd Font&quot;</span> :size <span class=dv>14</span>))</span></code></pre></div><h3 id=an-unfinished-nano-theme-for-doom>An unfinished nano theme for doom</h3><p>Even though the result is not 100% satisfactory, you could start using my work. Save this file into <code class=verbatim>~/.doom.d/themes/doom-nano-theme.el</code>:<div class=sourceCode id=cb3 data-org-language=lisp><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id=cb3-1><a href=#cb3-1 aria-hidden=true tabindex=-1></a><span class=co>;;; doom-nano-theme.el --- inspired by Nicolas Rougier nano-theme -*- lexical-binding: t; no-byte-compile: t; -*-</span></span>
+<span id=cb3-2><a href=#cb3-2 aria-hidden=true tabindex=-1></a><span class=co>;;</span></span>
+<span id=cb3-3><a href=#cb3-3 aria-hidden=true tabindex=-1></a><span class=co>;; Author: Yann Esposito &lt;https://yannesposito.com&gt;</span></span>
+<span id=cb3-4><a href=#cb3-4 aria-hidden=true tabindex=-1></a><span class=co>;; Created: August 16, 2021</span></span>
+<span id=cb3-5><a href=#cb3-5 aria-hidden=true tabindex=-1></a><span class=co>;; Version: 1.0.0</span></span>
+<span id=cb3-6><a href=#cb3-6 aria-hidden=true tabindex=-1></a><span class=co>;; Keywords: custom themes, faces</span></span>
+<span id=cb3-7><a href=#cb3-7 aria-hidden=true tabindex=-1></a><span class=co>;; Homepage: https://github.com/hlissner/emacs-doom-themes</span></span>
+<span id=cb3-8><a href=#cb3-8 aria-hidden=true tabindex=-1></a><span class=co>;; Package-Requires: ((emacs &quot;25.1&quot;) (cl-lib &quot;0.5&quot;) (doom-themes &quot;2.2.1&quot;))</span></span>
+<span id=cb3-9><a href=#cb3-9 aria-hidden=true tabindex=-1></a><span class=co>;;</span></span>
+<span id=cb3-10><a href=#cb3-10 aria-hidden=true tabindex=-1></a><span class=co>;;; Commentary:</span></span>
+<span id=cb3-11><a href=#cb3-11 aria-hidden=true tabindex=-1></a><span class=co>;;</span></span>
+<span id=cb3-12><a href=#cb3-12 aria-hidden=true tabindex=-1></a><span class=co>;; Ported from nano-theme: https://github.com/rougier/nano-theme</span></span>
+<span id=cb3-13><a href=#cb3-13 aria-hidden=true tabindex=-1></a><span class=co>;;</span></span>
+<span id=cb3-14><a href=#cb3-14 aria-hidden=true tabindex=-1></a><span class=co>;;; Code:</span></span>
+<span id=cb3-15><a href=#cb3-15 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-16><a href=#cb3-16 aria-hidden=true tabindex=-1></a>(<span class=kw>require</span> &#39;doom-themes)</span>
+<span id=cb3-17><a href=#cb3-17 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-18><a href=#cb3-18 aria-hidden=true tabindex=-1></a><span class=co>;;; Variables</span></span>
+<span id=cb3-19><a href=#cb3-19 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-20><a href=#cb3-20 aria-hidden=true tabindex=-1></a>(defgroup doom-plain-theme <span class=kw>nil</span></span>
+<span id=cb3-21><a href=#cb3-21 aria-hidden=true tabindex=-1></a>  <span class=st>&quot;Options for the `doom-plain&#39; theme.&quot;</span></span>
+<span id=cb3-22><a href=#cb3-22 aria-hidden=true tabindex=-1></a>  :group &#39;doom-themes)</span>
+<span id=cb3-23><a href=#cb3-23 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-24><a href=#cb3-24 aria-hidden=true tabindex=-1></a>(defcustom doom-plain-padded-modeline doom-themes-padded-modeline</span>
+<span id=cb3-25><a href=#cb3-25 aria-hidden=true tabindex=-1></a>  <span class=st>&quot;If non-nil, adds a 4px padding to the mode-line.</span></span>
+<span id=cb3-26><a href=#cb3-26 aria-hidden=true tabindex=-1></a><span class=st>Can be an integer to determine the exact padding.&quot;</span></span>
+<span id=cb3-27><a href=#cb3-27 aria-hidden=true tabindex=-1></a>  :group &#39;doom-plain-theme</span>
+<span id=cb3-28><a href=#cb3-28 aria-hidden=true tabindex=-1></a>  <span class=bu>:type</span> &#39;(<span class=kw>or</span> <span class=kw>integer</span> <span class=kw>boolean</span>))</span>
+<span id=cb3-29><a href=#cb3-29 aria-hidden=true tabindex=-1></a><span class=co>;;</span></span>
+<span id=cb3-30><a href=#cb3-30 aria-hidden=true tabindex=-1></a><span class=co>;;; Theme definition</span></span>
+<span id=cb3-31><a href=#cb3-31 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-32><a href=#cb3-32 aria-hidden=true tabindex=-1></a>(def-doom-theme doom-nano</span>
+<span id=cb3-33><a href=#cb3-33 aria-hidden=true tabindex=-1></a>  <span class=st>&quot;Theme inspired by Nicolas Rougier nano-theme&quot;</span></span>
+<span id=cb3-34><a href=#cb3-34 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-35><a href=#cb3-35 aria-hidden=true tabindex=-1></a>  <span class=co>;; name      default/256/16</span></span>
+<span id=cb3-36><a href=#cb3-36 aria-hidden=true tabindex=-1></a>  ((nano-color-foreground &#39;(<span class=st>&quot;#37474F&quot;</span>)) <span class=co>;; Blue Grey / L800</span></span>
+<span id=cb3-37><a href=#cb3-37 aria-hidden=true tabindex=-1></a>   (nano-color-background &#39;(<span class=st>&quot;#FFFFFF&quot;</span>)) <span class=co>;; White</span></span>
+<span id=cb3-38><a href=#cb3-38 aria-hidden=true tabindex=-1></a>   (nano-color-highlight  &#39;(<span class=st>&quot;#FAFAFA&quot;</span>)) <span class=co>;; Very Light Grey</span></span>
+<span id=cb3-39><a href=#cb3-39 aria-hidden=true tabindex=-1></a>   (nano-color-critical   &#39;(<span class=st>&quot;#FF6F00&quot;</span>)) <span class=co>;; Amber / L900</span></span>
+<span id=cb3-40><a href=#cb3-40 aria-hidden=true tabindex=-1></a>   (nano-color-salient    &#39;(<span class=st>&quot;#673AB7&quot;</span>)) <span class=co>;; Deep Purple / L500</span></span>
+<span id=cb3-41><a href=#cb3-41 aria-hidden=true tabindex=-1></a>   (nano-color-strong     &#39;(<span class=st>&quot;#000000&quot;</span>)) <span class=co>;; Black</span></span>
+<span id=cb3-42><a href=#cb3-42 aria-hidden=true tabindex=-1></a>   (nano-color-popout     &#39;(<span class=st>&quot;#FFAB91&quot;</span>)) <span class=co>;; Deep Orange / L200</span></span>
+<span id=cb3-43><a href=#cb3-43 aria-hidden=true tabindex=-1></a>   (nano-color-subtle     &#39;(<span class=st>&quot;#ECEFF1&quot;</span>)) <span class=co>;; Blue Grey / L50</span></span>
+<span id=cb3-44><a href=#cb3-44 aria-hidden=true tabindex=-1></a>   (nano-color-faded      &#39;(<span class=st>&quot;#B0BEC5&quot;</span>)) <span class=co>;; Blue Grey / L200</span></span>
+<span id=cb3-45><a href=#cb3-45 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-46><a href=#cb3-46 aria-hidden=true tabindex=-1></a>   (bg         nano-color-background)</span>
+<span id=cb3-47><a href=#cb3-47 aria-hidden=true tabindex=-1></a>   (bg-alt     nano-color-highlight)</span>
+<span id=cb3-48><a href=#cb3-48 aria-hidden=true tabindex=-1></a>   (base0      &#39;(<span class=st>&quot;#18282f&quot;</span>))</span>
+<span id=cb3-49><a href=#cb3-49 aria-hidden=true tabindex=-1></a>   (base1      &#39;(<span class=st>&quot;#24323a&quot;</span>))</span>
+<span id=cb3-50><a href=#cb3-50 aria-hidden=true tabindex=-1></a>   (base2      &#39;(<span class=st>&quot;#556066&quot;</span>))</span>
+<span id=cb3-51><a href=#cb3-51 aria-hidden=true tabindex=-1></a>   (base3      &#39;(<span class=st>&quot;#6f787d&quot;</span>))</span>
+<span id=cb3-52><a href=#cb3-52 aria-hidden=true tabindex=-1></a>   (base4      &#39;(<span class=st>&quot;#8a9296&quot;</span>))</span>
+<span id=cb3-53><a href=#cb3-53 aria-hidden=true tabindex=-1></a>   (base5      &#39;(<span class=st>&quot;#a6acaf&quot;</span>))</span>
+<span id=cb3-54><a href=#cb3-54 aria-hidden=true tabindex=-1></a>   (base6      &#39;(<span class=st>&quot;#e7e8e9&quot;</span>))</span>
+<span id=cb3-55><a href=#cb3-55 aria-hidden=true tabindex=-1></a>   (base7      &#39;(<span class=st>&quot;#f6f6f6&quot;</span>))</span>
+<span id=cb3-56><a href=#cb3-56 aria-hidden=true tabindex=-1></a>   (base8      &#39;(<span class=st>&quot;#fafafa&quot;</span>))</span>
+<span id=cb3-57><a href=#cb3-57 aria-hidden=true tabindex=-1></a>   (fg         nano-color-foreground)</span>
+<span id=cb3-58><a href=#cb3-58 aria-hidden=true tabindex=-1></a>   (fg-alt     nano-color-faded)</span>
+<span id=cb3-59><a href=#cb3-59 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-60><a href=#cb3-60 aria-hidden=true tabindex=-1></a>   (grey       fg)</span>
+<span id=cb3-61><a href=#cb3-61 aria-hidden=true tabindex=-1></a>   (red        fg)</span>
+<span id=cb3-62><a href=#cb3-62 aria-hidden=true tabindex=-1></a>   (blue       fg)</span>
+<span id=cb3-63><a href=#cb3-63 aria-hidden=true tabindex=-1></a>   (dark-blue  fg)</span>
+<span id=cb3-64><a href=#cb3-64 aria-hidden=true tabindex=-1></a>   (orange     fg)</span>
+<span id=cb3-65><a href=#cb3-65 aria-hidden=true tabindex=-1></a>   (green      fg)</span>
+<span id=cb3-66><a href=#cb3-66 aria-hidden=true tabindex=-1></a>   (teal       fg)</span>
+<span id=cb3-67><a href=#cb3-67 aria-hidden=true tabindex=-1></a>   (yellow     fg)</span>
+<span id=cb3-68><a href=#cb3-68 aria-hidden=true tabindex=-1></a>   (magenta    fg)</span>
+<span id=cb3-69><a href=#cb3-69 aria-hidden=true tabindex=-1></a>   (violet     fg)</span>
+<span id=cb3-70><a href=#cb3-70 aria-hidden=true tabindex=-1></a>   (cyan       fg)</span>
+<span id=cb3-71><a href=#cb3-71 aria-hidden=true tabindex=-1></a>   (dark-cyan  fg)</span>
+<span id=cb3-72><a href=#cb3-72 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-73><a href=#cb3-73 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-74><a href=#cb3-74 aria-hidden=true tabindex=-1></a>   <span class=co>;; face categories -- required for all themes</span></span>
+<span id=cb3-75><a href=#cb3-75 aria-hidden=true tabindex=-1></a>   (highlight      nano-color-salient)</span>
+<span id=cb3-76><a href=#cb3-76 aria-hidden=true tabindex=-1></a>   (vertical-bar   base5)</span>
+<span id=cb3-77><a href=#cb3-77 aria-hidden=true tabindex=-1></a>   (selection      nano-color-highlight)</span>
+<span id=cb3-78><a href=#cb3-78 aria-hidden=true tabindex=-1></a>   (builtin        nano-color-salient)</span>
+<span id=cb3-79><a href=#cb3-79 aria-hidden=true tabindex=-1></a>   (comments       nano-color-faded)</span>
+<span id=cb3-80><a href=#cb3-80 aria-hidden=true tabindex=-1></a>   (doc-comments   nano-color-faded)</span>
+<span id=cb3-81><a href=#cb3-81 aria-hidden=true tabindex=-1></a>   (constants      nano-color-strong)</span>
+<span id=cb3-82><a href=#cb3-82 aria-hidden=true tabindex=-1></a>   (functions      nano-color-salient)</span>
+<span id=cb3-83><a href=#cb3-83 aria-hidden=true tabindex=-1></a>   (keywords       nano-color-strong)</span>
+<span id=cb3-84><a href=#cb3-84 aria-hidden=true tabindex=-1></a>   (methods        nano-color-salient)</span>
+<span id=cb3-85><a href=#cb3-85 aria-hidden=true tabindex=-1></a>   (operators      nano-color-strong)</span>
+<span id=cb3-86><a href=#cb3-86 aria-hidden=true tabindex=-1></a>   (<span class=kw>type</span>           nano-color-strong)</span>
+<span id=cb3-87><a href=#cb3-87 aria-hidden=true tabindex=-1></a>   (strings        base0)</span>
+<span id=cb3-88><a href=#cb3-88 aria-hidden=true tabindex=-1></a>   (variables      base0)</span>
+<span id=cb3-89><a href=#cb3-89 aria-hidden=true tabindex=-1></a>   (numbers        base0)</span>
+<span id=cb3-90><a href=#cb3-90 aria-hidden=true tabindex=-1></a>   (region         base4)</span>
+<span id=cb3-91><a href=#cb3-91 aria-hidden=true tabindex=-1></a>   (<span class=kw>error</span>          nano-color-critical)</span>
+<span id=cb3-92><a href=#cb3-92 aria-hidden=true tabindex=-1></a>   (<span class=kw>warning</span>        nano-color-popout)</span>
+<span id=cb3-93><a href=#cb3-93 aria-hidden=true tabindex=-1></a>   (success        nano-color-salient)</span>
+<span id=cb3-94><a href=#cb3-94 aria-hidden=true tabindex=-1></a>   (vc-modified    nano-color-salient)</span>
+<span id=cb3-95><a href=#cb3-95 aria-hidden=true tabindex=-1></a>   (vc-added       fg-alt)</span>
+<span id=cb3-96><a href=#cb3-96 aria-hidden=true tabindex=-1></a>   (vc-deleted     nano-color-critical)</span>
+<span id=cb3-97><a href=#cb3-97 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-98><a href=#cb3-98 aria-hidden=true tabindex=-1></a>   <span class=co>;; custom categories</span></span>
+<span id=cb3-99><a href=#cb3-99 aria-hidden=true tabindex=-1></a>   (-modeline-pad</span>
+<span id=cb3-100><a href=#cb3-100 aria-hidden=true tabindex=-1></a>    (<span class=kw>when</span> doom-plain-padded-modeline</span>
+<span id=cb3-101><a href=#cb3-101 aria-hidden=true tabindex=-1></a>      (<span class=kw>if</span> (<span class=kw>integerp</span> doom-plain-padded-modeline) doom-plain-padded-modeline <span class=dv>4</span>)))</span>
+<span id=cb3-102><a href=#cb3-102 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-103><a href=#cb3-103 aria-hidden=true tabindex=-1></a>   (modeline-bg              (doom-darken bg-alt <span class=fl>0.15</span>))</span>
+<span id=cb3-104><a href=#cb3-104 aria-hidden=true tabindex=-1></a>   (modeline-bg-alt          (doom-darken bg-alt <span class=fl>0.1</span>))</span>
+<span id=cb3-105><a href=#cb3-105 aria-hidden=true tabindex=-1></a>   (modeline-bg-inactive     (doom-darken bg-alt <span class=fl>0.1</span>))</span>
+<span id=cb3-106><a href=#cb3-106 aria-hidden=true tabindex=-1></a>   (modeline-bg-inactive-alt bg-alt)</span>
+<span id=cb3-107><a href=#cb3-107 aria-hidden=true tabindex=-1></a>   (modeline-fg              fg)</span>
+<span id=cb3-108><a href=#cb3-108 aria-hidden=true tabindex=-1></a>   (modeline-fg-alt          (doom-darken modeline-bg-inactive <span class=fl>0.35</span>)))</span>
+<span id=cb3-109><a href=#cb3-109 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-110><a href=#cb3-110 aria-hidden=true tabindex=-1></a>  <span class=co>;;;; Base theme face overrides</span></span>
+<span id=cb3-111><a href=#cb3-111 aria-hidden=true tabindex=-1></a>  ((<span class=kw>error</span>   :underline `(:style wave :color ,<span class=kw>error</span>))</span>
+<span id=cb3-112><a href=#cb3-112 aria-hidden=true tabindex=-1></a>   (<span class=kw>warning</span> :underline `(:style wave :color ,<span class=kw>warning</span>))</span>
+<span id=cb3-113><a href=#cb3-113 aria-hidden=true tabindex=-1></a>   ((font-lock-constant-face &amp;override)      :slant &#39;italic)</span>
+<span id=cb3-114><a href=#cb3-114 aria-hidden=true tabindex=-1></a>   ((font-lock-comment-face &amp;override)       :slant &#39;italic)</span>
+<span id=cb3-115><a href=#cb3-115 aria-hidden=true tabindex=-1></a>   ((font-lock-function-name-face &amp;override) :slant &#39;italic)</span>
+<span id=cb3-116><a href=#cb3-116 aria-hidden=true tabindex=-1></a>   ((font-lock-type-face &amp;override)          :slant &#39;italic)</span>
+<span id=cb3-117><a href=#cb3-117 aria-hidden=true tabindex=-1></a>   <span class=co>;;(hl-line :background base8)</span></span>
+<span id=cb3-118><a href=#cb3-118 aria-hidden=true tabindex=-1></a>   ((line-number &amp;override) :foreground base3)</span>
+<span id=cb3-119><a href=#cb3-119 aria-hidden=true tabindex=-1></a>   ((line-number-current-line &amp;override) :foreground base2)</span>
+<span id=cb3-120><a href=#cb3-120 aria-hidden=true tabindex=-1></a>   (mode-line</span>
+<span id=cb3-121><a href=#cb3-121 aria-hidden=true tabindex=-1></a>    :background modeline-bg :foreground modeline-fg</span>
+<span id=cb3-122><a href=#cb3-122 aria-hidden=true tabindex=-1></a>    :box (<span class=kw>if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg)))</span>
+<span id=cb3-123><a href=#cb3-123 aria-hidden=true tabindex=-1></a>   (mode-line-inactive</span>
+<span id=cb3-124><a href=#cb3-124 aria-hidden=true tabindex=-1></a>    :background modeline-bg-inactive :foreground modeline-fg-alt</span>
+<span id=cb3-125><a href=#cb3-125 aria-hidden=true tabindex=-1></a>    :box (<span class=kw>if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive)))</span>
+<span id=cb3-126><a href=#cb3-126 aria-hidden=true tabindex=-1></a>   (mode-line-emphasis :foreground highlight)</span>
+<span id=cb3-127><a href=#cb3-127 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-128><a href=#cb3-128 aria-hidden=true tabindex=-1></a>   <span class=co>;;;; doom-modeline</span></span>
+<span id=cb3-129><a href=#cb3-129 aria-hidden=true tabindex=-1></a>   (doom-modeline-bar :background modeline-bg)</span>
+<span id=cb3-130><a href=#cb3-130 aria-hidden=true tabindex=-1></a>   (doom-modeline-bar-inactive :inherit &#39;doom-modeline-bar)</span>
+<span id=cb3-131><a href=#cb3-131 aria-hidden=true tabindex=-1></a>   (doom-modeline-project-dir :foreground fg)</span>
+<span id=cb3-132><a href=#cb3-132 aria-hidden=true tabindex=-1></a>   (doom-modeline-buffer-file :foreground fg)</span>
+<span id=cb3-133><a href=#cb3-133 aria-hidden=true tabindex=-1></a>   (doom-modeline-buffer-modified :weight &#39;bold :foreground <span class=st>&quot;#000000&quot;</span>)</span>
+<span id=cb3-134><a href=#cb3-134 aria-hidden=true tabindex=-1></a>   (doom-modeline-panel :inherit &#39;mode-line-highlight :background base3 :foreground fg)</span>
+<span id=cb3-135><a href=#cb3-135 aria-hidden=true tabindex=-1></a>   <span class=co>;;;; ivy</span></span>
+<span id=cb3-136><a href=#cb3-136 aria-hidden=true tabindex=-1></a>   (ivy-posframe :background bg-alt)</span>
+<span id=cb3-137><a href=#cb3-137 aria-hidden=true tabindex=-1></a>   <span class=co>;;;; magit</span></span>
+<span id=cb3-138><a href=#cb3-138 aria-hidden=true tabindex=-1></a>   ((magit-diff-added-highlight &amp;override)   :foreground fg :background (doom-blend vc-added bg <span class=fl>0.3</span>))</span>
+<span id=cb3-139><a href=#cb3-139 aria-hidden=true tabindex=-1></a>   ((magit-diff-removed &amp;override)           :foreground (doom-lighten fg <span class=fl>0.4</span>) :background (doom-blend vc-deleted bg <span class=fl>0.1</span>))</span>
+<span id=cb3-140><a href=#cb3-140 aria-hidden=true tabindex=-1></a>   ((magit-diff-removed-highlight &amp;override) :foreground fg :background (doom-blend vc-deleted bg <span class=fl>0.22</span>))</span>
+<span id=cb3-141><a href=#cb3-141 aria-hidden=true tabindex=-1></a>   <span class=co>;;;; lsp-mode</span></span>
+<span id=cb3-142><a href=#cb3-142 aria-hidden=true tabindex=-1></a>   (lsp-headerline-breadcrumb-symbols-face :foreground keywords :weight &#39;bold)</span>
+<span id=cb3-143><a href=#cb3-143 aria-hidden=true tabindex=-1></a>   <span class=co>;;;; outline &lt;built-in&gt;</span></span>
+<span id=cb3-144><a href=#cb3-144 aria-hidden=true tabindex=-1></a>   (outline<span class=dv>-1</span> :slant   &#39;italic :foreground fg-alt)</span>
+<span id=cb3-145><a href=#cb3-145 aria-hidden=true tabindex=-1></a>   (outline<span class=dv>-2</span> :inherit &#39;outline<span class=dv>-1</span> :foreground base2)</span>
+<span id=cb3-146><a href=#cb3-146 aria-hidden=true tabindex=-1></a>   (outline<span class=dv>-3</span> :inherit &#39;outline<span class=dv>-2</span>)</span>
+<span id=cb3-147><a href=#cb3-147 aria-hidden=true tabindex=-1></a>   (outline<span class=dv>-4</span> :inherit &#39;outline<span class=dv>-3</span>)</span>
+<span id=cb3-148><a href=#cb3-148 aria-hidden=true tabindex=-1></a>   (outline<span class=dv>-5</span> :inherit &#39;outline<span class=dv>-4</span>)</span>
+<span id=cb3-149><a href=#cb3-149 aria-hidden=true tabindex=-1></a>   (outline<span class=dv>-6</span> :inherit &#39;outline<span class=dv>-5</span>)</span>
+<span id=cb3-150><a href=#cb3-150 aria-hidden=true tabindex=-1></a>   (outline<span class=dv>-7</span> :inherit &#39;outline<span class=dv>-6</span>)</span>
+<span id=cb3-151><a href=#cb3-151 aria-hidden=true tabindex=-1></a>   (outline<span class=dv>-8</span> :inherit &#39;outline<span class=dv>-7</span>)</span>
+<span id=cb3-152><a href=#cb3-152 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-153><a href=#cb3-153 aria-hidden=true tabindex=-1></a>   (org-level<span class=dv>-1</span> :inherit &#39;org-level<span class=dv>-1</span> :foreground nano-color-strong)</span>
+<span id=cb3-154><a href=#cb3-154 aria-hidden=true tabindex=-1></a>   (org-level<span class=dv>-2</span> :inherit &#39;org-level<span class=dv>-2</span> :foreground nano-color-strong)</span>
+<span id=cb3-155><a href=#cb3-155 aria-hidden=true tabindex=-1></a>   (org-level<span class=dv>-3</span> :inherit &#39;org-level<span class=dv>-3</span> :foreground nano-color-strong)</span>
+<span id=cb3-156><a href=#cb3-156 aria-hidden=true tabindex=-1></a>   (org-level<span class=dv>-4</span> :inherit &#39;org-level<span class=dv>-4</span> :foreground nano-color-strong)</span>
+<span id=cb3-157><a href=#cb3-157 aria-hidden=true tabindex=-1></a>   (org-level<span class=dv>-5</span> :inherit &#39;org-level<span class=dv>-5</span> :foreground nano-color-strong)</span>
+<span id=cb3-158><a href=#cb3-158 aria-hidden=true tabindex=-1></a>   (org-level<span class=dv>-6</span> :inherit &#39;org-level<span class=dv>-6</span> :foreground nano-color-strong)</span>
+<span id=cb3-159><a href=#cb3-159 aria-hidden=true tabindex=-1></a>   (org-level<span class=dv>-7</span> :inherit &#39;org-level<span class=dv>-7</span> :foreground nano-color-strong)</span>
+<span id=cb3-160><a href=#cb3-160 aria-hidden=true tabindex=-1></a>   (org-level<span class=dv>-8</span> :inherit &#39;org-level<span class=dv>-8</span> :foreground nano-color-strong)</span>
+<span id=cb3-161><a href=#cb3-161 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-162><a href=#cb3-162 aria-hidden=true tabindex=-1></a>   (org-code     :inherit &#39;org-code</span>
+<span id=cb3-163><a href=#cb3-163 aria-hidden=true tabindex=-1></a>                 :foreground nano-color-salient</span>
+<span id=cb3-164><a href=#cb3-164 aria-hidden=true tabindex=-1></a>                 :weight &#39;bold)</span>
+<span id=cb3-165><a href=#cb3-165 aria-hidden=true tabindex=-1></a>   (org-verbatim :inherit &#39;org-verbatim</span>
+<span id=cb3-166><a href=#cb3-166 aria-hidden=true tabindex=-1></a>                 :foreground nano-color-salient</span>
+<span id=cb3-167><a href=#cb3-167 aria-hidden=true tabindex=-1></a>                 :weight &#39;bold)</span>
+<span id=cb3-168><a href=#cb3-168 aria-hidden=true tabindex=-1></a>   (org-upcoming-deadline :inherit &#39;org-upcoming-deadline</span>
+<span id=cb3-169><a href=#cb3-169 aria-hidden=true tabindex=-1></a>                          :foreground nano-color-critical</span>
+<span id=cb3-170><a href=#cb3-170 aria-hidden=true tabindex=-1></a>                          :weight &#39;bold)</span>
+<span id=cb3-171><a href=#cb3-171 aria-hidden=true tabindex=-1></a>   (org-upcoming-distant-deadline :inherit &#39;org-upcoming-distant-deadline</span>
+<span id=cb3-172><a href=#cb3-172 aria-hidden=true tabindex=-1></a>                                  :foreground nano-color-salient)</span>
+<span id=cb3-173><a href=#cb3-173 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-174><a href=#cb3-174 aria-hidden=true tabindex=-1></a>   (org-habit-overdue-face</span>
+<span id=cb3-175><a href=#cb3-175 aria-hidden=true tabindex=-1></a>    :inherit &#39;org-habit-overdue-face</span>
+<span id=cb3-176><a href=#cb3-176 aria-hidden=true tabindex=-1></a>    :background fg-alt)</span>
+<span id=cb3-177><a href=#cb3-177 aria-hidden=true tabindex=-1></a>   (org-habit-overdue-future-face</span>
+<span id=cb3-178><a href=#cb3-178 aria-hidden=true tabindex=-1></a>    :inherit &#39;org-habit-overdue-future-face</span>
+<span id=cb3-179><a href=#cb3-179 aria-hidden=true tabindex=-1></a>    :background nano-color-subtle)</span>
+<span id=cb3-180><a href=#cb3-180 aria-hidden=true tabindex=-1></a>   (org-habit-alert-face</span>
+<span id=cb3-181><a href=#cb3-181 aria-hidden=true tabindex=-1></a>    :inherit &#39;org-habit-alert-face</span>
+<span id=cb3-182><a href=#cb3-182 aria-hidden=true tabindex=-1></a>    :background nano-color-critical)</span>
+<span id=cb3-183><a href=#cb3-183 aria-hidden=true tabindex=-1></a>   (org-habit-alert-future-face</span>
+<span id=cb3-184><a href=#cb3-184 aria-hidden=true tabindex=-1></a>    :inherit &#39;org-habit-alert-future-face</span>
+<span id=cb3-185><a href=#cb3-185 aria-hidden=true tabindex=-1></a>    :background nano-color-subtle)</span>
+<span id=cb3-186><a href=#cb3-186 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-187><a href=#cb3-187 aria-hidden=true tabindex=-1></a>   (org-scheduled-today :inherit &#39;org-scheduled-today :foreground fg)</span>
+<span id=cb3-188><a href=#cb3-188 aria-hidden=true tabindex=-1></a>   (org-scheduled-previously :inherit &#39;org-scheduled-previously :foreground fg)</span>
+<span id=cb3-189><a href=#cb3-189 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-190><a href=#cb3-190 aria-hidden=true tabindex=-1></a>   <span class=co>;;;; org &lt;built-in&gt;</span></span>
+<span id=cb3-191><a href=#cb3-191 aria-hidden=true tabindex=-1></a>   ((org-block &amp;override) :background bg-alt)</span>
+<span id=cb3-192><a href=#cb3-192 aria-hidden=true tabindex=-1></a>   ((org-block-begin-line &amp;override) :foreground base5)</span>
+<span id=cb3-193><a href=#cb3-193 aria-hidden=true tabindex=-1></a>   <span class=co>;;;; solaire-mode</span></span>
+<span id=cb3-194><a href=#cb3-194 aria-hidden=true tabindex=-1></a>   (solaire-mode-line-face</span>
+<span id=cb3-195><a href=#cb3-195 aria-hidden=true tabindex=-1></a>    :inherit &#39;mode-line</span>
+<span id=cb3-196><a href=#cb3-196 aria-hidden=true tabindex=-1></a>    :background modeline-bg-alt</span>
+<span id=cb3-197><a href=#cb3-197 aria-hidden=true tabindex=-1></a>    :box (<span class=kw>if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-alt)))</span>
+<span id=cb3-198><a href=#cb3-198 aria-hidden=true tabindex=-1></a>   (solaire-mode-line-inactive-face</span>
+<span id=cb3-199><a href=#cb3-199 aria-hidden=true tabindex=-1></a>    :inherit &#39;mode-line-inactive</span>
+<span id=cb3-200><a href=#cb3-200 aria-hidden=true tabindex=-1></a>    :background modeline-bg-inactive-alt</span>
+<span id=cb3-201><a href=#cb3-201 aria-hidden=true tabindex=-1></a>    :box (<span class=kw>if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive-alt)))))</span>
+<span id=cb3-202><a href=#cb3-202 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-203><a href=#cb3-203 aria-hidden=true tabindex=-1></a><span class=co>;;; doom-plain-theme.el ends here</span></span></code></pre></div><p>You will probably need more work to achieve the colors you expect. For that, using <code>SPC-u C-x =</code> will probably be useful. It will show the font face under the cursor.<p>Best of luck.<section class=footnotes role=doc-endnotes><hr><ol><li id=fn1 role=doc-endnote><p><a href=https://www.nerdfonts.com>https://www.nerdfonts.com</a><a href=#fnref1 class=footnote-back role=doc-backlink>↩︎</a><li id=fn2 role=doc-endnote><p><a href=https://www.nerdfonts.com>https://www.nerdfonts.com</a><a href=#fnref2 class=footnote-back role=doc-backlink>↩︎</a><li id=fn3 role=doc-endnote><p><a href=https://github.com/hlissner/doom-emacs>https://github.com/hlissner/doom-emacs</a><a href=#fnref3 class=footnote-back role=doc-backlink>↩︎</a><li id=fn4 role=doc-endnote><p><a href=https://github.com/rougier/nano-emacs>https://github.com/rougier/nano-emacs</a><a href=#fnref4 class=footnote-back role=doc-backlink>↩︎</a></ol></section></div><div id=postamble class=status><div class=content><nav><a href=/index.html>Home</a> |
+<a href=/slides.html>Slides</a> |
+<a href=/about-me.html>About</a>
+<span class=details>(<a href=https://gitea.esy.fun/yogsototh>code</a>
+<a href=https://espial.esy.fun/u:yogsototh>bookmarks</a>
+<a href=https://espial.esy.fun/u:yogsototh/notes>notes</a>)</span> |
+<a href=#logo>↑ Top ↑</a></nav></div></div></div>
