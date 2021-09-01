@@ -15,7 +15,7 @@
   <description><![CDATA[her.esy.fun articles, mostly random personal thoughts]]></description>
   <language>en</language>
   <pubDate>Sat, 21 Aug 2021 00:00:00 +0200</pubDate>
-  <lastBuildDate>Sun, 22 Aug 2021 00:00:00 +0200</lastBuildDate>
+  <lastBuildDate>Wed, 01 Sep 2021 00:00:00 +0200</lastBuildDate>
   <generator>mkrss.sh</generator>
   <webMaster>yann@esposito.host (Yann Esposito)</webMaster>
   <image>
@@ -537,7 +537,7 @@ email:  yann@esposito.host
 => /files/publickey.txt gpg
 date:  [2021-05-25 Tue]
 
-This article will dig a bit deeper about how I generate my static website.
+This article will dig a bit deeper about my =Makefile= based static website generator.
 In a
 
 => https://her.esy.fun/posts/0017-static-blog-builder/index.html previous article
@@ -545,12 +545,12 @@ In a
 yourself.
 Mainly it is very fast and portable.
 
-A few goal reached by my current build system are:
+A few goals reached by my current build system are:
 
-1. Be fast, try to make as few work as possible.
+1. Be fast and make the minimal amount of work as possible.
    I don't want to rebuild all the html pages if I only change one file.
 2. Source file format agnostic. You can use markdown, org-mode or even
-   directly writing html.
+   directly write html.
 3. Support gemini
 4. Optimize size: minify HTML, CSS, images
 5. Generate an index page listing the posts
@@ -567,7 +567,7 @@ To make those transformations I use very short a shell scripts.
 
 # =Makefile= overview
 
-A Makefile is constitued of rules.
+A Makefile is made out of rules.
 The first rule of your Makefile will be the default rule.
 The first rule of my Makefile is called =all=.
 
@@ -579,15 +579,14 @@ target: file1 file2
 		--output target
 ```
 
-if =target= does not exists, then =make= will look at its
-dependencies.
-If any of its dependency need to be updated, it will run all the rules in
-the correct order to rebuild them, and finally run the script to build
+if =target= does not exists, then =make= will look at its dependencies.
+If any of its dependencies need to be updated, it will run all the rules in
+the correct order to rebuild them and finally run the script to build
 =target=.
-A file need to be updated if one of its dependency need to be updated or is
+A file needs to be updated if one of its dependency needs to be updated or is
 newer.
 
-The ususal case of =make= is about building a single binary out of many
+The usual use case of =make= is about building a single binary out of many
 source files.
 But for a static website, we need to generate a lot of files from a lot of
 files.
@@ -631,7 +630,7 @@ I have a block for:
 The rules to copy assets will be a good first example.
 
 1. find all assets in =src/= directory
-2. generate all assets from these file in =_site/= directory
+2. generate all assets from these files in =_site/= directory
 3. make this rule a dependency on the =all= rule.
 
 
@@ -649,41 +648,41 @@ ALL += assets
 OK, this looks terrible.
 But mainly:
 
-* ~SRC_ASSETS~ will contains the result of the command ~find~.
-* ~DST_ASSETS~ will contains the files of ~SRC_ASSETS~  but we replace the
+* ~SRC_ASSETS~ will contain the result of the command ~find~.
+* ~DST_ASSETS~ will contain the files of ~SRC_ASSETS~  but we replace the
   =src/= by =_site/=.
 * We create a generic rule; for all files matching the following pattern
   =_site/%=, look for the file =src/%= and if it is newer (in our case)
-  then execute the following commmands:
+  then execute the following commands:
   - create the directory to put =_site/%= in
   - copy the file
 
 About the line ~@mkdir -p "$(dir $@)"~:
 * the =@= at the start of the command simply means that we make this execution silent.
 * The =$@= is replaced by the target string.
-* And =$(dir $@)= will generate the dirname of =$@=.
+* And =$(dir $@)= will generate the folder name of =$@=.
 
-For the line with ~cp~ you just need to know that =$<= will represent the
+For the line with ~cp~, you just need to know that =~$<~= will represent the
 first dependency.
 
-So my Makefile is composed of similar blocks, where I replace the first
-find command to match specific files and where I use different building rule.
-An important point, is that the rule must be the most specific possible
-because make will use the most specific rule in case of ambiguity.
-So for example, the matching rule =_site/%: src/%= will match all files in
+My Makefile is composed of similar blocks, where I replace the first
+find command to match specific files and where I use different building rules.
+An important point is that the rules must be the most specific possible.
+This is because =make= will use the most specific rule in case of ambiguity.
+For example, the matching rule =_site/%: src/%= will match all files in
 the =src/= dir.
-But if we want to treat css file with another rule we could write:
+But if we want to treat =CSS= files with another rule we could write:
 
 ```makefile
 _site/%.css: src/%.css
 	minify "$<" "$@"
 ```
 
-And if the selected file is a css file, this rule will be selected.
+And if the selected file is a =CSS= file, this rule will be selected.
 
 ## Prelude
 
-So to start I have a few predefined useful variables.
+I start with variables declarations:
 
 ```makefile
 all: site
@@ -703,7 +702,7 @@ NO_SRC_FILE := ! -name '*.org'
 
 ## CSS
 
-So here we go, the same simple pattern for CSS files.
+Here we go; the same simple pattern for CSS files.
 
 ```makefile
 # CSS
@@ -794,16 +793,15 @@ But the important part is that now, if I change my script or the template
 or the file, it will generate the dependencies.
 ## Indexes
 
-One of the goal I have is to be as agnostic as possible regarding format.
-I know that the main destination format will be html.
-So as much as possible, I would like to use this format.
-So for every generated html file I will generate a clean XML file (via
-hxclean) so I will be able to get specific node of my HTML files.
-These XML files will constitute my "index".
-Of course this is not the most optimized index (I could have used sqlite
-for example) but it will already be quite helpful as the same index files
-will be used to build the homepage with the list of articles, and the RSS
-file.
+We often need indexes to build a website.
+Typically to list the latest articles, build the RSS file.
+So for sake of simplicity, I decided to build my index as a set of XML files.
+Of course, this could be optimizide, by using SQLite for example.
+But this will already be really fast.
+
+For every generated html file I will generate a clean XML file with
+=hxclean=.
+Once cleaned, it will be easy to access a specific node of in these XML files.
 
 ```makefile
 # INDEXES
@@ -822,21 +820,20 @@ indexcache: $(DST_XML_FILES)
 ALL += indexcache
 ```
 
-So to resume this rule will generate for every file in =site/posts/*.html=
-a corresponding =xml= file (=hxclean= takes an HTML an try its best to make
-an XML out of it).
+This rule will generate for every file in =site/posts/*.html= a corresponding
+=xml= file (=hxclean= takes an HTML an try its best to make an XML out of it).
 
 ## HTML Index
 
-So now we just want to generate the main =index.html= page at the root of
+Now we just want to generate the main =index.html= page at the root of
 the site.
 This page should list all articles by date in reverse order.
 
-So the first step is to take advantage of the cache index.
+The first step is to take advantage of the cache index.
 For every XML file I generated before I should generate the small HTML
 block I want for every entry.
 For this I use a script =mk-index-entry.sh=.
-He will use =hxclean= to retrieve the date and the title from the cached
+He will use =hxselect= to retrieve the date and the title from the cached
 XML files.
 Then generate a small file just containing the date and the link.
 
@@ -851,7 +848,7 @@ $(INDEX_CACHE_DIR)/%.index: $(INDEX_CACHE_DIR)/%.xml $(MK_INDEX_ENTRY)
 	$(MK_INDEX_ENTRY) "$<" "$@"
 ```
 
-which reads, for every =.xml= file generate a =.index= file with
+It means: for every =.xml= file generate a =.index= file with
 =mk-index-entry.sh=.
 
 ```sh
@@ -889,7 +886,7 @@ printf ": %-55s" "$title ($keywords)"
 echo " [${fg[green]}OK${reset_color}]"
 ```
 
-Then I use these intermediate file to generate a single bigger index file.
+Then I use these intermediate files to generate a single bigger index file.
 
 ```makefile
 HTML_INDEX := $(DST_DIR)/index.html
@@ -904,13 +901,16 @@ ALL += index
 ```
 
 This script is a big one, but it is not that complex.
-For every file, I generate a new file =DATE-dirname=, I sort them in
-reverse order and put their content in the middle of an HTML file.
+For every file, I generate a new file =DATE-dirname=.
+I sort them in reverse order and put their content in the middle of an HTML
+file.
 
-The important part is that it is only generated if the index change.
-So first part of the script handle the creation of file using the date in
-their file name which will help us sort them later.
+Important note: this file updates only if the index change.
 
+The first part of the script creates files with the creation date in their
+metadatas.
+The created file name will contain the creation date, this will be helpful
+later.
 
 ```sh
 #!/usr/bin/env zsh
@@ -988,11 +988,11 @@ echo "* HTML INDEX [done]"
 
 ## RSS
 
-So for my RSS generation this is quite similar to the system I use to
-generate my index file.
+My RSS generation is similar to the system I used to generate the index
+file.
 I just slightly improved the rules.
 
-The makefile blocks look like:
+The =Makefile= blocks look like:
 
 ```makefile
 # RSS
@@ -1055,7 +1055,7 @@ gemini: $(DST_GMI_FILES) $(GMI_INDEX) $(GEM_ATOM)
 ```
 ## Images
 
-For images, I try to convert all of them with imagemagick to compress them.
+For images, I try to compress them all with imagemagick.
 
 ```makefile
 # Images
@@ -1085,7 +1085,6 @@ ALL += $(DST_IMG_FILES)
 ## Deploy
 
 A nice bonus is that I also deploy my website using make.
-And note I protect myself from Makefile temporary bugs for the =clean= rule.
 
 ```makefile
 # DEPLOY
