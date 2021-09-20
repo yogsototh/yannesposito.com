@@ -27,5 +27,6 @@ pkgs.mkShell {
         # for emacs dev
         ripgrep
         nodePackages.http-server
+        lighttpd
       ];
   }

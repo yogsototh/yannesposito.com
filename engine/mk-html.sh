@@ -3,8 +3,9 @@ set -eu
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
 template="$1"
-orgfile="$2"
-htmlfile="$3"
+luafilter="$2"
+orgfile="$3"
+htmlfile="$4"
 
 tocoption=""
 if grep -ie '^#+options:' "$orgfile" | grep 'toc:t'>/dev/null; then
@@ -14,6 +15,7 @@ fi
 set -x
 pandoc $tocoption \
        --template="$template" \
+       --lua-filter="$luafilter" \
        --mathml \
        --from org \
        --to html5 \

@@ -37,9 +37,10 @@ DST_PANDOC_FILES ?= $(patsubst %$(EXT),%.html, \
                         $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%, \
                             $(SRC_PANDOC_FILES)))
 PANDOC_TEMPLATE ?= templates/post.html
+PANDOC_LUA_FILTER ?= engine/links-to-html.lua
 MK_HTML := engine/mk-html.sh
-PANDOC := $(MK_HTML) $(PANDOC_TEMPLATE)
-$(DST_DIR)/%.html: $(SRC_DIR)/%.org $(PANDOC_TEMPLATE) $(MK_HTML)
+PANDOC := $(MK_HTML) $(PANDOC_TEMPLATE) $(PANDOC_LUA_FILTER)
+$(DST_DIR)/%.html: $(SRC_DIR)/%.org $(PANDOC_TEMPLATE) $(PANDOC_LUA_FILTER) $(MK_HTML)
 	@mkdir -p "$(dir $@)"
 	$(PANDOC) "$<" "$@.tmp"
 	minify --mime text/html "$@.tmp" > "$@"

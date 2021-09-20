@@ -2,12 +2,6 @@
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
 
-if (( $# == 0 )); then
-    webdir="_site"
-else
-    webdir="$1"
-fi
-
-cd $webdir && \
-echo "Serving: $webdir" && \
-http-server -p 3000
+webdir="_site"
+echo "Serving: $webdir on http://localhost:3077" && \
+lighttpd -f ./engine/lighttpd.conf -D
