@@ -1,6 +1,5 @@
 # Generate my website out of org-mode/gemini files
 
-
 all: site
 SRC_DIR ?= src
 DST_DIR ?= _site
@@ -11,10 +10,20 @@ NO_DRAFT := -not -path '$(SRC_DIR)/drafts/*'
 # we don't copy source files
 NO_SRC_FILE := ! -name '*.org'
 
+# Prevent path/nix bugs
+ENV_VARS := ./engine/envvars.sh
+NIX_FILES := ./shell.nix  $(shell find nix -type f)
+$(ENV_VARS): $(NIX_FILES)
+	$(info  Build ${ENV_VARS})
+	@echo "export PATH=\"${PATH}\"" >> ./engine/envvars.sh
+.PHONY: envvars
+envvars: $(ENV_VARS)
+ALL += envvars
+
 # ASSETS
 SRC_RAW_FILES := $(shell find $(SRC_DIR) -type f $(NO_DRAFT) $(NO_SRC_FILE))
 DST_RAW_FILES   := $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%,$(SRC_RAW_FILES))
-$(DST_DIR)/%: $(SRC_DIR)/%
+$(DST_DIR)/%: $(SRC_DIR)/% $(ENV_VARS)
 	@mkdir -p "$(dir $@)"
 	cp "$<" "$@"
 .PHONY: assets
@@ -24,7 +33,7 @@ ALL += assets
 # CSS
 SRC_CSS_FILES := $(shell find $(SRC_DIR) -type f -name '*.css')
 DST_CSS_FILES   := $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%,$(SRC_RAW_FILES))
-$(DST_DIR)/%.css: $(SRC_DIR)/%.css
+$(DST_DIR)/%.css: $(SRC_DIR)/%.css  $(ENV_VARS)
 	@mkdir -p "$(dir $@)"
 	minify "$<" > "$@"
 css: $(DST_CSS_FILES)
@@ -40,7 +49,7 @@ PANDOC_TEMPLATE ?= templates/post.html
 PANDOC_LUA_FILTER ?= engine/links-to-html.lua
 MK_HTML := engine/mk-html.sh
 PANDOC := $(MK_HTML) $(PANDOC_TEMPLATE) $(PANDOC_LUA_FILTER)
-$(DST_DIR)/%.html: $(SRC_DIR)/%.org $(PANDOC_TEMPLATE) $(PANDOC_LUA_FILTER) $(MK_HTML)
+$(DST_DIR)/%.html: $(SRC_DIR)/%.org $(PANDOC_TEMPLATE) $(PANDOC_LUA_FILTER) $(MK_HTML) $(ENV_VARS)
 	@mkdir -p "$(dir $@)"
 	$(PANDOC) "$<" "$@.tmp"
 	minify --mime text/html "$@.tmp" > "$@"
@@ -57,7 +66,7 @@ RSS_CACHE_DIR ?= $(CACHE_DIR)/rss
 DST_XML_FILES ?= $(patsubst %.org,%.xml, \
                         $(patsubst $(SRC_POSTS_DIR)/%,$(RSS_CACHE_DIR)/%, \
                             $(SRC_POSTS_FILES)))
-$(RSS_CACHE_DIR)/%.xml: $(DST_POSTS_DIR)/%.html
+$(RSS_CACHE_DIR)/%.xml: $(DST_POSTS_DIR)/%.html $(ENV_VARS)
 	@mkdir -p "$(dir $@)"
 	hxclean "$<" > "$@"
 .PHONY: indexcache
@@ -75,18 +84,12 @@ $(INDEX_CACHE_DIR)/%.index: $(INDEX_CACHE_DIR)/%.xml $(MK_INDEX_ENTRY) $(ENV_VAR
 HTML_INDEX := $(DST_DIR)/index.html
 MKINDEX := engine/mk-index.sh
 INDEX_TEMPLATE ?= templates/index.html
-$(HTML_INDEX): $(DST_INDEX_FILES) $(MKINDEX) $(INDEX_TEMPLATE)
+$(HTML_INDEX): $(DST_INDEX_FILES) $(MKINDEX) $(INDEX_TEMPLATE) $(ENV_VARS)
 	@mkdir -p $(DST_DIR)
 	$(MKINDEX)
 .PHONY: index
 index: $(HTML_INDEX)
 ALL += index
-
-ENV_VARS := ./engine/envvars.sh
-NIX_FILES := ./shell.nix  $(shell find nix -type f)
-$(ENV_VARS): $(NIX_FILES)
-	@echo "export PATH=\"${PATH}\"" >> ./engine/envvars.sh
-ALL += ./engine/envvars.sh
 
 # RSS
 DST_RSS_FILES ?= $(patsubst %.xml,%.rss, $(DST_XML_FILES)) $(ENV_VARS)
