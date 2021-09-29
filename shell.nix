@@ -24,6 +24,7 @@ pkgs.mkShell {
         direnv
         ghc
         tmux
+        libwebp
         # for emacs dev
         ripgrep
         nodePackages.http-server
