@@ -7,10 +7,18 @@ sizeof() {
     stat --format="%s" "$*"
 }
 
-convert "$src" -resize 800x800\> -quality 50 "$dst"
+
+convert "$src" -resize 800x800\> "$dst"
 
 before=$(sizeof $src)
-after=$(sizeof $dst)
+
+if [[ "${src:e}" == "gif" ]]; then
+  after=$(sizeof $dst)
+else
+  cwebp "$dst" -quiet -o "$dst.webp"
+  after=$(sizeof $dst.webp)
+fi
+
 
 if (( before <= after )); then
   cp -f "$src" "$dst"
