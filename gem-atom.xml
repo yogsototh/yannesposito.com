@@ -14,8 +14,8 @@
   <link>gemini://her.esy.fun</link>
   <description><![CDATA[her.esy.fun articles, mostly random personal thoughts]]></description>
   <language>en</language>
-  <pubDate>Sun, 24 Oct 2021 00:00:00 +0200</pubDate>
-  <lastBuildDate>Sun, 24 Oct 2021 00:00:00 +0200</lastBuildDate>
+  <pubDate>Sat, 30 Oct 2021 00:00:00 +0200</pubDate>
+  <lastBuildDate>Sat, 30 Oct 2021 00:00:00 +0200</lastBuildDate>
   <generator>mkrss.sh</generator>
   <webMaster>yann@esposito.host (Yann Esposito)</webMaster>
   <image>
@@ -23,6 +23,232 @@
     <title>her.esy.fun</title>
     <link>gemini://her.esy.fun</link>
   </image>
+
+<item>
+<title>My personal environment sync</title>
+<guid>gemini://her.esy.fun/posts/0021-my-personal-environment-sync/index.gmi</guid>
+<pubDate>Sat, 30 Oct 2021 00:00:00 +0200</pubDate>
+<category>programming</category>
+<description><![CDATA[
+# My personal environment sync
+description: 
+keywords:  programming
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2021-10-30 Sat]
+
+I have a quite specific system that I improved along the years to manage my
+local environment.
+Think about, binaries I expect to have in my shell, as well as
+configuration files for various utilities, and a few personal scripts.
+
+The notion of what is exactly my local environment is not perfectly defined.
+I expect every of my computers to behave slightly differently.
+Some are for work-only, some personal use only.
+
+For the things I want everywhere, I have a peculiar personal system.
+
+I use a personal script that depends on
+
+=> https://yadm.io yadm
+ and
+
+=> https://github.com/nix-community/home-manager home-manager
+
+My script try to check if some files where updated and react accordingly:
+
+1. I download the dot-files changes via =yadm=.
+2. If my home-manager files changes, it will run ~home-manager switch~
+   ; if it fails, try to update nix channels then try again.
+3. If my doom emacs packages changed, it will run ~doom sync~
+4. If the script itself changed, it re-run the script after updating itself.
+
+If the script detect that I changed my emacs configuration, it runs ~doom
+sync~ or ~doom sync -u~.
+
+Here it is:
+
+```bash
+#!/bin/bash
+
+### logs fn helpers
+
+## colors for tput
+# black=0
+red=1
+green=2
+yellow=3
+blue=4
+# magenta=5
+# cyan=6
+# white=7
+highpr() {
+    printf "$(tput setaf $green)→$(tput sgr0) $(tput bold)%-60s$(tput sgr0)" "$*"
+}
+ok() {
+    local txt="OK"
+    echo -e " [$(tput bold)$(tput setaf $green)${txt}$(tput sgr0)]" >&2
+}
+info() {
+    echo -e " [$(tput bold)$(tput setaf $blue)$*$(tput sgr0)]" >&2
+}
+warn() {
+    echo -e "$(tput bold)$(tput setaf $yellow)$*$(tput sgr0)" >&2
+}
+err() {
+    echo -e "$(tput bold)$(tput setaf $red)$*$(tput sgr0)" >&2
+}
+fail() {
+    err -e "\n[ERR] $*"
+    exit 1
+}
+
+highpr "check nix"
+if ! [ -x "$(command -v nix)" ]; then
+    echo
+    err "nix does not seem to be installed."
+    err "Install it from: https://nixos.org/nix/"
+    exit 1
+fi
+ok
+
+highpr "yadm fetch"
+yadm fetch --quiet  || fail "yadm fetch failed"
+ok
+
+# check the hash of a few files before doing yadm pull
+OLD_SYNC_ENV_ID=$(yadm rev-parse HEAD:bin/sync-env.sh)
+OLD_HOME_MANAGER_ID=$(yadm rev-parse HEAD:.config/nixpkgs/home.nix)
+OLD_DOOM_PACKAGES=$(yadm rev-parse HEAD:.doom.d/packages.el)
+OLD_DOOM_INIT=$(yadm rev-parse HEAD:.doom.d/init.el)
+
+highpr "yadm pull"
+yadm pull --quiet || fail "yadm pull failed"
+ok
+
+# check the hash of a few files after doing yadm pull
+NEW_SYNC_ENV_ID=$(yadm rev-parse HEAD:bin/sync-env.sh)
+NEW_HOME_MANAGER_ID=$(yadm rev-parse HEAD:.config/nixpkgs/home.nix)
+NEW_DOOM_PACKAGES=$(yadm rev-parse HEAD:.doom.d/packages.el)
+NEW_DOOM_INIT=$(yadm rev-parse HEAD:.doom.d/init.el)
+
+highpr "check sync-env diff"
+if ! [ "$OLD_SYNC_ENV_ID" = "$NEW_SYNC_ENV_ID" ]; then
+    warn " changed"
+    warn " Starting ~/bin/sync-env.sh again"
+    echo
+    ~/bin/sync-env.sh
+    exit $?
+fi
+ok
+
+if [ -f "$HOME/.yadm/files.gpg" ]; then
+  highpr "yadm decrypt"
+  yadm decrypt || fail "yadm decrypt failed"
+  ok
+fi
+
+highpr "home-manager"
+USERNAME_NIX_FILE="$HOME/.config/nixpkgs/username.nix"
+if [ ! -f  "$USERNAME_NIX_FILE" ]; then
+  echo "\"$USER\"" >> "$USERNAME_NIX_FILE"
+fi
+if ! [ "$OLD_HOME_MANAGER_ID" = "$NEW_HOME_MANAGER_ID" ]; then
+    echo
+    highpr "home-manager switch"
+    home-manager switch || \
+      ( nix-channel --update && home-manager switch ) || \
+      fail "home-manager switch failed"
+    ok
+else
+    info "skipped"
+fi
+
+highpr "doom-emacs"
+doompath="$HOME/.emacs.d/bin/doom"
+if ! [ "$OLD_DOOM_PACKAGES" = "$NEW_DOOM_PACKAGES" ] || \
+   ! [ "$OLD_DOOM_INIT"     = "$NEW_DOOM_INIT"  ]; then
+  if =>  -x $doompath ; then
+      echo
+      highpr "doom sync"
+      $doompath sync || fail "doom failed to sync"
+      ok
+  else
+     fail "Cannot find doom executable at $doompath";
+  fi
+else
+   info "skipped"
+fi
+```
+
+## Bootstrapping
+
+Bootstrapping this system is always a nice problem to think about.
+It is smooth when everything is set but to bootstrap it I need binaries
+installed by this system...
+So...
+How to handle the dependency cycle correctly?
+
+To minimize the pain, I removed more and more bootstrapping dependencies.
+Now my almost single dependence for bootstrapping my environment is =nix=.
+I haven't initialized any machine for a long time now.
+The following should work.
+
+0. Use fish[fn:fish]  ~chsh /bin/fish~
+1. Install nix
+   ~curl -L https://nixos.org/nix/install | sh~
+2. Install home-manager
+   ```bash
+   nix-channel --add https://github.com/nix-community/home-manager/archive/release-21.05.tar.gz home-manager
+   nix-channel --update
+   export NIX_PATH=$HOME/.nix-defexpr/channels${NIX_PATH:+:}$NIX_PATH
+   nix-shell '<home-manager>' -A install
+   ```
+3. Install and use ~yadm~
+   ```bash
+   nix-shell -p yadm
+   yadm boostrap
+   yadm remote set-url origin <url-to-my-dot-files-repo>
+   yadm pull
+   ```
+4. Still in the =nix-shell= with =yadm= run ~~/bin/sync-env.sh~
+
+
+There is a risk that step 3 fail because I pin most of my packages in
+home-manager configuration, and it will try to install =yadm=. This can
+conflict with the =yadm= installed in the current =nix-shell=.
+So sometime I need to:
+
+1. Remove the line installing =yadm= in my home-manager configuration first
+2. run =home-manager sync=
+3. get out of the =nix-shell=,
+4. add =yadm= back in the =home-manager= config
+5. run =home-manager sync= again, but this time out of the =nix-shell=.
+6. Finally I can run my =~/bin/sync-env.sh= command.
+
+So this post will probably be useful as a personal note in the future.
+Because bootstrapping is generally not trivial.
+I will probably update this post if something is missing.
+
+[fn:fish] I use fish for interactive shell. I use ~zsh~ for quick dirty
+scripts (a lot better than bash), and I switch to
+
+=> https://hackage.haskell.org/package/turtle turtle
+ if I need to be
+serious about the script.
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes
+]]></description>
+</item>
+
 
 <item>
 <title>iA writer clone within doom-emacs</title>
@@ -354,6 +580,136 @@ Can be an integer to determine the exact padding."
     :box (if -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive-alt)))))
 
 ;;; doom-zen-writer-theme.el ends here
+```
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes
+]]></description>
+</item>
+
+
+<item>
+<title>Elegant Functional Programming Application Architecture</title>
+<guid>gemini://her.esy.fun/posts/0021-elegant-functional-programming-application-architecture/index.gmi</guid>
+<pubDate>Sun, 26 Sep 2021 00:00:00 +0200</pubDate>
+<category>blog</category>
+<category>static</category>
+<description><![CDATA[
+# Elegant Functional Programming Application Architecture
+description:  An elegant and working code architecture
+keywords:  blog static
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2021-09-26 Sun]
+
+In this article I will expose you about how to architect your application
+using function programming paradigm.
+
+It is not tied to any programming language.
+The principles in this article could probably be used by most programming
+languages.
+# Pre
+
+First note that many /functional programming languages/ are not functional.
+They all provide holes in order to trick the system to be faster.
+Also for internal use, some advanced feature might be provided.
+
+1. Type-classes ; this is not something I consider belongs to functional programming.
+2. Clojure Protocols, ~defmulti~  ; are not something I would consider belongs
+   to functional programming.
+
+And many other languages features.
+Let be radical functional programmer.
+
+Radical, means going back to the roots.
+
+So here we go.
+Functional programming is about manipulating functions with the meaning of
+*mathematical functions* not what most programming language call functions.
+A "function" in C, Clojure, Python, Java, Javascript is *not* a function in
+the functional programming sense.
+OTOH in Haskell it is /often/ a real function, but not always.
+
+So a mathematical function is something that takes a bunch of parameters
+and return a value (or not, we should allow partial functions unfortunately).
+And if you provide the same parameter twice the result will always be the same.
+Also, it should not have any side effect, for example, it should log, emit
+sounds, ... nothing.
+
+Whoa whoa... Give me a minute here. Why would we want to ... do nothing at
+all?
+Isn't writing an application about doing things?
+Yes, it is.
+
+Let just say, that, you generally, don't need more than plunging a
+pure function graph into a context where an interpreter will be able to use
+and this big pile of pure functions will be used to have side effect.
+A big ball of pure functions are reproducible, easy to test, easy to
+analyze and reason about.
+Easy to expose business logic out of technical detail to access data,
+etc...
+
+So I will provide a system as radical, and simple as possible that will
+have a lot of good properties that advanced functional programming methods
+(like Monad, Monads transformers, Free Monads, Effect systems) are trying
+to achieve.
+
+# The Architecture
+
+The main architecture is based on the /Service/ paradigm.
+A service will be a sub-application living at runtime, it will depends on
+other services, and have an internal state.
+
+So in the end your application should look like an acyclic graph of services.
+
+Every service has an init phase, then a living phase, then a stop phase.
+Every service declare a set of methods to be used and every service will
+keep an internal implicit state.
+
+Even if this look a lot like Object oriented programming.
+It is in fact a quite radical functional programming architecture.
+
+```clojure
+(def Interface
+  (function-1 [arg-1 arg-2] "a function"))
+
+;; Main implementation of /my-service/
+(defservice my-service
+  Interface
+  [sub-service-1
+   sub-service-2
+   ,,,
+   sub-service-n]
+  (init [initial-ctx]
+        (let [service-state
+              (core/init {:sub-service-1 sub-service-1 ,,,})]
+          (into initial-ctx service-state)))
+
+  (function-1 [ctx arg-1 arg-2]
+              (core/function-1 ctx arg-1 arg-2)))
+
+;; A test implementation of /my-service/
+(defservice my-test-service
+  Interface
+  [sub-service-1
+   sub-service-2
+   ,,,
+   sub-service-n]
+  (init [initial-ctx]
+        (let [service-state
+              (test/init {:sub-service-1 sub-service-1 ,,,})]
+          (into initial-ctx service-state)))
+
+  (function-1 [ctx arg-1 arg-2]
+              (test/function-1 ctx arg-1 arg-2)))
+
 ```
 
 => /index.gmi Home
@@ -2510,461 +2866,6 @@ I'm still playing with it.
 So there still might be a bug.
 Use at your own risk.
 Happy hacking to all of you.
-
-=> /index.gmi Home
-=> /gem-atom.xml Feed
-=> /slides.gmi Slides
-=> /about-me.gmi About
-
-=> https://gitea.esy.fun code
-=> https://espial.esy.fun/u:yogsototh bookmarks
-=> https://espial.esy.fun/u:yogsototh/notes notes
-]]></description>
-</item>
-
-
-<item>
-<title>How to choose your tools</title>
-<guid>gemini://her.esy.fun/posts/0013-how-to-choose-your-tools/index.gmi</guid>
-<pubDate>Sat, 09 May 2020 00:00:00 +0200</pubDate>
-<category>emacs</category>
-<category>softwares</category>
-<description><![CDATA[
-# How to choose your tools
-author:  Yann Esposito
-email:  yann@esposito.host
-=> /files/publickey.txt gpg
-date:  [2020-05-09 Sat]
-keywords:  emacs softwares
-description:  Modern tools tend to disappear.
-description:  An app on the web will change, and could break for the worst.
-description:  Quite often it is worth investing into tools with steep learning curve.
-
-This week I didn't take a look at HN to grab some news.
-And this week-end, in the morning I read those:
-
-
-=> https://news.ycombinator.com/item?id=23102430 Zoom acquires keybase
-
-
-=> https://news.ycombinator.com/item?id=23107123 Making Emacs popular again
-
-
-=> https://news.ycombinator.com/item?id=23092904 Github Codespace
-
-
-attr_org:  :width 560
-attr_html:  :alt Midsommar Welcome
-name:  Welcome to Halsingland
-caption:  Welcome to Halsingland
-=> Welcome-to-Halsingland.jpg
-
-Similar articles have existed for years on different products.
-What is their common point?
-/Software tooling and their potential change and disappearance/.
-
-Across the years, too many times I saw tools disappear.
-By tools I mean applications, web applications, web sites.
-I think we can also include programming languages, control versioning
-tools, building tools, package manager, etc...
-
-The story can be quite different.
-Sometimes the disappearance of a tool is positive, because I found a better
-one (from cvs to svn to git).
-But, too often, the tool simply disappears or worse downgrade its quality.
-I think we can find different names for those softwares:
-
-* /bloatware/: remember digg, stumbleupon, windows?
-* /downgradeware/: Swagger-UI v3 (v2 is neat), reddit new redesign (looks better, but slow)
-* /payware/: Useful free service ask for money now. Or cost a lot more.
-* /crapware/: Stop to works, quality degrate unless you pay: Twitter streaming API?
-* /dieware/: Remember Friendfeed, Google Reader™, etc...
-* etc...
-
-This is often quite frustrating because you lose a lot of your investment
-with that tool.
-
-Regarding Github Codespace; the integration of VSCode™ inside GitHub™ can
-be even worse.
-This is what I would call a /trapware/.
-
-______
-/trapware/:
-A software that is intended to put you inside a closed ecosystem.
-By slowly but surely add features that while looking great for the user at
-first sight will prevent interoperability with other tools.
-______
-
-Furthermore, the fact that Microsoft is involved give this story a taste of
-
-
-=> https://en.wikipedia.org/wiki/Embrace,_extend,_and_extinguish Embrace, Extend and Extinguish
-
-My real concern is that it could become a /work framework/.
-This could impose the full tooling on a lot of developers without giving
-them the freedom of choice.
-
-For a startup CTO/CEO this GitHub™ Codespace™ could offer the following
-advantages:
-
-* /security/: impossible or very hard to steal the source code by a single dev.
-* /homogeneity/: all dev must use the same development environment. Thus
-  the integration of new dev is faster.
-* /cheaper/: don't need to pay for a full featured, fast machine to each new developer.
-  A less performant machine able to display an electron app will do the trick.
-* /stats/: you can observe the throughput of your developers.
-  How many commits a day, how many lines of code, etc...
-  How much bugs involved which part of the code and thus which dev to blame?
-  How much time the dev is typing, moving its mouse, how much copy/paste is
-  involved, etc...
-
-For the single developers and open source developers this offer:
-
-* /homogeneity/: if I learn how to work in this environment, I'll be easier
-  to recruit and I'll know how to work fast.
-* /lower barrier to entry/: for an opensource repository, it will become much
-  easier for anyone to propose a PR to fix some issue. No need to local
-  clone the project, no need to download all the dependencies to test it
-  locally, etc...
-
-But the price to pay is hidden.
-
-attr_org:  :width 560
-attr_html:  :alt Midsommar Sorrow
-caption:  Midsommar Sorrow
-=> midsommar-cry.jpg
-
-
-
-1. First, you are now, not able to choose your local working environment on
-   your machine.
-2. GitHub™ can still change so much to become one of the previously
-   mentionned ~/.*ware/~ you don't want to be involved with.
-   They could forces you to pay a lot more, remove features, redesign to a
-   bloatware, make it harder to interop with other platforms (prefer Azure
-   to AWS etc...).
-3. If everything involve machines in the cloud via the browser and via
-   authorized plugins only. A lot of tools, features will never be allowed
-   in this new ecosystem.
-4. Surveillance on meaningless or wrong metrics about your work.
-   Instead of being evaluated on the feature you shipped or on other higher
-   level metrics. It will be very tempting for your bosses to find flaws in
-   your working habits.
-   We are already living in a world were surveillance, metrics and stats
-   are too easy to grab about a person. And anyone involved know this is
-   all bullshit.
-   Human are very good to play those kind of games.
-   So people really working hard for the best will certainly perform badly
-   compared to other people that simply trick the system.
-
-So as good as Codespace can be, I think this warning is good to keep that in mind.
-Don't put yourself in a trap.
-
-The
-
-=> https://news.ycombinator.com/item?id=23102430 Zoom acquires keybase
- is just another story of a dying product.
-Apparently the keybase team will probably stop maintaining keybase.
-The idea behind keybase was pretty nice.
-And they filled a gap in the current open source world.
-
-The last article I mentionned was
-
-=> https://news.ycombinator.com/item?id=23107123 Making Emacs popular again
-The first comment in HN was about how VSCode is easy to start with as
-compared to Emacs that need a lot more time to configure correctly for your
-needs.
-Yes, VSCode certainly just work and is easy to use.
-But Emacs is another beast.
-VSCode can become bad very fast, you don't control how it will evolve.
-The fact that this is a succesful Microsoft product does not garanty it
-will keep its currently quality.
-Emacs on the other hand is 44 year old and was designed so that it adapts
-to you.
-You are the one using libs and customizing it.
-
-The argument to chose VSCode instead of Emacs look similar to me to the
-debate "Frameworks vs Libraries".
-Frameworks are easier to start with, but soon you find corner cases were
-you start to fight against them.
-
-A Library on the other hand, is just a bunch of helpers you can use.
-And if you need another functionality, just make it using the libraries.
-But you have a lot more work to do yourself.
-
-The common pattern I see during choice decision is often reducible to:
-
-1. Easy now, but less extensible and harder in the long run.
-2. Harder now, but more extensible and easier in the long run.
-
-As a conclustion I would state that when you need to choose between
-different tools.
-Take the time to think about the investment costs.
-Sometime, the bit of pain in the begining is worth it.
-In particular if you are going to use this tool every days for many hours
-during the following years.
-If on the other hand you don't plan to use that tool much.
-Going with the easy option is certainly the best choice.
-
-I consider Emacs to be of the 2nd option when compared to VSCode.
-Harder to start, but with a lot more control and potential power that you
-will probably never be able to get with most modern IDE/Editor.
-Also choosing a Free Software[fn:1] gives you a lot more control about its
-future.
-
-[fn:1] note I said /free software/ and not /open source/; c.f
-
-
-
-=> https://www.gnu.org/philosophy/open-source-misses-the-point.en.html Why Open Source misses the point of Free Software
-
-
-## Post-conclusion -- Emacs is awesome
-
-attr_org:  :width 560
-attr_html:  :alt Midsommar Joy
-caption:  Midsommar Joy
-=> ./midsommar-joy.jpg
-
-To go beyond my opinion, I'd like to share my experience with editors and
-emacs.
-
-When I started to be serious about coding, I was taught to use vi, not vim,
-vi.
-I only knew a few survival vi commands: =i=, =a=, =dd= and =cw=.
-A few years later I started to use IDEs and I was thrilled.
-A few years forward I started to work for a company that forced me to use
-their shitty computers.
-Quite soon, I started to have wrist issues.
-Thus I decided to use vim again but be serious about it this time.
-And I saw the benefits only after a few weeks.
-They were tremendous.
-No more wrist pain.
-And an incredible edition power at the tip of my fingers[fn:vim].
-
-Then, I started a new job where we decided to code in Clojure.
-Of course Clojure being a LISP and emacs using also a LISP as script
-language, it sound natural to try Emacs even though I loved Vim.
-I started by installing spacemacs.
-At that time I didn't want to invest much time in learning Emacs.
-I just wanted to learn the tricks that will make Emacs more valuable to my
-work.
-It did after just a few days or maybe weeks.
-I used Emacs superficially for years.
-This was already quite efficient, at least as much as vim.
-
-Recently I dug deeper.
-I heard much praise about org-mode and I became curious.
-I discovered why it is so great.
-Basic org-mode is already quite valuable.
-But if you dig, it starts to be awesome.
-Unfortunately this is a bit hard to describe how org-mode is great
-without really digging a bit.
-
-You can think of org-mode as an extremely versatile todo-list and note
-taker with agenda and time tracking integration.
-You are in deep control of your workflow.
-But mainly here are a few example of usages that are really worth it:
-
-* note taker
-* documentation; this is a far better than markdown
-* interactive document; run code inside the doc, keep track of the results
-* export to HMTL/PDF
-* time tracking
-* reminders
-
-Recently there is also org-roam that is a step further to make orgmode a
-nice place to keep track of all your knowledge in one place.
-You can take a look at this
-
-=> https://www.youtube.com/watch?v=Lg61ocfxk3c great video
- by Matt Williams.
-
-Emacs changed my workflow by making me more productive.
-It improved not only my coding workflow, but my full work environment.
-I started with the editor, a few plugins, and slowly, I integrated more
-aspect of my day to day tasks in emacs.
-Emacs is designed to adapt to your own needs.
-As such it is a lot easier to automate a lot of small tasks.
-
-I really love Emacs and if you want to joyfully join the Emacs users here
-are my advices:
-
-Start by using either
-
-=> https://www.spacemacs.org spacemacs
- or
-
-=> https://github.com/hlissner/doom-emacs doom-emacs
-It will take a few weeks to absorb vim keybindings.
-Slowly you'll start to learn how to configure it for your needs.
-
-I really advise you to take a look at org-mode.
-Mastering it could change your carrier.
-Im my opinion
-
-=> https://orgmode.org org-mode
- alone is a good reason enough to use emacs.
-But there are a lot more to discover.
-
-However, if you are used to tools from startups, with nice UI/UX.
-Almost no configuration cost.
-Be aware that digging in Free Softwares is a lot different.
-Instead of having a big bundle with everything prepared to work you you
-will need to take the time to configure each part of a big system
-separately.
-
-Howevery I'm deeply convinced the investment is really worth it.
-
-[fn:vim]
-
-=> http://yannesposito.com/Scratch/en/blog/Learn-Vim-Progressively/ Lear Vim Progressively
- is an old "popular" blog post of mine.
-
-=> /index.gmi Home
-=> /gem-atom.xml Feed
-=> /slides.gmi Slides
-=> /about-me.gmi About
-
-=> https://gitea.esy.fun code
-=> https://espial.esy.fun/u:yogsototh bookmarks
-=> https://espial.esy.fun/u:yogsototh/notes notes
-]]></description>
-</item>
-
-
-<item>
-<title>Solaryzed: A Generalisation of Solarized</title>
-<guid>gemini://her.esy.fun/posts/0012-solaryzed-theme/index.gmi</guid>
-<pubDate>Sun, 01 Mar 2020 00:00:00 +0100</pubDate>
-<category>colorscheme</category>
-<description><![CDATA[
-# Solaryzed: A Generalisation of Solarized
-date:  [2020-03-01 Sun]
-author:  Yann Esposito
-email:  yann@esposito.host
-=> /files/publickey.txt gpg
-keywords:  colorscheme
-description:  A generalization of solarized.
-description:  I tried to keep the same fundamentals and to free some variables.
-
-After many years using
-
-=> https://ethanschoonover.com/solarized/ Solarized
- I changed to a new one.
-I use it for my terminal, emacs and most of my tools.
-
-This is inspired by both
-
-=> https://ethanschoonover.com/solarized/ Solarized
- and
-
-=> https://nordtheme.com Nord
-I switched because I wanted a greyer theme.
-
-Ethan Shoovnover the creator of Solarized gave plenty of information about
-the creation of his colorscheme.
-And I stumbled upon the
-
-=> https://nordtheme.com Nord
- theme.
-And I really liked it.
-But while the colors are great, it is not as easy to switch from light to
-dark theme than with solarized because Solarized has a lot of nice
-properties.
-
-So I kept the main principle used to create Solarized but freed a few parameters.
-The tint of the dark and light colors for the background and the text, as
-well as the contrast of the colors.
-
-And I created this minimal application in Purescript:
-
-https://solaryzed.esy.fun
-
-It is still not perfect, because the real theme I use for my website as a
-slightly bigger contrast for text.
-
-Here is the CSS you could use:
-
-
-______html
-<style>#colors div {
-  display: inline-block;
-  height: 50.0px;
-  width: 50.0px;
-  margin: 2px 0;
-  font-weight: bold;
-  line-height: 50.0px;
-  text-align: center; }
-  #colors { padding: 10px; margin: 10px 0; }
-</style>
-<div id="colors">
-______
-{{{colorbox(b03,white,#202631)}}}
-{{{colorbox(b02,white,#2b303c)}}}
-{{{colorbox(b01,white,#595e6a)}}}
-{{{colorbox(b00,white,#727782)}}}
-{{{colorbox(b0,black,#8c919b)}}}
-{{{colorbox(b1,black,#a7abb5)}}}
-{{{colorbox(b2,black,#e5e8f0)}}}
-{{{colorbox(b3,black,#f3f6fe)}}}
-{{{colorbox(y,white,#ad8c51)}}}
-{{{colorbox(o,white,#a9664b)}}}
-{{{colorbox(r,white,#af6256)}}}
-{{{colorbox(m,white,#ae5e7d)}}}
-{{{colorbox(v,white,#6774b2)}}}
-{{{colorbox(b,white,#408cc3)}}}
-{{{colorbox(c,white,#17a198)}}}
-{{{colorbox(g,white,#939452)}}}
-______html
-</div>
-______
-
-```css :tangle solaryzed.css
-:root {
-    color-scheme: light dark; /* support color scheme */
-    --b03: #202631;
-    --b02: #2b313c;
-    --b01: #656b74;
-    --b00: #727781;
-    --b0:  #989ea8;
-    --b1:  #b0bac7;
-    --b2:  #e5e8ed;
-    --b3:  #f4f7ff;
-    --y:   #a98d50;
-    --o:   #aa6550;
-    --r:   #b85a64;
-    --m:   #af53b0;
-    --v:   #846f93;
-    --b:   #5679a4;
-    --c:   #4c8493;
-    --g:   #728b5c;
-
-    --bg:  var(--b3);
-    --fg:  var(--b02);
-    --fg0: var(--b0);  /* lower contrast */
-    --bg2: var(--b2);  /* second color block background */
-    --fg2: var(--b01); /* second color block foreground */
-    --acc: var(--o);   /* accent color */
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        /* Dark */
-        --bg: var(--b03);
-        --fg: var(--b0);
-        --fg0: var(--b00); /* lower contrast */
-        --bg2: var(--b02); /* second color block background */
-        --fg2: var(--b1);  /* second color block foreground */
-        --acc: var(--g);   /* accent color */
-    }
-}
-
-body,.main {
-    background: var(--bg);
-    color: var(--fg);
-}
-```
 
 => /index.gmi Home
 => /gem-atom.xml Feed
