@@ -147,17 +147,16 @@ else
 fi
 #+end_src
 
-This is ok
-
 ** Bootstrapping
 :PROPERTIES:
 :CUSTOM_ID: boostraping
 :END:
 
 Bootstrapping this system is always a nice problem to think about.
-Once everything is set things are smooths, but to install the system I need
-binaries installed by the system... So... How to handle the dependency
-cycle correctly?
+It is smooth when everything is set but to bootstrap it I need binaries
+installed by this system...
+So...
+How to handle the dependency cycle correctly?
 
 To minimize the pain, I removed more and more bootstrapping dependencies.
 Now my almost single dependence for bootstrapping my environment is =nix=.
@@ -187,11 +186,18 @@ The following should work.
 There is a risk that step 3 fail because I pin most of my packages in
 home-manager configuration, and it will try to install =yadm=. This can
 conflict with the =yadm= installed in the current =nix-shell=.
-So sometime I need to 1st, remove the line installing =yadm= in my
-home-manager configuration first, then run =home-manager sync= then get out
-of the =nix-shell=, add =yadm= back in the =home-manager= config, then run
-=home-manager sync= again, but this time out of the =nix-shell=.
-And finally I can run my =~/bin/sync-env.sh= command.
+So sometime I need to:
+
+1. Remove the line installing =yadm= in my home-manager configuration first
+2. run =home-manager sync=
+3. get out of the =nix-shell=,
+4. add =yadm= back in the =home-manager= config
+5. run =home-manager sync= again, but this time out of the =nix-shell=.
+6. Finally I can run my =~/bin/sync-env.sh= command.
+
+So this post will probably be useful as a personal note in the future.
+Because bootstrapping is generally not trivial.
+I will probably update this post if something is missing.
 
 [fn:fish] I use fish for interactive shell. I use ~zsh~ for quick dirty
 scripts (a lot better than bash), and I switch to [[https://hackage.haskell.org/package/turtle][turtle]] if I need to be
