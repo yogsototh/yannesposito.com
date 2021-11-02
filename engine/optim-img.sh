@@ -14,9 +14,11 @@ before=$(sizeof $src)
 
 if [[ "${src:e}" == "gif" ]]; then
   after=$(sizeof $dst)
+  dest=$dst
 else
   cwebp "$dst" -quiet -o "$dst.webp"
   after=$(sizeof $dst.webp)
+  dest=$dst.webp
 fi
 
 
