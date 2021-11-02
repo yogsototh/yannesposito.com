@@ -16,5 +16,4 @@ blue() { printf "$(tput setaf $blue)%s$(tput sgr0)" "$*" }
 tee >(lorri watch | sed 's/^/[lorri] /' ) \
   >(./engine/serve.sh | sed 's/^/[http] /') \
   >(./engine/auto-build.sh | sed 's/^/[make] /') \
-  >(sleep 1 && open 'http://127.0.0.1:3000')
-
+  >(sleep 1 && open 'http://127.0.0.1:3077')
