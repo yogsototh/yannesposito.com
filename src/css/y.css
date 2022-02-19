@@ -1,7 +1,7 @@
 html {
-    font-family: Georgia, serif;
-    font-size: 18px;
-    line-height: calc(1ex/0.32);
+    font-family: monospace;
+    font-size: large;
+    line-height: auto;
 }
 #TOC {text-align: left;}
 html,body { margin: 0; padding: 0; border: 0; }
@@ -32,7 +32,7 @@ hr { opacity: 0.3; }
 #preamble, #postamble { text-align: center; }
 #content,.content,#postamble {
     padding: 0 1rem;
-    max-width: 62ch;
+    max-width: 80ch;
     overflow: hidden;
     margin: 0 auto;
 }
@@ -89,6 +89,7 @@ figcaption { text-align: right; font-style: italic; font-size: 0.875em; }
     --bg: #fff;
     --fg: hsl(218,20%,35%);
     --hl: #000;
+    --soft: hsl(218,20%,85%);
     --gr: hsl(218,20%,95%);
 }
 
@@ -110,6 +111,7 @@ img:hover,svg:hover { filter: none; }
         --bg: hsl(218,20%,12%);
         --fg: hsl(218,20%,70%);
         --hl: hsl(218,10%,93%);
+        --soft: hsl(218,20%,35%);
         --gr: hsl(218,20%,20%);
     }
     img { filter: brightness(0.6) sepia(100%) hue-rotate(185deg) saturate(0.5); }
@@ -124,9 +126,14 @@ body, body > div {
     background: var(--bg);
     color: var(--fg);
 }
+a { text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-decoration-color: var(--soft) ; }
 a { color: var(--hl); }
 a:visited { color: var(--fg); }
-a:hover { color: var(--o); }
+a:hover { color: var(--o);
+          text-decoration-color: var(--o);
+        }
 /* ---- SYNTAX HIGHLIGHTING ---- */
 .ex { color:var(--v); }
 .op, .fu, .ot {color:var(--b);}
