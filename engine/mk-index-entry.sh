@@ -28,7 +28,7 @@ keywords=( $(findkeywords $xfic) )
 printf ": %-55s" "$title ($keywords)"
 { printf "\\n<li>"
   printf "\\n<span class=\"pubDate\">%s</span>" "$d"
-  printf "\\n<a href=\"%s\">%s</a>" "${blogfile}" "$title"
+  printf "\\n<span class=\"post-title\"><a href=\"%s\">%s</a></span>" "${blogfile}" "$title"
   printf "\\n</li>\\n\\n"
 } > ${dst}
 
