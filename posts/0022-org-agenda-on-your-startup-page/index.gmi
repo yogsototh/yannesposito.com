@@ -1,0 +1,226 @@
+# Org agenda on your startup page
+description: 
+keywords:  blog static
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2022-05-05 Thu]
+
+# Your org-agenda at your homepage                                   :ATTACH:
+
+During most of the day my emacs is open.
+But I sometime forget to look at my org-agenda.
+This is why I wanted to find another way to be exposed to it.
+
+And one thing I am mostly exposed to is my personal start page.
+This is just the default page I see when I open my browser.
+
+Here is the end result:
+
+attr_org:  :width 560
+attr_html:  Generate HTML from the Agenda
+caption:  The result inside my start page
+name:  fig:agenda-html
+=> ./agenda-html.png
+
+
+My start page is named /mothership/.
+And I just put the org-agenda at the top of the page inside an iframe.
+I have a service that start a server on localhost and I configured my
+browser to use it as startup page.
+That's it.
+
+So now, here is how to sync my org-agenda on this start page.
+
+In my ~config.el~:
+
+```elisp
+(setq y/mothership "~/dev/mothership/")
+(setq org-agenda-custom-commands
+      `(("g" "Plan Today"
+         ((agenda "" ((org-agenda-span 'day))))
+         nil
+         ( ,(concat y/mothership "/agenda.html") ))))
+```
+
+This provide a custom org agenda command and link that custom command to
+the export file =~/dev/mothership/agenda.html=.
+
+And a shell script:
+
+```bash
+#!/usr/bin/env bash
+emacs --batch \
+  --load "$HOME/.emacs.d/init.el" \
+  --eval '(org-batch-store-agenda-views)' \
+  --kill
+```
+
+```bash
+*/5 * * * * /Users/esposito/dev/mothership/export-agenda.sh
+```
+
+And finally in my start-page html I just need to add an iframe like so:
+
+```html
+<iframe id="agenda" src="agenda.html"></iframe>
+```
+
+But as I also want to be able to toggle the agenda, and auto-resize the
+iframe.
+So I added a bit of js code:
+
+```html
+<div id="agendatoggle">[-]</div><br/>
+<script>
+function resizeIframe(iframe) {
+  iframe.height = ( iframe.contentWindow.document.body.scrollHeight + 30) + "px";
+}
+</script>
+<iframe id="agenda" src="agenda.html" onload="resizeIframe(this)"></iframe>
+</div>
+<script>
+
+function hideAgenda () {
+  let agenda = document.getElementById("agenda");
+  agenda.style.display = 'none';
+  let at = document.getElementById("agendatoggle");
+  at.innerHTML="agenda [+]";
+  at.onclick = showAgenda;
+}
+
+function showAgenda () {
+  let agenda = document.getElementById("agenda");
+  agenda.style.display = 'block';
+  resizeIframe(agenda);
+  // setInterval(function(){ ; }, 1000);
+  let at = document.getElementById("agendatoggle");
+  at.innerHTML="agenda [-]";
+  at.onclick = hideAgenda;
+}
+
+showAgenda();
+</script>
+```
+
+And that's it.
+That's a neat trick, and so I'm glad to put a small post about it.
+## Bonuses
+### auto-resize iframe
+
+In order to auto-resize the iframe you must have a non =file:///= URL in the browser.
+So you must serve your start page.
+After a lot of different way to serve my pages, I finally use ~lighttpd~
+inside a ~nix-shell~.
+
+So I added the following to my startpage code:
+
+A => ./lighttpd.conf file
+
+```conf :tangle lighttpd.conf
+server.bind = "127.0.0.1"
+server.port = 31337
+server.document-root = var.CWD
+
+index-file.names = ( "index.html" )
+
+mimetype.assign = (
+  ".css"        =>  "text/css",
+  ".gif"        =>  "image/gif",
+  ".htm"        =>  "text/html",
+  ".html"       =>  "text/html",
+  ".jpeg"       =>  "image/jpeg",
+  ".jpg"        =>  "image/jpeg",
+  ".js"         =>  "text/javascript",
+  ".png"        =>  "image/png",
+  ".swf"        =>  "application/x-shockwave-flash",
+  ".txt"        =>  "text/plain",
+  ".gmi"        =>  "text/plain",
+  ".svg"        =>  "image/svg+xml",
+  ".svgz"       =>  "image/svg+xml"
+)
+
+# Making sure file uploads above 64k always work when using IE or Safari
+# For more information, see http://trac.lighttpd.net/trac/ticket/360
+$HTTP["useragent"] =~ "^(.*MSIE.*)|(.*AppleWebKit.*)$" {
+  server.max-keep-alive-requests = 0
+}
+```
+
+With a
+
+```bash :tangle serve.sh
+#! /user/bin/env nix-shell
+#! nix-shell shell.nix -i bash
+webdir="_site"
+port="$(grep server.port ./lighttpd.conf|sed 's/[^0-9]*//')"
+echo "Serving: $webdir on http://localhost:$port" && \
+lighttpd -f ./lighttpd.conf -D
+```
+
+I have a frozen nixpkgs dependencies via =niv=.
+But you could probably simply replace the line by:
+
+```
+#! nix-shell -p lighttpd -i bash
+```
+
+And it should work fine.
+
+### Start your server at startup on macOS
+
+Last but not least, starting this start page server when I login.
+
+So for that you should demonize with launchd.
+
+I created a => ./y.mothership.plist file to put in =~/Library/LauchAgents/=:
+
+```xml :tangle y.mothership.plist
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>mothership</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/zsh</string>
+        <string>-c</string>
+        <string>$HOME/y/mothership/serve.sh</string>
+    </array>
+    <key>StandardOutPath</key>
+    <string>/var/log/mothership.log</string>
+    <key>StandardErrorPath</key>
+    <string>/var/log/mothership.log</string>
+</dict>
+</plist>
+```
+
+Then to ensure that the executable ~nix-shell~ is present in the PATH for the
+demon, I ran:
+
+```
+launchctl config user path "$PATH"
+```
+
+This will affect the path of all users, but as I am the only user on my
+computer this is fine for me.
+
+Then:
+
+```
+launchctl load ~/Library/LaunchAgents/y.mothership.plist
+launchctl start mothership
+```
+
+
+And that's about it.
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes

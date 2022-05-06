@@ -1,0 +1,100 @@
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Org agenda on your startup page</title><meta name=author content="Yann Esposito"><meta name=description content><meta name=keywords content="blog static"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><meta name=theme-color media="(prefers-color-scheme: light)" content="#d84100"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#2E3440"><div class=main><div id=logo><a href=/><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="#a3aec2" stroke-width="1" fill="#2e3440"/><circle cx="32" cy="32" r="12" stroke="#800" stroke-width="1" fill="#c20"/><circle cx="32" cy="32" r="5" stroke-width="1" stroke="#f60" fill="#fa0"/><ellipse cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="#fff"/></svg></a></div><div id=preamble class=status><div class=content><h1>Org agenda on your startup page</h1><div class=meta><span class=yyydate>[2022-05-05 Thu]</span> on
+<a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract></div></div></div><div id=content><h1 id=d88a1458-07bb-4c73-86c3-9f09b3d6a1ad id=your-org-agenda-at-your-homepage>Your org-agenda at your homepage <span class=tag data-tag-name=ATTACH><span class=smallcaps>ATTACH</span></span></h1><p>During most of the day my emacs is open. But I sometime forget to look at my org-agenda. This is why I wanted to find another way to be exposed to it.<p>And one thing I am mostly exposed to is my personal start page. This is just the default page I see when I open my browser.<p>Here is the end result:<figure><img src=./agenda-html.png.webp title=agenda-html alt="The result inside my start page"><figcaption aria-hidden=true>The result inside my start page</figcaption></figure><p>My start page is named <em>mothership</em>. And I just put the org-agenda at the top of the page inside an iframe. I have a service that start a server on localhost and I configured my browser to use it as startup page. That's it.<p>So now, here is how to sync my org-agenda on this start page.<p>In my <code>config.el</code>:<pre class=elisp><code>(setq y/mothership &quot;~/dev/mothership/&quot;)
+(setq org-agenda-custom-commands
+      `((&quot;g&quot; &quot;Plan Today&quot;
+         ((agenda &quot;&quot; ((org-agenda-span &#39;day))))
+         nil
+         ( ,(concat y/mothership &quot;/agenda.html&quot;) ))))
+</code></pre><p>This provide a custom org agenda command and link that custom command to the export file <code>~/dev/mothership/agenda.html</code>.<p>And a shell script:<div class=sourceCode id=cb2><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb2-1><a href=#cb2-1 aria-hidden=true></a><span class=co>#!/usr/bin/env bash</span></span>
+<span id=cb2-2><a href=#cb2-2 aria-hidden=true></a><span class=ex>emacs</span> --batch <span class=kw>\</span></span>
+<span id=cb2-3><a href=#cb2-3 aria-hidden=true></a>  <span class=ex>--load</span> <span class=st>&quot;</span><span class=va>$HOME</span><span class=st>/.emacs.d/init.el&quot;</span> <span class=kw>\</span></span>
+<span id=cb2-4><a href=#cb2-4 aria-hidden=true></a>  <span class=ex>--eval</span> <span class=st>&#39;(org-batch-store-agenda-views)&#39;</span> <span class=kw>\</span></span>
+<span id=cb2-5><a href=#cb2-5 aria-hidden=true></a>  <span class=ex>--kill</span></span></code></pre></div><div class=sourceCode id=cb3><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb3-1><a href=#cb3-1 aria-hidden=true></a><span class=ex>*/5</span> * * * * /Users/esposito/dev/mothership/export-agenda.sh</span></code></pre></div><p>And finally in my start-page html I just need to add an iframe like so:<div class=sourceCode id=cb4><pre class="sourceCode html"><code class="sourceCode html"><span id=cb4-1><a href=#cb4-1 aria-hidden=true></a><span class=kw>&lt;iframe</span><span class=ot> id=</span><span class=st>&quot;agenda&quot;</span><span class=ot> src=</span><span class=st>&quot;agenda.html&quot;</span><span class=kw>&gt;&lt;/iframe&gt;</span></span></code></pre></div><p>But as I also want to be able to toggle the agenda, and auto-resize the iframe. So I added a bit of js code:<div class=sourceCode id=cb5><pre class="sourceCode html"><code class="sourceCode html"><span id=cb5-1><a href=#cb5-1 aria-hidden=true></a><span class=kw>&lt;div</span><span class=ot> id=</span><span class=st>&quot;agendatoggle&quot;</span><span class=kw>&gt;</span>[-]<span class=kw>&lt;/div&gt;&lt;br/&gt;</span></span>
+<span id=cb5-2><a href=#cb5-2 aria-hidden=true></a><span class=kw>&lt;script&gt;</span></span>
+<span id=cb5-3><a href=#cb5-3 aria-hidden=true></a><span class=kw>function</span> <span class=fu>resizeIframe</span>(iframe) {</span>
+<span id=cb5-4><a href=#cb5-4 aria-hidden=true></a>  iframe<span class=op>.</span><span class=at>height</span> <span class=op>=</span> ( iframe<span class=op>.</span><span class=at>contentWindow</span><span class=op>.</span><span class=at>document</span><span class=op>.</span><span class=at>body</span><span class=op>.</span><span class=at>scrollHeight</span> <span class=op>+</span> <span class=dv>30</span>) <span class=op>+</span> <span class=st>&quot;px&quot;</span><span class=op>;</span></span>
+<span id=cb5-5><a href=#cb5-5 aria-hidden=true></a>}</span>
+<span id=cb5-6><a href=#cb5-6 aria-hidden=true></a><span class=kw>&lt;/script&gt;</span></span>
+<span id=cb5-7><a href=#cb5-7 aria-hidden=true></a><span class=kw>&lt;iframe</span><span class=ot> id=</span><span class=st>&quot;agenda&quot;</span><span class=ot> src=</span><span class=st>&quot;agenda.html&quot;</span><span class=ot> onload=</span><span class=st>&quot;resizeIframe(this)&quot;</span><span class=kw>&gt;&lt;/iframe&gt;</span></span>
+<span id=cb5-8><a href=#cb5-8 aria-hidden=true></a><span class=kw>&lt;/div&gt;</span></span>
+<span id=cb5-9><a href=#cb5-9 aria-hidden=true></a><span class=kw>&lt;script&gt;</span></span>
+<span id=cb5-10><a href=#cb5-10 aria-hidden=true></a></span>
+<span id=cb5-11><a href=#cb5-11 aria-hidden=true></a><span class=kw>function</span> <span class=fu>hideAgenda</span> () {</span>
+<span id=cb5-12><a href=#cb5-12 aria-hidden=true></a>  <span class=kw>let</span> agenda <span class=op>=</span> <span class=bu>document</span><span class=op>.</span><span class=fu>getElementById</span>(<span class=st>&quot;agenda&quot;</span>)<span class=op>;</span></span>
+<span id=cb5-13><a href=#cb5-13 aria-hidden=true></a>  agenda<span class=op>.</span><span class=at>style</span><span class=op>.</span><span class=at>display</span> <span class=op>=</span> <span class=st>&#39;none&#39;</span><span class=op>;</span></span>
+<span id=cb5-14><a href=#cb5-14 aria-hidden=true></a>  <span class=kw>let</span> at <span class=op>=</span> <span class=bu>document</span><span class=op>.</span><span class=fu>getElementById</span>(<span class=st>&quot;agendatoggle&quot;</span>)<span class=op>;</span></span>
+<span id=cb5-15><a href=#cb5-15 aria-hidden=true></a>  at<span class=op>.</span><span class=at>innerHTML</span><span class=op>=</span><span class=st>&quot;agenda [+]&quot;</span><span class=op>;</span></span>
+<span id=cb5-16><a href=#cb5-16 aria-hidden=true></a>  at<span class=op>.</span><span class=at>onclick</span> <span class=op>=</span> showAgenda<span class=op>;</span></span>
+<span id=cb5-17><a href=#cb5-17 aria-hidden=true></a>}</span>
+<span id=cb5-18><a href=#cb5-18 aria-hidden=true></a></span>
+<span id=cb5-19><a href=#cb5-19 aria-hidden=true></a><span class=kw>function</span> <span class=fu>showAgenda</span> () {</span>
+<span id=cb5-20><a href=#cb5-20 aria-hidden=true></a>  <span class=kw>let</span> agenda <span class=op>=</span> <span class=bu>document</span><span class=op>.</span><span class=fu>getElementById</span>(<span class=st>&quot;agenda&quot;</span>)<span class=op>;</span></span>
+<span id=cb5-21><a href=#cb5-21 aria-hidden=true></a>  agenda<span class=op>.</span><span class=at>style</span><span class=op>.</span><span class=at>display</span> <span class=op>=</span> <span class=st>&#39;block&#39;</span><span class=op>;</span></span>
+<span id=cb5-22><a href=#cb5-22 aria-hidden=true></a>  <span class=fu>resizeIframe</span>(agenda)<span class=op>;</span></span>
+<span id=cb5-23><a href=#cb5-23 aria-hidden=true></a>  <span class=co>// setInterval(function(){ ; }, 1000);</span></span>
+<span id=cb5-24><a href=#cb5-24 aria-hidden=true></a>  <span class=kw>let</span> at <span class=op>=</span> <span class=bu>document</span><span class=op>.</span><span class=fu>getElementById</span>(<span class=st>&quot;agendatoggle&quot;</span>)<span class=op>;</span></span>
+<span id=cb5-25><a href=#cb5-25 aria-hidden=true></a>  at<span class=op>.</span><span class=at>innerHTML</span><span class=op>=</span><span class=st>&quot;agenda [-]&quot;</span><span class=op>;</span></span>
+<span id=cb5-26><a href=#cb5-26 aria-hidden=true></a>  at<span class=op>.</span><span class=at>onclick</span> <span class=op>=</span> hideAgenda<span class=op>;</span></span>
+<span id=cb5-27><a href=#cb5-27 aria-hidden=true></a>}</span>
+<span id=cb5-28><a href=#cb5-28 aria-hidden=true></a></span>
+<span id=cb5-29><a href=#cb5-29 aria-hidden=true></a><span class=fu>showAgenda</span>()<span class=op>;</span></span>
+<span id=cb5-30><a href=#cb5-30 aria-hidden=true></a><span class=kw>&lt;/script&gt;</span></span></code></pre></div><p>And that's it. That's a neat trick, and so I'm glad to put a small post about it.<h2 id=bonuses>Bonuses</h2><h3 id=auto-resize-iframe>auto-resize iframe</h3><p>In order to auto-resize the iframe you must have a non <code>file:///</code> URL in the browser. So you must serve your start page. After a lot of different way to serve my pages, I finally use <code>lighttpd</code> inside a <code>nix-shell</code>.<p>So I added the following to my startpage code:<p>A <a href=./lighttpd.conf>./lighttpd.conf</a> file<pre class=conf data-tangle=lighttpd.conf><code>server.bind = &quot;127.0.0.1&quot;
+server.port = 31337
+server.document-root = var.CWD
+
+index-file.names = ( &quot;index.html&quot; )
+
+mimetype.assign = (
+  &quot;.css&quot;        =&gt;  &quot;text/css&quot;,
+  &quot;.gif&quot;        =&gt;  &quot;image/gif&quot;,
+  &quot;.htm&quot;        =&gt;  &quot;text/html&quot;,
+  &quot;.html&quot;       =&gt;  &quot;text/html&quot;,
+  &quot;.jpeg&quot;       =&gt;  &quot;image/jpeg&quot;,
+  &quot;.jpg&quot;        =&gt;  &quot;image/jpeg&quot;,
+  &quot;.js&quot;         =&gt;  &quot;text/javascript&quot;,
+  &quot;.png&quot;        =&gt;  &quot;image/png&quot;,
+  &quot;.swf&quot;        =&gt;  &quot;application/x-shockwave-flash&quot;,
+  &quot;.txt&quot;        =&gt;  &quot;text/plain&quot;,
+  &quot;.gmi&quot;        =&gt;  &quot;text/plain&quot;,
+  &quot;.svg&quot;        =&gt;  &quot;image/svg+xml&quot;,
+  &quot;.svgz&quot;       =&gt;  &quot;image/svg+xml&quot;
+)
+
+# Making sure file uploads above 64k always work when using IE or Safari
+# For more information, see http://trac.lighttpd.net/trac/ticket/360
+$HTTP[&quot;useragent&quot;] =~ &quot;^(.*MSIE.*)|(.*AppleWebKit.*)$&quot; {
+  server.max-keep-alive-requests = 0
+}
+</code></pre><p>With a<div class=sourceCode id=cb7 data-tangle=serve.sh><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb7-1><a href=#cb7-1 aria-hidden=true></a><span class=co>#! /user/bin/env nix-shell</span></span>
+<span id=cb7-2><a href=#cb7-2 aria-hidden=true></a><span class=co>#! nix-shell shell.nix -i bash</span></span>
+<span id=cb7-3><a href=#cb7-3 aria-hidden=true></a><span class=va>webdir=</span><span class=st>&quot;_site&quot;</span></span>
+<span id=cb7-4><a href=#cb7-4 aria-hidden=true></a><span class=va>port=</span><span class=st>&quot;</span><span class=va>$(</span><span class=fu>grep</span> server.port ./lighttpd.conf<span class=kw>|</span><span class=fu>sed</span> <span class=st>&#39;s/[^0-9]*//&#39;</span><span class=va>)</span><span class=st>&quot;</span></span>
+<span id=cb7-5><a href=#cb7-5 aria-hidden=true></a><span class=bu>echo</span> <span class=st>&quot;Serving: </span><span class=va>$webdir</span><span class=st> on http://localhost:</span><span class=va>$port</span><span class=st>&quot;</span> <span class=kw>&amp;&amp;</span> <span class=kw>\</span></span>
+<span id=cb7-6><a href=#cb7-6 aria-hidden=true></a><span class=ex>lighttpd</span> -f ./lighttpd.conf -D</span></code></pre></div><p>I have a frozen nixpkgs dependencies via <code>niv</code>. But you could probably simply replace the line by:<pre><code>#! nix-shell -p lighttpd -i bash
+</code></pre><p>And it should work fine.<h3 id=start-your-server-at-startup-on-macos>Start your server at startup on macOS</h3><p>Last but not least, starting this start page server when I login.<p>So for that you should demonize with launchd.<p>I created a <a href=./y.mothership.plist>./y.mothership.plist</a> file to put in <code>~/Library/LauchAgents/</code>:<div class=sourceCode id=cb9 data-tangle=y.mothership.plist><pre class="sourceCode xml"><code class="sourceCode xml"><span id=cb9-1><a href=#cb9-1 aria-hidden=true></a><span class=kw>&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class=kw>?&gt;</span></span>
+<span id=cb9-2><a href=#cb9-2 aria-hidden=true></a><span class=dt>&lt;!DOCTYPE </span>plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;<span class=dt>&gt;</span></span>
+<span id=cb9-3><a href=#cb9-3 aria-hidden=true></a><span class=kw>&lt;plist</span><span class=ot> version=</span><span class=st>&quot;1.0&quot;</span><span class=kw>&gt;</span></span>
+<span id=cb9-4><a href=#cb9-4 aria-hidden=true></a><span class=kw>&lt;dict&gt;</span></span>
+<span id=cb9-5><a href=#cb9-5 aria-hidden=true></a>    <span class=kw>&lt;key&gt;</span>Label<span class=kw>&lt;/key&gt;</span></span>
+<span id=cb9-6><a href=#cb9-6 aria-hidden=true></a>    <span class=kw>&lt;string&gt;</span>mothership<span class=kw>&lt;/string&gt;</span></span>
+<span id=cb9-7><a href=#cb9-7 aria-hidden=true></a>    <span class=kw>&lt;key&gt;</span>ProgramArguments<span class=kw>&lt;/key&gt;</span></span>
+<span id=cb9-8><a href=#cb9-8 aria-hidden=true></a>    <span class=kw>&lt;array&gt;</span></span>
+<span id=cb9-9><a href=#cb9-9 aria-hidden=true></a>        <span class=kw>&lt;string&gt;</span>/bin/zsh<span class=kw>&lt;/string&gt;</span></span>
+<span id=cb9-10><a href=#cb9-10 aria-hidden=true></a>        <span class=kw>&lt;string&gt;</span>-c<span class=kw>&lt;/string&gt;</span></span>
+<span id=cb9-11><a href=#cb9-11 aria-hidden=true></a>        <span class=kw>&lt;string&gt;</span>$HOME/y/mothership/serve.sh<span class=kw>&lt;/string&gt;</span></span>
+<span id=cb9-12><a href=#cb9-12 aria-hidden=true></a>    <span class=kw>&lt;/array&gt;</span></span>
+<span id=cb9-13><a href=#cb9-13 aria-hidden=true></a>    <span class=kw>&lt;key&gt;</span>StandardOutPath<span class=kw>&lt;/key&gt;</span></span>
+<span id=cb9-14><a href=#cb9-14 aria-hidden=true></a>    <span class=kw>&lt;string&gt;</span>/var/log/mothership.log<span class=kw>&lt;/string&gt;</span></span>
+<span id=cb9-15><a href=#cb9-15 aria-hidden=true></a>    <span class=kw>&lt;key&gt;</span>StandardErrorPath<span class=kw>&lt;/key&gt;</span></span>
+<span id=cb9-16><a href=#cb9-16 aria-hidden=true></a>    <span class=kw>&lt;string&gt;</span>/var/log/mothership.log<span class=kw>&lt;/string&gt;</span></span>
+<span id=cb9-17><a href=#cb9-17 aria-hidden=true></a><span class=kw>&lt;/dict&gt;</span></span>
+<span id=cb9-18><a href=#cb9-18 aria-hidden=true></a><span class=kw>&lt;/plist&gt;</span></span></code></pre></div><p>Then to ensure that the executable <code>nix-shell</code> is present in the PATH for the demon, I ran:<pre><code>launchctl config user path &quot;$PATH&quot;
+</code></pre><p>This will affect the path of all users, but as I am the only user on my computer this is fine for me.<p>Then:<pre><code>launchctl load ~/Library/LaunchAgents/y.mothership.plist
+launchctl start mothership
+</code></pre><p>And that's about it.</div><div id=postamble class=status><div class=content><nav><a href=/index.html>Home</a> |
+<a href=/slides.html>Slides</a> |
+<a href=/about-me.html>About</a>
+<span class=details>(<a href=https://gitea.esy.fun/yogsototh>code</a>
+<a href=https://espial.esy.fun/u:yogsototh>bookmarks</a>
+<a href=https://espial.esy.fun/u:yogsototh/notes>notes</a>)</span> |
+<a href=#logo>↑ Top ↑</a></nav></div></div></div>
