@@ -37,7 +37,7 @@ for fic in $(ls $tmpdir/*.index | sort -r); do
 done
 echo "</ul>" >> $tmpdir/index
 
-title="Y"
+title="Home"
 description="Most recent articles"
 author="Yann Esposito"
 body=$(< $tmpdir/index)
