@@ -3,13 +3,22 @@ html {
     font-size: normal;
     line-height: 1.5;
 }
-#toc,#TOC {text-align: left;}
 html,body { margin: 0; padding: 0; border: 0; }
+body { padding-top: 5px;
+       padding-bottom: 5px;
+       border-top: solid 5px var(--y);
+       border-bottom: solid 5px var(--y);
+       box-sizing: border-box; min-height: 100vh;
+     }
+* { block-sizing: border-box; }
+
+#toc,#TOC {text-align: left;}
 .main { min-height: calc(100vh - 1em); }
-h1,h2,h3,h4,h5,h6 {
+h1,h2,h3,h4,h5,h6,.abstract {
+    font-family: Georgia, Palatino, serif;
     line-height: calc(1ex/0.42);
     margin: 1rem 0; }
-#preamble > .content > h1 { margin: 0 0 1rem 0; }
+header > .content > h1 { margin: 0 0 1rem 0; }
 p { text-align: justify; hyphens: auto; }
 pre { overflow-x: scroll; padding: 1em; border-left: dotted 1px; }
 pre > code { background: none; font-size: 0.875em; padding: 0; }
@@ -28,18 +37,33 @@ hr { opacity: 0.3; }
 #logo { display: block;
         vertical-align: middle;
         text-align: center;
-        padding: 1rem;
+        float: left;
       }
 #logo svg { width: 5em; }
-#logo div { display: none; }
-#preamble, #postamble { text-align: center; }
-#content,.content,#postamble {
-    padding: 0 1rem;
-    max-width: 80ch;
+/* For assistive technology we sometime want to keep a text in a link */
+/* while not showing it. */
+.vis-hidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: auto;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    white-space: nowrap;
+}
+header, footer { text-align: center; }
+#content,.content,footer {
+    padding: 1rem;
+    max-width: 65ch;
     overflow: hidden;
     margin: 0 auto;
 }
-#content, #preamble,#postamble { padding: 1rem; }
+header { padding-top: 5px; max-width: 80ch; margin: 0 auto;}
+header > .content { padding-top: 0; text-align: left; }
+header > .content > h1 { padding: 0; margin: 0; text-align: left; }
+footer { padding: 1rem; }
 figure img { width: 100%; }
 img { max-width: 100%; border: solid; }
 li p { margin: 0; padding: 0; }
@@ -56,8 +80,7 @@ sub { top: 0.4em; }
 .footdef > sup { vertical-align: top; font-size: medium; }
 .footdef > sup > a { padding: 0.5em; }
 .footpara { display: inline; }
-footer { margin: 3em 0;
-         padding: 1em 0;
+footer { padding: 1em 0;
          border-top: solid 1px;
          border-bottom: solid 1px;
          line-height: 1em;
