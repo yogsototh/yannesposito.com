@@ -1,160 +1,143 @@
-<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Further Blog Engine change</title><meta name=author content="Yann Esposito"><meta name=description content="About recent changes on my blog
-system."><meta name=keywords content="blog"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><meta name=theme-color media="(prefers-color-scheme: light)" content="#d84100"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#2E3440"><div class=main><div id=logo><a href=/ title="logo, back to root page"><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="#a3aec2" stroke-width="1" fill="#2e3440"/><circle cx="32" cy="32" r="12" stroke="#800" stroke-width="1" fill="#c20"/><circle cx="32" cy="32" r="5" stroke-width="1" stroke="#f60" fill="#fa0"/><ellipse cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="#fff"/></svg></a></div><header id=preamble class=status role=banner><div class=content><h1>Further Blog Engine change</h1><div class=meta><span class=yyydate>[2019-11-30 Sat]</span> on
-<a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract>About recent changes on my blog system.</div></div></header><main id=content role=main><p>When I started this new blog, I wanted to find something minimal to
-be able to minimize my natural tendency to hack my blogging system.<p>Clearly it was a failure :), <code class=verbatim>org-publish</code> ecosystem is not easy enough to
-handle all my needs, so I had to hack a few external scripts. In
-particular regarding RSS.<p>Here are a few recent changes I did in my system:<ol><li>I changed how I reduce the size of the images.<li>I do not merge all CSS styles in the same CSS file, I splitted 4
-different CSS each supporting light/dark theme. This way the size of
-each page is reduced.<li>I added an HTML minimize step. I could optimize this a lot I
-think.<li>I added a script that show the size of each webpage (HTML + CSS +
-Images). There is an example in all the footers of the pages of my
-website.</ol><p>So to compress the images I use:<div class=sourceCode id=cb1><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb1-1><a href=#cb1-1 aria-hidden=true tabindex=-1></a><span class=ex>convert</span> src.jpg <span class=dt>\</span></span>
-<span id=cb1-2><a href=#cb1-2 aria-hidden=true tabindex=-1></a>        <span class=at>-resize</span> 400x400<span class=dt>\&gt;</span> <span class=dt>\</span></span>
-<span id=cb1-3><a href=#cb1-3 aria-hidden=true tabindex=-1></a>        <span class=at>-colorspace</span> Gray <span class=dt>\</span></span>
-<span id=cb1-4><a href=#cb1-4 aria-hidden=true tabindex=-1></a>        <span class=at>-ordered-dither</span> o8x8,8 <span class=dt>\</span></span>
-<span id=cb1-5><a href=#cb1-5 aria-hidden=true tabindex=-1></a>        dst.jpg</span></code></pre></div><p>Somehow, I made 4 themes. This is too much, but, I don't know I guess
-I felt inspired. I'm particularly proud of the matrix theme (sci dark,
-try it by selecting sci and then choose dark theme). It takes care of
-making the images green, and inspired by this one I also added this
-trick to all other themes.<p>To note, one of the theme is a minimal one. It is used to minimize
-the size of the CSS, while I'm writting those lines, the css size is 728
-bytes.<p>I'll certainly be able to optimize a lot more the size of my HTML
-files too. But I haven't invested much time in it yet. I just use the
-<code class=verbatim>minify</code> command line tool for them.<p>So right now to build my website here is the script I use:<div class=sourceCode id=build.sh><pre class="sourceCode bash"><code class="sourceCode bash"><span id=build.sh-1><a href=#build.sh-1 aria-hidden=true tabindex=-1></a><span class=co>#!/usr/bin/env bash</span></span>
-<span id=build.sh-2><a href=#build.sh-2 aria-hidden=true tabindex=-1></a></span>
-<span id=build.sh-3><a href=#build.sh-3 aria-hidden=true tabindex=-1></a><span class=co># build the files via emacs</span></span>
-<span id=build.sh-4><a href=#build.sh-4 aria-hidden=true tabindex=-1></a><span class=ex>emacs</span> <span class=dt>\</span></span>
-<span id=build.sh-5><a href=#build.sh-5 aria-hidden=true tabindex=-1></a>  <span class=at>--load</span> project.el <span class=dt>\</span></span>
-<span id=build.sh-6><a href=#build.sh-6 aria-hidden=true tabindex=-1></a>  <span class=at>--eval</span> <span class=st>&quot;(progn (org-publish </span><span class=dt>\&quot;</span><span class=st>blog</span><span class=dt>\&quot;</span><span class=st> t) (evil-quit))&quot;</span></span>
-<span id=build.sh-7><a href=#build.sh-7 aria-hidden=true tabindex=-1></a></span>
-<span id=build.sh-8><a href=#build.sh-8 aria-hidden=true tabindex=-1></a><span class=bu>echo</span> <span class=st>&quot;Optim HTML size&quot;</span></span>
-<span id=build.sh-9><a href=#build.sh-9 aria-hidden=true tabindex=-1></a><span class=ex>./optim-html.sh</span></span>
-<span id=build.sh-10><a href=#build.sh-10 aria-hidden=true tabindex=-1></a><span class=bu>echo</span> <span class=st>&quot;Gen themes clones&quot;</span></span>
-<span id=build.sh-11><a href=#build.sh-11 aria-hidden=true tabindex=-1></a><span class=ex>./dup-for-themes.sh</span></span>
-<span id=build.sh-12><a href=#build.sh-12 aria-hidden=true tabindex=-1></a><span class=bu>echo</span> <span class=st>&quot;Update file size&quot;</span></span>
-<span id=build.sh-13><a href=#build.sh-13 aria-hidden=true tabindex=-1></a><span class=ex>./update-file-size.sh</span></span>
-<span id=build.sh-14><a href=#build.sh-14 aria-hidden=true tabindex=-1></a><span class=bu>echo</span> <span class=st>&quot;Building RSS&quot;</span></span>
-<span id=build.sh-15><a href=#build.sh-15 aria-hidden=true tabindex=-1></a><span class=ex>./mkrss.sh</span></span>
-<span id=build.sh-16><a href=#build.sh-16 aria-hidden=true tabindex=-1></a><span class=bu>echo</span> <span class=st>&quot;RSS Built&quot;</span></span></code></pre></div><p>Where<div class=sourceCode id=optim-html.sh><pre class="sourceCode bash"><code class="sourceCode bash"><span id=optim-html.sh-1><a href=#optim-html.sh-1 aria-hidden=true tabindex=-1></a><span class=co>#!/usr/bin/env nix-shell</span></span>
-<span id=optim-html.sh-2><a href=#optim-html.sh-2 aria-hidden=true tabindex=-1></a><span class=co>#!nix-shell -i zsh</span></span>
-<span id=optim-html.sh-3><a href=#optim-html.sh-3 aria-hidden=true tabindex=-1></a><span class=co>#!nix-shell -I nixpkgs=&quot;https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz&quot;</span></span>
-<span id=optim-html.sh-4><a href=#optim-html.sh-4 aria-hidden=true tabindex=-1></a></span>
-<span id=optim-html.sh-5><a href=#optim-html.sh-5 aria-hidden=true tabindex=-1></a><span class=va>webdir</span><span class=op>=</span><span class=st>&quot;_site&quot;</span></span>
-<span id=optim-html.sh-6><a href=#optim-html.sh-6 aria-hidden=true tabindex=-1></a></span>
-<span id=optim-html.sh-7><a href=#optim-html.sh-7 aria-hidden=true tabindex=-1></a><span class=fu>debug ()</span> <span class=kw>{</span></span>
-<span id=optim-html.sh-8><a href=#optim-html.sh-8 aria-hidden=true tabindex=-1></a> <span class=ex>print</span> <span class=at>--</span> <span class=va>$*</span> <span class=op>&gt;</span>/dev/null</span>
-<span id=optim-html.sh-9><a href=#optim-html.sh-9 aria-hidden=true tabindex=-1></a><span class=kw>}</span></span>
-<span id=optim-html.sh-10><a href=#optim-html.sh-10 aria-hidden=true tabindex=-1></a></span>
-<span id=optim-html.sh-11><a href=#optim-html.sh-11 aria-hidden=true tabindex=-1></a><span class=bu>type</span> <span class=at>-a</span> filelist</span>
-<span id=optim-html.sh-12><a href=#optim-html.sh-12 aria-hidden=true tabindex=-1></a><span class=ex>setopt</span> extendedglob</span>
-<span id=optim-html.sh-13><a href=#optim-html.sh-13 aria-hidden=true tabindex=-1></a><span class=cf>if</span> <span class=kw>((</span><span class=va>$#</span><span class=op>&gt;</span><span class=dv>0</span><span class=kw>));</span> <span class=cf>then</span></span>
-<span id=optim-html.sh-14><a href=#optim-html.sh-14 aria-hidden=true tabindex=-1></a>    <span class=va>filelist</span><span class=op>=</span><span class=va>(</span> <span class=va>$*</span> <span class=va>)</span></span>
-<span id=optim-html.sh-15><a href=#optim-html.sh-15 aria-hidden=true tabindex=-1></a><span class=cf>else</span></span>
-<span id=optim-html.sh-16><a href=#optim-html.sh-16 aria-hidden=true tabindex=-1></a>    <span class=va>filelist</span><span class=op>=</span><span class=va>(</span> <span class=va>$webdir</span>/<span class=pp>**</span>/<span class=pp>*</span>.html<span class=er>(</span>.<span class=va>)</span> <span class=er>)</span></span>
-<span id=optim-html.sh-17><a href=#optim-html.sh-17 aria-hidden=true tabindex=-1></a><span class=cf>fi</span></span>
-<span id=optim-html.sh-18><a href=#optim-html.sh-18 aria-hidden=true tabindex=-1></a></span>
-<span id=optim-html.sh-19><a href=#optim-html.sh-19 aria-hidden=true tabindex=-1></a><span class=va>tmp</span><span class=op>=</span><span class=va>$(</span><span class=fu>mktemp</span><span class=va>)</span></span>
-<span id=optim-html.sh-20><a href=#optim-html.sh-20 aria-hidden=true tabindex=-1></a></span>
-<span id=optim-html.sh-21><a href=#optim-html.sh-21 aria-hidden=true tabindex=-1></a><span class=cf>for</span> fic <span class=kw>in</span> <span class=va>$filelist</span><span class=kw>;</span> <span class=cf>do</span></span>
-<span id=optim-html.sh-22><a href=#optim-html.sh-22 aria-hidden=true tabindex=-1></a>    <span class=cf>if</span> <span class=bu>echo</span> <span class=va>$fic</span><span class=kw>|</span><span class=fu>egrep</span> <span class=at>--</span> <span class=st>&#39;-(mk|min|sci|modern).html$&#39;</span><span class=op>&gt;</span>/dev/null<span class=kw>;</span> <span class=cf>then</span></span>
-<span id=optim-html.sh-23><a href=#optim-html.sh-23 aria-hidden=true tabindex=-1></a>        <span class=cf>continue</span></span>
-<span id=optim-html.sh-24><a href=#optim-html.sh-24 aria-hidden=true tabindex=-1></a>    <span class=cf>fi</span></span>
-<span id=optim-html.sh-25><a href=#optim-html.sh-25 aria-hidden=true tabindex=-1></a>    <span class=ex>print</span> <span class=at>-n</span> <span class=at>--</span> <span class=st>&quot;</span><span class=va>$fic</span><span class=st> &quot;</span></span>
-<span id=optim-html.sh-26><a href=#optim-html.sh-26 aria-hidden=true tabindex=-1></a>    <span class=fu>cp</span> <span class=va>$fic</span> <span class=va>$tmp</span><span class=kw>;</span> <span class=ex>minify</span> <span class=at>--mime</span> text/html <span class=va>$tmp</span> <span class=op>&gt;</span> <span class=va>$fic</span></span>
-<span id=optim-html.sh-27><a href=#optim-html.sh-27 aria-hidden=true tabindex=-1></a>    <span class=ex>print</span> <span class=st>&quot;[OK]&quot;</span></span>
-<span id=optim-html.sh-28><a href=#optim-html.sh-28 aria-hidden=true tabindex=-1></a><span class=cf>done</span></span></code></pre></div><div class=sourceCode id=dup-for-themes.sh><pre class="sourceCode bash"><code class="sourceCode bash"><span id=dup-for-themes.sh-1><a href=#dup-for-themes.sh-1 aria-hidden=true tabindex=-1></a><span class=co>#!/usr/bin/env nix-shell</span></span>
-<span id=dup-for-themes.sh-2><a href=#dup-for-themes.sh-2 aria-hidden=true tabindex=-1></a><span class=co>#!nix-shell -i zsh</span></span>
-<span id=dup-for-themes.sh-3><a href=#dup-for-themes.sh-3 aria-hidden=true tabindex=-1></a><span class=co>#!nix-shell -I nixpkgs=&quot;https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz&quot;</span></span>
-<span id=dup-for-themes.sh-4><a href=#dup-for-themes.sh-4 aria-hidden=true tabindex=-1></a></span>
-<span id=dup-for-themes.sh-5><a href=#dup-for-themes.sh-5 aria-hidden=true tabindex=-1></a><span class=va>webdir</span><span class=op>=</span><span class=st>&quot;_site&quot;</span></span>
-<span id=dup-for-themes.sh-6><a href=#dup-for-themes.sh-6 aria-hidden=true tabindex=-1></a></span>
-<span id=dup-for-themes.sh-7><a href=#dup-for-themes.sh-7 aria-hidden=true tabindex=-1></a><span class=fu>debug ()</span> <span class=kw>{</span></span>
-<span id=dup-for-themes.sh-8><a href=#dup-for-themes.sh-8 aria-hidden=true tabindex=-1></a> <span class=ex>print</span> <span class=at>--</span> <span class=va>$*</span> <span class=op>&gt;</span>/dev/null</span>
-<span id=dup-for-themes.sh-9><a href=#dup-for-themes.sh-9 aria-hidden=true tabindex=-1></a><span class=kw>}</span></span>
-<span id=dup-for-themes.sh-10><a href=#dup-for-themes.sh-10 aria-hidden=true tabindex=-1></a></span>
-<span id=dup-for-themes.sh-11><a href=#dup-for-themes.sh-11 aria-hidden=true tabindex=-1></a><span class=cf>if</span> <span class=kw>((</span><span class=va>$#</span><span class=op>&gt;</span><span class=dv>0</span><span class=kw>));</span> <span class=cf>then</span></span>
-<span id=dup-for-themes.sh-12><a href=#dup-for-themes.sh-12 aria-hidden=true tabindex=-1></a>    <span class=va>filelist</span><span class=op>=</span><span class=va>(</span> <span class=va>$*</span> <span class=va>)</span></span>
-<span id=dup-for-themes.sh-13><a href=#dup-for-themes.sh-13 aria-hidden=true tabindex=-1></a><span class=cf>else</span></span>
-<span id=dup-for-themes.sh-14><a href=#dup-for-themes.sh-14 aria-hidden=true tabindex=-1></a>    <span class=va>filelist</span><span class=op>=</span><span class=va>(</span> <span class=va>$webdir</span>/<span class=pp>**</span>/<span class=pp>*</span>.html<span class=er>(</span>.<span class=va>)</span> <span class=er>)</span></span>
-<span id=dup-for-themes.sh-15><a href=#dup-for-themes.sh-15 aria-hidden=true tabindex=-1></a><span class=cf>fi</span></span>
-<span id=dup-for-themes.sh-16><a href=#dup-for-themes.sh-16 aria-hidden=true tabindex=-1></a></span>
-<span id=dup-for-themes.sh-17><a href=#dup-for-themes.sh-17 aria-hidden=true tabindex=-1></a><span class=fu>trans()</span><span class=kw>{</span></span>
-<span id=dup-for-themes.sh-18><a href=#dup-for-themes.sh-18 aria-hidden=true tabindex=-1></a>   <span class=bu>local</span> <span class=va>suff</span><span class=op>=</span><span class=va>$1</span><span class=kw>;</span></span>
-<span id=dup-for-themes.sh-19><a href=#dup-for-themes.sh-19 aria-hidden=true tabindex=-1></a>   <span class=bu>local</span> <span class=va>fic</span><span class=op>=</span><span class=va>$2</span><span class=kw>;</span></span>
-<span id=dup-for-themes.sh-20><a href=#dup-for-themes.sh-20 aria-hidden=true tabindex=-1></a>   <span class=fu>cat</span> <span class=va>$fic</span> <span class=kw>|</span> <span class=fu>perl</span> <span class=at>-p</span> <span class=at>-e</span> <span class=st>&#39;s#href=&quot;?/css/mk.css&quot;?#href=/css/&#39;</span><span class=va>$suff</span><span class=st>&#39;.css#;s#(/?(index|archive|slides|about-me)).html#$1-&#39;</span><span class=va>$suff</span><span class=st>&#39;.html#g;s#(posts/[a-zA-Z0-9_-]*).html#$1-&#39;</span><span class=va>$suff</span><span class=st>&#39;.html#g;s#-&#39;</span><span class=va>$suff</span><span class=st>&#39;.html&gt;mk#.html&gt;mk#g&#39;</span> <span class=op>&gt;</span> <span class=va>${fic</span><span class=op>:</span>r<span class=va>}</span>-<span class=va>${suff}</span>.html</span>
-<span id=dup-for-themes.sh-21><a href=#dup-for-themes.sh-21 aria-hidden=true tabindex=-1></a><span class=kw>}</span></span>
-<span id=dup-for-themes.sh-22><a href=#dup-for-themes.sh-22 aria-hidden=true tabindex=-1></a></span>
-<span id=dup-for-themes.sh-23><a href=#dup-for-themes.sh-23 aria-hidden=true tabindex=-1></a><span class=cf>for</span> fic <span class=kw>in</span> <span class=va>$filelist</span><span class=kw>;</span> <span class=cf>do</span></span>
-<span id=dup-for-themes.sh-24><a href=#dup-for-themes.sh-24 aria-hidden=true tabindex=-1></a>    <span class=cf>if</span> <span class=bu>echo</span> <span class=va>$fic</span><span class=kw>|</span><span class=fu>egrep</span> <span class=at>--</span> <span class=st>&#39;-(mk|min|sci|modern).html$&#39;</span><span class=op>&gt;</span>/dev/null<span class=kw>;</span> <span class=cf>then</span></span>
-<span id=dup-for-themes.sh-25><a href=#dup-for-themes.sh-25 aria-hidden=true tabindex=-1></a>        <span class=cf>continue</span></span>
-<span id=dup-for-themes.sh-26><a href=#dup-for-themes.sh-26 aria-hidden=true tabindex=-1></a>    <span class=cf>fi</span></span>
-<span id=dup-for-themes.sh-27><a href=#dup-for-themes.sh-27 aria-hidden=true tabindex=-1></a>    <span class=ex>print</span> <span class=at>-n</span> <span class=at>--</span> <span class=st>&quot;</span><span class=va>$fic</span><span class=st> &quot;</span></span>
-<span id=dup-for-themes.sh-28><a href=#dup-for-themes.sh-28 aria-hidden=true tabindex=-1></a>    <span class=cf>for</span> suff <span class=kw>in</span> sci min modern<span class=kw>;</span> <span class=cf>do</span></span>
-<span id=dup-for-themes.sh-29><a href=#dup-for-themes.sh-29 aria-hidden=true tabindex=-1></a>        <span class=ex>trans</span> <span class=va>$suff</span> <span class=va>$fic</span></span>
-<span id=dup-for-themes.sh-30><a href=#dup-for-themes.sh-30 aria-hidden=true tabindex=-1></a>    <span class=cf>done</span></span>
-<span id=dup-for-themes.sh-31><a href=#dup-for-themes.sh-31 aria-hidden=true tabindex=-1></a>    <span class=ex>print</span> <span class=st>&quot;[OK]&quot;</span></span>
-<span id=dup-for-themes.sh-32><a href=#dup-for-themes.sh-32 aria-hidden=true tabindex=-1></a><span class=cf>done</span></span></code></pre></div><p>and the script to write the size of the file inside the file:<div class=sourceCode id=update-file-size.sh><pre class="sourceCode bash"><code class="sourceCode bash"><span id=update-file-size.sh-1><a href=#update-file-size.sh-1 aria-hidden=true tabindex=-1></a><span class=co>#!/usr/bin/env nix-shell</span></span>
-<span id=update-file-size.sh-2><a href=#update-file-size.sh-2 aria-hidden=true tabindex=-1></a><span class=co>#!nix-shell -i zsh</span></span>
-<span id=update-file-size.sh-3><a href=#update-file-size.sh-3 aria-hidden=true tabindex=-1></a><span class=co>#!nix-shell -I nixpkgs=&quot;https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz&quot;</span></span>
-<span id=update-file-size.sh-4><a href=#update-file-size.sh-4 aria-hidden=true tabindex=-1></a></span>
-<span id=update-file-size.sh-5><a href=#update-file-size.sh-5 aria-hidden=true tabindex=-1></a><span class=va>webdir</span><span class=op>=</span><span class=st>&quot;_site&quot;</span></span>
-<span id=update-file-size.sh-6><a href=#update-file-size.sh-6 aria-hidden=true tabindex=-1></a></span>
-<span id=update-file-size.sh-7><a href=#update-file-size.sh-7 aria-hidden=true tabindex=-1></a><span class=fu>sizeof()</span> <span class=kw>{</span></span>
-<span id=update-file-size.sh-8><a href=#update-file-size.sh-8 aria-hidden=true tabindex=-1></a>    <span class=fu>stat</span> <span class=at>--format</span><span class=op>=</span><span class=st>&quot;%s&quot;</span> <span class=st>&quot;</span><span class=va>$*</span><span class=st>&quot;</span></span>
-<span id=update-file-size.sh-9><a href=#update-file-size.sh-9 aria-hidden=true tabindex=-1></a><span class=kw>}</span></span>
-<span id=update-file-size.sh-10><a href=#update-file-size.sh-10 aria-hidden=true tabindex=-1></a></span>
-<span id=update-file-size.sh-11><a href=#update-file-size.sh-11 aria-hidden=true tabindex=-1></a><span class=fu>debug ()</span> <span class=kw>{</span></span>
-<span id=update-file-size.sh-12><a href=#update-file-size.sh-12 aria-hidden=true tabindex=-1></a> <span class=ex>print</span> <span class=at>--</span> <span class=va>$*</span> <span class=op>&gt;</span>/dev/null</span>
-<span id=update-file-size.sh-13><a href=#update-file-size.sh-13 aria-hidden=true tabindex=-1></a><span class=kw>}</span></span>
-<span id=update-file-size.sh-14><a href=#update-file-size.sh-14 aria-hidden=true tabindex=-1></a></span>
-<span id=update-file-size.sh-15><a href=#update-file-size.sh-15 aria-hidden=true tabindex=-1></a><span class=fu>toh ()</span> <span class=kw>{</span></span>
-<span id=update-file-size.sh-16><a href=#update-file-size.sh-16 aria-hidden=true tabindex=-1></a>    <span class=fu>numfmt</span> <span class=at>--to</span><span class=op>=</span>iec <span class=va>$*</span></span>
-<span id=update-file-size.sh-17><a href=#update-file-size.sh-17 aria-hidden=true tabindex=-1></a><span class=kw>}</span></span>
-<span id=update-file-size.sh-18><a href=#update-file-size.sh-18 aria-hidden=true tabindex=-1></a></span>
-<span id=update-file-size.sh-19><a href=#update-file-size.sh-19 aria-hidden=true tabindex=-1></a><span class=va>tmpdir</span><span class=op>=</span><span class=va>$(</span><span class=fu>mktemp</span> <span class=at>-d</span><span class=va>)</span></span>
-<span id=update-file-size.sh-20><a href=#update-file-size.sh-20 aria-hidden=true tabindex=-1></a></span>
-<span id=update-file-size.sh-21><a href=#update-file-size.sh-21 aria-hidden=true tabindex=-1></a><span class=bu>type</span> <span class=at>-a</span> filelist</span>
-<span id=update-file-size.sh-22><a href=#update-file-size.sh-22 aria-hidden=true tabindex=-1></a><span class=cf>if</span> <span class=kw>((</span><span class=va>$#</span><span class=op>&gt;</span><span class=dv>0</span><span class=kw>));</span> <span class=cf>then</span></span>
-<span id=update-file-size.sh-23><a href=#update-file-size.sh-23 aria-hidden=true tabindex=-1></a>    <span class=va>filelist</span><span class=op>=</span><span class=va>(</span> <span class=va>$*</span> <span class=va>)</span></span>
-<span id=update-file-size.sh-24><a href=#update-file-size.sh-24 aria-hidden=true tabindex=-1></a><span class=cf>else</span></span>
-<span id=update-file-size.sh-25><a href=#update-file-size.sh-25 aria-hidden=true tabindex=-1></a>    <span class=va>filelist</span><span class=op>=</span><span class=va>(</span> <span class=va>$webdir</span>/<span class=pp>**</span>/<span class=pp>*</span>.html<span class=er>(</span>.<span class=va>)</span> <span class=er>)</span></span>
-<span id=update-file-size.sh-26><a href=#update-file-size.sh-26 aria-hidden=true tabindex=-1></a><span class=cf>fi</span></span>
-<span id=update-file-size.sh-27><a href=#update-file-size.sh-27 aria-hidden=true tabindex=-1></a></span>
-<span id=update-file-size.sh-28><a href=#update-file-size.sh-28 aria-hidden=true tabindex=-1></a><span class=cf>for</span> fic <span class=kw>in</span> <span class=va>$filelist</span><span class=kw>;</span> <span class=cf>do</span></span>
-<span id=update-file-size.sh-29><a href=#update-file-size.sh-29 aria-hidden=true tabindex=-1></a>    <span class=ex>print</span> <span class=at>-n</span> <span class=at>--</span> <span class=st>&quot;</span><span class=va>$fic</span><span class=st>   &quot;</span></span>
-<span id=update-file-size.sh-30><a href=#update-file-size.sh-30 aria-hidden=true tabindex=-1></a></span>
-<span id=update-file-size.sh-31><a href=#update-file-size.sh-31 aria-hidden=true tabindex=-1></a>    <span class=va>htmlsize</span><span class=op>=</span><span class=va>$(</span><span class=ex>sizeof</span> <span class=va>$fic)</span></span>
-<span id=update-file-size.sh-32><a href=#update-file-size.sh-32 aria-hidden=true tabindex=-1></a>    <span class=ex>debug</span> HTML: <span class=va>$htmlsize</span></span>
-<span id=update-file-size.sh-33><a href=#update-file-size.sh-33 aria-hidden=true tabindex=-1></a></span>
-<span id=update-file-size.sh-34><a href=#update-file-size.sh-34 aria-hidden=true tabindex=-1></a>    <span class=va>xfic</span><span class=op>=</span><span class=va>$tmpdir</span>/<span class=va>$fic</span></span>
-<span id=update-file-size.sh-35><a href=#update-file-size.sh-35 aria-hidden=true tabindex=-1></a>    <span class=fu>mkdir</span> <span class=at>-p</span> <span class=va>$(</span><span class=fu>dirname</span> <span class=va>$xfic)</span></span>
-<span id=update-file-size.sh-36><a href=#update-file-size.sh-36 aria-hidden=true tabindex=-1></a>    <span class=ex>hxclean</span> <span class=va>$fic</span> <span class=op>&gt;</span> <span class=va>$xfic</span></span>
-<span id=update-file-size.sh-37><a href=#update-file-size.sh-37 aria-hidden=true tabindex=-1></a></span>
-<span id=update-file-size.sh-38><a href=#update-file-size.sh-38 aria-hidden=true tabindex=-1></a>    <span class=va>images</span><span class=op>=</span><span class=va>(</span> <span class=va>$(</span> <span class=op>&lt;</span> <span class=va>$xfic</span> <span class=ex>hxselect</span> <span class=at>-i</span> <span class=at>-c</span> <span class=at>-s</span> <span class=st>&#39;\n&#39;</span> <span class=st>&#39;img::attr(src)&#39;</span> <span class=kw>|</span> <span class=fu>sed</span> <span class=st>&#39;s/^\.\.\///&#39;</span> <span class=va>)</span> <span class=va>)</span></span>
-<span id=update-file-size.sh-39><a href=#update-file-size.sh-39 aria-hidden=true tabindex=-1></a>    <span class=va>imgsize</span><span class=op>=</span>0</span>
-<span id=update-file-size.sh-40><a href=#update-file-size.sh-40 aria-hidden=true tabindex=-1></a>    <span class=va>nbimg</span><span class=op>=</span>0</span>
-<span id=update-file-size.sh-41><a href=#update-file-size.sh-41 aria-hidden=true tabindex=-1></a>    <span class=cf>for</span> i <span class=kw>in</span> <span class=va>$images</span><span class=kw>;</span> <span class=cf>do</span></span>
-<span id=update-file-size.sh-42><a href=#update-file-size.sh-42 aria-hidden=true tabindex=-1></a>        <span class=kw>((</span><span class=va>nbimg</span><span class=op>++</span><span class=kw>))</span></span>
-<span id=update-file-size.sh-43><a href=#update-file-size.sh-43 aria-hidden=true tabindex=-1></a>        <span class=va>isize</span><span class=op>=</span><span class=va>$(</span> <span class=ex>sizeof</span> <span class=va>${fic</span><span class=op>:</span>h<span class=va>}</span>/<span class=va>$i</span> <span class=va>)</span></span>
-<span id=update-file-size.sh-44><a href=#update-file-size.sh-44 aria-hidden=true tabindex=-1></a>        <span class=ex>debug</span> <span class=va>$i</span> <span class=st>&#39;=&gt;&#39;</span> <span class=va>$isize</span></span>
-<span id=update-file-size.sh-45><a href=#update-file-size.sh-45 aria-hidden=true tabindex=-1></a>        <span class=kw>((</span> <span class=va>imgsize</span> <span class=op>+=</span> <span class=va>isize</span> <span class=kw>))</span></span>
-<span id=update-file-size.sh-46><a href=#update-file-size.sh-46 aria-hidden=true tabindex=-1></a>    <span class=cf>done</span></span>
-<span id=update-file-size.sh-47><a href=#update-file-size.sh-47 aria-hidden=true tabindex=-1></a>    <span class=ex>debug</span> IMG: <span class=va>$imgsize</span></span>
-<span id=update-file-size.sh-48><a href=#update-file-size.sh-48 aria-hidden=true tabindex=-1></a></span>
-<span id=update-file-size.sh-49><a href=#update-file-size.sh-49 aria-hidden=true tabindex=-1></a>    <span class=va>css</span><span class=op>=</span><span class=va>(</span> <span class=va>$(</span> <span class=op>&lt;</span> <span class=va>$xfic</span> <span class=ex>hxselect</span> <span class=at>-i</span> <span class=at>-c</span> <span class=at>-s</span> <span class=st>&#39;\n&#39;</span> <span class=st>&#39;link[rel=stylesheet]::attr(href)&#39;</span><span class=va>))</span></span>
-<span id=update-file-size.sh-50><a href=#update-file-size.sh-50 aria-hidden=true tabindex=-1></a>    <span class=va>csssize</span><span class=op>=</span>0</span>
-<span id=update-file-size.sh-51><a href=#update-file-size.sh-51 aria-hidden=true tabindex=-1></a>    <span class=cf>for</span> i <span class=kw>in</span> <span class=va>$css</span><span class=kw>;</span> <span class=cf>do</span></span>
-<span id=update-file-size.sh-52><a href=#update-file-size.sh-52 aria-hidden=true tabindex=-1></a>        <span class=va>isize</span><span class=op>=</span><span class=va>$(</span> <span class=ex>sizeof</span> <span class=va>$webdir</span>/<span class=va>$i</span> <span class=va>)</span></span>
-<span id=update-file-size.sh-53><a href=#update-file-size.sh-53 aria-hidden=true tabindex=-1></a>        <span class=ex>debug</span> <span class=va>$i</span> <span class=st>&#39;=&gt;&#39;</span> <span class=va>$isize</span></span>
-<span id=update-file-size.sh-54><a href=#update-file-size.sh-54 aria-hidden=true tabindex=-1></a>        <span class=kw>((</span> <span class=va>csssize</span> <span class=op>+=</span> <span class=va>isize</span> <span class=kw>))</span></span>
-<span id=update-file-size.sh-55><a href=#update-file-size.sh-55 aria-hidden=true tabindex=-1></a>    <span class=cf>done</span></span>
-<span id=update-file-size.sh-56><a href=#update-file-size.sh-56 aria-hidden=true tabindex=-1></a>    <span class=ex>debug</span> CSS: <span class=va>$csssize</span></span>
-<span id=update-file-size.sh-57><a href=#update-file-size.sh-57 aria-hidden=true tabindex=-1></a>    <span class=va>total</span><span class=op>=</span><span class=va>$((</span> <span class=va>htmlsize</span> <span class=op>+</span> <span class=va>imgsize</span> <span class=op>+</span> <span class=va>csssize</span> <span class=va>))</span></span>
-<span id=update-file-size.sh-58><a href=#update-file-size.sh-58 aria-hidden=true tabindex=-1></a>    <span class=va>sizeinfos</span><span class=op>=</span><span class=va>$(</span><span class=ex>print</span> <span class=at>--</span> <span class=st>&quot;Size: </span><span class=va>$(</span><span class=ex>toh</span> <span class=va>$total)</span><span class=st> (HTML: </span><span class=va>$(</span><span class=ex>toh</span> <span class=va>$htmlsize)</span><span class=st>, CSS: </span><span class=va>$(</span><span class=ex>toh</span> <span class=va>$csssize)</span><span class=st>, IMG: </span><span class=va>$(</span><span class=ex>toh</span> <span class=va>$imgsize)</span><span class=st>)&quot;</span><span class=va>)</span></span>
-<span id=update-file-size.sh-59><a href=#update-file-size.sh-59 aria-hidden=true tabindex=-1></a>    <span class=ex>print</span> <span class=at>--</span> <span class=va>$sizeinfos</span></span>
-<span id=update-file-size.sh-60><a href=#update-file-size.sh-60 aria-hidden=true tabindex=-1></a>    <span class=fu>perl</span> <span class=at>-pi</span> <span class=at>-e</span> <span class=st>&#39;s#(&lt;span class=&quot;?web-file-size&quot;?&gt;)[^&lt;]*(&lt;/span&gt;)#$1&#39;&quot;</span><span class=va>$sizeinfos</span><span class=st>&quot;&#39;$2#&#39;</span> <span class=va>$fic</span></span>
-<span id=update-file-size.sh-61><a href=#update-file-size.sh-61 aria-hidden=true tabindex=-1></a><span class=cf>done</span></span>
-<span id=update-file-size.sh-62><a href=#update-file-size.sh-62 aria-hidden=true tabindex=-1></a><span class=fu>rm</span> <span class=at>-rf</span> <span class=va>$tmpdir</span></span></code></pre></div></main><footer id=postamble class=status role=contentinfo><div class=content><nav role=navigation><a href=/index.html>Home</a> |
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Further Blog Engine change</title><meta name=author content="Yann Esposito"><meta name=description content="About recent changes on my blog system."><meta name=keywords content="blog"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><meta name=theme-color media="(prefers-color-scheme: light)" content="#d84100"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#2E3440"><div class=main><div id=logo><a href=/ title="logo, back to root page"><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="#a3aec2" stroke-width="1" fill="#2e3440"/><circle cx="32" cy="32" r="12" stroke="#800" stroke-width="1" fill="#c20"/><circle cx="32" cy="32" r="5" stroke-width="1" stroke="#f60" fill="#fa0"/><ellipse cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="#fff"/></svg></a></div><header id=preamble class=status role=banner><div class=content><h1>Further Blog Engine change</h1><div class=meta><span class=yyydate>[2019-11-30 Sat]</span> on
+<a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract>About recent changes on my blog system.</div></div></header><main id=content role=main><article><p>When I started this new blog, I wanted to find something minimal to be able to minimize my natural tendency to hack my blogging system.<p>Clearly it was a failure :), <code>org-publish</code> ecosystem is not easy enough to handle all my needs, so I had to hack a few external scripts. In particular regarding RSS.<p>Here are a few recent changes I did in my system:<ol><li>I changed how I reduce the size of the images.<li>I do not merge all CSS styles in the same CSS file, I splitted 4 different CSS each supporting light/dark theme. This way the size of each page is reduced.<li>I added an HTML minimize step. I could optimize this a lot I think.<li>I added a script that show the size of each webpage (HTML + CSS + Images). There is an example in all the footers of the pages of my website.</ol><p>So to compress the images I use:<div class=sourceCode id=cb1><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb1-1><a href=#cb1-1 aria-hidden=true></a><span class=ex>convert</span> src.jpg <span class=kw>\</span></span>
+<span id=cb1-2><a href=#cb1-2 aria-hidden=true></a>        <span class=ex>-resize</span> 400x400<span class=dt>\&gt;</span> <span class=kw>\</span></span>
+<span id=cb1-3><a href=#cb1-3 aria-hidden=true></a>        <span class=ex>-colorspace</span> Gray <span class=kw>\</span></span>
+<span id=cb1-4><a href=#cb1-4 aria-hidden=true></a>        <span class=ex>-ordered-dither</span> o8x8,8 <span class=kw>\</span></span>
+<span id=cb1-5><a href=#cb1-5 aria-hidden=true></a>        <span class=ex>dst.jpg</span></span></code></pre></div><p>Somehow, I made 4 themes. This is too much, but, I don't know I guess I felt inspired. I'm particularly proud of the matrix theme (sci dark, try it by selecting sci and then choose dark theme). It takes care of making the images green, and inspired by this one I also added this trick to all other themes.<p>To note, one of the theme is a minimal one. It is used to minimize the size of the CSS, while I'm writting those lines, the css size is 728 bytes.<p>I'll certainly be able to optimize a lot more the size of my HTML files too. But I haven't invested much time in it yet. I just use the <code>minify</code> command line tool for them.<p>So right now to build my website here is the script I use:<div class=sourceCode id=build.sh><pre class="sourceCode bash"><code class="sourceCode bash"><span id=build.sh-1><a href=#build.sh-1 aria-hidden=true></a><span class=co>#!/usr/bin/env bash</span></span>
+<span id=build.sh-2><a href=#build.sh-2 aria-hidden=true></a></span>
+<span id=build.sh-3><a href=#build.sh-3 aria-hidden=true></a><span class=co># build the files via emacs</span></span>
+<span id=build.sh-4><a href=#build.sh-4 aria-hidden=true></a><span class=ex>emacs</span> <span class=kw>\</span></span>
+<span id=build.sh-5><a href=#build.sh-5 aria-hidden=true></a>  <span class=ex>--load</span> project.el <span class=kw>\</span></span>
+<span id=build.sh-6><a href=#build.sh-6 aria-hidden=true></a>  <span class=ex>--eval</span> <span class=st>&quot;(progn (org-publish </span><span class=dt>\&quot;</span><span class=st>blog</span><span class=dt>\&quot;</span><span class=st> t) (evil-quit))&quot;</span></span>
+<span id=build.sh-7><a href=#build.sh-7 aria-hidden=true></a></span>
+<span id=build.sh-8><a href=#build.sh-8 aria-hidden=true></a><span class=bu>echo</span> <span class=st>&quot;Optim HTML size&quot;</span></span>
+<span id=build.sh-9><a href=#build.sh-9 aria-hidden=true></a><span class=ex>./optim-html.sh</span></span>
+<span id=build.sh-10><a href=#build.sh-10 aria-hidden=true></a><span class=bu>echo</span> <span class=st>&quot;Gen themes clones&quot;</span></span>
+<span id=build.sh-11><a href=#build.sh-11 aria-hidden=true></a><span class=ex>./dup-for-themes.sh</span></span>
+<span id=build.sh-12><a href=#build.sh-12 aria-hidden=true></a><span class=bu>echo</span> <span class=st>&quot;Update file size&quot;</span></span>
+<span id=build.sh-13><a href=#build.sh-13 aria-hidden=true></a><span class=ex>./update-file-size.sh</span></span>
+<span id=build.sh-14><a href=#build.sh-14 aria-hidden=true></a><span class=bu>echo</span> <span class=st>&quot;Building RSS&quot;</span></span>
+<span id=build.sh-15><a href=#build.sh-15 aria-hidden=true></a><span class=ex>./mkrss.sh</span></span>
+<span id=build.sh-16><a href=#build.sh-16 aria-hidden=true></a><span class=bu>echo</span> <span class=st>&quot;RSS Built&quot;</span></span></code></pre></div><p>Where<div class=sourceCode id=optim-html.sh><pre class="sourceCode bash"><code class="sourceCode bash"><span id=optim-html.sh-1><a href=#optim-html.sh-1 aria-hidden=true></a><span class=co>#!/usr/bin/env nix-shell</span></span>
+<span id=optim-html.sh-2><a href=#optim-html.sh-2 aria-hidden=true></a><span class=co>#!nix-shell -i zsh</span></span>
+<span id=optim-html.sh-3><a href=#optim-html.sh-3 aria-hidden=true></a><span class=co>#!nix-shell -I nixpkgs=&quot;https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz&quot;</span></span>
+<span id=optim-html.sh-4><a href=#optim-html.sh-4 aria-hidden=true></a></span>
+<span id=optim-html.sh-5><a href=#optim-html.sh-5 aria-hidden=true></a><span class=va>webdir=</span><span class=st>&quot;_site&quot;</span></span>
+<span id=optim-html.sh-6><a href=#optim-html.sh-6 aria-hidden=true></a></span>
+<span id=optim-html.sh-7><a href=#optim-html.sh-7 aria-hidden=true></a><span class=fu>debug ()</span> <span class=kw>{</span></span>
+<span id=optim-html.sh-8><a href=#optim-html.sh-8 aria-hidden=true></a> <span class=ex>print</span> -- <span class=va>$*</span> <span class=op>&gt;</span>/dev/null</span>
+<span id=optim-html.sh-9><a href=#optim-html.sh-9 aria-hidden=true></a><span class=kw>}</span></span>
+<span id=optim-html.sh-10><a href=#optim-html.sh-10 aria-hidden=true></a></span>
+<span id=optim-html.sh-11><a href=#optim-html.sh-11 aria-hidden=true></a><span class=bu>type</span> -a filelist</span>
+<span id=optim-html.sh-12><a href=#optim-html.sh-12 aria-hidden=true></a><span class=ex>setopt</span> extendedglob</span>
+<span id=optim-html.sh-13><a href=#optim-html.sh-13 aria-hidden=true></a><span class=kw>if</span> <span class=kw>((</span><span class=va>$#</span>&gt;0<span class=kw>))</span>; <span class=kw>then</span></span>
+<span id=optim-html.sh-14><a href=#optim-html.sh-14 aria-hidden=true></a>    <span class=va>filelist=(</span> <span class=va>$*</span> <span class=va>)</span></span>
+<span id=optim-html.sh-15><a href=#optim-html.sh-15 aria-hidden=true></a><span class=kw>else</span></span>
+<span id=optim-html.sh-16><a href=#optim-html.sh-16 aria-hidden=true></a>    <span class=va>filelist=(</span> <span class=va>$webdir</span>/**/*.html(.<span class=va>)</span> )</span>
+<span id=optim-html.sh-17><a href=#optim-html.sh-17 aria-hidden=true></a><span class=kw>fi</span></span>
+<span id=optim-html.sh-18><a href=#optim-html.sh-18 aria-hidden=true></a></span>
+<span id=optim-html.sh-19><a href=#optim-html.sh-19 aria-hidden=true></a><span class=va>tmp=$(</span><span class=fu>mktemp</span><span class=va>)</span></span>
+<span id=optim-html.sh-20><a href=#optim-html.sh-20 aria-hidden=true></a></span>
+<span id=optim-html.sh-21><a href=#optim-html.sh-21 aria-hidden=true></a><span class=kw>for</span> <span class=ex>fic</span> in <span class=va>$filelist</span><span class=kw>;</span> <span class=kw>do</span></span>
+<span id=optim-html.sh-22><a href=#optim-html.sh-22 aria-hidden=true></a>    <span class=kw>if</span> <span class=bu>echo</span> <span class=va>$fic</span><span class=kw>|</span><span class=fu>egrep</span> -- <span class=st>&#39;-(mk|min|sci|modern).html$&#39;</span><span class=op>&gt;</span>/dev/null<span class=kw>;</span> <span class=kw>then</span></span>
+<span id=optim-html.sh-23><a href=#optim-html.sh-23 aria-hidden=true></a>        <span class=bu>continue</span></span>
+<span id=optim-html.sh-24><a href=#optim-html.sh-24 aria-hidden=true></a>    <span class=kw>fi</span></span>
+<span id=optim-html.sh-25><a href=#optim-html.sh-25 aria-hidden=true></a>    <span class=ex>print</span> -n -- <span class=st>&quot;</span><span class=va>$fic</span><span class=st> &quot;</span></span>
+<span id=optim-html.sh-26><a href=#optim-html.sh-26 aria-hidden=true></a>    <span class=fu>cp</span> <span class=va>$fic</span> <span class=va>$tmp</span><span class=kw>;</span> <span class=ex>minify</span> --mime text/html <span class=va>$tmp</span> <span class=op>&gt;</span> <span class=va>$fic</span></span>
+<span id=optim-html.sh-27><a href=#optim-html.sh-27 aria-hidden=true></a>    <span class=ex>print</span> <span class=st>&quot;[OK]&quot;</span></span>
+<span id=optim-html.sh-28><a href=#optim-html.sh-28 aria-hidden=true></a><span class=kw>done</span></span></code></pre></div><div class=sourceCode id=dup-for-themes.sh><pre class="sourceCode bash"><code class="sourceCode bash"><span id=dup-for-themes.sh-1><a href=#dup-for-themes.sh-1 aria-hidden=true></a><span class=co>#!/usr/bin/env nix-shell</span></span>
+<span id=dup-for-themes.sh-2><a href=#dup-for-themes.sh-2 aria-hidden=true></a><span class=co>#!nix-shell -i zsh</span></span>
+<span id=dup-for-themes.sh-3><a href=#dup-for-themes.sh-3 aria-hidden=true></a><span class=co>#!nix-shell -I nixpkgs=&quot;https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz&quot;</span></span>
+<span id=dup-for-themes.sh-4><a href=#dup-for-themes.sh-4 aria-hidden=true></a></span>
+<span id=dup-for-themes.sh-5><a href=#dup-for-themes.sh-5 aria-hidden=true></a><span class=va>webdir=</span><span class=st>&quot;_site&quot;</span></span>
+<span id=dup-for-themes.sh-6><a href=#dup-for-themes.sh-6 aria-hidden=true></a></span>
+<span id=dup-for-themes.sh-7><a href=#dup-for-themes.sh-7 aria-hidden=true></a><span class=fu>debug ()</span> <span class=kw>{</span></span>
+<span id=dup-for-themes.sh-8><a href=#dup-for-themes.sh-8 aria-hidden=true></a> <span class=ex>print</span> -- <span class=va>$*</span> <span class=op>&gt;</span>/dev/null</span>
+<span id=dup-for-themes.sh-9><a href=#dup-for-themes.sh-9 aria-hidden=true></a><span class=kw>}</span></span>
+<span id=dup-for-themes.sh-10><a href=#dup-for-themes.sh-10 aria-hidden=true></a></span>
+<span id=dup-for-themes.sh-11><a href=#dup-for-themes.sh-11 aria-hidden=true></a><span class=kw>if</span> <span class=kw>((</span><span class=va>$#</span>&gt;0<span class=kw>))</span>; <span class=kw>then</span></span>
+<span id=dup-for-themes.sh-12><a href=#dup-for-themes.sh-12 aria-hidden=true></a>    <span class=va>filelist=(</span> <span class=va>$*</span> <span class=va>)</span></span>
+<span id=dup-for-themes.sh-13><a href=#dup-for-themes.sh-13 aria-hidden=true></a><span class=kw>else</span></span>
+<span id=dup-for-themes.sh-14><a href=#dup-for-themes.sh-14 aria-hidden=true></a>    <span class=va>filelist=(</span> <span class=va>$webdir</span>/**/*.html(.<span class=va>)</span> )</span>
+<span id=dup-for-themes.sh-15><a href=#dup-for-themes.sh-15 aria-hidden=true></a><span class=kw>fi</span></span>
+<span id=dup-for-themes.sh-16><a href=#dup-for-themes.sh-16 aria-hidden=true></a></span>
+<span id=dup-for-themes.sh-17><a href=#dup-for-themes.sh-17 aria-hidden=true></a><span class=fu>trans()</span><span class=kw>{</span></span>
+<span id=dup-for-themes.sh-18><a href=#dup-for-themes.sh-18 aria-hidden=true></a>   <span class=bu>local</span> <span class=va>suff=$1</span>;</span>
+<span id=dup-for-themes.sh-19><a href=#dup-for-themes.sh-19 aria-hidden=true></a>   <span class=bu>local</span> <span class=va>fic=$2</span>;</span>
+<span id=dup-for-themes.sh-20><a href=#dup-for-themes.sh-20 aria-hidden=true></a>   <span class=fu>cat</span> <span class=va>$fic</span> <span class=kw>|</span> <span class=fu>perl</span> -p -e <span class=st>&#39;s#href=&quot;?/css/mk.css&quot;?#href=/css/&#39;</span><span class=va>$suff</span><span class=st>&#39;.css#;s#(/?(index|archive|slides|about-me)).html#$1-&#39;</span><span class=va>$suff</span><span class=st>&#39;.html#g;s#(posts/[a-zA-Z0-9_-]*).html#$1-&#39;</span><span class=va>$suff</span><span class=st>&#39;.html#g;s#-&#39;</span><span class=va>$suff</span><span class=st>&#39;.html&gt;mk#.html&gt;mk#g&#39;</span> <span class=op>&gt;</span> <span class=va>${fic:r}</span>-<span class=va>${suff}</span>.html</span>
+<span id=dup-for-themes.sh-21><a href=#dup-for-themes.sh-21 aria-hidden=true></a><span class=kw>}</span></span>
+<span id=dup-for-themes.sh-22><a href=#dup-for-themes.sh-22 aria-hidden=true></a></span>
+<span id=dup-for-themes.sh-23><a href=#dup-for-themes.sh-23 aria-hidden=true></a><span class=kw>for</span> <span class=ex>fic</span> in <span class=va>$filelist</span><span class=kw>;</span> <span class=kw>do</span></span>
+<span id=dup-for-themes.sh-24><a href=#dup-for-themes.sh-24 aria-hidden=true></a>    <span class=kw>if</span> <span class=bu>echo</span> <span class=va>$fic</span><span class=kw>|</span><span class=fu>egrep</span> -- <span class=st>&#39;-(mk|min|sci|modern).html$&#39;</span><span class=op>&gt;</span>/dev/null<span class=kw>;</span> <span class=kw>then</span></span>
+<span id=dup-for-themes.sh-25><a href=#dup-for-themes.sh-25 aria-hidden=true></a>        <span class=bu>continue</span></span>
+<span id=dup-for-themes.sh-26><a href=#dup-for-themes.sh-26 aria-hidden=true></a>    <span class=kw>fi</span></span>
+<span id=dup-for-themes.sh-27><a href=#dup-for-themes.sh-27 aria-hidden=true></a>    <span class=ex>print</span> -n -- <span class=st>&quot;</span><span class=va>$fic</span><span class=st> &quot;</span></span>
+<span id=dup-for-themes.sh-28><a href=#dup-for-themes.sh-28 aria-hidden=true></a>    <span class=kw>for</span> <span class=ex>suff</span> in sci min modern<span class=kw>;</span> <span class=kw>do</span></span>
+<span id=dup-for-themes.sh-29><a href=#dup-for-themes.sh-29 aria-hidden=true></a>        <span class=ex>trans</span> <span class=va>$suff</span> <span class=va>$fic</span></span>
+<span id=dup-for-themes.sh-30><a href=#dup-for-themes.sh-30 aria-hidden=true></a>    <span class=kw>done</span></span>
+<span id=dup-for-themes.sh-31><a href=#dup-for-themes.sh-31 aria-hidden=true></a>    <span class=ex>print</span> <span class=st>&quot;[OK]&quot;</span></span>
+<span id=dup-for-themes.sh-32><a href=#dup-for-themes.sh-32 aria-hidden=true></a><span class=kw>done</span></span></code></pre></div><p>and the script to write the size of the file inside the file:<div class=sourceCode id=update-file-size.sh><pre class="sourceCode bash"><code class="sourceCode bash"><span id=update-file-size.sh-1><a href=#update-file-size.sh-1 aria-hidden=true></a><span class=co>#!/usr/bin/env nix-shell</span></span>
+<span id=update-file-size.sh-2><a href=#update-file-size.sh-2 aria-hidden=true></a><span class=co>#!nix-shell -i zsh</span></span>
+<span id=update-file-size.sh-3><a href=#update-file-size.sh-3 aria-hidden=true></a><span class=co>#!nix-shell -I nixpkgs=&quot;https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz&quot;</span></span>
+<span id=update-file-size.sh-4><a href=#update-file-size.sh-4 aria-hidden=true></a></span>
+<span id=update-file-size.sh-5><a href=#update-file-size.sh-5 aria-hidden=true></a><span class=va>webdir=</span><span class=st>&quot;_site&quot;</span></span>
+<span id=update-file-size.sh-6><a href=#update-file-size.sh-6 aria-hidden=true></a></span>
+<span id=update-file-size.sh-7><a href=#update-file-size.sh-7 aria-hidden=true></a><span class=fu>sizeof()</span> <span class=kw>{</span></span>
+<span id=update-file-size.sh-8><a href=#update-file-size.sh-8 aria-hidden=true></a>    <span class=fu>stat</span> --format=<span class=st>&quot;%s&quot;</span> <span class=st>&quot;</span><span class=va>$*</span><span class=st>&quot;</span></span>
+<span id=update-file-size.sh-9><a href=#update-file-size.sh-9 aria-hidden=true></a><span class=kw>}</span></span>
+<span id=update-file-size.sh-10><a href=#update-file-size.sh-10 aria-hidden=true></a></span>
+<span id=update-file-size.sh-11><a href=#update-file-size.sh-11 aria-hidden=true></a><span class=fu>debug ()</span> <span class=kw>{</span></span>
+<span id=update-file-size.sh-12><a href=#update-file-size.sh-12 aria-hidden=true></a> <span class=ex>print</span> -- <span class=va>$*</span> <span class=op>&gt;</span>/dev/null</span>
+<span id=update-file-size.sh-13><a href=#update-file-size.sh-13 aria-hidden=true></a><span class=kw>}</span></span>
+<span id=update-file-size.sh-14><a href=#update-file-size.sh-14 aria-hidden=true></a></span>
+<span id=update-file-size.sh-15><a href=#update-file-size.sh-15 aria-hidden=true></a><span class=fu>toh ()</span> <span class=kw>{</span></span>
+<span id=update-file-size.sh-16><a href=#update-file-size.sh-16 aria-hidden=true></a>    <span class=ex>numfmt</span> --to=iec <span class=va>$*</span></span>
+<span id=update-file-size.sh-17><a href=#update-file-size.sh-17 aria-hidden=true></a><span class=kw>}</span></span>
+<span id=update-file-size.sh-18><a href=#update-file-size.sh-18 aria-hidden=true></a></span>
+<span id=update-file-size.sh-19><a href=#update-file-size.sh-19 aria-hidden=true></a><span class=va>tmpdir=$(</span><span class=fu>mktemp</span> -d<span class=va>)</span></span>
+<span id=update-file-size.sh-20><a href=#update-file-size.sh-20 aria-hidden=true></a></span>
+<span id=update-file-size.sh-21><a href=#update-file-size.sh-21 aria-hidden=true></a><span class=bu>type</span> -a filelist</span>
+<span id=update-file-size.sh-22><a href=#update-file-size.sh-22 aria-hidden=true></a><span class=kw>if</span> <span class=kw>((</span><span class=va>$#</span>&gt;0<span class=kw>))</span>; <span class=kw>then</span></span>
+<span id=update-file-size.sh-23><a href=#update-file-size.sh-23 aria-hidden=true></a>    <span class=va>filelist=(</span> <span class=va>$*</span> <span class=va>)</span></span>
+<span id=update-file-size.sh-24><a href=#update-file-size.sh-24 aria-hidden=true></a><span class=kw>else</span></span>
+<span id=update-file-size.sh-25><a href=#update-file-size.sh-25 aria-hidden=true></a>    <span class=va>filelist=(</span> <span class=va>$webdir</span>/**/*.html(.<span class=va>)</span> )</span>
+<span id=update-file-size.sh-26><a href=#update-file-size.sh-26 aria-hidden=true></a><span class=kw>fi</span></span>
+<span id=update-file-size.sh-27><a href=#update-file-size.sh-27 aria-hidden=true></a></span>
+<span id=update-file-size.sh-28><a href=#update-file-size.sh-28 aria-hidden=true></a><span class=kw>for</span> <span class=ex>fic</span> in <span class=va>$filelist</span><span class=kw>;</span> <span class=kw>do</span></span>
+<span id=update-file-size.sh-29><a href=#update-file-size.sh-29 aria-hidden=true></a>    <span class=ex>print</span> -n -- <span class=st>&quot;</span><span class=va>$fic</span><span class=st>   &quot;</span></span>
+<span id=update-file-size.sh-30><a href=#update-file-size.sh-30 aria-hidden=true></a></span>
+<span id=update-file-size.sh-31><a href=#update-file-size.sh-31 aria-hidden=true></a>    <span class=va>htmlsize=$(</span><span class=ex>sizeof</span> <span class=va>$fic)</span></span>
+<span id=update-file-size.sh-32><a href=#update-file-size.sh-32 aria-hidden=true></a>    <span class=ex>debug</span> HTML: <span class=va>$htmlsize</span></span>
+<span id=update-file-size.sh-33><a href=#update-file-size.sh-33 aria-hidden=true></a></span>
+<span id=update-file-size.sh-34><a href=#update-file-size.sh-34 aria-hidden=true></a>    <span class=va>xfic=$tmpdir</span>/<span class=va>$fic</span></span>
+<span id=update-file-size.sh-35><a href=#update-file-size.sh-35 aria-hidden=true></a>    <span class=fu>mkdir</span> -p <span class=va>$(</span><span class=fu>dirname</span> <span class=va>$xfic)</span></span>
+<span id=update-file-size.sh-36><a href=#update-file-size.sh-36 aria-hidden=true></a>    <span class=ex>hxclean</span> <span class=va>$fic</span> <span class=op>&gt;</span> <span class=va>$xfic</span></span>
+<span id=update-file-size.sh-37><a href=#update-file-size.sh-37 aria-hidden=true></a></span>
+<span id=update-file-size.sh-38><a href=#update-file-size.sh-38 aria-hidden=true></a>    <span class=va>images=(</span> <span class=va>$(</span> <span class=op>&lt;</span> <span class=va>$xfic</span> <span class=ex>hxselect</span> -i -c -s <span class=st>&#39;\n&#39;</span> <span class=st>&#39;img::attr(src)&#39;</span> <span class=kw>|</span> <span class=fu>sed</span> <span class=st>&#39;s/^\.\.\///&#39;</span> <span class=va>)</span> <span class=va>)</span></span>
+<span id=update-file-size.sh-39><a href=#update-file-size.sh-39 aria-hidden=true></a>    <span class=va>imgsize=</span>0</span>
+<span id=update-file-size.sh-40><a href=#update-file-size.sh-40 aria-hidden=true></a>    <span class=va>nbimg=</span>0</span>
+<span id=update-file-size.sh-41><a href=#update-file-size.sh-41 aria-hidden=true></a>    <span class=kw>for</span> <span class=ex>i</span> in <span class=va>$images</span><span class=kw>;</span> <span class=kw>do</span></span>
+<span id=update-file-size.sh-42><a href=#update-file-size.sh-42 aria-hidden=true></a>        <span class=kw>((</span>nbimg++<span class=kw>))</span></span>
+<span id=update-file-size.sh-43><a href=#update-file-size.sh-43 aria-hidden=true></a>        <span class=va>isize=$(</span> <span class=ex>sizeof</span> <span class=va>${fic:h}</span>/<span class=va>$i</span> <span class=va>)</span></span>
+<span id=update-file-size.sh-44><a href=#update-file-size.sh-44 aria-hidden=true></a>        <span class=ex>debug</span> <span class=va>$i</span> <span class=st>&#39;=&gt;&#39;</span> <span class=va>$isize</span></span>
+<span id=update-file-size.sh-45><a href=#update-file-size.sh-45 aria-hidden=true></a>        <span class=kw>((</span> imgsize += isize <span class=kw>))</span></span>
+<span id=update-file-size.sh-46><a href=#update-file-size.sh-46 aria-hidden=true></a>    <span class=kw>done</span></span>
+<span id=update-file-size.sh-47><a href=#update-file-size.sh-47 aria-hidden=true></a>    <span class=ex>debug</span> IMG: <span class=va>$imgsize</span></span>
+<span id=update-file-size.sh-48><a href=#update-file-size.sh-48 aria-hidden=true></a></span>
+<span id=update-file-size.sh-49><a href=#update-file-size.sh-49 aria-hidden=true></a>    <span class=va>css=(</span> <span class=va>$(</span> <span class=op>&lt;</span> <span class=va>$xfic</span> <span class=ex>hxselect</span> -i -c -s <span class=st>&#39;\n&#39;</span> <span class=st>&#39;link[rel=stylesheet]::attr(href)&#39;</span><span class=va>))</span></span>
+<span id=update-file-size.sh-50><a href=#update-file-size.sh-50 aria-hidden=true></a>    <span class=va>csssize=</span>0</span>
+<span id=update-file-size.sh-51><a href=#update-file-size.sh-51 aria-hidden=true></a>    <span class=kw>for</span> <span class=ex>i</span> in <span class=va>$css</span><span class=kw>;</span> <span class=kw>do</span></span>
+<span id=update-file-size.sh-52><a href=#update-file-size.sh-52 aria-hidden=true></a>        <span class=va>isize=$(</span> <span class=ex>sizeof</span> <span class=va>$webdir</span>/<span class=va>$i</span> <span class=va>)</span></span>
+<span id=update-file-size.sh-53><a href=#update-file-size.sh-53 aria-hidden=true></a>        <span class=ex>debug</span> <span class=va>$i</span> <span class=st>&#39;=&gt;&#39;</span> <span class=va>$isize</span></span>
+<span id=update-file-size.sh-54><a href=#update-file-size.sh-54 aria-hidden=true></a>        <span class=kw>((</span> csssize += isize <span class=kw>))</span></span>
+<span id=update-file-size.sh-55><a href=#update-file-size.sh-55 aria-hidden=true></a>    <span class=kw>done</span></span>
+<span id=update-file-size.sh-56><a href=#update-file-size.sh-56 aria-hidden=true></a>    <span class=ex>debug</span> CSS: <span class=va>$csssize</span></span>
+<span id=update-file-size.sh-57><a href=#update-file-size.sh-57 aria-hidden=true></a>    <span class=va>total=$((</span> htmlsize + imgsize + csssize <span class=va>))</span></span>
+<span id=update-file-size.sh-58><a href=#update-file-size.sh-58 aria-hidden=true></a>    <span class=va>sizeinfos=$(</span><span class=ex>print</span> -- <span class=st>&quot;Size: </span><span class=va>$(</span><span class=ex>toh</span> <span class=va>$total)</span><span class=st> (HTML: </span><span class=va>$(</span><span class=ex>toh</span> <span class=va>$htmlsize)</span><span class=st>, CSS: </span><span class=va>$(</span><span class=ex>toh</span> <span class=va>$csssize)</span><span class=st>, IMG: </span><span class=va>$(</span><span class=ex>toh</span> <span class=va>$imgsize)</span><span class=st>)&quot;</span><span class=va>)</span></span>
+<span id=update-file-size.sh-59><a href=#update-file-size.sh-59 aria-hidden=true></a>    <span class=ex>print</span> -- <span class=va>$sizeinfos</span></span>
+<span id=update-file-size.sh-60><a href=#update-file-size.sh-60 aria-hidden=true></a>    <span class=fu>perl</span> -pi -e <span class=st>&#39;s#(&lt;span class=&quot;?web-file-size&quot;?&gt;)[^&lt;]*(&lt;/span&gt;)#$1&#39;&quot;</span><span class=va>$sizeinfos</span><span class=st>&quot;&#39;$2#&#39;</span> <span class=va>$fic</span></span>
+<span id=update-file-size.sh-61><a href=#update-file-size.sh-61 aria-hidden=true></a><span class=kw>done</span></span>
+<span id=update-file-size.sh-62><a href=#update-file-size.sh-62 aria-hidden=true></a><span class=fu>rm</span> -rf <span class=va>$tmpdir</span></span></code></pre></div></article></main><footer id=postamble class=status role=contentinfo><div class=content><nav role=navigation><a href=/index.html>Home</a> |
 <a href=/slides.html>Slides</a> |
 <a href=/about-me.html>About</a>
 <span class=details>(<a href=https://gitea.esy.fun/yogsototh>code</a>
