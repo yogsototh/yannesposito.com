@@ -15,7 +15,7 @@
   <description><![CDATA[her.esy.fun articles, mostly random personal thoughts]]></description>
   <language>en</language>
   <pubDate>Thu, 05 May 2022 00:00:00 +0200</pubDate>
-  <lastBuildDate>Thu, 29 Sep 2022 00:00:00 +0200</lastBuildDate>
+  <lastBuildDate>Wed, 28 Sep 2022 00:00:00 +0200</lastBuildDate>
   <generator>mkrss.sh</generator>
   <webMaster>yann@esposito.host (Yann Esposito)</webMaster>
   <image>
@@ -31,7 +31,232 @@
 <category>blog</category>
 <category>static</category>
 <description><![CDATA[
+# Org agenda on your startup page
+description: 
+keywords:  blog static
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2022-05-05 Thu]
 
+# Your org-agenda at your homepage
+
+During most of the day my emacs is open.
+But I sometime forget to look at my org-agenda.
+This is why I wanted to find another way to be exposed to it.
+
+And one thing I am mostly exposed to is my personal start page.
+This is just the default page I see when I open my browser.
+
+Here is the end result:
+
+attr_org:  :width 560
+attr_html:  Generate HTML from the Agenda
+caption:  The result inside my start page
+name:  fig:agenda-html
+=> ./agenda-html.png
+
+
+My start page is named /mothership/.
+And I just put the org-agenda at the top of the page inside an iframe.
+I have a service that start a server on localhost and I configured my
+browser to use it as startup page.
+That's it.
+
+So now, here is how to sync my org-agenda on this start page.
+
+In my ~config.el~:
+
+```elisp
+(setq y/mothership "~/dev/mothership/")
+(setq org-agenda-custom-commands
+      `(("g" "Plan Today"
+         ((agenda "" ((org-agenda-span 'day))))
+         nil
+         ( ,(concat y/mothership "/agenda.html") ))))
+```
+
+This provide a custom org agenda command and link that custom command to
+the export file =~/dev/mothership/agenda.html=.
+
+And a shell script:
+
+```bash
+#!/usr/bin/env bash
+emacs --batch \
+  --load "$HOME/.emacs.d/init.el" \
+  --eval '(org-batch-store-agenda-views)' \
+  --kill
+```
+
+```bash
+*/5 * * * * /Users/esposito/dev/mothership/export-agenda.sh
+```
+
+And finally in my start-page html I just need to add an iframe like so:
+
+```html
+<iframe id="agenda" src="gemini://her.esy.fun/posts/0022-org-agenda-on-your-startup-page/agenda.html"></iframe>
+```
+
+But as I also want to be able to toggle the agenda, and auto-resize the
+iframe.
+So I added a bit of js code:
+
+```html
+<div id="agendatoggle">[-]</div><br/>
+<script>
+function resizeIframe(iframe) {
+  iframe.height = ( iframe.contentWindow.document.body.scrollHeight + 30) + "px";
+}
+</script>
+<iframe id="agenda" src="gemini://her.esy.fun/posts/0022-org-agenda-on-your-startup-page/agenda.html" onload="resizeIframe(this)"></iframe>
+</div>
+<script>
+
+function hideAgenda () {
+  let agenda = document.getElementById("agenda");
+  agenda.style.display = 'none';
+  let at = document.getElementById("agendatoggle");
+  at.innerHTML="agenda [+]";
+  at.onclick = showAgenda;
+}
+
+function showAgenda () {
+  let agenda = document.getElementById("agenda");
+  agenda.style.display = 'block';
+  resizeIframe(agenda);
+  // setInterval(function(){ ; }, 1000);
+  let at = document.getElementById("agendatoggle");
+  at.innerHTML="agenda [-]";
+  at.onclick = hideAgenda;
+}
+
+showAgenda();
+</script>
+```
+
+And that's it.
+That's a neat trick, and so I'm glad to put a small post about it.
+## Bonuses
+### auto-resize iframe
+
+In order to auto-resize the iframe you must have a non =file:///= URL in the browser.
+So you must serve your start page.
+After a lot of different way to serve my pages, I finally use ~lighttpd~
+inside a ~nix-shell~.
+
+So I added the following to my startpage code:
+
+A => ./lighttpd.conf file
+
+```conf :tangle lighttpd.conf
+server.bind = "127.0.0.1"
+server.port = 31337
+server.document-root = var.CWD
+
+index-file.names = ( "index.html" )
+
+mimetype.assign = (
+  ".css"        =>  "text/css",
+  ".gif"        =>  "image/gif",
+  ".htm"        =>  "text/html",
+  ".html"       =>  "text/html",
+  ".jpeg"       =>  "image/jpeg",
+  ".jpg"        =>  "image/jpeg",
+  ".js"         =>  "text/javascript",
+  ".png"        =>  "image/png",
+  ".swf"        =>  "application/x-shockwave-flash",
+  ".txt"        =>  "text/plain",
+  ".gmi"        =>  "text/plain",
+  ".svg"        =>  "image/svg+xml",
+  ".svgz"       =>  "image/svg+xml"
+)
+
+# Making sure file uploads above 64k always work when using IE or Safari
+# For more information, see http://trac.lighttpd.net/trac/ticket/360
+$HTTP["useragent"] =~ "^(.*MSIE.*)|(.*AppleWebKit.*)$" {
+  server.max-keep-alive-requests = 0
+}
+```
+
+With a
+
+```bash :tangle serve.sh
+#! /user/bin/env nix-shell
+#! nix-shell shell.nix -i bash
+webdir="_site"
+port="$(grep server.port ./lighttpd.conf|sed 's/[^0-9]*//')"
+echo "Serving: $webdir on http://localhost:$port" && \
+lighttpd -f ./lighttpd.conf -D
+```
+
+I have a frozen nixpkgs dependencies via =niv=.
+But you could probably simply replace the line by:
+
+```
+#! nix-shell -p lighttpd -i bash
+```
+
+And it should work fine.
+
+### Start your server at startup on macOS
+
+Last but not least, starting this start page server when I login.
+
+So for that you should demonize with launchd.
+
+I created a => ./y.mothership.plist file to put in =~/Library/LauchAgents/=:
+
+```xml :tangle y.mothership.plist
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>mothership</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/zsh</string>
+        <string>-c</string>
+        <string>$HOME/y/mothership/serve.sh</string>
+    </array>
+    <key>StandardOutPath</key>
+    <string>/var/log/mothership.log</string>
+    <key>StandardErrorPath</key>
+    <string>/var/log/mothership.log</string>
+</dict>
+</plist>
+```
+
+Then to ensure that the executable ~nix-shell~ is present in the PATH for the
+demon, I ran:
+
+```
+launchctl config user path "$PATH"
+```
+
+This will affect the path of all users, but as I am the only user on my
+computer this is fine for me.
+
+Then:
+
+```
+launchctl load ~/Library/LaunchAgents/y.mothership.plist
+launchctl start mothership
+```
+
+
+And that's about it.
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes
 ]]></description>
 </item>
 
@@ -42,7 +267,222 @@
 <pubDate>Sat, 30 Oct 2021 00:00:00 +0200</pubDate>
 <category>programming</category>
 <description><![CDATA[
+# My personal environment sync
+description: 
+keywords:  programming
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2021-10-30 Sat]
 
+I have a quite specific system that I improved along the years to manage my
+local environment.
+Think about, binaries I expect to have in my shell, as well as
+configuration files for various utilities, and a few personal scripts.
+
+The notion of what is exactly my local environment is not perfectly defined.
+I expect every of my computers to behave slightly differently.
+Some are for work-only, some personal use only.
+
+For the things I want everywhere, I have a peculiar personal system.
+
+I use a personal script that depends on
+
+=> https://yadm.io yadm
+ and
+
+=> https://github.com/nix-community/home-manager home-manager
+
+My script try to check if some files where updated and react accordingly:
+
+1. I download the dot-files changes via =yadm=.
+2. If my home-manager files changes, it will run ~home-manager switch~
+   ; if it fails, try to update nix channels then try again.
+3. If my doom emacs packages changed, it will run ~doom sync~
+4. If the script itself changed, it re-run the script after updating itself.
+
+If the script detect that I changed my emacs configuration, it runs ~doom
+sync~ or ~doom sync -u~.
+
+Here it is:
+
+```bash
+#!/bin/bash
+
+### logs fn helpers
+
+## colors for tput
+# black=0
+red=1
+green=2
+yellow=3
+blue=4
+# magenta=5
+# cyan=6
+# white=7
+highpr() {
+    printf "$(tput setaf $green)→$(tput sgr0) $(tput bold)%-60s$(tput sgr0)" "$*"
+}
+ok() {
+    local txt="OK"
+    echo -e " [$(tput bold)$(tput setaf $green)${txt}$(tput sgr0)]" >&2
+}
+info() {
+    echo -e " [$(tput bold)$(tput setaf $blue)$*$(tput sgr0)]" >&2
+}
+warn() {
+    echo -e "$(tput bold)$(tput setaf $yellow)$*$(tput sgr0)" >&2
+}
+err() {
+    echo -e "$(tput bold)$(tput setaf $red)$*$(tput sgr0)" >&2
+}
+fail() {
+    err -e "\n[ERR] $*"
+    exit 1
+}
+
+highpr "check nix"
+if ! [ -x "$(command -v nix)" ]; then
+    echo
+    err "nix does not seem to be installed."
+    err "Install it from: https://nixos.org/nix/"
+    exit 1
+fi
+ok
+
+highpr "yadm fetch"
+yadm fetch --quiet  || fail "yadm fetch failed"
+ok
+
+# check the hash of a few files before doing yadm pull
+OLD_SYNC_ENV_ID=$(yadm rev-parse HEAD:bin/sync-env.sh)
+OLD_HOME_MANAGER_ID=$(yadm rev-parse HEAD:.config/nixpkgs/home.nix)
+OLD_DOOM_PACKAGES=$(yadm rev-parse HEAD:.doom.d/packages.el)
+OLD_DOOM_INIT=$(yadm rev-parse HEAD:.doom.d/init.el)
+
+highpr "yadm pull"
+yadm pull --quiet || fail "yadm pull failed"
+ok
+
+# check the hash of a few files after doing yadm pull
+NEW_SYNC_ENV_ID=$(yadm rev-parse HEAD:bin/sync-env.sh)
+NEW_HOME_MANAGER_ID=$(yadm rev-parse HEAD:.config/nixpkgs/home.nix)
+NEW_DOOM_PACKAGES=$(yadm rev-parse HEAD:.doom.d/packages.el)
+NEW_DOOM_INIT=$(yadm rev-parse HEAD:.doom.d/init.el)
+
+highpr "check sync-env diff"
+if ! [ "$OLD_SYNC_ENV_ID" = "$NEW_SYNC_ENV_ID" ]; then
+    warn " changed"
+    warn " Starting ~/bin/sync-env.sh again"
+    echo
+    ~/bin/sync-env.sh
+    exit $?
+fi
+ok
+
+if [ -f "$HOME/.yadm/files.gpg" ]; then
+  highpr "yadm decrypt"
+  yadm decrypt || fail "yadm decrypt failed"
+  ok
+fi
+
+highpr "home-manager"
+USERNAME_NIX_FILE="$HOME/.config/nixpkgs/username.nix"
+if [ ! -f  "$USERNAME_NIX_FILE" ]; then
+  echo "\"$USER\"" >> "$USERNAME_NIX_FILE"
+fi
+if ! [ "$OLD_HOME_MANAGER_ID" = "$NEW_HOME_MANAGER_ID" ]; then
+    echo
+    highpr "home-manager switch"
+    home-manager switch || \
+      ( nix-channel --update && home-manager switch ) || \
+      fail "home-manager switch failed"
+    ok
+else
+    info "skipped"
+fi
+
+highpr "doom-emacs"
+doompath="$HOME/.emacs.d/bin/doom"
+if ! [ "$OLD_DOOM_PACKAGES" = "$NEW_DOOM_PACKAGES" ] || \
+   ! [ "$OLD_DOOM_INIT"     = "$NEW_DOOM_INIT"  ]; then
+  if =>  -x $doompath ; then
+      echo
+      highpr "doom sync"
+      $doompath sync || fail "doom failed to sync"
+      ok
+  else
+     fail "Cannot find doom executable at $doompath";
+  fi
+else
+   info "skipped"
+fi
+```
+
+## Bootstrapping
+
+Bootstrapping this system is always a nice problem to think about.
+It is smooth when everything is set but to bootstrap it I need binaries
+installed by this system...
+So...
+How to handle the dependency cycle correctly?
+
+To minimize the pain, I removed more and more bootstrapping dependencies.
+Now my almost single dependence for bootstrapping my environment is =nix=.
+I haven't initialized any machine for a long time now.
+The following should work.
+
+0. Use fish[fn:fish]  ~chsh /bin/fish~
+1. Install nix
+   ~curl -L https://nixos.org/nix/install | sh~
+2. Install home-manager
+   ```bash
+   nix-channel --add https://github.com/nix-community/home-manager/archive/release-21.05.tar.gz home-manager
+   nix-channel --update
+   export NIX_PATH=$HOME/.nix-defexpr/channels${NIX_PATH:+:}$NIX_PATH
+   nix-shell '<home-manager>' -A install
+   ```
+3. Install and use ~yadm~
+   ```bash
+   nix-shell -p yadm
+   yadm boostrap
+   yadm remote set-url origin <url-to-my-dot-files-repo>
+   yadm pull
+   ```
+4. Still in the =nix-shell= with =yadm= run ~~/bin/sync-env.sh~
+
+
+There is a risk that step 3 fail because I pin most of my packages in
+home-manager configuration, and it will try to install =yadm=. This can
+conflict with the =yadm= installed in the current =nix-shell=.
+So sometime I need to:
+
+1. Remove the line installing =yadm= in my home-manager configuration first
+2. run =home-manager sync=
+3. get out of the =nix-shell=,
+4. add =yadm= back in the =home-manager= config
+5. run =home-manager sync= again, but this time out of the =nix-shell=.
+6. Finally I can run my =~/bin/sync-env.sh= command.
+
+So this post will probably be useful as a personal note in the future.
+Because bootstrapping is generally not trivial.
+I will probably update this post if something is missing.
+
+[fn:fish] I use fish for interactive shell. I use ~zsh~ for quick dirty
+scripts (a lot better than bash), and I switch to
+
+=> https://hackage.haskell.org/package/turtle turtle
+ if I need to be
+serious about the script.
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes
 ]]></description>
 </item>
 
@@ -54,7 +494,339 @@
 <category>emacs</category>
 <category>org-mode</category>
 <description><![CDATA[
+# iA writer clone within doom-emacs
+description: 
+keywords:  emacs org-mode
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2021-10-24 Sun]
 
+So I played with tweaking my emacs configuration again.
+I think I made something worth to be shared.
+I wanted to have the same effect than in iA writer within emacs.
+And I just reached this.
+
+So the effect I am looking to achieve can be seen in this video.
+
+name:  demo video
+______html
+<video src="gemini://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/zen-writer-demo.mov" width="100%" controls autoplay>
+<a href="gemini://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/zen-writer-demo.mov">zen-writer-demo video (7.2MB)</a>
+</video>
+______
+______
+=> ./zen-writer-demo.mov zen-writer-demo video (7.2MB)
+______
+
+
+
+It highlight the current sentence (in black) while the rest of the text is
+gray.
+The main issue with the =hl-sentence= package alone is that it set a specific
+face to the current sentence, but does not affect the other text in the
+buffer.
+In fact to make it work as I would expect, you need to make the default
+color grey, and only set black for the highlighted text.
+
+Fortunately, I have recently created a personal theme close to that.
+I just created a new specific one.
+Everything is mostly "gray" except the font ~hl-sentence~ which is black.
+
+And that's it.
+So to make it all work I need.
+
+* a Gray theme,
+* the package ~hl-sentence~,
+* the ~writeroom~ package.
+
+So how to achieve that yourself?
+Here is how I do it.
+
+## The zen-writer theme
+
+Download
+
+=> ./doom-zen-writer-theme.el Doom Zen-Writer theme
+This depend on doom-themes and here is the code of the theme.
+Just put it in you =~/.doom.d/themes= directory.
+
+## add this is your ~packages.el~
+
+```elisp
+(package! hl-sentence
+  :pin "86ae38d3103bd20da5485cbdd59dfbd396c45ee4")
+```
+## Helpers
+
+You probably want to be able to put you out of this writing mode.
+Here is a
+
+=> zen-writer.el zen-writer.el
+ file that contain my keymaps and useful functions.
+
+Put it in you =~/.doom.d/= directory and in you =config.el=
+put
+
+```emacs-lisp
+(load! "~/.doom.d/zen-writer.el")
+```
+
+And with this you should pass to zen mode with ~SPC y z z~.
+
+To make the un-zen works.
+You will need to have a ~y/auto-update-theme~ function that set your current theme.
+My function change the theme depending on the time of the day or the day of
+the week.
+
+So here it is for inspiration:
+
+```emacs-lisp
+(defun y/auto-update-theme ()
+  "depending on time use different theme"
+  ;; very early => gruvbox-light, solarized-light, nord-light
+  (let* ((day-of-week (format-time-string "%a"))
+         (week-end? (or (equal "Sat" day-of-week)
+                        (equal "Sun" day-of-week)))
+         (hour (nth 2 (decode-time (current-time))))
+         (time-to-sleep? (or (> hour 22) (< hour 7)))
+
+         (theme (cond
+                 (time-to-sleep?  'doom-plain-dark)
+                 (week-end?       'doom-nord-light)
+                 ((<= 7 hour 8)   'doom-gruvbox-light)
+                 ((= 9 hour)      'doom-solarized-light)
+                 ((<= 10 hour 16) 'doom-solarized-white)
+                 ((<= 17 hour 18) 'doom-gruvbox-light)
+                 ((<= 19 hour 22) 'doom-oceanic-next))))
+    (when (not (equal doom-theme theme))
+      (setq doom-theme theme)
+      (load-theme doom-theme t))
+    ;; run that function again next hour
+    (run-at-time (format "%02d:%02d" (+ hour 1) 0) nil 'y/auto-update-theme)))
+```
+
+## Bonus
+
+I use Nerd Fonts and in particular the font `iMWritingDuoS` which is I
+think a clone of the iAWriter font.
+
+```emacs-lisp
+(setq doom-variable-pitch-font
+      (font-spec :family "iMWritingDuoS Nerd Font" :size 12))
+```
+
+I hope you find this useful.
+I really like how it looks now.
+
+## Annex
+
+The code source used in this article.
+
+### zen-writer
+
+name:  zen-writer.el
+```emacs-lisp :tangle zen-writer.el
+;;; zen-writer.el -*- lexical-binding: t; -*-
+
+(defun y/zen ()
+  (interactive)
+  (setq doom-theme 'doom-zen-writer)
+  (load-theme doom-theme t)
+  (hl-sentence-mode +1))
+
+(defun y/unzen ()
+  (interactive)
+  (y/auto-update-theme)
+  (hl-sentence-mode -1))
+
+(defun y/zen-full ()
+  (interactive)
+  (y/zen)
+  (toggle-frame-fullscreen)
+  (doom-big-font-mode +1))
+
+(defun y/unzen-full ()
+  (interactive)
+  (y/unzen)
+  (toggle-frame-fullscreen)
+  (doom-big-font-mode -1))
+
+(map! :leader
+      (:prefix ("y z" . "Zen Writer")
+       :desc "Full Zen Writer" "z" #'y/zen-full
+       :desc "un-Full Zen Writer" "u" #'y/unzen-full
+       :desc "Zen Writer" "t" #'y/zen
+       :desc "un-Zen Writer" "q" #'y/unzen))
+```
+
+### zen-writer doom theme
+
+```emacs-lisp :tangle doom-zen-writer-theme.el
+;;; doom-zen-writer-theme.el --- -*- lexical-binding: t; no-byte-compile: t; -*-
+;;
+;; Author: Yann Esposito <https://github.com/yogsototh>
+;; Created: October 24, 2021
+;; Version: 1.0.0
+;; Keywords: custom themes, faces
+;; Homepage: https://github.com/hlissner/emacs-doom-themes
+;; Package-Requires: ((emacs "25.1") (cl-lib "0.5") (doom-themes "2.2.1"))
+;;
+;;; Code:
+
+(require 'doom-themes)
+
+;;
+;;; Variables
+
+(defgroup doom-plain-theme nil
+  "Options for the `doom-plain' theme."
+  :group 'doom-themes)
+
+(defcustom doom-plain-padded-modeline doom-themes-padded-modeline
+  "If non-nil, adds a 4px padding to the mode-line.
+Can be an integer to determine the exact padding."
+  :group 'doom-plain-theme
+  :type '(or integer boolean))
+
+
+;;
+;;; Theme definition
+
+(def-doom-theme doom-zen-writer
+  "Theme inspired by gko's plain."
+
+  ;; name      default/256/16
+  ((bg         '("#ffffff"))
+   (bg-alt     '("#eaecea"))
+   (base0      '("#969896"))
+   (base1      '("#f1f3f5"))
+   (base2      '("#606666"))
+   (base3      '("#cccccc"))
+   (base4      '("#e7e7e7"))
+   (base5      '("#a5a8a6"))
+   (base6      '("#fafafa"))
+   (base7      '("#dfdfdf"))
+   (base8      '("#fafafa"))
+   (fg         '("#969896"))
+   (fg-alt     (doom-lighten fg 0.15))
+
+   (grey       fg)
+   (red        fg)
+   (blue       fg)
+   (dark-blue  fg)
+   (orange     fg)
+   (green      fg)
+   (teal       fg)
+   (yellow     fg)
+   (magenta    fg)
+   (violet     fg)
+   (cyan       fg)
+   (dark-cyan  fg)
+
+   ;; face categories -- required for all themes
+   (highlight      base2)
+   (vertical-bar   base5)
+   (selection      base1)
+   (builtin        base0)
+   (comments       base5)
+   (doc-comments   base5)
+   (constants      base0)
+   (functions      fg)
+   (keywords       fg)
+   (methods        fg)
+   (operators      fg)
+   (type           fg)
+   (strings        base0)
+   (variables      base0)
+   (numbers        base0)
+   (region         base4)
+   (error          (doom-blend fg "#ff0000" 0.4))
+   (warning        base2)
+   (success        green)
+   (vc-modified    base5)
+   (vc-added       (doom-lighten fg 0.7))
+   (vc-deleted     base2)
+
+   ;; custom categories
+   (-modeline-pad
+    (when doom-plain-padded-modeline
+      (if (integerp doom-plain-padded-modeline) doom-plain-padded-modeline 4)))
+
+   (modeline-bg              (doom-darken bg-alt 0.15))
+   (modeline-bg-alt          (doom-darken bg-alt 0.1))
+   (modeline-bg-inactive     (doom-darken bg-alt 0.1))
+   (modeline-bg-inactive-alt bg-alt)
+   (modeline-fg              fg)
+   (modeline-fg-alt          (doom-darken modeline-bg-inactive 0.35)))
+
+  ;;;; Base theme face overrides
+  ((error   :underline `(:style wave :color ,error))
+   (warning :underline `(:style wave :color ,warning))
+   (hl-sentence :foreground "#000000" :background bg)
+   ((font-lock-constant-face &override)      :slant 'italic)
+   ((font-lock-comment-face &override)       :slant 'italic)
+   ((font-lock-function-name-face &override) :slant 'italic)
+   ((font-lock-type-face &override)          :slant 'italic)
+   (hl-line :background base8)
+   ((line-number &override) :foreground base3)
+   ((line-number-current-line &override) :foreground base2)
+   (mode-line
+    :background modeline-bg :foreground modeline-fg
+    :box (if -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg)))
+   (mode-line-inactive
+    :background modeline-bg-inactive :foreground modeline-fg-alt
+    :box (if -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive)))
+   (mode-line-emphasis :foreground highlight)
+
+   ;;;; doom-modeline
+   (doom-modeline-bar :background modeline-bg)
+   (doom-modeline-bar-inactive :inherit 'doom-modeline-bar)
+   (doom-modeline-project-dir :foreground fg)
+   (doom-modeline-buffer-file :foreground fg)
+   (doom-modeline-buffer-modified :weight 'bold :foreground "#000000")
+   (doom-modeline-panel :inherit 'mode-line-highlight :background base3 :foreground fg)
+   ;;;; ivy
+   (ivy-posframe :background bg-alt)
+   ;;;; magit
+   ((magit-diff-added-highlight &override)   :foreground fg :background (doom-blend vc-added bg 0.3))
+   ((magit-diff-removed &override)           :foreground (doom-lighten fg 0.4) :background (doom-blend vc-deleted bg 0.1))
+   ((magit-diff-removed-highlight &override) :foreground fg :background (doom-blend vc-deleted bg 0.22))
+   ;;;; lsp-mode
+   (lsp-headerline-breadcrumb-symbols-face :foreground keywords :weight 'bold)
+   ;;;; outline <built-in>
+   (outline-1 :slant 'italic :foreground fg-alt)
+   (outline-2 :inherit 'outline-1 :foreground base2)
+   (outline-3 :inherit 'outline-2)
+   (outline-4 :inherit 'outline-3)
+   (outline-5 :inherit 'outline-4)
+   (outline-6 :inherit 'outline-5)
+   (outline-7 :inherit 'outline-6)
+   (outline-8 :inherit 'outline-7)
+   ;;;; org <built-in>
+   ((org-block &override) :background bg-alt)
+   ((org-block-begin-line &override) :foreground base5)
+   ;;;; solaire-mode
+   (solaire-mode-line-face
+    :inherit 'mode-line
+    :background modeline-bg-alt
+    :box (if -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-alt)))
+   (solaire-mode-line-inactive-face
+    :inherit 'mode-line-inactive
+    :background modeline-bg-inactive-alt
+    :box (if -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive-alt)))))
+
+;;; doom-zen-writer-theme.el ends here
+```
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes
 ]]></description>
 </item>
 
@@ -66,7 +838,420 @@
 <category>org-mode</category>
 <category>emacs</category>
 <description><![CDATA[
+# Cool looking org-mode
+description:  A configuration to make org-mode look even better.
+keywords:  org-mode emacs
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2021-08-21 Sat]
 
+______
+TL;DR: My tweaked configuration to make org-mode even more pleasant to use.
+______
+
+## The code
+
+At the end of this article there is a long digression about why I ended up here.
+But instead of bothering you with the why here is a what it looks like, and
+how to achieve it.
+
+First you need to install some dependencies.
+
+1. Install nerdfonts[fn:nerdfonts]
+2. Tell org-mode to use =variable-pitch-mode= (variable width font)
+3. Use ~(setq org-hide-emphasis-markers t)~
+4. Configure a lot of org-mode specific faces to still use a monospaced font.
+
+Here are some images of the result.
+Notice one important factor of the feel is that I work on a mac with retina
+display.
+Often font rendering feel too bold by default.
+But this is perfect to have a writing environment even if screenshot does
+not look as slick as other ones, the usage is superior.
+
+attr_org:  :width 560
+attr_html:  top
+caption:  org-mode headers
+name:  fig:top
+=> ./top.png
+attr_org:  :width 560
+attr_html:  img-with-caption
+caption:  org-mode some inline image
+name:  fig:img-with-caption
+=> ./img-with-caption.png
+
+attr_org:  :width 560
+attr_html:  code
+caption:  org-mode with some code block
+name:  fig:img-with-caption
+=> ./code.png
+
+attr_org:  :width 560
+attr_html:  Org mode with a modified doom-solarized light theme (use a grey background)
+caption:  Org mode with a modified doom-solarized light theme (use a grey background)
+name:  fig:nano-emacs
+=> ./y-org-mode.png
+
+The main trick is to change org-mode to use different font depending on the
+kind of bloc.
+I use two fonts variant which are an iA Writer clone fonts; iM Writing Nerd Font.
+
+First you need to install nerd-fonts[fn:nerdfonts].
+You will get that =iMWritingDuoS Nerd Font=.
+If you look at the code block; I support the case when the font is
+not installed and fall back to Georgia or PT Serif.
+One nice little bonus of the config is to make the fixed width fonts smaller.
+This is often something I like when writing in org-mode.
+
+There is a minor dependency on =doom= as I use =doom-color= for the color of
+the links.
+But you could easily use any color you like if you do not use doom.
+
+```emacs-lisp
+(setq org-ellipsis " [+]")
+(add-hook 'org-mode-hook 'variable-pitch-mode)
+(let* ((variable-tuple
+        (cond
+         ((x-list-fonts "iMWritingDuoS Nerd Font")   '(:family "iMWritingDuoS Nerd Font"))
+         ((x-list-fonts "Georgia")   '(:family "Georgia"))
+         ((x-list-fonts "PT Serif")  '(:family "PT Serif"))))
+       (fixed-tuple
+        (cond
+         ((x-list-fonts "iMWritingDuoS Nerd Font Mono")   '(:family "iMWritingDuoS Nerd Font Mono"   :height 160))
+         ((x-list-fonts "Menlo")               '(:family "Menlo"    :height 120))
+         ((x-list-fonts "PT Mono")             '(:family "PT Mono"  :height 120))))
+       (headline `(:inherit default :weight bold)))
+  (custom-theme-set-faces
+   'user
+   `(org-level-1 ((t (,@headline ,@variable-tuple))))
+   `(org-level-2 ((t (,@headline ,@variable-tuple))))
+   `(org-level-3 ((t (,@headline ,@variable-tuple))))
+   `(org-level-4 ((t (,@headline ,@variable-tuple))))
+   `(org-level-5 ((t (,@headline ,@variable-tuple))))
+   `(org-level-6 ((t (,@headline ,@variable-tuple))))
+   `(org-level-7 ((t (,@headline ,@variable-tuple))))
+   `(org-level-8 ((t (,@headline ,@variable-tuple))))
+   `(org-document-title ((t (,@headline ,@variable-tuple))))
+
+   `(variable-pitch     ((t ,@variable-tuple)))
+   `(fixed-pitch        ((t ,@fixed-tuple)))
+
+   '(org-ellipsis ((t (:inherit fixed-pitch :foreground "gray40" :underline nil))))
+   '(org-block            ((t (:inherit fixed-pitch))))
+   '(org-block-begin-line ((t (:inherit fixed-pitch))))
+   '(org-block-end-line   ((t (:inherit fixed-pitch))))
+   '(org-src              ((t (:inherit fixed-pitch))))
+   '(org-properties       ((t (:inherit fixed-pitch))))
+   '(org-code             ((t (:inherit (shadow fixed-pitch)))))
+   '(org-date             ((t (:inherit (shadow fixed-pitch)))))
+   '(org-document-info    ((t (:inherit (shadow fixed-pitch)))))
+   '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+   '(org-drawer           ((t (:inherit (shadow fixed-pitch)))))
+   '(org-indent           ((t (:inherit (org-hide fixed-pitch)))))
+   `(org-link             ((t (:inherit fixed-pitch :foreground ,(doom-color 'blue) :underline t))))
+   '(org-meta-line        ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+   '(org-property-value   ((t (:inherit fixed-pitch))) t)
+   '(org-special-keyword  ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+   '(org-table            ((t (:inherit fixed-pitch))))
+   '(org-tag              ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+   '(org-verbatim         ((t (:inherit (shadow fixed-pitch)))))))
+```
+
+[fn:nerdfonts] https://www.nerdfonts.com
+
+## Digression about why I did that;
+
+For some reason a went to the rabbit hole of tweaking my emacs.
+In fact, it first started as; let's try to switch from
+=doom-emacs=[fn:doom-emacs] to =nano-emacs=[fn:nano-emacs].
+But, doing so, I realized I wouldn't be able to reach the quality and
+optimization provided by doom-emacs myself.
+So instead of doing this, I first tried to copy the theme of nano.
+Then I realized one of the biggest factor of nano look & feel was
+its usage of "Roboto Mono" but with weight light (or Thin).
+
+See
+
+attr_org:  :width 560
+attr_html:  nano-emacs look (light theme)
+caption:  GNU Emacs / N Λ N O Look (light theme)
+name:  fig:nano-emacs
+=> ./nano-emacs-light.png
+
+
+
+attr_org:  :width 560
+attr_html:  nano-emacs look (dark theme)
+caption:  GNU Emacs / N Λ N O Look (dark theme)
+name:  fig:nano-emacs
+=> ./nano-emacs-dark.png
+
+OK so...
+I just tried to match the theme colors.
+It was easy to create a theme with matching colors.
+*But*, to make it really looks like nano; almost monochrome with two accent
+colors; it would mean a lot more work than anyone could expect.
+For most emacs mode you probably need to add a set of specific font faces.
+This choice is also what makes nano looks so good too.
+This is not just about the color, but about a lot more details than that.
+Using the good colors only at the right place is difficult to achieve.
+And not only the colors, but also, the correct fonts, the spacing of text
+elements etc...
+
+Unfortunately if you want the nano look and feel in doom, it is much more
+work than just copying the nano theme.
+
+But this research of look and feel opened the door to using thin fonts in
+emacs.
+And also tweaking the fonts which really improve the look & feel of emacs.
+
+With this conf, I do not use the same font for coding and for writing
+prose or a blog post with code blocks.
+So far, I like this new look and feel.
+
+[fn:doom-emacs] https://github.com/hlissner/doom-emacs
+[fn:nano-emacs] https://github.com/rougier/nano-emacs
+
+## Bonuses
+
+### Thin Code fonts
+
+After lot of try, I finally switched my default coding font to SauceCodePro
+Nerd Font Mono with weight ~semi-light~.
+This is a clone of Adobe =SourceCode Pro=.
+And on a retina display it is really nice to use.
+
+```emacs-lisp
+(setq doom-font (font-spec :family "SauceCodePro Nerd Font Mono" :size 12 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "iMWritingDuoS Nerd Font" :size 14))
+```
+
+### An unfinished nano theme for doom
+
+Even though the result is not 100% satisfactory, you could start using my work.
+Save this file into =~/.doom.d/themes/doom-nano-theme.el=:
+
+``` lisp
+;;; doom-nano-theme.el --- inspired by Nicolas Rougier nano-theme -*- lexical-binding: t; no-byte-compile: t; -*-
+;;
+;; Author: Yann Esposito <https://yannesposito.com>
+;; Created: August 16, 2021
+;; Version: 1.0.0
+;; Keywords: custom themes, faces
+;; Homepage: https://github.com/hlissner/emacs-doom-themes
+;; Package-Requires: ((emacs "25.1") (cl-lib "0.5") (doom-themes "2.2.1"))
+;;
+;;; Commentary:
+;;
+;; Ported from nano-theme: https://github.com/rougier/nano-theme
+;;
+;;; Code:
+
+(require 'doom-themes)
+
+;;; Variables
+
+(defgroup doom-plain-theme nil
+  "Options for the `doom-plain' theme."
+  :group 'doom-themes)
+
+(defcustom doom-plain-padded-modeline doom-themes-padded-modeline
+  "If non-nil, adds a 4px padding to the mode-line.
+Can be an integer to determine the exact padding."
+  :group 'doom-plain-theme
+  :type '(or integer boolean))
+;;
+;;; Theme definition
+
+(def-doom-theme doom-nano
+  "Theme inspired by Nicolas Rougier nano-theme"
+
+  ;; name      default/256/16
+  ((nano-color-foreground '("#37474F")) ;; Blue Grey / L800
+   (nano-color-background '("#FFFFFF")) ;; White
+   (nano-color-highlight  '("#FAFAFA")) ;; Very Light Grey
+   (nano-color-critical   '("#FF6F00")) ;; Amber / L900
+   (nano-color-salient    '("#673AB7")) ;; Deep Purple / L500
+   (nano-color-strong     '("#000000")) ;; Black
+   (nano-color-popout     '("#FFAB91")) ;; Deep Orange / L200
+   (nano-color-subtle     '("#ECEFF1")) ;; Blue Grey / L50
+   (nano-color-faded      '("#B0BEC5")) ;; Blue Grey / L200
+
+   (bg         nano-color-background)
+   (bg-alt     nano-color-highlight)
+   (base0      '("#18282f"))
+   (base1      '("#24323a"))
+   (base2      '("#556066"))
+   (base3      '("#6f787d"))
+   (base4      '("#8a9296"))
+   (base5      '("#a6acaf"))
+   (base6      '("#e7e8e9"))
+   (base7      '("#f6f6f6"))
+   (base8      '("#fafafa"))
+   (fg         nano-color-foreground)
+   (fg-alt     nano-color-faded)
+
+   (grey       fg)
+   (red        fg)
+   (blue       fg)
+   (dark-blue  fg)
+   (orange     fg)
+   (green      fg)
+   (teal       fg)
+   (yellow     fg)
+   (magenta    fg)
+   (violet     fg)
+   (cyan       fg)
+   (dark-cyan  fg)
+
+
+   ;; face categories -- required for all themes
+   (highlight      nano-color-salient)
+   (vertical-bar   base5)
+   (selection      nano-color-highlight)
+   (builtin        nano-color-salient)
+   (comments       nano-color-faded)
+   (doc-comments   nano-color-faded)
+   (constants      nano-color-strong)
+   (functions      nano-color-salient)
+   (keywords       nano-color-strong)
+   (methods        nano-color-salient)
+   (operators      nano-color-strong)
+   (type           nano-color-strong)
+   (strings        base0)
+   (variables      base0)
+   (numbers        base0)
+   (region         base4)
+   (error          nano-color-critical)
+   (warning        nano-color-popout)
+   (success        nano-color-salient)
+   (vc-modified    nano-color-salient)
+   (vc-added       fg-alt)
+   (vc-deleted     nano-color-critical)
+
+   ;; custom categories
+   (-modeline-pad
+    (when doom-plain-padded-modeline
+      (if (integerp doom-plain-padded-modeline) doom-plain-padded-modeline 4)))
+
+   (modeline-bg              (doom-darken bg-alt 0.15))
+   (modeline-bg-alt          (doom-darken bg-alt 0.1))
+   (modeline-bg-inactive     (doom-darken bg-alt 0.1))
+   (modeline-bg-inactive-alt bg-alt)
+   (modeline-fg              fg)
+   (modeline-fg-alt          (doom-darken modeline-bg-inactive 0.35)))
+
+  ;;;; Base theme face overrides
+  ((error   :underline `(:style wave :color ,error))
+   (warning :underline `(:style wave :color ,warning))
+   ((font-lock-constant-face &override)      :slant 'italic)
+   ((font-lock-comment-face &override)       :slant 'italic)
+   ((font-lock-function-name-face &override) :slant 'italic)
+   ((font-lock-type-face &override)          :slant 'italic)
+   ;;(hl-line :background base8)
+   ((line-number &override) :foreground base3)
+   ((line-number-current-line &override) :foreground base2)
+   (mode-line
+    :background modeline-bg :foreground modeline-fg
+    :box (if -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg)))
+   (mode-line-inactive
+    :background modeline-bg-inactive :foreground modeline-fg-alt
+    :box (if -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive)))
+   (mode-line-emphasis :foreground highlight)
+
+   ;;;; doom-modeline
+   (doom-modeline-bar :background modeline-bg)
+   (doom-modeline-bar-inactive :inherit 'doom-modeline-bar)
+   (doom-modeline-project-dir :foreground fg)
+   (doom-modeline-buffer-file :foreground fg)
+   (doom-modeline-buffer-modified :weight 'bold :foreground "#000000")
+   (doom-modeline-panel :inherit 'mode-line-highlight :background base3 :foreground fg)
+   ;;;; ivy
+   (ivy-posframe :background bg-alt)
+   ;;;; magit
+   ((magit-diff-added-highlight &override)   :foreground fg :background (doom-blend vc-added bg 0.3))
+   ((magit-diff-removed &override)           :foreground (doom-lighten fg 0.4) :background (doom-blend vc-deleted bg 0.1))
+   ((magit-diff-removed-highlight &override) :foreground fg :background (doom-blend vc-deleted bg 0.22))
+   ;;;; lsp-mode
+   (lsp-headerline-breadcrumb-symbols-face :foreground keywords :weight 'bold)
+   ;;;; outline <built-in>
+   (outline-1 :slant   'italic :foreground fg-alt)
+   (outline-2 :inherit 'outline-1 :foreground base2)
+   (outline-3 :inherit 'outline-2)
+   (outline-4 :inherit 'outline-3)
+   (outline-5 :inherit 'outline-4)
+   (outline-6 :inherit 'outline-5)
+   (outline-7 :inherit 'outline-6)
+   (outline-8 :inherit 'outline-7)
+
+   (org-level-1 :inherit 'org-level-1 :foreground nano-color-strong)
+   (org-level-2 :inherit 'org-level-2 :foreground nano-color-strong)
+   (org-level-3 :inherit 'org-level-3 :foreground nano-color-strong)
+   (org-level-4 :inherit 'org-level-4 :foreground nano-color-strong)
+   (org-level-5 :inherit 'org-level-5 :foreground nano-color-strong)
+   (org-level-6 :inherit 'org-level-6 :foreground nano-color-strong)
+   (org-level-7 :inherit 'org-level-7 :foreground nano-color-strong)
+   (org-level-8 :inherit 'org-level-8 :foreground nano-color-strong)
+
+   (org-code     :inherit 'org-code
+                 :foreground nano-color-salient
+                 :weight 'bold)
+   (org-verbatim :inherit 'org-verbatim
+                 :foreground nano-color-salient
+                 :weight 'bold)
+   (org-upcoming-deadline :inherit 'org-upcoming-deadline
+                          :foreground nano-color-critical
+                          :weight 'bold)
+   (org-upcoming-distant-deadline :inherit 'org-upcoming-distant-deadline
+                                  :foreground nano-color-salient)
+
+   (org-habit-overdue-face
+    :inherit 'org-habit-overdue-face
+    :background fg-alt)
+   (org-habit-overdue-future-face
+    :inherit 'org-habit-overdue-future-face
+    :background nano-color-subtle)
+   (org-habit-alert-face
+    :inherit 'org-habit-alert-face
+    :background nano-color-critical)
+   (org-habit-alert-future-face
+    :inherit 'org-habit-alert-future-face
+    :background nano-color-subtle)
+
+   (org-scheduled-today :inherit 'org-scheduled-today :foreground fg)
+   (org-scheduled-previously :inherit 'org-scheduled-previously :foreground fg)
+
+   ;;;; org <built-in>
+   ((org-block &override) :background bg-alt)
+   ((org-block-begin-line &override) :foreground base5)
+   ;;;; solaire-mode
+   (solaire-mode-line-face
+    :inherit 'mode-line
+    :background modeline-bg-alt
+    :box (if -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-alt)))
+   (solaire-mode-line-inactive-face
+    :inherit 'mode-line-inactive
+    :background modeline-bg-inactive-alt
+    :box (if -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive-alt)))))
+
+;;; doom-plain-theme.el ends here
+```
+
+You will probably need more work to achieve the colors you expect.
+For that, using ~SPC-u C-x =~ will probably be useful.
+It will show the font face under the cursor.
+
+Best of luck.
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes
 ]]></description>
 </item>
 
@@ -77,7 +1262,71 @@
 <pubDate>Tue, 01 Jun 2021 00:00:00 +0200</pubDate>
 <category>tv-show</category>
 <description><![CDATA[
+# Utopia (2013)
+description:  The Utopia (2013-2014) British TV Show deserve to be known.
+description:  In the age of COVID19 it is even more relevant.
+description:  The filmography is magistral, as well as the soundtrack,
+description:  acting, and overall atmosphere.
+description:  I really urge you to at least take a look at the opening scene.
+keywords:  tv-show
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2021-06-01 Tue]
+lightbk:  #ff0
+darkbk:  #880
 
+attr_html:  Utopia
+caption:  Utopia
+=> ./utopia-s01.jpg
+
+I wanted to write a few articles about great shows lot of people around me
+do not know about.
+
+
+=> https://www.themoviedb.org/tv/46511-utopia Utopia (2013)
+ is one of these TV Shows that deserve more attention.
+
+The *filmography* is quite original.
+I have never seen another film/TV show with a similar atmosphere.
+The usage of bright colors is magistral.
+Flashy yellow, green, red.
+
+The *soundtrack* is also pretty surprising original and enjoyable.
+
+The *acting* is really great.
+Actors are doing a great job and are quite relatable.
+These are not the (super)heroes you are used to.
+We are far away from shows where every girl is a bimbo and every guy is a
+Chippendale.
+
+The *scenario*, in regard to the recent events related to COVID19 is just perfect.
+I do not want to reveal too much.
+But let's just say the current real events are close to the events
+predicted in this show.
+
+The *Surrealistic Humor* atmosphere make the viewing experience quite
+exceptionnal.
+There is a mix between nonchalance and extreme violence.
+It really feels surrealist.
+In this show some people act with extreme violence as if there is no choice.
+
+As a conclusion, if you are looking for a very innovative TV show then
+search no further this one is a great original choice.
+If you are still unsure, just watch the opening scene, it is quite incredible.
+
+ps: Also try to get the original content. Amazon Prime apparently cut some
+very important scene and also changed the ratio which hurt the very good
+image work.
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes
 ]]></description>
 </item>
 
@@ -89,7 +1338,586 @@
 <category>blog</category>
 <category>static</category>
 <description><![CDATA[
+# Fast Static Site with make
+description:  A deeper view of my static site builder Makefile
+keywords:  blog static
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2021-05-25 Tue]
 
+This article will dig a bit deeper about my =Makefile= based static website generator.
+In a
+
+=> https://her.esy.fun/posts/0017-static-blog-builder/index.html previous article
+ I just gave the rationale and an overview to do it
+yourself.
+Mainly it is very fast and portable.
+
+A few goals reached by my current build system are:
+
+1. Be fast and make the minimal amount of work as possible.
+   I don't want to rebuild all the html pages if I only change one file.
+2. Source file format agnostic. You can use markdown, org-mode or even
+   directly write html.
+3. Support gemini
+4. Optimize size: minify HTML, CSS, images
+5. Generate an index page listing the posts
+6. Generate RSS/atom feed (for both gemini and http)
+
+=make= will take care of handling the dependency graph to minimize
+the amount of effort when a change occurs in the sources.
+For some features, I built specifics small shell scripts.
+For example to be absolutely agnostic in the source format for my articles
+I generate the RSS out of a tree of HTML files.
+But taking advantage of =make=, I generate an index cache to transform those
+HTML into XML which will be faster to use to build different indexes.
+To make those transformations I use very short a shell scripts.
+
+# =Makefile= overview
+
+A Makefile is made out of rules.
+The first rule of your Makefile will be the default rule.
+The first rule of my Makefile is called =all=.
+
+A rule as the following format:
+
+```makefile
+target: file1 file2
+	cmd --input file1 file2 \
+		--output target
+```
+
+if =target= does not exists, then =make= will look at its dependencies.
+If any of its dependencies need to be updated, it will run all the rules in
+the correct order to rebuild them and finally run the script to build
+=target=.
+A file needs to be updated if one of its dependency needs to be updated or is
+newer.
+
+The usual use case of =make= is about building a single binary out of many
+source files.
+But for a static website, we need to generate a lot of files from a lot of
+files.
+So we construct the rules like this:
+
+```makefile
+all: site
+
+# build a list of files that will need to be build
+DST_FILES := ....
+# RULES TO GENERATE DST_FILES
+ALL += $(DST_FILES)
+
+# another list of files
+DST_FILES_2 := ....
+# RULES TO GENERATE DST_FILES_2
+ALL += $(DST_FILES_2)
+
+site: $(ALL)
+```
+
+In my =Makefile= I have many similar block with the same pattern.
+
+1. I retrieve a list of source files
+2. I construct the list of destination files (change the directory, the extension)
+3. I declare a rule to construct these destination files
+4. I add the destination files to the =ALL= variable.
+
+I have a block for:
+* raw assets I just want copied
+* images I would like to compress for the web
+* =html= I would like to generate from org mode files via pandoc
+* =gmi= I would like to generate from org mode files
+* =xml= files I use as cache to build different index files
+* =index.html= file containing a list of my posts
+* =rss.xml= file containing a list of my posts
+* =gemini-atom.xml= file containing a list of my posts
+
+## Assets
+
+The rules to copy assets will be a good first example.
+
+1. find all assets in =src/= directory
+2. generate all assets from these files in =_site/= directory
+3. make this rule a dependency on the =all= rule.
+
+
+```makefile
+SRC_ASSETS := $(shell find src -type f)
+DST_ASSETS := $(patsubst src/%,_site/%,$(SRC_ASSETS))
+_site/% : src/%
+	@mkdir -p "$(dir $@)"
+	cp "$<" "$@"
+.PHONY: assets
+assets: $(DST_ASSETS)
+ALL += assets
+```
+
+OK, this looks terrible.
+But mainly:
+
+* ~SRC_ASSETS~ will contain the result of the command ~find~.
+* ~DST_ASSETS~ will contain the files of ~SRC_ASSETS~  but we replace the
+  =src/= by =_site/=.
+* We create a generic rule; for all files matching the following pattern
+  =_site/%=, look for the file =src/%= and if it is newer (in our case)
+  then execute the following commands:
+  - create the directory to put =_site/%= in
+  - copy the file
+
+About the line ~@mkdir -p "$(dir $@)"~:
+* the =@= at the start of the command simply means that we make this execution silent.
+* The =$@= is replaced by the target string.
+* And =$(dir $@)= will generate the folder name of =$@=.
+
+For the line with ~cp~, you just need to know that =~$<~= will represent the
+first dependency.
+
+My Makefile is composed of similar blocks, where I replace the first
+find command to match specific files and where I use different building rules.
+An important point is that the rules must be the most specific possible.
+This is because =make= will use the most specific rule in case of ambiguity.
+For example, the matching rule =_site/%: src/%= will match all files in
+the =src/= dir.
+But if we want to treat =CSS= files with another rule we could write:
+
+```makefile
+_site/%.css: src/%.css
+	minify "$<" "$@"
+```
+
+And if the selected file is a =CSS= file, this rule will be selected.
+
+## Prelude
+
+I start with variables declarations:
+
+```makefile
+all: site
+# directory containing the source files
+SRC_DIR ?= src
+# directory that will contain the site files
+DST_DIR ?= _site
+# a directory that will contain a cache to speedup indexing
+CACHE_DIR ?= .cache
+
+# options to pass to find to prevent matching files in the src/drafts
+# directory
+NO_DRAFT := -not -path '$(SRC_DIR)/drafts/*'
+# option to pass to find to not match  org files
+NO_SRC_FILE := ! -name '*.org'
+```
+
+## CSS
+
+Here we go; the same simple pattern for CSS files.
+
+```makefile
+# CSS
+SRC_CSS_FILES := $(shell find $(SRC_DIR) -type f -name '*.css')
+DST_CSS_FILES := $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%,$(SRC_RAW_FILES))
+$(DST_DIR)/%.css : $(SRC_DIR)/%.css
+	@mkdir -p "$(dir $@)"
+	minify "$<" > "$@"
+.PHONY: css
+css: $(DST_CSS_FILES)
+ALL += css
+```
+
+This is very similar to the block for raw assets.
+The difference is just that instead of using =cp= we use the =minify=
+command.
+
+## ORG → HTML
+
+Now this one is more complex but is still follow the same pattern.
+
+```makefile
+# ORG -> HTML
+EXT ?= .org
+SRC_PANDOC_FILES ?= $(shell find $(SRC_DIR) -type f -name "*$(EXT)" $(NO_DRAFT))
+DST_PANDOC_FILES ?= $(patsubst %$(EXT),%.html, \
+                        $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%, \
+                            $(SRC_PANDOC_FILES)))
+PANDOC_TEMPLATE ?= templates/post.html
+MK_HTML := engine/mk-html.sh
+PANDOC := $(MK_HTML) $(PANDOC_TEMPLATE)
+$(DST_DIR)/%.html: $(SRC_DIR)/%.org $(PANDOC_TEMPLATE) $(MK_HTML)
+	@mkdir -p "$(dir $@)"
+	$(PANDOC) "$<" "$@.tmp"
+	minify --mime text/html "$@.tmp" > "$@"
+	@rm "$@.tmp"
+.PHONY: html
+html: $(DST_PANDOC_FILES)
+ALL += html
+```
+
+So to construct =DST_PANDOC_FILES= this time we also need to change the
+extension of the file from =org= to =html=.
+We need to provide a template that will be passed to pandoc.
+
+And of course, as if we change the template file we would like to
+regenerate all HTML files we put the template as a dependency.
+But importantly *not* at the first place. Because we use =$<= that will be
+the first dependency.
+
+I also have a short script instead of directly using =pandoc=.
+It is easier to handle =toc= using the metadatas in the file.
+And if someday I want to put the template in the metas, this will be the
+right place to put that.
+
+The =mk-html.sh= is quite straightforward:
+
+```bash
+#!/usr/bin/env bash
+set -eu
+
+# put me at the top level of my project (like Makefile)
+cd "$(git rev-parse --show-toplevel)" || exit 1
+template="$1"
+orgfile="$2"
+htmlfile="$3"
+
+# check if there is the #+OPTIONS: toc:t
+tocoption=""
+if grep -ie '^#+options:' "$orgfile" | grep 'toc:t'>/dev/null; then
+    tocoption="--toc"
+fi
+
+set -x
+pandoc $tocoption \
+       --template="$template" \
+       --mathml \
+       --from org \
+       --to html5 \
+       --standalone \
+       $orgfile \
+       --output "$htmlfile"
+```
+
+Once generated I also minify the html file.
+And, that's it.
+But the important part is that now, if I change my script or the template
+or the file, it will generate the dependencies.
+## Indexes
+
+We often need indexes to build a website.
+Typically to list the latest articles, build the RSS file.
+So for sake of simplicity, I decided to build my index as a set of XML files.
+Of course, this could be optimizide, by using SQLite for example.
+But this will already be really fast.
+
+For every generated html file I will generate a clean XML file with
+=hxclean=.
+Once cleaned, it will be easy to access a specific node of in these XML files.
+
+```makefile
+# INDEXES
+SRC_POSTS_DIR ?= $(SRC_DIR)/posts
+DST_POSTS_DIR ?= $(DST_DIR)/posts
+SRC_POSTS_FILES ?= $(shell find $(SRC_POSTS_DIR) -type f -name "*$(EXT)")
+RSS_CACHE_DIR ?= $(CACHE_DIR)/rss
+DST_XML_FILES ?= $(patsubst %.org,%.xml, \
+                        $(patsubst $(SRC_POSTS_DIR)/%,$(RSS_CACHE_DIR)/%, \
+                            $(SRC_POSTS_FILES)))
+$(RSS_CACHE_DIR)/%.xml: $(DST_POSTS_DIR)/%.html
+	@mkdir -p "$(dir $@)"
+	hxclean "$<" > "$@"
+.PHONY: indexcache
+indexcache: $(DST_XML_FILES)
+ALL += indexcache
+```
+
+This rule will generate for every file in =site/posts/*.html= a corresponding
+=xml= file (=hxclean= takes an HTML an try its best to make an XML out of it).
+
+## HTML Index
+
+Now we just want to generate the main =index.html= page at the root of
+the site.
+This page should list all articles by date in reverse order.
+
+The first step is to take advantage of the cache index.
+For every XML file I generated before I should generate the small HTML
+block I want for every entry.
+For this I use a script =mk-index-entry.sh=.
+He will use =hxselect= to retrieve the date and the title from the cached
+XML files.
+Then generate a small file just containing the date and the link.
+
+Here is the block in the Makefile:
+
+```makefile
+DST_INDEX_FILES ?= $(patsubst %.xml,%.index, $(DST_XML_FILES))
+MK_INDEX_ENTRY := ./engine/mk-index-entry.sh
+INDEX_CACHE_DIR ?= $(CACHE_DIR)/rss
+$(INDEX_CACHE_DIR)/%.index: $(INDEX_CACHE_DIR)/%.xml $(MK_INDEX_ENTRY)
+	@mkdir -p $(INDEX_CACHE_DIR)
+	$(MK_INDEX_ENTRY) "$<" "$@"
+```
+
+It means: for every =.xml= file generate a =.index= file with
+=mk-index-entry.sh=.
+
+```sh
+#!/usr/bin/env zsh
+
+# prelude
+cd "$(git rev-parse --show-toplevel)" || exit 1
+xfic="$1"
+dst="$2"
+indexdir=".cache/rss"
+
+# HTML Accessors (similar to CSS accessors)
+dateaccessor='.yyydate'
+# title and keyword shouldn't be changed
+titleaccessor='title'
+finddate(){ < $1 hxselect -c $dateaccessor | sed 's/\[//g;s/\]//g;s/ .*$//' }
+findtitle(){ < $1 hxselect -c $titleaccessor }
+
+autoload -U colors && colors
+
+blogfile="$(echo "$xfic"|sed 's#.xml$#.html#;s#^'$indexdir'/#posts/#')"
+printf "%-30s" $blogfile
+d=$(finddate $xfic)
+echo -n " [$d]"
+rssdate=$(formatdate $d)
+title=$(findtitle $xfic)
+keywords=( $(findkeywords $xfic) )
+printf ": %-55s" "$title ($keywords)"
+{ printf "\\n<li>"
+  printf "\\n<span class=\"pubDate\">%s</span>" "$d"
+  printf "\\n<a href=\"%s\">%s</a>" "${blogfile}" "$title"
+  printf "\\n</li>\\n\\n"
+} >> ${dst}
+
+echo " [${fg[green]}OK${reset_color}]"
+```
+
+Then I use these intermediate files to generate a single bigger index file.
+
+```makefile
+HTML_INDEX := $(DST_DIR)/index.html
+MKINDEX := engine/mk-index.sh
+INDEX_TEMPLATE ?= templates/index.html
+$(HTML_INDEX): $(DST_INDEX_FILES) $(MKINDEX) $(INDEX_TEMPLATE)
+	@mkdir -p $(DST_DIR)
+	$(MKINDEX)
+.PHONY: index
+index: $(HTML_INDEX)
+ALL += index
+```
+
+This script is a big one, but it is not that complex.
+For every file, I generate a new file =DATE-dirname=.
+I sort them in reverse order and put their content in the middle of an HTML
+file.
+
+Important note: this file updates only if the index change.
+
+The first part of the script creates files with the creation date in their
+metadatas.
+The created file name will contain the creation date, this will be helpful
+later.
+
+```sh
+#!/usr/bin/env zsh
+
+autoload -U colors && colors
+cd "$(git rev-parse --show-toplevel)" || exit 1
+# Directory
+webdir="_site"
+indexfile="$webdir/index.html"
+indexdir=".cache/rss"
+tmpdir=$(mktemp -d)
+
+echo "Publishing"
+
+dateaccessor='.pubDate'
+finddate(){ < $1 hxselect -c $dateaccessor }
+# generate files with <DATE>-<FILENAME>.index
+for fic in $indexdir/**/*.index; do
+    d=$(finddate $fic)
+    echo "${${fic:h}:t} [$d]"
+    cp $fic $tmpdir/$d-${${fic:h}:t}.index
+done
+```
+
+Then I use these files to generate a file that will contain the =body= of
+the HTML.
+
+```sh
+# for every post in reverse order
+# generate the body (there is some logic to group by year)
+previousyear=""
+for fic in $(ls $tmpdir/*.index | sort -r); do
+    d=$(finddate $fic)
+    year=$( echo "$d" | perl -pe 's#(\d{4})-.*#$1#')
+    if (( year != previousyear )); then
+        if (( previousyear > 0 )); then
+            echo "</ul>" >> $tmpdir/index
+        fi
+        previousyear=$year
+        echo "<h3 name=\"${year}\" >${year}</h3><ul>" >> $tmpdir/index
+    fi
+    cat $fic >> $tmpdir/index
+done
+echo "</ul>" >> $tmpdir/index
+```
+
+And finally, I render the HTML using a template within a shell script:
+
+```sh
+title="Y"
+description="Most recent articles"
+author="Yann Esposito"
+body=$(< $tmpdir/index)
+date=$(LC_TIME=en_US date +'%Y-%m-%d')
+
+# A neat trick to use pandoc template within a shell script
+# the pandoc templates use $x$ format, we replace it by just $x
+# to be used with envsubst
+template=$(< templates/index.html | \
+    sed 's/\$\(header-includes\|table-of-content\)\$//' | \
+    sed 's/\$if.*\$//' | \
+    perl -pe 's#(\$[^\$]*)\$#$1#g' )
+{
+    export title
+    export author
+    export description
+    export date
+    export body
+    echo ${template} | envsubst
+} > "$indexfile"
+
+rm -rf $tmpdir
+echo "* HTML INDEX [done]"
+```
+
+## RSS
+
+My RSS generation is similar to the system I used to generate the index
+file.
+I just slightly improved the rules.
+
+The =Makefile= blocks look like:
+
+```makefile
+# RSS
+DST_RSS_FILES ?= $(patsubst %.xml,%.rss, $(DST_XML_FILES))
+MK_RSS_ENTRY := ./engine/mk-rss-entry.sh
+$(RSS_CACHE_DIR)/%.rss: $(RSS_CACHE_DIR)/%.xml $(MK_RSS_ENTRY)
+	@mkdir -p $(RSS_CACHE_DIR)
+	$(MK_RSS_ENTRY) "$<" "$@"
+
+RSS := $(DST_DIR)/rss.xml
+MKRSS := engine/mkrss.sh
+$(RSS): $(DST_RSS_FILES) $(MKRSS)
+	$(MKRSS)
+
+.PHONY: rss
+rss: $(RSS)
+ALL += rss
+```
+## Gemini
+
+I wrote a minimal script to transform my org files to gemini files.
+I also need to generate an index and an atom file for gemini:
+
+```makefile
+# ORG -> GEMINI
+EXT := .org
+SRC_GMI_FILES ?= $(shell find $(SRC_DIR) -type f -name "*$(EXT)" $(NO_DRAFT))
+DST_GMI_FILES ?= $(subst $(EXT),.gmi, \
+                        $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%, \
+                            $(SRC_GMI_FILES)))
+GMI := engine/org2gemini.sh
+$(DST_DIR)/%.gmi: $(SRC_DIR)/%.org $(GMI) engine/org2gemini_step1.sh
+	@mkdir -p $(dir $@)
+	$(GMI) "$<" "$@"
+ALL += $(DST_GMI_FILES)
+.PHONY: gmi
+gmi: $(DST_GMI_FILES)
+
+# GEMINI INDEX
+GMI_INDEX := $(DST_DIR)/index.gmi
+MK_GMI_INDEX := engine/mk-gemini-index.sh
+$(GMI_INDEX): $(DST_GMI_FILES) $(MK_GMI_INDEX)
+	@mkdir -p $(DST_DIR)
+	$(MK_GMI_INDEX)
+ALL += $(GMI_INDEX)
+.PHONY: gmi-index
+gmi-index: $(GMI_INDEX)
+
+# RSS
+GEM_ATOM := $(DST_DIR)/gem-atom.xml
+MK_GEMINI_ATOM := engine/mk-gemini-atom.sh
+$(GEM_ATOM): $(DST_GMI_FILES) $(MK_GEMINI_ATOM)
+	$(MK_GEMINI_ATOM)
+ALL += $(GEM_ATOM)
+.PHONY: gmi-atom
+gmi-atom: $(GMI_ATOM)
+
+.PHONY: gemini
+gemini: $(DST_GMI_FILES) $(GMI_INDEX) $(GEM_ATOM)
+```
+## Images
+
+For images, I try to compress them all with imagemagick.
+
+```makefile
+# Images
+SRC_IMG_FILES ?= $(shell find $(SRC_DIR) -type f -name "*.jpg" -or -name "*.jpeg" -or -name "*.gif" -or -name "*.png")
+DST_IMG_FILES ?= $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%, $(SRC_IMG_FILES))
+
+$(DST_DIR)/%.jpg: $(SRC_DIR)/%.jpg
+	@mkdir -p $(dir $@)
+	convert "$<" -quality 50 -resize 800x800\> "$@"
+
+$(DST_DIR)/%.jpg: $(SRC_DIR)/%.jpeg
+	@mkdir -p $(dir $@)
+	convert "$<" -quality 50 -resize 800x800\> "$@"
+
+$(DST_DIR)/%.gif: $(SRC_DIR)/%.gif
+	@mkdir -p $(dir $@)
+	convert "$<" -quality 50 -resize 800x800\> "$@"
+
+$(DST_DIR)/%.png: $(SRC_DIR)/%.png
+	@mkdir -p $(dir $@)
+	convert "$<" -quality 50 -resize 800x800\> "$@"
+
+.PHONY: img
+img: $(DST_IMG_FILES)
+ALL += $(DST_IMG_FILES)
+```
+## Deploy
+
+A nice bonus is that I also deploy my website using make.
+
+```makefile
+# DEPLOY
+.PHONY: site
+site: $(ALL)
+
+.PHONY: deploy
+deploy: $(ALL)
+	engine/sync.sh
+
+.PHONY: clean
+clean:
+	-[ ! -z "$(DST_DIR)" ] && rm -rf $(DST_DIR)/*
+	-[ ! -z "$(CACHE_DIR)" ] && rm -rf $(CACHE_DIR)/*
+```
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes
 ]]></description>
 </item>
 
@@ -101,7 +1929,282 @@
 <category>blog</category>
 <category>static</category>
 <description><![CDATA[
+# Static Blog Builder
+subtitle:  A few static blog rewrite experiences
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2021-05-01 Sat]
+keywords:  blog static
+description:  Minimal and fast static website builder with make.
 
+
+
+As someone on the Internet said not so far ago.
+Building its own static building system is a rite of passage for many developers.
+It has a lot of nice features.
+It gives a goal with a feeling of accomplishment.
+It is simple enough so most developers could build their own system.
+It could also become complex when you go down the rabbit hole.
+
+Along the years I used different tools and used and wrote of few static
+website systems:
+
+
+=> https://nanoc.app nanoc
+ (in Ruby), at that time it looked like this:
+
+=> https://web.archive.org/web/20081002071448/http://nanoc.stoneship.org/ old nanoc 2 website
+
+
+=> https://jaspervdj.be/hakyll/ hakyll
+ (haskell static website generator)
+
+=> https://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html org-publish
+ (emacs package in conjunction with org-mode)
+
+=> https://shakebuild.com shake
+ (haskell again)
+
+So if you look at the progression, I first used nanoc because I used ruby
+and it was a new solution, the website looked really great.
+Also the main developer
+
+=> https://denisdefreyne.com Denis Defreyne
+ was really helpful.
+Ruby was really great at dealing with regular expressions for hacking my
+documents.
+
+Then I was interested in Haskell, and I switched to a Haskell-made
+solution.
+I used hakyll, and I wrote a bit about it in
+
+=> http://yannesposito.com/Scratch/en/blog/Hakyll-setup/ Hakyll Setup
+As a side note, the author of Hakyll
+
+=> https://jaspervdj.be/hakyll/ Jasper Van der Jeugt
+ is apparently a
+friend of the author of nanoc.
+They both wrote a static site generators with their preferred programming
+language.
+I added a lot of personal features to my own site builder.
+It was a nice toy project.
+
+Then, due to a major disruption in my professional and private life I
+stopped to take care of my website.
+
+And a few years ago, I wanted to start a new website from scratch.
+In the meantime I switched my editor of choice from vim to Emacs.
+I started to work in Clojure and emacs is generally a natural choice
+because you can configure it with LISP.
+I discovered
+
+=> https://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html org-mode
+ (I don't think the homepage of org mode makes justice
+to how incredible it is).
+So org-mode comes with an export system.
+Thus I switched to org-publish.
+Again
+
+=> https://her.esy.fun/posts/0001-new-blog/index.html I wrote a bit about it
+
+It was nice but slow.
+I improved a few things like writing a short script to
+
+
+=> https://her.esy.fun/posts/0005-rss-gen/index.html Generate RSS from a tree of html files.
+
+I still had the feeling it was too slow.
+
+Static site building is a specific usage of a build system.
+And as I knew I could use =pandoc= to build HTML out of org-mode files
+and still versed in the Haskell culture I decided to try
+
+=> https://shakebuild.com shake
+You can learn more by reading this excellent paper about it, I
+think all developer should read it:
+
+=> https://github.com/snowleopard/build-systems/releases/download/icfp-submission/build-systems.pdf Build System à la carte
+
+As a bonus,
+
+=> https://pandoc.org pandoc
+ is written in Haskell.
+I could then directly use the
+
+=> https://pandoc.org pandoc
+ library in my build program.
+It worked like a charm and it was *very fast* as compared to other
+solutions I tried.
+So really let me tell you shake is a great build system.
+
+Unfortunately it was not perfect.
+While it was very fast, and I was able to use pandoc API directly.
+It made me dependent on Haskell.
+The best way I found to have Haskell reproducible build environment is to
+use
+
+=> https://nixos.org/nix nix
+This was great until the Big Sur update.
+To keep it short, nix stopped working on my computers after I upgraded my
+to Big Sur.
+Gosh, it was painful to fix.
+
+Concurrently I discovered
+
+=> /posts/0016-gemini/index.html gemini
+ and wanted to duplicate my website into
+gemini sphere.
+So I tried to update my build system but my code was to oriented to use
+pandoc and it was painful to have gemini in the middle of it.
+Particularly, generating a gemini index file.
+My main goal was to have gemini file that could only be linked from withing
+gemini sphere.
+Because gemini is a lot smaller web where you could feel a bit more
+protected from what the Web has become along the years.
+Whatever, in the end, I just had two problems to tackles.
+
+1. Haskell became difficult to trust as very stable tool. Stable in the
+   sense that I would not have any support work to do in order to keep just
+   using it and not fixing/tweaking it.
+2. Simplify the overall system to have a simpler build description
+
+So a very stable tool that I am pretty sure will still work almost exactly
+as today in 10 years is *=make=* (more precisely gnumake).
+I expected a lot of people had already come to the same conclusion and
+wrote about it.
+To my great surprise, I found very few article about generating static
+website with make.
+I only found solutions a bit too specific for my need.
+This is why I would like to give you a more generic starting point
+solution.
+
+# The =Makefile=
+
+Instead of copy/pasting my current =Makefile= entirely let me give you a
+more generic one.
+It should be a great start.
+
+The first part will be used to simply copy the files from =src/= to
+=_site/=.
+
+```makefile
+all: website
+
+# directory containing my org files as well as my assets files
+SRC_DIR ?= src
+# directory where I will but the files for my website (HTML + assets)
+DST_DIR ?= _site
+
+# list all files in src
+# if you want to exclude .org files use the exclude from the find command
+SRC_RAW_FILES := $(shell find $(SRC_DIR) -type f)
+# generate all file that should be copied in the site
+# For my site, I want to publish my source files along the HTML files
+DST_RAW_FILES   := $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%,$(SRC_RAW_FILES))
+ALL             += $(DST_RAW_FILES)
+
+# COPY EVERYTHING (.org file included)
+$(DST_DIR)/% : $(SRC_DIR)/%
+	mkdir -p "$(dir $@)"
+	cp "$<" "$@"
+```
+
+This part is about running the =pandoc= command for all =org= files in =src/=
+so they generate a html file in =_site/=.
+
+```makefile
+# ORG -> HTML, If you prefer markdown replace .org by .md
+EXT := .org
+# all source file we'll pass to pandoc
+SRC_PANDOC_FILES ?= $(shell find $(SRC_DIR) -type f -name "*$(EXT)")
+# all destination files we expect (replace the extension by .html)
+DST_PANDOC_FILES ?= $(subst $(EXT),.html, \
+                        $(subst $(SRC_DIR),$(DST_DIR), \
+                            $(SRC_PANDOC_FILES)))
+ALL              += $(DST_PANDOC_FILES)
+
+# use a template (you should use one)
+TEMPLATE ?= templates/post.html
+# URL of the CSS put yours
+CSS = /css/y.css
+# The pandoc command to run to generate an html out of a source file
+PANDOC := pandoc \
+			-c $(CSS) \
+			--template=$(TEMPLATE) \
+			--from org \
+			--to html5 \
+			--standalone
+
+# Generate all html if the org file change or the template change
+$(DST_DIR)/%.html: $(SRC_DIR)/%.org $(TEMPLATE)
+	mkdir -p $(dir $@)
+	$(PANDOC) $< \
+		--output $@
+
+```
+
+A missing part is often the part where you would like to generate
+an index page to list the latest posts.
+Here you are a bit alone, you need to make one yourself.
+There is not generic way to do this one.
+
+```makefile
+# Generating an index page is not difficult but not trivial either
+HTML_INDEX := $(DST_DIR)/index.html
+MKINDEX := engine/mk-index.sh
+$(HTML_INDEX): $(DST_PANDOC_FILES) $(MKINDEX)
+	mkdir -p $(DST_DIR)
+	$(MKINDEX)
+ALL += $(HTML_INDEX)
+```
+
+Finally, a few useful make commands. =make clean= and =make deploy=.
+
+```makefile
+# make deploy will deploy the files to my website write your own script
+deploy: $(ALL)
+	engine/deploy.sh
+
+website: $(ALL)
+
+.PHONY: clean
+
+clean:
+	-rm -rf $(DST_DIR)/*
+```
+
+Limitation: =make= is old.
+So it really does not support spaces in filenames.
+Take care of that.
+
+Let me tell you.
+While this is quite a minimalist approach (<100 lines) it is nevertheless *very fast*.
+It will only generate the minimal amount of work to generate your website.
+I have a nice watcher script that update the website every time I save a
+file.
+It is almost instantaneous.
+
+The only risky dependencies for my website now is =pandoc=.
+Perhaps, they will change how they generate an HTML from the same org file
+in the future.
+I still use =nix= to pin my pandoc version.
+The static site builder itself is very simple, very stable and still
+very efficient.
+
+As a conclusion, if you want to write your own static site builder that's great.
+There are plenty of things to learn along the way.
+Still if you want something stable for a long time, with a minimal amount
+of dependencies, I think this Makefile is really a great start.
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes
 ]]></description>
 </item>
 
@@ -114,7 +2217,96 @@
 <category>gopher</category>
 <category>gemini</category>
 <description><![CDATA[
+# Gemini
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2020-11-09 Mon]
+keywords:  internet gopher gemini
+description:  How I discovered gemini
 
+This weekend I read an article about gopher and gemini.
+I already seen articles about gemini pass.
+Somehow, it was more appealing to me than gopher space for totally
+subjective reasons I think.
+Anyway this time I really dug into it, and I loved the experience.
+
+At first sight gemini is like a parallel web for nerds.
+It has fundamental changes that I would have really liked to see from the
+modern web.
+The client decide the design, no user tracking, calm, minimalist, simple.
+
+Right now, on the web, most news website make the experience terrible to
+read the article.
+The page is bloated with a lot of animations, popin asking you to accept
+the cookies, ads with videos, strange fonts or design, plenty of
+javascript, trackers, etc...
+
+Gemini make those kind of anti-design impractical.
+In gemini space there is no:
+
+* CSS: the client decide the look of the page, the fonts, the colors, the
+  width of the columns, etc...
+* inline image: you can still link to images, but images should not be
+  displayed in the middle of the text.
+* inline links: If you link to an external resource, it is clearly visible
+  as an element on its own line.
+* cookies
+* HTTP headers used to track users
+* scripts on the client side
+* hard to parse format (no HTML, XHTML, etc...)
+
+Another strength of Gemini is its protocol's simplicity.
+It is easy to write your own gemini server as well as your own gemini
+client within a few hours of work in your programming language of choice.
+
+And last but not least, gemini is unfit to serve "big" files.
+So we should not experience people going to gemini for music/movie piracy.
+If you want to serve "big" files you should use another protocol.
+
+Personally I started to browse gemini directly from emacs with elpher.
+But I know there are a lot of clients.
+
+I liked gemini so much I hacked my blog to also publish in the gemini sphere.
+I serve my pages with a rust based server.
+And I hacked a quick script to transform my org mode files to gemini format.
+Gemini file format is a kind of super simplified markdown.
+I really like the simplicity of it.
+
+Here are a few links to get you started.
+
+Web:
+
+
+=> https://gemini.circumlunar.space gemini homepage
+
+
+=> https://thelambdalab.xyz/elpher/ elpher emacs gopher and gemini client
+
+
+=> https://portal.mozz.us/gemini/gemini.circumlunar.space/ Explore gemini from the web
+
+
+Gopher:
+
+
+=> gopher://thelambdalab.xyz/1/projects/elpher/ elpher
+
+
+Gemini:
+
+
+=> gemini://her.esy.fun my website in gemini
+
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes
 ]]></description>
 </item>
 
@@ -125,7 +2317,593 @@
 <pubDate>Thu, 29 Oct 2020 00:00:00 +0100</pubDate>
 <category>org-mode</category>
 <description><![CDATA[
+# How I use org-mode
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2020-10-29 Thu]
+keywords:  org-mode
+description:  How I use org-mode
 
+______
+In this article I'll try to give an overview of my current use of
+
+=> https://orgmode.org org mode
+I use org mode for:
+
+* tasks management & time tracking
+* writing documents (articles, book, etc...)
+* note taking ; which I consider slightly different from just writing documents
+
+TL;DR:
+
+* =SPC y a=  ⇒ Show agenda view for today
+* =SPC X=  ⇒ Capture a new task, write a description, then =C-c C-c=, save
+  that in =tracker.org= (or =inbox.org= depending of the capture template)
+* =SPC n o= ⇒ jump to the current time tracked tasks
+* =SPC m c o= ⇒ stop the clock on that task; if you capture a new time
+  tracking tasks you don't need to clock-out
+* =SPC y o r=  ⇒ =org-refile=, meaning move that task somewhere else
+* =SPC q= ⇒ add/remove tags to that task
+______
+
+In this article I would like to share a tool that was a real life changer
+to me:
+
+=> http://orgmode.org org mode
+
+In my opinion emacs is worth learning just for org-mode.
+This is by far the best solution I ever used to manage my tasks.
+I tried a lot of differents tools before it, and this is the only one I
+really stick with.
+It is so versatile that it can adapt to your very specific needs.
+
+The major difficulty faced by tasks management application is the wrong
+level of complexity facing the user.
+This is a very hard problem to tackle.
+
+If your system is too simple, the users will not be able to manage the
+tasks how they would like.
+If your system is too complex, the user will be faced with too much
+details.
+So most successful systems have a way to adapt their apparent complexity to
+the need of their users.
+And org mode is exactly like that.
+Not only starting with org mode can be extremely simple but also there are
+mostly no complexity limit.
+
+Either org mode already handle one of your need, or most of the time you
+will find a package to fulfill your need.
+And if not, it is easy to write your own.
+
+Here is the result of a few years of improving my use of org mode.
+Today I can say that org mode is part of my day to day life.
+I still invest a bit of time to improve minor details of my workflow time
+to time.
+But now my daily workflow is mostly stable.
+So I think I can share it.
+
+## Overview
+
+### daily routine
+
+The first thing I do in the morning is to open =org-agenda= view for today.
+It shows me the tasks planned for today.
+What are urgent tasks, deadlines, tasks that have deadlines in a few days, etc...
+I also have a glimpse of my habits, tasks that I should start at some hour
+in the day, etc...
+
+attr_org:  :width 560
+caption:  Org super calendar view
+name:  fig:org-super-agenda
+=> ./img/org-super-agenda.png
+
+I then start to track (/clock/) the tasks I'm currently working on.
+
+Often during the day, I need to create new tasks.
+Most of the time I create a task and I add either a deadline or a schedule
+date.
+
+Sometime I also need to deal with interruptions.
+In that case, I /capture/ the interruption that will also create a new task
+being clocked.
+
+At the end of the day, every tasks I worked on are saved in a =tracker.org=
+file.
+That file look like a date tree.
+And I generally generate a /report/ that tell me how much hours I worked
+today.
+Some tasks are tagged =work=.
+The report filter only on the =work= tagged tasks.
+
+Also I have some repeating tasks like review memory cards using a spaced
+repetition plugin.
+I start it, and it shows me a few =cards= with questions that I review.
+So mainly those cards contain info I want to keep in my mind and not only
+in my notes.
+
+### document writing
+
+Writing documents with org mode and in particular technical document is
+just incredible.
+Org mode feels a lot like markdown.
+
+But org mode shine with its use of *org-babel*.
+*org-babel* is used to execute code inside your document.
+So you can execute block of code and get their result in block of code.
+For technical writing this is extremely useful.
+
+For example, I wrote most part of an OAuth2 provider in Clojure.
+And to generate a documentation to some of our advanced users it is very
+nice to provide the full HTTP request along the response.
+
+But I also often need to play a few tricks in the doc and directly use our
+Clojure code to generate JWT for example.
+The great part is the ability to use those JWT generated from Clojure code
+in the following code block making HTTP call.
+
+That plus the natural ability to fold/unfold the tree structure of the org
+mode file is great.
+
+### note taking
+
+Time to time, I need to really take the time write note on a technical
+subject or sometime about articles I read about anything.
+For that I use
+
+=> https://github.com/org-roam/org-roam org roam
+I only started to use it a few months ago.
+But this is a great addition to my previous workflow that used =deft= (that
+I still use).
+But I must say, this is pretty perfect as a note taking app.
+
+Mainly you capture notes quite easily and put links about the subject, but
+also tags.
+In the end that generate a graph of notes that you could use later to dig
+into your own notes.
+### journal
+
+Along with note taking.
+I also try to write a journal note everyday.
+For that I use org-journal (another org mode related package).
+I have a default template which take care of a few metrics I want to focus on.
+And I guess it is different for anyone of us.
+
+## Task Management
+
+So here is a more detailed description about my org mode usage.
+
+### Workflow 1; planned tasks : org-agenda + clock
+
+1. look at the current tasks planned for today
+2. select a task, clock it
+3. work on the task
+4. back to the task and clock it out.
+
+I work most of my using emacs[fn:emacs-digression].
+Generally the first thing I do in the morning is opening `org-calendar`.
+It looks like this:
+
+attr_org:  :width 560
+caption:  Org super calendar view
+name:  fig:org-super-agenda
+=> ./img/org-super-agenda.png
+
+Pretty brutalist interface which is a great thing to me.
+Distraction free interface going to the essential.
+
+With this view, I see what I planned to do today.
+I also see a few "Due Soon" tasks in case I have the time to handle those.
+
+When I start working on a task I start a clock on it (I simply type =I=
+when my cursor is on the TODO line).
+When I finished some task I change its status from TODO to something else.
+Mainly I'm prompted when doing so:
+
+```
+{ [t] TODO   [p] IN-PROGRESS   [h] HOLD   [w] WAITING
+  [d] DONE   [c] CANCELLED     [l] HANDLED }
+```
+
+And that's it.
+The time spent on the task as been clocked I can work on another task.
+
+Looking at the agenda view you could notice habits.
+They start to become green when you are doing them correctly.
+
+But generally, I don't use much direct clocking from the agenda.
+Most of the time I prefer the capture mechanism.
+Which bring us to "Workflow 2".
+
+### Workflow 2: Tracking; org-capture
+
+Most of the tasks I perform on the day are not planned.
+I have a generic routine + some prepared events and tasks to performs.
+But during the day you have multiple interruptions, and part of my job is
+to write code reviews too.
+I cannot plan those.
+
+In that case I use =org-capture= along =org-refile=.
+Mainly =org-capture= helps you create a new TODO entry.
+And =org-refile= will help you move that TODO entry to the correct place.
+
+So let say I get a direct message in the chat asking me to do something.
+I generally start org capture (for me it's =SPC X=).
+I am presented with the following choice:
+
+```
+Select a capture template
+=========================
+
+[t] todo
+[c] chat
+[e] email
+[m] meeting
+[p] pause
+[r] review
+[w] work
+[i] interruption
+[f] chore
+---------------------------------------------------------------------------
+[q] Abort
+```
+
+In my example it was a chat interruption.
+So I type =i= that presents me with this
+
+```
+  **** IN-PROGRESS |  :interruption:
+  [2020-09-23 Wed 08:01]
+  ref :: [link-to-where-I-was-in-emacs-when-captured]
+```
+
+My cursor placed where the =|= is displayed.
+Here I add the tag =chat= and a small description, "dm from John about X" for example.
+Then I type =C-c C-c= and the TODO is placed in a =tracker.org= file under
+a date tree that looks like this:
+
+```org-mode
+  * 2020
+  ** 2020-W39
+  *** 2020-09-21 Monday
+  *** 2020-09-22 Tuesday
+  *** 2020-09-23 Wednesday
+  **** IN-PROGRESS Chat with John about X                          :interruption:chat:
+  [2020-09-23 Wed 17:58]
+  ref ::
+  ...
+```
+
+So the clock for this task started at the moment at made the capture.
+In my workflow, I prefer to finish the capture and stop clock later.
+So after I finished the capture, the clock is still running while the task
+is put in my tracker file.
+
+Once I finished with that task.
+I can:
+
+1. Jump to the tasks with =SPC n o= (=org-clock-goto=), and stop the
+   clock =SPC m c o= (=clock-out=).
+2. Jump to the task and change its status to =DONE= which will stop the clock.
+3. Capture another tasks which will stop the clock on the current task and
+   will start on the new one.
+
+By the end of the day, my tracker file will contain a date tree with all
+the tasks I done in the day.
+All tasks nicely clocked.
+I generally create a clock report that look like this:
+
+```
+  #+BEGIN: clocktable :scope subtree :maxlevel 4 :timestamp t :narrow 36! :match "work"
+  #+CAPTION: Clock summary at [2020-09-23 Wed 08:20]
+  | Timestamp              | Headline                             | Time   |   |      |      |
+  |------------------------+--------------------------------------+--------+---+------+------|
+  |                        | *Total time*                         | *6:40* |   |      |      |
+  |------------------------+--------------------------------------+--------+---+------+------|
+  |                        | \_    2020-09-21 Monday              |        |   | 7:40 |      |
+  | [2020-09-21 Mon 08:54] | \_      check chat                   |        |   |      | 0:36 |
+  | [2020-09-21 Mon 09:30] | \_      check reviews                |        |   |      | 0:41 |
+  | [2020-09-21 Mon 10:11] | \_      check emails                 |        |   |      | 0:07 |
+  | [2020-09-21 Mon 10:37] | \_      review PR about xxx          |        |   |      | 0:44 |
+  | [2020-09-21 Mon 11:21] | \_      update my PR from feedbacks  |        |   |      | 0:36 |
+  | [2020-09-21 Mon 12:08] | \_      review John's PR about Foo   |        |   |      | 0:12 |
+  | [2020-09-21 Mon 13:41] | \_      review M's PR about Bar      |        |   |      | 0:11 |
+  | [2020-09-21 Mon 13:53] | \_      another thing                |        |   |      | 0:16 |
+  | [2020-09-21 Mon 14:09] | \_      review PR                    |        |   |      | 0:51 |
+  | [2020-09-21 Mon 15:00] | \_      work on PR                   |        |   |      | 1:30 |
+  | [2020-09-21 Mon 16:49] | \_      check another PR             |        |   |      | 0:33 |
+  | [2020-09-21 Mon 17:03] | \_      answer email                 |        |   |      | 0:55 |
+  | [2020-09-21 Mon 17:58] | \_      Chat John about X            |        |   |      | 0:28 |
+
+```
+
+And that's mostly it for TODOs and tasks handling.
+
+### Workflow 3: Add new tasks; org-capture / org-refile
+Another thing I do quite often.
+I need to add new task to be done.
+Be it for today or another day.
+
+In that case, I generally use org-capture again.
+This time I choose =t= for TODO and I generally detail the task to be done.
+I add either a SCHEDULE (when I plan to start) or a DEADLINE (when this
+must be finished) and I refile it.
+
+So refile will start a fuzzy search to put this task under some subtree.
+So instead of going to my =tracker.org= file, this goes to my =inbox.org=
+file.
+
+And it will appear in my agenda.
+
+### Configuration
+
+So to have all of that, I added a lot of configuration over time.
+But here is the most important part.
+
+Most of that config is what I personally think are better defaults.
+And a minor part of it only is about how I organize myself.
+
+```emacs-lisp
+(defun org-mode-config ()
+  "Org-mode."
+  (setq org-extend-today-until 4
+        org-use-effective-time t)
+  (setq org-todo-keywords
+        '((sequence "TODO(t)"
+                    "IN-PROGRESS(p)"
+                    "|"
+                    "DONE(d)"
+                    "HOLD(h@/!)"
+                    "CANCELED(c@/!)"
+                    "HANDLED(l@/!)")
+          (sequence "|" "PAUSE(p)" "CHAT(c)" "EMAIL(e)" "MEETING(m)" "REVIEW(r)" "GEEK(g)")))
+
+  ;;; Look & Feel
+
+  ;; I like to have something different than ellipsis because I often use them
+  ;; myself.
+  (setq org-ellipsis " [+]")
+  (custom-set-faces '(org-ellipsis ((t (:foreground "gray40" :underline nil)))))
+
+  (defun my-org-settings ()
+    (org-display-inline-images)
+    (setq fill-column 75)
+    (abbrev-mode)
+    (org-indent-mode)
+    nil)
+
+  (add-hook 'org-mode-hook #'my-org-settings)
+
+  (setq org-tags-column 69)
+
+  ;; src block indentation / editing / syntax highlighting
+  (setq org-src-fontify-natively t
+        org-src-window-setup 'current-window ;; edit in current window
+        org-src-preserve-indentation t ;; do not put two spaces on the left
+        org-src-tab-acts-natively t)
+
+  ;; *** Templates
+  ;; the %a refer to the place you are in emacs when you make the capture
+  ;; that's very neat when you do that in an email for example.
+  (setq org-capture-templates
+        '(("t" "todo"         entry (file "~/.org/inbox.org")
+           "* TODO %?\n%U\n- ref :: %a\n")
+          ;; time tracker (clocked tasks)
+          ("g" "geek"         entry (file+olp+datetree "~/.org/tracker.org")
+           "* GEEK %?         :perso:\n%U\n- ref :: %a\n"
+           :prepend t :tree-type week :clock-in t :clock-keep t)
+          ("c" "chat"         entry (file+olp+datetree "~/.org/tracker.org")
+           "* CHAT %?         :work:chat:\n%U\n- ref :: %a\n"
+           :prepend t :tree-type week :clock-in t :clock-keep t)
+          ("e" "email"        entry (file+olp+datetree "~/.org/tracker.org")
+           "* EMAIL %?        :work:email:\n%U\n- ref :: %a\n"
+           :prepend t :tree-type week :clock-in t :clock-keep t)
+          ("m" "meeting"      entry (file+olp+datetree "~/.org/tracker.org")
+           "* MEETING %?      :work:meeting:\n%U\n- ref :: %a\n"
+           :prepend t :tree-type week :clock-in t :clock-keep t)
+          ("r" "review"       entry (file+olp+datetree "~/.org/tracker.org")
+           "* REVIEW %?       :work:review:\n%U\n- ref :: %a\n"
+           :prepend t :tree-type week :clock-in t :clock-keep t)
+          ("w" "work"         entry (file+olp+datetree "~/.org/tracker.org")
+           "* IN-PROGRESS %?  :work:\n%U\n- ref :: %a\n"
+           :prepend t :tree-type week :clock-in t :clock-keep t)
+          ("p" "pause"        entry (file+olp+datetree "~/.org/tracker.org")
+           "* PAUSE %?        :pause:\n%U\n- ref :: %a\n"
+           :prepend t :tree-type week :clock-in t :clock-keep t)
+          ("i" "interruption" entry (file+olp+datetree "~/.org/tracker.org")
+           "* IN-PROGRESS %?  :interruption:work:\n%U\n- ref :: %a\n"
+           :prepend t :tree-type week :clock-in t :clock-keep t)
+          ("f" "chore"        entry (file "~/.org/inbox.org")
+           "* IN-PROGRESS %?  :chore:\n%U\n"
+           :clock-in t :clock-keep t)))
+
+  ;; How to create default clocktable
+  (setq org-clock-clocktable-default-properties
+        '(:scope subtree :maxlevel 4 :timestamp t :link t :tags t :narrow 36! :match "work"))
+
+  ;; How to display default clock report in agenda view
+  (setq org-agenda-clockreport-parameter-plist
+        '(:lang "en" :maxlevel 4 :fileskip0 t :link t :indent t :narrow 80!))
+
+  ;; *** Projectile; default TODO file to create in your projects
+  (setq org-projectile-file "inbox.org")
+
+  ;; *** Refile mapped to SPC y o r
+  (map! :leader :desc "org-refile" "y o r" #'org-refile)
+
+  ;; Refile to either the =refile.org= file or to =agenda.org= org =standup.org=
+  (setq org-refile-target-files
+        '("~/.org/tracker.org"
+          "~/.org/inbox.org"))
+
+  (setq org-refile-targets
+        '((nil :maxlevel . 5)
+          (org-refile-target-files :maxlevel . 5)))
+
+  ;; *** Agenda
+  (setq org-log-into-drawer t) ;; hide the log state change history a bit better
+  (setq org-agenda-files org-refile-target-files)
+  (setq org-deadline-warning-days 7)
+  (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
+  (setq org-habit-show-habits-only-for-today nil)
+  (setq org-habit-graph-column 65)
+  (setq org-duration-format 'h:mm) ;; show hours at max, not days
+  (setq org-agenda-compact-blocks t)
+  ;; default show today
+  (setq org-agenda-span 'day)
+  (setq org-agenda-start-day "-0d")
+  (setq org-agenda-start-on-weekday nil)
+  (setq org-agenda-custom-commands
+        '(("d" "Done tasks" tags "/DONE|CANCELED")
+          ("g" "Plan Today"
+           ((agenda "" ((org-agenda-span 'day)))
+            (org-agenda-skip-function '(org-agenda-skip-deadline-if-not-today))
+            (org-agenda-entry-types '(:deadline))
+            (org-agenda-overriding-header "Today's Deadlines ")))))
+  (setq org-agenda-window-setup 'only-window)
+
+  (defun y/go-to-today-agenda ()
+    (interactive)
+    (org-agenda nil "a"))
+  ;; Faster jump to agenda today keybinding shortcut (SPC y a)
+  (map! :leader
+        :desc "Today's agenda"
+        "y a" #'y/go-to-today-agenda)
+
+  ;; ** Org Annotate
+
+  ;; Ability to take annotate some files, can of double usage with org-capture.
+  ;; Still, I keep that keyboard shortcut here.
+  ;; (evil-leader/set-key "oa" 'org-annotate-file)
+  (setq org-annotate-file-storage-file "~/.org/annotations.org")
+
+
+  ;; ** Org colums
+  ;; Can be nice sometime to have that column view
+  ;; give a felling of Excel view
+  (setq org-columns-default-format
+        "%TODO %3PRIORITY %40ITEM(Task) %17Effort(Estimated Effort){:} %CLOCKSUM %8TAGS(TAG)")
+  (map! :leader "y o c" #'org-columns)
+
+  ;; ** Deft
+  ;; useful to find files and jump to them
+  (setq deft-extensions '("org" "gpg" "md" "txt"))
+  (setq deft-recursive t)
+  (setq deft-use-filter-string-for-filename t)
+  (setq deft-default-extension "org")
+  (setq deft-directory "~/.org")
+
+
+  ;; Org Babel
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '(;; other Babel languages
+     (shell . t)
+     (http . t)
+     (clojure . t)
+     (haskell . t)
+     (plantuml . t) ;; UML graphs
+     (gnuplot . t)))
+  (setq org-plantuml-jar-path "~/bin/plantuml.jar"))
+
+(use-package! org
+  :config (org-mode-config))
+```
+
+And also
+
+```emacs-lisp
+(use-package! org-super-agenda
+  :after org-agenda
+  :custom (org-super-agenda-groups
+           '( ;; Each group has an implicit boolean OR operator between its selectors.
+             (:name "Overdue" :deadline past :order 0)
+             (:name "Evening Habits" :and (:habit t :tag "evening") :order 8)
+             (:name "Habits" :habit t :order 6)
+             (:name "Today" ;; Optionally specify section name
+              :time-grid t  ;; Items that appear on the time grid (scheduled/deadline with time)
+              :order 3)     ;; capture the today first but show it in order 3
+             (:name "Low Priority" :priority "C" :tag "maybe" :order 7)
+             (:name "Due Today" :deadline today :order 1)
+             (:name "Important"
+              :and (:priority "A" :not (:todo ("DONE" "CANCELED")))
+              :order 2)
+             (:name "Due Soon" :deadline future :order 4)
+             (:name "Todo" :not (:habit t) :order 5)
+             (:name "Waiting" :todo ("WAITING" "HOLD") :order 9)))
+  :config
+  (setq org-super-agenda-header-map nil)
+  (org-super-agenda-mode t))
+```
+
+## Conclusions
+
+That article is already quite long.
+But if you intend to dig into org mode, this can be a nice default starting point.
+
+I haven't really dig into some details but only given you the ability to
+start not completely from scratch and with decent default values for an
+already advanced usage.
+
+To resume:
+
+* =SPC y a=  ⇒ Show agenda view for today
+* =SPC X=  ⇒ Capture a new task, write a description, then =C-c C-c=, save
+  that in =tracker.org= (or =inbox.org= depending of the capture template)
+* =SPC n o= ⇒ jump to the current time tracked tasks
+* =SPC m c o= ⇒ stop the clock on that task; if you capture a new time
+  tracking tasks you don't need to clock-out
+* =SPC y o r=  ⇒ =org-refile=, meaning move that task somewhere else
+* =SPC q= ⇒ add/remove tags to that task
+
+## Footnotes
+
+
+[fn:emacs-digression]
+/Short digression/:
+Historically, I coded using different IDEs.
+Then I worked for a company that forced me to use terrible keyboards and
+after just a few weeks I started to have serious wrist issues.
+So to minimize that pain I switched to vim.
+And it was /awesome/.
+Once you're use to the power of vim keybinding forever your soul will bound
+to them.
+So learning vim is a bit like learning a new music instrument.
+You need to construct some muscle memory and integrate one after one new
+tricks.
+Once learned your personal editing power start to become overwhelming.
+
+After a few years of vim, I wanted to try to explore new editor tooling.
+So I switched to emacs using the spacemacs distribution.
+So mainly it's vim but with even better keybindgs, helpers and within
+emacs.
+The main reason for the switch was that vimscript is a really bad language
+to configure your editor.
+Emacs use emacs-LISP.
+For editor customization a LISP looked perfect to me.
+LISP is still one of the most powerful and easy to use programming language
+to date.
+
+And recently, as my personal configuration started to grow so much I
+switched to
+
+=> https://github.com/hlissner/doom-emacs doom-emacs
+I was quite hesitant to do the switch but so far its been a pleasure.
+IMHO using
+
+=> https://github.com/hlissner/doom-emacs doom-emacs
+ is a lot better than using my own personal
+configuration from scratch because I wouldn't be able to end up with so
+much configuration quality.
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes
 ]]></description>
 </item>
 
@@ -136,7 +2914,74 @@
 <pubDate>Tue, 22 Sep 2020 00:00:00 +0200</pubDate>
 <category>emacs</category>
 <description><![CDATA[
+# Auto change emacs theme
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2020-09-22 Tue]
+keywords:  emacs
+description:  A small snippet to automatically change theme in emacs.
 
+One thing I kind of like is the ability to change emacs theme depending of
+the hour.
+There are two possibilities.
+One would be to sync with the sun using the current location.
+There is an emacs package for that.
+It's called
+
+=> https://github.com/hadronzoo/theme-changer theme-changer
+ which at the time of writing those lines is
+asking for a new maintainer.
+This theme changer is very elegant because like macOS use the location to
+determine if it is day or night.
+But I wanted to have more themes from morning to night:
+
+1. early morning: deep yellow (gruvbox-light),
+2. morning: light yellow (solarized-light),
+3. day: grey/blueish during the day (nord-light),
+4. evening: deep yellow again (gruvbox-light)
+5. night: dark theme (oceanic-next)
+6. sleep time: neon-like (laserwave)
+
+And also, I wanted that to follow my working hours and not really the sun.
+I might change my mind and use the code of theme-changer to follow the
+curve of the sun.
+But for now, just using straight hours should be good enough.
+So here is my piece of code I added to my doom-emacs =config.el=:
+
+```emacs-lisp
+(defun y/auto-update-theme ()
+  "depending on time use different theme"
+  ;; very early => gruvbox-light, solarized-light, nord-light
+  (let* ((hour (nth 2 (decode-time (current-time))))
+         (theme (cond ((<= 7 hour 8)   'doom-gruvbox-light)
+                      ((= 9 hour)      'doom-solarized-light)
+                      ((<= 10 hour 16) 'doom-nord-light)
+                      ((<= 17 hour 18) 'doom-gruvbox-light)
+                      ((<= 19 hour 22) 'doom-oceanic-next)
+                      (t               'doom-laserwave))))
+    (when (not (equal doom-theme theme))
+      (setq doom-theme theme)
+      (load-theme doom-theme t))
+    ;; run that function again next hour
+    (run-at-time (format "%02d:%02d" (+ hour 1) 0) nil 'y/auto-update-theme)))
+
+(y/auto-update-theme)
+```
+
+I'm still playing with it.
+So there still might be a bug.
+Use at your own risk.
+Happy hacking to all of you.
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes
 ]]></description>
 </item>
 
