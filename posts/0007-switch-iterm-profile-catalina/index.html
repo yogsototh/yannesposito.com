@@ -1,44 +1,48 @@
-<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Catalina iTerm Theme switch</title><meta name=author content="Yann Esposito"><meta name=description content="Change the profile of iTerm in sync with macOS preferences."><meta name=keywords content="self-hosting chat irc"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><meta name=theme-color media="(prefers-color-scheme: light)" content="#d84100"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#2E3440"><header><div id=logo><a href=/><div class=vis-hidden>Go to Home</div><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="#a3aec2" stroke-width="1" fill="#2e3440"/><circle class="i1" cx="32" cy="32" r="12" stroke="#800" stroke-width="1" fill="#c20"/><circle class="i0" cx="32" cy="32" r="5" stroke-width="1" stroke="#f60" fill="#fa0"/><ellipse class="e" cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="#fff"/></svg></a></div><div class=content><h1>Catalina iTerm Theme switch</h1><div class=meta><span class=yyydate>[2019-11-10 Sun]</span> on
-<a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract>Change the profile of iTerm in sync with macOS preferences.</div></div></header><main id=content><article><p>How to have dark/light profile selected when opening a new iTerm.<h1 id=the-script>The script</h1><p>For the script to work you need to have two iTerm profiles, one named <code>Dark</code> and the other one <code>Light</code>. Just go to <code>Preferences</code> then <code>Profiles</code> then <code>Duplicate profile</code>.<p>I use <code>fish</code> but you can easily adapt that in your <code>.bashrc</code>, <code>.bash_profile</code> etc…<p>Here is what I have in my <code>~/.config/fish/config.fish</code>:<div class=sourceCode id=cb1 data-org-language=sh><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb1-1><a href=#cb1-1 aria-hidden=true></a><span class=kw>function</span><span class=fu> setItermProfile</span></span>
-<span id=cb1-2><a href=#cb1-2 aria-hidden=true></a>    <span class=bu>echo</span> -ne <span class=st>&quot;\033]50;SetProfile=</span><span class=va>$argv</span><span class=st>\a&quot;</span></span>
-<span id=cb1-3><a href=#cb1-3 aria-hidden=true></a><span class=ex>end</span></span>
-<span id=cb1-4><a href=#cb1-4 aria-hidden=true></a></span>
-<span id=cb1-5><a href=#cb1-5 aria-hidden=true></a><span class=kw>function</span><span class=fu> sync_appearance</span></span>
-<span id=cb1-6><a href=#cb1-6 aria-hidden=true></a></span>
-<span id=cb1-7><a href=#cb1-7 aria-hidden=true></a>    <span class=kw>set</span> <span class=ex>-x</span> MacOSThemeAutoSwitch <span class=kw>\</span></span>
-<span id=cb1-8><a href=#cb1-8 aria-hidden=true></a>        <span class=kw>(</span><span class=ex>defaults</span> read -g AppleInterfaceStyleSwitchesAutomatically <span class=op>2&gt;</span>/dev/null<span class=kw>)</span></span>
-<span id=cb1-9><a href=#cb1-9 aria-hidden=true></a>    <span class=bu>test</span> -z <span class=va>$MacOSThemeAutoSwitch</span><span class=kw>;</span> <span class=ex>and</span> set -x MacOSThemeAutoSwitch 0</span>
-<span id=cb1-10><a href=#cb1-10 aria-hidden=true></a></span>
-<span id=cb1-11><a href=#cb1-11 aria-hidden=true></a>    <span class=kw>set</span> <span class=ex>-x</span> MacOSTheme (defaults read -g AppleInterfaceStyle <span class=op>2&gt;</span>/dev/null)</span>
-<span id=cb1-12><a href=#cb1-12 aria-hidden=true></a>    <span class=bu>test</span> -z <span class=va>$MacOSTheme</span><span class=kw>;</span> <span class=ex>and</span> set -x MacOSTheme <span class=st>&#39;nil&#39;</span></span>
-<span id=cb1-13><a href=#cb1-13 aria-hidden=true></a></span>
-<span id=cb1-14><a href=#cb1-14 aria-hidden=true></a>    <span class=kw>if</span> <span class=bu>test</span> -n <span class=va>$ITERM_PROFILE</span> <span class=co># check if we are using iTerm2</span></span>
-<span id=cb1-15><a href=#cb1-15 aria-hidden=true></a>        <span class=ex>switch</span> <span class=va>$MacOSThemeAutoSwitch</span></span>
-<span id=cb1-16><a href=#cb1-16 aria-hidden=true></a>            <span class=kw>case</span> 1 # autoswitch on</span>
-<span id=cb1-17><a href=#cb1-17 aria-hidden=true></a>                switch <span class=va>$MacOSTheme</span></span>
-<span id=cb1-18><a href=#cb1-18 aria-hidden=true></a>                    case <span class=st>&#39;nil&#39;</span></span>
-<span id=cb1-19><a href=#cb1-19 aria-hidden=true></a>                        setItermProfile Light</span>
-<span id=cb1-20><a href=#cb1-20 aria-hidden=true></a>                    case <span class=st>&#39;*&#39;</span></span>
-<span id=cb1-21><a href=#cb1-21 aria-hidden=true></a>                        setItermProfile Dark</span>
-<span id=cb1-22><a href=#cb1-22 aria-hidden=true></a>                end</span>
-<span id=cb1-23><a href=#cb1-23 aria-hidden=true></a>            case 0 # autoswitch off</span>
-<span id=cb1-24><a href=#cb1-24 aria-hidden=true></a>                switch <span class=va>$MacOSTheme</span></span>
-<span id=cb1-25><a href=#cb1-25 aria-hidden=true></a>                    case <span class=st>&#39;Dark&#39;</span></span>
-<span id=cb1-26><a href=#cb1-26 aria-hidden=true></a>                        setItermProfile Dark</span>
-<span id=cb1-27><a href=#cb1-27 aria-hidden=true></a>                    case <span class=st>&#39;Light&#39;</span></span>
-<span id=cb1-28><a href=#cb1-28 aria-hidden=true></a>                        setItermProfile Light</span>
-<span id=cb1-29><a href=#cb1-29 aria-hidden=true></a>                    case <span class=st>&#39;nil&#39;</span></span>
-<span id=cb1-30><a href=#cb1-30 aria-hidden=true></a>                        setItermProfile Light</span>
-<span id=cb1-31><a href=#cb1-31 aria-hidden=true></a>                end</span>
-<span id=cb1-32><a href=#cb1-32 aria-hidden=true></a>        end</span>
-<span id=cb1-33><a href=#cb1-33 aria-hidden=true></a>    end</span>
-<span id=cb1-34><a href=#cb1-34 aria-hidden=true></a>end</span>
-<span id=cb1-35><a href=#cb1-35 aria-hidden=true></a></span>
-<span id=cb1-36><a href=#cb1-36 aria-hidden=true></a>if status --is-login</span>
-<span id=cb1-37><a href=#cb1-37 aria-hidden=true></a>    if status --is-interactive</span>
-<span id=cb1-38><a href=#cb1-38 aria-hidden=true></a>        sync_appearance</span>
-<span id=cb1-39><a href=#cb1-39 aria-hidden=true></a>    end</span>
-<span id=cb1-40><a href=#cb1-40 aria-hidden=true></a>end</span></code></pre></div><p>If the appearance change, you can call <code>sync_appearance</code> function in your shell to sync with the OS dark/light appearance.</article></main><footer id=postamble class=status><div class=content><nav role=navigation><a href=/index.html>Home</a> |
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Catalina iTerm Theme switch</title><meta name=author content="Yann Esposito"><meta name=description content="Change the profile of iTerm in
+sync with macOS preferences."><meta name=keywords content="self-hosting chat irc"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><meta name=theme-color media="(prefers-color-scheme: light)" content="#d84100"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#2E3440"><header><div id=logo><a href=/><div class=vis-hidden>Go to Home</div><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="#a3aec2" stroke-width="1" fill="#2e3440"/><circle class="i1" cx="32" cy="32" r="12" stroke="#800" stroke-width="1" fill="#c20"/><circle class="i0" cx="32" cy="32" r="5" stroke-width="1" stroke="#f60" fill="#fa0"/><ellipse class="e" cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="#fff"/></svg></a></div><div class=content><h1>Catalina iTerm Theme switch</h1><div class=meta><span class=yyydate>[2019-11-10 Sun]</span> on
+<a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract>Change the profile of iTerm in sync with macOS preferences.</div></div></header><main id=content><article><p>How to have dark/light profile selected when opening a new iTerm.<h1 id=the-script>The script</h1><p>For the script to work you need to have two iTerm profiles, one named
+<code class=verbatim>Dark</code> and the other one <code class=verbatim>Light</code>. Just go to <code class=verbatim>Preferences</code> then <code class=verbatim>Profiles</code> then <code class=verbatim>Duplicate profile</code>.<p>I use <code class=verbatim>fish</code> but you can easily adapt
+that in your <code class=verbatim>.bashrc</code>, <code class=verbatim>.bash_profile</code> etc…<p>Here is what I have in my <code class=verbatim>~/.config/fish/config.fish</code>:<div class=sourceCode id=cb1 data-org-language=sh><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb1-1><a href=#cb1-1 aria-hidden=true tabindex=-1></a><span class=kw>function</span><span class=fu> setItermProfile</span></span>
+<span id=cb1-2><a href=#cb1-2 aria-hidden=true tabindex=-1></a>    <span class=bu>echo</span> <span class=at>-ne</span> <span class=st>&quot;\033]50;SetProfile=</span><span class=va>$argv</span><span class=st>\a&quot;</span></span>
+<span id=cb1-3><a href=#cb1-3 aria-hidden=true tabindex=-1></a><span class=ex>end</span></span>
+<span id=cb1-4><a href=#cb1-4 aria-hidden=true tabindex=-1></a></span>
+<span id=cb1-5><a href=#cb1-5 aria-hidden=true tabindex=-1></a><span class=kw>function</span><span class=fu> sync_appearance</span></span>
+<span id=cb1-6><a href=#cb1-6 aria-hidden=true tabindex=-1></a></span>
+<span id=cb1-7><a href=#cb1-7 aria-hidden=true tabindex=-1></a>    <span class=bu>set</span> <span class=at>-x</span> MacOSThemeAutoSwitch <span class=dt>\</span></span>
+<span id=cb1-8><a href=#cb1-8 aria-hidden=true tabindex=-1></a>        <span class=er>(</span><span class=ex>defaults</span> read <span class=at>-g</span> AppleInterfaceStyleSwitchesAutomatically <span class=dv>2</span><span class=op>&gt;</span>/dev/null<span class=kw>)</span></span>
+<span id=cb1-9><a href=#cb1-9 aria-hidden=true tabindex=-1></a>    <span class=bu>test</span> <span class=at>-z</span> <span class=va>$MacOSThemeAutoSwitch</span><span class=kw>;</span> <span class=ex>and</span> set <span class=at>-x</span> MacOSThemeAutoSwitch 0</span>
+<span id=cb1-10><a href=#cb1-10 aria-hidden=true tabindex=-1></a></span>
+<span id=cb1-11><a href=#cb1-11 aria-hidden=true tabindex=-1></a>    <span class=bu>set</span> <span class=at>-x</span> MacOSTheme <span class=er>(</span><span class=ex>defaults</span> read <span class=at>-g</span> AppleInterfaceStyle <span class=dv>2</span><span class=op>&gt;</span>/dev/null<span class=kw>)</span></span>
+<span id=cb1-12><a href=#cb1-12 aria-hidden=true tabindex=-1></a>    <span class=bu>test</span> <span class=at>-z</span> <span class=va>$MacOSTheme</span><span class=kw>;</span> <span class=ex>and</span> set <span class=at>-x</span> MacOSTheme <span class=st>&#39;nil&#39;</span></span>
+<span id=cb1-13><a href=#cb1-13 aria-hidden=true tabindex=-1></a></span>
+<span id=cb1-14><a href=#cb1-14 aria-hidden=true tabindex=-1></a>    <span class=cf>if</span> <span class=bu>test</span> <span class=at>-n</span> <span class=va>$ITERM_PROFILE</span> <span class=co># check if we are using iTerm2</span></span>
+<span id=cb1-15><a href=#cb1-15 aria-hidden=true tabindex=-1></a>        <span class=ex>switch</span> <span class=va>$MacOSThemeAutoSwitch</span></span>
+<span id=cb1-16><a href=#cb1-16 aria-hidden=true tabindex=-1></a>            <span class=cf>case</span> 1 # autoswitch on</span>
+<span id=cb1-17><a href=#cb1-17 aria-hidden=true tabindex=-1></a>                switch <span class=va>$MacOSTheme</span></span>
+<span id=cb1-18><a href=#cb1-18 aria-hidden=true tabindex=-1></a>                    case <span class=st>&#39;nil&#39;</span></span>
+<span id=cb1-19><a href=#cb1-19 aria-hidden=true tabindex=-1></a>                        setItermProfile Light</span>
+<span id=cb1-20><a href=#cb1-20 aria-hidden=true tabindex=-1></a>                    case <span class=st>&#39;*&#39;</span></span>
+<span id=cb1-21><a href=#cb1-21 aria-hidden=true tabindex=-1></a>                        setItermProfile Dark</span>
+<span id=cb1-22><a href=#cb1-22 aria-hidden=true tabindex=-1></a>                end</span>
+<span id=cb1-23><a href=#cb1-23 aria-hidden=true tabindex=-1></a>            case 0 # autoswitch off</span>
+<span id=cb1-24><a href=#cb1-24 aria-hidden=true tabindex=-1></a>                switch <span class=va>$MacOSTheme</span></span>
+<span id=cb1-25><a href=#cb1-25 aria-hidden=true tabindex=-1></a>                    case <span class=st>&#39;Dark&#39;</span></span>
+<span id=cb1-26><a href=#cb1-26 aria-hidden=true tabindex=-1></a>                        setItermProfile Dark</span>
+<span id=cb1-27><a href=#cb1-27 aria-hidden=true tabindex=-1></a>                    case <span class=st>&#39;Light&#39;</span></span>
+<span id=cb1-28><a href=#cb1-28 aria-hidden=true tabindex=-1></a>                        setItermProfile Light</span>
+<span id=cb1-29><a href=#cb1-29 aria-hidden=true tabindex=-1></a>                    case <span class=st>&#39;nil&#39;</span></span>
+<span id=cb1-30><a href=#cb1-30 aria-hidden=true tabindex=-1></a>                        setItermProfile Light</span>
+<span id=cb1-31><a href=#cb1-31 aria-hidden=true tabindex=-1></a>                end</span>
+<span id=cb1-32><a href=#cb1-32 aria-hidden=true tabindex=-1></a>        end</span>
+<span id=cb1-33><a href=#cb1-33 aria-hidden=true tabindex=-1></a>    end</span>
+<span id=cb1-34><a href=#cb1-34 aria-hidden=true tabindex=-1></a>end</span>
+<span id=cb1-35><a href=#cb1-35 aria-hidden=true tabindex=-1></a></span>
+<span id=cb1-36><a href=#cb1-36 aria-hidden=true tabindex=-1></a>if status --is-login</span>
+<span id=cb1-37><a href=#cb1-37 aria-hidden=true tabindex=-1></a>    if status --is-interactive</span>
+<span id=cb1-38><a href=#cb1-38 aria-hidden=true tabindex=-1></a>        sync_appearance</span>
+<span id=cb1-39><a href=#cb1-39 aria-hidden=true tabindex=-1></a>    end</span>
+<span id=cb1-40><a href=#cb1-40 aria-hidden=true tabindex=-1></a>end</span></code></pre></div><p>If the appearance change, you can call <code class=verbatim>sync_appearance</code> function in your shell to sync
+with the OS dark/light appearance.</article></main><footer id=postamble class=status><div class=content><nav role=navigation><a href=/index.html>Home</a> |
 <a href=/slides.html>Slides</a> |
 <a href=/about-me.html>About</a>
 <span class=details>(<a href=https://gitea.esy.fun/yogsototh>code</a>

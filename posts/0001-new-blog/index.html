@@ -1,32 +1,109 @@
-<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>New Blog</title><meta name=author content="Yann Esposito"><meta name=description content="Meta article about how I generate this blog."><meta name=keywords content="programming blog org-mode web css"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><meta name=theme-color media="(prefers-color-scheme: light)" content="#d84100"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#2E3440"><header><div id=logo><a href=/><div class=vis-hidden>Go to Home</div><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="#a3aec2" stroke-width="1" fill="#2e3440"/><circle class="i1" cx="32" cy="32" r="12" stroke="#800" stroke-width="1" fill="#c20"/><circle class="i0" cx="32" cy="32" r="5" stroke-width="1" stroke="#f60" fill="#fa0"/><ellipse class="e" cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="#fff"/></svg></a></div><div class=content><h1>New Blog</h1><div class=meta><span class=yyydate>[2019-08-17 Sat 16:00]</span> on
-<a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract>Meta article about how I generate this blog.</div></div></header><main id=content><article><div class=notes><p>tl;dr: The first blog post of a blog should certainly be about the blog itself to provide a feeling of self-reference.</div><h1 id=peaceful-and-respectful-website>Peaceful and Respectful Website</h1><p>There is a trend about website being quite less accessible, using more and more resources, adding trackers, popups, videos, animations, big js frameworks, etc…<p>I wanted a more peaceful and respectful website.<p>That website was created with the following constraints in mind by order of priority:<ol><li><strong>Respect Privacy</strong>; no tracker of any sort (no ads, no google analytics, no referrer for all external links, etc…)<li><strong>nearly no javascript</strong>; no js at all except for a single exception, pages containing Math formula are displayed using mathjax. That means that event the CSS theme switcher does not use javascript.<li><strong>Accessible</strong>; should be easy to read on a text browser so people with disabilities could easily consume it<li><strong>nerdy</strong>; should feel mostly like markdown text in a terminal and source code should be syntax highlighted.<li><strong>theme switchable</strong>; support your preferred light/dark theme by default but you can change it if you want.<li><strong>rss</strong>; you should be able to get informed when I add a new blog post.<li><strong>frugal</strong>; try to minimize the resources needed to visit my website; no javascript, no web-font, not too much CSS magic, not much images or really compressed one.</ol><p>Some of the constraints are straightforward to get, some not.<p>You can also check that not using more resources one of the theme of my website looks quite more classical and modern that my preferred ones.<h2 id=respect-privacy>Respect Privacy</h2><p>The one should be easy, simply not put any 3rd party inclusion in my website. So, no external CSS in my headers, no link to any image I do not host myself. No 3rd party javascript.<h2 id=javascript-free>Javascript Free</h2><p>I do not really see why a content oriented website should need to execute javascript.<h2 id=disability-friendly>Accessible</h2><p>A good way to check that a website is friendly to disabled people is by looking at it with a text browser. If you open most website today you see that at the top of the page is crippled with a numerous number of links/metas info used for javascript tricks, login/logout buttons, etc… The website should only contain, a pretty minimal menu to navigate, and the content.<h2 id=nerdy>Nerdy</h2><p>The feel of the website should be nerdy, it should look like reading a terminal or emacs. It should almost feel the same as if you were using a text-browser. For sensible people, I added a "modern" theme that should better suit modern eye, still the first design should always be the terminal looking one.<h2 id=theme-switchable>Theme switchable</h2><p>Even if you are not used to disability friendly browser. The website should try to guess your preferred way to consume my website. Recently we dark/light themes were integrated as a new CSS feature. This website should propose your apparently preferred theme. But you could also change it manually.<h2 id=rss>RSS</h2><p>This is another layer that help you consume my website as you prefer. You should at least be informed a new article has been published.<h2 id=frugal>Frugal</h2><p>This one is a bit tricky. It would mean, that visiting my website should not consume much resources. Mainly, this would prevent using heavy medias as much as possible. So, no video, no animated gif, no image if possible or very compressed small one. So I have a script that convert all images to maximize site to `800x800` and use at max 16 colors. On my current example image the size goes from 3.1MB to 88KB.<h1 id=how>How</h1><h2 id=css>CSS</h2><p>Regarding CSS, I always found that the default text display by navigator is terrible. So just to "fix" a minimal CSS to have something bearable it takes me about 120 lines of CSS.<p>By fixing I mean things like using a fixed line width for text (there is an optimal range to improve legibility). Also having correct list indentation, line-height and font-size. Table displaying correctly.<p>Then I have about 90 lines of CSS to make my HTML look like text source of a markdown.<p>Then I set a few CSS rules to handle the ids and classes added by org-export as instead of using the ubiquitous Markdown, I prefer greatly to use org mode files. I need 60 lines of CSS for them.<p>In order to handle color themes (5 at the time of writing those lines) I use almost 350 line to handle those.<h3 id=css-theme-selection>CSS Theme selection</h3><p>One thing that wasn't straightforward while writing the CSS was to provide an interactive theme selector without any javascript involved. That theme switcher is really the limit I can concede to modern standards because it is CSS only.<p>The trick is to provide one top-level element per theme at the beginning of the body of the HTML. Then hide those elements (I chose inputs). Finally provide a set of anchor links.<div class=sourceCode id=cb1><pre class="sourceCode html"><code class="sourceCode html"><span id=cb1-1><a href=#cb1-1 aria-hidden=true></a>  ...</span>
-<span id=cb1-2><a href=#cb1-2 aria-hidden=true></a><span class=kw>&lt;body&gt;</span></span>
-<span id=cb1-3><a href=#cb1-3 aria-hidden=true></a>   <span class=kw>&lt;input</span><span class=ot> id=</span><span class=st>&quot;light&quot;</span><span class=kw>/&gt;</span></span>
-<span id=cb1-4><a href=#cb1-4 aria-hidden=true></a>   <span class=kw>&lt;input</span><span class=ot> id=</span><span class=st>&quot;dark&quot;</span><span class=kw>/&gt;</span></span>
-<span id=cb1-5><a href=#cb1-5 aria-hidden=true></a>   <span class=kw>&lt;div</span><span class=ot> id=</span><span class=st>&quot;labels&quot;</span><span class=kw>&gt;</span></span>
-<span id=cb1-6><a href=#cb1-6 aria-hidden=true></a>     Change theme:</span>
-<span id=cb1-7><a href=#cb1-7 aria-hidden=true></a>     <span class=kw>&lt;a</span><span class=ot> href=</span><span class=st>&quot;#light&quot;</span><span class=kw>&gt;</span>Light<span class=kw>&lt;/a&gt;</span></span>
-<span id=cb1-8><a href=#cb1-8 aria-hidden=true></a>     <span class=kw>&lt;a</span><span class=ot> href=</span><span class=st>&quot;#dark&quot;</span><span class=kw>&gt;</span>Dark<span class=kw>&lt;/a&gt;</span></span>
-<span id=cb1-9><a href=#cb1-9 aria-hidden=true></a>   <span class=kw>&lt;/div&gt;</span></span>
-<span id=cb1-10><a href=#cb1-10 aria-hidden=true></a>   <span class=kw>&lt;div</span><span class=ot> class=</span><span class=st>&quot;main&quot;</span><span class=kw>&gt;</span></span>
-<span id=cb1-11><a href=#cb1-11 aria-hidden=true></a>   ALL YOUR CONTENT HERE</span>
-<span id=cb1-12><a href=#cb1-12 aria-hidden=true></a>   <span class=kw>&lt;/div&gt;</span></span>
-<span id=cb1-13><a href=#cb1-13 aria-hidden=true></a> <span class=kw>&lt;/body&gt;</span></span></code></pre></div><p>Then use the <em>sibling</em> CSS selector <code>~</code>. Then put all your content in a div of class <code>.main</code> for example. Finally in the CSS you can write things like:<div class=sourceCode id=cb2><pre class="sourceCode css"><code class="sourceCode css"><span id=cb2-1><a href=#cb2-1 aria-hidden=true></a><span class=co>/* hide all radio button that are not inside another div of body */</span></span>
-<span id=cb2-2><a href=#cb2-2 aria-hidden=true></a>body <span class=op>&gt;</span> input {</span>
-<span id=cb2-3><a href=#cb2-3 aria-hidden=true></a>  <span class=kw>display</span>: <span class=dv>none</span><span class=op>;</span></span>
-<span id=cb2-4><a href=#cb2-4 aria-hidden=true></a>}</span>
-<span id=cb2-5><a href=#cb2-5 aria-hidden=true></a><span class=in>:root</span> {</span>
-<span id=cb2-6><a href=#cb2-6 aria-hidden=true></a>  <span class=va>--light-color</span>: <span class=cn>#fff</span><span class=op>;</span></span>
-<span id=cb2-7><a href=#cb2-7 aria-hidden=true></a>  <span class=va>--dark-color</span>: <span class=cn>#000</span><span class=op>;</span></span>
-<span id=cb2-8><a href=#cb2-8 aria-hidden=true></a>}</span>
-<span id=cb2-9><a href=#cb2-9 aria-hidden=true></a>input<span class=pp>#light</span><span class=in>:checked</span> <span class=op>~</span> <span class=fu>.main</span> {</span>
-<span id=cb2-10><a href=#cb2-10 aria-hidden=true></a>  <span class=kw>background-color</span>: <span class=fu>var(</span><span class=va>--light-color</span><span class=fu>)</span><span class=op>;</span></span>
-<span id=cb2-11><a href=#cb2-11 aria-hidden=true></a>  <span class=kw>color</span>: <span class=fu>var(</span><span class=va>--dark-color</span><span class=fu>)</span><span class=op>;</span></span>
-<span id=cb2-12><a href=#cb2-12 aria-hidden=true></a>}</span>
-<span id=cb2-13><a href=#cb2-13 aria-hidden=true></a>input<span class=pp>#dark</span><span class=in>:checked</span> <span class=op>~</span> <span class=fu>.main</span> {</span>
-<span id=cb2-14><a href=#cb2-14 aria-hidden=true></a>  <span class=kw>background-color</span>: <span class=fu>var(</span><span class=va>--dark-color</span><span class=fu>)</span><span class=op>;</span></span>
-<span id=cb2-15><a href=#cb2-15 aria-hidden=true></a>  <span class=kw>color</span>: <span class=fu>var(</span><span class=va>--light-color</span><span class=fu>)</span><span class=op>;</span></span>
-<span id=cb2-16><a href=#cb2-16 aria-hidden=true></a>}</span></code></pre></div><p>I previously used checkbox inputs but using URL fragment feels better.<h2 id=blog-engine---org-mode-with-org-publish>Blog Engine - org-mode with org-publish</h2><p>So publishing a website is something that could go from. Write your own HTML each time. But this is quite tedious, so we generally all use a website generator. The next thing with the minimal possible amount of work is using org-mode with org-publish. Because a website is mostly, export all of file in org-mode format (easier to write and manipulate than raw HTML) to HTML.<p>In fact, there are numerous details that make this task not this straightforward. You want:<ol><li>from a tree of org-mode files, generate an equivalent file tree of HTML files generated from the org-mode files. This is the main purpose of org-publish.<li>We also want to set specific headers, a CSS file, a favicon, link to RSS file, mobile friendly directives.<li>Have common header/footer (preamble, postamble) if possible with a menu.<li>An archive page with a list of posts.<li>Generate an RSS file<li>Niceties:<ul><li>obfuscate your email to prevent spam<li>link to your email with a link to the current page integrated in the body/subject<li>replace your external link to open in a new tab securely (<code>noopener / noreferrer</code>).<li>compress images during publishing</ul></ol><p>Also, a single detail make using org-publish a bit awkward compared to classical other classical static website generators; it is designed to be set in you full emacs configuration. But I wanted to be able to clone my git repository and be able to generate my website locally even if I clone it on different directories.<p>So I created a package just for that: <a href=project-el/index.html>Autoload eLISP file in projects</a>.<h3 id=tree-of-files>Tree of files</h3><p>There is a first pass that use <code>projectile</code> emacs package to detect the current root file of the project and provide a list of absolute paths.<p>Then you set the associative list <code>org-publish-project-alist</code> with many straightforward details. The source directory, the destination directory, but also, file to exclude, a function used to transform org files to HTML, etc…<pre class=elisp><code>(setq domainname &quot;https://john.doe&quot;)
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>New Blog</title><meta name=author content="Yann Esposito"><meta name=description content="Meta article about how I generate
+this blog."><meta name=keywords content="programming blog org-mode web css"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><meta name=theme-color media="(prefers-color-scheme: light)" content="#d84100"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#2E3440"><header><div id=logo><a href=/><div class=vis-hidden>Go to Home</div><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="#a3aec2" stroke-width="1" fill="#2e3440"/><circle class="i1" cx="32" cy="32" r="12" stroke="#800" stroke-width="1" fill="#c20"/><circle class="i0" cx="32" cy="32" r="5" stroke-width="1" stroke="#f60" fill="#fa0"/><ellipse class="e" cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="#fff"/></svg></a></div><div class=content><h1>New Blog</h1><div class=meta><span class=yyydate>[2019-08-17 Sat 16:00]</span> on
+<a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract>Meta article about how I generate this blog.</div></div></header><main id=content><article><div class=notes><p>tl;dr: The first blog post of a blog should certainly be about the
+blog itself to provide a feeling of self-reference.</div><h1 id=peaceful-and-respectful-website>Peaceful and Respectful
+Website</h1><p>There is a trend about website being quite less accessible, using
+more and more resources, adding trackers, popups, videos, animations,
+big js frameworks, etc…<p>I wanted a more peaceful and respectful website.<p>That website was created with the following constraints in mind by
+order of priority:<ol><li><strong>Respect Privacy</strong>; no tracker of any sort (no ads, no
+google analytics, no referrer for all external links, etc…)<li><strong>nearly no javascript</strong>; no js at all except for a
+single exception, pages containing Math formula are displayed using
+mathjax. That means that event the CSS theme switcher does not use
+javascript.<li><strong>Accessible</strong>; should be easy to read on a text
+browser so people with disabilities could easily consume it<li><strong>nerdy</strong>; should feel mostly like markdown text in a
+terminal and source code should be syntax highlighted.<li><strong>theme switchable</strong>; support your preferred light/dark
+theme by default but you can change it if you want.<li><strong>rss</strong>; you should be able to get informed when I add
+a new blog post.<li><strong>frugal</strong>; try to minimize the resources needed to
+visit my website; no javascript, no web-font, not too much CSS magic,
+not much images or really compressed one.</ol><p>Some of the constraints are straightforward to get, some not.<p>You can also check that not using more resources one of the theme of
+my website looks quite more classical and modern that my preferred
+ones.<h2 id=respect-privacy>Respect Privacy</h2><p>The one should be easy, simply not put any 3rd party inclusion in my
+website. So, no external CSS in my headers, no link to any image I do
+not host myself. No 3rd party javascript.<h2 id=javascript-free>Javascript Free</h2><p>I do not really see why a content oriented website should need to
+execute javascript.<h2 id=disability-friendly>Accessible</h2><p>A good way to check that a website is friendly to disabled people is
+by looking at it with a text browser. If you open most website today you
+see that at the top of the page is crippled with a numerous number of
+links/metas info used for javascript tricks, login/logout buttons, etc…
+The website should only contain, a pretty minimal menu to navigate, and
+the content.<h2 id=nerdy>Nerdy</h2><p>The feel of the website should be nerdy, it should look like reading
+a terminal or emacs. It should almost feel the same as if you were using
+a text-browser. For sensible people, I added a "modern" theme that
+should better suit modern eye, still the first design should always be
+the terminal looking one.<h2 id=theme-switchable>Theme switchable</h2><p>Even if you are not used to disability friendly browser. The website
+should try to guess your preferred way to consume my website. Recently
+we dark/light themes were integrated as a new CSS feature. This website
+should propose your apparently preferred theme. But you could also
+change it manually.<h2 id=rss>RSS</h2><p>This is another layer that help you consume my website as you prefer.
+You should at least be informed a new article has been published.<h2 id=frugal>Frugal</h2><p>This one is a bit tricky. It would mean, that visiting my website
+should not consume much resources. Mainly, this would prevent using
+heavy medias as much as possible. So, no video, no animated gif, no
+image if possible or very compressed small one. So I have a script that
+convert all images to maximize site to `800x800` and use at max 16
+colors. On my current example image the size goes from 3.1MB to
+88KB.<h1 id=how>How</h1><h2 id=css>CSS</h2><p>Regarding CSS, I always found that the default text display by
+navigator is terrible. So just to "fix" a minimal CSS to have something
+bearable it takes me about 120 lines of CSS.<p>By fixing I mean things like using a fixed line width for text (there
+is an optimal range to improve legibility). Also having correct list
+indentation, line-height and font-size. Table displaying correctly.<p>Then I have about 90 lines of CSS to make my HTML look like text
+source of a markdown.<p>Then I set a few CSS rules to handle the ids and classes added by
+org-export as instead of using the ubiquitous Markdown, I prefer greatly
+to use org mode files. I need 60 lines of CSS for them.<p>In order to handle color themes (5 at the time of writing those
+lines) I use almost 350 line to handle those.<h3 id=css-theme-selection>CSS Theme selection</h3><p>One thing that wasn't straightforward while writing the CSS was to
+provide an interactive theme selector without any javascript involved.
+That theme switcher is really the limit I can concede to modern
+standards because it is CSS only.<p>The trick is to provide one top-level element per theme at the
+beginning of the body of the HTML. Then hide those elements (I chose
+inputs). Finally provide a set of anchor links.<div class=sourceCode id=cb1><pre class="sourceCode html"><code class="sourceCode html"><span id=cb1-1><a href=#cb1-1 aria-hidden=true tabindex=-1></a>  ...</span>
+<span id=cb1-2><a href=#cb1-2 aria-hidden=true tabindex=-1></a><span class=kw>&lt;body&gt;</span></span>
+<span id=cb1-3><a href=#cb1-3 aria-hidden=true tabindex=-1></a>   <span class=kw>&lt;input</span> <span class=er>id</span><span class=ot>=</span><span class=st>&quot;light&quot;</span><span class=kw>/&gt;</span></span>
+<span id=cb1-4><a href=#cb1-4 aria-hidden=true tabindex=-1></a>   <span class=kw>&lt;input</span> <span class=er>id</span><span class=ot>=</span><span class=st>&quot;dark&quot;</span><span class=kw>/&gt;</span></span>
+<span id=cb1-5><a href=#cb1-5 aria-hidden=true tabindex=-1></a>   <span class=kw>&lt;div</span> <span class=er>id</span><span class=ot>=</span><span class=st>&quot;labels&quot;</span><span class=kw>&gt;</span></span>
+<span id=cb1-6><a href=#cb1-6 aria-hidden=true tabindex=-1></a>     Change theme:</span>
+<span id=cb1-7><a href=#cb1-7 aria-hidden=true tabindex=-1></a>     <span class=kw>&lt;a</span> <span class=er>href</span><span class=ot>=</span><span class=st>&quot;#light&quot;</span><span class=kw>&gt;</span>Light<span class=kw>&lt;/a&gt;</span></span>
+<span id=cb1-8><a href=#cb1-8 aria-hidden=true tabindex=-1></a>     <span class=kw>&lt;a</span> <span class=er>href</span><span class=ot>=</span><span class=st>&quot;#dark&quot;</span><span class=kw>&gt;</span>Dark<span class=kw>&lt;/a&gt;</span></span>
+<span id=cb1-9><a href=#cb1-9 aria-hidden=true tabindex=-1></a>   <span class=kw>&lt;/div&gt;</span></span>
+<span id=cb1-10><a href=#cb1-10 aria-hidden=true tabindex=-1></a>   <span class=kw>&lt;div</span> <span class=er>class</span><span class=ot>=</span><span class=st>&quot;main&quot;</span><span class=kw>&gt;</span></span>
+<span id=cb1-11><a href=#cb1-11 aria-hidden=true tabindex=-1></a>   ALL YOUR CONTENT HERE</span>
+<span id=cb1-12><a href=#cb1-12 aria-hidden=true tabindex=-1></a>   <span class=kw>&lt;/div&gt;</span></span>
+<span id=cb1-13><a href=#cb1-13 aria-hidden=true tabindex=-1></a> <span class=kw>&lt;/body&gt;</span></span></code></pre></div><p>Then use the <em>sibling</em> CSS selector <code class=verbatim>~</code>. Then put all your content in a div of class
+<code class=verbatim>.main</code> for example. Finally in the CSS you
+can write things like:<div class=sourceCode id=cb2><pre class="sourceCode css"><code class="sourceCode css"><span id=cb2-1><a href=#cb2-1 aria-hidden=true tabindex=-1></a><span class=co>/* hide all radio button that are not inside another div of body */</span></span>
+<span id=cb2-2><a href=#cb2-2 aria-hidden=true tabindex=-1></a>body <span class=op>&gt;</span> input {</span>
+<span id=cb2-3><a href=#cb2-3 aria-hidden=true tabindex=-1></a>  <span class=kw>display</span>: <span class=dv>none</span><span class=op>;</span></span>
+<span id=cb2-4><a href=#cb2-4 aria-hidden=true tabindex=-1></a>}</span>
+<span id=cb2-5><a href=#cb2-5 aria-hidden=true tabindex=-1></a><span class=in>:root</span> {</span>
+<span id=cb2-6><a href=#cb2-6 aria-hidden=true tabindex=-1></a>  <span class=va>--light-color</span>: <span class=cn>#fff</span><span class=op>;</span></span>
+<span id=cb2-7><a href=#cb2-7 aria-hidden=true tabindex=-1></a>  <span class=va>--dark-color</span>: <span class=cn>#000</span><span class=op>;</span></span>
+<span id=cb2-8><a href=#cb2-8 aria-hidden=true tabindex=-1></a>}</span>
+<span id=cb2-9><a href=#cb2-9 aria-hidden=true tabindex=-1></a>input<span class=pp>#light</span><span class=in>:checked</span> <span class=op>~</span> <span class=fu>.main</span> {</span>
+<span id=cb2-10><a href=#cb2-10 aria-hidden=true tabindex=-1></a>  <span class=kw>background-color</span>: <span class=fu>var(</span><span class=va>--light-color</span><span class=fu>)</span><span class=op>;</span></span>
+<span id=cb2-11><a href=#cb2-11 aria-hidden=true tabindex=-1></a>  <span class=kw>color</span>: <span class=fu>var(</span><span class=va>--dark-color</span><span class=fu>)</span><span class=op>;</span></span>
+<span id=cb2-12><a href=#cb2-12 aria-hidden=true tabindex=-1></a>}</span>
+<span id=cb2-13><a href=#cb2-13 aria-hidden=true tabindex=-1></a>input<span class=pp>#dark</span><span class=in>:checked</span> <span class=op>~</span> <span class=fu>.main</span> {</span>
+<span id=cb2-14><a href=#cb2-14 aria-hidden=true tabindex=-1></a>  <span class=kw>background-color</span>: <span class=fu>var(</span><span class=va>--dark-color</span><span class=fu>)</span><span class=op>;</span></span>
+<span id=cb2-15><a href=#cb2-15 aria-hidden=true tabindex=-1></a>  <span class=kw>color</span>: <span class=fu>var(</span><span class=va>--light-color</span><span class=fu>)</span><span class=op>;</span></span>
+<span id=cb2-16><a href=#cb2-16 aria-hidden=true tabindex=-1></a>}</span></code></pre></div><p>I previously used checkbox inputs but using URL fragment feels
+better.<h2 id=blog-engine---org-mode-with-org-publish>Blog Engine - org-mode
+with org-publish</h2><p>So publishing a website is something that could go from. Write your
+own HTML each time. But this is quite tedious, so we generally all use a
+website generator. The next thing with the minimal possible amount of
+work is using org-mode with org-publish. Because a website is mostly,
+export all of file in org-mode format (easier to write and manipulate
+than raw HTML) to HTML.<p>In fact, there are numerous details that make this task not this
+straightforward. You want:<ol><li>from a tree of org-mode files, generate an equivalent file tree of
+HTML files generated from the org-mode files. This is the main purpose
+of org-publish.<li>We also want to set specific headers, a CSS file, a favicon, link to
+RSS file, mobile friendly directives.<li>Have common header/footer (preamble, postamble) if possible with a
+menu.<li>An archive page with a list of posts.<li>Generate an RSS file<li>Niceties:<ul><li>obfuscate your email to prevent spam<li>link to your email with a link to the current page integrated in the
+body/subject<li>replace your external link to open in a new tab securely (<code class=verbatim>noopener / noreferrer</code>).<li>compress images during publishing</ul></ol><p>Also, a single detail make using org-publish a bit awkward compared
+to classical other classical static website generators; it is designed
+to be set in you full emacs configuration. But I wanted to be able to
+clone my git repository and be able to generate my website locally even
+if I clone it on different directories.<p>So I created a package just for that: <a href=project-el/index.html>Autoload eLISP file in projects</a>.<h3 id=tree-of-files>Tree of files</h3><p>There is a first pass that use <code class=verbatim>projectile</code> emacs package to detect the current
+root file of the project and provide a list of absolute paths.<p>Then you set the associative list <code class=verbatim>org-publish-project-alist</code> with many
+straightforward details. The source directory, the destination
+directory, but also, file to exclude, a function used to transform org
+files to HTML, etc…<pre class=elisp><code>(setq domainname &quot;https://john.doe&quot;)
 (setq base-dir (concat (projectile-project-root) &quot;src&quot;))
 (setq publish-dir (concat (projectile-project-root) &quot;_site&quot;))
 (setq assets-dir (concat base-dir &quot;/&quot;))
@@ -102,14 +179,17 @@
          :table-of-contents nil)
 
         (&quot;blog&quot; :components (&quot;orgfiles&quot; &quot;assets&quot; &quot;rss&quot;))))
-</code></pre><h3 id=html-headers>HTML Headers</h3><p>I set the header to provide a link to the RSS file, the CSS, the favicon and viewport directive for mobile browsers.<pre class=elisp><code>(defvar org-blog-head
+</code></pre><h3 id=html-headers>HTML Headers</h3><p>I set the header to provide a link to the RSS file, the CSS, the
+favicon and viewport directive for mobile browsers.<pre class=elisp><code>(defvar org-blog-head
   (concat
    &quot;&lt;link rel=\&quot;stylesheet\&quot; type=\&quot;text/css\&quot; href=\&quot;&quot; css-path &quot;\&quot;/&gt;&quot;
    &quot;&lt;meta name=\&quot;viewport\&quot; content=\&quot;width=device-width, initial-scale=1.0\&quot;&gt;&quot;
    &quot;&lt;link rel=\&quot;alternative\&quot; type=\&quot;application/rss+xml\&quot; title=\&quot;&quot; rss-title &quot;\&quot; href=\&quot;/archives.xml\&quot; /&gt;&quot;
    &quot;&lt;link rel=\&quot;shortcut icon\&quot; type=\&quot;image/x-icon\&quot; href=\&quot;/favicon.ico\&quot;&gt;&quot;))
 
-</code></pre><h3 id=preamble---postamble>Preamble & Postamble</h3><p>So I put a menu in both the preamble and postamble. The postamble contains a lot of details about the article, author, email, date, etc…<pre class=elisp><code>(defun menu (lst)
+</code></pre><h3 id=preamble---postamble>Preamble & Postamble</h3><p>So I put a menu in both the preamble and postamble. The postamble
+contains a lot of details about the article, author, email, date,
+etc…<pre class=elisp><code>(defun menu (lst)
     &quot;Blog menu&quot;
     (concat
      &quot;&lt;nav&gt;&quot;
@@ -180,7 +260,8 @@
      &quot;&lt;/footer&gt;&quot;
      (menu &#39;(&quot;&lt;a href=\&quot;#preamble\&quot;&gt;↑ Top ↑&lt;/a&gt;&quot;))
      &quot;&lt;/div&gt;&quot;))
-</code></pre><h3 id=obfuscate-email>Obfuscate email</h3><p>A simple function to obfuscate HTML by using hexadecimal and octal notation.<pre class=elisp><code>(defun rand-obfs (c)
+</code></pre><h3 id=obfuscate-email>Obfuscate email</h3><p>A simple function to obfuscate HTML by using hexadecimal and octal
+notation.<pre class=elisp><code>(defun rand-obfs (c)
   (let ((r (% (random) 20)))
     (cond ;; ((eq 0 r) (format &quot;%c&quot; c))
      ((&lt;= 0 r 10) (format &quot;&amp;#%d;&quot; c))
@@ -189,7 +270,8 @@
 (defun obfuscate-html (txt)
   (apply &#39;concat
          (mapcar &#39;rand-obfs txt)))
-</code></pre><h3 id=specific-email-subject>Specific email subject</h3><p>You can set a subject to an email when you click on it by writing a link that looks like:<pre class=example><code>mailto:john@doe.com?subject=the-subject
+</code></pre><h3 id=specific-email-subject>Specific email subject</h3><p>You can set a subject to an email when you click on it by writing a
+link that looks like:<pre class=example><code>mailto:john@doe.com?subject=the-subject
 </code></pre><p>Of course most of it is obfuscated.<pre class=elisp><code>(let* ((obfs-email (obfuscate-html email))
        (obfs-author (obfuscate-html author))
        (obfs-title (obfuscate-html (get-from-info info :title)))
@@ -200,7 +282,8 @@
           (obfuscate-html &quot;?subject=yblog: &quot;)
           obfs-title
           full-email))
-</code></pre><h3 id=nice-external-links>Nice external links</h3><p>Also, why not fix our external link (see <a href=https://www.jitbit.com/alexblog/256-targetblank---the-most-underestimated-vulnerability-ever/>this article</a> as reference):<pre class=elisp><code>;; add target=_blank and rel=&quot;noopener noreferrer&quot; to all links by default
+</code></pre><h3 id=nice-external-links>Nice external links</h3><p>Also, why not fix our external link (see <a href=https://www.jitbit.com/alexblog/256-targetblank---the-most-underestimated-vulnerability-ever/>this
+article</a> as reference):<pre class=elisp><code>;; add target=_blank and rel=&quot;noopener noreferrer&quot; to all links by default
 (defun my-org-export-add-target-blank-to-http-links (text backend info)
   &quot;Add target=\&quot;_blank\&quot; to external links.&quot;
   (when (and
@@ -213,7 +296,7 @@
 
 (add-to-list &#39;org-export-filter-link-functions
              &#39;my-org-export-add-target-blank-to-http-links)
-</code></pre><h3 id=image-compression>Image compression</h3><p>to compress images I use <a href=https://imagemagick.html>imagemagick</a> like this:<div class=sourceCode id=cb10><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb10-1><a href=#cb10-1 aria-hidden=true></a><span class=ex>convert</span> src/a.png -resize 800x800<span class=dt>\&gt;</span> +dither -colors 16 -depth 4 dest/a.png</span></code></pre></div><p>For example:<p><img src=../img/a.png.webp><p>I compress automatically images during publishing with:<pre class=elisp><code>(defun org-blog-publish-attachment (plist filename pub-dir)
+</code></pre><h3 id=image-compression>Image compression</h3><p>to compress images I use <a href=https://imagemagick.html>imagemagick</a> like this:<div class=sourceCode id=cb10><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb10-1><a href=#cb10-1 aria-hidden=true tabindex=-1></a><span class=ex>convert</span> src/a.png <span class=at>-resize</span> 800x800<span class=dt>\&gt;</span> +dither <span class=at>-colors</span> 16 <span class=at>-depth</span> 4 dest/a.png</span></code></pre></div><p>For example:<p><img src=../img/a.png.webp><p>I compress automatically images during publishing with:<pre class=elisp><code>(defun org-blog-publish-attachment (plist filename pub-dir)
   &quot;Publish a file with no transformation of any kind.
 FILENAME is the filename of the Org file to be published.  PLIST
 is the property list for the given project.  PUB-DIR is the

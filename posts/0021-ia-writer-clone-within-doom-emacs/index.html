@@ -1,213 +1,234 @@
 <!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>iA writer clone within doom-emacs</title><meta name=author content="Yann Esposito"><meta name=description content><meta name=keywords content="emacs org-mode"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><meta name=theme-color media="(prefers-color-scheme: light)" content="#d84100"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#2E3440"><header><div id=logo><a href=/><div class=vis-hidden>Go to Home</div><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="#a3aec2" stroke-width="1" fill="#2e3440"/><circle class="i1" cx="32" cy="32" r="12" stroke="#800" stroke-width="1" fill="#c20"/><circle class="i0" cx="32" cy="32" r="5" stroke-width="1" stroke="#f60" fill="#fa0"/><ellipse class="e" cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="#fff"/></svg></a></div><div class=content><h1>iA writer clone within doom-emacs</h1><div class=meta><span class=yyydate>[2021-10-24 Sun]</span> on
-<a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract></div></div></header><main id=content><article><p>So I played with tweaking my emacs configuration again. I think I made something worth to be shared. I wanted to have the same effect than in iA writer within emacs. And I just reached this.<p>So the effect I am looking to achieve can be seen in this video.</p><video src=./zen-writer-demo.mov width=100% controls autoplay>
-<a href=./zen-writer-demo.mov>zen-writer-demo video (7.2MB)</a></video><p>It highlight the current sentence (in black) while the rest of the text is gray. The main issue with the <code>hl-sentence</code> package alone is that it set a specific face to the current sentence, but does not affect the other text in the buffer. In fact to make it work as I would expect, you need to make the default color grey, and only set black for the highlighted text.<p>Fortunately, I have recently created a personal theme close to that. I just created a new specific one. Everything is mostly "gray" except the font <code>hl-sentence</code> which is black.<p>And that's it. So to make it all work I need.<ul><li>a Gray theme,<li>the package <code>hl-sentence</code>,<li>the <code>writeroom</code> package.</ul><p>So how to achieve that yourself? Here is how I do it.<h2 id=the-zen-writer-theme>The zen-writer theme</h2><p>Download <a href=./doom-zen-writer-theme.el>Doom Zen-Writer theme</a>. This depend on doom-themes and here is the code of the theme. Just put it in you <code>~/.doom.d/themes</code> directory.<h2 id=add-this-is-your--packages-el->add this is your <code>packages.el</code></h2><pre class=elisp><code>(package! hl-sentence
+<a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract></div></div></header><main id=content><article><p>So I played with tweaking my emacs configuration again. I think I
+made something worth to be shared. I wanted to have the same effect than
+in iA writer within emacs. And I just reached this.<p>So the effect I am looking to achieve can be seen in this video.</p><video src=./zen-writer-demo.mov width=100% controls autoplay>
+<a href=./zen-writer-demo.mov>zen-writer-demo video (7.2MB)</a></video><p>It highlight the current sentence (in black) while the rest of the
+text is gray. The main issue with the <code class=verbatim>hl-sentence</code> package alone is that it set a
+specific face to the current sentence, but does not affect the other
+text in the buffer. In fact to make it work as I would expect, you need
+to make the default color grey, and only set black for the highlighted
+text.<p>Fortunately, I have recently created a personal theme close to that.
+I just created a new specific one. Everything is mostly "gray" except
+the font <code>hl-sentence</code> which is black.<p>And that's it. So to make it all work I need.<ul><li>a Gray theme,<li>the package <code>hl-sentence</code>,<li>the <code>writeroom</code> package.</ul><p>So how to achieve that yourself? Here is how I do it.<h2 id=the-zen-writer-theme>The zen-writer theme</h2><p>Download <a href=./doom-zen-writer-theme.el>Doom Zen-Writer
+theme</a>. This depend on doom-themes and here is the code of the theme.
+Just put it in you <code class=verbatim>~/.doom.d/themes</code>
+directory.<h2 id=add-this-is-your--packages-el->add this is your
+<code>packages.el</code></h2><pre class=elisp><code>(package! hl-sentence
   :pin &quot;86ae38d3103bd20da5485cbdd59dfbd396c45ee4&quot;)
-</code></pre><h2 id=helpers>Helpers</h2><p>You probably want to be able to put you out of this writing mode. Here is a <a href=zen-writer.el>zen-writer.el</a> file that contain my keymaps and useful functions.<p>Put it in you <code>~/.doom.d/</code> directory and in you <code>config.el</code> put<div class=sourceCode id=cb2 data-org-language=emacs-lisp><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id=cb2-1><a href=#cb2-1 aria-hidden=true></a>(load! <span class=st>&quot;~/.doom.d/zen-writer.el&quot;</span>)</span></code></pre></div><p>And with this you should pass to zen mode with <code>SPC y z z</code>.<p>To make the un-zen works. You will need to have a <code>y/auto-update-theme</code> function that set your current theme. My function change the theme depending on the time of the day or the day of the week.<p>So here it is for inspiration:<div class=sourceCode id=cb3 data-org-language=emacs-lisp><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id=cb3-1><a href=#cb3-1 aria-hidden=true></a>(<span class=kw>defun</span><span class=fu> y/auto-update-theme </span>()</span>
-<span id=cb3-2><a href=#cb3-2 aria-hidden=true></a>  <span class=st>&quot;depending on time use different theme&quot;</span></span>
-<span id=cb3-3><a href=#cb3-3 aria-hidden=true></a>  <span class=co>;; very early =&gt; gruvbox-light, solarized-light, nord-light</span></span>
-<span id=cb3-4><a href=#cb3-4 aria-hidden=true></a>  (<span class=kw>let*</span> ((day-of-week (format-time-string <span class=st>&quot;%a&quot;</span>))</span>
-<span id=cb3-5><a href=#cb3-5 aria-hidden=true></a>         (week-end? (<span class=kw>or</span> (<span class=kw>equal</span> <span class=st>&quot;Sat&quot;</span> day-of-week)</span>
-<span id=cb3-6><a href=#cb3-6 aria-hidden=true></a>                        (<span class=kw>equal</span> <span class=st>&quot;Sun&quot;</span> day-of-week)))</span>
-<span id=cb3-7><a href=#cb3-7 aria-hidden=true></a>         (hour (<span class=kw>nth</span> <span class=dv>2</span> (decode-time (current-time))))</span>
-<span id=cb3-8><a href=#cb3-8 aria-hidden=true></a>         (time-to-sleep? (<span class=kw>or</span> (<span class=op>&gt;</span> hour <span class=dv>22</span>) (<span class=op>&lt;</span> hour <span class=dv>7</span>)))</span>
-<span id=cb3-9><a href=#cb3-9 aria-hidden=true></a></span>
-<span id=cb3-10><a href=#cb3-10 aria-hidden=true></a>         (theme (<span class=kw>cond</span></span>
-<span id=cb3-11><a href=#cb3-11 aria-hidden=true></a>                 (time-to-sleep?  &#39;doom-plain-dark)</span>
-<span id=cb3-12><a href=#cb3-12 aria-hidden=true></a>                 (week-end?       &#39;doom-nord-light)</span>
-<span id=cb3-13><a href=#cb3-13 aria-hidden=true></a>                 ((<span class=op>&lt;=</span> <span class=dv>7</span> hour <span class=dv>8</span>)   &#39;doom-gruvbox-light)</span>
-<span id=cb3-14><a href=#cb3-14 aria-hidden=true></a>                 ((<span class=op>=</span> <span class=dv>9</span> hour)      &#39;doom-solarized-light)</span>
-<span id=cb3-15><a href=#cb3-15 aria-hidden=true></a>                 ((<span class=op>&lt;=</span> <span class=dv>10</span> hour <span class=dv>16</span>) &#39;doom-solarized-white)</span>
-<span id=cb3-16><a href=#cb3-16 aria-hidden=true></a>                 ((<span class=op>&lt;=</span> <span class=dv>17</span> hour <span class=dv>18</span>) &#39;doom-gruvbox-light)</span>
-<span id=cb3-17><a href=#cb3-17 aria-hidden=true></a>                 ((<span class=op>&lt;=</span> <span class=dv>19</span> hour <span class=dv>22</span>) &#39;doom-oceanic-next))))</span>
-<span id=cb3-18><a href=#cb3-18 aria-hidden=true></a>    (<span class=kw>when</span> (<span class=kw>not</span> (<span class=kw>equal</span> doom-theme theme))</span>
-<span id=cb3-19><a href=#cb3-19 aria-hidden=true></a>      (<span class=kw>setq</span> doom-theme theme)</span>
-<span id=cb3-20><a href=#cb3-20 aria-hidden=true></a>      (load-theme doom-theme <span class=kw>t</span>))</span>
-<span id=cb3-21><a href=#cb3-21 aria-hidden=true></a>    <span class=co>;; run that function again next hour</span></span>
-<span id=cb3-22><a href=#cb3-22 aria-hidden=true></a>    (run-at-time (<span class=kw>format</span> <span class=st>&quot;%02d:%02d&quot;</span> (<span class=op>+</span> hour <span class=dv>1</span>) <span class=dv>0</span>) <span class=kw>nil</span> &#39;y/auto-update-theme)))</span></code></pre></div><h2 id=bonus>Bonus</h2><p>I use Nerd Fonts and in particular the font `iMWritingDuoS` which is I think a clone of the iAWriter font.<div class=sourceCode id=cb4 data-org-language=emacs-lisp><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id=cb4-1><a href=#cb4-1 aria-hidden=true></a>(<span class=kw>setq</span> doom-variable-pitch-font</span>
-<span id=cb4-2><a href=#cb4-2 aria-hidden=true></a>      (font-spec :family <span class=st>&quot;iMWritingDuoS Nerd Font&quot;</span> :size <span class=dv>12</span>))</span></code></pre></div><p>I hope you find this useful. I really like how it looks now.<h2 id=annex>Annex</h2><p>The code source used in this article.<h3 id=zen-writer>zen-writer</h3><div class=sourceCode id=zen-writer.el data-org-language=emacs-lisp data-tangle=zen-writer.el><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id=zen-writer.el-1><a href=#zen-writer.el-1 aria-hidden=true></a><span class=co>;;; zen-writer.el -*- lexical-binding: t; -*-</span></span>
-<span id=zen-writer.el-2><a href=#zen-writer.el-2 aria-hidden=true></a></span>
-<span id=zen-writer.el-3><a href=#zen-writer.el-3 aria-hidden=true></a>(<span class=kw>defun</span><span class=fu> y/zen </span>()</span>
-<span id=zen-writer.el-4><a href=#zen-writer.el-4 aria-hidden=true></a>  (interactive)</span>
-<span id=zen-writer.el-5><a href=#zen-writer.el-5 aria-hidden=true></a>  (<span class=kw>setq</span> doom-theme &#39;doom-zen-writer)</span>
-<span id=zen-writer.el-6><a href=#zen-writer.el-6 aria-hidden=true></a>  (load-theme doom-theme <span class=kw>t</span>)</span>
-<span id=zen-writer.el-7><a href=#zen-writer.el-7 aria-hidden=true></a>  (hl-sentence-mode +<span class=dv>1</span>))</span>
-<span id=zen-writer.el-8><a href=#zen-writer.el-8 aria-hidden=true></a></span>
-<span id=zen-writer.el-9><a href=#zen-writer.el-9 aria-hidden=true></a>(<span class=kw>defun</span><span class=fu> y/unzen </span>()</span>
-<span id=zen-writer.el-10><a href=#zen-writer.el-10 aria-hidden=true></a>  (interactive)</span>
-<span id=zen-writer.el-11><a href=#zen-writer.el-11 aria-hidden=true></a>  (y/auto-update-theme)</span>
-<span id=zen-writer.el-12><a href=#zen-writer.el-12 aria-hidden=true></a>  (hl-sentence-mode <span class=dv>-1</span>))</span>
-<span id=zen-writer.el-13><a href=#zen-writer.el-13 aria-hidden=true></a></span>
-<span id=zen-writer.el-14><a href=#zen-writer.el-14 aria-hidden=true></a>(<span class=kw>defun</span><span class=fu> y/zen-full </span>()</span>
-<span id=zen-writer.el-15><a href=#zen-writer.el-15 aria-hidden=true></a>  (interactive)</span>
-<span id=zen-writer.el-16><a href=#zen-writer.el-16 aria-hidden=true></a>  (y/zen)</span>
-<span id=zen-writer.el-17><a href=#zen-writer.el-17 aria-hidden=true></a>  (toggle-frame-fullscreen)</span>
-<span id=zen-writer.el-18><a href=#zen-writer.el-18 aria-hidden=true></a>  (doom-big-font-mode +<span class=dv>1</span>))</span>
-<span id=zen-writer.el-19><a href=#zen-writer.el-19 aria-hidden=true></a></span>
-<span id=zen-writer.el-20><a href=#zen-writer.el-20 aria-hidden=true></a>(<span class=kw>defun</span><span class=fu> y/unzen-full </span>()</span>
-<span id=zen-writer.el-21><a href=#zen-writer.el-21 aria-hidden=true></a>  (interactive)</span>
-<span id=zen-writer.el-22><a href=#zen-writer.el-22 aria-hidden=true></a>  (y/unzen)</span>
-<span id=zen-writer.el-23><a href=#zen-writer.el-23 aria-hidden=true></a>  (toggle-frame-fullscreen)</span>
-<span id=zen-writer.el-24><a href=#zen-writer.el-24 aria-hidden=true></a>  (doom-big-font-mode <span class=dv>-1</span>))</span>
-<span id=zen-writer.el-25><a href=#zen-writer.el-25 aria-hidden=true></a></span>
-<span id=zen-writer.el-26><a href=#zen-writer.el-26 aria-hidden=true></a>(map! :leader</span>
-<span id=zen-writer.el-27><a href=#zen-writer.el-27 aria-hidden=true></a>      (:prefix (<span class=st>&quot;y z&quot;</span> . <span class=st>&quot;Zen Writer&quot;</span>)</span>
-<span id=zen-writer.el-28><a href=#zen-writer.el-28 aria-hidden=true></a>       :desc <span class=st>&quot;Full Zen Writer&quot;</span> <span class=st>&quot;z&quot;</span> #&#39;y/zen-full</span>
-<span id=zen-writer.el-29><a href=#zen-writer.el-29 aria-hidden=true></a>       :desc <span class=st>&quot;un-Full Zen Writer&quot;</span> <span class=st>&quot;u&quot;</span> #&#39;y/unzen-full</span>
-<span id=zen-writer.el-30><a href=#zen-writer.el-30 aria-hidden=true></a>       :desc <span class=st>&quot;Zen Writer&quot;</span> <span class=st>&quot;t&quot;</span> #&#39;y/zen</span>
-<span id=zen-writer.el-31><a href=#zen-writer.el-31 aria-hidden=true></a>       :desc <span class=st>&quot;un-Zen Writer&quot;</span> <span class=st>&quot;q&quot;</span> #&#39;y/unzen))</span></code></pre></div><h3 id=zen-writer-doom-theme>zen-writer doom theme</h3><div class=sourceCode id=cb5 data-org-language=emacs-lisp data-tangle=doom-zen-writer-theme.el><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id=cb5-1><a href=#cb5-1 aria-hidden=true></a><span class=co>;;; doom-zen-writer-theme.el --- -*- lexical-binding: t; no-byte-compile: t; -*-</span></span>
-<span id=cb5-2><a href=#cb5-2 aria-hidden=true></a><span class=co>;;</span></span>
-<span id=cb5-3><a href=#cb5-3 aria-hidden=true></a><span class=co>;; Author: Yann Esposito &lt;https://github.com/yogsototh&gt;</span></span>
-<span id=cb5-4><a href=#cb5-4 aria-hidden=true></a><span class=co>;; Created: October 24, 2021</span></span>
-<span id=cb5-5><a href=#cb5-5 aria-hidden=true></a><span class=co>;; Version: 1.0.0</span></span>
-<span id=cb5-6><a href=#cb5-6 aria-hidden=true></a><span class=co>;; Keywords: custom themes, faces</span></span>
-<span id=cb5-7><a href=#cb5-7 aria-hidden=true></a><span class=co>;; Homepage: https://github.com/hlissner/emacs-doom-themes</span></span>
-<span id=cb5-8><a href=#cb5-8 aria-hidden=true></a><span class=co>;; Package-Requires: ((emacs &quot;25.1&quot;) (cl-lib &quot;0.5&quot;) (doom-themes &quot;2.2.1&quot;))</span></span>
-<span id=cb5-9><a href=#cb5-9 aria-hidden=true></a><span class=co>;;</span></span>
-<span id=cb5-10><a href=#cb5-10 aria-hidden=true></a><span class=co>;;; Code:</span></span>
-<span id=cb5-11><a href=#cb5-11 aria-hidden=true></a></span>
-<span id=cb5-12><a href=#cb5-12 aria-hidden=true></a>(<span class=kw>require</span> &#39;doom-themes)</span>
-<span id=cb5-13><a href=#cb5-13 aria-hidden=true></a></span>
-<span id=cb5-14><a href=#cb5-14 aria-hidden=true></a><span class=co>;;</span></span>
-<span id=cb5-15><a href=#cb5-15 aria-hidden=true></a><span class=co>;;; Variables</span></span>
-<span id=cb5-16><a href=#cb5-16 aria-hidden=true></a></span>
-<span id=cb5-17><a href=#cb5-17 aria-hidden=true></a>(defgroup doom-plain-theme <span class=kw>nil</span></span>
-<span id=cb5-18><a href=#cb5-18 aria-hidden=true></a>  <span class=st>&quot;Options for the `doom-plain&#39; theme.&quot;</span></span>
-<span id=cb5-19><a href=#cb5-19 aria-hidden=true></a>  :group &#39;doom-themes)</span>
-<span id=cb5-20><a href=#cb5-20 aria-hidden=true></a></span>
-<span id=cb5-21><a href=#cb5-21 aria-hidden=true></a>(defcustom doom-plain-padded-modeline doom-themes-padded-modeline</span>
-<span id=cb5-22><a href=#cb5-22 aria-hidden=true></a>  <span class=st>&quot;If non-nil, adds a 4px padding to the mode-line.</span></span>
-<span id=cb5-23><a href=#cb5-23 aria-hidden=true></a><span class=st>Can be an integer to determine the exact padding.&quot;</span></span>
-<span id=cb5-24><a href=#cb5-24 aria-hidden=true></a>  :group &#39;doom-plain-theme</span>
-<span id=cb5-25><a href=#cb5-25 aria-hidden=true></a>  <span class=bu>:type</span> &#39;(<span class=kw>or</span> <span class=kw>integer</span> <span class=kw>boolean</span>))</span>
-<span id=cb5-26><a href=#cb5-26 aria-hidden=true></a></span>
-<span id=cb5-27><a href=#cb5-27 aria-hidden=true></a></span>
-<span id=cb5-28><a href=#cb5-28 aria-hidden=true></a><span class=co>;;</span></span>
-<span id=cb5-29><a href=#cb5-29 aria-hidden=true></a><span class=co>;;; Theme definition</span></span>
-<span id=cb5-30><a href=#cb5-30 aria-hidden=true></a></span>
-<span id=cb5-31><a href=#cb5-31 aria-hidden=true></a>(def-doom-theme doom-zen-writer</span>
-<span id=cb5-32><a href=#cb5-32 aria-hidden=true></a>  <span class=st>&quot;Theme inspired by gko&#39;s plain.&quot;</span></span>
-<span id=cb5-33><a href=#cb5-33 aria-hidden=true></a></span>
-<span id=cb5-34><a href=#cb5-34 aria-hidden=true></a>  <span class=co>;; name      default/256/16</span></span>
-<span id=cb5-35><a href=#cb5-35 aria-hidden=true></a>  ((bg         &#39;(<span class=st>&quot;#ffffff&quot;</span>))</span>
-<span id=cb5-36><a href=#cb5-36 aria-hidden=true></a>   (bg-alt     &#39;(<span class=st>&quot;#eaecea&quot;</span>))</span>
-<span id=cb5-37><a href=#cb5-37 aria-hidden=true></a>   (base0      &#39;(<span class=st>&quot;#969896&quot;</span>))</span>
-<span id=cb5-38><a href=#cb5-38 aria-hidden=true></a>   (base1      &#39;(<span class=st>&quot;#f1f3f5&quot;</span>))</span>
-<span id=cb5-39><a href=#cb5-39 aria-hidden=true></a>   (base2      &#39;(<span class=st>&quot;#606666&quot;</span>))</span>
-<span id=cb5-40><a href=#cb5-40 aria-hidden=true></a>   (base3      &#39;(<span class=st>&quot;#cccccc&quot;</span>))</span>
-<span id=cb5-41><a href=#cb5-41 aria-hidden=true></a>   (base4      &#39;(<span class=st>&quot;#e7e7e7&quot;</span>))</span>
-<span id=cb5-42><a href=#cb5-42 aria-hidden=true></a>   (base5      &#39;(<span class=st>&quot;#a5a8a6&quot;</span>))</span>
-<span id=cb5-43><a href=#cb5-43 aria-hidden=true></a>   (base6      &#39;(<span class=st>&quot;#fafafa&quot;</span>))</span>
-<span id=cb5-44><a href=#cb5-44 aria-hidden=true></a>   (base7      &#39;(<span class=st>&quot;#dfdfdf&quot;</span>))</span>
-<span id=cb5-45><a href=#cb5-45 aria-hidden=true></a>   (base8      &#39;(<span class=st>&quot;#fafafa&quot;</span>))</span>
-<span id=cb5-46><a href=#cb5-46 aria-hidden=true></a>   (fg         &#39;(<span class=st>&quot;#969896&quot;</span>))</span>
-<span id=cb5-47><a href=#cb5-47 aria-hidden=true></a>   (fg-alt     (doom-lighten fg <span class=fl>0.15</span>))</span>
-<span id=cb5-48><a href=#cb5-48 aria-hidden=true></a></span>
-<span id=cb5-49><a href=#cb5-49 aria-hidden=true></a>   (grey       fg)</span>
-<span id=cb5-50><a href=#cb5-50 aria-hidden=true></a>   (red        fg)</span>
-<span id=cb5-51><a href=#cb5-51 aria-hidden=true></a>   (blue       fg)</span>
-<span id=cb5-52><a href=#cb5-52 aria-hidden=true></a>   (dark-blue  fg)</span>
-<span id=cb5-53><a href=#cb5-53 aria-hidden=true></a>   (orange     fg)</span>
-<span id=cb5-54><a href=#cb5-54 aria-hidden=true></a>   (green      fg)</span>
-<span id=cb5-55><a href=#cb5-55 aria-hidden=true></a>   (teal       fg)</span>
-<span id=cb5-56><a href=#cb5-56 aria-hidden=true></a>   (yellow     fg)</span>
-<span id=cb5-57><a href=#cb5-57 aria-hidden=true></a>   (magenta    fg)</span>
-<span id=cb5-58><a href=#cb5-58 aria-hidden=true></a>   (violet     fg)</span>
-<span id=cb5-59><a href=#cb5-59 aria-hidden=true></a>   (cyan       fg)</span>
-<span id=cb5-60><a href=#cb5-60 aria-hidden=true></a>   (dark-cyan  fg)</span>
-<span id=cb5-61><a href=#cb5-61 aria-hidden=true></a></span>
-<span id=cb5-62><a href=#cb5-62 aria-hidden=true></a>   <span class=co>;; face categories -- required for all themes</span></span>
-<span id=cb5-63><a href=#cb5-63 aria-hidden=true></a>   (highlight      base2)</span>
-<span id=cb5-64><a href=#cb5-64 aria-hidden=true></a>   (vertical-bar   base5)</span>
-<span id=cb5-65><a href=#cb5-65 aria-hidden=true></a>   (selection      base1)</span>
-<span id=cb5-66><a href=#cb5-66 aria-hidden=true></a>   (builtin        base0)</span>
-<span id=cb5-67><a href=#cb5-67 aria-hidden=true></a>   (comments       base5)</span>
-<span id=cb5-68><a href=#cb5-68 aria-hidden=true></a>   (doc-comments   base5)</span>
-<span id=cb5-69><a href=#cb5-69 aria-hidden=true></a>   (constants      base0)</span>
-<span id=cb5-70><a href=#cb5-70 aria-hidden=true></a>   (functions      fg)</span>
-<span id=cb5-71><a href=#cb5-71 aria-hidden=true></a>   (keywords       fg)</span>
-<span id=cb5-72><a href=#cb5-72 aria-hidden=true></a>   (methods        fg)</span>
-<span id=cb5-73><a href=#cb5-73 aria-hidden=true></a>   (operators      fg)</span>
-<span id=cb5-74><a href=#cb5-74 aria-hidden=true></a>   (<span class=kw>type</span>           fg)</span>
-<span id=cb5-75><a href=#cb5-75 aria-hidden=true></a>   (strings        base0)</span>
-<span id=cb5-76><a href=#cb5-76 aria-hidden=true></a>   (variables      base0)</span>
-<span id=cb5-77><a href=#cb5-77 aria-hidden=true></a>   (numbers        base0)</span>
-<span id=cb5-78><a href=#cb5-78 aria-hidden=true></a>   (region         base4)</span>
-<span id=cb5-79><a href=#cb5-79 aria-hidden=true></a>   (<span class=kw>error</span>          (doom-blend fg <span class=st>&quot;#ff0000&quot;</span> <span class=fl>0.4</span>))</span>
-<span id=cb5-80><a href=#cb5-80 aria-hidden=true></a>   (<span class=kw>warning</span>        base2)</span>
-<span id=cb5-81><a href=#cb5-81 aria-hidden=true></a>   (success        green)</span>
-<span id=cb5-82><a href=#cb5-82 aria-hidden=true></a>   (vc-modified    base5)</span>
-<span id=cb5-83><a href=#cb5-83 aria-hidden=true></a>   (vc-added       (doom-lighten fg <span class=fl>0.7</span>))</span>
-<span id=cb5-84><a href=#cb5-84 aria-hidden=true></a>   (vc-deleted     base2)</span>
-<span id=cb5-85><a href=#cb5-85 aria-hidden=true></a></span>
-<span id=cb5-86><a href=#cb5-86 aria-hidden=true></a>   <span class=co>;; custom categories</span></span>
-<span id=cb5-87><a href=#cb5-87 aria-hidden=true></a>   (-modeline-pad</span>
-<span id=cb5-88><a href=#cb5-88 aria-hidden=true></a>    (<span class=kw>when</span> doom-plain-padded-modeline</span>
-<span id=cb5-89><a href=#cb5-89 aria-hidden=true></a>      (<span class=kw>if</span> (<span class=kw>integerp</span> doom-plain-padded-modeline) doom-plain-padded-modeline <span class=dv>4</span>)))</span>
-<span id=cb5-90><a href=#cb5-90 aria-hidden=true></a></span>
-<span id=cb5-91><a href=#cb5-91 aria-hidden=true></a>   (modeline-bg              (doom-darken bg-alt <span class=fl>0.15</span>))</span>
-<span id=cb5-92><a href=#cb5-92 aria-hidden=true></a>   (modeline-bg-alt          (doom-darken bg-alt <span class=fl>0.1</span>))</span>
-<span id=cb5-93><a href=#cb5-93 aria-hidden=true></a>   (modeline-bg-inactive     (doom-darken bg-alt <span class=fl>0.1</span>))</span>
-<span id=cb5-94><a href=#cb5-94 aria-hidden=true></a>   (modeline-bg-inactive-alt bg-alt)</span>
-<span id=cb5-95><a href=#cb5-95 aria-hidden=true></a>   (modeline-fg              fg)</span>
-<span id=cb5-96><a href=#cb5-96 aria-hidden=true></a>   (modeline-fg-alt          (doom-darken modeline-bg-inactive <span class=fl>0.35</span>)))</span>
-<span id=cb5-97><a href=#cb5-97 aria-hidden=true></a></span>
-<span id=cb5-98><a href=#cb5-98 aria-hidden=true></a>  <span class=co>;;;; Base theme face overrides</span></span>
-<span id=cb5-99><a href=#cb5-99 aria-hidden=true></a>  ((<span class=kw>error</span>   :underline `(:style wave :color ,<span class=kw>error</span>))</span>
-<span id=cb5-100><a href=#cb5-100 aria-hidden=true></a>   (<span class=kw>warning</span> :underline `(:style wave :color ,<span class=kw>warning</span>))</span>
-<span id=cb5-101><a href=#cb5-101 aria-hidden=true></a>   (hl-sentence :foreground <span class=st>&quot;#000000&quot;</span> :background bg)</span>
-<span id=cb5-102><a href=#cb5-102 aria-hidden=true></a>   ((font-lock-constant-face &amp;override)      :slant &#39;italic)</span>
-<span id=cb5-103><a href=#cb5-103 aria-hidden=true></a>   ((font-lock-comment-face &amp;override)       :slant &#39;italic)</span>
-<span id=cb5-104><a href=#cb5-104 aria-hidden=true></a>   ((font-lock-function-name-face &amp;override) :slant &#39;italic)</span>
-<span id=cb5-105><a href=#cb5-105 aria-hidden=true></a>   ((font-lock-type-face &amp;override)          :slant &#39;italic)</span>
-<span id=cb5-106><a href=#cb5-106 aria-hidden=true></a>   (hl-line :background base8)</span>
-<span id=cb5-107><a href=#cb5-107 aria-hidden=true></a>   ((line-number &amp;override) :foreground base3)</span>
-<span id=cb5-108><a href=#cb5-108 aria-hidden=true></a>   ((line-number-current-line &amp;override) :foreground base2)</span>
-<span id=cb5-109><a href=#cb5-109 aria-hidden=true></a>   (mode-line</span>
-<span id=cb5-110><a href=#cb5-110 aria-hidden=true></a>    :background modeline-bg :foreground modeline-fg</span>
-<span id=cb5-111><a href=#cb5-111 aria-hidden=true></a>    :box (<span class=kw>if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg)))</span>
-<span id=cb5-112><a href=#cb5-112 aria-hidden=true></a>   (mode-line-inactive</span>
-<span id=cb5-113><a href=#cb5-113 aria-hidden=true></a>    :background modeline-bg-inactive :foreground modeline-fg-alt</span>
-<span id=cb5-114><a href=#cb5-114 aria-hidden=true></a>    :box (<span class=kw>if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive)))</span>
-<span id=cb5-115><a href=#cb5-115 aria-hidden=true></a>   (mode-line-emphasis :foreground highlight)</span>
-<span id=cb5-116><a href=#cb5-116 aria-hidden=true></a></span>
-<span id=cb5-117><a href=#cb5-117 aria-hidden=true></a>   <span class=co>;;;; doom-modeline</span></span>
-<span id=cb5-118><a href=#cb5-118 aria-hidden=true></a>   (doom-modeline-bar :background modeline-bg)</span>
-<span id=cb5-119><a href=#cb5-119 aria-hidden=true></a>   (doom-modeline-bar-inactive :inherit &#39;doom-modeline-bar)</span>
-<span id=cb5-120><a href=#cb5-120 aria-hidden=true></a>   (doom-modeline-project-dir :foreground fg)</span>
-<span id=cb5-121><a href=#cb5-121 aria-hidden=true></a>   (doom-modeline-buffer-file :foreground fg)</span>
-<span id=cb5-122><a href=#cb5-122 aria-hidden=true></a>   (doom-modeline-buffer-modified :weight &#39;bold :foreground <span class=st>&quot;#000000&quot;</span>)</span>
-<span id=cb5-123><a href=#cb5-123 aria-hidden=true></a>   (doom-modeline-panel :inherit &#39;mode-line-highlight :background base3 :foreground fg)</span>
-<span id=cb5-124><a href=#cb5-124 aria-hidden=true></a>   <span class=co>;;;; ivy</span></span>
-<span id=cb5-125><a href=#cb5-125 aria-hidden=true></a>   (ivy-posframe :background bg-alt)</span>
-<span id=cb5-126><a href=#cb5-126 aria-hidden=true></a>   <span class=co>;;;; magit</span></span>
-<span id=cb5-127><a href=#cb5-127 aria-hidden=true></a>   ((magit-diff-added-highlight &amp;override)   :foreground fg :background (doom-blend vc-added bg <span class=fl>0.3</span>))</span>
-<span id=cb5-128><a href=#cb5-128 aria-hidden=true></a>   ((magit-diff-removed &amp;override)           :foreground (doom-lighten fg <span class=fl>0.4</span>) :background (doom-blend vc-deleted bg <span class=fl>0.1</span>))</span>
-<span id=cb5-129><a href=#cb5-129 aria-hidden=true></a>   ((magit-diff-removed-highlight &amp;override) :foreground fg :background (doom-blend vc-deleted bg <span class=fl>0.22</span>))</span>
-<span id=cb5-130><a href=#cb5-130 aria-hidden=true></a>   <span class=co>;;;; lsp-mode</span></span>
-<span id=cb5-131><a href=#cb5-131 aria-hidden=true></a>   (lsp-headerline-breadcrumb-symbols-face :foreground keywords :weight &#39;bold)</span>
-<span id=cb5-132><a href=#cb5-132 aria-hidden=true></a>   <span class=co>;;;; outline &lt;built-in&gt;</span></span>
-<span id=cb5-133><a href=#cb5-133 aria-hidden=true></a>   (outline<span class=dv>-1</span> :slant &#39;italic :foreground fg-alt)</span>
-<span id=cb5-134><a href=#cb5-134 aria-hidden=true></a>   (outline<span class=dv>-2</span> :inherit &#39;outline<span class=dv>-1</span> :foreground base2)</span>
-<span id=cb5-135><a href=#cb5-135 aria-hidden=true></a>   (outline<span class=dv>-3</span> :inherit &#39;outline<span class=dv>-2</span>)</span>
-<span id=cb5-136><a href=#cb5-136 aria-hidden=true></a>   (outline<span class=dv>-4</span> :inherit &#39;outline<span class=dv>-3</span>)</span>
-<span id=cb5-137><a href=#cb5-137 aria-hidden=true></a>   (outline<span class=dv>-5</span> :inherit &#39;outline<span class=dv>-4</span>)</span>
-<span id=cb5-138><a href=#cb5-138 aria-hidden=true></a>   (outline<span class=dv>-6</span> :inherit &#39;outline<span class=dv>-5</span>)</span>
-<span id=cb5-139><a href=#cb5-139 aria-hidden=true></a>   (outline<span class=dv>-7</span> :inherit &#39;outline<span class=dv>-6</span>)</span>
-<span id=cb5-140><a href=#cb5-140 aria-hidden=true></a>   (outline<span class=dv>-8</span> :inherit &#39;outline<span class=dv>-7</span>)</span>
-<span id=cb5-141><a href=#cb5-141 aria-hidden=true></a>   <span class=co>;;;; org &lt;built-in&gt;</span></span>
-<span id=cb5-142><a href=#cb5-142 aria-hidden=true></a>   ((org-block &amp;override) :background bg-alt)</span>
-<span id=cb5-143><a href=#cb5-143 aria-hidden=true></a>   ((org-block-begin-line &amp;override) :foreground base5)</span>
-<span id=cb5-144><a href=#cb5-144 aria-hidden=true></a>   <span class=co>;;;; solaire-mode</span></span>
-<span id=cb5-145><a href=#cb5-145 aria-hidden=true></a>   (solaire-mode-line-face</span>
-<span id=cb5-146><a href=#cb5-146 aria-hidden=true></a>    :inherit &#39;mode-line</span>
-<span id=cb5-147><a href=#cb5-147 aria-hidden=true></a>    :background modeline-bg-alt</span>
-<span id=cb5-148><a href=#cb5-148 aria-hidden=true></a>    :box (<span class=kw>if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-alt)))</span>
-<span id=cb5-149><a href=#cb5-149 aria-hidden=true></a>   (solaire-mode-line-inactive-face</span>
-<span id=cb5-150><a href=#cb5-150 aria-hidden=true></a>    :inherit &#39;mode-line-inactive</span>
-<span id=cb5-151><a href=#cb5-151 aria-hidden=true></a>    :background modeline-bg-inactive-alt</span>
-<span id=cb5-152><a href=#cb5-152 aria-hidden=true></a>    :box (<span class=kw>if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive-alt)))))</span>
-<span id=cb5-153><a href=#cb5-153 aria-hidden=true></a></span>
-<span id=cb5-154><a href=#cb5-154 aria-hidden=true></a><span class=co>;;; doom-zen-writer-theme.el ends here</span></span></code></pre></div></article></main><footer id=postamble class=status><div class=content><nav role=navigation><a href=/index.html>Home</a> |
+</code></pre><h2 id=helpers>Helpers</h2><p>You probably want to be able to put you out of this writing mode.
+Here is a <a href=zen-writer.el>zen-writer.el</a> file that contain my
+keymaps and useful functions.<p>Put it in you <code class=verbatim>~/.doom.d/</code> directory and
+in you <code class=verbatim>config.el</code> put<div class=sourceCode id=cb2 data-org-language=emacs-lisp><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id=cb2-1><a href=#cb2-1 aria-hidden=true tabindex=-1></a>(load! <span class=st>&quot;~/.doom.d/zen-writer.el&quot;</span>)</span></code></pre></div><p>And with this you should pass to zen mode with
+<code>SPC y z z</code>.<p>To make the un-zen works. You will need to have a
+<code>y/auto-update-theme</code> function that set your current theme.
+My function change the theme depending on the time of the day or the day
+of the week.<p>So here it is for inspiration:<div class=sourceCode id=cb3 data-org-language=emacs-lisp><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id=cb3-1><a href=#cb3-1 aria-hidden=true tabindex=-1></a>(<span class=kw>defun</span><span class=fu> y/auto-update-theme </span>()</span>
+<span id=cb3-2><a href=#cb3-2 aria-hidden=true tabindex=-1></a>  <span class=st>&quot;depending on time use different theme&quot;</span></span>
+<span id=cb3-3><a href=#cb3-3 aria-hidden=true tabindex=-1></a>  <span class=co>;; very early =&gt; gruvbox-light, solarized-light, nord-light</span></span>
+<span id=cb3-4><a href=#cb3-4 aria-hidden=true tabindex=-1></a>  (<span class=kw>let*</span> ((day-of-week (format-time-string <span class=st>&quot;%a&quot;</span>))</span>
+<span id=cb3-5><a href=#cb3-5 aria-hidden=true tabindex=-1></a>         (week-end? (<span class=kw>or</span> (<span class=kw>equal</span> <span class=st>&quot;Sat&quot;</span> day-of-week)</span>
+<span id=cb3-6><a href=#cb3-6 aria-hidden=true tabindex=-1></a>                        (<span class=kw>equal</span> <span class=st>&quot;Sun&quot;</span> day-of-week)))</span>
+<span id=cb3-7><a href=#cb3-7 aria-hidden=true tabindex=-1></a>         (hour (<span class=kw>nth</span> <span class=dv>2</span> (decode-time (current-time))))</span>
+<span id=cb3-8><a href=#cb3-8 aria-hidden=true tabindex=-1></a>         (time-to-sleep? (<span class=kw>or</span> (<span class=op>&gt;</span> hour <span class=dv>22</span>) (<span class=op>&lt;</span> hour <span class=dv>7</span>)))</span>
+<span id=cb3-9><a href=#cb3-9 aria-hidden=true tabindex=-1></a></span>
+<span id=cb3-10><a href=#cb3-10 aria-hidden=true tabindex=-1></a>         (theme (<span class=kw>cond</span></span>
+<span id=cb3-11><a href=#cb3-11 aria-hidden=true tabindex=-1></a>                 (time-to-sleep?  &#39;doom-plain-dark)</span>
+<span id=cb3-12><a href=#cb3-12 aria-hidden=true tabindex=-1></a>                 (week-end?       &#39;doom-nord-light)</span>
+<span id=cb3-13><a href=#cb3-13 aria-hidden=true tabindex=-1></a>                 ((<span class=op>&lt;=</span> <span class=dv>7</span> hour <span class=dv>8</span>)   &#39;doom-gruvbox-light)</span>
+<span id=cb3-14><a href=#cb3-14 aria-hidden=true tabindex=-1></a>                 ((<span class=op>=</span> <span class=dv>9</span> hour)      &#39;doom-solarized-light)</span>
+<span id=cb3-15><a href=#cb3-15 aria-hidden=true tabindex=-1></a>                 ((<span class=op>&lt;=</span> <span class=dv>10</span> hour <span class=dv>16</span>) &#39;doom-solarized-white)</span>
+<span id=cb3-16><a href=#cb3-16 aria-hidden=true tabindex=-1></a>                 ((<span class=op>&lt;=</span> <span class=dv>17</span> hour <span class=dv>18</span>) &#39;doom-gruvbox-light)</span>
+<span id=cb3-17><a href=#cb3-17 aria-hidden=true tabindex=-1></a>                 ((<span class=op>&lt;=</span> <span class=dv>19</span> hour <span class=dv>22</span>) &#39;doom-oceanic-next))))</span>
+<span id=cb3-18><a href=#cb3-18 aria-hidden=true tabindex=-1></a>    (<span class=kw>when</span> (<span class=kw>not</span> (<span class=kw>equal</span> doom-theme theme))</span>
+<span id=cb3-19><a href=#cb3-19 aria-hidden=true tabindex=-1></a>      (<span class=kw>setq</span> doom-theme theme)</span>
+<span id=cb3-20><a href=#cb3-20 aria-hidden=true tabindex=-1></a>      (load-theme doom-theme <span class=kw>t</span>))</span>
+<span id=cb3-21><a href=#cb3-21 aria-hidden=true tabindex=-1></a>    <span class=co>;; run that function again next hour</span></span>
+<span id=cb3-22><a href=#cb3-22 aria-hidden=true tabindex=-1></a>    (run-at-time (<span class=kw>format</span> <span class=st>&quot;%02d:%02d&quot;</span> (<span class=op>+</span> hour <span class=dv>1</span>) <span class=dv>0</span>) <span class=kw>nil</span> &#39;y/auto-update-theme)))</span></code></pre></div><h2 id=bonus>Bonus</h2><p>I use Nerd Fonts and in particular the font `iMWritingDuoS` which is
+I think a clone of the iAWriter font.<div class=sourceCode id=cb4 data-org-language=emacs-lisp><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id=cb4-1><a href=#cb4-1 aria-hidden=true tabindex=-1></a>(<span class=kw>setq</span> doom-variable-pitch-font</span>
+<span id=cb4-2><a href=#cb4-2 aria-hidden=true tabindex=-1></a>      (font-spec :family <span class=st>&quot;iMWritingDuoS Nerd Font&quot;</span> :size <span class=dv>12</span>))</span></code></pre></div><p>I hope you find this useful. I really like how it looks now.<h2 id=annex>Annex</h2><p>The code source used in this article.<h3 id=zen-writer>zen-writer</h3><div class=sourceCode id=zen-writer.el data-org-language=emacs-lisp data-tangle=zen-writer.el><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id=zen-writer.el-1><a href=#zen-writer.el-1 aria-hidden=true tabindex=-1></a><span class=co>;;; zen-writer.el -*- lexical-binding: t; -*-</span></span>
+<span id=zen-writer.el-2><a href=#zen-writer.el-2 aria-hidden=true tabindex=-1></a></span>
+<span id=zen-writer.el-3><a href=#zen-writer.el-3 aria-hidden=true tabindex=-1></a>(<span class=kw>defun</span><span class=fu> y/zen </span>()</span>
+<span id=zen-writer.el-4><a href=#zen-writer.el-4 aria-hidden=true tabindex=-1></a>  (interactive)</span>
+<span id=zen-writer.el-5><a href=#zen-writer.el-5 aria-hidden=true tabindex=-1></a>  (<span class=kw>setq</span> doom-theme &#39;doom-zen-writer)</span>
+<span id=zen-writer.el-6><a href=#zen-writer.el-6 aria-hidden=true tabindex=-1></a>  (load-theme doom-theme <span class=kw>t</span>)</span>
+<span id=zen-writer.el-7><a href=#zen-writer.el-7 aria-hidden=true tabindex=-1></a>  (hl-sentence-mode +<span class=dv>1</span>))</span>
+<span id=zen-writer.el-8><a href=#zen-writer.el-8 aria-hidden=true tabindex=-1></a></span>
+<span id=zen-writer.el-9><a href=#zen-writer.el-9 aria-hidden=true tabindex=-1></a>(<span class=kw>defun</span><span class=fu> y/unzen </span>()</span>
+<span id=zen-writer.el-10><a href=#zen-writer.el-10 aria-hidden=true tabindex=-1></a>  (interactive)</span>
+<span id=zen-writer.el-11><a href=#zen-writer.el-11 aria-hidden=true tabindex=-1></a>  (y/auto-update-theme)</span>
+<span id=zen-writer.el-12><a href=#zen-writer.el-12 aria-hidden=true tabindex=-1></a>  (hl-sentence-mode -<span class=dv>1</span>))</span>
+<span id=zen-writer.el-13><a href=#zen-writer.el-13 aria-hidden=true tabindex=-1></a></span>
+<span id=zen-writer.el-14><a href=#zen-writer.el-14 aria-hidden=true tabindex=-1></a>(<span class=kw>defun</span><span class=fu> y/zen-full </span>()</span>
+<span id=zen-writer.el-15><a href=#zen-writer.el-15 aria-hidden=true tabindex=-1></a>  (interactive)</span>
+<span id=zen-writer.el-16><a href=#zen-writer.el-16 aria-hidden=true tabindex=-1></a>  (y/zen)</span>
+<span id=zen-writer.el-17><a href=#zen-writer.el-17 aria-hidden=true tabindex=-1></a>  (toggle-frame-fullscreen)</span>
+<span id=zen-writer.el-18><a href=#zen-writer.el-18 aria-hidden=true tabindex=-1></a>  (doom-big-font-mode +<span class=dv>1</span>))</span>
+<span id=zen-writer.el-19><a href=#zen-writer.el-19 aria-hidden=true tabindex=-1></a></span>
+<span id=zen-writer.el-20><a href=#zen-writer.el-20 aria-hidden=true tabindex=-1></a>(<span class=kw>defun</span><span class=fu> y/unzen-full </span>()</span>
+<span id=zen-writer.el-21><a href=#zen-writer.el-21 aria-hidden=true tabindex=-1></a>  (interactive)</span>
+<span id=zen-writer.el-22><a href=#zen-writer.el-22 aria-hidden=true tabindex=-1></a>  (y/unzen)</span>
+<span id=zen-writer.el-23><a href=#zen-writer.el-23 aria-hidden=true tabindex=-1></a>  (toggle-frame-fullscreen)</span>
+<span id=zen-writer.el-24><a href=#zen-writer.el-24 aria-hidden=true tabindex=-1></a>  (doom-big-font-mode -<span class=dv>1</span>))</span>
+<span id=zen-writer.el-25><a href=#zen-writer.el-25 aria-hidden=true tabindex=-1></a></span>
+<span id=zen-writer.el-26><a href=#zen-writer.el-26 aria-hidden=true tabindex=-1></a>(map! :leader</span>
+<span id=zen-writer.el-27><a href=#zen-writer.el-27 aria-hidden=true tabindex=-1></a>      (:prefix (<span class=st>&quot;y z&quot;</span> . <span class=st>&quot;Zen Writer&quot;</span>)</span>
+<span id=zen-writer.el-28><a href=#zen-writer.el-28 aria-hidden=true tabindex=-1></a>       :desc <span class=st>&quot;Full Zen Writer&quot;</span> <span class=st>&quot;z&quot;</span> #&#39;y/zen-full</span>
+<span id=zen-writer.el-29><a href=#zen-writer.el-29 aria-hidden=true tabindex=-1></a>       :desc <span class=st>&quot;un-Full Zen Writer&quot;</span> <span class=st>&quot;u&quot;</span> #&#39;y/unzen-full</span>
+<span id=zen-writer.el-30><a href=#zen-writer.el-30 aria-hidden=true tabindex=-1></a>       :desc <span class=st>&quot;Zen Writer&quot;</span> <span class=st>&quot;t&quot;</span> #&#39;y/zen</span>
+<span id=zen-writer.el-31><a href=#zen-writer.el-31 aria-hidden=true tabindex=-1></a>       :desc <span class=st>&quot;un-Zen Writer&quot;</span> <span class=st>&quot;q&quot;</span> #&#39;y/unzen))</span></code></pre></div><h3 id=zen-writer-doom-theme>zen-writer doom theme</h3><div class=sourceCode id=cb5 data-org-language=emacs-lisp data-tangle=doom-zen-writer-theme.el><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id=cb5-1><a href=#cb5-1 aria-hidden=true tabindex=-1></a><span class=co>;;; doom-zen-writer-theme.el --- -*- lexical-binding: t; no-byte-compile: t; -*-</span></span>
+<span id=cb5-2><a href=#cb5-2 aria-hidden=true tabindex=-1></a><span class=co>;;</span></span>
+<span id=cb5-3><a href=#cb5-3 aria-hidden=true tabindex=-1></a><span class=co>;; Author: Yann Esposito &lt;https://github.com/yogsototh&gt;</span></span>
+<span id=cb5-4><a href=#cb5-4 aria-hidden=true tabindex=-1></a><span class=co>;; Created: October 24, 2021</span></span>
+<span id=cb5-5><a href=#cb5-5 aria-hidden=true tabindex=-1></a><span class=co>;; Version: 1.0.0</span></span>
+<span id=cb5-6><a href=#cb5-6 aria-hidden=true tabindex=-1></a><span class=co>;; Keywords: custom themes, faces</span></span>
+<span id=cb5-7><a href=#cb5-7 aria-hidden=true tabindex=-1></a><span class=co>;; Homepage: https://github.com/hlissner/emacs-doom-themes</span></span>
+<span id=cb5-8><a href=#cb5-8 aria-hidden=true tabindex=-1></a><span class=co>;; Package-Requires: ((emacs &quot;25.1&quot;) (cl-lib &quot;0.5&quot;) (doom-themes &quot;2.2.1&quot;))</span></span>
+<span id=cb5-9><a href=#cb5-9 aria-hidden=true tabindex=-1></a><span class=co>;;</span></span>
+<span id=cb5-10><a href=#cb5-10 aria-hidden=true tabindex=-1></a><span class=co>;;; Code:</span></span>
+<span id=cb5-11><a href=#cb5-11 aria-hidden=true tabindex=-1></a></span>
+<span id=cb5-12><a href=#cb5-12 aria-hidden=true tabindex=-1></a>(<span class=kw>require</span> &#39;doom-themes)</span>
+<span id=cb5-13><a href=#cb5-13 aria-hidden=true tabindex=-1></a></span>
+<span id=cb5-14><a href=#cb5-14 aria-hidden=true tabindex=-1></a><span class=co>;;</span></span>
+<span id=cb5-15><a href=#cb5-15 aria-hidden=true tabindex=-1></a><span class=co>;;; Variables</span></span>
+<span id=cb5-16><a href=#cb5-16 aria-hidden=true tabindex=-1></a></span>
+<span id=cb5-17><a href=#cb5-17 aria-hidden=true tabindex=-1></a>(defgroup doom-plain-theme <span class=kw>nil</span></span>
+<span id=cb5-18><a href=#cb5-18 aria-hidden=true tabindex=-1></a>  <span class=st>&quot;Options for the `doom-plain&#39; theme.&quot;</span></span>
+<span id=cb5-19><a href=#cb5-19 aria-hidden=true tabindex=-1></a>  :group &#39;doom-themes)</span>
+<span id=cb5-20><a href=#cb5-20 aria-hidden=true tabindex=-1></a></span>
+<span id=cb5-21><a href=#cb5-21 aria-hidden=true tabindex=-1></a>(defcustom doom-plain-padded-modeline doom-themes-padded-modeline</span>
+<span id=cb5-22><a href=#cb5-22 aria-hidden=true tabindex=-1></a>  <span class=st>&quot;If non-nil, adds a 4px padding to the mode-line.</span></span>
+<span id=cb5-23><a href=#cb5-23 aria-hidden=true tabindex=-1></a><span class=st>Can be an integer to determine the exact padding.&quot;</span></span>
+<span id=cb5-24><a href=#cb5-24 aria-hidden=true tabindex=-1></a>  :group &#39;doom-plain-theme</span>
+<span id=cb5-25><a href=#cb5-25 aria-hidden=true tabindex=-1></a>  <span class=bu>:type</span> &#39;(<span class=kw>or</span> <span class=kw>integer</span> <span class=kw>boolean</span>))</span>
+<span id=cb5-26><a href=#cb5-26 aria-hidden=true tabindex=-1></a></span>
+<span id=cb5-27><a href=#cb5-27 aria-hidden=true tabindex=-1></a></span>
+<span id=cb5-28><a href=#cb5-28 aria-hidden=true tabindex=-1></a><span class=co>;;</span></span>
+<span id=cb5-29><a href=#cb5-29 aria-hidden=true tabindex=-1></a><span class=co>;;; Theme definition</span></span>
+<span id=cb5-30><a href=#cb5-30 aria-hidden=true tabindex=-1></a></span>
+<span id=cb5-31><a href=#cb5-31 aria-hidden=true tabindex=-1></a>(def-doom-theme doom-zen-writer</span>
+<span id=cb5-32><a href=#cb5-32 aria-hidden=true tabindex=-1></a>  <span class=st>&quot;Theme inspired by gko&#39;s plain.&quot;</span></span>
+<span id=cb5-33><a href=#cb5-33 aria-hidden=true tabindex=-1></a></span>
+<span id=cb5-34><a href=#cb5-34 aria-hidden=true tabindex=-1></a>  <span class=co>;; name      default/256/16</span></span>
+<span id=cb5-35><a href=#cb5-35 aria-hidden=true tabindex=-1></a>  ((bg         &#39;(<span class=st>&quot;#ffffff&quot;</span>))</span>
+<span id=cb5-36><a href=#cb5-36 aria-hidden=true tabindex=-1></a>   (bg-alt     &#39;(<span class=st>&quot;#eaecea&quot;</span>))</span>
+<span id=cb5-37><a href=#cb5-37 aria-hidden=true tabindex=-1></a>   (base0      &#39;(<span class=st>&quot;#969896&quot;</span>))</span>
+<span id=cb5-38><a href=#cb5-38 aria-hidden=true tabindex=-1></a>   (base1      &#39;(<span class=st>&quot;#f1f3f5&quot;</span>))</span>
+<span id=cb5-39><a href=#cb5-39 aria-hidden=true tabindex=-1></a>   (base2      &#39;(<span class=st>&quot;#606666&quot;</span>))</span>
+<span id=cb5-40><a href=#cb5-40 aria-hidden=true tabindex=-1></a>   (base3      &#39;(<span class=st>&quot;#cccccc&quot;</span>))</span>
+<span id=cb5-41><a href=#cb5-41 aria-hidden=true tabindex=-1></a>   (base4      &#39;(<span class=st>&quot;#e7e7e7&quot;</span>))</span>
+<span id=cb5-42><a href=#cb5-42 aria-hidden=true tabindex=-1></a>   (base5      &#39;(<span class=st>&quot;#a5a8a6&quot;</span>))</span>
+<span id=cb5-43><a href=#cb5-43 aria-hidden=true tabindex=-1></a>   (base6      &#39;(<span class=st>&quot;#fafafa&quot;</span>))</span>
+<span id=cb5-44><a href=#cb5-44 aria-hidden=true tabindex=-1></a>   (base7      &#39;(<span class=st>&quot;#dfdfdf&quot;</span>))</span>
+<span id=cb5-45><a href=#cb5-45 aria-hidden=true tabindex=-1></a>   (base8      &#39;(<span class=st>&quot;#fafafa&quot;</span>))</span>
+<span id=cb5-46><a href=#cb5-46 aria-hidden=true tabindex=-1></a>   (fg         &#39;(<span class=st>&quot;#969896&quot;</span>))</span>
+<span id=cb5-47><a href=#cb5-47 aria-hidden=true tabindex=-1></a>   (fg-alt     (doom-lighten fg <span class=fl>0.15</span>))</span>
+<span id=cb5-48><a href=#cb5-48 aria-hidden=true tabindex=-1></a></span>
+<span id=cb5-49><a href=#cb5-49 aria-hidden=true tabindex=-1></a>   (grey       fg)</span>
+<span id=cb5-50><a href=#cb5-50 aria-hidden=true tabindex=-1></a>   (red        fg)</span>
+<span id=cb5-51><a href=#cb5-51 aria-hidden=true tabindex=-1></a>   (blue       fg)</span>
+<span id=cb5-52><a href=#cb5-52 aria-hidden=true tabindex=-1></a>   (dark-blue  fg)</span>
+<span id=cb5-53><a href=#cb5-53 aria-hidden=true tabindex=-1></a>   (orange     fg)</span>
+<span id=cb5-54><a href=#cb5-54 aria-hidden=true tabindex=-1></a>   (green      fg)</span>
+<span id=cb5-55><a href=#cb5-55 aria-hidden=true tabindex=-1></a>   (teal       fg)</span>
+<span id=cb5-56><a href=#cb5-56 aria-hidden=true tabindex=-1></a>   (yellow     fg)</span>
+<span id=cb5-57><a href=#cb5-57 aria-hidden=true tabindex=-1></a>   (magenta    fg)</span>
+<span id=cb5-58><a href=#cb5-58 aria-hidden=true tabindex=-1></a>   (violet     fg)</span>
+<span id=cb5-59><a href=#cb5-59 aria-hidden=true tabindex=-1></a>   (cyan       fg)</span>
+<span id=cb5-60><a href=#cb5-60 aria-hidden=true tabindex=-1></a>   (dark-cyan  fg)</span>
+<span id=cb5-61><a href=#cb5-61 aria-hidden=true tabindex=-1></a></span>
+<span id=cb5-62><a href=#cb5-62 aria-hidden=true tabindex=-1></a>   <span class=co>;; face categories -- required for all themes</span></span>
+<span id=cb5-63><a href=#cb5-63 aria-hidden=true tabindex=-1></a>   (highlight      base2)</span>
+<span id=cb5-64><a href=#cb5-64 aria-hidden=true tabindex=-1></a>   (vertical-bar   base5)</span>
+<span id=cb5-65><a href=#cb5-65 aria-hidden=true tabindex=-1></a>   (selection      base1)</span>
+<span id=cb5-66><a href=#cb5-66 aria-hidden=true tabindex=-1></a>   (builtin        base0)</span>
+<span id=cb5-67><a href=#cb5-67 aria-hidden=true tabindex=-1></a>   (comments       base5)</span>
+<span id=cb5-68><a href=#cb5-68 aria-hidden=true tabindex=-1></a>   (doc-comments   base5)</span>
+<span id=cb5-69><a href=#cb5-69 aria-hidden=true tabindex=-1></a>   (constants      base0)</span>
+<span id=cb5-70><a href=#cb5-70 aria-hidden=true tabindex=-1></a>   (functions      fg)</span>
+<span id=cb5-71><a href=#cb5-71 aria-hidden=true tabindex=-1></a>   (keywords       fg)</span>
+<span id=cb5-72><a href=#cb5-72 aria-hidden=true tabindex=-1></a>   (methods        fg)</span>
+<span id=cb5-73><a href=#cb5-73 aria-hidden=true tabindex=-1></a>   (operators      fg)</span>
+<span id=cb5-74><a href=#cb5-74 aria-hidden=true tabindex=-1></a>   (<span class=kw>type</span>           fg)</span>
+<span id=cb5-75><a href=#cb5-75 aria-hidden=true tabindex=-1></a>   (strings        base0)</span>
+<span id=cb5-76><a href=#cb5-76 aria-hidden=true tabindex=-1></a>   (variables      base0)</span>
+<span id=cb5-77><a href=#cb5-77 aria-hidden=true tabindex=-1></a>   (numbers        base0)</span>
+<span id=cb5-78><a href=#cb5-78 aria-hidden=true tabindex=-1></a>   (region         base4)</span>
+<span id=cb5-79><a href=#cb5-79 aria-hidden=true tabindex=-1></a>   (<span class=kw>error</span>          (doom-blend fg <span class=st>&quot;#ff0000&quot;</span> <span class=fl>0.4</span>))</span>
+<span id=cb5-80><a href=#cb5-80 aria-hidden=true tabindex=-1></a>   (<span class=kw>warning</span>        base2)</span>
+<span id=cb5-81><a href=#cb5-81 aria-hidden=true tabindex=-1></a>   (success        green)</span>
+<span id=cb5-82><a href=#cb5-82 aria-hidden=true tabindex=-1></a>   (vc-modified    base5)</span>
+<span id=cb5-83><a href=#cb5-83 aria-hidden=true tabindex=-1></a>   (vc-added       (doom-lighten fg <span class=fl>0.7</span>))</span>
+<span id=cb5-84><a href=#cb5-84 aria-hidden=true tabindex=-1></a>   (vc-deleted     base2)</span>
+<span id=cb5-85><a href=#cb5-85 aria-hidden=true tabindex=-1></a></span>
+<span id=cb5-86><a href=#cb5-86 aria-hidden=true tabindex=-1></a>   <span class=co>;; custom categories</span></span>
+<span id=cb5-87><a href=#cb5-87 aria-hidden=true tabindex=-1></a>   (-modeline-pad</span>
+<span id=cb5-88><a href=#cb5-88 aria-hidden=true tabindex=-1></a>    (<span class=kw>when</span> doom-plain-padded-modeline</span>
+<span id=cb5-89><a href=#cb5-89 aria-hidden=true tabindex=-1></a>      (<span class=kw>if</span> (<span class=kw>integerp</span> doom-plain-padded-modeline) doom-plain-padded-modeline <span class=dv>4</span>)))</span>
+<span id=cb5-90><a href=#cb5-90 aria-hidden=true tabindex=-1></a></span>
+<span id=cb5-91><a href=#cb5-91 aria-hidden=true tabindex=-1></a>   (modeline-bg              (doom-darken bg-alt <span class=fl>0.15</span>))</span>
+<span id=cb5-92><a href=#cb5-92 aria-hidden=true tabindex=-1></a>   (modeline-bg-alt          (doom-darken bg-alt <span class=fl>0.1</span>))</span>
+<span id=cb5-93><a href=#cb5-93 aria-hidden=true tabindex=-1></a>   (modeline-bg-inactive     (doom-darken bg-alt <span class=fl>0.1</span>))</span>
+<span id=cb5-94><a href=#cb5-94 aria-hidden=true tabindex=-1></a>   (modeline-bg-inactive-alt bg-alt)</span>
+<span id=cb5-95><a href=#cb5-95 aria-hidden=true tabindex=-1></a>   (modeline-fg              fg)</span>
+<span id=cb5-96><a href=#cb5-96 aria-hidden=true tabindex=-1></a>   (modeline-fg-alt          (doom-darken modeline-bg-inactive <span class=fl>0.35</span>)))</span>
+<span id=cb5-97><a href=#cb5-97 aria-hidden=true tabindex=-1></a></span>
+<span id=cb5-98><a href=#cb5-98 aria-hidden=true tabindex=-1></a>  <span class=co>;;;; Base theme face overrides</span></span>
+<span id=cb5-99><a href=#cb5-99 aria-hidden=true tabindex=-1></a>  ((<span class=kw>error</span>   :underline `(:style wave :color ,<span class=kw>error</span>))</span>
+<span id=cb5-100><a href=#cb5-100 aria-hidden=true tabindex=-1></a>   (<span class=kw>warning</span> :underline `(:style wave :color ,<span class=kw>warning</span>))</span>
+<span id=cb5-101><a href=#cb5-101 aria-hidden=true tabindex=-1></a>   (hl-sentence :foreground <span class=st>&quot;#000000&quot;</span> :background bg)</span>
+<span id=cb5-102><a href=#cb5-102 aria-hidden=true tabindex=-1></a>   ((font-lock-constant-face &amp;override)      :slant &#39;italic)</span>
+<span id=cb5-103><a href=#cb5-103 aria-hidden=true tabindex=-1></a>   ((font-lock-comment-face &amp;override)       :slant &#39;italic)</span>
+<span id=cb5-104><a href=#cb5-104 aria-hidden=true tabindex=-1></a>   ((font-lock-function-name-face &amp;override) :slant &#39;italic)</span>
+<span id=cb5-105><a href=#cb5-105 aria-hidden=true tabindex=-1></a>   ((font-lock-type-face &amp;override)          :slant &#39;italic)</span>
+<span id=cb5-106><a href=#cb5-106 aria-hidden=true tabindex=-1></a>   (hl-line :background base8)</span>
+<span id=cb5-107><a href=#cb5-107 aria-hidden=true tabindex=-1></a>   ((line-number &amp;override) :foreground base3)</span>
+<span id=cb5-108><a href=#cb5-108 aria-hidden=true tabindex=-1></a>   ((line-number-current-line &amp;override) :foreground base2)</span>
+<span id=cb5-109><a href=#cb5-109 aria-hidden=true tabindex=-1></a>   (mode-line</span>
+<span id=cb5-110><a href=#cb5-110 aria-hidden=true tabindex=-1></a>    :background modeline-bg :foreground modeline-fg</span>
+<span id=cb5-111><a href=#cb5-111 aria-hidden=true tabindex=-1></a>    :box (<span class=kw>if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg)))</span>
+<span id=cb5-112><a href=#cb5-112 aria-hidden=true tabindex=-1></a>   (mode-line-inactive</span>
+<span id=cb5-113><a href=#cb5-113 aria-hidden=true tabindex=-1></a>    :background modeline-bg-inactive :foreground modeline-fg-alt</span>
+<span id=cb5-114><a href=#cb5-114 aria-hidden=true tabindex=-1></a>    :box (<span class=kw>if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive)))</span>
+<span id=cb5-115><a href=#cb5-115 aria-hidden=true tabindex=-1></a>   (mode-line-emphasis :foreground highlight)</span>
+<span id=cb5-116><a href=#cb5-116 aria-hidden=true tabindex=-1></a></span>
+<span id=cb5-117><a href=#cb5-117 aria-hidden=true tabindex=-1></a>   <span class=co>;;;; doom-modeline</span></span>
+<span id=cb5-118><a href=#cb5-118 aria-hidden=true tabindex=-1></a>   (doom-modeline-bar :background modeline-bg)</span>
+<span id=cb5-119><a href=#cb5-119 aria-hidden=true tabindex=-1></a>   (doom-modeline-bar-inactive :inherit &#39;doom-modeline-bar)</span>
+<span id=cb5-120><a href=#cb5-120 aria-hidden=true tabindex=-1></a>   (doom-modeline-project-dir :foreground fg)</span>
+<span id=cb5-121><a href=#cb5-121 aria-hidden=true tabindex=-1></a>   (doom-modeline-buffer-file :foreground fg)</span>
+<span id=cb5-122><a href=#cb5-122 aria-hidden=true tabindex=-1></a>   (doom-modeline-buffer-modified :weight &#39;bold :foreground <span class=st>&quot;#000000&quot;</span>)</span>
+<span id=cb5-123><a href=#cb5-123 aria-hidden=true tabindex=-1></a>   (doom-modeline-panel :inherit &#39;mode-line-highlight :background base3 :foreground fg)</span>
+<span id=cb5-124><a href=#cb5-124 aria-hidden=true tabindex=-1></a>   <span class=co>;;;; ivy</span></span>
+<span id=cb5-125><a href=#cb5-125 aria-hidden=true tabindex=-1></a>   (ivy-posframe :background bg-alt)</span>
+<span id=cb5-126><a href=#cb5-126 aria-hidden=true tabindex=-1></a>   <span class=co>;;;; magit</span></span>
+<span id=cb5-127><a href=#cb5-127 aria-hidden=true tabindex=-1></a>   ((magit-diff-added-highlight &amp;override)   :foreground fg :background (doom-blend vc-added bg <span class=fl>0.3</span>))</span>
+<span id=cb5-128><a href=#cb5-128 aria-hidden=true tabindex=-1></a>   ((magit-diff-removed &amp;override)           :foreground (doom-lighten fg <span class=fl>0.4</span>) :background (doom-blend vc-deleted bg <span class=fl>0.1</span>))</span>
+<span id=cb5-129><a href=#cb5-129 aria-hidden=true tabindex=-1></a>   ((magit-diff-removed-highlight &amp;override) :foreground fg :background (doom-blend vc-deleted bg <span class=fl>0.22</span>))</span>
+<span id=cb5-130><a href=#cb5-130 aria-hidden=true tabindex=-1></a>   <span class=co>;;;; lsp-mode</span></span>
+<span id=cb5-131><a href=#cb5-131 aria-hidden=true tabindex=-1></a>   (lsp-headerline-breadcrumb-symbols-face :foreground keywords :weight &#39;bold)</span>
+<span id=cb5-132><a href=#cb5-132 aria-hidden=true tabindex=-1></a>   <span class=co>;;;; outline &lt;built-in&gt;</span></span>
+<span id=cb5-133><a href=#cb5-133 aria-hidden=true tabindex=-1></a>   (outline<span class=dv>-1</span> :slant &#39;italic :foreground fg-alt)</span>
+<span id=cb5-134><a href=#cb5-134 aria-hidden=true tabindex=-1></a>   (outline<span class=dv>-2</span> :inherit &#39;outline<span class=dv>-1</span> :foreground base2)</span>
+<span id=cb5-135><a href=#cb5-135 aria-hidden=true tabindex=-1></a>   (outline<span class=dv>-3</span> :inherit &#39;outline<span class=dv>-2</span>)</span>
+<span id=cb5-136><a href=#cb5-136 aria-hidden=true tabindex=-1></a>   (outline<span class=dv>-4</span> :inherit &#39;outline<span class=dv>-3</span>)</span>
+<span id=cb5-137><a href=#cb5-137 aria-hidden=true tabindex=-1></a>   (outline<span class=dv>-5</span> :inherit &#39;outline<span class=dv>-4</span>)</span>
+<span id=cb5-138><a href=#cb5-138 aria-hidden=true tabindex=-1></a>   (outline<span class=dv>-6</span> :inherit &#39;outline<span class=dv>-5</span>)</span>
+<span id=cb5-139><a href=#cb5-139 aria-hidden=true tabindex=-1></a>   (outline<span class=dv>-7</span> :inherit &#39;outline<span class=dv>-6</span>)</span>
+<span id=cb5-140><a href=#cb5-140 aria-hidden=true tabindex=-1></a>   (outline<span class=dv>-8</span> :inherit &#39;outline<span class=dv>-7</span>)</span>
+<span id=cb5-141><a href=#cb5-141 aria-hidden=true tabindex=-1></a>   <span class=co>;;;; org &lt;built-in&gt;</span></span>
+<span id=cb5-142><a href=#cb5-142 aria-hidden=true tabindex=-1></a>   ((org-block &amp;override) :background bg-alt)</span>
+<span id=cb5-143><a href=#cb5-143 aria-hidden=true tabindex=-1></a>   ((org-block-begin-line &amp;override) :foreground base5)</span>
+<span id=cb5-144><a href=#cb5-144 aria-hidden=true tabindex=-1></a>   <span class=co>;;;; solaire-mode</span></span>
+<span id=cb5-145><a href=#cb5-145 aria-hidden=true tabindex=-1></a>   (solaire-mode-line-face</span>
+<span id=cb5-146><a href=#cb5-146 aria-hidden=true tabindex=-1></a>    :inherit &#39;mode-line</span>
+<span id=cb5-147><a href=#cb5-147 aria-hidden=true tabindex=-1></a>    :background modeline-bg-alt</span>
+<span id=cb5-148><a href=#cb5-148 aria-hidden=true tabindex=-1></a>    :box (<span class=kw>if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-alt)))</span>
+<span id=cb5-149><a href=#cb5-149 aria-hidden=true tabindex=-1></a>   (solaire-mode-line-inactive-face</span>
+<span id=cb5-150><a href=#cb5-150 aria-hidden=true tabindex=-1></a>    :inherit &#39;mode-line-inactive</span>
+<span id=cb5-151><a href=#cb5-151 aria-hidden=true tabindex=-1></a>    :background modeline-bg-inactive-alt</span>
+<span id=cb5-152><a href=#cb5-152 aria-hidden=true tabindex=-1></a>    :box (<span class=kw>if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive-alt)))))</span>
+<span id=cb5-153><a href=#cb5-153 aria-hidden=true tabindex=-1></a></span>
+<span id=cb5-154><a href=#cb5-154 aria-hidden=true tabindex=-1></a><span class=co>;;; doom-zen-writer-theme.el ends here</span></span></code></pre></div></article></main><footer id=postamble class=status><div class=content><nav role=navigation><a href=/index.html>Home</a> |
 <a href=/slides.html>Slides</a> |
 <a href=/about-me.html>About</a>
 <span class=details>(<a href=https://gitea.esy.fun/yogsototh>code</a>
