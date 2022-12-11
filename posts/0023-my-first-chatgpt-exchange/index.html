@@ -1,0 +1,171 @@
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>My first ChatGPT exchange</title><meta name=author content="Yann Esposito"><meta name=description content="My first interaction with ChatGPT
+about Clojure and Monads."><meta name=keywords content="machine-learning ai gpt"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><meta name=theme-color media="(prefers-color-scheme: light)" content="#d84100"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#2E3440"><header><div id=logo><a href=/><div class=vis-hidden>Go to Home</div><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="#a3aec2" stroke-width="1" fill="#2e3440"/><circle class="i1" cx="32" cy="32" r="12" stroke="#800" stroke-width="1" fill="#c20"/><circle class="i0" cx="32" cy="32" r="5" stroke-width="1" stroke="#f60" fill="#fa0"/><ellipse class="e" cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="#fff"/></svg></a></div><div class=content><h1>My first ChatGPT exchange</h1><div class=meta><span class=yyydate>[2022-12-11 Sun]</span> on
+<a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract>My first interaction with ChatGPT about Clojure and Monads.</div></div></header><main id=content><article><h1 id=the-first-few-questions-for-chatgpt>The first few questions for
+ChatGPT</h1><p>I finally opened an account to beta-test ChatGPT. I must say, I am
+quite impressed. I asked it a few questions that I could have asked
+during an interview. To my surprise, the answer given was, while wrong,
+believable enough to kind of sneak the answer as right up to some
+imprecision. Like if you squint enough, it could pass, but if you pay
+attention it is clearly false.<p>So yes, mainly ChatGPT in this interaction was quite good at being
+convincing. This is the same kind of impression you have from looking at
+AI generated images. At first sight everything seems fine, but if you
+start looking to the details, many things are off.<p>So here is the full interaction, I'll let the attentive reader find
+the technical problems:<p><img src=/logo.svg alt=me style=width:1.5em;filter:none> Can
+you write a clojure function that will reverse any string provided to
+it.<blockquote><p><strong>ChatGPT</strong>: Sure, here's a possible implementation of a
+function that reverses a string in Clojure:<div class=sourceCode id=cb1><pre class="sourceCode clojure"><code class="sourceCode clojure"><span id=cb1-1><a href=#cb1-1 aria-hidden=true tabindex=-1></a>(<span class=bu>defn</span><span class=fu> reverse-string </span>[s]</span>
+<span id=cb1-2><a href=#cb1-2 aria-hidden=true tabindex=-1></a>  (<span class=kw>apply</span> <span class=kw>str</span> (<span class=kw>reverse</span> (<span class=kw>seq</span> s))))</span></code></pre></div><p>This function takes a strings as input, converts it to a sequence of
+characters using the <code>seq</code> function, reverses this sequence
+using the reverse function, and then converts the resulting sequence
+back to a string using the <code>apply</code> and <code>str</code>
+functions.<p>Here's an example of how you can use this function:<div class=sourceCode id=cb2><pre class="sourceCode clojure"><code class="sourceCode clojure"><span id=cb2-1><a href=#cb2-1 aria-hidden=true tabindex=-1></a>user=&gt; (reverse-string <span class=st>&quot;hello world&quot;</span>)</span>
+<span id=cb2-2><a href=#cb2-2 aria-hidden=true tabindex=-1></a><span class=st>&quot;dirow olleh&quot;</span></span></code></pre></div><p>Note that this function only works for strings that contain
+characters in the Unicode Basic Multilingual Plane (BMP), since the
+<code>seq</code> function only works on strings that contain characters
+in this range. If you need to reverse strings that contain characters
+outside of the BMP, you can use the <code>string-seq</code> function
+instead of <code>seq</code> to convert the string to a sequence of
+characters.</blockquote><p><img src=/logo.svg alt=me style=width:1.5em;filter:none> How
+would this function react if instead of string you provide an
+integer?<blockquote><p><strong>ChatGPT:</strong> If you provide an integer as input to the
+<code>reverse-string</code> function instead of a string, the function
+will fail with a <code>ClassCastException</code> because the
+<code>seq</code> function only works on strings, and you cannot convert
+an integer to a string in a straightforward way in Clojure. The
+<code>seq</code> function expects its input to be a string or a
+collection, such as a vector or a list, and when you try to pass an
+integer to it, it will try to convert the integer to a string by calling
+the <code>str</code> function on it. However, since <code>str</code>
+only works on strings and collections, and not on numbers, this will
+result in a <code>ClassCastException</code>.<p>Here's an example of what will happen if you try to pass an integer
+to the reverse-string function:<div class=sourceCode id=cb3><pre class="sourceCode clojure"><code class="sourceCode clojure"><span id=cb3-1><a href=#cb3-1 aria-hidden=true tabindex=-1></a>user=&gt; (reverse-string <span class=dv>12345</span>)</span>
+<span id=cb3-2><a href=#cb3-2 aria-hidden=true tabindex=-1></a>ClassCastException clojure.lang. Numbers cannot be <span class=kw>cast</span> to</span>
+<span id=cb3-3><a href=#cb3-3 aria-hidden=true tabindex=-1></a>clojure.lang. IFn clojure.core/seq (core.clj<span class=at>:136</span>)</span></code></pre></div><p>To avoid this error, you can either make sure that the input to the
+<code>reverse-string</code> function is always a string, or you can
+modify the function to handle other types of input, such as integers, by
+first converting them to strings using the <code>str</code> function.
+For example, you could write the <code>reverse-string</code> function
+like this to handle both strings and integers as input:<div class=sourceCode id=cb4><pre class="sourceCode clojure"><code class="sourceCode clojure"><span id=cb4-1><a href=#cb4-1 aria-hidden=true tabindex=-1></a>(<span class=bu>defn</span><span class=fu> reverse-string </span>[s]</span>
+<span id=cb4-2><a href=#cb4-2 aria-hidden=true tabindex=-1></a>(<span class=kw>let</span> [s (<span class=kw>if</span> (<span class=kw>string?</span> s) s (<span class=kw>str</span> s))]</span>
+<span id=cb4-3><a href=#cb4-3 aria-hidden=true tabindex=-1></a>  (<span class=kw>apply</span> <span class=kw>str</span> (<span class=kw>reverse</span> (<span class=kw>seq</span> s)))))</span></code></pre></div><p>With this version of the function, if you pass an integer as input,
+the function will convert it to a string using the <code>str</code>
+function before calling the <code>seq</code> function on it, so the
+<code>seq</code> function will be able to work with the input. Here's an
+example of how you can use this modified version of the
+<code>reverse-string</code> function:<div class=sourceCode id=cb5><pre class="sourceCode clojure"><code class="sourceCode clojure"><span id=cb5-1><a href=#cb5-1 aria-hidden=true tabindex=-1></a>user-&gt; (reverse-string <span class=st>&quot;hello world&quot;</span>)</span>
+<span id=cb5-2><a href=#cb5-2 aria-hidden=true tabindex=-1></a><span class=st>&quot;dlrow olleh&quot;</span></span>
+<span id=cb5-3><a href=#cb5-3 aria-hidden=true tabindex=-1></a></span>
+<span id=cb5-4><a href=#cb5-4 aria-hidden=true tabindex=-1></a>user=&gt; (reverse-string <span class=dv>12345</span>)</span>
+<span id=cb5-5><a href=#cb5-5 aria-hidden=true tabindex=-1></a><span class=st>&quot;54321&quot;</span></span></code></pre></div><p>Note that the modified version of the function will also work for
+other types of input that can be converted to strings using the
+<code>str</code> function, such as floats and booleans.</blockquote><p><img src=/logo.svg alt=me style=width:1.5em;filter:none> How
+would you use the concept of the Maybe monad in Haskell in this clojure
+function?<blockquote><p><strong>ChatGPT</strong>: The Maybe monad in Haskell is a way to
+represent computations that may or may not have & p a result, and it
+provides a way to compose these computations in a safe and predictable
+way. In Clojure, the Maybe monad is usually implemented as a
+<code>Option</code> type, which has two possible values:
+<code>Some</code> and <code>None</code><p>In the context of the <code>reverse-string</code> function, you could
+use the <code>Option</code> type to represent the possibility that the
+input to the function might not be a string, in which case the function
+would return <code>None</code> instead of a reversed string. Here's an
+example of how you could use the <code>Option</code> type to modify the
+<code>reverse-string</code> function to handle the case where the input
+is not a string:<div class=sourceCode id=cb6><pre class="sourceCode clojure"><code class="sourceCode clojure"><span id=cb6-1><a href=#cb6-1 aria-hidden=true tabindex=-1></a>(<span class=bu>defn</span><span class=fu> reverse-string </span>[s]</span>
+<span id=cb6-2><a href=#cb6-2 aria-hidden=true tabindex=-1></a>  (<span class=kw>if</span> (<span class=kw>string?</span> s)</span>
+<span id=cb6-3><a href=#cb6-3 aria-hidden=true tabindex=-1></a>    (Some (<span class=kw>apply</span> <span class=kw>str</span> (<span class=kw>reverse</span> (<span class=kw>seq</span> s))))</span>
+<span id=cb6-4><a href=#cb6-4 aria-hidden=true tabindex=-1></a>    None))</span></code></pre></div><p>With this version of the <code>reverse-string</code> function, if the
+input is a string, the function will return a <code>Some</code> value
+containing the reversed string, and if the input is not a string, the
+function will return a <code>None</code> value. This allows the caller
+of the function to handle the case where the input is not a string in a
+predictable and safe way.<p>Here's an example of how you can use this modified version of the
+<code>reverse-string</code> function:<div class=sourceCode id=cb7><pre class="sourceCode clojure"><code class="sourceCode clojure"><span id=cb7-1><a href=#cb7-1 aria-hidden=true tabindex=-1></a>user=&gt; (reverse-string <span class=st>&quot;hello world&quot;</span>)</span>
+<span id=cb7-2><a href=#cb7-2 aria-hidden=true tabindex=-1></a></span>
+<span id=cb7-3><a href=#cb7-3 aria-hidden=true tabindex=-1></a>Some <span class=st>&quot;dlrow olleh&quot;</span></span>
+<span id=cb7-4><a href=#cb7-4 aria-hidden=true tabindex=-1></a>user=&gt; (reverse-string <span class=dv>12345</span>)</span>
+<span id=cb7-5><a href=#cb7-5 aria-hidden=true tabindex=-1></a>None</span></code></pre></div><p>Note that the Option type in Clojure does not provide the same
+syntactic sugar for composing computations as the Maybe monad in
+Haskell, so you cannot use the <code>>>=</code> operator to chain
+calls to the <code>reverse-string</code> function in the same way you
+can in Haskell. However, you can still use the <code>Option</code> type
+to represent computations that may or may not have a result, and you can
+use the <code>match</code> or <code>case</code> forms to pattern match
+on the <code>Option</code> values and handle the different cases in a
+predictable and safe way.</blockquote><p><img src=/logo.svg alt=me style=width:1.5em;filter:none> How
+would you implement Option in clojure?<blockquote><p><strong>ChatGPT</strong>: In Clojure, the <code>Option</code> type is
+typically implemented as a sealed protocol, which is a type of
+polymorphic type that defines a set of concrete types that implement the
+protocol.<p>The <code>Option</code> protocol typically defines two concrete
+types: <code>Some</code>, which represents a computation that has a
+result, and <code>None</code>, which represents a computation that does
+not have a result.<p>Here's an example of how you could define the <code>Option</code>
+protocol and the <code>Some</code> and <code>None</code> types in
+Clojure:<div class=sourceCode id=cb8><pre class="sourceCode clojure"><code class="sourceCode clojure"><span id=cb8-1><a href=#cb8-1 aria-hidden=true tabindex=-1></a>(<span class=bu>defprotocol</span><span class=fu> Option</span></span>
+<span id=cb8-2><a href=#cb8-2 aria-hidden=true tabindex=-1></a>  (<span class=kw>map</span> [o f])</span>
+<span id=cb8-3><a href=#cb8-3 aria-hidden=true tabindex=-1></a>  (flat-map [o f]))</span>
+<span id=cb8-4><a href=#cb8-4 aria-hidden=true tabindex=-1></a></span>
+<span id=cb8-5><a href=#cb8-5 aria-hidden=true tabindex=-1></a>(<span class=bu>deftype</span><span class=fu> Some </span>[x]</span>
+<span id=cb8-6><a href=#cb8-6 aria-hidden=true tabindex=-1></a>  Option</span>
+<span id=cb8-7><a href=#cb8-7 aria-hidden=true tabindex=-1></a>  (<span class=kw>map</span> [o f] (Some (f x)))</span>
+<span id=cb8-8><a href=#cb8-8 aria-hidden=true tabindex=-1></a>  (flat-map [o f] (f x)))</span>
+<span id=cb8-9><a href=#cb8-9 aria-hidden=true tabindex=-1></a></span>
+<span id=cb8-10><a href=#cb8-10 aria-hidden=true tabindex=-1></a>(<span class=bu>deftype</span><span class=fu> None </span>[])</span>
+<span id=cb8-11><a href=#cb8-11 aria-hidden=true tabindex=-1></a>  Option</span>
+<span id=cb8-12><a href=#cb8-12 aria-hidden=true tabindex=-1></a>  (<span class=kw>map</span> [o f] None)</span>
+<span id=cb8-13><a href=#cb8-13 aria-hidden=true tabindex=-1></a>  (flat-map [o f] None))</span></code></pre></div><p>The <code>Option</code> protocol defines two methods:
+<code>map</code> and <code>flat-map</code> The <code>map</code> method
+takes a function <code>f</code> as input and applies it to the value
+contained in the <code>Some</code> type, <code>f</code> it exists, or
+returns a <code>None</code> value <code>f</code> the <code>Option</code>
+type is <code>None</code> The <code>flat-map</code> method is similar to
+<code>map</code> but it allows the function <code>f</code> to return an
+<code>Option</code> value, which is then flattened into the outer
+<code>Option</code> value.<p>The <code>Some</code> type implements the <code>Option</code>
+protocol by providing concrete implementations <code>f</code> the map
+and <code>flat-map</code> methods. The 'map method applies the function
+<code>f</code> to the value <code>x</code> contained in the
+<code>Some</code> type, and returns a new <code>Some</code> value
+containing the result <code>f</code> the function. The
+<code>flat-map</code> method applies the function <code>f</code> to the
+value <code>x</code> contained in the Some type, and then flattens the
+resulting <code>Option</code> value into the outer <code>Option</code>
+value.<p>The <code>None</code> type also implements the Option protocol by
+providing concrete implementations of the <code>map</code> and
+<code>flat-map</code> methods. The <code>map</code> and
+<code>flat-map</code> methods simply return a <code>None</code> value in
+this case, since there is no value to apply the function to.<p>Here's an example of how you can use the <code>Option</code> protocol
+and the <code>Some</code> and <code>None</code> types:<div class=sourceCode id=cb9><pre class="sourceCode clojure"><code class="sourceCode clojure"><span id=cb9-1><a href=#cb9-1 aria-hidden=true tabindex=-1></a>user=&gt; (<span class=bu>def</span><span class=fu> some-value </span>(Some <span class=dv>12345</span>))</span>
+<span id=cb9-2><a href=#cb9-2 aria-hidden=true tabindex=-1></a>#&#39; user/some-value</span>
+<span id=cb9-3><a href=#cb9-3 aria-hidden=true tabindex=-1></a></span>
+<span id=cb9-4><a href=#cb9-4 aria-hidden=true tabindex=-1></a>user=&gt; (<span class=kw>map</span> some-value <span class=kw>inc</span>)</span>
+<span id=cb9-5><a href=#cb9-5 aria-hidden=true tabindex=-1></a>Some <span class=dv>12346</span></span>
+<span id=cb9-6><a href=#cb9-6 aria-hidden=true tabindex=-1></a></span>
+<span id=cb9-7><a href=#cb9-7 aria-hidden=true tabindex=-1></a>user=&gt; (flat-map some-value (<span class=kw>fn</span> [x] (Some (<span class=kw>*</span> × <span class=dv>2</span>))))</span>
+<span id=cb9-8><a href=#cb9-8 aria-hidden=true tabindex=-1></a>Some <span class=dv>24690</span></span>
+<span id=cb9-9><a href=#cb9-9 aria-hidden=true tabindex=-1></a></span>
+<span id=cb9-10><a href=#cb9-10 aria-hidden=true tabindex=-1></a>user=&gt; (<span class=kw>map</span> some-value (<span class=kw>comp</span> (<span class=kw>partial</span> <span class=kw>*</span> <span class=dv>2</span>) <span class=kw>inc</span>))</span>
+<span id=cb9-11><a href=#cb9-11 aria-hidden=true tabindex=-1></a>Some <span class=dv>24690</span></span>
+<span id=cb9-12><a href=#cb9-12 aria-hidden=true tabindex=-1></a></span>
+<span id=cb9-13><a href=#cb9-13 aria-hidden=true tabindex=-1></a>user=&gt; (<span class=bu>def</span><span class=fu> none-value </span>None)</span>
+<span id=cb9-14><a href=#cb9-14 aria-hidden=true tabindex=-1></a><span class=va>#&#39;user/none-value</span></span>
+<span id=cb9-15><a href=#cb9-15 aria-hidden=true tabindex=-1></a></span>
+<span id=cb9-16><a href=#cb9-16 aria-hidden=true tabindex=-1></a>user=&gt; (<span class=kw>map</span> none-value <span class=kw>inc</span>)</span>
+<span id=cb9-17><a href=#cb9-17 aria-hidden=true tabindex=-1></a>None</span>
+<span id=cb9-18><a href=#cb9-18 aria-hidden=true tabindex=-1></a></span>
+<span id=cb9-19><a href=#cb9-19 aria-hidden=true tabindex=-1></a>user=&gt; (flat-map none-value (<span class=kw>fn</span> [x] (Some (<span class=kw>*</span> × <span class=dv>2</span>))))</span>
+<span id=cb9-20><a href=#cb9-20 aria-hidden=true tabindex=-1></a>None</span>
+<span id=cb9-21><a href=#cb9-21 aria-hidden=true tabindex=-1></a></span>
+<span id=cb9-22><a href=#cb9-22 aria-hidden=true tabindex=-1></a>user=&gt; (<span class=kw>map</span> none-value (<span class=kw>comp</span> (<span class=kw>partial</span> <span class=kw>*</span> <span class=dv>2</span>) <span class=kw>inc</span>))</span>
+<span id=cb9-23><a href=#cb9-23 aria-hidden=true tabindex=-1></a>None</span></code></pre></div><p>In this example, the <code>some-value</code> variable is defined as a
+<code>Some</code> value containing the integer 12345, and the
+<code>none-value</code> variable is defined as a <code>None</code>
+value. The <code>map</code> and <code>flat-map</code> functions are then
+used to apply different functions to the values contained in the
+<code>Option</code> types, and the…</blockquote></article></main><footer id=postamble class=status><div class=content><nav role=navigation><a href=/index.html>Home</a> |
+<a href=/slides.html>Slides</a> |
+<a href=/about-me.html>About</a>
+<span class=details>(<a href=https://gitea.esy.fun/yogsototh>code</a>
+<a href=https://espial.esy.fun/u:yogsototh>bookmarks</a>
+<a href=https://espial.esy.fun/u:yogsototh/notes>notes</a>)</span> |
+<a href=#logo>↑ Top ↑</a></nav></div></footer>

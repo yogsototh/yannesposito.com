@@ -1,0 +1,257 @@
+# My first ChatGPT exchange
+description:  My first interaction with ChatGPT about Clojure and Monads.
+keywords:  machine-learning ai gpt
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2022-12-11 Sun]
+
+
+# The first few questions for ChatGPT
+
+I finally opened an account to beta-test ChatGPT.
+I must say, I am quite impressed.
+I asked it a few questions that I could have asked during an interview.
+To my surprise, the answer given was, while wrong, believable enough to kind of
+sneak the answer as right up to some imprecision.
+Like if you squint enough, it could pass, but if you pay attention it is clearly
+false.
+
+So yes, mainly ChatGPT in this interaction was quite good at being convincing.
+This is the same kind of impression you have from looking at AI generated images.
+At first sight everything seems fine, but if you start looking to the details, many
+things are off.
+
+So here is the full interaction, I'll let the attentive reader find the
+technical problems:
+
+
+{{{logo}}} Can you write a clojure function that will reverse any string provided to it.
+
+______
+
+*ChatGPT*: Sure, here's a possible implementation of a function that reverses a string in Clojure:
+
+```clojure
+(defn reverse-string [s]
+  (apply str (reverse (seq s))))
+```
+
+This function takes a strings as input, converts it to a sequence of characters
+using the ~seq~ function, reverses this sequence using the reverse function, and
+then converts the resulting sequence back to a string using the ~apply~ and ~str~
+functions.
+
+Here's an example of how you can use this function:
+```clojure
+user=> (reverse-string "hello world")
+"dirow olleh"
+```
+
+
+Note that this function only works
+for strings that contain characters in the Unicode Basic Multilingual Plane
+(BMP), since the ~seq~ function only works on strings that contain characters in
+this range.
+If you need to reverse strings that contain characters outside of the BMP, you
+can use the ~string-seq~ function instead of ~seq~ to convert the string to a
+sequence of characters.
+______
+
+{{{logo}}} How would this function react if instead of string you provide an integer?
+
+______
+*ChatGPT:* If you provide an integer as input to the ~reverse-string~ function instead of a
+string, the function will fail with a ~ClassCastException~ because the ~seq~
+function only works on strings, and you cannot convert an integer to a string in
+a straightforward way in Clojure.
+The ~seq~ function expects its input to be a string or a collection, such as a
+vector or a list, and when you try to pass an integer to it, it will try to
+convert the integer to a string by calling the ~str~ function on it.
+However, since ~str~ only works on strings and collections, and not on numbers,
+this will result in a ~ClassCastException~.
+
+Here's an example of what will happen if you try to pass an integer to the reverse-string function:
+
+```clojure
+user=> (reverse-string 12345)
+ClassCastException clojure.lang. Numbers cannot be cast to
+clojure.lang. IFn clojure.core/seq (core.clj:136)
+```
+
+To avoid this error, you can either make sure that the input to the
+~reverse-string~ function is always a string, or you can modify the function to
+handle other types of input, such as integers, by first converting them to
+strings using the ~str~ function.
+For example, you could write the ~reverse-string~ function like this to handle
+both strings and integers as input:
+
+```clojure
+(defn reverse-string [s]
+(let [s (if (string? s) s (str s))]
+  (apply str (reverse (seq s)))))
+```
+
+With this version of the function, if you pass an integer as input, the function
+will convert it to a string using the ~str~ function before calling the ~seq~
+function on it, so the ~seq~ function will be able to work with the input.
+Here's an example of how you can use this modified version of the
+~reverse-string~ function:
+
+```clojure
+user-> (reverse-string "hello world")
+"dlrow olleh"
+
+user=> (reverse-string 12345)
+"54321"
+```
+
+Note that the modified version of the function will also work for other types of
+input that can be converted to strings using the ~str~ function, such as floats
+and booleans.
+
+______
+
+{{{logo}}} How would you use the concept of the Maybe monad in Haskell in this clojure function?
+
+______
+*ChatGPT*: The Maybe monad in Haskell is a way to represent computations that may or may
+not have & p a result, and it provides a way to compose these computations in a
+safe and predictable way.
+In Clojure, the Maybe monad is usually implemented as a ~Option~ type, which has
+two possible values: ~Some~ and ~None~
+
+In the context of the ~reverse-string~ function, you could use the ~Option~ type
+to represent the possibility that the input to the function might not be a
+string, in which case the function would return ~None~ instead of a reversed
+string.
+Here's an example of how you could use the ~Option~ type to modify the
+~reverse-string~ function to handle the case where the input is not a string:
+
+```clojure
+(defn reverse-string [s]
+  (if (string? s)
+    (Some (apply str (reverse (seq s))))
+    None))
+```
+
+With this version of the ~reverse-string~ function, if the input is a string, the
+function will return a ~Some~ value containing the reversed string, and if the
+input is not a string, the function will return a ~None~ value.
+This allows the caller of the function to handle the case where the input is not
+a string in a predictable and safe way.
+
+Here's an example of how you can use this modified version of the ~reverse-string~
+function:
+
+```clojure
+user=> (reverse-string "hello world")
+
+Some "dlrow olleh"
+user=> (reverse-string 12345)
+None
+```
+
+Note that the Option type in Clojure does not provide the same syntactic sugar
+for composing computations as the Maybe monad in Haskell, so you cannot use the
+~>>=~ operator to chain calls to the ~reverse-string~ function in the same way you
+can in Haskell.
+However, you can still use the ~Option~ type to represent computations that may
+or may not have a result, and you can use the ~match~ or ~case~ forms to pattern
+match on the ~Option~ values and handle the different cases in a predictable and
+safe way.
+
+______
+
+{{{logo}}} How would you implement Option in clojure?
+
+______
+*ChatGPT*:
+In Clojure, the ~Option~ type is typically implemented as a sealed protocol,
+which is a type of polymorphic type that defines a set of concrete types that
+implement the protocol.
+
+The ~Option~ protocol typically defines two concrete types: ~Some~, which represents
+a computation that has a result, and ~None~, which represents a computation that
+does not have a result.
+
+Here's an example of how you could define the ~Option~ protocol and the ~Some~ and
+~None~ types in Clojure:
+
+```clojure
+(defprotocol Option
+  (map [o f])
+  (flat-map [o f]))
+
+(deftype Some [x]
+  Option
+  (map [o f] (Some (f x)))
+  (flat-map [o f] (f x)))
+
+(deftype None [])
+  Option
+  (map [o f] None)
+  (flat-map [o f] None))
+```
+
+The ~Option~ protocol defines two methods: ~map~ and ~flat-map~ The ~map~ method takes a
+function ~f~ as input and applies it to the value contained in the ~Some~ type, ~f~ it
+exists, or returns a ~None~ value ~f~ the ~Option~ type is ~None~ The ~flat-map~ method is
+similar to ~map~ but it allows the function ~f~ to return an ~Option~ value, which is
+then flattened into the outer ~Option~ value.
+
+The ~Some~ type implements the ~Option~ protocol by providing concrete
+implementations ~f~ the map and ~flat-map~ methods.
+The 'map method applies the function ~f~ to the value ~x~ contained in the ~Some~
+type, and returns a new ~Some~ value containing the result ~f~ the function.
+The ~flat-map~ method applies the function ~f~ to the value ~x~ contained in the Some
+type, and then flattens the resulting ~Option~ value into the outer ~Option~ value.
+
+The ~None~ type also implements the Option protocol by providing concrete
+implementations of the ~map~ and ~flat-map~ methods.
+The ~map~ and ~flat-map~ methods simply return a ~None~ value in this case, since
+there is no value to apply the function to.
+
+Here's an example of how you can use the ~Option~ protocol and the ~Some~ and ~None~ types:
+
+```clojure
+user=> (def some-value (Some 12345))
+#' user/some-value
+
+user=> (map some-value inc)
+Some 12346
+
+user=> (flat-map some-value (fn [x] (Some (* × 2))))
+Some 24690
+
+user=> (map some-value (comp (partial * 2) inc))
+Some 24690
+
+user=> (def none-value None)
+#'user/none-value
+
+user=> (map none-value inc)
+None
+
+user=> (flat-map none-value (fn [x] (Some (* × 2))))
+None
+
+user=> (map none-value (comp (partial * 2) inc))
+None
+```
+
+In this example, the ~some-value~ variable is defined as a ~Some~ value containing
+the integer 12345, and the ~none-value~ variable is defined as a ~None~ value.
+The ~map~ and ~flat-map~ functions are then used to apply different functions to the
+values contained in the ~Option~ types, and the...
+______
+
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes
