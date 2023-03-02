@@ -1,0 +1,603 @@
+# Replace docker-compose with nix-shell
+description:  This is how I created a docker-compose replacement with nix-shell.
+description:  Here is a solution to have a composable nix shell representation focused on
+description:  replacing docker-compose.
+keywords:  blog static
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2023-03-02 Thu]
+
+
+
+At work we use =docker-compose= to run integration tests on a big project that
+need to connect to multiple different databases as well as a few other services.
+This article is about how to replace =docker-compose= by =nix= for a local
+development environment.
+
+## Quick tutorial
+
+### =nix-shell-fu= level 1 lesson
+
+Let's start with a basic =shell.nix= example:
+
+```nix
+{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
+with pkgs: mkShell
+  { buildInputs = [ hello ];
+    shellHook = ''
+      echo "Using ${hello.name}."
+    '';
+  }
+```
+
+And this could be understood in plain English as:
+
+______
+In the packages of nix version 22.11, create a new shell into which the package
+=hello= will be installed. At the end of the install, run a script that will print
+the package name. (Cf => digression)
+______
+
+
+If you copy/paste this in a =shell.nix= file and run ~nix-shell~ you get:
+
+```
+> nix-shell
+nix-shell shell.nix
+these 53 paths will be fetched (84.69 MiB download, 524.77 MiB unpacked):
+  /nix/store/08pckaqznwh0s3822cjp5aji6y1lsm27-libcxx-11.1.0
+  ...
+  /nix/store/zqcs5xahjxij0c8vfw60lnfb6d979rn2-zlib-1.2.13
+copying path '/nix/store/49wn01k9yikhjlxc1ym5b6civ29zz3gv-bash-5.1-p16' from 'https://cache.nixos.org'...
+...
+copying path '/nix/store/4w2rv6s96fwsb4qyw8b9w394010gxriz-stdenv-darwin' from 'https://cache.nixos.org'...
+Using hello-2.12.1.
+
+[nix-shell:~/tmp/nixplayground]$
+```
+
+If you close the session and run it again, it will be much faster and will only
+show this:
+
+```
+❯ nix-shell
+Using hello-2.12.1.
+
+[nix-shell:~/tmp/nixplayground]$
+```
+
+This is because all dependencies will be cached.
+OK so, this is level 1 of /nix-shell-fu/.
+
+Now, let's start level 2.
+
+### =nix-shell-fu= level 2 lesson; scripting and configuring
+
+This time, we want to launch a full service, as a redis docker would do.
+So here is a basic shell script which is similar to the previous one but will
+request =redis= as a dependency instead of =hello= and also as a launching script.
+From there will add a little bit more features.
+
+```nix
+{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
+  pkgs.mkShell {
+    # must contain buildInputs, nativeBuildInputs and shellHook
+    buildInputs = [ pkgs.redis ];
+
+    # Post Shell Hook
+    shellHook = ''
+    echo "Using ${pkgs.redis.name} on port: ${port}"
+    redis-server
+  '';
+  }
+```
+
+Again if you run ~nix-shell~ here is the result:
+
+```
+❯ nix-shell
+these 2 paths will be fetched (2.08 MiB download, 6.99 MiB unpacked):
+  /nix/store/6w4vnaxdx12ccq172i8j5l830mlp8jlg-redis-7.0.5
+  /nix/store/b47gmsx9qx0c9vh75wsg8bqq9qd0ad6f-openssl-3.0.7
+copying path '/nix/store/b47gmsx9qx0c9vh75wsg8bqq9qd0ad6f-openssl-3.0.7' from 'https://cache.nixos.org'...
+copying path '/nix/store/6w4vnaxdx12ccq172i8j5l830mlp8jlg-redis-7.0.5' from 'https://cache.nixos.org'...
+Using redis-7.0.5
+97814:C 10 Feb 2023 20:44:36.960 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+97814:C 10 Feb 2023 20:44:36.960 # Redis version=7.0.5, bits=64, commit=00000000, modified=0, pid=97814, just started
+97814:C 10 Feb 2023 20:44:36.960 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+97814:M 10 Feb 2023 20:44:36.961 * Increased maximum number of open files to 10032 (it was originally set to 256).
+97814:M 10 Feb 2023 20:44:36.961 * monotonic clock: POSIX clock_gettime
+                _._
+           _.-``__ ''-._
+      _.-``    `.  `_.  ''-._           Redis 7.0.5 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
+ |    `-._   `._    /     _.-'    |     PID: 97814
+  `-._    `-._  `-./  _.-'    _.-'
+ |`-._`-._    `-.__.-'    _.-'_.-'|
+ |    `-._`-._        _.-'_.-'    |           https://redis.io
+  `-._    `-._`-.__.-'_.-'    _.-'
+ |`-._`-._    `-.__.-'    _.-'_.-'|
+ |    `-._`-._        _.-'_.-'    |
+  `-._    `-._`-.__.-'_.-'    _.-'
+      `-._    `-.__.-'    _.-'
+          `-._        _.-'
+              `-.__.-'
+
+97814:M 10 Feb 2023 20:44:36.962 # WARNING: The TCP backlog setting of 511 cannot be enforced because kern.ipc.somaxconn is set to the lower value of 128.
+97814:M 10 Feb 2023 20:44:36.962 # Server initialized
+97814:M 10 Feb 2023 20:44:36.963 * Ready to accept connections
+```
+
+Woo! Redis is started and it works!
+
+But if you have multiple projects you want to have more control. For example, we
+will want to run redis on a specific port.
+Here is how you do it:
+
+```nix
+{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/21.05.tar.gz) {} }:
+  let iport = 16380;
+      port = toString iport;
+  in pkgs.mkShell {
+    # must contain buildInputs, nativeBuildInputs and shellHook
+    buildInputs = [ pkgs.redis ];
+
+    # Post Shell Hook
+    shellHook = ''
+    echo "Using ${pkgs.redis.name} on port ${port}"
+    redis-server --port ${port}
+  '';
+  }
+```
+
+And here is the result:
+
+```
+> rm dump.rdb
+> nix-shell
+Using redis-6.2.3 on port 16380
+1785:C 10 Feb 2023 20:50:00.880 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1785:C 10 Feb 2023 20:50:00.880 # Redis version=6.2.3, bits=64, commit=00000000, modified=0, pid=1785, just started
+1785:C 10 Feb 2023 20:50:00.880 # Configuration loaded
+1785:M 10 Feb 2023 20:50:00.880 * Increased maximum number of open files to 10032 (it was originally set to 256).
+1785:M 10 Feb 2023 20:50:00.880 * monotonic clock: POSIX clock_gettime
+                _._
+           _.-``__ ''-._
+      _.-``    `.  `_.  ''-._           Redis 6.2.3 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 16380
+ |    `-._   `._    /     _.-'    |     PID: 1785
+  `-._    `-._  `-./  _.-'    _.-'
+ |`-._`-._    `-.__.-'    _.-'_.-'|
+ |    `-._`-._        _.-'_.-'    |           https://redis.io
+  `-._    `-._`-.__.-'_.-'    _.-'
+ |`-._`-._    `-.__.-'    _.-'_.-'|
+ |    `-._`-._        _.-'_.-'    |
+  `-._    `-._`-.__.-'_.-'    _.-'
+      `-._    `-.__.-'    _.-'
+          `-._        _.-'
+              `-.__.-'
+
+1785:M 10 Feb 2023 20:50:00.881 # Server initialized
+1785:M 10 Feb 2023 20:50:00.881 * Ready to accept connections
+```
+
+Woo!
+We control the port from the file.
+That's nice.
+
+But, has you might have noticed, when you quit the session it dumps the DB as
+the file =dump.rdb=.
+What we would like is to keep all the state in a local directory that would be
+easy to delete.
+
+To achieve this, instead of passing argument to the redis command line we will
+use a local config file to use.
+
+```nix
+{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
+let iport = 16380;
+    port = toString iport;
+in pkgs.mkShell (rec {
+  # ENV Variables the directory to put all the DATA
+  REDIS_DATA = "${toString ./.}/.redis";
+  # the config file, as we use REDIS_DATA variable we just declared in the
+  # same nix set, we need to use rec
+  redisConf = pkgs.writeText "redis.conf"
+                             ''
+                             port ${port}
+                             dbfilename redis.db
+                             dir ${REDIS_DATA}
+                             '';
+
+  buildInputs = [ pkgs.redis ];
+
+  # Post Shell Hook
+  shellHook = ''
+    echo "Using ${pkgs.redis.name} on port: ${port}"
+
+    [ ! -d $REDIS_DATA ] \
+      && mkdir -p $REDIS_DATA
+    cat "$redisConf" > $REDIS_DATA/redis.conf
+    alias redisstop="echo 'Stopping Redis'; redis-cli -p ${port} shutdown; rm -rf $REDIS_DATA"
+    nohup redis-server $REDIS_DATA/redis.conf > /dev/null 2>&1 &
+    echo "When finished just run redisstop && exit"
+    trap redisstop EXIT
+  '';
+})
+```
+
+And here is a full session using this =shell.nix=:
+
+```
+> nix-shell
+Using redis-6.2.3 on port: 16380
+When finished just run redisstop && exit
+
+-------------------------------
+[nix-shell:~/tmp/nixplayground]$ redis-cli -p 16380
+127.0.0.1:16380> help
+redis-cli 6.2.3
+To get help about Redis commands type:
+      "help @<group>" to get a list of commands in <group>
+      "help <command>" for help on <command>
+      "help <tab>" to get a list of possible help topics
+      "quit" to exit
+
+To set redis-cli preferences:
+      ":set hints" enable online hints
+      ":set nohints" disable online hints
+Set your preferences in ~/.redisclirc
+127.0.0.1:16380>
+
+-------------------------------
+[nix-shell:~/tmp/nixplayground]$ ls -a
+.  ..  .redis  shell.nix
+
+-------------------------------
+[nix-shell:~/tmp/nixplayground]$ find .redis
+.redis
+.redis/redis.conf
+
+-------------------------------
+[nix-shell:~/tmp/nixplayground]$ redis-cli -p 16380 shutdown
+[1]+  Done                    nohup redis-server $REDIS_DATA/redis.conf > /dev/null 2>&1
+
+-------------------------------
+[nix-shell:~/tmp/nixplayground]$ find .redis
+.redis
+.redis/redis.db
+.redis/redis.conf
+
+-------------------------------
+[nix-shell:~/tmp/nixplayground]$ redisstop
+Stopping Redis
+Could not connect to Redis at 127.0.0.1:16380: Connection refused
+
+-------------------------------
+[nix-shell:~/tmp/nixplayground]$ ls -a
+.  ..  shell.nix
+```
+
+So with this version all data related to redis is saved into the local =.redis=
+directory.
+And in the nix shell we provide a command =redisstop= that once invoked, shutdown
+redis, then purge all redis related data (as you would like in a development environment).
+Also, as compared to previous version, redis is launched in background so you
+could run commands in your nix shell.
+
+Notice I also run ~redisstop~ command on exit of the nix-shell. So when you close
+the nix-shell redis is stopped and the DB state is cleaned up.
+
+## Composable =nix-shell=
+
+As a quick recap you now have a boilerplate to create new =shell.nix=:
+
+```nix
+{ pkgs ? import ( ... ) {} }:
+mkShell { MY_ENV_VAR_1 = ...;
+          MY_ENV_VAR_2 = ...;
+          buildInputs = [ dependency-1 ... dependency-n ];
+          nativeBuildInputs = [ dependency-1 ... dependency-n ];
+          shellHook = '' command_to_run_after_init '';
+        }
+```
+
+But if I give you two such =shell.nix= files, would you be able to compose them?
+Unfortunately, not directly.
+To solve the problem we will replace this boilerplate by another one that do not
+directly uses =mkShell=.
+And in order to make it fully composable, we will also need to narrow the
+environment variables declaration in a sub field:
+
+```nix
+{ pkgs ? import ( ... ) {} }:
+let env = { PGDATA = ...; }
+in { inherit env; # equivalent to env = env;
+     buildInputs = [ dependency-1 ... dependency-n ];
+     nativeBuildInputs = [ dependency-1 ... dependency-n ];
+     shellHook = '' some_command $PG_DATA '';
+   }
+```
+
+With this, we can compose two nix set into a single merged one that will be
+suitable to pass as argument to ~mkShell~.
+Another minor detail, but important one. In bash, the command ~trap~ do not
+accumulate but replace the function. For our need, we want to run all stop
+function on exit. So the ~trap~ directive added in the shell hook does not compose
+naturally. This is why we add a =stop= value that will contain the name of the
+bash function to call to stop and cleanup a service.
+
+Finally the main structure for each of our service will look like this *nix
+service boilerplate*:
+
+```nix
+{ pkgs ? import ( ... ) {} }:
+let env = { MY_SERVICE_ENV_VAR = ...; }
+in { inherit env; # equivalent to env = env;
+     buildInputs = [ dependency-1 ... dependency-n ];
+     nativeBuildInputs = [ dependency-1 ... dependency-n ];
+     shellHook = '' my_command $MY_SERVICE_ENV_VAR '';
+     stop = "stop_my_service"
+   }
+```
+
+
+So let's start easy.
+To run a single shell script like this with =nix-shell=, you should put your
+service specific nix file in a =service.nix= file and create a =shell.nix= file
+that contains something like:
+
+```nix
+{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
+let service = import ./service.nix { inherit pkgs; };
+in with service; pkgs.mkShell ( env //
+   {
+     buildInputs       = buildInputs;
+     nativeBuildInputs = nativeBuildInputs ;
+     shellHook         = shellHook;
+   })
+```
+
+Now, if you would like to run nix shell for multiple files, here is a first qui solution:
+
+```nix
+{ pkgs ? import (...) {}}:
+let
+  # merge all the env sets
+  mergedEnvs = builtins.foldl' (acc: e: acc // e) {} envs;
+
+  # merge all the confs by accumulating the dependencies
+  # and concatenating the shell hooks.
+  mergedConfs =
+    builtins.foldl'
+      (acc: {buildInputs ? [], nativeBuildInputs ? [], shellHook ? "", ...}:
+        { buildInputs = acc.buildInputs ++ buildInputs;
+          nativeBuildInputs = acc.nativeBuildInputs ++ nativeBuildInputs;
+          shellHook = acc.shellHook + shellHook;
+        })
+      emptyConf
+      confs;
+in mkShell (mergedEnvs // mergedConfs)
+```
+
+And now, here is the full solution that also deal with other minor details like
+importing the files and dealing with the exit of the shell:
+
+```nix
+{ mergeShellConfs =
+    # imports should contain a list of nix files
+    { pkgs, imports }:
+    let confs = map (f: import f { inherit pkgs; }) imports;
+        envs  = map ({env ? {}, ...}: env) confs;
+
+        # list the name of a command to stop a service (if none provided just use ':' which mean noop)
+        stops  = map ({stop ? ":", ...}: stop) confs;
+
+        # we want to stop all services on exit
+        stopCmd = builtins.concatStringsSep " && " stops;
+
+        # we would like to add a shellHook to cleanup the service that will call
+        # all cleaning-up function declared in sub-shells
+        lastConf =
+          { shellHook = ''
+                        stopall() { ${stopCmd}; }
+                        echo "You can manually stop all services by calling stopall"
+                        trap stopall EXIT
+                        '';
+          };
+
+        # merge Environment variables needed for other shell environments
+        mergedEnvs = builtins.foldl' (acc: e: acc // e) {} envs;
+
+        # zeroConf is the minimal empty configuration needed
+        zeroConf = {buildInputs = []; nativeBuildInputs = []; shellHook="";};
+
+        # merge all confs by appending buildInputs and nativeBuildInputs
+        # and by concatenating the shellHooks
+        mergedConfs =
+          builtins.foldl'
+            (acc: {buildInputs ? [], nativeBuildInputs ? [], shellHook ? "", ...}:
+              { buildInputs = acc.buildInputs ++ buildInputs;
+                nativeBuildInputs = acc.nativeBuildInputs ++ nativeBuildInputs;
+                shellHook = acc.shellHook + shellHook;
+              })
+            zeroConf
+            (confs ++ [lastConf]);
+
+    in (mergedEnvs // mergedConfs);
+}
+```
+
+So I put this function declaration in a file named =./nix/merge-shell.nix=.
+And I have a =pg.nix= as well as a =redis.nix= file in the =nix= directory.
+On the root of the project the main =shell.nix= looks like:
+
+```nix
+{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
+let
+  # we import the file, and rename the function mergeShellConfs as mergeShells
+  mergeShells = (import ./nix/merge-shell.nix).mergeShellConfs;
+  # we call mergeShells
+  mergedShellConfs =
+    mergeShells { inherit pkgs;
+                  # imports = [ ./nix/pg.nix ./nix/redis.nix ];
+                  imports = [ ./nix/pg.nix ./nix/redis.nix ];
+                };
+in pkgs.mkShell mergedShellConfs
+```
+
+And, that's it. Now when I run =nix-shell= it launch both Postgresql and Redis,
+and when I quit the shell, the state is cleaned up. Both postgres and redis are
+shutdown and the local files are erased.
+
+I hope this could be useful to someone else.
+
+## Appendix
+
+### <<digression>> Digression
+
+In fact, this is a bit more complex than "just that".
+The reality is a bit more complex.
+The nix language is "pure", meaning, if you run the nix evaluation multiple
+times, it will always evaluate to the exact same value.
+But here, this block represent a function.
+The function takes as input a "nix set" (which you can see as an associative
+array, or a hash-map or also a javascript object depending on your preference),
+and this set is expected to contain a field named =pkgs=. If =pkgs= is not provided,
+it will use the set from the stable version 22.11 of nixpkgs by downloading them
+from github archive.
+The second part of the function generate "something" that is returned by an
+internal function of the standard library provided by =nix= which is named
+=mkShell=.
+So mainly, =mkShell= is a helper function that will generate what nix calls a
+/
+
+=> https://blog.ielliott.io/nix-docs/derivation.html derivation
+/. Mainly, we don't really care about exactly what is a /derivation/.
+This is an internal to nix representation that could be finally used by
+different nix tools for different things. Typically, installing a package,
+running a local development environment with nix-shell or nix develop, etc…
+
+So the important detail to remember is that we can manipulate the parameter we
+pass to the functions =derivation=, =mkDerivation= and =mkShell=, but we have no
+mechanism to manipulate directly =derivation=. So in order to make that
+composable, you need to call the =derivation= internal function at the very end only.
+
+The argument of all these functions are /nix sets/
+### The full nix files for postgres
+
+For postgres:
+
+```nix
+{ pkgs }:
+  let iport = 15432;
+      port = toString iport;
+      pguser = "pguser";
+      pgpass = "pgpass";
+      pgdb = "iroh";
+      # env should contain all variable you need to configure correctly mkShell
+      # so ENV_VAR, but also any other kind of variables.
+      env =  {
+        postgresConf =
+          pkgs.writeText "postgresql.conf"
+            ''
+        # Add Custom Settings
+        log_min_messages = warning
+        log_min_error_statement = error
+        log_min_duration_statement = 100  # ms
+        log_connections = on
+        log_disconnections = on
+        log_duration = on
+        #log_line_prefix = '[] '
+        log_timezone = 'UTC'
+        log_statement = 'all'
+        log_directory = 'pg_log'
+        log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
+        logging_collector = on
+        log_min_error_statement = error
+      '';
+
+        postgresInitScript =
+          pkgs.writeText "init.sql"
+            ''
+        CREATE DATABASE ${pgdb};
+        CREATE USER ${pguser} WITH ENCRYPTED PASSWORD '${pgpass}';
+        GRANT ALL PRIVILEGES ON DATABASE ${pgdb} TO ${pguser};
+        '';
+
+        PGDATA = "${toString ./.}/.pg";
+      };
+  in env // {
+    # Warning if you add an attribute like an ENV VAR you must do it via env.
+    inherit env;
+    # must contain buildInputs, nativeBuildInputs and shellHook
+    buildInputs = [ pkgs.coreutils
+                    pkgs.jdk11
+                    pkgs.lsof
+                    pkgs.plantuml
+                    pkgs.leiningen
+                  ];
+    nativeBuildInputs = [
+      pkgs.zsh
+      pkgs.vim
+      pkgs.nixpkgs-fmt
+      pkgs.postgresql_11
+
+      # postgres-11 with postgis support
+      # (pkgs.postgresql_11.withPackages (p: [ p.postgis ]))
+    ];
+
+    # Post Shell Hook
+    shellHook = ''
+      echo "Using ${pkgs.postgresql_11.name}. port: ${port} user: ${pguser} pass: ${pgpass}"
+
+      # Setup: other env variables
+      export PGHOST="$PGDATA"
+      # Setup: DB
+      [ ! -d $PGDATA ] \
+       && pg_ctl initdb -o "-U postgres" \
+       && cat "$postgresConf" >> $PGDATA/postgresql.conf
+      pg_ctl -o "-p ${port} -k $PGDATA" start
+      echo "Creating DB and User"
+      psql -U postgres -p ${port} -f $postgresInitScript
+
+      function pgstop {
+         echo "Stopping and Cleaning up Postgres";
+         pg_ctl stop && rm -rf $PGDATA
+      }
+
+      alias pg="psql -p ${port} -U postgres"
+      echo "Send SQL commands with pg"
+      trap pgstop EXIT
+      '';
+    stop = "pgstop";
+  }
+```
+
+And to just launch Posgresql, there is also this file =./nix/pgshell.nix=, that
+simply contains
+
+```nix
+{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
+let pg = import ./pg.nix { inherit pkgs; };
+in with pg; pkgs.mkShell ( env //
+   {
+     buildInputs       = buildInputs;
+     nativeBuildInputs = nativeBuildInputs ;
+     shellHook         = shellHook;
+   })
+```
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes

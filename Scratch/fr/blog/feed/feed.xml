@@ -14,8 +14,8 @@
   <link>https://her.esy.fun</link>
   <description><![CDATA[her.esy.fun articles, mostly random personal thoughts]]></description>
   <language>en</language>
-  <pubDate>Sun, 11 Dec 2022 00:00:00 +0100</pubDate>
-  <lastBuildDate>Sun, 11 Dec 2022 00:00:00 +0100</lastBuildDate>
+  <pubDate>Thu, 02 Mar 2023 00:00:00 +0100</pubDate>
+  <lastBuildDate>Thu, 02 Mar 2023 00:00:00 +0100</lastBuildDate>
   <generator>mkrss.sh</generator>
   <webMaster>yann@esposito.host (Yann Esposito)</webMaster>
   <image>
@@ -23,6 +23,469 @@
     <title>her.esy.fun</title>
     <link>https://her.esy.fun</link>
   </image>
+
+<item>
+<title>Replace docker-compose with nix-shell</title>
+<guid>https://her.esy.fun/posts/0024-replace-docker-compose-with-nix-shell/index.html</guid>
+<pubDate>Thu, 02 Mar 2023 00:00:00 +0100</pubDate>
+<category>blog</category>
+<category>static</category>
+<description><![CDATA[
+<main id="content"><article><p>At work we use <code class="verbatim">docker-compose</code> to run
+integration tests on a big project that need to connect to multiple
+different databases as well as a few other services. This article is
+about how to replace <code class="verbatim">docker-compose</code> by
+<code class="verbatim">nix</code> for a local development
+environment.</p><h2 id="quick-tutorial">Quick tutorial</h2><h3 id="-nix-shell-fu--level-1-lesson"><code class="verbatim">nix-shell-fu</code> level 1 lesson</h3><p>Let's start with a basic <code class="verbatim">shell.nix</code>
+example:</p><pre class="nix"><code>{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
+with pkgs: mkShell
+  { buildInputs = [ hello ];
+    shellHook = &#39;&#39;
+      echo &quot;Using ${hello.name}.&quot;
+    &#39;&#39;;
+  }
+</code></pre><p>And this could be understood in plain English as:</p><blockquote><p>In the packages of nix version 22.11, create a new shell into which
+the package <code class="verbatim">hello</code> will be installed. At
+the end of the install, run a script that will print the package name.
+(Cf <a href="https://her.esy.fun/posts/0024-replace-docker-compose-with-nix-shell/index.html#digression">digression</a>)</p></blockquote><p>If you copy/paste this in a <code class="verbatim">shell.nix</code>
+file and run <code>nix-shell</code> you get:</p><pre><code>&gt; nix-shell
+nix-shell shell.nix
+these 53 paths will be fetched (84.69 MiB download, 524.77 MiB unpacked):
+  /nix/store/08pckaqznwh0s3822cjp5aji6y1lsm27-libcxx-11.1.0
+  ...
+  /nix/store/zqcs5xahjxij0c8vfw60lnfb6d979rn2-zlib-1.2.13
+copying path &#39;/nix/store/49wn01k9yikhjlxc1ym5b6civ29zz3gv-bash-5.1-p16&#39; from &#39;https://cache.nixos.org&#39;...
+...
+copying path &#39;/nix/store/4w2rv6s96fwsb4qyw8b9w394010gxriz-stdenv-darwin&#39; from &#39;https://cache.nixos.org&#39;...
+Using hello-2.12.1.
+
+[nix-shell:~/tmp/nixplayground]$
+</code></pre><p>If you close the session and run it again, it will be much faster and
+will only show this:</p><pre><code>❯ nix-shell
+Using hello-2.12.1.
+
+[nix-shell:~/tmp/nixplayground]$
+</code></pre><p>This is because all dependencies will be cached. OK so, this is level
+1 of <em>nix-shell-fu</em>.</p><p>Now, let's start level 2.</p><h3 id="-nix-shell-fu--level-2-lesson--scripting-and-configuring"><code class="verbatim">nix-shell-fu</code> level 2 lesson; scripting and
+configuring</h3><p>This time, we want to launch a full service, as a redis docker would
+do. So here is a basic shell script which is similar to the previous one
+but will request <code class="verbatim">redis</code> as a dependency
+instead of <code class="verbatim">hello</code> and also as a launching
+script. From there will add a little bit more features.</p><pre class="nix"><code>{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
+  pkgs.mkShell {
+    # must contain buildInputs, nativeBuildInputs and shellHook
+    buildInputs = [ pkgs.redis ];
+
+    # Post Shell Hook
+    shellHook = &#39;&#39;
+    echo &quot;Using ${pkgs.redis.name} on port: ${port}&quot;
+    redis-server
+  &#39;&#39;;
+  }
+</code></pre><p>Again if you run <code>nix-shell</code> here is the result:</p><pre><code>❯ nix-shell
+these 2 paths will be fetched (2.08 MiB download, 6.99 MiB unpacked):
+  /nix/store/6w4vnaxdx12ccq172i8j5l830mlp8jlg-redis-7.0.5
+  /nix/store/b47gmsx9qx0c9vh75wsg8bqq9qd0ad6f-openssl-3.0.7
+copying path &#39;/nix/store/b47gmsx9qx0c9vh75wsg8bqq9qd0ad6f-openssl-3.0.7&#39; from &#39;https://cache.nixos.org&#39;...
+copying path &#39;/nix/store/6w4vnaxdx12ccq172i8j5l830mlp8jlg-redis-7.0.5&#39; from &#39;https://cache.nixos.org&#39;...
+Using redis-7.0.5
+97814:C 10 Feb 2023 20:44:36.960 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+97814:C 10 Feb 2023 20:44:36.960 # Redis version=7.0.5, bits=64, commit=00000000, modified=0, pid=97814, just started
+97814:C 10 Feb 2023 20:44:36.960 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+97814:M 10 Feb 2023 20:44:36.961 * Increased maximum number of open files to 10032 (it was originally set to 256).
+97814:M 10 Feb 2023 20:44:36.961 * monotonic clock: POSIX clock_gettime
+                _._
+           _.-``__ &#39;&#39;-._
+      _.-``    `.  `_.  &#39;&#39;-._           Redis 7.0.5 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ &#39;&#39;-._
+ (    &#39;      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|&#39;` _.-&#39;|     Port: 6379
+ |    `-._   `._    /     _.-&#39;    |     PID: 97814
+  `-._    `-._  `-./  _.-&#39;    _.-&#39;
+ |`-._`-._    `-.__.-&#39;    _.-&#39;_.-&#39;|
+ |    `-._`-._        _.-&#39;_.-&#39;    |           https://redis.io
+  `-._    `-._`-.__.-&#39;_.-&#39;    _.-&#39;
+ |`-._`-._    `-.__.-&#39;    _.-&#39;_.-&#39;|
+ |    `-._`-._        _.-&#39;_.-&#39;    |
+  `-._    `-._`-.__.-&#39;_.-&#39;    _.-&#39;
+      `-._    `-.__.-&#39;    _.-&#39;
+          `-._        _.-&#39;
+              `-.__.-&#39;
+
+97814:M 10 Feb 2023 20:44:36.962 # WARNING: The TCP backlog setting of 511 cannot be enforced because kern.ipc.somaxconn is set to the lower value of 128.
+97814:M 10 Feb 2023 20:44:36.962 # Server initialized
+97814:M 10 Feb 2023 20:44:36.963 * Ready to accept connections
+</code></pre><p>Woo! Redis is started and it works!</p><p>But if you have multiple projects you want to have more control. For
+example, we will want to run redis on a specific port. Here is how you
+do it:</p><pre class="nix"><code>{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/21.05.tar.gz) {} }:
+  let iport = 16380;
+      port = toString iport;
+  in pkgs.mkShell {
+    # must contain buildInputs, nativeBuildInputs and shellHook
+    buildInputs = [ pkgs.redis ];
+
+    # Post Shell Hook
+    shellHook = &#39;&#39;
+    echo &quot;Using ${pkgs.redis.name} on port ${port}&quot;
+    redis-server --port ${port}
+  &#39;&#39;;
+  }
+</code></pre><p>And here is the result:</p><pre><code>&gt; rm dump.rdb
+&gt; nix-shell
+Using redis-6.2.3 on port 16380
+1785:C 10 Feb 2023 20:50:00.880 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1785:C 10 Feb 2023 20:50:00.880 # Redis version=6.2.3, bits=64, commit=00000000, modified=0, pid=1785, just started
+1785:C 10 Feb 2023 20:50:00.880 # Configuration loaded
+1785:M 10 Feb 2023 20:50:00.880 * Increased maximum number of open files to 10032 (it was originally set to 256).
+1785:M 10 Feb 2023 20:50:00.880 * monotonic clock: POSIX clock_gettime
+                _._
+           _.-``__ &#39;&#39;-._
+      _.-``    `.  `_.  &#39;&#39;-._           Redis 6.2.3 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ &#39;&#39;-._
+ (    &#39;      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|&#39;` _.-&#39;|     Port: 16380
+ |    `-._   `._    /     _.-&#39;    |     PID: 1785
+  `-._    `-._  `-./  _.-&#39;    _.-&#39;
+ |`-._`-._    `-.__.-&#39;    _.-&#39;_.-&#39;|
+ |    `-._`-._        _.-&#39;_.-&#39;    |           https://redis.io
+  `-._    `-._`-.__.-&#39;_.-&#39;    _.-&#39;
+ |`-._`-._    `-.__.-&#39;    _.-&#39;_.-&#39;|
+ |    `-._`-._        _.-&#39;_.-&#39;    |
+  `-._    `-._`-.__.-&#39;_.-&#39;    _.-&#39;
+      `-._    `-.__.-&#39;    _.-&#39;
+          `-._        _.-&#39;
+              `-.__.-&#39;
+
+1785:M 10 Feb 2023 20:50:00.881 # Server initialized
+1785:M 10 Feb 2023 20:50:00.881 * Ready to accept connections
+</code></pre><p>Woo! We control the port from the file. That's nice.</p><p>But, has you might have noticed, when you quit the session it dumps
+the DB as the file <code class="verbatim">dump.rdb</code>. What we would
+like is to keep all the state in a local directory that would be easy to
+delete.</p><p>To achieve this, instead of passing argument to the redis command
+line we will use a local config file to use.</p><pre class="nix"><code>{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
+let iport = 16380;
+    port = toString iport;
+in pkgs.mkShell (rec {
+  # ENV Variables the directory to put all the DATA
+  REDIS_DATA = &quot;${toString ./.}/.redis&quot;;
+  # the config file, as we use REDIS_DATA variable we just declared in the
+  # same nix set, we need to use rec
+  redisConf = pkgs.writeText &quot;redis.conf&quot;
+                             &#39;&#39;
+                             port ${port}
+                             dbfilename redis.db
+                             dir ${REDIS_DATA}
+                             &#39;&#39;;
+
+  buildInputs = [ pkgs.redis ];
+
+  # Post Shell Hook
+  shellHook = &#39;&#39;
+    echo &quot;Using ${pkgs.redis.name} on port: ${port}&quot;
+
+    [ ! -d $REDIS_DATA ] \
+      &amp;&amp; mkdir -p $REDIS_DATA
+    cat &quot;$redisConf&quot; &gt; $REDIS_DATA/redis.conf
+    alias redisstop=&quot;echo &#39;Stopping Redis&#39;; redis-cli -p ${port} shutdown; rm -rf $REDIS_DATA&quot;
+    nohup redis-server $REDIS_DATA/redis.conf &gt; /dev/null 2&gt;&amp;1 &amp;
+    echo &quot;When finished just run redisstop &amp;&amp; exit&quot;
+    trap redisstop EXIT
+  &#39;&#39;;
+})
+</code></pre><p>And here is a full session using this <code class="verbatim">shell.nix</code>:</p><pre><code>&gt; nix-shell
+Using redis-6.2.3 on port: 16380
+When finished just run redisstop &amp;&amp; exit
+
+-------------------------------
+[nix-shell:~/tmp/nixplayground]$ redis-cli -p 16380
+127.0.0.1:16380&gt; help
+redis-cli 6.2.3
+To get help about Redis commands type:
+      &quot;help @&lt;group&gt;&quot; to get a list of commands in &lt;group&gt;
+      &quot;help &lt;command&gt;&quot; for help on &lt;command&gt;
+      &quot;help &lt;tab&gt;&quot; to get a list of possible help topics
+      &quot;quit&quot; to exit
+
+To set redis-cli preferences:
+      &quot;:set hints&quot; enable online hints
+      &quot;:set nohints&quot; disable online hints
+Set your preferences in ~/.redisclirc
+127.0.0.1:16380&gt;
+
+-------------------------------
+[nix-shell:~/tmp/nixplayground]$ ls -a
+.  ..  .redis  shell.nix
+
+-------------------------------
+[nix-shell:~/tmp/nixplayground]$ find .redis
+.redis
+.redis/redis.conf
+
+-------------------------------
+[nix-shell:~/tmp/nixplayground]$ redis-cli -p 16380 shutdown
+[1]+  Done                    nohup redis-server $REDIS_DATA/redis.conf &gt; /dev/null 2&gt;&amp;1
+
+-------------------------------
+[nix-shell:~/tmp/nixplayground]$ find .redis
+.redis
+.redis/redis.db
+.redis/redis.conf
+
+-------------------------------
+[nix-shell:~/tmp/nixplayground]$ redisstop
+Stopping Redis
+Could not connect to Redis at 127.0.0.1:16380: Connection refused
+
+-------------------------------
+[nix-shell:~/tmp/nixplayground]$ ls -a
+.  ..  shell.nix
+</code></pre><p>So with this version all data related to redis is saved into the
+local <code class="verbatim">.redis</code> directory. And in the nix
+shell we provide a command <code class="verbatim">redisstop</code> that
+once invoked, shutdown redis, then purge all redis related data (as you
+would like in a development environment). Also, as compared to previous
+version, redis is launched in background so you could run commands in
+your nix shell.</p><p>Notice I also run <code>redisstop</code> command on exit of the
+nix-shell. So when you close the nix-shell redis is stopped and the DB
+state is cleaned up.</p><h2 id="-nix-shell-fu--level-3-lesson--composability">Composable <code class="verbatim">nix-shell</code></h2><p>As a quick recap you now have a boilerplate to create new <code class="verbatim">shell.nix</code>:</p><pre class="nix"><code>{ pkgs ? import ( ... ) {} }:
+mkShell { MY_ENV_VAR_1 = ...;
+          MY_ENV_VAR_2 = ...;
+          buildInputs = [ dependency-1 ... dependency-n ];
+          nativeBuildInputs = [ dependency-1 ... dependency-n ];
+          shellHook = &#39;&#39; command_to_run_after_init &#39;&#39;;
+        }
+</code></pre><p>But if I give you two such <code class="verbatim">shell.nix</code>
+files, would you be able to compose them? Unfortunately, not directly.
+To solve the problem we will replace this boilerplate by another one
+that do not directly uses <code class="verbatim">mkShell</code>. And in
+order to make it fully composable, we will also need to narrow the
+environment variables declaration in a sub field:</p><pre class="nix"><code>{ pkgs ? import ( ... ) {} }:
+let env = { PGDATA = ...; }
+in { inherit env; # equivalent to env = env;
+     buildInputs = [ dependency-1 ... dependency-n ];
+     nativeBuildInputs = [ dependency-1 ... dependency-n ];
+     shellHook = &#39;&#39; some_command $PG_DATA &#39;&#39;;
+   }
+</code></pre><p>With this, we can compose two nix set into a single merged one that
+will be suitable to pass as argument to <code>mkShell</code>. Another
+minor detail, but important one. In bash, the command <code>trap</code>
+do not accumulate but replace the function. For our need, we want to run
+all stop function on exit. So the <code>trap</code> directive added in
+the shell hook does not compose naturally. This is why we add a <code class="verbatim">stop</code> value that will contain the name of the
+bash function to call to stop and cleanup a service.</p><p>Finally the main structure for each of our service will look like
+this <strong>nix service boilerplate</strong>:</p><pre class="nix"><code>{ pkgs ? import ( ... ) {} }:
+let env = { MY_SERVICE_ENV_VAR = ...; }
+in { inherit env; # equivalent to env = env;
+     buildInputs = [ dependency-1 ... dependency-n ];
+     nativeBuildInputs = [ dependency-1 ... dependency-n ];
+     shellHook = &#39;&#39; my_command $MY_SERVICE_ENV_VAR &#39;&#39;;
+     stop = &quot;stop_my_service&quot;
+   }
+</code></pre><p>So let's start easy. To run a single shell script like this with
+<code class="verbatim">nix-shell</code>, you should put your service
+specific nix file in a <code class="verbatim">service.nix</code> file
+and create a <code class="verbatim">shell.nix</code> file that contains
+something like:</p><pre class="nix"><code>{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
+let service = import ./service.nix { inherit pkgs; };
+in with service; pkgs.mkShell ( env //
+   {
+     buildInputs       = buildInputs;
+     nativeBuildInputs = nativeBuildInputs ;
+     shellHook         = shellHook;
+   })
+</code></pre><p>Now, if you would like to run nix shell for multiple files, here is a
+first qui solution:</p><pre class="nix"><code>{ pkgs ? import (...) {}}:
+let
+  # merge all the env sets
+  mergedEnvs = builtins.foldl&#39; (acc: e: acc // e) {} envs;
+
+  # merge all the confs by accumulating the dependencies
+  # and concatenating the shell hooks.
+  mergedConfs =
+    builtins.foldl&#39;
+      (acc: {buildInputs ? [], nativeBuildInputs ? [], shellHook ? &quot;&quot;, ...}:
+        { buildInputs = acc.buildInputs ++ buildInputs;
+          nativeBuildInputs = acc.nativeBuildInputs ++ nativeBuildInputs;
+          shellHook = acc.shellHook + shellHook;
+        })
+      emptyConf
+      confs;
+in mkShell (mergedEnvs // mergedConfs)
+</code></pre><p>And now, here is the full solution that also deal with other minor
+details like importing the files and dealing with the exit of the
+shell:</p><pre class="nix"><code>{ mergeShellConfs =
+    # imports should contain a list of nix files
+    { pkgs, imports }:
+    let confs = map (f: import f { inherit pkgs; }) imports;
+        envs  = map ({env ? {}, ...}: env) confs;
+
+        # list the name of a command to stop a service (if none provided just use &#39;:&#39; which mean noop)
+        stops  = map ({stop ? &quot;:&quot;, ...}: stop) confs;
+
+        # we want to stop all services on exit
+        stopCmd = builtins.concatStringsSep &quot; &amp;&amp; &quot; stops;
+
+        # we would like to add a shellHook to cleanup the service that will call
+        # all cleaning-up function declared in sub-shells
+        lastConf =
+          { shellHook = &#39;&#39;
+                        stopall() { ${stopCmd}; }
+                        echo &quot;You can manually stop all services by calling stopall&quot;
+                        trap stopall EXIT
+                        &#39;&#39;;
+          };
+
+        # merge Environment variables needed for other shell environments
+        mergedEnvs = builtins.foldl&#39; (acc: e: acc // e) {} envs;
+
+        # zeroConf is the minimal empty configuration needed
+        zeroConf = {buildInputs = []; nativeBuildInputs = []; shellHook=&quot;&quot;;};
+
+        # merge all confs by appending buildInputs and nativeBuildInputs
+        # and by concatenating the shellHooks
+        mergedConfs =
+          builtins.foldl&#39;
+            (acc: {buildInputs ? [], nativeBuildInputs ? [], shellHook ? &quot;&quot;, ...}:
+              { buildInputs = acc.buildInputs ++ buildInputs;
+                nativeBuildInputs = acc.nativeBuildInputs ++ nativeBuildInputs;
+                shellHook = acc.shellHook + shellHook;
+              })
+            zeroConf
+            (confs ++ [lastConf]);
+
+    in (mergedEnvs // mergedConfs);
+}
+</code></pre><p>So I put this function declaration in a file named <code class="verbatim">./nix/merge-shell.nix</code>. And I have a <code class="verbatim">pg.nix</code> as well as a <code class="verbatim">redis.nix</code> file in the <code class="verbatim">nix</code> directory. On the root of the project the
+main <code class="verbatim">shell.nix</code> looks like:</p><pre class="nix"><code>{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
+let
+  # we import the file, and rename the function mergeShellConfs as mergeShells
+  mergeShells = (import ./nix/merge-shell.nix).mergeShellConfs;
+  # we call mergeShells
+  mergedShellConfs =
+    mergeShells { inherit pkgs;
+                  # imports = [ ./nix/pg.nix ./nix/redis.nix ];
+                  imports = [ ./nix/pg.nix ./nix/redis.nix ];
+                };
+in pkgs.mkShell mergedShellConfs
+</code></pre><p>And, that's it. Now when I run <code class="verbatim">nix-shell</code> it launch both Postgresql and Redis,
+and when I quit the shell, the state is cleaned up. Both postgres and
+redis are shutdown and the local files are erased.</p><p>I hope this could be useful to someone else.</p><h2 id="appendix">Appendix</h2><h3 id="--digression---digression"><span id="digression"></span>Digression</h3><p>In fact, this is a bit more complex than "just that". The reality is
+a bit more complex. The nix language is "pure", meaning, if you run the
+nix evaluation multiple times, it will always evaluate to the exact same
+value. But here, this block represent a function. The function takes as
+input a "nix set" (which you can see as an associative array, or a
+hash-map or also a javascript object depending on your preference), and
+this set is expected to contain a field named <code class="verbatim">pkgs</code>. If <code class="verbatim">pkgs</code> is
+not provided, it will use the set from the stable version 22.11 of
+nixpkgs by downloading them from github archive. The second part of the
+function generate "something" that is returned by an internal function
+of the standard library provided by <code class="verbatim">nix</code>
+which is named <code class="verbatim">mkShell</code>. So mainly, <code class="verbatim">mkShell</code> is a helper function that will generate
+what nix calls a <em><a href="https://blog.ielliott.io/nix-docs/derivation.html">derivation</a></em>.
+Mainly, we don't really care about exactly what is a
+<em>derivation</em>. This is an internal to nix representation that
+could be finally used by different nix tools for different things.
+Typically, installing a package, running a local development environment
+with nix-shell or nix develop, etc…</p><p>So the important detail to remember is that we can manipulate the
+parameter we pass to the functions <code class="verbatim">derivation</code>, <code class="verbatim">mkDerivation</code> and <code class="verbatim">mkShell</code>, but we have no mechanism to manipulate
+directly <code class="verbatim">derivation</code>. So in order to make
+that composable, you need to call the <code class="verbatim">derivation</code> internal function at the very end
+only.</p><p>The argument of all these functions are <em>nix sets</em></p><h3 id="the-full-nix-files-for-postgres">The full nix files for
+postgres</h3><p>For postgres:</p><pre class="nix"><code>{ pkgs }:
+  let iport = 15432;
+      port = toString iport;
+      pguser = &quot;pguser&quot;;
+      pgpass = &quot;pgpass&quot;;
+      pgdb = &quot;iroh&quot;;
+      # env should contain all variable you need to configure correctly mkShell
+      # so ENV_VAR, but also any other kind of variables.
+      env =  {
+        postgresConf =
+          pkgs.writeText &quot;postgresql.conf&quot;
+            &#39;&#39;
+        # Add Custom Settings
+        log_min_messages = warning
+        log_min_error_statement = error
+        log_min_duration_statement = 100  # ms
+        log_connections = on
+        log_disconnections = on
+        log_duration = on
+        #log_line_prefix = &#39;[] &#39;
+        log_timezone = &#39;UTC&#39;
+        log_statement = &#39;all&#39;
+        log_directory = &#39;pg_log&#39;
+        log_filename = &#39;postgresql-%Y-%m-%d_%H%M%S.log&#39;
+        logging_collector = on
+        log_min_error_statement = error
+      &#39;&#39;;
+
+        postgresInitScript =
+          pkgs.writeText &quot;init.sql&quot;
+            &#39;&#39;
+        CREATE DATABASE ${pgdb};
+        CREATE USER ${pguser} WITH ENCRYPTED PASSWORD &#39;${pgpass}&#39;;
+        GRANT ALL PRIVILEGES ON DATABASE ${pgdb} TO ${pguser};
+        &#39;&#39;;
+
+        PGDATA = &quot;${toString ./.}/.pg&quot;;
+      };
+  in env // {
+    # Warning if you add an attribute like an ENV VAR you must do it via env.
+    inherit env;
+    # must contain buildInputs, nativeBuildInputs and shellHook
+    buildInputs = [ pkgs.coreutils
+                    pkgs.jdk11
+                    pkgs.lsof
+                    pkgs.plantuml
+                    pkgs.leiningen
+                  ];
+    nativeBuildInputs = [
+      pkgs.zsh
+      pkgs.vim
+      pkgs.nixpkgs-fmt
+      pkgs.postgresql_11
+
+      # postgres-11 with postgis support
+      # (pkgs.postgresql_11.withPackages (p: [ p.postgis ]))
+    ];
+
+    # Post Shell Hook
+    shellHook = &#39;&#39;
+      echo &quot;Using ${pkgs.postgresql_11.name}. port: ${port} user: ${pguser} pass: ${pgpass}&quot;
+
+      # Setup: other env variables
+      export PGHOST=&quot;$PGDATA&quot;
+      # Setup: DB
+      [ ! -d $PGDATA ] \
+       &amp;&amp; pg_ctl initdb -o &quot;-U postgres&quot; \
+       &amp;&amp; cat &quot;$postgresConf&quot; &gt;&gt; $PGDATA/postgresql.conf
+      pg_ctl -o &quot;-p ${port} -k $PGDATA&quot; start
+      echo &quot;Creating DB and User&quot;
+      psql -U postgres -p ${port} -f $postgresInitScript
+
+      function pgstop {
+         echo &quot;Stopping and Cleaning up Postgres&quot;;
+         pg_ctl stop &amp;&amp; rm -rf $PGDATA
+      }
+
+      alias pg=&quot;psql -p ${port} -U postgres&quot;
+      echo &quot;Send SQL commands with pg&quot;
+      trap pgstop EXIT
+      &#39;&#39;;
+    stop = &quot;pgstop&quot;;
+  }
+</code></pre><p>And to just launch Posgresql, there is also this file <code class="verbatim">./nix/pgshell.nix</code>, that simply contains</p><pre class="nix"><code>{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
+let pg = import ./pg.nix { inherit pkgs; };
+in with pg; pkgs.mkShell ( env //
+   {
+     buildInputs       = buildInputs;
+     nativeBuildInputs = nativeBuildInputs ;
+     shellHook         = shellHook;
+   })
+</code></pre></article></main>
+]]></description>
+</item>
+
 
 <item>
 <title>My first ChatGPT exchange</title>
@@ -1608,387 +2071,6 @@ format is a kind of super simplified markdown. I really like the
 simplicity of it.</p><p>Here are a few links to get you started.</p><p>Web:</p><ul><li><a href="https://gemini.circumlunar.space">gemini homepage</a></li><li><a href="https://thelambdalab.xyz/elpher/">elpher emacs gopher and
 gemini client</a></li><li><a href="https://portal.mozz.us/gemini/gemini.circumlunar.space/">Explore
 gemini from the web</a></li></ul><p>Gopher:</p><ul><li><a href="gopher://thelambdalab.xyz/1/projects/elpher/">elpher</a></li></ul><p>Gemini:</p><ul><li><a href="gemini://her.esy.fun">my website in gemini</a></li></ul></article></main>
-]]></description>
-</item>
-
-
-<item>
-<title>How I use org-mode</title>
-<guid>https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html</guid>
-<pubDate>Thu, 29 Oct 2020 00:00:00 +0100</pubDate>
-<category>org-mode</category>
-<description><![CDATA[
-<main id="content"><nav id="toc" role="doc-toc"><ul><li><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#overview">Overview</a><ul><li><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#daily-routine">daily routine</a></li><li><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#document-writing">document writing</a></li><li><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#note-taking">note taking</a></li><li><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#journaling">journal</a></li></ul></li><li><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#task-management">Task Management</a><ul><li><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#worfklow-1--planned-tasks---org-agenda---clock">Workflow
-1; planned tasks : org-agenda + clock</a></li><li><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#workflow-2--org-capture-org-refile">Workflow 2: Tracking;
-org-capture</a></li><li><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#workflow-3--org-capture---org-refile">Workflow 3: Add new
-tasks; org-capture / org-refile</a></li><li><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#configuration">Configuration</a></li></ul></li><li><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#conclusions">Conclusions</a></li><li><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#footnotes">Footnotes</a></li></ul></nav><article><div class="abstract"><p>In this article I'll try to give an overview of my current use of <a href="https://orgmode.html">org mode</a>. I use org mode for:</p><ul><li>tasks management & time tracking</li><li>writing documents (articles, book, etc…)</li><li>note taking ; which I consider slightly different from just writing
-documents</li></ul><p>TL;DR:</p><ul><li><code class="verbatim">SPC y a</code> ⇒ Show agenda view for
-today</li><li><code class="verbatim">SPC X</code> ⇒ Capture a new task, write a
-description, then <code class="verbatim">C-c C-c</code>, save that in
-<code class="verbatim">tracker.org</code> (or <code class="verbatim">inbox.org</code> depending of the capture
-template)</li><li><code class="verbatim">SPC n o</code> ⇒ jump to the current time
-tracked tasks</li><li><code class="verbatim">SPC m c o</code> ⇒ stop the clock on that
-task; if you capture a new time tracking tasks you don't need to
-clock-out</li><li><code class="verbatim">SPC y o r</code> ⇒ <code class="verbatim">org-refile</code>, meaning move that task somewhere
-else</li><li><code class="verbatim">SPC q</code> ⇒ add/remove tags to that
-task</li></ul></div><p>In this article I would like to share a tool that was a real life
-changer to me: <a href="http://orgmode.html">org mode</a>.</p><p>In my opinion emacs is worth learning just for org-mode. This is by
-far the best solution I ever used to manage my tasks. I tried a lot of
-differents tools before it, and this is the only one I really stick
-with. It is so versatile that it can adapt to your very specific
-needs.</p><p>The major difficulty faced by tasks management application is the
-wrong level of complexity facing the user. This is a very hard problem
-to tackle.</p><p>If your system is too simple, the users will not be able to manage
-the tasks how they would like. If your system is too complex, the user
-will be faced with too much details. So most successful systems have a
-way to adapt their apparent complexity to the need of their users. And
-org mode is exactly like that. Not only starting with org mode can be
-extremely simple but also there are mostly no complexity limit.</p><p>Either org mode already handle one of your need, or most of the time
-you will find a package to fulfill your need. And if not, it is easy to
-write your own.</p><p>Here is the result of a few years of improving my use of org mode.
-Today I can say that org mode is part of my day to day life. I still
-invest a bit of time to improve minor details of my workflow time to
-time. But now my daily workflow is mostly stable. So I think I can share
-it.</p><h2 id="overview">Overview</h2><h3 id="daily-routine">daily routine</h3><p>The first thing I do in the morning is to open <code class="verbatim">org-agenda</code> view for today. It shows me the tasks
-planned for today. What are urgent tasks, deadlines, tasks that have
-deadlines in a few days, etc… I also have a glimpse of my habits, tasks
-that I should start at some hour in the day, etc…</p><figure><img src="https://her.esy.fun/posts/0015-how-i-use-org-mode/img/org-super-agenda.png.webp" title="org-super-agenda" alt="Org super calendar view"></img><figcaption aria-hidden="true">Org super calendar view</figcaption></figure><p>I then start to track (<em>clock</em>) the tasks I'm currently
-working on.</p><p>Often during the day, I need to create new tasks. Most of the time I
-create a task and I add either a deadline or a schedule date.</p><p>Sometime I also need to deal with interruptions. In that case, I
-<em>capture</em> the interruption that will also create a new task being
-clocked.</p><p>At the end of the day, every tasks I worked on are saved in a <code class="verbatim">tracker.org</code> file. That file look like a date
-tree. And I generally generate a <em>report</em> that tell me how much
-hours I worked today. Some tasks are tagged <code class="verbatim">work</code>. The report filter only on the <code class="verbatim">work</code> tagged tasks.</p><p>Also I have some repeating tasks like review memory cards using a
-spaced repetition plugin. I start it, and it shows me a few <code class="verbatim">cards</code> with questions that I review. So mainly
-those cards contain info I want to keep in my mind and not only in my
-notes.</p><h3 id="document-writing">document writing</h3><p>Writing documents with org mode and in particular technical document
-is just incredible. Org mode feels a lot like markdown.</p><p>But org mode shine with its use of <strong>org-babel</strong>.
-<strong>org-babel</strong> is used to execute code inside your document.
-So you can execute block of code and get their result in block of code.
-For technical writing this is extremely useful.</p><p>For example, I wrote most part of an OAuth2 provider in Clojure. And
-to generate a documentation to some of our advanced users it is very
-nice to provide the full HTTP request along the response.</p><p>But I also often need to play a few tricks in the doc and directly
-use our Clojure code to generate JWT for example. The great part is the
-ability to use those JWT generated from Clojure code in the following
-code block making HTTP call.</p><p>That plus the natural ability to fold/unfold the tree structure of
-the org mode file is great.</p><h3 id="note-taking">note taking</h3><p>Time to time, I need to really take the time write note on a
-technical subject or sometime about articles I read about anything. For
-that I use <a href="https://github.com/org-roam/org-roam">org roam</a>.
-I only started to use it a few months ago. But this is a great addition
-to my previous workflow that used <code class="verbatim">deft</code>
-(that I still use). But I must say, this is pretty perfect as a note
-taking app.</p><p>Mainly you capture notes quite easily and put links about the
-subject, but also tags. In the end that generate a graph of notes that
-you could use later to dig into your own notes.</p><h3 id="journaling">journal</h3><p>Along with note taking. I also try to write a journal note everyday.
-For that I use org-journal (another org mode related package). I have a
-default template which take care of a few metrics I want to focus on.
-And I guess it is different for anyone of us.</p><h2 id="task-management">Task Management</h2><p>So here is a more detailed description about my org mode usage.</p><h3 id="worfklow-1--planned-tasks---org-agenda---clock">Workflow 1;
-planned tasks : org-agenda + clock</h3><ol><li>look at the current tasks planned for today</li><li>select a task, clock it</li><li>work on the task</li><li>back to the task and clock it out.</li></ol><p>I work most of my using emacs<a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Generally the first
-thing I do in the morning is opening `org-calendar`. It looks like
-this:</p><figure><img src="https://her.esy.fun/posts/0015-how-i-use-org-mode/img/org-super-agenda.png.webp" title="org-super-agenda" alt="Org super calendar view"></img><figcaption aria-hidden="true">Org super calendar view</figcaption></figure><p>Pretty brutalist interface which is a great thing to me. Distraction
-free interface going to the essential.</p><p>With this view, I see what I planned to do today. I also see a few
-"Due Soon" tasks in case I have the time to handle those.</p><p>When I start working on a task I start a clock on it (I simply type
-<code class="verbatim">I</code> when my cursor is on the TODO line).
-When I finished some task I change its status from TODO to something
-else. Mainly I'm prompted when doing so:</p><pre><code>{ [t] TODO   [p] IN-PROGRESS   [h] HOLD   [w] WAITING
-  [d] DONE   [c] CANCELLED     [l] HANDLED }
-</code></pre><p>And that's it. The time spent on the task as been clocked I can work
-on another task.</p><p>Looking at the agenda view you could notice habits. They start to
-become green when you are doing them correctly.</p><p>But generally, I don't use much direct clocking from the agenda. Most
-of the time I prefer the capture mechanism. Which bring us to "Workflow
-2".</p><h3 id="workflow-2--org-capture-org-refile">Workflow 2: Tracking;
-org-capture</h3><p>Most of the tasks I perform on the day are not planned. I have a
-generic routine + some prepared events and tasks to performs. But during
-the day you have multiple interruptions, and part of my job is to write
-code reviews too. I cannot plan those.</p><p>In that case I use <code class="verbatim">org-capture</code> along
-<code class="verbatim">org-refile</code>. Mainly <code class="verbatim">org-capture</code> helps you create a new TODO entry.
-And <code class="verbatim">org-refile</code> will help you move that
-TODO entry to the correct place.</p><p>So let say I get a direct message in the chat asking me to do
-something. I generally start org capture (for me it's <code class="verbatim">SPC X</code>). I am presented with the following
-choice:</p><pre><code>Select a capture template
-=========================
-
-[t] todo
-[c] chat
-[e] email
-[m] meeting
-[p] pause
-[r] review
-[w] work
-[i] interruption
-[f] chore
----------------------------------------------------------------------------
-[q] Abort
-</code></pre><p>In my example it was a chat interruption. So I type <code class="verbatim">i</code> that presents me with this</p><pre><code>**** IN-PROGRESS |  :interruption:
-:LOGBOOK:
-[2020-09-23 Wed 08:01]
-ref :: [link-to-where-I-was-in-emacs-when-captured]
-</code></pre><p>My cursor placed where the <code class="verbatim">|</code> is
-displayed. Here I add the tag <code class="verbatim">chat</code> and a
-small description, "dm from John about X" for example. Then I type <code class="verbatim">C-c C-c</code> and the TODO is placed in a <code class="verbatim">tracker.org</code> file under a date tree that looks
-like this:</p><pre class="org-mode"><code>* 2020
-** 2020-W39
-*** 2020-09-21 Monday
-*** 2020-09-22 Tuesday
-*** 2020-09-23 Wednesday
-**** IN-PROGRESS Chat with John about X                          :interruption:chat:
-:LOGBOOK:
-:END:
-[2020-09-23 Wed 17:58]
-ref ::
-...
-</code></pre><p>So the clock for this task started at the moment at made the capture.
-In my workflow, I prefer to finish the capture and stop clock later. So
-after I finished the capture, the clock is still running while the task
-is put in my tracker file.</p><p>Once I finished with that task. I can:</p><ol><li>Jump to the tasks with <code class="verbatim">SPC n o</code> (<code class="verbatim">org-clock-goto</code>), and stop the clock <code class="verbatim">SPC m c o</code> (<code class="verbatim">clock-out</code>).</li><li>Jump to the task and change its status to <code class="verbatim">DONE</code> which will stop the clock.</li><li>Capture another tasks which will stop the clock on the current task
-and will start on the new one.</li></ol><p>By the end of the day, my tracker file will contain a date tree with
-all the tasks I done in the day. All tasks nicely clocked. I generally
-create a clock report that look like this:</p><pre><code>#+BEGIN: clocktable :scope subtree :maxlevel 4 :timestamp t :narrow 36! :match &quot;work&quot;
-#+CAPTION: Clock summary at [2020-09-23 Wed 08:20]
-| Timestamp              | Headline                             | Time   |   |      |      |
-|------------------------+--------------------------------------+--------+---+------+------|
-|                        | *Total time*                         | *6:40* |   |      |      |
-|------------------------+--------------------------------------+--------+---+------+------|
-|                        | \_    2020-09-21 Monday              |        |   | 7:40 |      |
-| [2020-09-21 Mon 08:54] | \_      check chat                   |        |   |      | 0:36 |
-| [2020-09-21 Mon 09:30] | \_      check reviews                |        |   |      | 0:41 |
-| [2020-09-21 Mon 10:11] | \_      check emails                 |        |   |      | 0:07 |
-| [2020-09-21 Mon 10:37] | \_      review PR about xxx          |        |   |      | 0:44 |
-| [2020-09-21 Mon 11:21] | \_      update my PR from feedbacks  |        |   |      | 0:36 |
-| [2020-09-21 Mon 12:08] | \_      review John&#39;s PR about Foo   |        |   |      | 0:12 |
-| [2020-09-21 Mon 13:41] | \_      review M&#39;s PR about Bar      |        |   |      | 0:11 |
-| [2020-09-21 Mon 13:53] | \_      another thing                |        |   |      | 0:16 |
-| [2020-09-21 Mon 14:09] | \_      review PR                    |        |   |      | 0:51 |
-| [2020-09-21 Mon 15:00] | \_      work on PR                   |        |   |      | 1:30 |
-| [2020-09-21 Mon 16:49] | \_      check another PR             |        |   |      | 0:33 |
-| [2020-09-21 Mon 17:03] | \_      answer email                 |        |   |      | 0:55 |
-| [2020-09-21 Mon 17:58] | \_      Chat John about X            |        |   |      | 0:28 |
-
-</code></pre><p>And that's mostly it for TODOs and tasks handling.</p><h3 id="workflow-3--org-capture---org-refile">Workflow 3: Add new tasks;
-org-capture / org-refile</h3><p>Another thing I do quite often. I need to add new task to be done. Be
-it for today or another day.</p><p>In that case, I generally use org-capture again. This time I choose
-<code class="verbatim">t</code> for TODO and I generally detail the task
-to be done. I add either a SCHEDULE (when I plan to start) or a DEADLINE
-(when this must be finished) and I refile it.</p><p>So refile will start a fuzzy search to put this task under some
-subtree. So instead of going to my <code class="verbatim">tracker.org</code> file, this goes to my <code class="verbatim">inbox.org</code> file.</p><p>And it will appear in my agenda.</p><h3 id="configuration">Configuration</h3><p>So to have all of that, I added a lot of configuration over time. But
-here is the most important part.</p><p>Most of that config is what I personally think are better defaults.
-And a minor part of it only is about how I organize myself.</p><div class="sourceCode" id="cb6" data-org-language="emacs-lisp"><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id="cb6-1"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">defun</span><span class="fu"> org-mode-config </span>()</span>
-<span id="cb6-2"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Org-mode.&quot;</span></span>
-<span id="cb6-3"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-3" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-extend-today-until <span class="dv">4</span></span>
-<span id="cb6-4"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-4" aria-hidden="true" tabindex="-1"></a>        org-use-effective-time <span class="kw">t</span>)</span>
-<span id="cb6-5"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-5" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-todo-keywords</span>
-<span id="cb6-6"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-6" aria-hidden="true" tabindex="-1"></a>        &#39;((<span class="kw">sequence</span> <span class="st">&quot;TODO(t)&quot;</span></span>
-<span id="cb6-7"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-7" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;IN-PROGRESS(p)&quot;</span></span>
-<span id="cb6-8"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-8" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;|&quot;</span></span>
-<span id="cb6-9"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-9" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;DONE(d)&quot;</span></span>
-<span id="cb6-10"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-10" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;HOLD(h@/!)&quot;</span></span>
-<span id="cb6-11"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-11" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;CANCELED(c@/!)&quot;</span></span>
-<span id="cb6-12"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-12" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;HANDLED(l@/!)&quot;</span>)</span>
-<span id="cb6-13"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-13" aria-hidden="true" tabindex="-1"></a>          (<span class="kw">sequence</span> <span class="st">&quot;|&quot;</span> <span class="st">&quot;PAUSE(p)&quot;</span> <span class="st">&quot;CHAT(c)&quot;</span> <span class="st">&quot;EMAIL(e)&quot;</span> <span class="st">&quot;MEETING(m)&quot;</span> <span class="st">&quot;REVIEW(r)&quot;</span> <span class="st">&quot;GEEK(g)&quot;</span>)))</span>
-<span id="cb6-14"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-15"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">;;; Look &amp; Feel</span></span>
-<span id="cb6-16"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-17"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; I like to have something different than ellipsis because I often use them</span></span>
-<span id="cb6-18"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; myself.</span></span>
-<span id="cb6-19"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-19" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-ellipsis <span class="st">&quot; [+]&quot;</span>)</span>
-<span id="cb6-20"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-20" aria-hidden="true" tabindex="-1"></a>  (custom-set-faces &#39;(org-ellipsis ((<span class="kw">t</span> (:foreground <span class="st">&quot;gray40&quot;</span> :underline <span class="kw">nil</span>)))))</span>
-<span id="cb6-21"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-22"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-22" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">defun</span><span class="fu"> my-org-settings </span>()</span>
-<span id="cb6-23"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-23" aria-hidden="true" tabindex="-1"></a>    (org-display-inline-images)</span>
-<span id="cb6-24"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-24" aria-hidden="true" tabindex="-1"></a>    (<span class="kw">setq</span> fill-column <span class="dv">75</span>)</span>
-<span id="cb6-25"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-25" aria-hidden="true" tabindex="-1"></a>    (abbrev-mode)</span>
-<span id="cb6-26"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-26" aria-hidden="true" tabindex="-1"></a>    (org-indent-mode)</span>
-<span id="cb6-27"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">nil</span>)</span>
-<span id="cb6-28"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-29"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-29" aria-hidden="true" tabindex="-1"></a>  (add-hook &#39;org-mode-hook #&#39;my-org-settings)</span>
-<span id="cb6-30"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-31"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-31" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-tags-column <span class="dv">69</span>)</span>
-<span id="cb6-32"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-33"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-33" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; src block indentation / editing / syntax highlighting</span></span>
-<span id="cb6-34"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-34" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-src-fontify-natively <span class="kw">t</span></span>
-<span id="cb6-35"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-35" aria-hidden="true" tabindex="-1"></a>        org-src-window-setup &#39;current-window <span class="co">;; edit in current window</span></span>
-<span id="cb6-36"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-36" aria-hidden="true" tabindex="-1"></a>        org-src-preserve-indentation <span class="kw">t</span> <span class="co">;; do not put two spaces on the left</span></span>
-<span id="cb6-37"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-37" aria-hidden="true" tabindex="-1"></a>        org-src-tab-acts-natively <span class="kw">t</span>)</span>
-<span id="cb6-38"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-39"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-39" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; *** Templates</span></span>
-<span id="cb6-40"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-40" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; the %a refer to the place you are in emacs when you make the capture</span></span>
-<span id="cb6-41"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-41" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; that&#39;s very neat when you do that in an email for example.</span></span>
-<span id="cb6-42"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-42" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-capture-templates</span>
-<span id="cb6-43"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-43" aria-hidden="true" tabindex="-1"></a>        &#39;((<span class="st">&quot;t&quot;</span> <span class="st">&quot;todo&quot;</span>         entry (file <span class="st">&quot;~/.org/inbox.org&quot;</span>)</span>
-<span id="cb6-44"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-44" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;* TODO %?</span><span class="sc">\n</span><span class="st">%U</span><span class="sc">\n</span><span class="st">- ref :: %a</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
-<span id="cb6-45"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-45" aria-hidden="true" tabindex="-1"></a>          <span class="co">;; time tracker (clocked tasks)</span></span>
-<span id="cb6-46"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-46" aria-hidden="true" tabindex="-1"></a>          (<span class="st">&quot;g&quot;</span> <span class="st">&quot;geek&quot;</span>         entry (file+olp+datetree <span class="st">&quot;~/.org/tracker.org&quot;</span>)</span>
-<span id="cb6-47"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-47" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;* GEEK %?         :perso:</span><span class="sc">\n</span><span class="st">%U</span><span class="sc">\n</span><span class="st">- ref :: %a</span><span class="sc">\n</span><span class="st">&quot;</span></span>
-<span id="cb6-48"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-48" aria-hidden="true" tabindex="-1"></a>           :prepend <span class="kw">t</span> :tree-type week :clock-in <span class="kw">t</span> :clock-keep <span class="kw">t</span>)</span>
-<span id="cb6-49"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-49" aria-hidden="true" tabindex="-1"></a>          (<span class="st">&quot;c&quot;</span> <span class="st">&quot;chat&quot;</span>         entry (file+olp+datetree <span class="st">&quot;~/.org/tracker.org&quot;</span>)</span>
-<span id="cb6-50"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-50" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;* CHAT %?         :work:chat:</span><span class="sc">\n</span><span class="st">%U</span><span class="sc">\n</span><span class="st">- ref :: %a</span><span class="sc">\n</span><span class="st">&quot;</span></span>
-<span id="cb6-51"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-51" aria-hidden="true" tabindex="-1"></a>           :prepend <span class="kw">t</span> :tree-type week :clock-in <span class="kw">t</span> :clock-keep <span class="kw">t</span>)</span>
-<span id="cb6-52"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-52" aria-hidden="true" tabindex="-1"></a>          (<span class="st">&quot;e&quot;</span> <span class="st">&quot;email&quot;</span>        entry (file+olp+datetree <span class="st">&quot;~/.org/tracker.org&quot;</span>)</span>
-<span id="cb6-53"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-53" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;* EMAIL %?        :work:email:</span><span class="sc">\n</span><span class="st">%U</span><span class="sc">\n</span><span class="st">- ref :: %a</span><span class="sc">\n</span><span class="st">&quot;</span></span>
-<span id="cb6-54"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-54" aria-hidden="true" tabindex="-1"></a>           :prepend <span class="kw">t</span> :tree-type week :clock-in <span class="kw">t</span> :clock-keep <span class="kw">t</span>)</span>
-<span id="cb6-55"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-55" aria-hidden="true" tabindex="-1"></a>          (<span class="st">&quot;m&quot;</span> <span class="st">&quot;meeting&quot;</span>      entry (file+olp+datetree <span class="st">&quot;~/.org/tracker.org&quot;</span>)</span>
-<span id="cb6-56"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-56" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;* MEETING %?      :work:meeting:</span><span class="sc">\n</span><span class="st">%U</span><span class="sc">\n</span><span class="st">- ref :: %a</span><span class="sc">\n</span><span class="st">&quot;</span></span>
-<span id="cb6-57"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-57" aria-hidden="true" tabindex="-1"></a>           :prepend <span class="kw">t</span> :tree-type week :clock-in <span class="kw">t</span> :clock-keep <span class="kw">t</span>)</span>
-<span id="cb6-58"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-58" aria-hidden="true" tabindex="-1"></a>          (<span class="st">&quot;r&quot;</span> <span class="st">&quot;review&quot;</span>       entry (file+olp+datetree <span class="st">&quot;~/.org/tracker.org&quot;</span>)</span>
-<span id="cb6-59"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-59" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;* REVIEW %?       :work:review:</span><span class="sc">\n</span><span class="st">%U</span><span class="sc">\n</span><span class="st">- ref :: %a</span><span class="sc">\n</span><span class="st">&quot;</span></span>
-<span id="cb6-60"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-60" aria-hidden="true" tabindex="-1"></a>           :prepend <span class="kw">t</span> :tree-type week :clock-in <span class="kw">t</span> :clock-keep <span class="kw">t</span>)</span>
-<span id="cb6-61"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-61" aria-hidden="true" tabindex="-1"></a>          (<span class="st">&quot;w&quot;</span> <span class="st">&quot;work&quot;</span>         entry (file+olp+datetree <span class="st">&quot;~/.org/tracker.org&quot;</span>)</span>
-<span id="cb6-62"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-62" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;* IN-PROGRESS %?  :work:</span><span class="sc">\n</span><span class="st">%U</span><span class="sc">\n</span><span class="st">- ref :: %a</span><span class="sc">\n</span><span class="st">&quot;</span></span>
-<span id="cb6-63"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-63" aria-hidden="true" tabindex="-1"></a>           :prepend <span class="kw">t</span> :tree-type week :clock-in <span class="kw">t</span> :clock-keep <span class="kw">t</span>)</span>
-<span id="cb6-64"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-64" aria-hidden="true" tabindex="-1"></a>          (<span class="st">&quot;p&quot;</span> <span class="st">&quot;pause&quot;</span>        entry (file+olp+datetree <span class="st">&quot;~/.org/tracker.org&quot;</span>)</span>
-<span id="cb6-65"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-65" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;* PAUSE %?        :pause:</span><span class="sc">\n</span><span class="st">%U</span><span class="sc">\n</span><span class="st">- ref :: %a</span><span class="sc">\n</span><span class="st">&quot;</span></span>
-<span id="cb6-66"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-66" aria-hidden="true" tabindex="-1"></a>           :prepend <span class="kw">t</span> :tree-type week :clock-in <span class="kw">t</span> :clock-keep <span class="kw">t</span>)</span>
-<span id="cb6-67"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-67" aria-hidden="true" tabindex="-1"></a>          (<span class="st">&quot;i&quot;</span> <span class="st">&quot;interruption&quot;</span> entry (file+olp+datetree <span class="st">&quot;~/.org/tracker.org&quot;</span>)</span>
-<span id="cb6-68"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-68" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;* IN-PROGRESS %?  :interruption:work:</span><span class="sc">\n</span><span class="st">%U</span><span class="sc">\n</span><span class="st">- ref :: %a</span><span class="sc">\n</span><span class="st">&quot;</span></span>
-<span id="cb6-69"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-69" aria-hidden="true" tabindex="-1"></a>           :prepend <span class="kw">t</span> :tree-type week :clock-in <span class="kw">t</span> :clock-keep <span class="kw">t</span>)</span>
-<span id="cb6-70"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-70" aria-hidden="true" tabindex="-1"></a>          (<span class="st">&quot;f&quot;</span> <span class="st">&quot;chore&quot;</span>        entry (file <span class="st">&quot;~/.org/inbox.org&quot;</span>)</span>
-<span id="cb6-71"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-71" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;* IN-PROGRESS %?  :chore:</span><span class="sc">\n</span><span class="st">%U</span><span class="sc">\n</span><span class="st">&quot;</span></span>
-<span id="cb6-72"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-72" aria-hidden="true" tabindex="-1"></a>           :clock-in <span class="kw">t</span> :clock-keep <span class="kw">t</span>)))</span>
-<span id="cb6-73"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-74"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-74" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; How to create default clocktable</span></span>
-<span id="cb6-75"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-75" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-clock-clocktable-default-properties</span>
-<span id="cb6-76"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-76" aria-hidden="true" tabindex="-1"></a>        &#39;(:scope subtree :maxlevel <span class="dv">4</span> :timestamp <span class="kw">t</span> :link <span class="kw">t</span> :tags <span class="kw">t</span> :narrow <span class="dv">36</span>! :match <span class="st">&quot;work&quot;</span>))</span>
-<span id="cb6-77"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-78"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-78" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; How to display default clock report in agenda view</span></span>
-<span id="cb6-79"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-79" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-agenda-clockreport-parameter-plist</span>
-<span id="cb6-80"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-80" aria-hidden="true" tabindex="-1"></a>        &#39;(:lang <span class="st">&quot;en&quot;</span> :maxlevel <span class="dv">4</span> :fileskip0 <span class="kw">t</span> :link <span class="kw">t</span> :indent <span class="kw">t</span> :narrow <span class="dv">80</span>!))</span>
-<span id="cb6-81"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-82"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-82" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; *** Projectile; default </span><span class="al">TODO</span><span class="co"> file to create in your projects</span></span>
-<span id="cb6-83"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-83" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-projectile-file <span class="st">&quot;inbox.org&quot;</span>)</span>
-<span id="cb6-84"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-85"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-85" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; *** Refile mapped to SPC y o r</span></span>
-<span id="cb6-86"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-86" aria-hidden="true" tabindex="-1"></a>  (map! :leader :desc <span class="st">&quot;org-refile&quot;</span> <span class="st">&quot;y o r&quot;</span> #&#39;org-refile)</span>
-<span id="cb6-87"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-88"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-88" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; Refile to either the =refile.org= file or to =agenda.org= org =standup.org=</span></span>
-<span id="cb6-89"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-89" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-refile-target-files</span>
-<span id="cb6-90"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-90" aria-hidden="true" tabindex="-1"></a>        &#39;(<span class="st">&quot;~/.org/tracker.org&quot;</span></span>
-<span id="cb6-91"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-91" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;~/.org/inbox.org&quot;</span>))</span>
-<span id="cb6-92"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-93"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-93" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-refile-targets</span>
-<span id="cb6-94"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-94" aria-hidden="true" tabindex="-1"></a>        &#39;((<span class="kw">nil</span> :maxlevel . <span class="dv">5</span>)</span>
-<span id="cb6-95"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-95" aria-hidden="true" tabindex="-1"></a>          (org-refile-target-files :maxlevel . <span class="dv">5</span>)))</span>
-<span id="cb6-96"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-97"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-97" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; *** Agenda</span></span>
-<span id="cb6-98"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-98" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-log-into-drawer <span class="kw">t</span>) <span class="co">;; hide the log state change history a bit better</span></span>
-<span id="cb6-99"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-99" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-agenda-files org-refile-target-files)</span>
-<span id="cb6-100"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-100" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-deadline-warning-days <span class="dv">7</span>)</span>
-<span id="cb6-101"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-101" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-agenda-skip-scheduled-if-deadline-is-shown <span class="kw">t</span>)</span>
-<span id="cb6-102"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-102" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-habit-show-habits-only-for-today <span class="kw">nil</span>)</span>
-<span id="cb6-103"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-103" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-habit-graph-column <span class="dv">65</span>)</span>
-<span id="cb6-104"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-104" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-duration-format &#39;h:mm) <span class="co">;; show hours at max, not days</span></span>
-<span id="cb6-105"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-105" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-agenda-compact-blocks <span class="kw">t</span>)</span>
-<span id="cb6-106"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-106" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; default show today</span></span>
-<span id="cb6-107"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-107" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-agenda-span &#39;day)</span>
-<span id="cb6-108"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-108" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-agenda-start-day <span class="st">&quot;-0d&quot;</span>)</span>
-<span id="cb6-109"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-109" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-agenda-start-on-weekday <span class="kw">nil</span>)</span>
-<span id="cb6-110"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-110" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-agenda-custom-commands</span>
-<span id="cb6-111"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-111" aria-hidden="true" tabindex="-1"></a>        &#39;((<span class="st">&quot;d&quot;</span> <span class="st">&quot;Done tasks&quot;</span> tags <span class="st">&quot;/DONE|CANCELED&quot;</span>)</span>
-<span id="cb6-112"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-112" aria-hidden="true" tabindex="-1"></a>          (<span class="st">&quot;g&quot;</span> <span class="st">&quot;Plan Today&quot;</span></span>
-<span id="cb6-113"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-113" aria-hidden="true" tabindex="-1"></a>           ((agenda <span class="st">&quot;&quot;</span> ((org-agenda-span &#39;day)))</span>
-<span id="cb6-114"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-114" aria-hidden="true" tabindex="-1"></a>            (org-agenda-skip-function &#39;(org-agenda-skip-deadline-if-not-today))</span>
-<span id="cb6-115"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-115" aria-hidden="true" tabindex="-1"></a>            (org-agenda-entry-types &#39;(:deadline))</span>
-<span id="cb6-116"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-116" aria-hidden="true" tabindex="-1"></a>            (org-agenda-overriding-header <span class="st">&quot;Today&#39;s Deadlines &quot;</span>)))))</span>
-<span id="cb6-117"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-117" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-agenda-window-setup &#39;only-window)</span>
-<span id="cb6-118"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-119"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-119" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">defun</span><span class="fu"> y/go-to-today-agenda </span>()</span>
-<span id="cb6-120"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-120" aria-hidden="true" tabindex="-1"></a>    (interactive)</span>
-<span id="cb6-121"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-121" aria-hidden="true" tabindex="-1"></a>    (org-agenda <span class="kw">nil</span> <span class="st">&quot;a&quot;</span>))</span>
-<span id="cb6-122"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-122" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; Faster jump to agenda today keybinding shortcut (SPC y a)</span></span>
-<span id="cb6-123"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-123" aria-hidden="true" tabindex="-1"></a>  (map! :leader</span>
-<span id="cb6-124"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-124" aria-hidden="true" tabindex="-1"></a>        :desc <span class="st">&quot;Today&#39;s agenda&quot;</span></span>
-<span id="cb6-125"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-125" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;y a&quot;</span> #&#39;y/go-to-today-agenda)</span>
-<span id="cb6-126"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-127"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-127" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; ** Org Annotate</span></span>
-<span id="cb6-128"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-129"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-129" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; Ability to take annotate some files, can of double usage with org-capture.</span></span>
-<span id="cb6-130"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-130" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; Still, I keep that keyboard shortcut here.</span></span>
-<span id="cb6-131"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-131" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; (evil-leader/set-key &quot;oa&quot; &#39;org-annotate-file)</span></span>
-<span id="cb6-132"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-132" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-annotate-file-storage-file <span class="st">&quot;~/.org/annotations.org&quot;</span>)</span>
-<span id="cb6-133"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-134"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-135"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-135" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; ** Org colums</span></span>
-<span id="cb6-136"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-136" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; Can be nice sometime to have that column view</span></span>
-<span id="cb6-137"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-137" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; give a felling of Excel view</span></span>
-<span id="cb6-138"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-138" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-columns-default-format</span>
-<span id="cb6-139"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-139" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;%TODO %3PRIORITY %40ITEM(Task) %17Effort(Estimated Effort){:} %CLOCKSUM %8TAGS(TAG)&quot;</span>)</span>
-<span id="cb6-140"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-140" aria-hidden="true" tabindex="-1"></a>  (map! :leader <span class="st">&quot;y o c&quot;</span> #&#39;org-columns)</span>
-<span id="cb6-141"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-142"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-142" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; ** Deft</span></span>
-<span id="cb6-143"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-143" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; useful to find files and jump to them</span></span>
-<span id="cb6-144"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-144" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> deft-extensions &#39;(<span class="st">&quot;org&quot;</span> <span class="st">&quot;gpg&quot;</span> <span class="st">&quot;md&quot;</span> <span class="st">&quot;txt&quot;</span>))</span>
-<span id="cb6-145"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-145" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> deft-recursive <span class="kw">t</span>)</span>
-<span id="cb6-146"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-146" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> deft-use-filter-string-for-filename <span class="kw">t</span>)</span>
-<span id="cb6-147"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-147" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> deft-default-extension <span class="st">&quot;org&quot;</span>)</span>
-<span id="cb6-148"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-148" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> deft-directory <span class="st">&quot;~/.org&quot;</span>)</span>
-<span id="cb6-149"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-150"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-151"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-151" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; Org Babel</span></span>
-<span id="cb6-152"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-152" aria-hidden="true" tabindex="-1"></a>  (org-babel-do-load-languages</span>
-<span id="cb6-153"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-153" aria-hidden="true" tabindex="-1"></a>   &#39;org-babel-load-languages</span>
-<span id="cb6-154"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-154" aria-hidden="true" tabindex="-1"></a>   &#39;(<span class="co">;; other Babel languages</span></span>
-<span id="cb6-155"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-155" aria-hidden="true" tabindex="-1"></a>     (shell . <span class="kw">t</span>)</span>
-<span id="cb6-156"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-156" aria-hidden="true" tabindex="-1"></a>     (http . <span class="kw">t</span>)</span>
-<span id="cb6-157"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-157" aria-hidden="true" tabindex="-1"></a>     (clojure . <span class="kw">t</span>)</span>
-<span id="cb6-158"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-158" aria-hidden="true" tabindex="-1"></a>     (haskell . <span class="kw">t</span>)</span>
-<span id="cb6-159"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-159" aria-hidden="true" tabindex="-1"></a>     (plantuml . <span class="kw">t</span>) <span class="co">;; UML graphs</span></span>
-<span id="cb6-160"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-160" aria-hidden="true" tabindex="-1"></a>     (gnuplot . <span class="kw">t</span>)))</span>
-<span id="cb6-161"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-161" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-plantuml-jar-path <span class="st">&quot;~/bin/plantuml.jar&quot;</span>))</span>
-<span id="cb6-162"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-163"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-163" aria-hidden="true" tabindex="-1"></a>(use-package! org</span>
-<span id="cb6-164"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb6-164" aria-hidden="true" tabindex="-1"></a>  :config (org-mode-config))</span></code></pre></div><p>And also</p><div class="sourceCode" id="cb7" data-org-language="emacs-lisp"><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id="cb7-1"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-1" aria-hidden="true" tabindex="-1"></a>(use-package! org-super-agenda</span>
-<span id="cb7-2"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-2" aria-hidden="true" tabindex="-1"></a>  :after org-agenda</span>
-<span id="cb7-3"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-3" aria-hidden="true" tabindex="-1"></a>  :custom (org-super-agenda-groups</span>
-<span id="cb7-4"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-4" aria-hidden="true" tabindex="-1"></a>           &#39;( <span class="co">;; Each group has an implicit boolean OR operator between its selectors.</span></span>
-<span id="cb7-5"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-5" aria-hidden="true" tabindex="-1"></a>             (<span class="bu">:name</span> <span class="st">&quot;Overdue&quot;</span> :deadline past :order <span class="dv">0</span>)</span>
-<span id="cb7-6"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-6" aria-hidden="true" tabindex="-1"></a>             (<span class="bu">:name</span> <span class="st">&quot;Evening Habits&quot;</span> :and (:habit <span class="kw">t</span> :tag <span class="st">&quot;evening&quot;</span>) :order <span class="dv">8</span>)</span>
-<span id="cb7-7"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-7" aria-hidden="true" tabindex="-1"></a>             (<span class="bu">:name</span> <span class="st">&quot;Habits&quot;</span> :habit <span class="kw">t</span> :order <span class="dv">6</span>)</span>
-<span id="cb7-8"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-8" aria-hidden="true" tabindex="-1"></a>             (<span class="bu">:name</span> <span class="st">&quot;Today&quot;</span> <span class="co">;; Optionally specify section name</span></span>
-<span id="cb7-9"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-9" aria-hidden="true" tabindex="-1"></a>              :time-grid <span class="kw">t</span>  <span class="co">;; Items that appear on the time grid (scheduled/deadline with time)</span></span>
-<span id="cb7-10"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-10" aria-hidden="true" tabindex="-1"></a>              :order <span class="dv">3</span>)     <span class="co">;; capture the today first but show it in order 3</span></span>
-<span id="cb7-11"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-11" aria-hidden="true" tabindex="-1"></a>             (<span class="bu">:name</span> <span class="st">&quot;Low Priority&quot;</span> :priority <span class="st">&quot;C&quot;</span> :tag <span class="st">&quot;maybe&quot;</span> :order <span class="dv">7</span>)</span>
-<span id="cb7-12"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-12" aria-hidden="true" tabindex="-1"></a>             (<span class="bu">:name</span> <span class="st">&quot;Due Today&quot;</span> :deadline today :order <span class="dv">1</span>)</span>
-<span id="cb7-13"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-13" aria-hidden="true" tabindex="-1"></a>             (<span class="bu">:name</span> <span class="st">&quot;Important&quot;</span></span>
-<span id="cb7-14"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-14" aria-hidden="true" tabindex="-1"></a>              :and (:priority <span class="st">&quot;A&quot;</span> :not (:todo (<span class="st">&quot;DONE&quot;</span> <span class="st">&quot;CANCELED&quot;</span>)))</span>
-<span id="cb7-15"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-15" aria-hidden="true" tabindex="-1"></a>              :order <span class="dv">2</span>)</span>
-<span id="cb7-16"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-16" aria-hidden="true" tabindex="-1"></a>             (<span class="bu">:name</span> <span class="st">&quot;Due Soon&quot;</span> :deadline future :order <span class="dv">4</span>)</span>
-<span id="cb7-17"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-17" aria-hidden="true" tabindex="-1"></a>             (<span class="bu">:name</span> <span class="st">&quot;Todo&quot;</span> :not (:habit <span class="kw">t</span>) :order <span class="dv">5</span>)</span>
-<span id="cb7-18"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-18" aria-hidden="true" tabindex="-1"></a>             (<span class="bu">:name</span> <span class="st">&quot;Waiting&quot;</span> :todo (<span class="st">&quot;WAITING&quot;</span> <span class="st">&quot;HOLD&quot;</span>) :order <span class="dv">9</span>)))</span>
-<span id="cb7-19"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-19" aria-hidden="true" tabindex="-1"></a>  :config</span>
-<span id="cb7-20"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-20" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> org-super-agenda-header-map <span class="kw">nil</span>)</span>
-<span id="cb7-21"><a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#cb7-21" aria-hidden="true" tabindex="-1"></a>  (org-super-agenda-mode <span class="kw">t</span>))</span></code></pre></div><h2 id="conclusions">Conclusions</h2><p>That article is already quite long. But if you intend to dig into org
-mode, this can be a nice default starting point.</p><p>I haven't really dig into some details but only given you the ability
-to start not completely from scratch and with decent default values for
-an already advanced usage.</p><p>To resume:</p><ul><li><code class="verbatim">SPC y a</code> ⇒ Show agenda view for
-today</li><li><code class="verbatim">SPC X</code> ⇒ Capture a new task, write a
-description, then <code class="verbatim">C-c C-c</code>, save that in
-<code class="verbatim">tracker.org</code> (or <code class="verbatim">inbox.org</code> depending of the capture
-template)</li><li><code class="verbatim">SPC n o</code> ⇒ jump to the current time
-tracked tasks</li><li><code class="verbatim">SPC m c o</code> ⇒ stop the clock on that
-task; if you capture a new time tracking tasks you don't need to
-clock-out</li><li><code class="verbatim">SPC y o r</code> ⇒ <code class="verbatim">org-refile</code>, meaning move that task somewhere
-else</li><li><code class="verbatim">SPC q</code> ⇒ add/remove tags to that
-task</li></ul><h2 id="footnotes">Footnotes</h2><section class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr></hr><ol><li id="fn1" role="doc-endnote"><p><em>Short digression</em>:
-Historically, I coded using different IDEs. Then I worked for a company
-that forced me to use terrible keyboards and after just a few weeks I
-started to have serious wrist issues. So to minimize that pain I
-switched to vim. And it was <em>awesome</em>. Once you're use to the
-power of vim keybinding forever your soul will bound to them. So
-learning vim is a bit like learning a new music instrument. You need to
-construct some muscle memory and integrate one after one new tricks.
-Once learned your personal editing power start to become
-overwhelming.</p><p>After a few years of vim, I wanted to try to explore new editor
-tooling. So I switched to emacs using the spacemacs distribution. So
-mainly it's vim but with even better keybindgs, helpers and within
-emacs. The main reason for the switch was that vimscript is a really bad
-language to configure your editor. Emacs use emacs-LISP. For editor
-customization a LISP looked perfect to me. LISP is still one of the most
-powerful and easy to use programming language to date.</p><p>And recently, as my personal configuration started to grow so much I
-switched to <a href="https://github.com/hlissner/doom-emacs">doom-emacs</a>. I was
-quite hesitant to do the switch but so far its been a pleasure. IMHO
-using <a href="https://github.com/hlissner/doom-emacs">doom-emacs</a> is
-a lot better than using my own personal configuration from scratch
-because I wouldn't be able to end up with so much configuration
-quality.<a href="https://her.esy.fun/posts/0015-how-i-use-org-mode/index.html#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li></ol></section></article></main>
 ]]></description>
 </item>
 
