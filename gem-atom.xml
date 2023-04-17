@@ -15,7 +15,7 @@
   <description><![CDATA[her.esy.fun articles, mostly random personal thoughts]]></description>
   <language>en</language>
   <pubDate>Thu, 02 Mar 2023 00:00:00 +0100</pubDate>
-  <lastBuildDate>Thu, 02 Mar 2023 00:00:00 +0100</lastBuildDate>
+  <lastBuildDate>Mon, 17 Apr 2023 00:00:00 +0200</lastBuildDate>
   <generator>mkrss.sh</generator>
   <webMaster>yann@esposito.host (Yann Esposito)</webMaster>
   <image>
@@ -639,607 +639,6 @@ in with pg; pkgs.mkShell ( env //
 
 
 <item>
-<title>Replace docker-compose with nix-shell</title>
-<guid>gemini://her.esy.fun/posts/0024-replace-docker-compose-with-nix-shell/flycheck_index.gmi</guid>
-<pubDate>Thu, 02 Mar 2023 00:00:00 +0100</pubDate>
-<category>blog</category>
-<category>static</category>
-<description><![CDATA[
-# Replace docker-compose with nix-shell
-description:  This is how I created a docker-compose replacement with nix-shell.
-description:  Here is a solution to have a composable nix shell representation focused on
-description:  replacing docker-compose.
-keywords:  blog static
-author:  Yann Esposito
-email:  yann@esposito.host
-=> /files/publickey.txt gpg
-date:  [2023-03-02 Thu]
-
-
-
-At work we use =docker-compose= to run integration tests on a big project that
-need to connect to multiple different databases as well as a few other services.
-This article is about how to replace =docker-compose= by =nix= for a local
-development environment.
-
-## Quick tutorial
-
-### =nix-shell-fu= level 1 lesson
-
-Let's start with a basic =shell.nix= example:
-
-```nix
-{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
-with pkgs: mkShell
-  { buildInputs = [ hello ];
-    shellHook = ''
-      echo "Using ${hello.name}."
-    '';
-  }
-```
-
-And this could be understood in plain English as:
-
-______
-In the packages of nix version 22.11, create a new shell into which the package
-=hello= will be installed. At the end of the install, run a script that will print
-the package name. (Cf => digression)
-______
-
-
-If you copy/paste this in a =shell.nix= file and run ~nix-shell~ you get:
-
-```
-> nix-shell
-nix-shell shell.nix
-these 53 paths will be fetched (84.69 MiB download, 524.77 MiB unpacked):
-  /nix/store/08pckaqznwh0s3822cjp5aji6y1lsm27-libcxx-11.1.0
-  ...
-  /nix/store/zqcs5xahjxij0c8vfw60lnfb6d979rn2-zlib-1.2.13
-copying path '/nix/store/49wn01k9yikhjlxc1ym5b6civ29zz3gv-bash-5.1-p16' from 'https://cache.nixos.org'...
-...
-copying path '/nix/store/4w2rv6s96fwsb4qyw8b9w394010gxriz-stdenv-darwin' from 'https://cache.nixos.org'...
-Using hello-2.12.1.
-
-[nix-shell:~/tmp/nixplayground]$
-```
-
-If you close the session and run it again, it will be much faster and will only
-show this:
-
-```
-❯ nix-shell
-Using hello-2.12.1.
-
-[nix-shell:~/tmp/nixplayground]$
-```
-
-This is because all dependencies will be cached.
-OK so, this is level 1 of /nix-shell-fu/.
-
-Now, let's start level 2.
-
-### =nix-shell-fu= level 2 lesson; scripting and configuring
-
-This time, we want to launch a full service, as a redis docker would do.
-So here is a basic shell script which is similar to the previous one but will
-request =redis= as a dependency instead of =hello= and also as a launching script.
-From there will add a little bit more features.
-
-```nix
-{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
-  pkgs.mkShell {
-    # must contain buildInputs, nativeBuildInputs and shellHook
-    buildInputs = [ pkgs.redis ];
-
-    # Post Shell Hook
-    shellHook = ''
-    echo "Using ${pkgs.redis.name} on port: ${port}"
-    redis-server
-  '';
-  }
-```
-
-Again if you run ~nix-shell~ here is the result:
-
-```
-❯ nix-shell
-these 2 paths will be fetched (2.08 MiB download, 6.99 MiB unpacked):
-  /nix/store/6w4vnaxdx12ccq172i8j5l830mlp8jlg-redis-7.0.5
-  /nix/store/b47gmsx9qx0c9vh75wsg8bqq9qd0ad6f-openssl-3.0.7
-copying path '/nix/store/b47gmsx9qx0c9vh75wsg8bqq9qd0ad6f-openssl-3.0.7' from 'https://cache.nixos.org'...
-copying path '/nix/store/6w4vnaxdx12ccq172i8j5l830mlp8jlg-redis-7.0.5' from 'https://cache.nixos.org'...
-Using redis-7.0.5
-97814:C 10 Feb 2023 20:44:36.960 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
-97814:C 10 Feb 2023 20:44:36.960 # Redis version=7.0.5, bits=64, commit=00000000, modified=0, pid=97814, just started
-97814:C 10 Feb 2023 20:44:36.960 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
-97814:M 10 Feb 2023 20:44:36.961 * Increased maximum number of open files to 10032 (it was originally set to 256).
-97814:M 10 Feb 2023 20:44:36.961 * monotonic clock: POSIX clock_gettime
-                _._
-           _.-``__ ''-._
-      _.-``    `.  `_.  ''-._           Redis 7.0.5 (00000000/0) 64 bit
-  .-`` .-```.  ```\/    _.,_ ''-._
- (    '      ,       .-`  | `,    )     Running in standalone mode
- |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
- |    `-._   `._    /     _.-'    |     PID: 97814
-  `-._    `-._  `-./  _.-'    _.-'
- |`-._`-._    `-.__.-'    _.-'_.-'|
- |    `-._`-._        _.-'_.-'    |           https://redis.io
-  `-._    `-._`-.__.-'_.-'    _.-'
- |`-._`-._    `-.__.-'    _.-'_.-'|
- |    `-._`-._        _.-'_.-'    |
-  `-._    `-._`-.__.-'_.-'    _.-'
-      `-._    `-.__.-'    _.-'
-          `-._        _.-'
-              `-.__.-'
-
-97814:M 10 Feb 2023 20:44:36.962 # WARNING: The TCP backlog setting of 511 cannot be enforced because kern.ipc.somaxconn is set to the lower value of 128.
-97814:M 10 Feb 2023 20:44:36.962 # Server initialized
-97814:M 10 Feb 2023 20:44:36.963 * Ready to accept connections
-```
-
-Woo! Redis is started and it works!
-
-But if you have multiple projects you want to have more control. For example, we
-will want to run redis on a specific port.
-Here is how you do it:
-
-```nix
-{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/21.05.tar.gz) {} }:
-  let iport = 16380;
-      port = toString iport;
-  in pkgs.mkShell {
-    # must contain buildInputs, nativeBuildInputs and shellHook
-    buildInputs = [ pkgs.redis ];
-
-    # Post Shell Hook
-    shellHook = ''
-    echo "Using ${pkgs.redis.name} on port ${port}"
-    redis-server --port ${port}
-  '';
-  }
-```
-
-And here is the result:
-
-```
-> rm dump.rdb
-> nix-shell
-Using redis-6.2.3 on port 16380
-1785:C 10 Feb 2023 20:50:00.880 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
-1785:C 10 Feb 2023 20:50:00.880 # Redis version=6.2.3, bits=64, commit=00000000, modified=0, pid=1785, just started
-1785:C 10 Feb 2023 20:50:00.880 # Configuration loaded
-1785:M 10 Feb 2023 20:50:00.880 * Increased maximum number of open files to 10032 (it was originally set to 256).
-1785:M 10 Feb 2023 20:50:00.880 * monotonic clock: POSIX clock_gettime
-                _._
-           _.-``__ ''-._
-      _.-``    `.  `_.  ''-._           Redis 6.2.3 (00000000/0) 64 bit
-  .-`` .-```.  ```\/    _.,_ ''-._
- (    '      ,       .-`  | `,    )     Running in standalone mode
- |`-._`-...-` __...-.``-._|'` _.-'|     Port: 16380
- |    `-._   `._    /     _.-'    |     PID: 1785
-  `-._    `-._  `-./  _.-'    _.-'
- |`-._`-._    `-.__.-'    _.-'_.-'|
- |    `-._`-._        _.-'_.-'    |           https://redis.io
-  `-._    `-._`-.__.-'_.-'    _.-'
- |`-._`-._    `-.__.-'    _.-'_.-'|
- |    `-._`-._        _.-'_.-'    |
-  `-._    `-._`-.__.-'_.-'    _.-'
-      `-._    `-.__.-'    _.-'
-          `-._        _.-'
-              `-.__.-'
-
-1785:M 10 Feb 2023 20:50:00.881 # Server initialized
-1785:M 10 Feb 2023 20:50:00.881 * Ready to accept connections
-```
-
-Woo!
-We control the port from the file.
-That's nice.
-
-But, has you might have noticed, when you quit the session it dumps the DB as
-the file =dump.rdb=.
-What we would like is to keep all the state in a local directory that would be
-easy to delete.
-
-To achieve this, instead of passing argument to the redis command line we will
-use a local config file to use.
-
-```nix
-{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
-let iport = 16380;
-    port = toString iport;
-in pkgs.mkShell (rec {
-  # ENV Variables the directory to put all the DATA
-  REDIS_DATA = "${toString ./.}/.redis";
-  # the config file, as we use REDIS_DATA variable we just declared in the
-  # same nix set, we need to use rec
-  redisConf = pkgs.writeText "redis.conf"
-                             ''
-                             port ${port}
-                             dbfilename redis.db
-                             dir ${REDIS_DATA}
-                             '';
-
-  buildInputs = [ pkgs.redis ];
-
-  # Post Shell Hook
-  shellHook = ''
-    echo "Using ${pkgs.redis.name} on port: ${port}"
-
-    [ ! -d $REDIS_DATA ] \
-      && mkdir -p $REDIS_DATA
-    cat "$redisConf" > $REDIS_DATA/redis.conf
-    alias redisstop="echo 'Stopping Redis'; redis-cli -p ${port} shutdown; rm -rf $REDIS_DATA"
-    nohup redis-server $REDIS_DATA/redis.conf > /dev/null 2>&1 &
-    echo "When finished just run redisstop && exit"
-    trap redisstop EXIT
-  '';
-})
-```
-
-And here is a full session using this =shell.nix=:
-
-```
-> nix-shell
-Using redis-6.2.3 on port: 16380
-When finished just run redisstop && exit
-
--------------------------------
-[nix-shell:~/tmp/nixplayground]$ redis-cli -p 16380
-127.0.0.1:16380> help
-redis-cli 6.2.3
-To get help about Redis commands type:
-      "help @<group>" to get a list of commands in <group>
-      "help <command>" for help on <command>
-      "help <tab>" to get a list of possible help topics
-      "quit" to exit
-
-To set redis-cli preferences:
-      ":set hints" enable online hints
-      ":set nohints" disable online hints
-Set your preferences in ~/.redisclirc
-127.0.0.1:16380>
-
--------------------------------
-[nix-shell:~/tmp/nixplayground]$ ls -a
-.  ..  .redis  shell.nix
-
--------------------------------
-[nix-shell:~/tmp/nixplayground]$ find .redis
-.redis
-.redis/redis.conf
-
--------------------------------
-[nix-shell:~/tmp/nixplayground]$ redis-cli -p 16380 shutdown
-[1]+  Done                    nohup redis-server $REDIS_DATA/redis.conf > /dev/null 2>&1
-
--------------------------------
-[nix-shell:~/tmp/nixplayground]$ find .redis
-.redis
-.redis/redis.db
-.redis/redis.conf
-
--------------------------------
-[nix-shell:~/tmp/nixplayground]$ redisstop
-Stopping Redis
-Could not connect to Redis at 127.0.0.1:16380: Connection refused
-
--------------------------------
-[nix-shell:~/tmp/nixplayground]$ ls -a
-.  ..  shell.nix
-```
-
-So with this version all data related to redis is saved into the local =.redis=
-directory.
-And in the nix shell we provide a command =redisstop= that once invoked, shutdown
-redis, then purge all redis related data (as you would like in a development environment).
-Also, as compared to previous version, redis is launched in background so you
-could run commands in your nix shell.
-
-Notice I also run ~redisstop~ command on exit of the nix-shell. So when you close
-the nix-shell redis is stopped and the DB state is cleaned up.
-
-## Composable =nix-shell=
-
-As a quick recap you now have a boilerplate to create new =shell.nix=:
-
-```nix
-{ pkgs ? import ( ... ) {} }:
-mkShell { MY_ENV_VAR_1 = ...;
-          MY_ENV_VAR_2 = ...;
-          buildInputs = [ dependency-1 ... dependency-n ];
-          nativeBuildInputs = [ dependency-1 ... dependency-n ];
-          shellHook = '' command_to_run_after_init '';
-        }
-```
-
-But if I give you two such =shell.nix= files, would you be able to compose them?
-Unfortunately, not directly.
-To solve the problem we will replace this boilerplate by another one that do not
-directly uses =mkShell=.
-And in order to make it fully composable, we will also need to narrow the
-environment variables declaration in a sub field:
-
-```nix
-{ pkgs ? import ( ... ) {} }:
-let env = { PGDATA = ...; }
-in { inherit env; # equivalent to env = env;
-     buildInputs = [ dependency-1 ... dependency-n ];
-     nativeBuildInputs = [ dependency-1 ... dependency-n ];
-     shellHook = '' some_command $PG_DATA '';
-   }
-```
-
-With this, we can compose two nix set into a single merged one that will be
-suitable to pass as argument to ~mkShell~.
-Another minor detail, but important one. In bash, the command ~trap~ do not
-accumulate but replace the function. For our need, we want to run all stop
-function on exit. So the ~trap~ directive added in the shell hook does not compose
-naturally. This is why we add a =stop= value that will contain the name of the
-bash function to call to stop and cleanup a service.
-
-Finally the main structure for each of our service will look like:
-
-```nix
-{ pkgs ? import ( ... ) {} }:
-let env = { MY_SERVICE_ENV_VAR = ...; }
-in { inherit env; # equivalent to env = env;
-     buildInputs = [ dependency-1 ... dependency-n ];
-     nativeBuildInputs = [ dependency-1 ... dependency-n ];
-     shellHook = '' my_command $MY_SERVICE_ENV_VAR '';
-     stop = "stop_my_service"
-   }
-```
-
-
-So let's start easy.
-To run a single shell script like this with =nix-shell=, you should put your
-service specific nix file in a =service.nix= file and create a =shell.nix= file
-that contains something like:
-
-```nix
-{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
-let service = import ./service.nix { inherit pkgs; };
-in with service; pkgs.mkShell ( env //
-   {
-     buildInputs       = buildInputs;
-     nativeBuildInputs = nativeBuildInputs ;
-     shellHook         = shellHook;
-   })
-```
-
-Now, if you would like to run nix shell for multiple files, here is a first qui solution:
-
-```nix
-{ pkgs ? import (...) {}}:
-let
-  # merge all the env sets
-  mergedEnvs = builtins.foldl' (acc: e: acc // e) {} envs;
-  # merge all the confs by accumulating the dependencies
-  # and concatenating the shell hooks.
-  mergedConfs =
-    builtins.foldl'
-      (acc: {buildInputs ? [], nativeBuildInputs ? [], shellHook ? "", ...}:
-        { buildInputs = acc.buildInputs ++ buildInputs;
-          nativeBuildInputs = acc.nativeBuildInputs ++ nativeBuildInputs;
-          shellHook = acc.shellHook + shellHook;
-        })
-      emptyConf
-      confs;
-in mkShell (mergedEnvs // mergedConfs)
-```
-
-And now, here is the full solution that also deal with other minor details like
-importing the files and dealing with the exit of the shell:
-
-```nix
-{ mergeShellConfs =
-    # imports should contain a list of nix files
-    { pkgs, imports }:
-    let confs = map (f: import f { inherit pkgs; }) imports;
-        envs  = map ({env ? {}, ...}: env) confs;
-        # list the name of a command to stop a service (if none provided just use ':' which mean noop)
-        stops  = map ({stop ? ":", ...}: stop) confs;
-        # we want to stop all services on exit
-        stopCmd = builtins.concatStringsSep " && " stops;
-        # we would like to add a shellHook to cleanup the service that will call
-        # all cleaning-up function declared in sub-shells
-        lastConf =
-          { shellHook = ''
-                        stopall() { ${stopCmd}; }
-                        echo "You can manually stop all services by calling stopall"
-                        trap stopall EXIT
-                        '';
-          };
-        # merge Environment variables needed for other shell environments
-        mergedEnvs = builtins.foldl' (acc: e: acc // e) {} envs;
-        # zeroConf is the minimal empty configuration needed
-        zeroConf = {buildInputs = []; nativeBuildInputs = []; shellHook="";};
-        # merge all confs by appending buildInputs and nativeBuildInputs
-        # and by concatenating the shellHooks
-        mergedConfs =
-          builtins.foldl'
-            (acc: {buildInputs ? [], nativeBuildInputs ? [], shellHook ? "", ...}:
-              { buildInputs = acc.buildInputs ++ buildInputs;
-                nativeBuildInputs = acc.nativeBuildInputs ++ nativeBuildInputs;
-                shellHook = acc.shellHook + shellHook;
-              })
-            zeroConf
-            (confs ++ [lastConf]);
-    in (mergedEnvs // mergedConfs);
-}
-```
-
-So I put this function declaration in a file named =./nix/merge-shell.nix=.
-And I have a =pg.nix= as well as a =redis.nix= file in the =nix= directory.
-On the root of the project the main =shell.nix= looks like:
-
-```nix
-{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
-let
-  # we import the file, and rename the function mergeShellConfs as mergeShells
-  mergeShells = (import ./nix/merge-shell.nix).mergeShellConfs;
-  # we call mergeShells
-  mergedShellConfs =
-    mergeShells { inherit pkgs;
-                  # imports = [ ./nix/pg.nix ./nix/redis.nix ];
-                  imports = [ ./nix/pg.nix ./nix/redis.nix ];
-                };
-in pkgs.mkShell mergedShellConfs
-```
-
-And, that's it. Now when I run =nix-shell= it 
-
-## Appendix
-
-### <<digression>> Digression
-
-In fact, this is a bit more complex than "just that".
-The reality is a bit more complex.
-The nix language is "pure", meaning, if you run the nix evaluation multiple
-times, it will always evaluate to the exact same value.
-But here, this block represent a function.
-The function takes as input a "nix set" (which you can see as an associative
-array, or a hash-map or also a javascript object depending on your preference),
-and this set is expected to contain a field named =pkgs=. If =pkgs= is not provided,
-it will use the set from the stable version 22.11 of nixpkgs by downloading them
-from github archive.
-The second part of the function generate "something" that is returned by an
-internal function of the standard library provided by =nix= which is named
-=mkShell=.
-So mainly, =mkShell= is a helper function that will generate what nix calls a
-/
-
-=> https://blog.ielliott.io/nix-docs/derivation.html derivation
-/. Mainly, we don't really care about exactly what is a /derivation/.
-This is an internal to nix representation that could be finally used by
-different nix tools for different things. Typically, installing a package,
-running a local development environment with nix-shell or nix develop, etc…
-
-So the important detail to remember is that we can manipulate the parameter we
-pass to the functions =derivation=, =mkDerivation= and =mkShell=, but we have no
-mechanism to manipulate directly =derivation=. So in order to make that
-composable, you need to call the =derivation= internal function at the very end only.
-
-The argument of all these functions are /nix sets/
-### The full nix files for postgres
-
-For postgres:
-
-```nix
-{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
-  let iport = 15432;
-      port = toString iport;
-      pguser = "pguser";
-      pgpass = "pgpass";
-      pgdb = "iroh";
-      # env should contain all variable you need to configure correctly mkShell
-      # so ENV_VAR, but also any other kind of variables.
-      env =  {
-        postgresConf =
-          pkgs.writeText "postgresql.conf"
-            ''
-        # Add Custom Settings
-        log_min_messages = warning
-        log_min_error_statement = error
-        log_min_duration_statement = 100  # ms
-        log_connections = on
-        log_disconnections = on
-        log_duration = on
-        #log_line_prefix = '[] '
-        log_timezone = 'UTC'
-        log_statement = 'all'
-        log_directory = 'pg_log'
-        log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
-        logging_collector = on
-        log_min_error_statement = error
-      '';
-
-        postgresInitScript =
-          pkgs.writeText "init.sql"
-            ''
-        CREATE DATABASE ${pgdb};
-        CREATE USER ${pguser} WITH ENCRYPTED PASSWORD '${pgpass}';
-        GRANT ALL PRIVILEGES ON DATABASE ${pgdb} TO ${pguser};
-        '';
-
-        PGDATA = "${toString ./.}/.pg";
-      };
-  in env // {
-    # Warning if you add an attribute like an ENV VAR you must do it via env.
-    inherit env;
-    # must contain buildInputs, nativeBuildInputs and shellHook
-    buildInputs = [ pkgs.coreutils
-                    pkgs.jdk11
-                    pkgs.lsof
-                    pkgs.plantuml
-                    pkgs.leiningen
-                  ];
-    nativeBuildInputs = [
-      pkgs.zsh
-      pkgs.vim
-      pkgs.nixpkgs-fmt
-      pkgs.postgresql_11
-
-      # postgres-11 with postgis support
-      # (pkgs.postgresql_11.withPackages (p: [ p.postgis ]))
-    ];
-
-    # Post Shell Hook
-    shellHook = ''
-      echo "Using ${pkgs.postgresql_12.name}. port: ${port} user: ${pguser} pass: ${pgpass}"
-
-      # Setup: other env variables
-      export PGHOST="$PGDATA"
-      # Setup: DB
-      [ ! -d $PGDATA ] \
-       && pg_ctl initdb -o "-U postgres" \
-       && cat "$postgresConf" >> $PGDATA/postgresql.conf
-      pg_ctl -o "-p ${port} -k $PGDATA" start
-      echo "Creating DB and User"
-      psql -U postgres -p ${port} -f $postgresInitScript
-
-      function pgstop {
-         echo "Stopping and Cleaning up Postgres";
-         pg_ctl stop && rm -rf $PGDATA
-      }
-
-      alias pg="psql -p ${port} -U postgres"
-      echo "Send SQL commands with pg"
-      trap pgstop EXIT
-      '';
-    stop = "pgstop";
-  }
-```
-
-And to just launch Posgresql, there is also this file =./nix/pgshell.nix=, that
-simply contains
-
-```nix
-{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
-let pg = import ./pg.nix { inherit pkgs; };
-in with pg; pkgs.mkShell ( env //
-   {
-     buildInputs       = buildInputs;
-     nativeBuildInputs = nativeBuildInputs ;
-     shellHook         = shellHook;
-   })
-```
-
-=> /index.gmi Home
-=> /gem-atom.xml Feed
-=> /slides.gmi Slides
-=> /about-me.gmi About
-
-=> https://gitea.esy.fun code
-=> https://espial.esy.fun/u:yogsototh bookmarks
-=> https://espial.esy.fun/u:yogsototh/notes notes
-]]></description>
-</item>
-
-
-<item>
 <title>My first ChatGPT exchange</title>
 <guid>gemini://her.esy.fun/posts/0023-my-first-chatgpt-exchange/index.gmi</guid>
 <pubDate>Sun, 11 Dec 2022 00:00:00 +0100</pubDate>
@@ -1268,275 +667,6 @@ false.
 
 So yes, mainly ChatGPT in this interaction was quite good at being convincing.
 This is the same kind of impression you have from looking at AI generated images.
-At first sight everything seems fine, but if you start looking to the details, many
-things are off.
-
-So here is the full interaction, I'll let the attentive reader find the
-technical problems:
-
-
-{{{logo}}} Can you write a clojure function that will reverse any string provided to it.
-
-______
-
-*ChatGPT*: Sure, here's a possible implementation of a function that reverses a string in Clojure:
-
-```clojure
-(defn reverse-string [s]
-  (apply str (reverse (seq s))))
-```
-
-This function takes a strings as input, converts it to a sequence of characters
-using the ~seq~ function, reverses this sequence using the reverse function, and
-then converts the resulting sequence back to a string using the ~apply~ and ~str~
-functions.
-
-Here's an example of how you can use this function:
-```clojure
-user=> (reverse-string "hello world")
-"dirow olleh"
-```
-
-
-Note that this function only works
-for strings that contain characters in the Unicode Basic Multilingual Plane
-(BMP), since the ~seq~ function only works on strings that contain characters in
-this range.
-If you need to reverse strings that contain characters outside of the BMP, you
-can use the ~string-seq~ function instead of ~seq~ to convert the string to a
-sequence of characters.
-______
-
-{{{logo}}} How would this function react if instead of string you provide an integer?
-
-______
-*ChatGPT:* If you provide an integer as input to the ~reverse-string~ function instead of a
-string, the function will fail with a ~ClassCastException~ because the ~seq~
-function only works on strings, and you cannot convert an integer to a string in
-a straightforward way in Clojure.
-The ~seq~ function expects its input to be a string or a collection, such as a
-vector or a list, and when you try to pass an integer to it, it will try to
-convert the integer to a string by calling the ~str~ function on it.
-However, since ~str~ only works on strings and collections, and not on numbers,
-this will result in a ~ClassCastException~.
-
-Here's an example of what will happen if you try to pass an integer to the reverse-string function:
-
-```clojure
-user=> (reverse-string 12345)
-ClassCastException clojure.lang. Numbers cannot be cast to
-clojure.lang. IFn clojure.core/seq (core.clj:136)
-```
-
-To avoid this error, you can either make sure that the input to the
-~reverse-string~ function is always a string, or you can modify the function to
-handle other types of input, such as integers, by first converting them to
-strings using the ~str~ function.
-For example, you could write the ~reverse-string~ function like this to handle
-both strings and integers as input:
-
-```clojure
-(defn reverse-string [s]
-(let [s (if (string? s) s (str s))]
-  (apply str (reverse (seq s)))))
-```
-
-With this version of the function, if you pass an integer as input, the function
-will convert it to a string using the ~str~ function before calling the ~seq~
-function on it, so the ~seq~ function will be able to work with the input.
-Here's an example of how you can use this modified version of the
-~reverse-string~ function:
-
-```clojure
-user-> (reverse-string "hello world")
-"dlrow olleh"
-
-user=> (reverse-string 12345)
-"54321"
-```
-
-Note that the modified version of the function will also work for other types of
-input that can be converted to strings using the ~str~ function, such as floats
-and booleans.
-
-______
-
-{{{logo}}} How would you use the concept of the Maybe monad in Haskell in this clojure function?
-
-______
-*ChatGPT*: The Maybe monad in Haskell is a way to represent computations that may or may
-not have & p a result, and it provides a way to compose these computations in a
-safe and predictable way.
-In Clojure, the Maybe monad is usually implemented as a ~Option~ type, which has
-two possible values: ~Some~ and ~None~
-
-In the context of the ~reverse-string~ function, you could use the ~Option~ type
-to represent the possibility that the input to the function might not be a
-string, in which case the function would return ~None~ instead of a reversed
-string.
-Here's an example of how you could use the ~Option~ type to modify the
-~reverse-string~ function to handle the case where the input is not a string:
-
-```clojure
-(defn reverse-string [s]
-  (if (string? s)
-    (Some (apply str (reverse (seq s))))
-    None))
-```
-
-With this version of the ~reverse-string~ function, if the input is a string, the
-function will return a ~Some~ value containing the reversed string, and if the
-input is not a string, the function will return a ~None~ value.
-This allows the caller of the function to handle the case where the input is not
-a string in a predictable and safe way.
-
-Here's an example of how you can use this modified version of the ~reverse-string~
-function:
-
-```clojure
-user=> (reverse-string "hello world")
-
-Some "dlrow olleh"
-user=> (reverse-string 12345)
-None
-```
-
-Note that the Option type in Clojure does not provide the same syntactic sugar
-for composing computations as the Maybe monad in Haskell, so you cannot use the
-~>>=~ operator to chain calls to the ~reverse-string~ function in the same way you
-can in Haskell.
-However, you can still use the ~Option~ type to represent computations that may
-or may not have a result, and you can use the ~match~ or ~case~ forms to pattern
-match on the ~Option~ values and handle the different cases in a predictable and
-safe way.
-
-______
-
-{{{logo}}} How would you implement Option in clojure?
-
-______
-*ChatGPT*:
-In Clojure, the ~Option~ type is typically implemented as a sealed protocol,
-which is a type of polymorphic type that defines a set of concrete types that
-implement the protocol.
-
-The ~Option~ protocol typically defines two concrete types: ~Some~, which represents
-a computation that has a result, and ~None~, which represents a computation that
-does not have a result.
-
-Here's an example of how you could define the ~Option~ protocol and the ~Some~ and
-~None~ types in Clojure:
-
-```clojure
-(defprotocol Option
-  (map [o f])
-  (flat-map [o f]))
-
-(deftype Some [x]
-  Option
-  (map [o f] (Some (f x)))
-  (flat-map [o f] (f x)))
-
-(deftype None [])
-  Option
-  (map [o f] None)
-  (flat-map [o f] None))
-```
-
-The ~Option~ protocol defines two methods: ~map~ and ~flat-map~ The ~map~ method takes a
-function ~f~ as input and applies it to the value contained in the ~Some~ type, ~f~ it
-exists, or returns a ~None~ value ~f~ the ~Option~ type is ~None~ The ~flat-map~ method is
-similar to ~map~ but it allows the function ~f~ to return an ~Option~ value, which is
-then flattened into the outer ~Option~ value.
-
-The ~Some~ type implements the ~Option~ protocol by providing concrete
-implementations ~f~ the map and ~flat-map~ methods.
-The 'map method applies the function ~f~ to the value ~x~ contained in the ~Some~
-type, and returns a new ~Some~ value containing the result ~f~ the function.
-The ~flat-map~ method applies the function ~f~ to the value ~x~ contained in the Some
-type, and then flattens the resulting ~Option~ value into the outer ~Option~ value.
-
-The ~None~ type also implements the Option protocol by providing concrete
-implementations of the ~map~ and ~flat-map~ methods.
-The ~map~ and ~flat-map~ methods simply return a ~None~ value in this case, since
-there is no value to apply the function to.
-
-Here's an example of how you can use the ~Option~ protocol and the ~Some~ and ~None~ types:
-
-```clojure
-user=> (def some-value (Some 12345))
-#' user/some-value
-
-user=> (map some-value inc)
-Some 12346
-
-user=> (flat-map some-value (fn [x] (Some (* × 2))))
-Some 24690
-
-user=> (map some-value (comp (partial * 2) inc))
-Some 24690
-
-user=> (def none-value None)
-#'user/none-value
-
-user=> (map none-value inc)
-None
-
-user=> (flat-map none-value (fn [x] (Some (* × 2))))
-None
-
-user=> (map none-value (comp (partial * 2) inc))
-None
-```
-
-In this example, the ~some-value~ variable is defined as a ~Some~ value containing
-the integer 12345, and the ~none-value~ variable is defined as a ~None~ value.
-The ~map~ and ~flat-map~ functions are then used to apply different functions to the
-values contained in the ~Option~ types, and the...
-______
-
-
-=> /index.gmi Home
-=> /gem-atom.xml Feed
-=> /slides.gmi Slides
-=> /about-me.gmi About
-
-=> https://gitea.esy.fun code
-=> https://espial.esy.fun/u:yogsototh bookmarks
-=> https://espial.esy.fun/u:yogsototh/notes notes
-]]></description>
-</item>
-
-
-<item>
-<title>My first ChatGPT exchange</title>
-<guid>gemini://her.esy.fun/posts/0023-my-first-chatgpt-exchange/flycheck_index.gmi</guid>
-<pubDate>Sun, 11 Dec 2022 00:00:00 +0100</pubDate>
-<category>machine-learning</category>
-<category>ai</category>
-<category>gpt</category>
-<description><![CDATA[
-# My first ChatGPT exchange
-description:  My first interaction with ChatGPT about Clojure and Monads.
-keywords:  machine-learning ai gpt
-author:  Yann Esposito
-email:  yann@esposito.host
-=> /files/publickey.txt gpg
-date:  [2022-12-11 Sun]
-
-
-# The first few questions for ChatGPT
-
-I finally opened an account to beta-test ChatGPT.
-I must say, I am quite impressed.
-I asked it a few questions that I could have asked during an interview.
-To my surprise, the answer given was, while wrong, believable enough to kind
-of sneak the answer as right up to some imprecision.
-Like if you squint enough, it could pass, but if you pay attention
-it is clearly false.
-
-So yes, mainly ChatGPT in this interaction was quite good at being convincing,
-the same kind of impression you have from looking at AI generated images.
 At first sight everything seems fine, but if you start looking to the details, many
 things are off.
 
@@ -3662,6 +2792,395 @@ clean:
 	-[ ! -z "$(DST_DIR)" ] && rm -rf $(DST_DIR)/*
 	-[ ! -z "$(CACHE_DIR)" ] && rm -rf $(CACHE_DIR)/*
 ```
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes
+]]></description>
+</item>
+
+
+<item>
+<title>Static Blog Builder</title>
+<guid>gemini://her.esy.fun/posts/0017-static-blog-builder/index.gmi</guid>
+<pubDate>Sat, 01 May 2021 00:00:00 +0200</pubDate>
+<category>blog</category>
+<category>static</category>
+<description><![CDATA[
+# Static Blog Builder
+subtitle:  A few static blog rewrite experiences
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2021-05-01 Sat]
+keywords:  blog static
+description:  Minimal and fast static website builder with make.
+
+
+
+As someone on the Internet said not so far ago.
+Building its own static building system is a rite of passage for many developers.
+It has a lot of nice features.
+It gives a goal with a feeling of accomplishment.
+It is simple enough so most developers could build their own system.
+It could also become complex when you go down the rabbit hole.
+
+Along the years I used different tools and used and wrote of few static
+website systems:
+
+
+=> https://nanoc.app nanoc
+ (in Ruby), at that time it looked like this:
+
+=> https://web.archive.org/web/20081002071448/http://nanoc.stoneship.org/ old nanoc 2 website
+
+
+=> https://jaspervdj.be/hakyll/ hakyll
+ (haskell static website generator)
+
+=> https://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html org-publish
+ (emacs package in conjunction with org-mode)
+
+=> https://shakebuild.com shake
+ (haskell again)
+
+So if you look at the progression, I first used nanoc because I used ruby
+and it was a new solution, the website looked really great.
+Also the main developer
+
+=> https://denisdefreyne.com Denis Defreyne
+ was really helpful.
+Ruby was really great at dealing with regular expressions for hacking my
+documents.
+
+Then I was interested in Haskell, and I switched to a Haskell-made
+solution.
+I used hakyll, and I wrote a bit about it in
+
+=> http://yannesposito.com/Scratch/en/blog/Hakyll-setup/ Hakyll Setup
+As a side note, the author of Hakyll
+
+=> https://jaspervdj.be/hakyll/ Jasper Van der Jeugt
+ is apparently a
+friend of the author of nanoc.
+They both wrote a static site generators with their preferred programming
+language.
+I added a lot of personal features to my own site builder.
+It was a nice toy project.
+
+Then, due to a major disruption in my professional and private life I
+stopped to take care of my website.
+
+And a few years ago, I wanted to start a new website from scratch.
+In the meantime I switched my editor of choice from vim to Emacs.
+I started to work in Clojure and emacs is generally a natural choice
+because you can configure it with LISP.
+I discovered
+
+=> https://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html org-mode
+ (I don't think the homepage of org mode makes justice
+to how incredible it is).
+So org-mode comes with an export system.
+Thus I switched to org-publish.
+Again
+
+=> https://her.esy.fun/posts/0001-new-blog/index.html I wrote a bit about it
+
+It was nice but slow.
+I improved a few things like writing a short script to
+
+
+=> https://her.esy.fun/posts/0005-rss-gen/index.html Generate RSS from a tree of html files.
+
+I still had the feeling it was too slow.
+
+Static site building is a specific usage of a build system.
+And as I knew I could use =pandoc= to build HTML out of org-mode files
+and still versed in the Haskell culture I decided to try
+
+=> https://shakebuild.com shake
+You can learn more by reading this excellent paper about it, I
+think all developer should read it:
+
+=> https://github.com/snowleopard/build-systems/releases/download/icfp-submission/build-systems.pdf Build System à la carte
+
+As a bonus,
+
+=> https://pandoc.org pandoc
+ is written in Haskell.
+I could then directly use the
+
+=> https://pandoc.org pandoc
+ library in my build program.
+It worked like a charm and it was *very fast* as compared to other
+solutions I tried.
+So really let me tell you shake is a great build system.
+
+Unfortunately it was not perfect.
+While it was very fast, and I was able to use pandoc API directly.
+It made me dependent on Haskell.
+The best way I found to have Haskell reproducible build environment is to
+use
+
+=> https://nixos.org/nix nix
+This was great until the Big Sur update.
+To keep it short, nix stopped working on my computers after I upgraded my
+to Big Sur.
+Gosh, it was painful to fix.
+
+Concurrently I discovered
+
+=> /posts/0016-gemini/index.html gemini
+ and wanted to duplicate my website into
+gemini sphere.
+So I tried to update my build system but my code was to oriented to use
+pandoc and it was painful to have gemini in the middle of it.
+Particularly, generating a gemini index file.
+My main goal was to have gemini file that could only be linked from withing
+gemini sphere.
+Because gemini is a lot smaller web where you could feel a bit more
+protected from what the Web has become along the years.
+Whatever, in the end, I just had two problems to tackles.
+
+1. Haskell became difficult to trust as very stable tool. Stable in the
+   sense that I would not have any support work to do in order to keep just
+   using it and not fixing/tweaking it.
+2. Simplify the overall system to have a simpler build description
+
+So a very stable tool that I am pretty sure will still work almost exactly
+as today in 10 years is *=make=* (more precisely gnumake).
+I expected a lot of people had already come to the same conclusion and
+wrote about it.
+To my great surprise, I found very few article about generating static
+website with make.
+I only found solutions a bit too specific for my need.
+This is why I would like to give you a more generic starting point
+solution.
+
+# The =Makefile=
+
+Instead of copy/pasting my current =Makefile= entirely let me give you a
+more generic one.
+It should be a great start.
+
+The first part will be used to simply copy the files from =src/= to
+=_site/=.
+
+```makefile
+all: website
+
+# directory containing my org files as well as my assets files
+SRC_DIR ?= src
+# directory where I will but the files for my website (HTML + assets)
+DST_DIR ?= _site
+
+# list all files in src
+# if you want to exclude .org files use the exclude from the find command
+SRC_RAW_FILES := $(shell find $(SRC_DIR) -type f)
+# generate all file that should be copied in the site
+# For my site, I want to publish my source files along the HTML files
+DST_RAW_FILES   := $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%,$(SRC_RAW_FILES))
+ALL             += $(DST_RAW_FILES)
+
+# COPY EVERYTHING (.org file included)
+$(DST_DIR)/% : $(SRC_DIR)/%
+	mkdir -p "$(dir $@)"
+	cp "$<" "$@"
+```
+
+This part is about running the =pandoc= command for all =org= files in =src/=
+so they generate a html file in =_site/=.
+
+```makefile
+# ORG -> HTML, If you prefer markdown replace .org by .md
+EXT := .org
+# all source file we'll pass to pandoc
+SRC_PANDOC_FILES ?= $(shell find $(SRC_DIR) -type f -name "*$(EXT)")
+# all destination files we expect (replace the extension by .html)
+DST_PANDOC_FILES ?= $(subst $(EXT),.html, \
+                        $(subst $(SRC_DIR),$(DST_DIR), \
+                            $(SRC_PANDOC_FILES)))
+ALL              += $(DST_PANDOC_FILES)
+
+# use a template (you should use one)
+TEMPLATE ?= templates/post.html
+# URL of the CSS put yours
+CSS = /css/y.css
+# The pandoc command to run to generate an html out of a source file
+PANDOC := pandoc \
+			-c $(CSS) \
+			--template=$(TEMPLATE) \
+			--from org \
+			--to html5 \
+			--standalone
+
+# Generate all html if the org file change or the template change
+$(DST_DIR)/%.html: $(SRC_DIR)/%.org $(TEMPLATE)
+	mkdir -p $(dir $@)
+	$(PANDOC) $< \
+		--output $@
+
+```
+
+A missing part is often the part where you would like to generate
+an index page to list the latest posts.
+Here you are a bit alone, you need to make one yourself.
+There is not generic way to do this one.
+
+```makefile
+# Generating an index page is not difficult but not trivial either
+HTML_INDEX := $(DST_DIR)/index.html
+MKINDEX := engine/mk-index.sh
+$(HTML_INDEX): $(DST_PANDOC_FILES) $(MKINDEX)
+	mkdir -p $(DST_DIR)
+	$(MKINDEX)
+ALL += $(HTML_INDEX)
+```
+
+Finally, a few useful make commands. =make clean= and =make deploy=.
+
+```makefile
+# make deploy will deploy the files to my website write your own script
+deploy: $(ALL)
+	engine/deploy.sh
+
+website: $(ALL)
+
+.PHONY: clean
+
+clean:
+	-rm -rf $(DST_DIR)/*
+```
+
+Limitation: =make= is old.
+So it really does not support spaces in filenames.
+Take care of that.
+
+Let me tell you.
+While this is quite a minimalist approach (<100 lines) it is nevertheless *very fast*.
+It will only generate the minimal amount of work to generate your website.
+I have a nice watcher script that update the website every time I save a
+file.
+It is almost instantaneous.
+
+The only risky dependencies for my website now is =pandoc=.
+Perhaps, they will change how they generate an HTML from the same org file
+in the future.
+I still use =nix= to pin my pandoc version.
+The static site builder itself is very simple, very stable and still
+very efficient.
+
+As a conclusion, if you want to write your own static site builder that's great.
+There are plenty of things to learn along the way.
+Still if you want something stable for a long time, with a minimal amount
+of dependencies, I think this Makefile is really a great start.
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes
+]]></description>
+</item>
+
+
+<item>
+<title>Gemini</title>
+<guid>gemini://her.esy.fun/posts/0016-gemini/index.gmi</guid>
+<pubDate>Mon, 09 Nov 2020 00:00:00 +0100</pubDate>
+<category>internet</category>
+<category>gopher</category>
+<category>gemini</category>
+<description><![CDATA[
+# Gemini
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2020-11-09 Mon]
+keywords:  internet gopher gemini
+description:  How I discovered gemini
+
+This weekend I read an article about gopher and gemini.
+I already seen articles about gemini pass.
+Somehow, it was more appealing to me than gopher space for totally
+subjective reasons I think.
+Anyway this time I really dug into it, and I loved the experience.
+
+At first sight gemini is like a parallel web for nerds.
+It has fundamental changes that I would have really liked to see from the
+modern web.
+The client decide the design, no user tracking, calm, minimalist, simple.
+
+Right now, on the web, most news website make the experience terrible to
+read the article.
+The page is bloated with a lot of animations, popin asking you to accept
+the cookies, ads with videos, strange fonts or design, plenty of
+javascript, trackers, etc...
+
+Gemini make those kind of anti-design impractical.
+In gemini space there is no:
+
+* CSS: the client decide the look of the page, the fonts, the colors, the
+  width of the columns, etc...
+* inline image: you can still link to images, but images should not be
+  displayed in the middle of the text.
+* inline links: If you link to an external resource, it is clearly visible
+  as an element on its own line.
+* cookies
+* HTTP headers used to track users
+* scripts on the client side
+* hard to parse format (no HTML, XHTML, etc...)
+
+Another strength of Gemini is its protocol's simplicity.
+It is easy to write your own gemini server as well as your own gemini
+client within a few hours of work in your programming language of choice.
+
+And last but not least, gemini is unfit to serve "big" files.
+So we should not experience people going to gemini for music/movie piracy.
+If you want to serve "big" files you should use another protocol.
+
+Personally I started to browse gemini directly from emacs with elpher.
+But I know there are a lot of clients.
+
+I liked gemini so much I hacked my blog to also publish in the gemini sphere.
+I serve my pages with a rust based server.
+And I hacked a quick script to transform my org mode files to gemini format.
+Gemini file format is a kind of super simplified markdown.
+I really like the simplicity of it.
+
+Here are a few links to get you started.
+
+Web:
+
+
+=> https://gemini.circumlunar.space gemini homepage
+
+
+=> https://thelambdalab.xyz/elpher/ elpher emacs gopher and gemini client
+
+
+=> https://portal.mozz.us/gemini/gemini.circumlunar.space/ Explore gemini from the web
+
+
+Gopher:
+
+
+=> gopher://thelambdalab.xyz/1/projects/elpher/ elpher
+
+
+Gemini:
+
+
+=> gemini://her.esy.fun my website in gemini
+
 
 => /index.gmi Home
 => /gem-atom.xml Feed
