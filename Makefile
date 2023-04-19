@@ -8,7 +8,30 @@ CACHE_DIR ?= .cache
 # we don't want to publish files in drafts
 NO_DRAFT := -not -path '$(SRC_DIR)/drafts/*'
 # we don't copy source files
-NO_SRC_FILE := ! -name '*.org'
+NO_SRC_FILE := ! -name '*.org' ! -name '*.css'
+
+
+define adv_rule
+  SRC_$(1) := $$(shell find $$(SRC_DIR) -type f $(2))
+  DST_$(1) := $$(patsubst $$(SRC_DIR)/%,$$(DST_DIR)/%,$$(SRC_$(1)))
+  $$(DST_DIR)/%$(4): $$(SRC_DIR)/%$(4) $$(ENV_VARS)
+	@mkdir -p "$$(dir $$@)"
+	$(3)
+  .PHONY: $(1)
+  $(1): $$(DST_$(1))
+  ALL += $(1)
+endef
+
+define rule
+  SRC_$(1) := $$(shell find $$(SRC_DIR) -type f $(2))
+  DST_$(1) := $$(patsubst $$(SRC_DIR)/%,$$(DST_DIR)/%,$$(SRC_$(1)))
+  $$(DST_DIR)/%.$(1): $$(SRC_DIR)/%.$(1) $$(ENV_VARS)
+	@mkdir -p "$$(dir $$@)"
+	$(3)
+  .PHONY: $(1)
+  $(1): $$(DST_$(1))
+  ALL += $(1)
+endef
 
 # Prevent path/nix bugs
 ENV_VARS := ./engine/envvars.sh
@@ -21,23 +44,11 @@ envvars: $(ENV_VARS)
 ALL += envvars
 
 # ASSETS
-SRC_RAW_FILES := $(shell find $(SRC_DIR) -type f $(NO_DRAFT) $(NO_SRC_FILE))
-DST_RAW_FILES   := $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%,$(SRC_RAW_FILES))
-$(DST_DIR)/%: $(SRC_DIR)/% $(ENV_VARS)
-	@mkdir -p "$(dir $@)"
-	cp "$<" "$@"
-.PHONY: assets
-assets: $(DST_RAW_FILES)
-ALL += assets
+$(eval $(call adv_rule,assets,$$(NO_DRAFT) $$(NO_SRC_FILE),cp "$$<" "$$@",))
 
 # CSS
-SRC_CSS_FILES := $(shell find $(SRC_DIR) -type f -name '*.css')
-DST_CSS_FILES   := $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%,$(SRC_RAW_FILES))
-$(DST_DIR)/%.css: $(SRC_DIR)/%.css  $(ENV_VARS)
-	@mkdir -p "$(dir $@)"
-	minify "$<" > "$@"
-css: $(DST_CSS_FILES)
-ALL += css
+# $(info $(call rule,css,-name '*.css',minify "$$<" > "$$@"))
+$(eval $(call rule,css,-name '*.css',minify "$$<" > "$$@"))
 
 # ORG -> HTML
 EXT ?= .org
@@ -135,11 +146,11 @@ ALL += $(GMI_INDEX)
 gmi-index: $(GMI_INDEX)
 
 # RSS
-GEM_ATOM := $(DST_DIR)/gem-atom.xml
+GMI_ATOM := $(DST_DIR)/gem-atom.xml
 MK_GEMINI_ATOM := engine/mk-gemini-atom.sh
 $(GEM_ATOM): $(DST_GMI_FILES) $(MK_GEMINI_ATOM)
 	$(MK_GEMINI_ATOM)
-ALL += $(GEM_ATOM)
+ALL += $(GMI_ATOM)
 .PHONY: gmi-atom
 gmi-atom: $(GMI_ATOM)
 
@@ -147,29 +158,27 @@ gmi-atom: $(GMI_ATOM)
 gemini: $(DST_GMI_FILES) $(GMI_INDEX) $(GEM_ATOM)
 
 # Images
-SRC_IMG_FILES ?= $(shell find $(SRC_DIR) -type f -name "*.jpg" -or -name "*.jpeg" -or -name "*.gif" -or -name "*.png")
-DST_IMG_FILES ?= $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%, $(SRC_IMG_FILES))
 OPTIM_IMG := engine/optim-img.sh
 
-$(DST_DIR)/%.jpg: $(SRC_DIR)/%.jpg $(OPTIM_IMG)
-	@mkdir -p $(dir $@)
-	$(OPTIM_IMG) "$<" "$@"
+define img
+  SRC_IMG_$(1) ?= $$(shell find $$(SRC_DIR) -type f -name "*.$(1)")
+  DST_IMG_$(1) ?= $$(patsubst $$(SRC_DIR)/%,$$(DST_DIR)/%,$$(SRC_IMG_$(1)))
+  $$(DST_DIR)/%.$(1): $$(SRC_DIR)/%.$(1) $$(OPTIM_IMG)
+	@mkdir -p $$(dir $$@)
+	$$(OPTIM_IMG) "$$<" "$$@"
+  .PHONY: $(1)
+  $(1): $$(DST_IMG_$(1))
+  ALL += $(1)
+endef
 
-$(DST_DIR)/%.jpg: $(SRC_DIR)/%.jpeg $(OPTIM_IMG)
-	@mkdir -p $(dir $@)
-	$(OPTIM_IMG) "$<" "$@"
-
-$(DST_DIR)/%.gif: $(SRC_DIR)/%.gif $(OPTIM_IMG)
-	@mkdir -p $(dir $@)
-	$(OPTIM_IMG) "$<" "$@"
-
-$(DST_DIR)/%.png: $(SRC_DIR)/%.png $(OPTIM_IMG)
-	@mkdir -p $(dir $@)
-	$(OPTIM_IMG) "$<" "$@"
+$(info $(call img,jpg))
+$(eval $(call img,jpg))
+$(eval $(call img,jpeg))
+$(eval $(call img,gif))
+$(eval $(call img,png))
 
 .PHONY: img
-img: $(DST_IMG_FILES)
-ALL += $(DST_IMG_FILES)
+img: jpg jpeg gif png
 
 # DEPLOY
 .PHONY: site
