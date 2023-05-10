@@ -148,14 +148,14 @@ gmi-index: $(GMI_INDEX)
 # RSS
 GMI_ATOM := $(DST_DIR)/gem-atom.xml
 MK_GEMINI_ATOM := engine/mk-gemini-atom.sh
-$(GEM_ATOM): $(DST_GMI_FILES) $(MK_GEMINI_ATOM)
+$(GMI_ATOM): $(DST_GMI_FILES) $(MK_GEMINI_ATOM)
 	$(MK_GEMINI_ATOM)
 ALL += $(GMI_ATOM)
 .PHONY: gmi-atom
 gmi-atom: $(GMI_ATOM)
 
 .PHONY: gemini
-gemini: $(DST_GMI_FILES) $(GMI_INDEX) $(GEM_ATOM)
+gemini: $(DST_GMI_FILES) $(GMI_INDEX) $(GMI_ATOM)
 
 # Images
 OPTIM_IMG := engine/optim-img.sh
