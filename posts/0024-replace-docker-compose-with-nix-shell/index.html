@@ -10,14 +10,13 @@ different databases as well as a few other services. This article is
 about how to replace <code class=verbatim>docker-compose</code> by
 <code class=verbatim>nix</code> for a local development
 environment.<h2 id=quick-tutorial>Quick tutorial</h2><h3 id=-nix-shell-fu--level-1-lesson><code class=verbatim>nix-shell-fu</code> level 1 lesson</h3><p>Let's start with a basic <code class=verbatim>shell.nix</code>
-example:<pre class=nix><code>{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
-with pkgs: mkShell
-  { buildInputs = [ hello ];
-    shellHook = &#39;&#39;
-      echo &quot;Using ${hello.name}.&quot;
-    &#39;&#39;;
-  }
-</code></pre><p>And this could be understood in plain English as:<blockquote><p>In the packages of nix version 22.11, create a new shell into which
+example:<div class=sourceCode id=cb1><pre class="sourceCode nix"><code class="sourceCode nix"><span id=cb1-1><a href=#cb1-1 aria-hidden=true tabindex=-1></a><span class=op>{</span> <span class=va>pkgs</span> <span class=op>?</span> <span class=bu>import</span> <span class=op>(</span><span class=bu>fetchTarball</span> <span class=va>https</span><span class=op>://</span><span class=ss>github.com/NixOS/nixpkgs/archive/22.11.tar.gz</span><span class=op>)</span> <span class=op>{}</span> <span class=op>}</span>:</span>
+<span id=cb1-2><a href=#cb1-2 aria-hidden=true tabindex=-1></a><span class=kw>with</span> <span class=va>pkgs</span><span class=op>:</span> mkShell</span>
+<span id=cb1-3><a href=#cb1-3 aria-hidden=true tabindex=-1></a>  <span class=op>{</span> <span class=va>buildInputs</span> <span class=op>=</span> <span class=op>[</span> hello <span class=op>];</span></span>
+<span id=cb1-4><a href=#cb1-4 aria-hidden=true tabindex=-1></a>    <span class=va>shellHook</span> <span class=op>=</span> <span class=st>&#39;&#39;</span></span>
+<span id=cb1-5><a href=#cb1-5 aria-hidden=true tabindex=-1></a><span class=st>      echo &quot;Using </span><span class=sc>${</span>hello.name<span class=sc>}</span><span class=st>.&quot;</span></span>
+<span id=cb1-6><a href=#cb1-6 aria-hidden=true tabindex=-1></a><span class=st>    &#39;&#39;</span><span class=op>;</span></span>
+<span id=cb1-7><a href=#cb1-7 aria-hidden=true tabindex=-1></a>  <span class=op>}</span></span></code></pre></div><p>And this could be understood in plain English as:<blockquote><p>In the packages of nix version 22.11, create a new shell into which
 the package <code class=verbatim>hello</code> will be installed. At
 the end of the install, run a script that will print the package name.
 (Cf <a href=#digression>digression</a>)</blockquote><p>If you copy/paste this in a <code class=verbatim>shell.nix</code>
@@ -44,18 +43,17 @@ configuring</h3><p>This time, we want to launch a full service, as a redis docke
 do. So here is a basic shell script which is similar to the previous one
 but will request <code class=verbatim>redis</code> as a dependency
 instead of <code class=verbatim>hello</code> and also as a launching
-script. From there will add a little bit more features.<pre class=nix><code>{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
-  pkgs.mkShell {
-    # must contain buildInputs, nativeBuildInputs and shellHook
-    buildInputs = [ pkgs.redis ];
-
-    # Post Shell Hook
-    shellHook = &#39;&#39;
-    echo &quot;Using ${pkgs.redis.name} on port: ${port}&quot;
-    redis-server
-  &#39;&#39;;
-  }
-</code></pre><p>Again if you run <code>nix-shell</code> here is the result:<pre><code>❯ nix-shell
+script. From there will add a little bit more features.<div class=sourceCode id=cb4><pre class="sourceCode nix"><code class="sourceCode nix"><span id=cb4-1><a href=#cb4-1 aria-hidden=true tabindex=-1></a><span class=op>{</span> <span class=va>pkgs</span> <span class=op>?</span> <span class=bu>import</span> <span class=op>(</span><span class=bu>fetchTarball</span> <span class=va>https</span><span class=op>://</span><span class=ss>github.com/NixOS/nixpkgs/archive/22.11.tar.gz</span><span class=op>)</span> <span class=op>{}</span> <span class=op>}</span>:</span>
+<span id=cb4-2><a href=#cb4-2 aria-hidden=true tabindex=-1></a>  pkgs.mkShell <span class=op>{</span></span>
+<span id=cb4-3><a href=#cb4-3 aria-hidden=true tabindex=-1></a>    <span class=co># must contain buildInputs, nativeBuildInputs and shellHook</span></span>
+<span id=cb4-4><a href=#cb4-4 aria-hidden=true tabindex=-1></a>    <span class=va>buildInputs</span> <span class=op>=</span> <span class=op>[</span> pkgs.redis <span class=op>];</span></span>
+<span id=cb4-5><a href=#cb4-5 aria-hidden=true tabindex=-1></a></span>
+<span id=cb4-6><a href=#cb4-6 aria-hidden=true tabindex=-1></a>    <span class=co># Post Shell Hook</span></span>
+<span id=cb4-7><a href=#cb4-7 aria-hidden=true tabindex=-1></a>    <span class=va>shellHook</span> <span class=op>=</span> <span class=st>&#39;&#39;</span></span>
+<span id=cb4-8><a href=#cb4-8 aria-hidden=true tabindex=-1></a><span class=st>    echo &quot;Using </span><span class=sc>${</span>pkgs.redis.name<span class=sc>}</span><span class=st> on port: </span><span class=sc>${</span>port<span class=sc>}</span><span class=st>&quot;</span></span>
+<span id=cb4-9><a href=#cb4-9 aria-hidden=true tabindex=-1></a><span class=st>    redis-server</span></span>
+<span id=cb4-10><a href=#cb4-10 aria-hidden=true tabindex=-1></a><span class=st>  &#39;&#39;</span><span class=op>;</span></span>
+<span id=cb4-11><a href=#cb4-11 aria-hidden=true tabindex=-1></a>  <span class=op>}</span></span></code></pre></div><p>Again if you run <code>nix-shell</code> here is the result:<pre><code>❯ nix-shell
 these 2 paths will be fetched (2.08 MiB download, 6.99 MiB unpacked):
   /nix/store/6w4vnaxdx12ccq172i8j5l830mlp8jlg-redis-7.0.5
   /nix/store/b47gmsx9qx0c9vh75wsg8bqq9qd0ad6f-openssl-3.0.7
@@ -90,20 +88,19 @@ Using redis-7.0.5
 97814:M 10 Feb 2023 20:44:36.963 * Ready to accept connections
 </code></pre><p>Woo! Redis is started and it works!<p>But if you have multiple projects you want to have more control. For
 example, we will want to run redis on a specific port. Here is how you
-do it:<pre class=nix><code>{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/21.05.tar.gz) {} }:
-  let iport = 16380;
-      port = toString iport;
-  in pkgs.mkShell {
-    # must contain buildInputs, nativeBuildInputs and shellHook
-    buildInputs = [ pkgs.redis ];
-
-    # Post Shell Hook
-    shellHook = &#39;&#39;
-    echo &quot;Using ${pkgs.redis.name} on port ${port}&quot;
-    redis-server --port ${port}
-  &#39;&#39;;
-  }
-</code></pre><p>And here is the result:<pre><code>&gt; rm dump.rdb
+do it:<div class=sourceCode id=cb6><pre class="sourceCode nix"><code class="sourceCode nix"><span id=cb6-1><a href=#cb6-1 aria-hidden=true tabindex=-1></a><span class=op>{</span> <span class=va>pkgs</span> <span class=op>?</span> <span class=bu>import</span> <span class=op>(</span><span class=bu>fetchTarball</span> <span class=va>https</span><span class=op>://</span><span class=ss>github.com/NixOS/nixpkgs/archive/21.05.tar.gz</span><span class=op>)</span> <span class=op>{}</span> <span class=op>}</span>:</span>
+<span id=cb6-2><a href=#cb6-2 aria-hidden=true tabindex=-1></a>  <span class=kw>let</span> <span class=va>iport</span> <span class=op>=</span> <span class=dv>16380</span><span class=op>;</span></span>
+<span id=cb6-3><a href=#cb6-3 aria-hidden=true tabindex=-1></a>      <span class=va>port</span> <span class=op>=</span> <span class=bu>toString</span> iport<span class=op>;</span></span>
+<span id=cb6-4><a href=#cb6-4 aria-hidden=true tabindex=-1></a>  <span class=kw>in</span> pkgs.mkShell <span class=op>{</span></span>
+<span id=cb6-5><a href=#cb6-5 aria-hidden=true tabindex=-1></a>    <span class=co># must contain buildInputs, nativeBuildInputs and shellHook</span></span>
+<span id=cb6-6><a href=#cb6-6 aria-hidden=true tabindex=-1></a>    <span class=va>buildInputs</span> <span class=op>=</span> <span class=op>[</span> pkgs.redis <span class=op>];</span></span>
+<span id=cb6-7><a href=#cb6-7 aria-hidden=true tabindex=-1></a></span>
+<span id=cb6-8><a href=#cb6-8 aria-hidden=true tabindex=-1></a>    <span class=co># Post Shell Hook</span></span>
+<span id=cb6-9><a href=#cb6-9 aria-hidden=true tabindex=-1></a>    <span class=va>shellHook</span> <span class=op>=</span> <span class=st>&#39;&#39;</span></span>
+<span id=cb6-10><a href=#cb6-10 aria-hidden=true tabindex=-1></a><span class=st>    echo &quot;Using </span><span class=sc>${</span>pkgs.redis.name<span class=sc>}</span><span class=st> on port </span><span class=sc>${</span>port<span class=sc>}</span><span class=st>&quot;</span></span>
+<span id=cb6-11><a href=#cb6-11 aria-hidden=true tabindex=-1></a><span class=st>    redis-server --port </span><span class=sc>${</span>port<span class=sc>}</span></span>
+<span id=cb6-12><a href=#cb6-12 aria-hidden=true tabindex=-1></a><span class=st>  &#39;&#39;</span><span class=op>;</span></span>
+<span id=cb6-13><a href=#cb6-13 aria-hidden=true tabindex=-1></a>  <span class=op>}</span></span></code></pre></div><p>And here is the result:<pre><code>&gt; rm dump.rdb
 &gt; nix-shell
 Using redis-6.2.3 on port 16380
 1785:C 10 Feb 2023 20:50:00.880 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
@@ -135,37 +132,36 @@ Using redis-6.2.3 on port 16380
 the DB as the file <code class=verbatim>dump.rdb</code>. What we would
 like is to keep all the state in a local directory that would be easy to
 delete.<p>To achieve this, instead of passing argument to the redis command
-line we will use a local config file to use.<pre class=nix><code>{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
-let iport = 16380;
-    port = toString iport;
-in pkgs.mkShell (rec {
-  # ENV Variables the directory to put all the DATA
-  REDIS_DATA = &quot;${toString ./.}/.redis&quot;;
-  # the config file, as we use REDIS_DATA variable we just declared in the
-  # same nix set, we need to use rec
-  redisConf = pkgs.writeText &quot;redis.conf&quot;
-                             &#39;&#39;
-                             port ${port}
-                             dbfilename redis.db
-                             dir ${REDIS_DATA}
-                             &#39;&#39;;
-
-  buildInputs = [ pkgs.redis ];
-
-  # Post Shell Hook
-  shellHook = &#39;&#39;
-    echo &quot;Using ${pkgs.redis.name} on port: ${port}&quot;
-
-    [ ! -d $REDIS_DATA ] \
-      &amp;&amp; mkdir -p $REDIS_DATA
-    cat &quot;$redisConf&quot; &gt; $REDIS_DATA/redis.conf
-    alias redisstop=&quot;echo &#39;Stopping Redis&#39;; redis-cli -p ${port} shutdown; rm -rf $REDIS_DATA&quot;
-    nohup redis-server $REDIS_DATA/redis.conf &gt; /dev/null 2&gt;&amp;1 &amp;
-    echo &quot;When finished just run redisstop &amp;&amp; exit&quot;
-    trap redisstop EXIT
-  &#39;&#39;;
-})
-</code></pre><p>And here is a full session using this <code class=verbatim>shell.nix</code>:<pre><code>&gt; nix-shell
+line we will use a local config file to use.<div class=sourceCode id=cb8><pre class="sourceCode nix"><code class="sourceCode nix"><span id=cb8-1><a href=#cb8-1 aria-hidden=true tabindex=-1></a><span class=op>{</span> <span class=va>pkgs</span> <span class=op>?</span> <span class=bu>import</span> <span class=op>(</span><span class=bu>fetchTarball</span> <span class=va>https</span><span class=op>://</span><span class=ss>github.com/NixOS/nixpkgs/archive/22.11.tar.gz</span><span class=op>)</span> <span class=op>{}</span> <span class=op>}</span>:</span>
+<span id=cb8-2><a href=#cb8-2 aria-hidden=true tabindex=-1></a><span class=kw>let</span> <span class=va>iport</span> <span class=op>=</span> <span class=dv>16380</span><span class=op>;</span></span>
+<span id=cb8-3><a href=#cb8-3 aria-hidden=true tabindex=-1></a>    <span class=va>port</span> <span class=op>=</span> <span class=bu>toString</span> iport<span class=op>;</span></span>
+<span id=cb8-4><a href=#cb8-4 aria-hidden=true tabindex=-1></a><span class=kw>in</span> pkgs.mkShell <span class=op>(</span><span class=kw>rec</span> <span class=op>{</span></span>
+<span id=cb8-5><a href=#cb8-5 aria-hidden=true tabindex=-1></a>  <span class=co># ENV Variables the directory to put all the DATA</span></span>
+<span id=cb8-6><a href=#cb8-6 aria-hidden=true tabindex=-1></a>  <span class=va>REDIS_DATA</span> <span class=op>=</span> <span class=st>&quot;</span><span class=sc>${</span><span class=bu>toString</span> <span class=ss>./.</span><span class=sc>}</span><span class=st>/.redis&quot;</span><span class=op>;</span></span>
+<span id=cb8-7><a href=#cb8-7 aria-hidden=true tabindex=-1></a>  <span class=co># the config file, as we use REDIS_DATA variable we just declared in the</span></span>
+<span id=cb8-8><a href=#cb8-8 aria-hidden=true tabindex=-1></a>  <span class=co># same nix set, we need to use rec</span></span>
+<span id=cb8-9><a href=#cb8-9 aria-hidden=true tabindex=-1></a>  <span class=va>redisConf</span> <span class=op>=</span> pkgs.writeText <span class=st>&quot;redis.conf&quot;</span></span>
+<span id=cb8-10><a href=#cb8-10 aria-hidden=true tabindex=-1></a>                             <span class=st>&#39;&#39;</span></span>
+<span id=cb8-11><a href=#cb8-11 aria-hidden=true tabindex=-1></a><span class=st>                             port </span><span class=sc>${</span>port<span class=sc>}</span></span>
+<span id=cb8-12><a href=#cb8-12 aria-hidden=true tabindex=-1></a><span class=st>                             dbfilename redis.db</span></span>
+<span id=cb8-13><a href=#cb8-13 aria-hidden=true tabindex=-1></a><span class=st>                             dir </span><span class=sc>${</span>REDIS_DATA<span class=sc>}</span></span>
+<span id=cb8-14><a href=#cb8-14 aria-hidden=true tabindex=-1></a><span class=st>                             &#39;&#39;</span><span class=op>;</span></span>
+<span id=cb8-15><a href=#cb8-15 aria-hidden=true tabindex=-1></a></span>
+<span id=cb8-16><a href=#cb8-16 aria-hidden=true tabindex=-1></a>  <span class=va>buildInputs</span> <span class=op>=</span> <span class=op>[</span> pkgs.redis <span class=op>];</span></span>
+<span id=cb8-17><a href=#cb8-17 aria-hidden=true tabindex=-1></a></span>
+<span id=cb8-18><a href=#cb8-18 aria-hidden=true tabindex=-1></a>  <span class=co># Post Shell Hook</span></span>
+<span id=cb8-19><a href=#cb8-19 aria-hidden=true tabindex=-1></a>  <span class=va>shellHook</span> <span class=op>=</span> <span class=st>&#39;&#39;</span></span>
+<span id=cb8-20><a href=#cb8-20 aria-hidden=true tabindex=-1></a><span class=st>    echo &quot;Using </span><span class=sc>${</span>pkgs.redis.name<span class=sc>}</span><span class=st> on port: </span><span class=sc>${</span>port<span class=sc>}</span><span class=st>&quot;</span></span>
+<span id=cb8-21><a href=#cb8-21 aria-hidden=true tabindex=-1></a></span>
+<span id=cb8-22><a href=#cb8-22 aria-hidden=true tabindex=-1></a><span class=st>    [ ! -d $REDIS_DATA ] \</span></span>
+<span id=cb8-23><a href=#cb8-23 aria-hidden=true tabindex=-1></a><span class=st>      &amp;&amp; mkdir -p $REDIS_DATA</span></span>
+<span id=cb8-24><a href=#cb8-24 aria-hidden=true tabindex=-1></a><span class=st>    cat &quot;$redisConf&quot; &gt; $REDIS_DATA/redis.conf</span></span>
+<span id=cb8-25><a href=#cb8-25 aria-hidden=true tabindex=-1></a><span class=st>    alias redisstop=&quot;echo &#39;Stopping Redis&#39;; redis-cli -p </span><span class=sc>${</span>port<span class=sc>}</span><span class=st> shutdown; rm -rf $REDIS_DATA&quot;</span></span>
+<span id=cb8-26><a href=#cb8-26 aria-hidden=true tabindex=-1></a><span class=st>    nohup redis-server $REDIS_DATA/redis.conf &gt; /dev/null 2&gt;&amp;1 &amp;</span></span>
+<span id=cb8-27><a href=#cb8-27 aria-hidden=true tabindex=-1></a><span class=st>    echo &quot;When finished just run redisstop &amp;&amp; exit&quot;</span></span>
+<span id=cb8-28><a href=#cb8-28 aria-hidden=true tabindex=-1></a><span class=st>    trap redisstop EXIT</span></span>
+<span id=cb8-29><a href=#cb8-29 aria-hidden=true tabindex=-1></a><span class=st>  &#39;&#39;</span><span class=op>;</span></span>
+<span id=cb8-30><a href=#cb8-30 aria-hidden=true tabindex=-1></a><span class=op>})</span></span></code></pre></div><p>And here is a full session using this <code class=verbatim>shell.nix</code>:<pre><code>&gt; nix-shell
 Using redis-6.2.3 on port: 16380
 When finished just run redisstop &amp;&amp; exit
 
@@ -220,127 +216,120 @@ would like in a development environment). Also, as compared to previous
 version, redis is launched in background so you could run commands in
 your nix shell.<p>Notice I also run <code>redisstop</code> command on exit of the
 nix-shell. So when you close the nix-shell redis is stopped and the DB
-state is cleaned up.<h2 id=-nix-shell-fu--level-3-lesson--composability>Composable <code class=verbatim>nix-shell</code></h2><p>As a quick recap you now have a boilerplate to create new <code class=verbatim>shell.nix</code>:<pre class=nix><code>{ pkgs ? import ( ... ) {} }:
-mkShell { MY_ENV_VAR_1 = ...;
-          MY_ENV_VAR_2 = ...;
-          buildInputs = [ dependency-1 ... dependency-n ];
-          nativeBuildInputs = [ dependency-1 ... dependency-n ];
-          shellHook = &#39;&#39; command_to_run_after_init &#39;&#39;;
-        }
-</code></pre><p>But if I give you two such <code class=verbatim>shell.nix</code>
+state is cleaned up.<h2 id=-nix-shell-fu--level-3-lesson--composability>Composable <code class=verbatim>nix-shell</code></h2><p>As a quick recap you now have a boilerplate to create new <code class=verbatim>shell.nix</code>:<div class=sourceCode id=cb10><pre class="sourceCode nix"><code class="sourceCode nix"><span id=cb10-1><a href=#cb10-1 aria-hidden=true tabindex=-1></a><span class=op>{</span> <span class=va>pkgs</span> <span class=op>?</span> <span class=bu>import</span> <span class=op>(</span> ... <span class=op>)</span> <span class=op>{}</span> <span class=op>}</span>:</span>
+<span id=cb10-2><a href=#cb10-2 aria-hidden=true tabindex=-1></a>mkShell <span class=op>{</span> <span class=va>MY_ENV_VAR_1</span> <span class=op>=</span> ...<span class=op>;</span></span>
+<span id=cb10-3><a href=#cb10-3 aria-hidden=true tabindex=-1></a>          <span class=va>MY_ENV_VAR_2</span> <span class=op>=</span> ...<span class=op>;</span></span>
+<span id=cb10-4><a href=#cb10-4 aria-hidden=true tabindex=-1></a>          <span class=va>buildInputs</span> <span class=op>=</span> <span class=op>[</span> dependency<span class=dv>-1</span> ... dependency-n <span class=op>];</span></span>
+<span id=cb10-5><a href=#cb10-5 aria-hidden=true tabindex=-1></a>          <span class=va>nativeBuildInputs</span> <span class=op>=</span> <span class=op>[</span> dependency<span class=dv>-1</span> ... dependency-n <span class=op>];</span></span>
+<span id=cb10-6><a href=#cb10-6 aria-hidden=true tabindex=-1></a>          <span class=va>shellHook</span> <span class=op>=</span> <span class=st>&#39;&#39; command_to_run_after_init &#39;&#39;</span><span class=op>;</span></span>
+<span id=cb10-7><a href=#cb10-7 aria-hidden=true tabindex=-1></a>        <span class=op>}</span></span></code></pre></div><p>But if I give you two such <code class=verbatim>shell.nix</code>
 files, would you be able to compose them? Unfortunately, not directly.
 To solve the problem we will replace this boilerplate by another one
 that do not directly uses <code class=verbatim>mkShell</code>. And in
 order to make it fully composable, we will also need to narrow the
-environment variables declaration in a sub field:<pre class=nix><code>{ pkgs ? import ( ... ) {} }:
-let env = { PGDATA = ...; }
-in { inherit env; # equivalent to env = env;
-     buildInputs = [ dependency-1 ... dependency-n ];
-     nativeBuildInputs = [ dependency-1 ... dependency-n ];
-     shellHook = &#39;&#39; some_command $PG_DATA &#39;&#39;;
-   }
-</code></pre><p>With this, we can compose two nix set into a single merged one that
+environment variables declaration in a sub field:<div class=sourceCode id=cb11><pre class="sourceCode nix"><code class="sourceCode nix"><span id=cb11-1><a href=#cb11-1 aria-hidden=true tabindex=-1></a><span class=op>{</span> <span class=va>pkgs</span> <span class=op>?</span> <span class=bu>import</span> <span class=op>(</span> ... <span class=op>)</span> <span class=op>{}</span> <span class=op>}</span>:</span>
+<span id=cb11-2><a href=#cb11-2 aria-hidden=true tabindex=-1></a><span class=kw>let</span> <span class=va>env</span> <span class=op>=</span> <span class=op>{</span> <span class=va>PGDATA</span> <span class=op>=</span> ...<span class=op>;</span> <span class=op>}</span></span>
+<span id=cb11-3><a href=#cb11-3 aria-hidden=true tabindex=-1></a>in <span class=op>{</span> <span class=kw>inherit</span> env<span class=op>;</span> <span class=co># equivalent to env = env;</span></span>
+<span id=cb11-4><a href=#cb11-4 aria-hidden=true tabindex=-1></a>     <span class=va>buildInputs</span> <span class=op>=</span> <span class=op>[</span> dependency<span class=dv>-1</span> ... dependency-n <span class=op>];</span></span>
+<span id=cb11-5><a href=#cb11-5 aria-hidden=true tabindex=-1></a>     <span class=va>nativeBuildInputs</span> <span class=op>=</span> <span class=op>[</span> dependency<span class=dv>-1</span> ... dependency-n <span class=op>];</span></span>
+<span id=cb11-6><a href=#cb11-6 aria-hidden=true tabindex=-1></a>     <span class=va>shellHook</span> <span class=op>=</span> <span class=st>&#39;&#39; some_command $PG_DATA &#39;&#39;</span><span class=op>;</span></span>
+<span id=cb11-7><a href=#cb11-7 aria-hidden=true tabindex=-1></a>   <span class=op>}</span></span></code></pre></div><p>With this, we can compose two nix set into a single merged one that
 will be suitable to pass as argument to <code>mkShell</code>. Another
 minor detail, but important one. In bash, the command <code>trap</code>
 do not accumulate but replace the function. For our need, we want to run
 all stop function on exit. So the <code>trap</code> directive added in
 the shell hook does not compose naturally. This is why we add a <code class=verbatim>stop</code> value that will contain the name of the
 bash function to call to stop and cleanup a service.<p>Finally the main structure for each of our service will look like
-this <strong>nix service boilerplate</strong>:<pre class=nix><code>{ pkgs ? import ( ... ) {} }:
-let env = { MY_SERVICE_ENV_VAR = ...; }
-in { inherit env; # equivalent to env = env;
-     buildInputs = [ dependency-1 ... dependency-n ];
-     nativeBuildInputs = [ dependency-1 ... dependency-n ];
-     shellHook = &#39;&#39; my_command $MY_SERVICE_ENV_VAR &#39;&#39;;
-     stop = &quot;stop_my_service&quot;
-   }
-</code></pre><p>So let's start easy. To run a single shell script like this with
+this <strong>nix service boilerplate</strong>:<div class=sourceCode id=cb12><pre class="sourceCode nix"><code class="sourceCode nix"><span id=cb12-1><a href=#cb12-1 aria-hidden=true tabindex=-1></a><span class=op>{</span> <span class=va>pkgs</span> <span class=op>?</span> <span class=bu>import</span> <span class=op>(</span> ... <span class=op>)</span> <span class=op>{}</span> <span class=op>}</span>:</span>
+<span id=cb12-2><a href=#cb12-2 aria-hidden=true tabindex=-1></a><span class=kw>let</span> <span class=va>env</span> <span class=op>=</span> <span class=op>{</span> <span class=va>MY_SERVICE_ENV_VAR</span> <span class=op>=</span> ...<span class=op>;</span> <span class=op>}</span></span>
+<span id=cb12-3><a href=#cb12-3 aria-hidden=true tabindex=-1></a>in <span class=op>{</span> <span class=kw>inherit</span> env<span class=op>;</span> <span class=co># equivalent to env = env;</span></span>
+<span id=cb12-4><a href=#cb12-4 aria-hidden=true tabindex=-1></a>     <span class=va>buildInputs</span> <span class=op>=</span> <span class=op>[</span> dependency<span class=dv>-1</span> ... dependency-n <span class=op>];</span></span>
+<span id=cb12-5><a href=#cb12-5 aria-hidden=true tabindex=-1></a>     <span class=va>nativeBuildInputs</span> <span class=op>=</span> <span class=op>[</span> dependency<span class=dv>-1</span> ... dependency-n <span class=op>];</span></span>
+<span id=cb12-6><a href=#cb12-6 aria-hidden=true tabindex=-1></a>     <span class=va>shellHook</span> <span class=op>=</span> <span class=st>&#39;&#39; my_command $MY_SERVICE_ENV_VAR &#39;&#39;</span><span class=op>;</span></span>
+<span id=cb12-7><a href=#cb12-7 aria-hidden=true tabindex=-1></a>     <span class=va>stop</span> <span class=op>=</span> <span class=st>&quot;stop_my_service&quot;</span></span>
+<span id=cb12-8><a href=#cb12-8 aria-hidden=true tabindex=-1></a>   <span class=er>}</span></span></code></pre></div><p>So let's start easy. To run a single shell script like this with
 <code class=verbatim>nix-shell</code>, you should put your service
 specific nix file in a <code class=verbatim>service.nix</code> file
 and create a <code class=verbatim>shell.nix</code> file that contains
-something like:<pre class=nix><code>{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
-let service = import ./service.nix { inherit pkgs; };
-in with service; pkgs.mkShell ( env //
-   {
-     buildInputs       = buildInputs;
-     nativeBuildInputs = nativeBuildInputs ;
-     shellHook         = shellHook;
-   })
-</code></pre><p>Now, if you would like to run nix shell for multiple files, here is a
-first qui solution:<pre class=nix><code>{ pkgs ? import (...) {}}:
-let
-  # merge all the env sets
-  mergedEnvs = builtins.foldl&#39; (acc: e: acc // e) {} envs;
-
-  # merge all the confs by accumulating the dependencies
-  # and concatenating the shell hooks.
-  mergedConfs =
-    builtins.foldl&#39;
-      (acc: {buildInputs ? [], nativeBuildInputs ? [], shellHook ? &quot;&quot;, ...}:
-        { buildInputs = acc.buildInputs ++ buildInputs;
-          nativeBuildInputs = acc.nativeBuildInputs ++ nativeBuildInputs;
-          shellHook = acc.shellHook + shellHook;
-        })
-      emptyConf
-      confs;
-in mkShell (mergedEnvs // mergedConfs)
-</code></pre><p>And now, here is the full solution that also deal with other minor
+something like:<div class=sourceCode id=cb13><pre class="sourceCode nix"><code class="sourceCode nix"><span id=cb13-1><a href=#cb13-1 aria-hidden=true tabindex=-1></a><span class=op>{</span> <span class=va>pkgs</span> <span class=op>?</span> <span class=bu>import</span> <span class=op>(</span><span class=bu>fetchTarball</span> <span class=va>https</span><span class=op>://</span><span class=ss>github.com/NixOS/nixpkgs/archive/22.11.tar.gz</span><span class=op>)</span> <span class=op>{}</span> <span class=op>}</span>:</span>
+<span id=cb13-2><a href=#cb13-2 aria-hidden=true tabindex=-1></a><span class=kw>let</span> <span class=va>service</span> <span class=op>=</span> <span class=bu>import</span> <span class=ss>./service.nix</span> <span class=op>{</span> <span class=kw>inherit</span> pkgs<span class=op>;</span> <span class=op>};</span></span>
+<span id=cb13-3><a href=#cb13-3 aria-hidden=true tabindex=-1></a><span class=kw>in</span> <span class=kw>with</span> service<span class=op>;</span> pkgs.mkShell <span class=op>(</span> env <span class=op>//</span></span>
+<span id=cb13-4><a href=#cb13-4 aria-hidden=true tabindex=-1></a>   <span class=op>{</span></span>
+<span id=cb13-5><a href=#cb13-5 aria-hidden=true tabindex=-1></a>     <span class=va>buildInputs</span>       <span class=op>=</span> buildInputs<span class=op>;</span></span>
+<span id=cb13-6><a href=#cb13-6 aria-hidden=true tabindex=-1></a>     <span class=va>nativeBuildInputs</span> <span class=op>=</span> nativeBuildInputs <span class=op>;</span></span>
+<span id=cb13-7><a href=#cb13-7 aria-hidden=true tabindex=-1></a>     <span class=va>shellHook</span>         <span class=op>=</span> shellHook<span class=op>;</span></span>
+<span id=cb13-8><a href=#cb13-8 aria-hidden=true tabindex=-1></a>   <span class=op>})</span></span></code></pre></div><p>Now, if you would like to run nix shell for multiple files, here is a
+first qui solution:<div class=sourceCode id=cb14><pre class="sourceCode nix"><code class="sourceCode nix"><span id=cb14-1><a href=#cb14-1 aria-hidden=true tabindex=-1></a><span class=op>{</span> <span class=va>pkgs</span> <span class=op>?</span> <span class=bu>import</span> <span class=op>(</span>...<span class=op>)</span> <span class=op>{}}</span>:</span>
+<span id=cb14-2><a href=#cb14-2 aria-hidden=true tabindex=-1></a><span class=kw>let</span></span>
+<span id=cb14-3><a href=#cb14-3 aria-hidden=true tabindex=-1></a>  <span class=co># merge all the env sets</span></span>
+<span id=cb14-4><a href=#cb14-4 aria-hidden=true tabindex=-1></a>  <span class=va>mergedEnvs</span> <span class=op>=</span> <span class=bu>builtins</span>.foldl&#39; <span class=op>(</span><span class=va>acc</span><span class=op>:</span> <span class=va>e</span><span class=op>:</span> acc <span class=op>//</span> e<span class=op>)</span> <span class=op>{}</span> envs<span class=op>;</span></span>
+<span id=cb14-5><a href=#cb14-5 aria-hidden=true tabindex=-1></a></span>
+<span id=cb14-6><a href=#cb14-6 aria-hidden=true tabindex=-1></a>  <span class=co># merge all the confs by accumulating the dependencies</span></span>
+<span id=cb14-7><a href=#cb14-7 aria-hidden=true tabindex=-1></a>  <span class=co># and concatenating the shell hooks.</span></span>
+<span id=cb14-8><a href=#cb14-8 aria-hidden=true tabindex=-1></a>  <span class=va>mergedConfs</span> <span class=op>=</span></span>
+<span id=cb14-9><a href=#cb14-9 aria-hidden=true tabindex=-1></a>    <span class=bu>builtins</span>.foldl&#39;</span>
+<span id=cb14-10><a href=#cb14-10 aria-hidden=true tabindex=-1></a>      <span class=op>(</span><span class=va>acc</span><span class=op>:</span> <span class=op>{</span><span class=va>buildInputs</span> <span class=op>?</span> <span class=op>[],</span> <span class=va>nativeBuildInputs</span> <span class=op>?</span> <span class=op>[],</span> <span class=va>shellHook</span> <span class=op>?</span> <span class=st>&quot;&quot;</span><span class=op>,</span> <span class=op>...}</span>:</span>
+<span id=cb14-11><a href=#cb14-11 aria-hidden=true tabindex=-1></a>        <span class=op>{</span> <span class=va>buildInputs</span> <span class=op>=</span> acc.buildInputs <span class=op>++</span> buildInputs<span class=op>;</span></span>
+<span id=cb14-12><a href=#cb14-12 aria-hidden=true tabindex=-1></a>          <span class=va>nativeBuildInputs</span> <span class=op>=</span> acc.nativeBuildInputs <span class=op>++</span> nativeBuildInputs<span class=op>;</span></span>
+<span id=cb14-13><a href=#cb14-13 aria-hidden=true tabindex=-1></a>          <span class=va>shellHook</span> <span class=op>=</span> acc.shellHook <span class=op>+</span> shellHook<span class=op>;</span></span>
+<span id=cb14-14><a href=#cb14-14 aria-hidden=true tabindex=-1></a>        <span class=op>})</span></span>
+<span id=cb14-15><a href=#cb14-15 aria-hidden=true tabindex=-1></a>      emptyConf</span>
+<span id=cb14-16><a href=#cb14-16 aria-hidden=true tabindex=-1></a>      confs<span class=op>;</span></span>
+<span id=cb14-17><a href=#cb14-17 aria-hidden=true tabindex=-1></a><span class=kw>in</span> mkShell <span class=op>(</span>mergedEnvs <span class=op>//</span> mergedConfs<span class=op>)</span></span></code></pre></div><p>And now, here is the full solution that also deal with other minor
 details like importing the files and dealing with the exit of the
-shell:<pre class=nix><code>{ mergeShellConfs =
-    # imports should contain a list of nix files
-    { pkgs, imports }:
-    let confs = map (f: import f { inherit pkgs; }) imports;
-        envs  = map ({env ? {}, ...}: env) confs;
-
-        # list the name of a command to stop a service (if none provided just use &#39;:&#39; which mean noop)
-        stops  = map ({stop ? &quot;:&quot;, ...}: stop) confs;
-
-        # we want to stop all services on exit
-        stopCmd = builtins.concatStringsSep &quot; &amp;&amp; &quot; stops;
-
-        # we would like to add a shellHook to cleanup the service that will call
-        # all cleaning-up function declared in sub-shells
-        lastConf =
-          { shellHook = &#39;&#39;
-                        stopall() { ${stopCmd}; }
-                        echo &quot;You can manually stop all services by calling stopall&quot;
-                        trap stopall EXIT
-                        &#39;&#39;;
-          };
-
-        # merge Environment variables needed for other shell environments
-        mergedEnvs = builtins.foldl&#39; (acc: e: acc // e) {} envs;
-
-        # zeroConf is the minimal empty configuration needed
-        zeroConf = {buildInputs = []; nativeBuildInputs = []; shellHook=&quot;&quot;;};
-
-        # merge all confs by appending buildInputs and nativeBuildInputs
-        # and by concatenating the shellHooks
-        mergedConfs =
-          builtins.foldl&#39;
-            (acc: {buildInputs ? [], nativeBuildInputs ? [], shellHook ? &quot;&quot;, ...}:
-              { buildInputs = acc.buildInputs ++ buildInputs;
-                nativeBuildInputs = acc.nativeBuildInputs ++ nativeBuildInputs;
-                shellHook = acc.shellHook + shellHook;
-              })
-            zeroConf
-            (confs ++ [lastConf]);
-
-    in (mergedEnvs // mergedConfs);
-}
-</code></pre><p>So I put this function declaration in a file named <code class=verbatim>./nix/merge-shell.nix</code>. And I have a <code class=verbatim>pg.nix</code> as well as a <code class=verbatim>redis.nix</code> file in the <code class=verbatim>nix</code> directory. On the root of the project the
-main <code class=verbatim>shell.nix</code> looks like:<pre class=nix><code>{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
-let
-  # we import the file, and rename the function mergeShellConfs as mergeShells
-  mergeShells = (import ./nix/merge-shell.nix).mergeShellConfs;
-  # we call mergeShells
-  mergedShellConfs =
-    mergeShells { inherit pkgs;
-                  # imports = [ ./nix/pg.nix ./nix/redis.nix ];
-                  imports = [ ./nix/pg.nix ./nix/redis.nix ];
-                };
-in pkgs.mkShell mergedShellConfs
-</code></pre><p>And, that's it. Now when I run <code class=verbatim>nix-shell</code> it launch both Postgresql and Redis,
+shell:<div class=sourceCode id=cb15><pre class="sourceCode nix"><code class="sourceCode nix"><span id=cb15-1><a href=#cb15-1 aria-hidden=true tabindex=-1></a><span class=op>{</span> <span class=va>mergeShellConfs</span> <span class=op>=</span></span>
+<span id=cb15-2><a href=#cb15-2 aria-hidden=true tabindex=-1></a>    <span class=co># imports should contain a list of nix files</span></span>
+<span id=cb15-3><a href=#cb15-3 aria-hidden=true tabindex=-1></a>    <span class=op>{</span> <span class=va>pkgs</span><span class=op>,</span> <span class=va>imports</span> <span class=op>}</span>:</span>
+<span id=cb15-4><a href=#cb15-4 aria-hidden=true tabindex=-1></a>    <span class=kw>let</span> <span class=va>confs</span> <span class=op>=</span> <span class=bu>map</span> <span class=op>(</span><span class=va>f</span><span class=op>:</span> <span class=bu>import</span> f <span class=op>{</span> <span class=kw>inherit</span> pkgs<span class=op>;</span> <span class=op>})</span> imports<span class=op>;</span></span>
+<span id=cb15-5><a href=#cb15-5 aria-hidden=true tabindex=-1></a>        <span class=va>envs</span>  <span class=op>=</span> <span class=bu>map</span> <span class=op>({</span><span class=va>env</span> <span class=op>?</span> <span class=op>{},</span> <span class=op>...}</span>: env<span class=op>)</span> confs<span class=op>;</span></span>
+<span id=cb15-6><a href=#cb15-6 aria-hidden=true tabindex=-1></a></span>
+<span id=cb15-7><a href=#cb15-7 aria-hidden=true tabindex=-1></a>        <span class=co># list the name of a command to stop a service (if none provided just use &#39;:&#39; which mean noop)</span></span>
+<span id=cb15-8><a href=#cb15-8 aria-hidden=true tabindex=-1></a>        <span class=va>stops</span>  <span class=op>=</span> <span class=bu>map</span> <span class=op>({</span><span class=va>stop</span> <span class=op>?</span> <span class=st>&quot;:&quot;</span><span class=op>,</span> <span class=op>...}</span>: stop<span class=op>)</span> confs<span class=op>;</span></span>
+<span id=cb15-9><a href=#cb15-9 aria-hidden=true tabindex=-1></a></span>
+<span id=cb15-10><a href=#cb15-10 aria-hidden=true tabindex=-1></a>        <span class=co># we want to stop all services on exit</span></span>
+<span id=cb15-11><a href=#cb15-11 aria-hidden=true tabindex=-1></a>        <span class=va>stopCmd</span> <span class=op>=</span> <span class=bu>builtins</span>.concatStringsSep <span class=st>&quot; &amp;&amp; &quot;</span> stops<span class=op>;</span></span>
+<span id=cb15-12><a href=#cb15-12 aria-hidden=true tabindex=-1></a></span>
+<span id=cb15-13><a href=#cb15-13 aria-hidden=true tabindex=-1></a>        <span class=co># we would like to add a shellHook to cleanup the service that will call</span></span>
+<span id=cb15-14><a href=#cb15-14 aria-hidden=true tabindex=-1></a>        <span class=co># all cleaning-up function declared in sub-shells</span></span>
+<span id=cb15-15><a href=#cb15-15 aria-hidden=true tabindex=-1></a>        <span class=va>lastConf</span> <span class=op>=</span></span>
+<span id=cb15-16><a href=#cb15-16 aria-hidden=true tabindex=-1></a>          <span class=op>{</span> <span class=va>shellHook</span> <span class=op>=</span> <span class=st>&#39;&#39;</span></span>
+<span id=cb15-17><a href=#cb15-17 aria-hidden=true tabindex=-1></a><span class=st>                        stopall() { </span><span class=sc>${</span>stopCmd<span class=sc>}</span><span class=st>; }</span></span>
+<span id=cb15-18><a href=#cb15-18 aria-hidden=true tabindex=-1></a><span class=st>                        echo &quot;You can manually stop all services by calling stopall&quot;</span></span>
+<span id=cb15-19><a href=#cb15-19 aria-hidden=true tabindex=-1></a><span class=st>                        trap stopall EXIT</span></span>
+<span id=cb15-20><a href=#cb15-20 aria-hidden=true tabindex=-1></a><span class=st>                        &#39;&#39;</span><span class=op>;</span></span>
+<span id=cb15-21><a href=#cb15-21 aria-hidden=true tabindex=-1></a>          <span class=op>};</span></span>
+<span id=cb15-22><a href=#cb15-22 aria-hidden=true tabindex=-1></a></span>
+<span id=cb15-23><a href=#cb15-23 aria-hidden=true tabindex=-1></a>        <span class=co># merge Environment variables needed for other shell environments</span></span>
+<span id=cb15-24><a href=#cb15-24 aria-hidden=true tabindex=-1></a>        <span class=va>mergedEnvs</span> <span class=op>=</span> <span class=bu>builtins</span>.foldl&#39; <span class=op>(</span><span class=va>acc</span><span class=op>:</span> <span class=va>e</span><span class=op>:</span> acc <span class=op>//</span> e<span class=op>)</span> <span class=op>{}</span> envs<span class=op>;</span></span>
+<span id=cb15-25><a href=#cb15-25 aria-hidden=true tabindex=-1></a></span>
+<span id=cb15-26><a href=#cb15-26 aria-hidden=true tabindex=-1></a>        <span class=co># zeroConf is the minimal empty configuration needed</span></span>
+<span id=cb15-27><a href=#cb15-27 aria-hidden=true tabindex=-1></a>        <span class=va>zeroConf</span> <span class=op>=</span> <span class=op>{</span><span class=va>buildInputs</span> <span class=op>=</span> <span class=op>[];</span> <span class=va>nativeBuildInputs</span> <span class=op>=</span> <span class=op>[];</span> <span class=va>shellHook</span><span class=op>=</span><span class=st>&quot;&quot;</span><span class=op>;};</span></span>
+<span id=cb15-28><a href=#cb15-28 aria-hidden=true tabindex=-1></a></span>
+<span id=cb15-29><a href=#cb15-29 aria-hidden=true tabindex=-1></a>        <span class=co># merge all confs by appending buildInputs and nativeBuildInputs</span></span>
+<span id=cb15-30><a href=#cb15-30 aria-hidden=true tabindex=-1></a>        <span class=co># and by concatenating the shellHooks</span></span>
+<span id=cb15-31><a href=#cb15-31 aria-hidden=true tabindex=-1></a>        <span class=va>mergedConfs</span> <span class=op>=</span></span>
+<span id=cb15-32><a href=#cb15-32 aria-hidden=true tabindex=-1></a>          <span class=bu>builtins</span>.foldl&#39;</span>
+<span id=cb15-33><a href=#cb15-33 aria-hidden=true tabindex=-1></a>            <span class=op>(</span><span class=va>acc</span><span class=op>:</span> <span class=op>{</span><span class=va>buildInputs</span> <span class=op>?</span> <span class=op>[],</span> <span class=va>nativeBuildInputs</span> <span class=op>?</span> <span class=op>[],</span> <span class=va>shellHook</span> <span class=op>?</span> <span class=st>&quot;&quot;</span><span class=op>,</span> <span class=op>...}</span>:</span>
+<span id=cb15-34><a href=#cb15-34 aria-hidden=true tabindex=-1></a>              <span class=op>{</span> <span class=va>buildInputs</span> <span class=op>=</span> acc.buildInputs <span class=op>++</span> buildInputs<span class=op>;</span></span>
+<span id=cb15-35><a href=#cb15-35 aria-hidden=true tabindex=-1></a>                <span class=va>nativeBuildInputs</span> <span class=op>=</span> acc.nativeBuildInputs <span class=op>++</span> nativeBuildInputs<span class=op>;</span></span>
+<span id=cb15-36><a href=#cb15-36 aria-hidden=true tabindex=-1></a>                <span class=va>shellHook</span> <span class=op>=</span> acc.shellHook <span class=op>+</span> shellHook<span class=op>;</span></span>
+<span id=cb15-37><a href=#cb15-37 aria-hidden=true tabindex=-1></a>              <span class=op>})</span></span>
+<span id=cb15-38><a href=#cb15-38 aria-hidden=true tabindex=-1></a>            zeroConf</span>
+<span id=cb15-39><a href=#cb15-39 aria-hidden=true tabindex=-1></a>            <span class=op>(</span>confs <span class=op>++</span> <span class=op>[</span>lastConf<span class=op>]);</span></span>
+<span id=cb15-40><a href=#cb15-40 aria-hidden=true tabindex=-1></a></span>
+<span id=cb15-41><a href=#cb15-41 aria-hidden=true tabindex=-1></a>    <span class=kw>in</span> <span class=op>(</span>mergedEnvs <span class=op>//</span> mergedConfs<span class=op>);</span></span>
+<span id=cb15-42><a href=#cb15-42 aria-hidden=true tabindex=-1></a><span class=op>}</span></span></code></pre></div><p>So I put this function declaration in a file named <code class=verbatim>./nix/merge-shell.nix</code>. And I have a <code class=verbatim>pg.nix</code> as well as a <code class=verbatim>redis.nix</code> file in the <code class=verbatim>nix</code> directory. On the root of the project the
+main <code class=verbatim>shell.nix</code> looks like:<div class=sourceCode id=cb16><pre class="sourceCode nix"><code class="sourceCode nix"><span id=cb16-1><a href=#cb16-1 aria-hidden=true tabindex=-1></a><span class=op>{</span> <span class=va>pkgs</span> <span class=op>?</span> <span class=bu>import</span> <span class=op>(</span><span class=bu>fetchTarball</span> <span class=va>https</span><span class=op>://</span><span class=ss>github.com/NixOS/nixpkgs/archive/22.11.tar.gz</span><span class=op>)</span> <span class=op>{}</span> <span class=op>}</span>:</span>
+<span id=cb16-2><a href=#cb16-2 aria-hidden=true tabindex=-1></a><span class=kw>let</span></span>
+<span id=cb16-3><a href=#cb16-3 aria-hidden=true tabindex=-1></a>  <span class=co># we import the file, and rename the function mergeShellConfs as mergeShells</span></span>
+<span id=cb16-4><a href=#cb16-4 aria-hidden=true tabindex=-1></a>  <span class=va>mergeShells</span> <span class=op>=</span> <span class=op>(</span><span class=bu>import</span> <span class=ss>./nix/merge-shell.nix</span><span class=op>)</span>.mergeShellConfs<span class=op>;</span></span>
+<span id=cb16-5><a href=#cb16-5 aria-hidden=true tabindex=-1></a>  <span class=co># we call mergeShells</span></span>
+<span id=cb16-6><a href=#cb16-6 aria-hidden=true tabindex=-1></a>  <span class=va>mergedShellConfs</span> <span class=op>=</span></span>
+<span id=cb16-7><a href=#cb16-7 aria-hidden=true tabindex=-1></a>    mergeShells <span class=op>{</span> <span class=kw>inherit</span> pkgs<span class=op>;</span></span>
+<span id=cb16-8><a href=#cb16-8 aria-hidden=true tabindex=-1></a>                  <span class=co># imports = [ ./nix/pg.nix ./nix/redis.nix ];</span></span>
+<span id=cb16-9><a href=#cb16-9 aria-hidden=true tabindex=-1></a>                  <span class=va>imports</span> <span class=op>=</span> <span class=op>[</span> <span class=ss>./nix/pg.nix</span> <span class=ss>./nix/redis.nix</span> <span class=op>];</span></span>
+<span id=cb16-10><a href=#cb16-10 aria-hidden=true tabindex=-1></a>                <span class=op>};</span></span>
+<span id=cb16-11><a href=#cb16-11 aria-hidden=true tabindex=-1></a><span class=kw>in</span> pkgs.mkShell mergedShellConfs</span></code></pre></div><p>And, that's it. Now when I run <code class=verbatim>nix-shell</code> it launch both Postgresql and Redis,
 and when I quit the shell, the state is cleaned up. Both postgres and
 redis are shutdown and the local files are erased.<p>I hope this could be useful to someone else.<h2 id=appendix>Appendix</h2><h3 id=--digression---digression><span id=digression></span>Digression</h3><p>In fact, this is a bit more complex than "just that". The reality is
 a bit more complex. The nix language is "pure", meaning, if you run the
@@ -364,98 +353,96 @@ parameter we pass to the functions <code class=verbatim>derivation</code>, <code
 directly <code class=verbatim>derivation</code>. So in order to make
 that composable, you need to call the <code class=verbatim>derivation</code> internal function at the very end
 only.<p>The argument of all these functions are <em>nix sets</em><h3 id=the-full-nix-files-for-postgres>The full nix files for
-postgres</h3><p>For postgres:<pre class=nix><code>{ pkgs }:
-  let iport = 15432;
-      port = toString iport;
-      pguser = &quot;pguser&quot;;
-      pgpass = &quot;pgpass&quot;;
-      pgdb = &quot;iroh&quot;;
-      # env should contain all variable you need to configure correctly mkShell
-      # so ENV_VAR, but also any other kind of variables.
-      env =  {
-        postgresConf =
-          pkgs.writeText &quot;postgresql.conf&quot;
-            &#39;&#39;
-        # Add Custom Settings
-        log_min_messages = warning
-        log_min_error_statement = error
-        log_min_duration_statement = 100  # ms
-        log_connections = on
-        log_disconnections = on
-        log_duration = on
-        #log_line_prefix = &#39;[] &#39;
-        log_timezone = &#39;UTC&#39;
-        log_statement = &#39;all&#39;
-        log_directory = &#39;pg_log&#39;
-        log_filename = &#39;postgresql-%Y-%m-%d_%H%M%S.log&#39;
-        logging_collector = on
-        log_min_error_statement = error
-      &#39;&#39;;
-
-        postgresInitScript =
-          pkgs.writeText &quot;init.sql&quot;
-            &#39;&#39;
-        CREATE DATABASE ${pgdb};
-        CREATE USER ${pguser} WITH ENCRYPTED PASSWORD &#39;${pgpass}&#39;;
-        GRANT ALL PRIVILEGES ON DATABASE ${pgdb} TO ${pguser};
-        &#39;&#39;;
-
-        PGDATA = &quot;${toString ./.}/.pg&quot;;
-      };
-  in env // {
-    # Warning if you add an attribute like an ENV VAR you must do it via env.
-    inherit env;
-    # must contain buildInputs, nativeBuildInputs and shellHook
-    buildInputs = [ pkgs.coreutils
-                    pkgs.jdk11
-                    pkgs.lsof
-                    pkgs.plantuml
-                    pkgs.leiningen
-                  ];
-    nativeBuildInputs = [
-      pkgs.zsh
-      pkgs.vim
-      pkgs.nixpkgs-fmt
-      pkgs.postgresql_11
-
-      # postgres-11 with postgis support
-      # (pkgs.postgresql_11.withPackages (p: [ p.postgis ]))
-    ];
-
-    # Post Shell Hook
-    shellHook = &#39;&#39;
-      echo &quot;Using ${pkgs.postgresql_11.name}. port: ${port} user: ${pguser} pass: ${pgpass}&quot;
-
-      # Setup: other env variables
-      export PGHOST=&quot;$PGDATA&quot;
-      # Setup: DB
-      [ ! -d $PGDATA ] \
-       &amp;&amp; pg_ctl initdb -o &quot;-U postgres&quot; \
-       &amp;&amp; cat &quot;$postgresConf&quot; &gt;&gt; $PGDATA/postgresql.conf
-      pg_ctl -o &quot;-p ${port} -k $PGDATA&quot; start
-      echo &quot;Creating DB and User&quot;
-      psql -U postgres -p ${port} -f $postgresInitScript
-
-      function pgstop {
-         echo &quot;Stopping and Cleaning up Postgres&quot;;
-         pg_ctl stop &amp;&amp; rm -rf $PGDATA
-      }
-
-      alias pg=&quot;psql -p ${port} -U postgres&quot;
-      echo &quot;Send SQL commands with pg&quot;
-      trap pgstop EXIT
-      &#39;&#39;;
-    stop = &quot;pgstop&quot;;
-  }
-</code></pre><p>And to just launch Posgresql, there is also this file <code class=verbatim>./nix/pgshell.nix</code>, that simply contains<pre class=nix><code>{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) {} }:
-let pg = import ./pg.nix { inherit pkgs; };
-in with pg; pkgs.mkShell ( env //
-   {
-     buildInputs       = buildInputs;
-     nativeBuildInputs = nativeBuildInputs ;
-     shellHook         = shellHook;
-   })
-</code></pre></article></main><footer id=postamble class=status><div class=content><nav role=navigation><a href=/index.html>Home</a> |
+postgres</h3><p>For postgres:<div class=sourceCode id=cb17><pre class="sourceCode nix"><code class="sourceCode nix"><span id=cb17-1><a href=#cb17-1 aria-hidden=true tabindex=-1></a><span class=op>{</span> <span class=va>pkgs</span> <span class=op>}</span>:</span>
+<span id=cb17-2><a href=#cb17-2 aria-hidden=true tabindex=-1></a>  <span class=kw>let</span> <span class=va>iport</span> <span class=op>=</span> <span class=dv>15432</span><span class=op>;</span></span>
+<span id=cb17-3><a href=#cb17-3 aria-hidden=true tabindex=-1></a>      <span class=va>port</span> <span class=op>=</span> <span class=bu>toString</span> iport<span class=op>;</span></span>
+<span id=cb17-4><a href=#cb17-4 aria-hidden=true tabindex=-1></a>      <span class=va>pguser</span> <span class=op>=</span> <span class=st>&quot;pguser&quot;</span><span class=op>;</span></span>
+<span id=cb17-5><a href=#cb17-5 aria-hidden=true tabindex=-1></a>      <span class=va>pgpass</span> <span class=op>=</span> <span class=st>&quot;pgpass&quot;</span><span class=op>;</span></span>
+<span id=cb17-6><a href=#cb17-6 aria-hidden=true tabindex=-1></a>      <span class=va>pgdb</span> <span class=op>=</span> <span class=st>&quot;iroh&quot;</span><span class=op>;</span></span>
+<span id=cb17-7><a href=#cb17-7 aria-hidden=true tabindex=-1></a>      <span class=co># env should contain all variable you need to configure correctly mkShell</span></span>
+<span id=cb17-8><a href=#cb17-8 aria-hidden=true tabindex=-1></a>      <span class=co># so ENV_VAR, but also any other kind of variables.</span></span>
+<span id=cb17-9><a href=#cb17-9 aria-hidden=true tabindex=-1></a>      <span class=va>env</span> <span class=op>=</span>  <span class=op>{</span></span>
+<span id=cb17-10><a href=#cb17-10 aria-hidden=true tabindex=-1></a>        <span class=va>postgresConf</span> <span class=op>=</span></span>
+<span id=cb17-11><a href=#cb17-11 aria-hidden=true tabindex=-1></a>          pkgs.writeText <span class=st>&quot;postgresql.conf&quot;</span></span>
+<span id=cb17-12><a href=#cb17-12 aria-hidden=true tabindex=-1></a>            <span class=st>&#39;&#39;</span></span>
+<span id=cb17-13><a href=#cb17-13 aria-hidden=true tabindex=-1></a><span class=st>        # Add Custom Settings</span></span>
+<span id=cb17-14><a href=#cb17-14 aria-hidden=true tabindex=-1></a><span class=st>        log_min_messages = warning</span></span>
+<span id=cb17-15><a href=#cb17-15 aria-hidden=true tabindex=-1></a><span class=st>        log_min_error_statement = error</span></span>
+<span id=cb17-16><a href=#cb17-16 aria-hidden=true tabindex=-1></a><span class=st>        log_min_duration_statement = 100  # ms</span></span>
+<span id=cb17-17><a href=#cb17-17 aria-hidden=true tabindex=-1></a><span class=st>        log_connections = on</span></span>
+<span id=cb17-18><a href=#cb17-18 aria-hidden=true tabindex=-1></a><span class=st>        log_disconnections = on</span></span>
+<span id=cb17-19><a href=#cb17-19 aria-hidden=true tabindex=-1></a><span class=st>        log_duration = on</span></span>
+<span id=cb17-20><a href=#cb17-20 aria-hidden=true tabindex=-1></a><span class=st>        #log_line_prefix = &#39;[] &#39;</span></span>
+<span id=cb17-21><a href=#cb17-21 aria-hidden=true tabindex=-1></a><span class=st>        log_timezone = &#39;UTC&#39;</span></span>
+<span id=cb17-22><a href=#cb17-22 aria-hidden=true tabindex=-1></a><span class=st>        log_statement = &#39;all&#39;</span></span>
+<span id=cb17-23><a href=#cb17-23 aria-hidden=true tabindex=-1></a><span class=st>        log_directory = &#39;pg_log&#39;</span></span>
+<span id=cb17-24><a href=#cb17-24 aria-hidden=true tabindex=-1></a><span class=st>        log_filename = &#39;postgresql-%Y-%m-%d_%H%M%S.log&#39;</span></span>
+<span id=cb17-25><a href=#cb17-25 aria-hidden=true tabindex=-1></a><span class=st>        logging_collector = on</span></span>
+<span id=cb17-26><a href=#cb17-26 aria-hidden=true tabindex=-1></a><span class=st>        log_min_error_statement = error</span></span>
+<span id=cb17-27><a href=#cb17-27 aria-hidden=true tabindex=-1></a><span class=st>      &#39;&#39;</span><span class=op>;</span></span>
+<span id=cb17-28><a href=#cb17-28 aria-hidden=true tabindex=-1></a></span>
+<span id=cb17-29><a href=#cb17-29 aria-hidden=true tabindex=-1></a>        <span class=va>postgresInitScript</span> <span class=op>=</span></span>
+<span id=cb17-30><a href=#cb17-30 aria-hidden=true tabindex=-1></a>          pkgs.writeText <span class=st>&quot;init.sql&quot;</span></span>
+<span id=cb17-31><a href=#cb17-31 aria-hidden=true tabindex=-1></a>            <span class=st>&#39;&#39;</span></span>
+<span id=cb17-32><a href=#cb17-32 aria-hidden=true tabindex=-1></a><span class=st>        CREATE DATABASE </span><span class=sc>${</span>pgdb<span class=sc>}</span><span class=st>;</span></span>
+<span id=cb17-33><a href=#cb17-33 aria-hidden=true tabindex=-1></a><span class=st>        CREATE USER </span><span class=sc>${</span>pguser<span class=sc>}</span><span class=st> WITH ENCRYPTED PASSWORD &#39;</span><span class=sc>${</span>pgpass<span class=sc>}</span><span class=st>&#39;;</span></span>
+<span id=cb17-34><a href=#cb17-34 aria-hidden=true tabindex=-1></a><span class=st>        GRANT ALL PRIVILEGES ON DATABASE </span><span class=sc>${</span>pgdb<span class=sc>}</span><span class=st> TO </span><span class=sc>${</span>pguser<span class=sc>}</span><span class=st>;</span></span>
+<span id=cb17-35><a href=#cb17-35 aria-hidden=true tabindex=-1></a><span class=st>        &#39;&#39;</span><span class=op>;</span></span>
+<span id=cb17-36><a href=#cb17-36 aria-hidden=true tabindex=-1></a></span>
+<span id=cb17-37><a href=#cb17-37 aria-hidden=true tabindex=-1></a>        <span class=va>PGDATA</span> <span class=op>=</span> <span class=st>&quot;</span><span class=sc>${</span><span class=bu>toString</span> <span class=ss>./.</span><span class=sc>}</span><span class=st>/.pg&quot;</span><span class=op>;</span></span>
+<span id=cb17-38><a href=#cb17-38 aria-hidden=true tabindex=-1></a>      <span class=op>};</span></span>
+<span id=cb17-39><a href=#cb17-39 aria-hidden=true tabindex=-1></a>  <span class=kw>in</span> env <span class=op>//</span> <span class=op>{</span></span>
+<span id=cb17-40><a href=#cb17-40 aria-hidden=true tabindex=-1></a>    <span class=co># Warning if you add an attribute like an ENV VAR you must do it via env.</span></span>
+<span id=cb17-41><a href=#cb17-41 aria-hidden=true tabindex=-1></a>    <span class=kw>inherit</span> env<span class=op>;</span></span>
+<span id=cb17-42><a href=#cb17-42 aria-hidden=true tabindex=-1></a>    <span class=co># must contain buildInputs, nativeBuildInputs and shellHook</span></span>
+<span id=cb17-43><a href=#cb17-43 aria-hidden=true tabindex=-1></a>    <span class=va>buildInputs</span> <span class=op>=</span> <span class=op>[</span> pkgs.coreutils</span>
+<span id=cb17-44><a href=#cb17-44 aria-hidden=true tabindex=-1></a>                    pkgs.jdk11</span>
+<span id=cb17-45><a href=#cb17-45 aria-hidden=true tabindex=-1></a>                    pkgs.lsof</span>
+<span id=cb17-46><a href=#cb17-46 aria-hidden=true tabindex=-1></a>                    pkgs.plantuml</span>
+<span id=cb17-47><a href=#cb17-47 aria-hidden=true tabindex=-1></a>                    pkgs.leiningen</span>
+<span id=cb17-48><a href=#cb17-48 aria-hidden=true tabindex=-1></a>                  <span class=op>];</span></span>
+<span id=cb17-49><a href=#cb17-49 aria-hidden=true tabindex=-1></a>    <span class=va>nativeBuildInputs</span> <span class=op>=</span> <span class=op>[</span></span>
+<span id=cb17-50><a href=#cb17-50 aria-hidden=true tabindex=-1></a>      pkgs.zsh</span>
+<span id=cb17-51><a href=#cb17-51 aria-hidden=true tabindex=-1></a>      pkgs.vim</span>
+<span id=cb17-52><a href=#cb17-52 aria-hidden=true tabindex=-1></a>      pkgs.nixpkgs-fmt</span>
+<span id=cb17-53><a href=#cb17-53 aria-hidden=true tabindex=-1></a>      pkgs.postgresql_11</span>
+<span id=cb17-54><a href=#cb17-54 aria-hidden=true tabindex=-1></a></span>
+<span id=cb17-55><a href=#cb17-55 aria-hidden=true tabindex=-1></a>      <span class=co># postgres-11 with postgis support</span></span>
+<span id=cb17-56><a href=#cb17-56 aria-hidden=true tabindex=-1></a>      <span class=co># (pkgs.postgresql_11.withPackages (p: [ p.postgis ]))</span></span>
+<span id=cb17-57><a href=#cb17-57 aria-hidden=true tabindex=-1></a>    <span class=op>];</span></span>
+<span id=cb17-58><a href=#cb17-58 aria-hidden=true tabindex=-1></a></span>
+<span id=cb17-59><a href=#cb17-59 aria-hidden=true tabindex=-1></a>    <span class=co># Post Shell Hook</span></span>
+<span id=cb17-60><a href=#cb17-60 aria-hidden=true tabindex=-1></a>    <span class=va>shellHook</span> <span class=op>=</span> <span class=st>&#39;&#39;</span></span>
+<span id=cb17-61><a href=#cb17-61 aria-hidden=true tabindex=-1></a><span class=st>      echo &quot;Using </span><span class=sc>${</span>pkgs.postgresql_11.name<span class=sc>}</span><span class=st>. port: </span><span class=sc>${</span>port<span class=sc>}</span><span class=st> user: </span><span class=sc>${</span>pguser<span class=sc>}</span><span class=st> pass: </span><span class=sc>${</span>pgpass<span class=sc>}</span><span class=st>&quot;</span></span>
+<span id=cb17-62><a href=#cb17-62 aria-hidden=true tabindex=-1></a></span>
+<span id=cb17-63><a href=#cb17-63 aria-hidden=true tabindex=-1></a><span class=st>      # Setup: other env variables</span></span>
+<span id=cb17-64><a href=#cb17-64 aria-hidden=true tabindex=-1></a><span class=st>      export PGHOST=&quot;$PGDATA&quot;</span></span>
+<span id=cb17-65><a href=#cb17-65 aria-hidden=true tabindex=-1></a><span class=st>      # Setup: DB</span></span>
+<span id=cb17-66><a href=#cb17-66 aria-hidden=true tabindex=-1></a><span class=st>      [ ! -d $PGDATA ] \</span></span>
+<span id=cb17-67><a href=#cb17-67 aria-hidden=true tabindex=-1></a><span class=st>       &amp;&amp; pg_ctl initdb -o &quot;-U postgres&quot; \</span></span>
+<span id=cb17-68><a href=#cb17-68 aria-hidden=true tabindex=-1></a><span class=st>       &amp;&amp; cat &quot;$postgresConf&quot; &gt;&gt; $PGDATA/postgresql.conf</span></span>
+<span id=cb17-69><a href=#cb17-69 aria-hidden=true tabindex=-1></a><span class=st>      pg_ctl -o &quot;-p </span><span class=sc>${</span>port<span class=sc>}</span><span class=st> -k $PGDATA&quot; start</span></span>
+<span id=cb17-70><a href=#cb17-70 aria-hidden=true tabindex=-1></a><span class=st>      echo &quot;Creating DB and User&quot;</span></span>
+<span id=cb17-71><a href=#cb17-71 aria-hidden=true tabindex=-1></a><span class=st>      psql -U postgres -p </span><span class=sc>${</span>port<span class=sc>}</span><span class=st> -f $postgresInitScript</span></span>
+<span id=cb17-72><a href=#cb17-72 aria-hidden=true tabindex=-1></a></span>
+<span id=cb17-73><a href=#cb17-73 aria-hidden=true tabindex=-1></a><span class=st>      function pgstop {</span></span>
+<span id=cb17-74><a href=#cb17-74 aria-hidden=true tabindex=-1></a><span class=st>         echo &quot;Stopping and Cleaning up Postgres&quot;;</span></span>
+<span id=cb17-75><a href=#cb17-75 aria-hidden=true tabindex=-1></a><span class=st>         pg_ctl stop &amp;&amp; rm -rf $PGDATA</span></span>
+<span id=cb17-76><a href=#cb17-76 aria-hidden=true tabindex=-1></a><span class=st>      }</span></span>
+<span id=cb17-77><a href=#cb17-77 aria-hidden=true tabindex=-1></a></span>
+<span id=cb17-78><a href=#cb17-78 aria-hidden=true tabindex=-1></a><span class=st>      alias pg=&quot;psql -p </span><span class=sc>${</span>port<span class=sc>}</span><span class=st> -U postgres&quot;</span></span>
+<span id=cb17-79><a href=#cb17-79 aria-hidden=true tabindex=-1></a><span class=st>      echo &quot;Send SQL commands with pg&quot;</span></span>
+<span id=cb17-80><a href=#cb17-80 aria-hidden=true tabindex=-1></a><span class=st>      trap pgstop EXIT</span></span>
+<span id=cb17-81><a href=#cb17-81 aria-hidden=true tabindex=-1></a><span class=st>      &#39;&#39;</span><span class=op>;</span></span>
+<span id=cb17-82><a href=#cb17-82 aria-hidden=true tabindex=-1></a>    <span class=va>stop</span> <span class=op>=</span> <span class=st>&quot;pgstop&quot;</span><span class=op>;</span></span>
+<span id=cb17-83><a href=#cb17-83 aria-hidden=true tabindex=-1></a>  <span class=op>}</span></span></code></pre></div><p>And to just launch Posgresql, there is also this file <code class=verbatim>./nix/pgshell.nix</code>, that simply contains<div class=sourceCode id=cb18><pre class="sourceCode nix"><code class="sourceCode nix"><span id=cb18-1><a href=#cb18-1 aria-hidden=true tabindex=-1></a><span class=op>{</span> <span class=va>pkgs</span> <span class=op>?</span> <span class=bu>import</span> <span class=op>(</span><span class=bu>fetchTarball</span> <span class=va>https</span><span class=op>://</span><span class=ss>github.com/NixOS/nixpkgs/archive/22.11.tar.gz</span><span class=op>)</span> <span class=op>{}</span> <span class=op>}</span>:</span>
+<span id=cb18-2><a href=#cb18-2 aria-hidden=true tabindex=-1></a><span class=kw>let</span> <span class=va>pg</span> <span class=op>=</span> <span class=bu>import</span> <span class=ss>./pg.nix</span> <span class=op>{</span> <span class=kw>inherit</span> pkgs<span class=op>;</span> <span class=op>};</span></span>
+<span id=cb18-3><a href=#cb18-3 aria-hidden=true tabindex=-1></a><span class=kw>in</span> <span class=kw>with</span> pg<span class=op>;</span> pkgs.mkShell <span class=op>(</span> env <span class=op>//</span></span>
+<span id=cb18-4><a href=#cb18-4 aria-hidden=true tabindex=-1></a>   <span class=op>{</span></span>
+<span id=cb18-5><a href=#cb18-5 aria-hidden=true tabindex=-1></a>     <span class=va>buildInputs</span>       <span class=op>=</span> buildInputs<span class=op>;</span></span>
+<span id=cb18-6><a href=#cb18-6 aria-hidden=true tabindex=-1></a>     <span class=va>nativeBuildInputs</span> <span class=op>=</span> nativeBuildInputs <span class=op>;</span></span>
+<span id=cb18-7><a href=#cb18-7 aria-hidden=true tabindex=-1></a>     <span class=va>shellHook</span>         <span class=op>=</span> shellHook<span class=op>;</span></span>
+<span id=cb18-8><a href=#cb18-8 aria-hidden=true tabindex=-1></a>   <span class=op>})</span></span></code></pre></div></article></main><footer id=postamble class=status><div class=content><nav role=navigation><a href=/index.html>Home</a> |
 <a href=/slides.html>Slides</a> |
 <a href=/about-me.html>About</a>
 <span class=details>(<a href=https://gitea.esy.fun/yogsototh>code</a>

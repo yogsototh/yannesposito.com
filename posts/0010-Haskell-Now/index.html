@@ -8,11 +8,28 @@ tutorial"><link rel=stylesheet href=/css/y.css><link rel=alternate type=applicat
 (2012) article. A lot of things have changed since then. Mostly I
 changed my approach about the easiest way to install a Haskell
 playground. I removed the not as important part, and added a short
-introduction about starting a new project.</div></div></header><main id=content><nav id=toc role=doc-toc><ul><li><a href=#introduction>Introduction</a><ul><li><a href=#install>Install</a><li><a href="#don't-be-afraid">Don't be afraid</a><li><a href=#very-basic-haskell>Very basic Haskell</a><ul><li><a href=#function-declaration>Function declaration</a><li><a href=#a-type-example>A Type Example</a></ul></ul><li><a href=#essential-haskell>Essential Haskell</a><ul><li><a href=#notations>Notations</a><li><a href=#useful-notations-for-functions>Useful notations for
-functions</a></ul><li><a href=#first-dive>First dive</a><ul><li><a href=#functional-style>Functional style</a><ul><li><a href=#higher-order-functions>Higher Order Functions</a></ul><li><a href=#types>Types</a><ul><li><a href=#type-inference>Type inference</a><li><a href=#type-construction>Type construction</a><li><a href=#recursive-type>Recursive type</a><li><a href=#trees>Trees</a><li><a href=#more-advanced-types>More Advanced Types</a></ul><li><a href=#infinite-structures>Infinite Structures</a><ul><li><a href=#infinite-trees>Infinite Trees</a><li><a href=#fibonnacci-infinite-list>Fibonnacci infinite
-list</a></ul></ul><li><a href=#dive-into-the-impure>Dive into the impure</a><ul><li><a href=#deal-with-io>Deal With IO</a><li><a href=#io-trick-explained>IO trick explained</a><li><a href=#monads>Monads</a><ul><li><a href=#monad-intuition>Monad Intuition</a><li><a href=#maybe-is-a-monad>Maybe is a monad</a><li><a href=#the-list-monad>The list monad</a></ul></ul><li><a href=#start-swimming>Start swimming</a><ul><li><a href=#start-a-new-project>Start a new project</a><ul><li><a href=#bootstrap-a-project-template-files>Bootstrap a project
-template files</a><li><a href=#create-a-few-nix-files>Create a few nix files</a><li><a href=#checking-your-environment>Checking your
-environment</a><li><a href=#add-a-library>Add a library</a><li><a href=#better-defaults>Better defaults</a></ul></ul><li><a href=#conclusion>Conclusion</a><li><a href=#thanks>Thanks</a></ul></nav><article><blockquote><p><strong>Prelude</strong><p>In 2012, I really believed that every developer should learn Haskell.
+introduction about starting a new project.</div></div></header><main id=content><nav id=toc role=doc-toc><ul><li><a href=#introduction id=toc-introduction>Introduction</a><ul><li><a href=#install id=toc-install>Install</a><li><a href="#don't-be-afraid" id="toc-don't-be-afraid">Don't be
+afraid</a><li><a href=#very-basic-haskell id=toc-very-basic-haskell>Very basic
+Haskell</a><ul><li><a href=#function-declaration id=toc-function-declaration>Function declaration</a><li><a href=#a-type-example id=toc-a-type-example>A Type
+Example</a></ul></ul><li><a href=#essential-haskell id=toc-essential-haskell>Essential
+Haskell</a><ul><li><a href=#notations id=toc-notations>Notations</a><li><a href=#useful-notations-for-functions id=toc-useful-notations-for-functions>Useful notations for
+functions</a></ul><li><a href=#first-dive id=toc-first-dive>First dive</a><ul><li><a href=#functional-style id=toc-functional-style>Functional
+style</a><ul><li><a href=#higher-order-functions id=toc-higher-order-functions>Higher Order Functions</a></ul><li><a href=#types id=toc-types>Types</a><ul><li><a href=#type-inference id=toc-type-inference>Type
+inference</a><li><a href=#type-construction id=toc-type-construction>Type
+construction</a><li><a href=#recursive-type id=toc-recursive-type>Recursive
+type</a><li><a href=#trees id=toc-trees>Trees</a><li><a href=#more-advanced-types id=toc-more-advanced-types>More
+Advanced Types</a></ul><li><a href=#infinite-structures id=toc-infinite-structures>Infinite
+Structures</a><ul><li><a href=#infinite-trees id=toc-infinite-trees>Infinite
+Trees</a><li><a href=#fibonnacci-infinite-list id=toc-fibonnacci-infinite-list>Fibonnacci infinite list</a></ul></ul><li><a href=#dive-into-the-impure id=toc-dive-into-the-impure>Dive
+into the impure</a><ul><li><a href=#deal-with-io id=toc-deal-with-io>Deal With IO</a><li><a href=#io-trick-explained id=toc-io-trick-explained>IO trick
+explained</a><li><a href=#monads id=toc-monads>Monads</a><ul><li><a href=#monad-intuition id=toc-monad-intuition>Monad
+Intuition</a><li><a href=#maybe-is-a-monad id=toc-maybe-is-a-monad>Maybe is a
+monad</a><li><a href=#the-list-monad id=toc-the-list-monad>The list
+monad</a></ul></ul><li><a href=#start-swimming id=toc-start-swimming>Start swimming</a><ul><li><a href=#start-a-new-project id=toc-start-a-new-project>Start a
+new project</a><ul><li><a href=#bootstrap-a-project-template-files id=toc-bootstrap-a-project-template-files>Bootstrap a project template
+files</a><li><a href=#create-a-few-nix-files id=toc-create-a-few-nix-files>Create a few nix files</a><li><a href=#checking-your-environment id=toc-checking-your-environment>Checking your environment</a><li><a href=#add-a-library id=toc-add-a-library>Add a
+library</a><li><a href=#better-defaults id=toc-better-defaults>Better
+defaults</a></ul></ul><li><a href=#conclusion id=toc-conclusion>Conclusion</a><li><a href=#thanks id=toc-thanks>Thanks</a></ul></nav><article><blockquote><p><strong>Prelude</strong><p>In 2012, I really believed that every developer should learn Haskell.
 This is why I wrote my old article. This is the end of 2019 and I still
 strongly believe that. I think you should at least be able to understand
 enough Haskell to write a simple tool. There are some features in
@@ -82,33 +99,32 @@ Otherwise, you can follow my advice to use nix:<ol><li><p>Install <a href=https:
 used while writting this article was nix (Nix) 2.3.1, future 2.X.X
 versions should work with the examples in this article)<li><p>create a new empty directory <code class=verbatim>hsenv</code>
 somewhere<li><p>Put the following <code class=verbatim>shell.nix</code> file
-inside it<pre class=nix data-tangle=shell.nix><code>{ nixpkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {} }:
-let
-  inherit (nixpkgs) pkgs;
-  inherit (pkgs) haskellPackages;
-
-  haskellDeps = ps: with ps; [
-    base
-    protolude
-    containers
-  ];
-
-  ghc = haskellPackages.ghcWithPackages haskellDeps;
-
-  nixPackages = [
-    ghc
-    pkgs.gdb
-    haskellPackages.cabal-install
-  ];
-in
-pkgs.stdenv.mkDerivation {
-  name = &quot;env&quot;;
-  buildInputs = nixPackages;
-  shellHook = &#39;&#39;
-     export PS1=&quot;\n\[[hs:\033[1;32m\]\W\[\033[0m\]]&gt; &quot;
-  &#39;&#39;;
-}
-</code></pre><li><p>In the <code class=verbatim>hsenv</code> directory, in a
+inside it<div class=sourceCode id=cb1 data-tangle=shell.nix><pre class="sourceCode nix"><code class="sourceCode nix"><span id=cb1-1><a href=#cb1-1 aria-hidden=true tabindex=-1></a><span class=op>{</span> <span class=va>nixpkgs</span> <span class=op>?</span> <span class=bu>import</span> <span class=op>(</span><span class=bu>fetchTarball</span> <span class=va>https</span><span class=op>://</span><span class=ss>github.com/NixOS/nixpkgs/archive/19.09.tar.gz</span><span class=op>)</span> <span class=op>{}</span> <span class=op>}</span>:</span>
+<span id=cb1-2><a href=#cb1-2 aria-hidden=true tabindex=-1></a><span class=kw>let</span></span>
+<span id=cb1-3><a href=#cb1-3 aria-hidden=true tabindex=-1></a>  <span class=va>inherit</span> (<span class=va>nixpkgs</span>) <span class=va>pkgs</span>;</span>
+<span id=cb1-4><a href=#cb1-4 aria-hidden=true tabindex=-1></a>  <span class=va>inherit</span> (<span class=va>pkgs</span>) <span class=va>haskellPackages</span>;</span>
+<span id=cb1-5><a href=#cb1-5 aria-hidden=true tabindex=-1></a></span>
+<span id=cb1-6><a href=#cb1-6 aria-hidden=true tabindex=-1></a>  <span class=va>haskellDeps</span> <span class=op>=</span> <span class=va>ps</span><span class=op>:</span> <span class=kw>with</span> ps<span class=op>;</span> <span class=op>[</span></span>
+<span id=cb1-7><a href=#cb1-7 aria-hidden=true tabindex=-1></a>    base</span>
+<span id=cb1-8><a href=#cb1-8 aria-hidden=true tabindex=-1></a>    protolude</span>
+<span id=cb1-9><a href=#cb1-9 aria-hidden=true tabindex=-1></a>    containers</span>
+<span id=cb1-10><a href=#cb1-10 aria-hidden=true tabindex=-1></a>  <span class=op>];</span></span>
+<span id=cb1-11><a href=#cb1-11 aria-hidden=true tabindex=-1></a></span>
+<span id=cb1-12><a href=#cb1-12 aria-hidden=true tabindex=-1></a>  <span class=va>ghc</span> <span class=op>=</span> haskellPackages.ghcWithPackages haskellDeps<span class=op>;</span></span>
+<span id=cb1-13><a href=#cb1-13 aria-hidden=true tabindex=-1></a></span>
+<span id=cb1-14><a href=#cb1-14 aria-hidden=true tabindex=-1></a>  <span class=va>nixPackages</span> <span class=op>=</span> <span class=op>[</span></span>
+<span id=cb1-15><a href=#cb1-15 aria-hidden=true tabindex=-1></a>    ghc</span>
+<span id=cb1-16><a href=#cb1-16 aria-hidden=true tabindex=-1></a>    pkgs.gdb</span>
+<span id=cb1-17><a href=#cb1-17 aria-hidden=true tabindex=-1></a>    haskellPackages.cabal-install</span>
+<span id=cb1-18><a href=#cb1-18 aria-hidden=true tabindex=-1></a>  <span class=op>];</span></span>
+<span id=cb1-19><a href=#cb1-19 aria-hidden=true tabindex=-1></a><span class=kw>in</span></span>
+<span id=cb1-20><a href=#cb1-20 aria-hidden=true tabindex=-1></a>pkgs.stdenv.mkDerivation <span class=op>{</span></span>
+<span id=cb1-21><a href=#cb1-21 aria-hidden=true tabindex=-1></a>  <span class=va>name</span> <span class=op>=</span> <span class=st>&quot;env&quot;</span><span class=op>;</span></span>
+<span id=cb1-22><a href=#cb1-22 aria-hidden=true tabindex=-1></a>  <span class=va>buildInputs</span> <span class=op>=</span> nixPackages<span class=op>;</span></span>
+<span id=cb1-23><a href=#cb1-23 aria-hidden=true tabindex=-1></a>  <span class=va>shellHook</span> <span class=op>=</span> <span class=st>&#39;&#39;</span></span>
+<span id=cb1-24><a href=#cb1-24 aria-hidden=true tabindex=-1></a><span class=st>     export PS1=&quot;\n\[[hs:\033[1;32m\]\W\[\033[0m\]]&gt; &quot;</span></span>
+<span id=cb1-25><a href=#cb1-25 aria-hidden=true tabindex=-1></a><span class=st>  &#39;&#39;</span><span class=op>;</span></span>
+<span id=cb1-26><a href=#cb1-26 aria-hidden=true tabindex=-1></a><span class=op>}</span></span></code></pre></div><li><p>In the <code class=verbatim>hsenv</code> directory, in a
 terminal, run <code class=verbatim>nix-shell --pure</code>. You should
 wait a lot of time for everything to download. And you should be ready.
 You will have in your PATH:<ul><li><code class=verbatim>ghc</code>, the Haskell compiler<li><code class=verbatim>ghci</code> that we can described as a
@@ -159,8 +175,8 @@ languages:<div class=sourceCode id=cb7><pre class="sourceCode python"><code clas
 <span id=cb9-4><a href=#cb9-4 aria-hidden=true tabindex=-1></a>    <span class=dt>char</span> name<span class=op>[</span><span class=dv>666</span><span class=op>];</span> <span class=co>// &lt;- An Evil Number!</span></span>
 <span id=cb9-5><a href=#cb9-5 aria-hidden=true tabindex=-1></a>    <span class=co>// What if my name is more than 665 character long?</span></span>
 <span id=cb9-6><a href=#cb9-6 aria-hidden=true tabindex=-1></a>    printf<span class=op>(</span><span class=st>&quot;What is your name?</span><span class=sc>\n</span><span class=st>&quot;</span><span class=op>);</span></span>
-<span id=cb9-7><a href=#cb9-7 aria-hidden=true tabindex=-1></a>    scanf<span class=op>(</span><span class=st>&quot;%s&quot;</span><span class=op>,</span> name<span class=op>);</span></span>
-<span id=cb9-8><a href=#cb9-8 aria-hidden=true tabindex=-1></a>    printf<span class=op>(</span><span class=st>&quot;Hello %s!</span><span class=sc>\n</span><span class=st>&quot;</span><span class=op>,</span> name<span class=op>);</span></span>
+<span id=cb9-7><a href=#cb9-7 aria-hidden=true tabindex=-1></a>    scanf<span class=op>(</span><span class=st>&quot;</span><span class=sc>%s</span><span class=st>&quot;</span><span class=op>,</span> name<span class=op>);</span></span>
+<span id=cb9-8><a href=#cb9-8 aria-hidden=true tabindex=-1></a>    printf<span class=op>(</span><span class=st>&quot;Hello </span><span class=sc>%s</span><span class=st>!</span><span class=sc>\n</span><span class=st>&quot;</span><span class=op>,</span> name<span class=op>);</span></span>
 <span id=cb9-9><a href=#cb9-9 aria-hidden=true tabindex=-1></a>    <span class=cf>return</span> <span class=dv>0</span><span class=op>;</span></span>
 <span id=cb9-10><a href=#cb9-10 aria-hidden=true tabindex=-1></a><span class=op>}</span></span></code></pre></div><p>The structure is the same, but there are some syntax differences. The
 main part of this tutorial will be dedicated to explaining why.<p>In Haskell there is a <code class=verbatim>main</code> function and
@@ -1673,44 +1689,42 @@ configure your <code class=verbatim>nix</code> environment you endup
 writing a <em>nix expression</em> in this <em>nix language</em>. And
 thus you can call the content of one nix-file in another one for
 example, or use variables.</div><p>The first file to create is the one that will pin the versions of all
-your packages and libraries:<pre class=nix data-tangle=my-app/nixpkgs.nix data-mkdirp=t><code>import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {}
-</code></pre><p>The second file is the <code class=verbatim>default.nix</code>
-file:<pre class=nix data-tangle=my-app/default.nix data-mkdirp=t><code>{ nixpkgs ? import ./nixpkgs.nix
-, compiler ? &quot;default&quot;
-, doBenchmark ? false }:
-let
-  inherit (nixpkgs) pkgs;
-  name = &quot;my-app&quot;;
-  haskellPackages = pkgs.haskellPackages;
-  variant = if doBenchmark
-            then pkgs.haskell.lib.doBenchmark
-            else pkgs.lib.id;
-  drv = haskellPackages.callCabal2nix name ./. {};
-in
-{
-  my_project = drv;
-  shell = haskellPackages.shellFor {
-    # generate hoogle doc
-    withHoogle = true;
-    packages = p: [drv];
-    # packages dependencies (by default haskellPackages)
-    buildInputs = with haskellPackages;
-      [ hlint
-        ghcid
-        cabal-install
-        cabal2nix
-        hindent
-        # # if you want to add some system lib like ncurses
-        # # you could by writing it like:
-        # pkgs.ncurses
-      ];
-    # nice prompt for the nix-shell
-    shellHook = &#39;&#39;
-     export PS1=&quot;\n\[[${name}:\033[1;32m\]\W\[\033[0m\]]&gt; &quot;
-  &#39;&#39;;
-  };
-}
-</code></pre><p>It uses the <code class=verbatim>nixpkgs.nix</code> file. But also
+your packages and libraries:<div class=sourceCode id=cb202 data-tangle=my-app/nixpkgs.nix data-mkdirp=t><pre class="sourceCode nix"><code class="sourceCode nix"><span id=cb202-1><a href=#cb202-1 aria-hidden=true tabindex=-1></a><span class=bu>import</span> <span class=op>(</span><span class=bu>fetchTarball</span> <span class=va>https</span><span class=op>://</span><span class=ss>github.com/NixOS/nixpkgs/archive/19.09.tar.gz</span><span class=op>)</span> <span class=op>{}</span></span></code></pre></div><p>The second file is the <code class=verbatim>default.nix</code>
+file:<div class=sourceCode id=cb203 data-tangle=my-app/default.nix data-mkdirp=t><pre class="sourceCode nix"><code class="sourceCode nix"><span id=cb203-1><a href=#cb203-1 aria-hidden=true tabindex=-1></a><span class=op>{</span> <span class=va>nixpkgs</span> <span class=op>?</span> <span class=bu>import</span> <span class=ss>./nixpkgs.nix</span></span>
+<span id=cb203-2><a href=#cb203-2 aria-hidden=true tabindex=-1></a><span class=op>,</span> <span class=va>compiler</span> <span class=op>?</span> <span class=st>&quot;default&quot;</span></span>
+<span id=cb203-3><a href=#cb203-3 aria-hidden=true tabindex=-1></a><span class=op>,</span> <span class=va>doBenchmark</span> <span class=op>?</span> <span class=cn>false</span> <span class=op>}</span>:</span>
+<span id=cb203-4><a href=#cb203-4 aria-hidden=true tabindex=-1></a><span class=kw>let</span></span>
+<span id=cb203-5><a href=#cb203-5 aria-hidden=true tabindex=-1></a>  <span class=va>inherit</span> (<span class=va>nixpkgs</span>) <span class=va>pkgs</span>;</span>
+<span id=cb203-6><a href=#cb203-6 aria-hidden=true tabindex=-1></a>  <span class=va>name</span> <span class=op>=</span> <span class=st>&quot;my-app&quot;</span><span class=op>;</span></span>
+<span id=cb203-7><a href=#cb203-7 aria-hidden=true tabindex=-1></a>  <span class=va>haskellPackages</span> <span class=op>=</span> pkgs.haskellPackages<span class=op>;</span></span>
+<span id=cb203-8><a href=#cb203-8 aria-hidden=true tabindex=-1></a>  <span class=va>variant</span> <span class=op>=</span> <span class=kw>if</span> doBenchmark</span>
+<span id=cb203-9><a href=#cb203-9 aria-hidden=true tabindex=-1></a>            <span class=kw>then</span> pkgs.haskell.lib.doBenchmark</span>
+<span id=cb203-10><a href=#cb203-10 aria-hidden=true tabindex=-1></a>            <span class=kw>else</span> pkgs.lib.id<span class=op>;</span></span>
+<span id=cb203-11><a href=#cb203-11 aria-hidden=true tabindex=-1></a>  <span class=va>drv</span> <span class=op>=</span> haskellPackages.callCabal2nix name <span class=ss>./.</span> <span class=op>{};</span></span>
+<span id=cb203-12><a href=#cb203-12 aria-hidden=true tabindex=-1></a><span class=kw>in</span></span>
+<span id=cb203-13><a href=#cb203-13 aria-hidden=true tabindex=-1></a><span class=op>{</span></span>
+<span id=cb203-14><a href=#cb203-14 aria-hidden=true tabindex=-1></a>  <span class=va>my_project</span> <span class=op>=</span> drv<span class=op>;</span></span>
+<span id=cb203-15><a href=#cb203-15 aria-hidden=true tabindex=-1></a>  <span class=va>shell</span> <span class=op>=</span> haskellPackages.shellFor <span class=op>{</span></span>
+<span id=cb203-16><a href=#cb203-16 aria-hidden=true tabindex=-1></a>    <span class=co># generate hoogle doc</span></span>
+<span id=cb203-17><a href=#cb203-17 aria-hidden=true tabindex=-1></a>    <span class=va>withHoogle</span> <span class=op>=</span> <span class=cn>true</span><span class=op>;</span></span>
+<span id=cb203-18><a href=#cb203-18 aria-hidden=true tabindex=-1></a>    <span class=va>packages</span> <span class=op>=</span> <span class=va>p</span><span class=op>:</span> <span class=op>[</span>drv<span class=op>];</span></span>
+<span id=cb203-19><a href=#cb203-19 aria-hidden=true tabindex=-1></a>    <span class=co># packages dependencies (by default haskellPackages)</span></span>
+<span id=cb203-20><a href=#cb203-20 aria-hidden=true tabindex=-1></a>    <span class=va>buildInputs</span> <span class=op>=</span> <span class=kw>with</span> haskellPackages<span class=op>;</span></span>
+<span id=cb203-21><a href=#cb203-21 aria-hidden=true tabindex=-1></a>      <span class=op>[</span> hlint</span>
+<span id=cb203-22><a href=#cb203-22 aria-hidden=true tabindex=-1></a>        ghcid</span>
+<span id=cb203-23><a href=#cb203-23 aria-hidden=true tabindex=-1></a>        cabal-install</span>
+<span id=cb203-24><a href=#cb203-24 aria-hidden=true tabindex=-1></a>        cabal2nix</span>
+<span id=cb203-25><a href=#cb203-25 aria-hidden=true tabindex=-1></a>        hindent</span>
+<span id=cb203-26><a href=#cb203-26 aria-hidden=true tabindex=-1></a>        <span class=co># # if you want to add some system lib like ncurses</span></span>
+<span id=cb203-27><a href=#cb203-27 aria-hidden=true tabindex=-1></a>        <span class=co># # you could by writing it like:</span></span>
+<span id=cb203-28><a href=#cb203-28 aria-hidden=true tabindex=-1></a>        <span class=co># pkgs.ncurses</span></span>
+<span id=cb203-29><a href=#cb203-29 aria-hidden=true tabindex=-1></a>      <span class=op>];</span></span>
+<span id=cb203-30><a href=#cb203-30 aria-hidden=true tabindex=-1></a>    <span class=co># nice prompt for the nix-shell</span></span>
+<span id=cb203-31><a href=#cb203-31 aria-hidden=true tabindex=-1></a>    <span class=va>shellHook</span> <span class=op>=</span> <span class=st>&#39;&#39;</span></span>
+<span id=cb203-32><a href=#cb203-32 aria-hidden=true tabindex=-1></a><span class=st>     export PS1=&quot;\n\[[</span><span class=sc>${</span>name<span class=sc>}</span><span class=st>:\033[1;32m\]\W\[\033[0m\]]&gt; &quot;</span></span>
+<span id=cb203-33><a href=#cb203-33 aria-hidden=true tabindex=-1></a><span class=st>  &#39;&#39;</span><span class=op>;</span></span>
+<span id=cb203-34><a href=#cb203-34 aria-hidden=true tabindex=-1></a>  <span class=op>};</span></span>
+<span id=cb203-35><a href=#cb203-35 aria-hidden=true tabindex=-1></a><span class=op>}</span></span></code></pre></div><p>It uses the <code class=verbatim>nixpkgs.nix</code> file. But also
 you can configure it to enable/disable benchmarks while building your
 application. I do not expect you to understand what is really going on
 here, but a short explanation is this file take cares of:<ol><li>use the pinned version of nixpkgs and should provide a working set
@@ -1721,12 +1735,10 @@ particular <code class=verbatim>hlint</code>, <code class=verbatim>ghcid</code>,
 later.<li>take care of handling the <code class=verbatim>nix-shell</code>
 prompt so you should see the name of your project.</ol><p>The only things you should manipulate for a new fresh project should
 be the <code class=verbatim>name</code> and perhaps the <code class=verbatim>buildInputs</code> list to add a few more libraries
-that could be either Haskell libraries or any library <code class=verbatim>nix</code> know about (for example <code class=verbatim>ncurses</code>, in that case you should write it <code class=verbatim>pkgs.ncurses</code>).<p>The two last file simply use the <code class=verbatim>default.nix</code> file:<p>The <code class=verbatim>shell.nix</code> file:<pre class=nix data-tangle=my-app/shell.nix data-mkdirp=t><code>(import ./. {}).shell
-</code></pre><p>And <code class=verbatim>release.nix</code>:<pre class=nix data-tangle=my-app/release.nix data-mkdirp=t><code>let
-  def = import ./. {};
-in
- { my_project = def.my_project; }
-</code></pre><p>So download those files as well as this <code class=verbatim>.gitignore</code> file:<pre class=gitignore data-tangle=my-app/.gitignore data-mkdirp=t><code>dist-newstyle/
+that could be either Haskell libraries or any library <code class=verbatim>nix</code> know about (for example <code class=verbatim>ncurses</code>, in that case you should write it <code class=verbatim>pkgs.ncurses</code>).<p>The two last file simply use the <code class=verbatim>default.nix</code> file:<p>The <code class=verbatim>shell.nix</code> file:<div class=sourceCode id=cb204 data-tangle=my-app/shell.nix data-mkdirp=t><pre class="sourceCode nix"><code class="sourceCode nix"><span id=cb204-1><a href=#cb204-1 aria-hidden=true tabindex=-1></a><span class=op>(</span><span class=bu>import</span> <span class=ss>./.</span> <span class=op>{})</span>.shell</span></code></pre></div><p>And <code class=verbatim>release.nix</code>:<div class=sourceCode id=cb205 data-tangle=my-app/release.nix data-mkdirp=t><pre class="sourceCode nix"><code class="sourceCode nix"><span id=cb205-1><a href=#cb205-1 aria-hidden=true tabindex=-1></a><span class=kw>let</span></span>
+<span id=cb205-2><a href=#cb205-2 aria-hidden=true tabindex=-1></a>  <span class=va>def</span> <span class=op>=</span> <span class=bu>import</span> <span class=ss>./.</span> <span class=op>{};</span></span>
+<span id=cb205-3><a href=#cb205-3 aria-hidden=true tabindex=-1></a><span class=kw>in</span></span>
+<span id=cb205-4><a href=#cb205-4 aria-hidden=true tabindex=-1></a> <span class=op>{</span> <span class=va>my_project</span> <span class=op>=</span> def.my_project<span class=op>;</span> <span class=op>}</span></span></code></pre></div><p>So download those files as well as this <code class=verbatim>.gitignore</code> file:<pre class=gitignore data-tangle=my-app/.gitignore data-mkdirp=t><code>dist-newstyle/
 result
 </code></pre><h3 id=checking-your-environment>Checking your environment</h3><p>Now you should see those files in your project:<pre class=example><code>[hs:my-app]&gt; tree
 .
@@ -1912,15 +1924,13 @@ test-suite my-app-test
 complete this with more advanced tutorial explaining how to write a few
 Haskell projects.<p>Thanks for reading it.<h1 id=thanks>Thanks</h1><p>Thanks to <a href=http://reddit.com/r/haskell><code class=verbatim>/r/haskell</code></a> and <a href=http://reddit.com/r/programming><code class=verbatim>/r/programming</code></a>. Your comment were most than
 welcome.<p>Particularly, I want to thank <a href=https://github.com/Emm>Emm</a> a thousand times for the time he
-spent on correcting my English. Thank you man.<section class="footnotes footnotes-end-of-document" role=doc-endnotes><hr><ol><li id=fn1 role=doc-endnote><p>Even if most recent languages try to
-hide them, they are present.<a href=#fnref1 class=footnote-back role=doc-backlink>↩︎</a><li id=fn2 role=doc-endnote><p>I know I'm cheating. But I will talk
-about non-strictness later.<a href=#fnref2 class=footnote-back role=doc-backlink>↩︎</a><li id=fn3 role=doc-endnote><p>For the brave, a more complete
-explanation of pattern matching can be found <a href=http://www.cs.auckland.ac.nz/references/haskell/haskell-intro-html/patterns.html>here</a>.<a href=#fnref3 class=footnote-back role=doc-backlink>↩︎</a><li id=fn4 role=doc-endnote><p>Which is itself very similar to the
-javascript <code class=verbatim>eval</code> function, that is applied
-to a string containing JSON.<a href=#fnref4 class=footnote-back role=doc-backlink>↩︎</a><li id=fn5 role=doc-endnote><p>There are some <em>unsafe</em>
-exceptions to this rule. But you shouldn't see such use in a real
-application except maybe for debugging purposes.<a href=#fnref5 class=footnote-back role=doc-backlink>↩︎</a><li id=fn6 role=doc-endnote><p>For the curious ones, the real type
-looks like <code class=verbatim>data IO a = IO {unIO :: State# RealWorld -> (# State# RealWorld, a #)}</code>.
+spent on correcting my English. Thank you man.<section id=footnotes class="footnotes footnotes-end-of-document" role=doc-endnotes><hr><ol><li id=fn1><p>Even if most recent languages try to hide them, they are
+present.<a href=#fnref1 class=footnote-back role=doc-backlink>↩︎</a><li id=fn2><p>I know I'm cheating. But I will talk about
+non-strictness later.<a href=#fnref2 class=footnote-back role=doc-backlink>↩︎</a><li id=fn3><p>For the brave, a more complete explanation of pattern
+matching can be found <a href=http://www.cs.auckland.ac.nz/references/haskell/haskell-intro-html/patterns.html>here</a>.<a href=#fnref3 class=footnote-back role=doc-backlink>↩︎</a><li id=fn4><p>Which is itself very similar to the javascript <code class=verbatim>eval</code> function, that is applied to a string
+containing JSON.<a href=#fnref4 class=footnote-back role=doc-backlink>↩︎</a><li id=fn5><p>There are some <em>unsafe</em> exceptions to this rule.
+But you shouldn't see such use in a real application except maybe for
+debugging purposes.<a href=#fnref5 class=footnote-back role=doc-backlink>↩︎</a><li id=fn6><p>For the curious ones, the real type looks like <code class=verbatim>data IO a = IO {unIO :: State# RealWorld -> (# State# RealWorld, a #)}</code>.
 All the <code class=verbatim>#</code> has to do with optimisation. I
 swapped the fields in my example. But this is the basic idea. As of
 today, the definition of <code class=verbatim>IO</code> is no more
@@ -1945,10 +1955,9 @@ Prelude   - GHC.IO.hs, and several other places including
 Libraries - parts of hslibs/lang.
 
 --SDM
-</code></pre></blockquote><a href=#fnref6 class=footnote-back role=doc-backlink>↩︎</a><li id=fn7 role=doc-endnote><p>Well, you'll certainly need to
-practice a bit to get used to them and to understand when you can use
-them and create your own. But you already made a big step in this
-direction.<a href=#fnref7 class=footnote-back role=doc-backlink>↩︎</a><li id=fn8 role=doc-endnote><p><a href="https://www.youtube.com/watch?v=oyLBGkS5ICk">Spec-ulation Keynote
+</code></pre></blockquote><a href=#fnref6 class=footnote-back role=doc-backlink>↩︎</a><li id=fn7><p>Well, you'll certainly need to practice a bit to get
+used to them and to understand when you can use them and create your
+own. But you already made a big step in this direction.<a href=#fnref7 class=footnote-back role=doc-backlink>↩︎</a><li id=fn8><p><a href="https://www.youtube.com/watch?v=oyLBGkS5ICk">Spec-ulation Keynote
 - Rich Hickey</a><a href=#fnref8 class=footnote-back role=doc-backlink>↩︎</a></ol></section></article></main><footer id=postamble class=status><div class=content><nav role=navigation><a href=/index.html>Home</a> |
 <a href=/slides.html>Slides</a> |
 <a href=/about-me.html>About</a>

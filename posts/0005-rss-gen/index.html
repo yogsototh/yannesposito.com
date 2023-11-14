@@ -156,15 +156,14 @@ takes care that <code class=verbatim>zsh</code>, <code class=verbatim>coreutils<
 script. For example my script uses <code class=verbatim>date</code>
 from GNU coreutils and not the <code class=verbatim>BSD</code> date
 from my OS, which makes the script more portable. This also take care of
-using the URI perl package.<p>Along my script I have a <a href=rss-gen/shell.nix><code class=verbatim>shell.nix</code></a> file containing:<pre class=nix><code># { pkgs ? import &lt;nixpkgs&gt; {} }:
-{ pkgs ? import (fetchTarball https://github.com/NixOS/nixpkgs/archive/19.09.tar.gz) {} }:
-  pkgs.mkShell {
-    buildInputs = [ pkgs.coreutils pkgs.html-xml-utils pkgs.zsh pkgs.perl pkgs.perlPackages.URI ];
-  }
-</code></pre><p>Mainly it <em>pins</em> a package version and the list in <code class=verbatim>buildInputs</code> contains the packages to install
+using the URI perl package.<p>Along my script I have a <a href=rss-gen/shell.nix><code class=verbatim>shell.nix</code></a> file containing:<div class=sourceCode id=cb6><pre class="sourceCode nix"><code class="sourceCode nix"><span id=cb6-1><a href=#cb6-1 aria-hidden=true tabindex=-1></a><span class=co># { pkgs ? import &lt;nixpkgs&gt; {} }:</span></span>
+<span id=cb6-2><a href=#cb6-2 aria-hidden=true tabindex=-1></a><span class=op>{</span> <span class=va>pkgs</span> <span class=op>?</span> <span class=bu>import</span> <span class=op>(</span><span class=bu>fetchTarball</span> <span class=va>https</span><span class=op>://</span><span class=ss>github.com/NixOS/nixpkgs/archive/19.09.tar.gz</span><span class=op>)</span> <span class=op>{}</span> <span class=op>}</span>:</span>
+<span id=cb6-3><a href=#cb6-3 aria-hidden=true tabindex=-1></a>  pkgs.mkShell <span class=op>{</span></span>
+<span id=cb6-4><a href=#cb6-4 aria-hidden=true tabindex=-1></a>    <span class=va>buildInputs</span> <span class=op>=</span> <span class=op>[</span> pkgs.coreutils pkgs.html-xml-utils pkgs.zsh pkgs.perl pkgs.perlPackages.URI <span class=op>];</span></span>
+<span id=cb6-5><a href=#cb6-5 aria-hidden=true tabindex=-1></a>  <span class=op>}</span></span></code></pre></div><p>Mainly it <em>pins</em> a package version and the list in <code class=verbatim>buildInputs</code> contains the packages to install
 locally.<p>If you are not already using nix<a href=#fn3 class=footnote-ref id=fnref3 role=doc-noteref><sup>3</sup></a> you should really take a
 look. That <code class=verbatim>shell.nix</code> will work on Linux
-and MacOS.<section class="footnotes footnotes-end-of-document" role=doc-endnotes><hr><ol><li id=fn1 role=doc-endnote><p><a href=https://github.com/LukeSmithxyz/lb>https://github.com/LukeSmithxyz/lb</a><a href=#fnref1 class=footnote-back role=doc-backlink>↩︎</a><li id=fn2 role=doc-endnote><p><a href=https://www.w3.html/Tools/HTML-XML-utils/>https://www.w3.org/Tools/HTML-XML-utils/</a><a href=#fnref2 class=footnote-back role=doc-backlink>↩︎</a><li id=fn3 role=doc-endnote><p><a href=https://nixos.html/nix>https://nixos.org/nix</a><a href=#fnref3 class=footnote-back role=doc-backlink>↩︎</a></ol></section></article></main><footer id=postamble class=status><div class=content><nav role=navigation><a href=/index.html>Home</a> |
+and MacOS.<section id=footnotes class="footnotes footnotes-end-of-document" role=doc-endnotes><hr><ol><li id=fn1><p><a href=https://github.com/LukeSmithxyz/lb>https://github.com/LukeSmithxyz/lb</a><a href=#fnref1 class=footnote-back role=doc-backlink>↩︎</a><li id=fn2><p><a href=https://www.w3.html/Tools/HTML-XML-utils/>https://www.w3.org/Tools/HTML-XML-utils/</a><a href=#fnref2 class=footnote-back role=doc-backlink>↩︎</a><li id=fn3><p><a href=https://nixos.html/nix>https://nixos.org/nix</a><a href=#fnref3 class=footnote-back role=doc-backlink>↩︎</a></ol></section></article></main><footer id=postamble class=status><div class=content><nav role=navigation><a href=/index.html>Home</a> |
 <a href=/slides.html>Slides</a> |
 <a href=/about-me.html>About</a>
 <span class=details>(<a href=https://gitea.esy.fun/yogsototh>code</a>

@@ -40,14 +40,14 @@ line:<div class=sourceCode id=cb2><pre class="sourceCode bash"><code class="sour
 <span id=cb3-8><a href=#cb3-8 aria-hidden=true tabindex=-1></a><span class=co>;; ...</span></span>
 <span id=cb3-9><a href=#cb3-9 aria-hidden=true tabindex=-1></a>(<span class=kw>defun</span><span class=fu> dotspacemacs/user-config </span>()</span>
 <span id=cb3-10><a href=#cb3-10 aria-hidden=true tabindex=-1></a>  <span class=co>;; ...</span></span>
-<span id=cb3-11><a href=#cb3-11 aria-hidden=true tabindex=-1></a>  (<span class=kw>require</span> &#39;auto-load-project)</span>
+<span id=cb3-11><a href=#cb3-11 aria-hidden=true tabindex=-1></a>  (<span class=kw>require</span> <span class=dt>&#39;auto-load-project</span>)</span>
 <span id=cb3-12><a href=#cb3-12 aria-hidden=true tabindex=-1></a>  (<span class=kw>setq</span> auto-load-project/trusted-gpg-key-fingerprints</span>
 <span id=cb3-13><a href=#cb3-13 aria-hidden=true tabindex=-1></a>        &#39;(<span class=st>&quot;0000000000000000000000000000000000000000&quot;</span></span>
 <span id=cb3-14><a href=#cb3-14 aria-hidden=true tabindex=-1></a>          <span class=st>&quot;1111111111111111111111111111111111111111&quot;</span></span>
 <span id=cb3-15><a href=#cb3-15 aria-hidden=true tabindex=-1></a>          <span class=st>&quot;2222222222222222222222222222222222222222&quot;</span></span>
 <span id=cb3-16><a href=#cb3-16 aria-hidden=true tabindex=-1></a>          )))</span>
 <span id=cb3-17><a href=#cb3-17 aria-hidden=true tabindex=-1></a><span class=co>;; ...</span></span></code></pre></div><p>The full current code should be easy to follow if you have basic
-notions of eLISP:<div class=sourceCode id=cb4 data-org-language=lisp><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id=cb4-1><a href=#cb4-1 aria-hidden=true tabindex=-1></a>(<span class=kw>require</span> &#39;projectile)</span>
+notions of eLISP:<div class=sourceCode id=cb4 data-org-language=lisp><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id=cb4-1><a href=#cb4-1 aria-hidden=true tabindex=-1></a>(<span class=kw>require</span> <span class=dt>&#39;projectile</span>)</span>
 <span id=cb4-2><a href=#cb4-2 aria-hidden=true tabindex=-1></a></span>
 <span id=cb4-3><a href=#cb4-3 aria-hidden=true tabindex=-1></a>(<span class=kw>defvar</span><span class=fu> auto-load-project/trusted-gpg-key-fingerprints</span></span>
 <span id=cb4-4><a href=#cb4-4 aria-hidden=true tabindex=-1></a>  &#39;()</span>
@@ -95,18 +95,18 @@ notions of eLISP:<div class=sourceCode id=cb4 data-org-language=lisp><pre class=
 <span id=cb4-46><a href=#cb4-46 aria-hidden=true tabindex=-1></a>        (message <span class=st>&quot;Loading project init file for %s&quot;</span> (projectile-project-name))</span>
 <span id=cb4-47><a href=#cb4-47 aria-hidden=true tabindex=-1></a>        (condition-case ex</span>
 <span id=cb4-48><a href=#cb4-48 aria-hidden=true tabindex=-1></a>            (<span class=kw>progn</span> (<span class=kw>load</span> project-init-file)</span>
-<span id=cb4-49><a href=#cb4-49 aria-hidden=true tabindex=-1></a>                   (add-to-list &#39;auto-load-project/loaded-projects current-project-root)</span>
+<span id=cb4-49><a href=#cb4-49 aria-hidden=true tabindex=-1></a>                   (add-to-list <span class=dt>&#39;auto-load-project/loaded-projects</span> current-project-root)</span>
 <span id=cb4-50><a href=#cb4-50 aria-hidden=true tabindex=-1></a>                   (message <span class=st>&quot;%s loaded successfully&quot;</span> project-init-file))</span>
-<span id=cb4-51><a href=#cb4-51 aria-hidden=true tabindex=-1></a>          (&#39;error</span>
+<span id=cb4-51><a href=#cb4-51 aria-hidden=true tabindex=-1></a>          (<span class=dt>&#39;error</span></span>
 <span id=cb4-52><a href=#cb4-52 aria-hidden=true tabindex=-1></a>           (message</span>
 <span id=cb4-53><a href=#cb4-53 aria-hidden=true tabindex=-1></a>            <span class=st>&quot;There was an error loading %s: %s&quot;</span></span>
 <span id=cb4-54><a href=#cb4-54 aria-hidden=true tabindex=-1></a>            project-init-file</span>
 <span id=cb4-55><a href=#cb4-55 aria-hidden=true tabindex=-1></a>            (error-message-string ex))))))))</span>
 <span id=cb4-56><a href=#cb4-56 aria-hidden=true tabindex=-1></a></span>
-<span id=cb4-57><a href=#cb4-57 aria-hidden=true tabindex=-1></a>(add-hook &#39;find-file-hook #&#39;auto-load-project/load <span class=kw>t</span>)</span>
-<span id=cb4-58><a href=#cb4-58 aria-hidden=true tabindex=-1></a>(add-hook &#39;dired-mode-hook #&#39;auto-load-project/load <span class=kw>t</span>)</span>
+<span id=cb4-57><a href=#cb4-57 aria-hidden=true tabindex=-1></a>(add-hook <span class=dt>&#39;find-file-hook</span> <span class=op>#&#39;</span>auto-load-project/load <span class=kw>t</span>)</span>
+<span id=cb4-58><a href=#cb4-58 aria-hidden=true tabindex=-1></a>(add-hook <span class=dt>&#39;dired-mode-hook</span> <span class=op>#&#39;</span>auto-load-project/load <span class=kw>t</span>)</span>
 <span id=cb4-59><a href=#cb4-59 aria-hidden=true tabindex=-1></a></span>
-<span id=cb4-60><a href=#cb4-60 aria-hidden=true tabindex=-1></a>(<span class=kw>provide</span> &#39;auto-load-project)</span></code></pre></div></article></main><footer id=postamble class=status><div class=content><nav role=navigation><a href=/index.html>Home</a> |
+<span id=cb4-60><a href=#cb4-60 aria-hidden=true tabindex=-1></a>(<span class=kw>provide</span> <span class=dt>&#39;auto-load-project</span>)</span></code></pre></div></article></main><footer id=postamble class=status><div class=content><nav role=navigation><a href=/index.html>Home</a> |
 <a href=/slides.html>Slides</a> |
 <a href=/about-me.html>About</a>
 <span class=details>(<a href=https://gitea.esy.fun/yogsototh>code</a>
