@@ -14,8 +14,8 @@
   <link>https://her.esy.fun</link>
   <description><![CDATA[her.esy.fun articles, mostly random personal thoughts]]></description>
   <language>en</language>
-  <pubDate>Thu, 02 Mar 2023 00:00:00 +0100</pubDate>
-  <lastBuildDate>Wed, 15 Nov 2023 00:00:00 +0100</lastBuildDate>
+  <pubDate>Fri, 08 Mar 2024 00:00:00 +0100</pubDate>
+  <lastBuildDate>Fri, 08 Mar 2024 00:00:00 +0100</lastBuildDate>
   <generator>mkrss.sh</generator>
   <webMaster>yann@esposito.host (Yann Esposito)</webMaster>
   <image>
@@ -23,6 +23,157 @@
     <title>her.esy.fun</title>
     <link>https://her.esy.fun</link>
   </image>
+
+<item>
+<title>A quick CORS proxy in a few lines of Clojure</title>
+<guid>https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html</guid>
+<pubDate>Fri, 08 Mar 2024 00:00:00 +0100</pubDate>
+<category>clojure</category>
+<category>CORS</category>
+<category>web</category>
+<description><![CDATA[
+<main id="content"><article><p>When I open a new tab in my browser I see my hand-made starter
+homepage. This is a single HTML file on my computer. Not a hosted
+website. This homepage is really useful and along the years I added some
+functionalities:</p><ul><li>organized links for my most frequently used websites</li><li>direct text input to some specialized search engines</li><li>work related links to a lot of different places, I see the APIs, the
+version number of the deployed nodes, etc…</li><li>my daily work tasks are displayed there (from org-mode calendar to
+this page)</li></ul><p>One of the section of links in this homepage contain a few website I
+host. And I wanted to query these websites to make a health check from
+my file. It turns out that you cannot easily make an HTTP call to any
+external website from a <code class="verbatim">file://</code> in your
+Browser as your are almost immediately blocked by <em>CORS</em>.</p><p>I don't want to explain how <em>CORS</em> are working. The important
+point is that it is a security measure that is <strong>very
+easy</strong> to circumvent.</p><p>Here is how to do it:</p><ol><li>Create a webservice that will play a role of "proxy". For example,
+the webservice will read the <code>?url=DESTINATION_URL</code>.</li><li>When receiving a request, the server will make a similar HTTP call
+to <code>DESTINATION_URL</code> and keep track of the
+<code>Origin</code> HTTP header of the request.</li><li>Take the response from <code>DESTINATION_URL</code> and add a few
+headers, in particular add the <code>Access-Control-Allow-Origin</code>
+header that will contain the value in the <code>Origin</code> header of
+the request.</li></ol><p>That's it.</p><p>So I wrote that in few minutes and use it now. So I can make these
+call and detect when I see my homepage if one of my hosted website is
+not reachable.</p><h1 id="the-clojure-code">The Clojure code</h1><p>Here is the code in a few lines of Clojure:</p><div class="sourceCode" id="cb1"><pre class="sourceCode clojure"><code class="sourceCode clojure"><span id="cb1-1"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">ns</span> fuck-cors-app.core</span>
+<span id="cb1-2"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-2" aria-hidden="true" tabindex="-1"></a>  (<span class="at">:require</span></span>
+<span id="cb1-3"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-3" aria-hidden="true" tabindex="-1"></a>    [clj-http.client <span class="at">:as</span> client]</span>
+<span id="cb1-4"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-4" aria-hidden="true" tabindex="-1"></a>    [ring.adapter.jetty <span class="at">:as</span> jetty]</span>
+<span id="cb1-5"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-5" aria-hidden="true" tabindex="-1"></a>    [ring.middleware.params <span class="at">:refer</span> [wrap-params]]</span>
+<span id="cb1-6"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-6" aria-hidden="true" tabindex="-1"></a>    [fuck-cors.core <span class="at">:refer</span> [wrap-open-cors]])</span>
+<span id="cb1-7"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-7" aria-hidden="true" tabindex="-1"></a>  (<span class="at">:gen-class</span>))</span>
+<span id="cb1-8"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-9" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defn</span><span class="fu"> handler</span></span>
+<span id="cb1-10"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-10" aria-hidden="true" tabindex="-1"></a>  [request]</span>
+<span id="cb1-11"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-11" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">if-let</span> [url (<span class="kw">get-in</span> request [<span class="at">:query-params</span> <span class="st">&quot;url&quot;</span>])]</span>
+<span id="cb1-12"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-12" aria-hidden="true" tabindex="-1"></a>    (client/request {<span class="at">:request-method</span> (<span class="at">:request-method</span> request)</span>
+<span id="cb1-13"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-13" aria-hidden="true" tabindex="-1"></a>                     <span class="at">:url</span> url})</span>
+<span id="cb1-14"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-14" aria-hidden="true" tabindex="-1"></a>    {<span class="at">:status</span> <span class="dv">200</span></span>
+<span id="cb1-15"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-15" aria-hidden="true" tabindex="-1"></a>     <span class="at">:headers</span> {<span class="st">&quot;Content-Type&quot;</span> <span class="st">&quot;text/plain; charset=utf-8&quot;</span>}</span>
+<span id="cb1-16"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">:body</span> <span class="st">&quot;Let&#39;s bypass CORS ok?&quot;</span>}))</span>
+<span id="cb1-17"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-18" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defn</span><span class="fu"> -main</span></span>
+<span id="cb1-19"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-19" aria-hidden="true" tabindex="-1"></a>  [&amp; _args]</span>
+<span id="cb1-20"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-20" aria-hidden="true" tabindex="-1"></a>  (jetty/run-jetty</span>
+<span id="cb1-21"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-21" aria-hidden="true" tabindex="-1"></a>    (<span class="kw">-&gt;</span> handler</span>
+<span id="cb1-22"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-22" aria-hidden="true" tabindex="-1"></a>        (wrap-params)</span>
+<span id="cb1-23"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-23" aria-hidden="true" tabindex="-1"></a>        (wrap-open-cors))</span>
+<span id="cb1-24"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-24" aria-hidden="true" tabindex="-1"></a>    {<span class="at">:port</span> <span class="dv">1977</span></span>
+<span id="cb1-25"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb1-25" aria-hidden="true" tabindex="-1"></a>     <span class="at">:host</span> <span class="st">&quot;127.0.0.1&quot;</span>}))</span></code></pre></div><p>And that's it, this is a whole web application that will proxy any
+call to a website that do not allow you to call from some origin (like
+my <code class="verbatim">file://</code>) and will make it work
+anyway.</p><p>If you feel that using too many libraries is cheating, here is the
+actual almost full content of the lib taking care of handling CORS:</p><div class="sourceCode" id="cb2"><pre class="sourceCode clojure"><code class="sourceCode clojure"><span id="cb2-1"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defn-</span><span class="fu"> host-from-req</span></span>
+<span id="cb2-2"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-2" aria-hidden="true" tabindex="-1"></a>  [request]</span>
+<span id="cb2-3"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-3" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">str</span> (<span class="kw">-&gt;</span> request <span class="at">:scheme</span> <span class="kw">name</span>)</span>
+<span id="cb2-4"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-4" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;://&quot;</span></span>
+<span id="cb2-5"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-5" aria-hidden="true" tabindex="-1"></a>       (<span class="kw">get-in</span> request [<span class="at">:headers</span> <span class="st">&quot;host&quot;</span>])))</span>
+<span id="cb2-6"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-7" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defn-</span><span class="fu"> get-header</span></span>
+<span id="cb2-8"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-8" aria-hidden="true" tabindex="-1"></a>  [request header-name]</span>
+<span id="cb2-9"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-9" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">let</span> [rawref (<span class="kw">get-in</span> request [<span class="at">:headers</span> header-name])]</span>
+<span id="cb2-10"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-10" aria-hidden="true" tabindex="-1"></a>    (<span class="kw">if</span> rawref</span>
+<span id="cb2-11"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-11" aria-hidden="true" tabindex="-1"></a>        (clojure.string/replace rawref <span class="ss">#&quot;(http://[^/]*).*$&quot;</span> <span class="st">&quot;$1&quot;</span>)</span>
+<span id="cb2-12"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">nil</span>)))</span>
+<span id="cb2-13"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-14" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defn</span><span class="fu"> wrap-open-cors</span></span>
+<span id="cb2-15"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Open your Origin Policy to Everybody, no limit&quot;</span></span>
+<span id="cb2-16"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-16" aria-hidden="true" tabindex="-1"></a>  [handler]</span>
+<span id="cb2-17"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-17" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">fn</span> [request]</span>
+<span id="cb2-18"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-18" aria-hidden="true" tabindex="-1"></a>    (<span class="kw">let</span> [origin (get-header request <span class="st">&quot;origin&quot;</span>)</span>
+<span id="cb2-19"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-19" aria-hidden="true" tabindex="-1"></a>          referer (get-header request <span class="st">&quot;referer&quot;</span>)</span>
+<span id="cb2-20"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-20" aria-hidden="true" tabindex="-1"></a>          host (host-from-req request)</span>
+<span id="cb2-21"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-21" aria-hidden="true" tabindex="-1"></a>          origins (<span class="kw">if</span> origin</span>
+<span id="cb2-22"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-22" aria-hidden="true" tabindex="-1"></a>                    origin</span>
+<span id="cb2-23"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-23" aria-hidden="true" tabindex="-1"></a>                    (<span class="kw">if</span> referer</span>
+<span id="cb2-24"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-24" aria-hidden="true" tabindex="-1"></a>                      referer</span>
+<span id="cb2-25"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-25" aria-hidden="true" tabindex="-1"></a>                      host))</span>
+<span id="cb2-26"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-26" aria-hidden="true" tabindex="-1"></a>          headers {<span class="st">&quot;Access-Control-Allow-Origin&quot;</span> origins</span>
+<span id="cb2-27"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-27" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;Access-Control-Allow-Headers&quot;</span> <span class="st">&quot;Origin, X-Requested-With, Content-Type, Accept, Cache-Control, Accept-Language, Accept-Encoding, Authorization&quot;</span></span>
+<span id="cb2-28"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-28" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;Access-Control-Allow-Methods&quot;</span> <span class="st">&quot;HEAD, GET, POST, PUT, DELETE, OPTIONS, TRACE&quot;</span></span>
+<span id="cb2-29"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-29" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;Access-Control-Allow-Credentials&quot;</span> <span class="st">&quot;true&quot;</span></span>
+<span id="cb2-30"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-30" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;Access-Control-Expose-Headers&quot;</span> <span class="st">&quot;content-length&quot;</span></span>
+<span id="cb2-31"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-31" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;Vary&quot;</span> <span class="st">&quot;Accept-Encoding, Origin, Accept-Language&quot;</span>}]</span>
+<span id="cb2-32"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-32" aria-hidden="true" tabindex="-1"></a>      (<span class="kw">-&gt;</span> (handler request)</span>
+<span id="cb2-33"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-33" aria-hidden="true" tabindex="-1"></a>          (<span class="kw">update-in</span> [<span class="at">:headers</span>] #(<span class="kw">into</span> <span class="va">%</span> headers))))))</span>
+<span id="cb2-34"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-35" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defn</span><span class="fu"> wrap-preflight</span></span>
+<span id="cb2-36"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-36" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Add a preflight answer. Will break any OPTIONS handler, beware.</span></span>
+<span id="cb2-37"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="st">  To put AFTER wrap-open-cors&quot;</span></span>
+<span id="cb2-38"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-38" aria-hidden="true" tabindex="-1"></a>  [handler]</span>
+<span id="cb2-39"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-39" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">fn</span> [request]</span>
+<span id="cb2-40"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-40" aria-hidden="true" tabindex="-1"></a>    (<span class="kw">if</span> (<span class="kw">=</span> (request <span class="at">:request-method</span>) <span class="at">:options</span>)</span>
+<span id="cb2-41"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-41" aria-hidden="true" tabindex="-1"></a>      (<span class="kw">into</span> request {<span class="at">:status</span> <span class="dv">200</span> <span class="at">:body</span> <span class="st">&quot;preflight complete&quot;</span>})</span>
+<span id="cb2-42"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb2-42" aria-hidden="true" tabindex="-1"></a>      (handler request))))</span></code></pre></div><p>I wrote it a long time ago, and I think I just found a potential bug
+related to the headers. I should probably retrieve all headers returned
+by the response, and add these header name to the
+<code>Access-Control-Allow-Headers</code>. But this list of allowed
+headers will work most of the time.</p><h1 id="bonus-frontend-code-to-check-the-availability-of-a-website">Bonus
+frontend code to check the availability of a website</h1><p>As a bonus here is the code I use in my homepage to see if the
+website I am looking for are reachable or not.</p><p>Imagine you have an HTML block like this:</p><div class="sourceCode" id="cb3"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb3-1"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;healthcheck&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb3-2"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb3-2" aria-hidden="true" tabindex="-1"></a>  ...</span>
+<span id="cb3-3"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;a</span> <span class="er">href</span><span class="ot">=</span><span class="st">&quot;SOME_URL&quot;</span><span class="kw">&gt;</span>website 1<span class="kw">&lt;/a&gt;</span></span>
+<span id="cb3-4"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb3-4" aria-hidden="true" tabindex="-1"></a>  ...</span>
+<span id="cb3-5"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;a</span> <span class="er">href</span><span class="ot">=</span><span class="st">&quot;SOME_URL&quot;</span><span class="kw">&gt;</span>website 2<span class="kw">&lt;/a&gt;</span></span>
+<span id="cb3-6"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb3-6" aria-hidden="true" tabindex="-1"></a>  ...</span>
+<span id="cb3-7"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/div&gt;</span></span></code></pre></div><p>I have a CSS rule that change the background of these link to green
+or red if I add the class <code>ok</code> or <code>error</code> to the
+<code>&lt;a></code>. And here is the javascript code:</p><div class="sourceCode" id="cb4"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb4-1"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// You can replace corsproxy.org (which is a public one)</span></span>
+<span id="cb4-2"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">// by the one you are hoting.</span></span>
+<span id="cb4-3"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> corsproxyurl<span class="op">=</span><span class="st">&#39;https://corsproxy.org/?&#39;</span><span class="op">;</span></span>
+<span id="cb4-4"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">healthchecklink</span>(a) {</span>
+<span id="cb4-5"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> linkurl<span class="op">=</span>a<span class="op">.</span><span class="at">href</span><span class="op">;</span></span>
+<span id="cb4-6"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (linkurl <span class="op">!=</span> <span class="kw">undefined</span>) {</span>
+<span id="cb4-7"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> url <span class="op">=</span> corsproxyurl <span class="op">+</span> <span class="pp">encodeURIComponent</span>(linkurl)<span class="op">;</span></span>
+<span id="cb4-8"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> {</span>
+<span id="cb4-9"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-9" aria-hidden="true" tabindex="-1"></a>      <span class="kw">var</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(url<span class="op">,</span> {<span class="dt">method</span><span class="op">:</span> <span class="st">&#39;GET&#39;</span><span class="op">,</span></span>
+<span id="cb4-10"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-10" aria-hidden="true" tabindex="-1"></a>                                       <span class="dt">redirect</span><span class="op">:</span> <span class="st">&#39;manual&#39;</span><span class="op">,</span></span>
+<span id="cb4-11"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-11" aria-hidden="true" tabindex="-1"></a>                                       <span class="dt">signal</span><span class="op">:</span> AbortSignal<span class="op">.</span><span class="fu">timeout</span>(<span class="dv">3000</span>)</span>
+<span id="cb4-12"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-12" aria-hidden="true" tabindex="-1"></a>                                      })<span class="op">;</span></span>
+<span id="cb4-13"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-13" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (response<span class="op">.</span><span class="at">ok</span> <span class="op">||</span> response<span class="op">.</span><span class="at">redirected</span> <span class="op">||</span> response<span class="op">.</span><span class="at">status</span> <span class="op">===</span> <span class="dv">0</span> ) {</span>
+<span id="cb4-14"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-14" aria-hidden="true" tabindex="-1"></a>        a<span class="op">.</span><span class="at">classList</span><span class="op">.</span><span class="fu">add</span>(<span class="st">&quot;ok&quot;</span>)<span class="op">;</span></span>
+<span id="cb4-15"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-15" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb4-16"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-16" aria-hidden="true" tabindex="-1"></a>        a<span class="op">.</span><span class="at">classList</span><span class="op">.</span><span class="fu">add</span>(<span class="st">&quot;error&quot;</span>)<span class="op">;</span></span>
+<span id="cb4-17"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-17" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb4-18"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-18" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">catch</span> (err) {</span>
+<span id="cb4-19"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-19" aria-hidden="true" tabindex="-1"></a>      a<span class="op">.</span><span class="at">classList</span><span class="op">.</span><span class="fu">add</span>(<span class="st">&quot;error&quot;</span>)<span class="op">;</span></span>
+<span id="cb4-20"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-20" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-21"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-21" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-22"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-23"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">checkhealth</span>() {</span>
+<span id="cb4-25"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> links <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">querySelectorAll</span>(<span class="st">&#39;.healthcheck a&#39;</span>)<span class="op">;</span></span>
+<span id="cb4-26"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (l <span class="kw">in</span> links) {</span>
+<span id="cb4-27"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">healthchecklink</span>(links[l])<span class="op">;</span></span>
+<span id="cb4-28"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-28" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-29"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-29" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-30"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-31"><a href="https://her.esy.fun/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="fu">checkhealth</span>()<span class="op">;</span></span></code></pre></div><p>Notice the <code>response.status == 0</code>, this is due to one of
+my website returning a 303 redirection but some complication make it
+returns a status 0. If there were an error it would return an error
+status.</p><p>That's it. Another tool I created myself to prevent me using a
+service checking for the status of my website and sending me
+notifications about it. None of my website is crucial enough not be ok
+to wait a few hours to be re-enabled.</p></article></main>
+]]></description>
+</item>
+
 
 <item>
 <title>Replace docker-compose with nix-shell</title>
@@ -2020,43 +2171,6 @@ builder itself is very simple, very stable and still very efficient.</p><p>As a 
 that's great. There are plenty of things to learn along the way. Still
 if you want something stable for a long time, with a minimal amount of
 dependencies, I think this Makefile is really a great start.</p></article></main>
-]]></description>
-</item>
-
-
-<item>
-<title>Gemini</title>
-<guid>https://her.esy.fun/posts/0016-gemini/index.html</guid>
-<pubDate>Mon, 09 Nov 2020 00:00:00 +0100</pubDate>
-<category>internet</category>
-<category>gopher</category>
-<category>gemini</category>
-<description><![CDATA[
-<main id="content"><article><p>This weekend I read an article about gopher and gemini. I already
-seen articles about gemini pass. Somehow, it was more appealing to me
-than gopher space for totally subjective reasons I think. Anyway this
-time I really dug into it, and I loved the experience.</p><p>At first sight gemini is like a parallel web for nerds. It has
-fundamental changes that I would have really liked to see from the
-modern web. The client decide the design, no user tracking, calm,
-minimalist, simple.</p><p>Right now, on the web, most news website make the experience terrible
-to read the article. The page is bloated with a lot of animations, popin
-asking you to accept the cookies, ads with videos, strange fonts or
-design, plenty of javascript, trackers, etc…</p><p>Gemini make those kind of anti-design impractical. In gemini space
-there is no:</p><ul><li>CSS: the client decide the look of the page, the fonts, the colors,
-the width of the columns, etc…</li><li>inline image: you can still link to images, but images should not be
-displayed in the middle of the text.</li><li>inline links: If you link to an external resource, it is clearly
-visible as an element on its own line.</li><li>cookies</li><li>HTTP headers used to track users</li><li>scripts on the client side</li><li>hard to parse format (no HTML, XHTML, etc…)</li></ul><p>Another strength of Gemini is its protocol's simplicity. It is easy
-to write your own gemini server as well as your own gemini client within
-a few hours of work in your programming language of choice.</p><p>And last but not least, gemini is unfit to serve "big" files. So we
-should not experience people going to gemini for music/movie piracy. If
-you want to serve "big" files you should use another protocol.</p><p>Personally I started to browse gemini directly from emacs with
-elpher. But I know there are a lot of clients.</p><p>I liked gemini so much I hacked my blog to also publish in the gemini
-sphere. I serve my pages with a rust based server. And I hacked a quick
-script to transform my org mode files to gemini format. Gemini file
-format is a kind of super simplified markdown. I really like the
-simplicity of it.</p><p>Here are a few links to get you started.</p><p>Web:</p><ul><li><a href="https://gemini.circumlunar.space">gemini homepage</a></li><li><a href="https://thelambdalab.xyz/elpher/">elpher emacs gopher and
-gemini client</a></li><li><a href="https://portal.mozz.us/gemini/gemini.circumlunar.space/">Explore
-gemini from the web</a></li></ul><p>Gopher:</p><ul><li><a href="gopher://thelambdalab.xyz/1/projects/elpher/">elpher</a></li></ul><p>Gemini:</p><ul><li><a href="gemini://her.esy.fun">my website in gemini</a></li></ul></article></main>
 ]]></description>
 </item>
 

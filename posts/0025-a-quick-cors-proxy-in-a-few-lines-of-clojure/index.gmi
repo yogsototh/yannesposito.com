@@ -1,0 +1,203 @@
+# A quick CORS proxy in a few lines of Clojure
+description: 
+keywords:  clojure CORS web
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2024-03-08 Fri]
+
+When I open a new tab in my browser I see my hand-made starter homepage.
+This is a single HTML file on my computer.
+Not a hosted website.
+This homepage is really useful and along the years I added some functionalities:
+* organized links for my most frequently used websites
+* direct text input to some specialized search engines
+* work related links to a lot of different places, I see the APIs, the version
+  number of the deployed nodes, etc…
+* my daily work tasks are displayed there (from org-mode calendar to this page)
+
+One of the section of links in this homepage contain a few website I host.
+And I wanted to query these websites to make a health check from my file.
+It turns out that you cannot easily make an HTTP call to any external website
+from a =file://= in your Browser as your are almost immediately blocked by /CORS/.
+
+I don't want to explain how /CORS/ are working.
+The important point is that it is a security measure that is *very easy* to circumvent.
+
+Here is how to do it:
+
+1. Create a webservice that will play a role of "proxy". For example, the
+   webservice will read the ~?url=DESTINATION_URL~.
+2. When receiving a request, the server will make a similar HTTP call to
+   ~DESTINATION_URL~ and keep track of the ~Origin~ HTTP header of the request.
+3. Take the response from ~DESTINATION_URL~ and add a few headers, in particular
+   add the ~Access-Control-Allow-Origin~ header that will contain the value in the
+   ~Origin~ header of the request.
+
+That's it.
+
+So I wrote that in few minutes and use it now. So I can make these call and
+detect when I see my homepage if one of my hosted website is not reachable.
+
+# The Clojure code
+
+Here is the code in a few lines of Clojure:
+
+```clojure
+(ns fuck-cors-app.core
+  (:require
+    [clj-http.client :as client]
+    [ring.adapter.jetty :as jetty]
+    [ring.middleware.params :refer [wrap-params]]
+    [fuck-cors.core :refer [wrap-open-cors]])
+  (:gen-class))
+
+(defn handler
+  [request]
+  (if-let [url (get-in request [:query-params "url"])]
+    (client/request {:request-method (:request-method request)
+                     :url url})
+    {:status 200
+     :headers {"Content-Type" "text/plain; charset=utf-8"}
+     :body "Let's bypass CORS ok?"}))
+
+(defn -main
+  [& _args]
+  (jetty/run-jetty
+    (-> handler
+        (wrap-params)
+        (wrap-open-cors))
+    {:port 1977
+     :host "127.0.0.1"}))
+```
+
+And that's it, this is a whole web application that will proxy any call to a
+website that do not allow you to call from some origin (like my =file://=) and
+will make it work anyway.
+
+If you feel that using too many libraries is cheating, here is the actual almost full
+content of the lib taking care of handling CORS:
+
+```clojure
+(defn- host-from-req
+  [request]
+  (str (-> request :scheme name)
+       "://"
+       (get-in request [:headers "host"])))
+
+(defn- get-header
+  [request header-name]
+  (let [rawref (get-in request [:headers header-name])]
+    (if rawref
+        (clojure.string/replace rawref #"(http://[^/]*).*$" "$1")
+        nil)))
+
+(defn wrap-open-cors
+  "Open your Origin Policy to Everybody, no limit"
+  [handler]
+  (fn [request]
+    (let [origin (get-header request "origin")
+          referer (get-header request "referer")
+          host (host-from-req request)
+          origins (if origin
+                    origin
+                    (if referer
+                      referer
+                      host))
+          headers {"Access-Control-Allow-Origin" origins
+                   "Access-Control-Allow-Headers" "Origin, X-Requested-With, Content-Type, Accept, Cache-Control, Accept-Language, Accept-Encoding, Authorization"
+                   "Access-Control-Allow-Methods" "HEAD, GET, POST, PUT, DELETE, OPTIONS, TRACE"
+                   "Access-Control-Allow-Credentials" "true"
+                   "Access-Control-Expose-Headers" "content-length"
+                   "Vary" "Accept-Encoding, Origin, Accept-Language"}]
+      (-> (handler request)
+          (update-in [:headers] #(into % headers))))))
+
+(defn wrap-preflight
+  "Add a preflight answer. Will break any OPTIONS handler, beware.
+  To put AFTER wrap-open-cors"
+  [handler]
+  (fn [request]
+    (if (= (request :request-method) :options)
+      (into request {:status 200 :body "preflight complete"})
+      (handler request))))
+```
+
+I wrote it a long time ago, and I think I just found a potential bug related to the headers.
+I should probably retrieve all headers returned by the response, and add these
+header name to the ~Access-Control-Allow-Headers~. But this list of allowed
+headers will work most of the time.
+
+
+# Bonus frontend code to check the availability of a website
+
+As a bonus here is the code I use in my homepage to see if the website I am
+looking for are reachable or not.
+
+Imagine you have an HTML block like this:
+
+```html
+<div class="healthcheck">
+  ...
+  <a href="SOME_URL">website 1</a>
+  ...
+  <a href="SOME_URL">website 2</a>
+  ...
+</div>
+```
+
+I have a CSS rule that change the background of these link to green or red if I
+add the class ~ok~ or ~error~ to the ~<a>~.
+And here is the javascript code:
+
+```javascript
+// You can replace corsproxy.org (which is a public one)
+// by the one you are hoting.
+const corsproxyurl='https://corsproxy.org/?';
+async function healthchecklink(a) {
+  var linkurl=a.href;
+  if (linkurl != undefined) {
+    var url = corsproxyurl + encodeURIComponent(linkurl);
+    try {
+      var response = await fetch(url, {method: 'GET',
+                                       redirect: 'manual',
+                                       signal: AbortSignal.timeout(3000)
+                                      });
+      if (response.ok || response.redirected || response.status === 0 ) {
+        a.classList.add("ok");
+      } else {
+        a.classList.add("error");
+      }
+    } catch (err) {
+      a.classList.add("error");
+    }
+  }
+}
+
+function checkhealth() {
+  var links = document.querySelectorAll('.healthcheck a');
+  for (l in links) {
+    healthchecklink(links[l]);
+  }
+}
+
+checkhealth();
+```
+
+Notice the ~response.status == 0~, this is due to one of my website returning a
+303 redirection but some complication make it returns a status 0.
+If there were an error it would return an error status.
+
+That's it.
+Another tool I created myself to prevent me using a service checking for the
+status of my website and sending me notifications about it.
+None of my website is crucial enough not be ok to wait a few hours to be re-enabled.
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://gitea.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes
