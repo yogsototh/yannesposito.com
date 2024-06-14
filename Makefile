@@ -10,7 +10,7 @@ NO_DRAFT := -not -path '$(SRC_DIR)/drafts/*'
 # we don't copy source files
 NO_SRC_FILE := ! -name '*.org' ! -name '*.css'
 
-
+# all files are copied from src to dest
 define adv_rule
   SRC_$(1) := $$(shell find $$(SRC_DIR) -type f $(2))
   DST_$(1) := $$(patsubst $$(SRC_DIR)/%,$$(DST_DIR)/%,$$(SRC_$(1)))
