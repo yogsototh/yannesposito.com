@@ -24,18 +24,12 @@ enough about the result to blog about it.
 #+NAME: fig:brut-homepage
 [[file:./brut-css-homepage.png]]
 
-Over the years, I've developed numerous private web applications - most often
+Over the years, I've developed numerous private web applications -- most often
 internal tools designed either for my own use or for an internal team of
 developers.
 While these projects have varied in scope and complexity, I've gradually come to
 appreciate the benefits of adopting a brutalist design approach for many of
 them.
-
-While it's true that having both form and function is ideal, I believe there's
-value in exploring websites that prioritize UX efficiency over aesthetics.
-By focusing on the immediate utility of an application rather than getting
-bogged down in nuances like color palette or image selection, we can create
-tools that are unapologetically functional.
 
 Using a brutalist design approach forces us to confront our priorities and
 eliminate distractions.
@@ -67,7 +61,7 @@ Here are my goals for this framework:
 :CUSTOM_ID: digressions-on-the-brut-website
 :END:
 
-If you take a look at the Brut website docs, you see I provide an example with
+If you take a look at the [[https://brut.esy.fun/h/docs.html][Brut website docs]], you see I provide an example with
 the code to generate that example.
 
 #+ATTR_ORG: :width 560
@@ -94,10 +88,7 @@ Babashka can easily be used as a task launcher, a bit like make.
 With this I used babashka to automate CSS generation/minimization as well as
 website generation.
 
-So, let's get back to generating html that contains both an example and its code
-that could be shown to the end user.
-
-So I could write this small clojure function that takes a HTML description (not
+I could write this small Clojure function that takes a HTML description (not
 a HTML string, but a structure that you use to generate HTML) and return a
 pretty print view of the generated HTML and put that in a ~<pre>~:
 
@@ -132,8 +123,7 @@ And render in the browser as:
 </div>
 #+end_src
 
-All with the expected indentation.
-So that's very nice.
+And the result will have the expected indentation which is very nice.
 If you wonder how I could pretty print HTML; I am cheating and calling both [[http://www.html-tidy.org/][=tidy=]]
 and [[https://www.w3.org/Tools/HTML-XML-utils/man1/hxselect.html][=hxselect=]] command line tools:
 
@@ -147,8 +137,9 @@ and [[https://www.w3.org/Tools/HTML-XML-utils/man1/hxselect.html][=hxselect=]] c
                      :out :string}))))
 #+end_src
 
-And this really helped and I could easily generate big blocks using that strategy:
-
+Once I had these I could easily generate complex blocs while showing the code
+source as example directly. For example look at this bloc that generate all
+possible combination of three columns on a 12 column total:
 
 #+ATTR_ORG: :width 560
 #+ATTR_HTML: Show all possible 3 columns size combination
@@ -156,27 +147,22 @@ And this really helped and I could easily generate big blocks using that strateg
 #+NAME: fig:brut-homepage
 [[file:./3-columns-demo.png]]
 
-which was generated with this short hiccup snippet:
+Generated from this short hiccup snippet:
 
 #+begin_src clojure
-[:div
- [:h3 "3 columns"]
- [:div
-  (for [i (range 11 0 -1)
-        j (range (- 11 i) -1 -1)]
-    (let [k (- 12 i j)
-          cli (str "c" i)
-          clj (str "c" j)
-          clk (str "c" k)]
-      (if (= j 0)
-        [:br]
-        [:div.row
-         (when (> j 0)
-           [:div.b {:class clj} clj])
-         (when (> i 0)
-           [:div.bg-neutral {:class cli} cli])
-         (when (> k 0)
-           [:div.r {:class clk} clk])])))]]
+[:div.content
+ (for [i (range 11 0 -1)        ;; from 11 to 1
+       j (range (- 11 i) -1 -1)] ;; from (11 - i) to 0
+   (let [k (- 12 i j)
+         cli (str "c" i)
+         clj (str "c" j)
+         clk (str "c" k)]
+     (if (= j 0)
+       [:br] ;; jump a line if j is equal to 0
+       [:div.row
+        [:div.b          {:class clj} clj]
+        [:div.bg-neutral {:class cli} cli]
+        [:div.r          {:class clk} clk]])))]
 #+end_src
 
 Overall, I do not regret using babashka for this small project. It has been delightful.
