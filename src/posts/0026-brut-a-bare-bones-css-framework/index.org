@@ -101,8 +101,8 @@ pretty print view of the generated HTML and put that in a ~<pre>~:
 
 For example:
 
-#+begin_src
-> (to-pre [:div.row [:span "hello"]]) ⇒
+#+begin_src clojure
+(to-pre [:div.row [:span "hello"]])
 #+end_src
 
 will generate the following string that will print as:
@@ -166,3 +166,8 @@ Generated from this short hiccup snippet:
 #+end_src
 
 Overall, I do not regret using babashka for this small project. It has been delightful.
+
+Last but not least, as I don't intend for my small website to be used as a CDN,
+I configured my server to add a few [[https://content-security-policy.com][CSP headers]] to prevent linking directly to the CSS and force
+people to copy it locally.
+I consider that 8kB is small enough that this should probably not be necessary.
