@@ -1,0 +1,198 @@
+# BRUT: a bare-bones CSS Framework
+description: 
+keywords:  blog static
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2024-07-25 Thu]
+
+
+______
+/TL;DR:/
+
+=> https://brut.esy.fun =brut.esy.fun=
+
+
+*Warning*: I built this CSS Framework for my personal use.
+I am not a UI developer, and I am certainly not following best practices.
+That being said, I used this for a few different internal projects and I was happy
+enough about the result to blog about it.
+______
+
+attr_org:  :width 560
+attr_html:  Brut CSS Framework Homepage
+caption:  Brut CSS Framework Hompage
+name:  fig:brut-homepage
+=> ./brut-css-homepage.png
+
+Over the years, I've developed numerous private web applications -- most often
+internal tools designed either for my own use or for an internal team of
+developers.
+While these projects have varied in scope and complexity, I've gradually come to
+appreciate the benefits of adopting a brutalist design approach for many of
+them.
+
+Using a brutalist design approach forces us to confront our priorities and
+eliminate distractions.
+We're not tempted to waste time agonizing over the perfect shade of blue or
+which image best conveys a particular sentiment.
+Instead, we focus on crafting a tool that gets the job done with minimal fuss.
+One of the most compelling aspects of brutalism is its ability to immediately
+convey a sense of purpose.
+A website built in this style screams "not for everyone" and focuses attention
+squarely on the content rather than trying to impress visitors with flashy
+visuals.
+
+Recently, I've been working on my own specialized CSS framework designed
+specifically for building nerd-targeted web applications.
+This project grew out of my professional experience creating internal
+administration tools that needed to be shared with other developers and
+managers.
+
+Here are my goals for this framework:
+* I want a dense, information-rich environment that defies modern design best
+  practices and eschews empty space.
+* I'm aiming for a minimalist approach with a limited number of components. This
+  will help me avoid adding unnecessary features over time.
+* The application should immediately convey its professional nature and
+  intimidate non-core users from trying to use it.
+
+# Digressions on the brut website
+
+If you take a look at the
+
+=> https://brut.esy.fun/h/docs.html Brut website docs
+, you see I provide an example with
+the code to generate that example.
+
+attr_org:  :width 560
+attr_html:  Brut CSS example and the code to generate it.
+caption:  Brut CSS example and the code to generate it.
+name:  fig:code-example
+=> code-example.png
+
+
+At first, I wrote the code in HTML, copy/pasting the code in a ~<pre>~ block and
+changing all ~<~ by ~&lt;~ etc…
+But quickly, as I wanted to have more and more examples, this quickly became tedious.
+I opted to generate the HTML from a program.
+
+And if you need to choose a language that is powerful enough and must generate
+HTML, I think Clojure is one of the best.
+In particular due to
+
+=> https://github.com/weavejester/hiccup hiccup
+ which is the best DSL I ever used other the years to
+generate HTML.
+
+As a bonus, I wanted to be able to launch the building of the website easily, so
+I used
+
+=> https://babashka.org/ babashka
+ so far this was a really great experience.
+Babashka can easily be used as a task launcher, a bit like make.
+
+With this I used babashka to automate CSS generation/minimization as well as
+website generation.
+
+I could write this small Clojure function that takes a HTML description (not
+a HTML string, but a structure that you use to generate HTML) and return a
+pretty print view of the generated HTML and put that in a ~<pre>~:
+
+```clojure
+(defn to-pre [hc]
+  (h/html {:escape-strings? true}
+          [:pre (-> (str (h/html hc))
+                    html-pp)]))
+```
+
+For example:
+
+```clojure
+(to-pre [:div.row [:span "hello"]])
+```
+
+will generate the following string that will print as:
+
+```html
+<pre>
+  &lt;div class=&quot;row&quot;&gt;
+    &lt;span&gt;hello&lt;/span&gt;
+  &lt;/div&gt;
+</pre>
+```
+
+And render in the browser as:
+
+```html
+<div class="row">
+  <span>hello</span>
+</div>
+```
+
+And the result will have the expected indentation which is very nice.
+If you wonder how I could pretty print HTML; I am cheating and calling both
+
+=> http://www.html-tidy.org/ =tidy=
+
+and
+
+=> https://www.w3.org/Tools/HTML-XML-utils/man1/hxselect.html =hxselect=
+ command line tools:
+
+```clojure
+(defn html-pp [html-str]
+  (let [xhtml (:out @(process ["tidy" "-i" "-asxhtml" "-quiet" "-utf8"]
+                              {:in html-str
+                               :out :string}))]
+    (:out @(process ["hxselect" "-c" "body"]
+                    {:in xhtml
+                     :out :string}))))
+```
+
+Once I had these I could easily generate complex blocs while showing the code
+source as example directly. For example look at this bloc that generate all
+possible combination of three columns on a 12 column total:
+
+attr_org:  :width 560
+attr_html:  Show all possible 3 columns size combination
+caption:  Show all possible 3 columns size combination
+name:  fig:brut-homepage
+=> ./3-columns-demo.png
+
+Generated from this short hiccup snippet:
+
+```clojure
+[:div.content
+ (for [i (range 11 0 -1)        ;; from 11 to 1
+       j (range (- 11 i) -1 -1)] ;; from (11 - i) to 0
+   (let [k (- 12 i j)
+         cli (str "c" i)
+         clj (str "c" j)
+         clk (str "c" k)]
+     (if (= j 0)
+       [:br] ;; jump a line if j is equal to 0
+       [:div.row
+        [:div.b          {:class clj} clj]
+        [:div.bg-neutral {:class cli} cli]
+        [:div.r          {:class clk} clk]])))]
+```
+
+Overall, I do not regret using babashka for this small project. It has been delightful.
+
+Last but not least, as I don't intend for my small website to be used as a CDN,
+I configured my server to add a few
+
+=> https://content-security-policy.com CSP headers
+ to prevent linking directly to the CSS and force
+people to copy it locally.
+I consider that 8kB is small enough that this should probably not be necessary.
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://git.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes

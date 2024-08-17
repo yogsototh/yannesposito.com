@@ -1,0 +1,86 @@
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>BRUT: a bare-bones CSS Framework</title><meta name=author content="Yann Esposito"><meta name=description content><meta name=keywords content="blog static"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><meta name=theme-color media="(prefers-color-scheme: light)" content="#d84100"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#2E3440"><header><div id=logo><a href=/><div class=vis-hidden>Go to Home</div><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="#00" stroke-width="1" fill="#2e3440"/><circle class="i1" cx="32" cy="32" r="12" stroke="#800" stroke-width="1" fill="#c20"/><circle class="i0" cx="32" cy="32" r="5" stroke-width="1" stroke="#f60" fill="#fa0"/><ellipse class="e" cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="#fff"/></svg></a></div><div class=content><h1>BRUT: a bare-bones CSS Framework</h1><div class=meta><span class=yyydate>[2024-07-25 Thu]</span> on
+<a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract></div></div></header><main id=content><article><div class=notes><p><em>TL;DR:</em> <a href=https://brut.esy.fun><code class=verbatim>brut.esy.fun</code></a><p><strong>Warning</strong>: I built this CSS Framework for my personal
+use. I am not a UI developer, and I am certainly not following best
+practices. That being said, I used this for a few different internal
+projects and I was happy enough about the result to blog about it.</div><figure><img src=./brut-css-homepage.png.webp title=brut-homepage alt="Brut CSS Framework Hompage"><figcaption aria-hidden=true>Brut CSS Framework Hompage</figcaption></figure><p>Over the years, I've developed numerous private web applications –
+most often internal tools designed either for my own use or for an
+internal team of developers. While these projects have varied in scope
+and complexity, I've gradually come to appreciate the benefits of
+adopting a brutalist design approach for many of them.<p>Using a brutalist design approach forces us to confront our
+priorities and eliminate distractions. We're not tempted to waste time
+agonizing over the perfect shade of blue or which image best conveys a
+particular sentiment. Instead, we focus on crafting a tool that gets the
+job done with minimal fuss. One of the most compelling aspects of
+brutalism is its ability to immediately convey a sense of purpose. A
+website built in this style screams "not for everyone" and focuses
+attention squarely on the content rather than trying to impress visitors
+with flashy visuals.<p>Recently, I've been working on my own specialized CSS framework
+designed specifically for building nerd-targeted web applications. This
+project grew out of my professional experience creating internal
+administration tools that needed to be shared with other developers and
+managers.<p>Here are my goals for this framework:<ul><li>I want a dense, information-rich environment that defies modern
+design best practices and eschews empty space.<li>I'm aiming for a minimalist approach with a limited number of
+components. This will help me avoid adding unnecessary features over
+time.<li>The application should immediately convey its professional nature
+and intimidate non-core users from trying to use it.</ul><h1 id=digressions-on-the-brut-website>Digressions on the brut
+website</h1><p>If you take a look at the <a href=https://brut.esy.fun/h/docs.html>Brut website docs</a>, you see I
+provide an example with the code to generate that example.<figure><img src=code-example.png.webp title=code-example alt="Brut CSS example and the code to generate it."><figcaption aria-hidden=true>Brut CSS example and the code to generate
+it.</figcaption></figure><p>At first, I wrote the code in HTML, copy/pasting the code in a
+<code>&lt;pre></code> block and changing all <code>&lt;</code> by
+<code>&amp;lt;</code> etc… But quickly, as I wanted to have more and
+more examples, this quickly became tedious. I opted to generate the HTML
+from a program.<p>And if you need to choose a language that is powerful enough and must
+generate HTML, I think Clojure is one of the best. In particular due to
+<a href=https://github.com/weavejester/hiccup>hiccup</a> which is the
+best DSL I ever used other the years to generate HTML.<p>As a bonus, I wanted to be able to launch the building of the website
+easily, so I used <a href=https://babashka.org/>babashka</a> so far
+this was a really great experience. Babashka can easily be used as a
+task launcher, a bit like make.<p>With this I used babashka to automate CSS generation/minimization as
+well as website generation.<p>I could write this small Clojure function that takes a HTML
+description (not a HTML string, but a structure that you use to generate
+HTML) and return a pretty print view of the generated HTML and put that
+in a <code>&lt;pre></code>:<div class=sourceCode id=cb1><pre class="sourceCode clojure"><code class="sourceCode clojure"><span id=cb1-1><a href=#cb1-1 aria-hidden=true tabindex=-1></a>(<span class=bu>defn</span><span class=fu> to-pre </span>[hc]</span>
+<span id=cb1-2><a href=#cb1-2 aria-hidden=true tabindex=-1></a>  (h/html {<span class=at>:escape-strings</span>? <span class=va>true</span>}</span>
+<span id=cb1-3><a href=#cb1-3 aria-hidden=true tabindex=-1></a>          [<span class=at>:pre</span> (<span class=kw>-&gt;</span> (<span class=kw>str</span> (h/html hc))</span>
+<span id=cb1-4><a href=#cb1-4 aria-hidden=true tabindex=-1></a>                    html-pp)]))</span></code></pre></div><p>For example:<div class=sourceCode id=cb2><pre class="sourceCode clojure"><code class="sourceCode clojure"><span id=cb2-1><a href=#cb2-1 aria-hidden=true tabindex=-1></a>(to-pre [<span class=at>:div.row</span> [<span class=at>:span</span> <span class=st>&quot;hello&quot;</span>]])</span></code></pre></div><p>will generate the following string that will print as:<div class=sourceCode id=cb3><pre class="sourceCode html"><code class="sourceCode html"><span id=cb3-1><a href=#cb3-1 aria-hidden=true tabindex=-1></a><span class=kw>&lt;pre&gt;</span></span>
+<span id=cb3-2><a href=#cb3-2 aria-hidden=true tabindex=-1></a>  <span class=dv>&amp;lt;</span>div class=<span class=dv>&amp;quot;</span>row<span class=dv>&amp;quot;&amp;gt;</span></span>
+<span id=cb3-3><a href=#cb3-3 aria-hidden=true tabindex=-1></a>    <span class=dv>&amp;lt;</span>span<span class=dv>&amp;gt;</span>hello<span class=dv>&amp;lt;</span>/span<span class=dv>&amp;gt;</span></span>
+<span id=cb3-4><a href=#cb3-4 aria-hidden=true tabindex=-1></a>  <span class=dv>&amp;lt;</span>/div<span class=dv>&amp;gt;</span></span>
+<span id=cb3-5><a href=#cb3-5 aria-hidden=true tabindex=-1></a><span class=kw>&lt;/pre&gt;</span></span></code></pre></div><p>And render in the browser as:<div class=sourceCode id=cb4><pre class="sourceCode html"><code class="sourceCode html"><span id=cb4-1><a href=#cb4-1 aria-hidden=true tabindex=-1></a><span class=kw>&lt;div</span> <span class=er>class</span><span class=ot>=</span><span class=st>&quot;row&quot;</span><span class=kw>&gt;</span></span>
+<span id=cb4-2><a href=#cb4-2 aria-hidden=true tabindex=-1></a>  <span class=kw>&lt;span&gt;</span>hello<span class=kw>&lt;/span&gt;</span></span>
+<span id=cb4-3><a href=#cb4-3 aria-hidden=true tabindex=-1></a><span class=kw>&lt;/div&gt;</span></span></code></pre></div><p>And the result will have the expected indentation which is very nice.
+If you wonder how I could pretty print HTML; I am cheating and calling
+both <a href=http://www.html-tidy.org/><code class=verbatim>tidy</code></a> and <a href=https://www.w3.org/Tools/HTML-XML-utils/man1/hxselect.html><code class=verbatim>hxselect</code></a> command line tools:<div class=sourceCode id=cb5><pre class="sourceCode clojure"><code class="sourceCode clojure"><span id=cb5-1><a href=#cb5-1 aria-hidden=true tabindex=-1></a>(<span class=bu>defn</span><span class=fu> html-pp </span>[html-str]</span>
+<span id=cb5-2><a href=#cb5-2 aria-hidden=true tabindex=-1></a>  (<span class=kw>let</span> [xhtml (<span class=at>:out</span> @(process [<span class=st>&quot;tidy&quot;</span> <span class=st>&quot;-i&quot;</span> <span class=st>&quot;-asxhtml&quot;</span> <span class=st>&quot;-quiet&quot;</span> <span class=st>&quot;-utf8&quot;</span>]</span>
+<span id=cb5-3><a href=#cb5-3 aria-hidden=true tabindex=-1></a>                              {<span class=at>:in</span> html-str</span>
+<span id=cb5-4><a href=#cb5-4 aria-hidden=true tabindex=-1></a>                               <span class=at>:out</span> <span class=at>:string</span>}))]</span>
+<span id=cb5-5><a href=#cb5-5 aria-hidden=true tabindex=-1></a>    (<span class=at>:out</span> @(process [<span class=st>&quot;hxselect&quot;</span> <span class=st>&quot;-c&quot;</span> <span class=st>&quot;body&quot;</span>]</span>
+<span id=cb5-6><a href=#cb5-6 aria-hidden=true tabindex=-1></a>                    {<span class=at>:in</span> xhtml</span>
+<span id=cb5-7><a href=#cb5-7 aria-hidden=true tabindex=-1></a>                     <span class=at>:out</span> <span class=at>:string</span>}))))</span></code></pre></div><p>Once I had these I could easily generate complex blocs while showing
+the code source as example directly. For example look at this bloc that
+generate all possible combination of three columns on a 12 column
+total:<figure><img src=./3-columns-demo.png.webp title=brut-homepage alt="Show all possible 3 columns size combination"><figcaption aria-hidden=true>Show all possible 3 columns size
+combination</figcaption></figure><p>Generated from this short hiccup snippet:<div class=sourceCode id=cb6><pre class="sourceCode clojure"><code class="sourceCode clojure"><span id=cb6-1><a href=#cb6-1 aria-hidden=true tabindex=-1></a>[<span class=at>:div.content</span></span>
+<span id=cb6-2><a href=#cb6-2 aria-hidden=true tabindex=-1></a> (<span class=kw>for</span> [i (<span class=kw>range</span> <span class=dv>11</span> <span class=dv>0</span> -<span class=dv>1</span>)        <span class=co>;; from 11 to 1</span></span>
+<span id=cb6-3><a href=#cb6-3 aria-hidden=true tabindex=-1></a>       j (<span class=kw>range</span> (<span class=kw>-</span> <span class=dv>11</span> i) -<span class=dv>1</span> -<span class=dv>1</span>)] <span class=co>;; from (11 - i) to 0</span></span>
+<span id=cb6-4><a href=#cb6-4 aria-hidden=true tabindex=-1></a>   (<span class=kw>let</span> [k (<span class=kw>-</span> <span class=dv>12</span> i j)</span>
+<span id=cb6-5><a href=#cb6-5 aria-hidden=true tabindex=-1></a>         cli (<span class=kw>str</span> <span class=st>&quot;c&quot;</span> i)</span>
+<span id=cb6-6><a href=#cb6-6 aria-hidden=true tabindex=-1></a>         clj (<span class=kw>str</span> <span class=st>&quot;c&quot;</span> j)</span>
+<span id=cb6-7><a href=#cb6-7 aria-hidden=true tabindex=-1></a>         clk (<span class=kw>str</span> <span class=st>&quot;c&quot;</span> k)]</span>
+<span id=cb6-8><a href=#cb6-8 aria-hidden=true tabindex=-1></a>     (<span class=kw>if</span> (<span class=kw>=</span> j <span class=dv>0</span>)</span>
+<span id=cb6-9><a href=#cb6-9 aria-hidden=true tabindex=-1></a>       [<span class=at>:br</span>] <span class=co>;; jump a line if j is equal to 0</span></span>
+<span id=cb6-10><a href=#cb6-10 aria-hidden=true tabindex=-1></a>       [<span class=at>:div.row</span></span>
+<span id=cb6-11><a href=#cb6-11 aria-hidden=true tabindex=-1></a>        [<span class=at>:div.b</span>          {<span class=at>:class</span> clj} clj]</span>
+<span id=cb6-12><a href=#cb6-12 aria-hidden=true tabindex=-1></a>        [<span class=at>:div.bg-neutral</span> {<span class=at>:class</span> cli} cli]</span>
+<span id=cb6-13><a href=#cb6-13 aria-hidden=true tabindex=-1></a>        [<span class=at>:div.r</span>          {<span class=at>:class</span> clk} clk]])))]</span></code></pre></div><p>Overall, I do not regret using babashka for this small project. It
+has been delightful.<p>Last but not least, as I don't intend for my small website to be used
+as a CDN, I configured my server to add a few <a href=https://content-security-policy.com>CSP headers</a> to prevent
+linking directly to the CSS and force people to copy it locally. I
+consider that 8kB is small enough that this should probably not be
+necessary.</article></main><footer id=postamble class=status><div class=content><nav role=navigation><a href=/index.html>Home</a> |
+<a href=/slides.html>Slides</a> |
+<a href=/about-me.html>About</a>
+<span class=details>(<a href=https://git.esy.fun/yogsototh>code</a>
+<a href=https://espial.esy.fun/u:yogsototh>bookmarks</a>
+<a href=https://espial.esy.fun/u:yogsototh/notes>notes</a>)</span> |
+<a href=#logo>↑ Top ↑</a></nav></div></footer>

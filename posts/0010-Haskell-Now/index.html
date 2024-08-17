@@ -86,7 +86,7 @@ accelerate your learning.<p>This article will certainly be hard to follow. This 
 There is no shortcut to learning Haskell. It is hard and challenging.
 But I believe this is a good thing. It is because it is hard that
 Haskell is interesting and rewarding.<p>Today, I could not really provide a conventional path to learn
-Haskell. So I think the best I can do is point you to the <a href=https://www.haskell.html/documentation/>haskell.org</a>
+Haskell. So I think the best I can do is point you to the <a href=https://www.haskell.org/documentation/>haskell.org</a>
 documentation website. And you will see that most path involve a long
 learning process. By that, I mean that you should read a long book and
 invest a lot of hours and certainly days before having a good idea about
@@ -94,8 +94,8 @@ what Haskell is all about.<p>In contrast, this article is a brief and dense over
 aspects of Haskell. I also added some information I lacked while I
 learned Haskell.<p>The article contains five parts:<ul><li><p><strong>Essential Haskell</strong>: Haskell syntax, and some
 essential notions.<li><p><strong>First Dive</strong>:<ul><li>Functional style; a progressive example, from imperative to
-functional style<li>Types; types and a standard binary tree example<li>Infinite Structure; manipulate an infinite binary tree!</ul><li><p><strong>Dive into the impure</strong>:<ul><li>Deal with IO; A minimal example<li>IO trick explained; the hidden detail I lacked to understand IO<li>Monads; incredible how we can generalize</ul><li><p><strong>Start swimming</strong>: Start a new project.</ul><h2 id=install>Install</h2><figure><img src=./Haskell-logo.png.webp alt="Haskell logo"><figcaption aria-hidden=true>Haskell logo</figcaption></figure><p>If you are not using either Linux nor macOS, you should look here: <a href=https://www.haskell.html/downloads/>https://www.haskell.org/downloads/</a>.
-Otherwise, you can follow my advice to use nix:<ol><li><p>Install <a href=https://nixos.html/nix>nix</a> (The version I
+functional style<li>Types; types and a standard binary tree example<li>Infinite Structure; manipulate an infinite binary tree!</ul><li><p><strong>Dive into the impure</strong>:<ul><li>Deal with IO; A minimal example<li>IO trick explained; the hidden detail I lacked to understand IO<li>Monads; incredible how we can generalize</ul><li><p><strong>Start swimming</strong>: Start a new project.</ul><h2 id=install>Install</h2><figure><img src=./Haskell-logo.png.webp alt="Haskell logo"><figcaption aria-hidden=true>Haskell logo</figcaption></figure><p>If you are not using either Linux nor macOS, you should look here: <a href=https://www.haskell.org/downloads/>https://www.haskell.org/downloads/</a>.
+Otherwise, you can follow my advice to use nix:<ol><li><p>Install <a href=https://nixos.org/nix>nix</a> (The version I
 used while writting this article was nix (Nix) 2.3.1, future 2.X.X
 versions should work with the examples in this article)<li><p>create a new empty directory <code class=verbatim>hsenv</code>
 somewhere<li><p>Put the following <code class=verbatim>shell.nix</code> file
@@ -140,13 +140,13 @@ Prelude&gt; import Protolude
 Prelude Protolude&gt;
 </code></pre></ol><p>Congratulations you should be ready to start now.<div class=notes><ul><li>There are multiple ways to install Haskell and I don't think there
 is a full consensus between developer about what is the best method. If
-you whish to use another method take a look at <a href=http://haskell.html>haskell.org</a>.<li>This install method is only suitable for using as a playground and I
+you whish to use another method take a look at <a href=http://haskell.org>haskell.org</a>.<li>This install method is only suitable for using as a playground and I
 think perfectly adapted to run code example from this article. I do not
 recommend it for serious development.<li><code class=verbatim>nix</code> is a generic package manager and
 goes beyond Haskell. One great good point is that it does not only
 manage Haskell packages but really a lot of other kind of packages. This
 can be helpful if you need to depends on a Haskell package that itself
-depends on a system library, for example <code class=verbatim>ncurses</code>.<li>I use <a href=http://nixos.html/nix><code class=verbatim>nix</code></a> for other projects unrelated to Haskell.
+depends on a system library, for example <code class=verbatim>ncurses</code>.<li>I use <a href=http://nixos.org/nix><code class=verbatim>nix</code></a> for other projects unrelated to Haskell.
 For example, I use the nix-shell bang pattern for shell script for which
 I can assume the executable I want are present.</ul></div><div class=notes><p><strong>BONUS</strong>: use <a href=https://direnv.net><code class=verbatim>direnv</code></a><pre><code>~ cd hsenv
 ~ echo &quot;use nix&quot; &gt; .envrc
@@ -861,8 +861,8 @@ be the higher order type <code class=verbatim>Tree</code> and <code class=verbat
 take a Tree of lists and will return a list of trees. For it to work
 <code class=verbatim>[]</code> need to be part of the <code class=verbatim>Applicative</code> class type (which is the case). I
 will not enter into the details about what <code class=verbatim>Applicative</code> type class is here. But just with
-this, you should start to have a better intuition about what <code class=verbatim>sequenceA</code> is about.<h2 id=infinite-structures>Infinite Structures</h2><figure><img src=./escher_infinite_lizards.jpg.webp alt=Escher><figcaption aria-hidden=true>Escher</figcaption></figure><p>It is often said that Haskell is <em>lazy</em>.<p>In fact, if you are a bit pedantic, you should say that <a href=http://www.haskell.html/haskellwiki/Lazy_vs._non-strict>Haskell
-is <em>non-strict</em></a>. Laziness is just a common implementation for
+this, you should start to have a better intuition about what <code class=verbatim>sequenceA</code> is about.<h2 id=infinite-structures>Infinite Structures</h2><figure><img src=./escher_infinite_lizards.jpg.webp alt=Escher><figcaption aria-hidden=true>Escher</figcaption></figure><p>It is often said that Haskell is <em>lazy</em>.<p>In fact, if you are a bit pedantic, you should say that <a href=http://www.haskell.org/haskellwiki/Lazy_vs._non-strict>Haskell is
+<em>non-strict</em></a>. Laziness is just a common implementation for
 non-strict languages.<p>Then what does "not-strict" mean? From the Haskell wiki:<blockquote><p>Reduction (the mathematical term for evaluation) proceeds from the
 outside in.<p>so if you have <code class=verbatim>(a+(b*c))</code> then you first
 reduce <code class=verbatim>+</code> first, then you reduce the inner
@@ -1334,7 +1334,7 @@ be an instance of this type class, you must provide the functions
 <code>(>>=)</code> and <code>return</code>. The function
 <code>(>>)</code> is derived from <code>(>>=)</code>. Here
 is how the type class <code class=verbatim>Monad</code> is declared
-(from <a href=https://hackage.haskell.html/package/base-4.12.0.0/docs/src/GHC.Base.html#Monad>hackage
+(from <a href=https://hackage.haskell.org/package/base-4.12.0.0/docs/src/GHC.Base.html#Monad>hackage
 GHC.Base</a>):<div class=sourceCode id=cb181><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id=cb181-1><a href=#cb181-1 aria-hidden=true tabindex=-1></a><span class=kw>class</span> <span class=dt>Applicative</span> m <span class=ot>=&gt;</span> <span class=dt>Monad</span> m <span class=kw>where</span></span>
 <span id=cb181-2><a href=#cb181-2 aria-hidden=true tabindex=-1></a>    <span class=co>-- | Sequentially compose two actions, passing any value produced</span></span>
 <span id=cb181-3><a href=#cb181-3 aria-hidden=true tabindex=-1></a>    <span class=co>-- by the first as an argument to the second.</span></span>
@@ -1817,7 +1817,7 @@ number for non visible changes. I will not argue much, but mainly,
 semantic versionning and Haskell versionning are just a "right to break
 things to your users".<p>I don't want to talk a lot more about this, but, it would be nice if
 more people would watch this talk<a href=#fn8 class=footnote-ref id=fnref8 role=doc-noteref><sup>8</sup></a> related to
-versionning.<p>If you want to know more about Haskell versionning convention: <a href=https://pvp.haskell.html>https://pvp.haskell.org</a></div><p>Add the <code class=verbatim>protolude</code> lib in the library
+versionning.<p>If you want to know more about Haskell versionning convention: <a href=https://pvp.haskell.org>https://pvp.haskell.org</a></div><p>Add the <code class=verbatim>protolude</code> lib in the library
 build-depends like this:<pre class=cabal><code>...
 library
   ...
@@ -1935,7 +1935,7 @@ All the <code class=verbatim>#</code> has to do with optimisation. I
 swapped the fields in my example. But this is the basic idea. As of
 today, the definition of <code class=verbatim>IO</code> is no more
 visible into <code class=verbatim>base</code>. We have the following
-explanation in <a href=http://hackage.haskell.html/package/base-4.12.0.0/docs/src/GHC.IO.html><code class=verbatim>GHC.IO.hs</code></a>:<blockquote><pre><code>The IO Monad is just an instance of the ST monad, where the state is
+explanation in <a href=http://hackage.haskell.org/package/base-4.12.0.0/docs/src/GHC.IO.html><code class=verbatim>GHC.IO.hs</code></a>:<blockquote><pre><code>The IO Monad is just an instance of the ST monad, where the state is
 the real world.  We use the exception mechanism (in GHC.Exception) to
 implement IO exceptions.
 
