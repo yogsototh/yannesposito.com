@@ -15,7 +15,7 @@
   <description><![CDATA[her.esy.fun articles, mostly random personal thoughts]]></description>
   <language>en</language>
   <pubDate>Thu, 25 Jul 2024 00:00:00 +0200</pubDate>
-  <lastBuildDate>Sat, 17 Aug 2024 00:00:00 +0200</lastBuildDate>
+  <lastBuildDate>Mon, 26 Aug 2024 00:00:00 +0200</lastBuildDate>
   <generator>mkrss.sh</generator>
   <webMaster>yann@esposito.host (Yann Esposito)</webMaster>
   <image>
@@ -370,6 +370,45 @@ I wrote it a long time ago, and I think I just found a potential bug related to 
 I should probably retrieve all headers returned by the response, and add these
 header name to the ~Access-Control-Allow-Headers~. But this list of allowed
 headers will work most of the time.
+
+*Edit*: I fixed this lib, here is the new code:
+
+```clojure
+(defn- host-from-req
+  [request]
+  (str (-> request :scheme name)
+       "://"
+       (get-in request [:headers "host"])))
+
+(defn- get-header
+  [request header-name]
+  (let [rawref (get-in request [:headers header-name])]
+    (if rawref
+        (string/replace rawref #"(http://[^/]*).*$" "$1")
+        nil)))
+
+(defn wrap-open-cors
+  "Open your Origin Policy to Everybody, no limit"
+  [handler]
+  (fn [request]
+    (let [origin  (get-header request "origin")
+          referer (get-header request "referer")
+          host    (host-from-req request)
+          origins (if origin
+                    origin
+                    (if referer
+                      referer
+                      host))
+          {:keys [headers] :as original-response} (handler request)
+          resp-cors-headers
+          {"Access-Control-Allow-Origin" origins
+           "Access-Control-Allow-Headers" (string/join "," (keys headers))
+           "Access-Control-Allow-Methods" "HEAD, GET, PATCH, POST, CONNECT, PUT, DELETE, OPTIONS, TRACE"
+           "Access-Control-Allow-Credentials" "true"
+           "Access-Control-Expose-Headers" (string/join "," (keys headers))}]
+      (-> original-response
+          (update-in [:headers] #(into % resp-cors-headers))))))
+```
 
 
 # Bonus frontend code to check the availability of a website
