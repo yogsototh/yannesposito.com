@@ -80,6 +80,8 @@ Here is the full script:
 # - metapost
 # - graphicsmagick
 
+set -e
+
 cmd=${0:t}
 showhelp() {
     echo "$cmd SRC [DEST]"
@@ -111,11 +113,31 @@ err() {
 }
 
 dst="$maindst"
+# i=0
+# while [[ -e $dst ]]; do
+#     dst="${maindst%.*}-$((++i)).png"
+# done
 
 tmpmp="${tmpdir}/tmp.mp"
 cat > "$tmpmp" <<EOF
 prologues:=3;
-outputtemplate:="%j-%c.eps";
+outputtemplate:="tmp-1.eps";
+% TEX macro is short enough to be copied
+string preverbatimtex_, postverbatimtex_;
+vardef TEXPRE text s =  preverbatimtex_ := s; enddef;
+vardef TEXPOST text s =  postverbatimtex_ := s; enddef;
+vardef TEX primary s =
+  if known preverbatimtex_:
+    write "verbatimtex "&preverbatimtex_&" etex" to "mptextmp.mp";
+  fi
+  write "btex "&s&" etex" to "mptextmp.mp";
+  if known postverbatimtex_:
+    write "verbatimtex "&postverbatimtex_&" etex" to "mptextmp.mp";
+  fi
+  write EOF to "mptextmp.mp";
+  scantokens "input mptextmp"
+enddef;
+beginfig(1);
 EOF
 if [[ "$src" = "-" ]]; then
     cat >> "$tmpmp"
@@ -123,6 +145,7 @@ else
     cat "$src" >> "$tmpmp"
 fi
 cat >> "$tmpmp" <<EOF
+endfig;
 end.
 EOF
 pushd "$tmpdir" || err "ERROR: pushd \"${tmpdir}\""
@@ -216,20 +239,18 @@ And that's it. That was a lot easier than I expected. And now, I can generate
 image like this:
 
 #+begin_src metapost :file triangle.png
-beginfig(1);
-  u := 0.2cm;
-  z0 = (0,0);
-  z1 = (sqrt(3)*cm,0);
-  z2 = (sqrt(3)*cm,1cm);
-  draw z0--z1--z2--cycle;
-  label.bot(btex $\sqrt{3}$ etex, 1/2[z0,z1]);
-  label.rt(btex 1 etex, 1/2[z1,z2]);
-  label.top(btex 2 etex, 1/2[z0,z2]);
-  z3 = z1 - (u,0);
-  z4 = z1 + (-u,u);
-  z5 = z1 + (0,u);
-  draw z3--z4--z5;
-endfig;
+u := 0.2cm;
+z0 = (0,0);
+z1 = (sqrt(3)*cm,0);
+z2 = (sqrt(3)*cm,1cm);
+draw z0--z1--z2--cycle;
+label.bot(btex $\sqrt{3}$ etex, 1/2[z0,z1]);
+label.rt(btex 1 etex, 1/2[z1,z2]);
+label.top(btex 2 etex, 1/2[z0,z2]);
+z3 = z1 - (u,0);
+z4 = z1 + (-u,u);
+z5 = z1 + (0,u);
+draw z3--z4--z5;
 #+end_src
 
 #+ATTR_ORG: :width 560
@@ -241,17 +262,24 @@ endfig;
 or this:
 
 #+begin_src metapost :file dragon.png
-beginfig(1);
-  path p;
-  p = origin -- dir 30;
-  numeric n;
-  for i=1 upto 12:
-    n := length p;
-    p := p rotated 45;
-    p := p & reverse p rotatedabout(point n of p, 90);
-  endfor
-  draw p scaled (384 / xpart (urcorner p - llcorner p)) withcolor (.2,.2,.7);
-endfig;
+numeric r, theta; r = sqrt 1/2; theta = 45;
+vardef dragon(expr a, b) =
+  if abs(a-b) > 8:
+    save p; pair p;
+    p = r[a, b] rotatedabout(a, theta);
+    dragon(a, p) & reverse dragon(b, p)
+  else:
+    a .. b
+  fi
+enddef;
+vardef rounded_corners expr p =
+  save r, n; numeric r, n; r = 1/4; n = length p;
+  subpath (0, 1-r) of p
+  for t=1 upto n-1:
+    .. subpath (t+r, t+1-r) of p
+  endfor .. subpath (n-r, n) of p
+enddef;
+draw rounded_corners dragon(origin,240 right) withcolor (.6,.2,.7);
 #+end_src
 
 #+ATTR_ORG: :width 560
