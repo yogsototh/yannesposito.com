@@ -14,8 +14,8 @@
   <link>https://her.esy.fun</link>
   <description><![CDATA[her.esy.fun articles, mostly random personal thoughts]]></description>
   <language>en</language>
-  <pubDate>Thu, 05 Sep 2024 00:00:00 +0200</pubDate>
-  <lastBuildDate>Tue, 15 Oct 2024 00:00:00 +0200</lastBuildDate>
+  <pubDate>Thu, 19 Dec 2024 00:00:00 +0100</pubDate>
+  <lastBuildDate>Thu, 19 Dec 2024 00:00:00 +0100</lastBuildDate>
   <generator>mkrss.sh</generator>
   <webMaster>yann@esposito.host (Yann Esposito)</webMaster>
   <image>
@@ -23,6 +23,201 @@
     <title>her.esy.fun</title>
     <link>https://her.esy.fun</link>
   </image>
+
+<item>
+<title>ob-metapost</title>
+<guid>https://her.esy.fun/posts/0028-ob-metapost/index.html</guid>
+<pubDate>Thu, 19 Dec 2024 00:00:00 +0100</pubDate>
+<category>emacs</category>
+<category>metapost</category>
+<description><![CDATA[
+<main id="content"><article><div class="notes"><p>When you search how to generate picture in org-mode on the Internet,
+the answer only focus on graphviz, ditaa and sometime plantuml, gnuplot
+or mermaid. Sometime they mention TikZ for LaTeX.</p><p>But, what about the great Metapost?</p><p>Metapost was a gem when I discovered it. This is a programming
+language made to generate images. And it is awesome.</p><p>This is how I quickly created an emacs package (not yet distributed)
+to use metapost in my org-mode documents.</p></div><h1 id="the-script">The script</h1><p>One of the main issue with metapost is that, like LaTeX, this
+generate a bunch of temporary files and cluter your current directory
+with them. There is also a notion that metapost is done to generate not
+a single, but multiple files.</p><p>For our usecase, we just want a program to generate a single
+image.</p><p>This is why I wrote a very simple <code>mp2png</code> script. It is
+close the one open-source <code>mp2png.sh</code> I could find in in <a href="https://github.com/foretspaisibles/bsdowl">bsdowl</a>.</p><p>In short, this script move a metapost single figure code into a
+temporary directory. We prepare enclose the figure description into a
+metapost template. We perform the compilation in that temporary
+directory.</p><p>If you remove all the ceremony this is simply:</p><div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate a temporary directory</span></span>
+<span id="cb1-2"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="va">tmpdir</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$(</span><span class="fu">mktemp</span> <span class="at">-d</span><span class="va">)</span><span class="st">&quot;</span></span>
+<span id="cb1-3"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Name the temporary metapost</span></span>
+<span id="cb1-4"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="va">tmpmp</span><span class="op">=</span><span class="st">&quot;</span><span class="va">${tmpdir}</span><span class="st">/tmp.mp&quot;</span></span>
+<span id="cb1-5"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Provide a prelude</span></span>
+<span id="cb1-6"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&gt;</span> <span class="st">&quot;</span><span class="va">$tmpmp</span><span class="st">&quot;</span> <span class="op">&lt;&lt;EOF</span></span>
+<span id="cb1-7"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="st">prologues:=3;</span></span>
+<span id="cb1-8"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="st">outputtemplate:=&quot;tmp-1.eps&quot;;</span></span>
+<span id="cb1-9"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
+<span id="cb1-10"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># copy the content of your metapost code</span></span>
+<span id="cb1-11"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="st">&quot;</span><span class="va">$src</span><span class="st">&quot;</span> <span class="op">&gt;&gt;</span> <span class="st">&quot;</span><span class="va">$tmpmp</span><span class="st">&quot;</span></span>
+<span id="cb1-12"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># close the metapost file</span></span>
+<span id="cb1-13"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&gt;&gt;</span> <span class="st">&quot;</span><span class="va">$tmpmp</span><span class="st">&quot;</span> <span class="op">&lt;&lt;EOF</span></span>
+<span id="cb1-14"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="st">end.</span></span>
+<span id="cb1-15"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
+<span id="cb1-16"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Move to the temporary directory</span></span>
+<span id="cb1-17"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="bu">pushd</span> <span class="st">&quot;</span><span class="va">$tmpdir</span><span class="st">&quot;</span> <span class="kw">||</span> <span class="ex">err</span> <span class="st">&quot;ERROR: pushd </span><span class="dt">\&quot;</span><span class="va">${tmpdir}</span><span class="dt">\&quot;</span><span class="st">&quot;</span></span>
+<span id="cb1-18"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Compile the metapost file</span></span>
+<span id="cb1-19"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ex">mpost</span> <span class="st">&quot;tmp.mp&quot;</span></span>
+<span id="cb1-20"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the EPS file to PNG</span></span>
+<span id="cb1-21"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="ex">gm</span> convert <span class="at">-density</span> <span class="st">&quot;</span><span class="va">$density</span><span class="st">&quot;</span> <span class="st">&quot;tmp-1.eps&quot;</span> <span class="st">&quot;tmp-1.png&quot;</span></span>
+<span id="cb1-22"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Return to the original directory</span></span>
+<span id="cb1-23"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="bu">popd</span> <span class="kw">||</span> <span class="ex">err</span> <span class="st">&quot;ERROR: popd (tmpdir= </span><span class="dt">\&quot;</span><span class="va">${tmpdir}</span><span class="dt">\&quot;</span><span class="st">)&quot;</span></span></code></pre></div><p>With all the details this become a bit more complex because I would
+like to be able to pass the code from stdin as this will ease to write
+the org babel code. Here is the full script:</p><div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env zsh</span></span>
+<span id="cb2-2"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># dependencies:</span></span>
+<span id="cb2-4"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># - metapost</span></span>
+<span id="cb2-5"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># - graphicsmagick</span></span>
+<span id="cb2-6"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="va">cmd</span><span class="op">=</span><span class="va">${0</span><span class="op">:</span>t<span class="va">}</span></span>
+<span id="cb2-8"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">showhelp()</span> <span class="kw">{</span></span>
+<span id="cb2-9"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$cmd</span><span class="st"> SRC [DEST]&quot;</span></span>
+<span id="cb2-10"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb2-11"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">&quot;SRC could be any file if - is provided read from stdin&quot;</span></span>
+<span id="cb2-12"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">&quot;    if - is provided the default file name will be result.png&quot;</span></span>
+<span id="cb2-13"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">&quot;DEST could be any file if - is provided read from stdin&quot;</span></span>
+<span id="cb2-14"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb2-15"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">((</span> <span class="va">$#</span> <span class="op">==</span> <span class="dv">0</span> <span class="kw">));</span> <span class="cf">then</span></span>
+<span id="cb2-17"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="ex">showhelp</span></span>
+<span id="cb2-18"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb2-19"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="va">src</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span></span>
+<span id="cb2-21"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="va">density</span><span class="op">=</span>1200</span>
+<span id="cb2-22"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="va">tmpdir</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$(</span><span class="fu">mktemp</span> <span class="at">-d</span><span class="va">)</span><span class="st">&quot;</span></span>
+<span id="cb2-23"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">((</span> <span class="va">$#</span> <span class="op">&gt;</span> <span class="dv">1</span> <span class="kw">));</span> <span class="cf">then</span></span>
+<span id="cb2-24"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="va">maindst</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$2</span><span class="st">&quot;</span></span>
+<span id="cb2-25"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="cf">elif</span> <span class="kw">[[</span> <span class="st">&quot;</span><span class="va">$src</span><span class="st">&quot;</span> <span class="ot">=</span> <span class="st">&quot;-&quot;</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb2-26"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="va">maindst</span><span class="op">=</span><span class="st">&quot;result.png&quot;</span></span>
+<span id="cb2-27"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb2-28"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="va">maindst</span><span class="op">=</span><span class="st">&quot;</span><span class="va">${src</span><span class="op">%</span>.<span class="pp">*</span><span class="va">}</span><span class="st">.png&quot;</span></span>
+<span id="cb2-29"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb2-30"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="fu">err()</span> <span class="kw">{</span></span>
+<span id="cb2-32"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-32" aria-hidden="true" tabindex="-1"></a>    <span class="bu">local</span> <span class="va">msg</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span></span>
+<span id="cb2-33"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-33" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$msg</span><span class="st">&quot;</span> <span class="op">&gt;&amp;</span><span class="dv">2</span></span>
+<span id="cb2-34"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-34" aria-hidden="true" tabindex="-1"></a>    <span class="bu">exit</span> 1</span>
+<span id="cb2-35"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb2-36"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="va">dst</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$maindst</span><span class="st">&quot;</span></span>
+<span id="cb2-38"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-39"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="va">tmpmp</span><span class="op">=</span><span class="st">&quot;</span><span class="va">${tmpdir}</span><span class="st">/tmp.mp&quot;</span></span>
+<span id="cb2-40"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&gt;</span> <span class="st">&quot;</span><span class="va">$tmpmp</span><span class="st">&quot;</span> <span class="op">&lt;&lt;EOF</span></span>
+<span id="cb2-41"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="st">prologues:=3;</span></span>
+<span id="cb2-42"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="st">outputtemplate:=&quot;%j-%c.eps&quot;;</span></span>
+<span id="cb2-43"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="st">beginfig(1);</span></span>
+<span id="cb2-44"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
+<span id="cb2-45"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">[[</span> <span class="st">&quot;</span><span class="va">$src</span><span class="st">&quot;</span> <span class="ot">=</span> <span class="st">&quot;-&quot;</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb2-46"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span> <span class="op">&gt;&gt;</span> <span class="st">&quot;</span><span class="va">$tmpmp</span><span class="st">&quot;</span></span>
+<span id="cb2-47"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb2-48"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-48" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span> <span class="st">&quot;</span><span class="va">$src</span><span class="st">&quot;</span> <span class="op">&gt;&gt;</span> <span class="st">&quot;</span><span class="va">$tmpmp</span><span class="st">&quot;</span></span>
+<span id="cb2-49"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb2-50"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&gt;&gt;</span> <span class="st">&quot;</span><span class="va">$tmpmp</span><span class="st">&quot;</span> <span class="op">&lt;&lt;EOF</span></span>
+<span id="cb2-51"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="st">endfig;</span></span>
+<span id="cb2-52"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-52" aria-hidden="true" tabindex="-1"></a><span class="st">end.</span></span>
+<span id="cb2-53"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
+<span id="cb2-54"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="bu">pushd</span> <span class="st">&quot;</span><span class="va">$tmpdir</span><span class="st">&quot;</span> <span class="kw">||</span> <span class="ex">err</span> <span class="st">&quot;ERROR: pushd </span><span class="dt">\&quot;</span><span class="va">${tmpdir}</span><span class="dt">\&quot;</span><span class="st">&quot;</span></span>
+<span id="cb2-55"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-55" aria-hidden="true" tabindex="-1"></a><span class="ex">mpost</span> <span class="st">&quot;tmp.mp&quot;</span></span>
+<span id="cb2-56"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="ex">gm</span> convert <span class="at">-density</span> <span class="st">&quot;</span><span class="va">$density</span><span class="st">&quot;</span> <span class="st">&quot;tmp-1.eps&quot;</span> <span class="st">&quot;tmp-1.png&quot;</span></span>
+<span id="cb2-57"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-57" aria-hidden="true" tabindex="-1"></a><span class="bu">popd</span> <span class="kw">||</span> <span class="ex">err</span> <span class="st">&quot;ERROR: popd (tmpdir= </span><span class="dt">\&quot;</span><span class="va">${tmpdir}</span><span class="dt">\&quot;</span><span class="st">)&quot;</span></span>
+<span id="cb2-58"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-58" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="st">&quot;</span><span class="va">${tmpdir}</span><span class="st">/tmp-1.png&quot;</span> <span class="st">&quot;</span><span class="va">$dst</span><span class="st">&quot;</span></span>
+<span id="cb2-59"><a href="https://her.esy.fun/posts/0028-ob-metapost/index.html#cb2-59" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;File: </span><span class="va">$dst</span><span class="st">&quot;</span></span></code></pre></div><p>And now for the code in emacs, inspired by <code>ob-ditaa</code>:</p><pre class="elisp"><code>;;; ob-metapost.el --- Babel Functions for metapost        -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024 Free Software Foundation, Inc.
+
+;; Author: Yann Esposito
+;; Keywords: literate programming, reproducible research
+;; Homepage: https://orgmode.org
+
+;; This file is part of GNU Emacs.
+
+;; GNU Emacs is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; GNU Emacs is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
+
+;;; Commentary:
+
+;; Org-Babel support for evaluating metapost source code.
+;;
+;; This differs from most standard languages in that
+;;
+;; 1) there is no such thing as a &quot;session&quot; in metapost
+;;
+;; 2) we are generally only going to return results of type &quot;file&quot;
+;;
+;; 3) we are adding the &quot;file&quot; and &quot;cmdline&quot; header arguments
+;;
+;; 4) there are no variables (at least for now)
+
+;;; Code:
+(require &#39;ob)
+(require &#39;org-compat)
+
+(defvar org-babel-default-header-args:metapost
+  &#39;((:results . &quot;file&quot;)
+    (:exports . &quot;results&quot;))
+  &quot;Default arguments for evaluating a metapost source block.&quot;)
+
+(defcustom org-babel-metapost-cmd &quot;mp2png&quot;
+  &quot;Metapost to png command&quot;
+  :group &#39;org-babel
+  :type &#39;string)
+
+(defun org-babel-execute:metapost (body params)
+  &quot;Execute a block of Metapost code with org-babel.
+This function is called by `org-babel-execute-src-block&#39;.&quot;
+  (let* ((out-file (or (cdr (assq :file params))
+               (error &quot;Metapost code block requires :file header argument&quot;)))
+     (cmdline (cdr (assq :cmdline params)))
+     (in-file (org-babel-temp-file &quot;metapost-&quot;))
+     (cmd (concat org-babel-metapost-cmd
+                      &quot; &quot; cmdline
+              &quot; &quot; (org-babel-process-file-name in-file)
+              &quot; &quot; (org-babel-process-file-name out-file))))
+    (with-temp-file in-file (insert body))
+    (message cmd)
+    (shell-command cmd)
+    nil)) ;; signal that output has already been written to file
+
+(defun org-babel-prep-session:metapost (_session _params)
+  &quot;Return an error because metapost does not support sessions.&quot;
+  (error &quot;Metapost does not support sessions&quot;))
+
+(provide &#39;ob-metapost)
+
+;;; ob-metapost.el ends here
+</code></pre><p>And that's it. That was a lot easier than I expected. And now, I can
+generate image like this:</p><pre class="metapost" data-file="dragon.png"><code>beginfig(1);
+  path p;
+  p = origin -- dir 30;
+  numeric n;
+  for i=1 upto 12:
+    n := length p;
+    p := p rotated 45;
+    p := p &amp; reverse p rotatedabout(point n of p, 90);
+  endfor
+  draw p scaled (384 / xpart (urcorner p - llcorner p)) withcolor (.2,.2,.7);
+endfig;
+</code></pre><figure><img src="https://her.esy.fun/posts/0028-ob-metapost/dragon.png.webp" title="dragon" alt="Dragon fractal"></img><figcaption>Dragon fractal</figcaption></figure><p>And, that's it for today. I hope it will help people to find the
+resources to write org babel integrations. But also perhaps it will make
+you discover Metapost. As this is an incredible language to generate
+very high quality figures.</p></article></main>
+]]></description>
+</item>
+
 
 <item>
 <title>How I became rich with AI and how you can join me!</title>
@@ -1816,35 +2011,6 @@ using my work. Save this file into <code class="verbatim">~/.doom.d/themes/doom-
 <span id="cb3-203"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-203" aria-hidden="true" tabindex="-1"></a><span class="co">;;; doom-plain-theme.el ends here</span></span></code></pre></div><p>You will probably need more work to achieve the colors you expect.
 For that, using <code>SPC-u C-x =</code> will probably be useful. It
 will show the font face under the cursor.</p><p>Best of luck.</p><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr></hr><ol><li id="fn1"><p><a href="https://www.nerdfonts.com">https://www.nerdfonts.com</a><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li><li id="fn2"><p><a href="https://www.nerdfonts.com">https://www.nerdfonts.com</a><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li><li id="fn3"><p><a href="https://github.com/hlissner/doom-emacs">https://github.com/hlissner/doom-emacs</a><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li><li id="fn4"><p><a href="https://github.com/rougier/nano-emacs">https://github.com/rougier/nano-emacs</a><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li></ol></section></article></main>
-]]></description>
-</item>
-
-
-<item>
-<title>Utopia (2013)</title>
-<guid>https://her.esy.fun/posts/0019-utopia-tv-show/index.html</guid>
-<pubDate>Tue, 01 Jun 2021 00:00:00 +0200</pubDate>
-<category>tv-show</category>
-<description><![CDATA[
-<main id="content"><article><figure><img src="https://her.esy.fun/posts/0019-utopia-tv-show/utopia-s01.jpg.webp" alt="Utopia"></img><figcaption aria-hidden="true">Utopia</figcaption></figure><p>I wanted to write a few articles about great shows lot of people
-around me do not know about. <a href="https://www.themoviedb.org/tv/46511-utopia">Utopia (2013)</a> is
-one of these TV Shows that deserve more attention.</p><p>The <strong>filmography</strong> is quite original. I have never seen
-another film/TV show with a similar atmosphere. The usage of bright
-colors is magistral. Flashy yellow, green, red.</p><p>The <strong>soundtrack</strong> is also pretty surprising original
-and enjoyable.</p><p>The <strong>acting</strong> is really great. Actors are doing a great
-job and are quite relatable. These are not the (super)heroes you are
-used to. We are far away from shows where every girl is a bimbo and
-every guy is a Chippendale.</p><p>The <strong>scenario</strong>, in regard to the recent events related
-to COVID19 is just perfect. I do not want to reveal too much. But let's
-just say the current real events are close to the events predicted in
-this show.</p><p>The <strong>Surrealistic Humor</strong> atmosphere make the viewing
-experience quite exceptionnal. There is a mix between nonchalance and
-extreme violence. It really feels surrealist. In this show some people
-act with extreme violence as if there is no choice.</p><p>As a conclusion, if you are looking for a very innovative TV show
-then search no further this one is a great original choice. If you are
-still unsure, just watch the opening scene, it is quite incredible.</p><p>ps: Also try to get the original content. Amazon Prime apparently cut
-some very important scene and also changed the ratio which hurt the very
-good image work.</p></article></main>
 ]]></description>
 </item>
 

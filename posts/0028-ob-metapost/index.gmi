@@ -1,0 +1,250 @@
+# ob-metapost
+description:  Metapost for generating images in Org Mode
+keywords:  emacs metapost
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2024-12-19 Thu]
+
+______
+When you search how to generate picture in org-mode on the Internet,
+the answer only focus on graphviz, ditaa and sometime plantuml, gnuplot or mermaid.
+Sometime they mention TikZ for LaTeX.
+
+But, what about the great Metapost?
+
+Metapost was a gem when I discovered it.
+This is a programming language made to generate images.
+And it is awesome.
+
+This is how I quickly created an emacs package (not yet distributed)
+to use metapost in my org-mode documents.
+______
+# The script
+
+One of the main issue with metapost is that, like LaTeX, this generate a bunch
+of temporary files and cluter your current directory with them.
+There is also a notion that metapost is done to generate not a single, but
+multiple files.
+
+For our usecase, we just want a program to generate a single image.
+
+This is why I wrote a very simple ~mp2png~ script. It is close the one open-source
+~mp2png.sh~ I could find in in
+
+=> https://github.com/foretspaisibles/bsdowl bsdowl
+
+In short, this script move a metapost single figure code into a temporary directory.
+We prepare enclose the figure description into a metapost template.
+We perform the compilation in that temporary directory.
+
+If you remove all the ceremony this is simply:
+
+```bash
+# Generate a temporary directory
+tmpdir="$(mktemp -d)"
+# Name the temporary metapost
+tmpmp="${tmpdir}/tmp.mp"
+# Provide a prelude
+cat > "$tmpmp" <<EOF
+prologues:=3;
+outputtemplate:="tmp-1.eps";
+EOF
+# copy the content of your metapost code
+cat "$src" >> "$tmpmp"
+# close the metapost file
+cat >> "$tmpmp" <<EOF
+end.
+EOF
+# Move to the temporary directory
+pushd "$tmpdir" || err "ERROR: pushd \"${tmpdir}\""
+# Compile the metapost file
+mpost "tmp.mp"
+# Convert the EPS file to PNG
+gm convert -density "$density" "tmp-1.eps" "tmp-1.png"
+# Return to the original directory
+popd || err "ERROR: popd (tmpdir= \"${tmpdir}\")"
+```
+
+With all the details this become a bit more complex because I would like to be
+able to pass the code from stdin as this will ease to write the org babel code.
+Here is the full script:
+
+```bash
+#!/usr/bin/env zsh
+
+# dependencies:
+# - metapost
+# - graphicsmagick
+
+cmd=${0:t}
+showhelp() {
+    echo "$cmd SRC [DEST]"
+    echo ""
+    echo "SRC could be any file if - is provided read from stdin"
+    echo "    if - is provided the default file name will be result.png"
+    echo "DEST could be any file if - is provided read from stdin"
+}
+
+if (( $# == 0 )); then
+    showhelp
+fi
+
+src="$1"
+density=1200
+tmpdir="$(mktemp -d)"
+if (( $# > 1 )); then
+    maindst="$2"
+elif =>  "$src" = "-" ; then
+    maindst="result.png"
+else
+    maindst="${src%.*}.png"
+fi
+
+err() {
+    local msg="$1"
+    echo "$msg" >&2
+    exit 1
+}
+
+dst="$maindst"
+
+tmpmp="${tmpdir}/tmp.mp"
+cat > "$tmpmp" <<EOF
+prologues:=3;
+outputtemplate:="%j-%c.eps";
+beginfig(1);
+EOF
+if =>  "$src" = "-" ; then
+    cat >> "$tmpmp"
+else
+    cat "$src" >> "$tmpmp"
+fi
+cat >> "$tmpmp" <<EOF
+endfig;
+end.
+EOF
+pushd "$tmpdir" || err "ERROR: pushd \"${tmpdir}\""
+mpost "tmp.mp"
+gm convert -density "$density" "tmp-1.eps" "tmp-1.png"
+popd || err "ERROR: popd (tmpdir= \"${tmpdir}\")"
+cp "${tmpdir}/tmp-1.png" "$dst"
+echo "File: $dst"
+```
+
+And now for the code in emacs, inspired by ~ob-ditaa~:
+
+```elisp
+;;; ob-metapost.el --- Babel Functions for metapost        -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024 Free Software Foundation, Inc.
+
+;; Author: Yann Esposito
+;; Keywords: literate programming, reproducible research
+;; Homepage: https://orgmode.org
+
+;; This file is part of GNU Emacs.
+
+;; GNU Emacs is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; GNU Emacs is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Org-Babel support for evaluating metapost source code.
+;;
+;; This differs from most standard languages in that
+;;
+;; 1) there is no such thing as a "session" in metapost
+;;
+;; 2) we are generally only going to return results of type "file"
+;;
+;; 3) we are adding the "file" and "cmdline" header arguments
+;;
+;; 4) there are no variables (at least for now)
+
+;;; Code:
+(require 'ob)
+(require 'org-compat)
+
+(defvar org-babel-default-header-args:metapost
+  '((:results . "file")
+    (:exports . "results"))
+  "Default arguments for evaluating a metapost source block.")
+
+(defcustom org-babel-metapost-cmd "mp2png"
+  "Metapost to png command"
+  :group 'org-babel
+  :type 'string)
+
+(defun org-babel-execute:metapost (body params)
+  "Execute a block of Metapost code with org-babel.
+This function is called by `org-babel-execute-src-block'."
+  (let* ((out-file (or (cdr (assq :file params))
+		       (error "Metapost code block requires :file header argument")))
+	 (cmdline (cdr (assq :cmdline params)))
+	 (in-file (org-babel-temp-file "metapost-"))
+	 (cmd (concat org-babel-metapost-cmd
+                      " " cmdline
+		      " " (org-babel-process-file-name in-file)
+		      " " (org-babel-process-file-name out-file))))
+    (with-temp-file in-file (insert body))
+    (message cmd)
+    (shell-command cmd)
+    nil)) ;; signal that output has already been written to file
+
+(defun org-babel-prep-session:metapost (_session _params)
+  "Return an error because metapost does not support sessions."
+  (error "Metapost does not support sessions"))
+
+(provide 'ob-metapost)
+
+;;; ob-metapost.el ends here
+```
+
+And that's it. That was a lot easier than I expected. And now, I can generate
+image like this:
+
+```metapost :file dragon.png
+beginfig(1);
+  path p;
+  p = origin -- dir 30;
+  numeric n;
+  for i=1 upto 12:
+    n := length p;
+    p := p rotated 45;
+    p := p & reverse p rotatedabout(point n of p, 90);
+  endfor
+  draw p scaled (384 / xpart (urcorner p - llcorner p)) withcolor (.2,.2,.7);
+endfig;
+```
+
+attr_org:  :width 560
+caption:  Dragon fractal
+attr_html:  :alt Dragon fractal
+name:  fig:dragon
+=> dragon.png
+
+And, that's it for today.
+I hope it will help people to find the resources to write org babel
+integrations.
+But also perhaps it will make you discover Metapost. As this is an incredible
+language to generate very high quality figures.
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://git.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes
