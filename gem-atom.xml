@@ -245,6 +245,31 @@ This function is called by `org-babel-execute-src-block'."
 And that's it. That was a lot easier than I expected. And now, I can generate
 image like this:
 
+```metapost :file triangle.png
+beginfig(1);
+  u := 0.2cm;
+  z0 = (0,0);
+  z1 = (sqrt(3)*cm,0);
+  z2 = (sqrt(3)*cm,1cm);
+  draw z0--z1--z2--cycle;
+  label.bot(btex $\sqrt{3}$ etex, 1/2[z0,z1]);
+  label.rt(btex 1 etex, 1/2[z1,z2]);
+  label.top(btex 2 etex, 1/2[z0,z2]);
+  z3 = z1 - (u,0);
+  z4 = z1 + (-u,u);
+  z5 = z1 + (0,u);
+  draw z3--z4--z5;
+endfig;
+```
+
+attr_org:  :width 560
+caption:  Triangle with LaTeX fonts
+attr_html:  :alt Triangle with LaTeX fonts
+name:  fig:triangle
+=> triangle.png
+
+or this:
+
 ```metapost :file dragon.png
 beginfig(1);
   path p;

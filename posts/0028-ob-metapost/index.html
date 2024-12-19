@@ -167,7 +167,21 @@ This function is called by `org-babel-execute-src-block&#39;.&quot;
 
 ;;; ob-metapost.el ends here
 </code></pre><p>And that's it. That was a lot easier than I expected. And now, I can
-generate image like this:<pre class=metapost data-file=dragon.png><code>beginfig(1);
+generate image like this:<pre class=metapost data-file=triangle.png><code>beginfig(1);
+  u := 0.2cm;
+  z0 = (0,0);
+  z1 = (sqrt(3)*cm,0);
+  z2 = (sqrt(3)*cm,1cm);
+  draw z0--z1--z2--cycle;
+  label.bot(btex $\sqrt{3}$ etex, 1/2[z0,z1]);
+  label.rt(btex 1 etex, 1/2[z1,z2]);
+  label.top(btex 2 etex, 1/2[z0,z2]);
+  z3 = z1 - (u,0);
+  z4 = z1 + (-u,u);
+  z5 = z1 + (0,u);
+  draw z3--z4--z5;
+endfig;
+</code></pre><figure><img src=triangle.png.webp title=triangle alt="Triangle with LaTeX fonts"><figcaption>Triangle with LaTeX fonts</figcaption></figure><p>or this:<pre class=metapost data-file=dragon.png><code>beginfig(1);
   path p;
   p = origin -- dir 30;
   numeric n;
