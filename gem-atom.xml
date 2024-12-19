@@ -146,7 +146,6 @@ tmpmp="${tmpdir}/tmp.mp"
 cat > "$tmpmp" <<EOF
 prologues:=3;
 outputtemplate:="%j-%c.eps";
-beginfig(1);
 EOF
 if =>  "$src" = "-" ; then
     cat >> "$tmpmp"
@@ -154,7 +153,6 @@ else
     cat "$src" >> "$tmpmp"
 fi
 cat >> "$tmpmp" <<EOF
-endfig;
 end.
 EOF
 pushd "$tmpdir" || err "ERROR: pushd \"${tmpdir}\""
