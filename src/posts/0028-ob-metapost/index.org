@@ -8,37 +8,31 @@
 #+options: auto-id:t
 #+startup: showeverything
 
-#+begin_notes
-When you search how to generate picture in org-mode on the Internet,
-the answer only focus on graphviz, ditaa and sometime plantuml, gnuplot or mermaid.
-Sometime they mention TikZ for LaTeX.
+When I searched how to generate pictures in org-mode on the Internet,
+Metapost is surprisingly missing.
 
-But, what about the great Metapost?
+If you never tried Metapost, I think you should really take a look at this gem.
 
-Metapost was a gem when I discovered it.
-This is a programming language made to generate images.
-And it is awesome.
+This article will simply provide an example how I could create an emacs package
+(not yet distributed) to use Metapost in my org-mode documents.
 
-This is how I quickly created an emacs package (not yet distributed)
-to use metapost in my org-mode documents.
-#+end_notes
 * The script
 :PROPERTIES:
 :CUSTOM_ID: the-script
 :END:
 
-One of the main issue with metapost is that, like LaTeX, this generate a bunch
-of temporary files and cluter your current directory with them.
-There is also a notion that metapost is done to generate not a single, but
+One of the main issue with Metapost is that, like $L^AT_EX$, it generates a bunch
+of temporary files and clutter your current directory with them.
+There is also a notion that Metapost is done to generate not a single, but
 multiple files.
 
-For our usecase, we just want a program to generate a single image.
+For our use case, we just want a program to generate a single image.
 
-This is why I wrote a very simple ~mp2png~ script. It is close the one open-source
-~mp2png.sh~ I could find in in [[https://github.com/foretspaisibles/bsdowl][bsdowl]].
+This is why I wrote a very simple ~mp2png~ script.
+It is inspired by ~mp2png.sh~ I could find in [[https://github.com/foretspaisibles/bsdowl][bsdowl]].
 
-In short, this script move a metapost single figure code into a temporary directory.
-We prepare enclose the figure description into a metapost template.
+In short, this script move a Metapost single figure code into a temporary directory.
+We prepare enclose the figure description into a Metapost template.
 We perform the compilation in that temporary directory.
 
 If you remove all the ceremony this is simply:
@@ -70,7 +64,7 @@ popd || err "ERROR: popd (tmpdir= \"${tmpdir}\")"
 #+end_src
 
 With all the details this become a bit more complex because I would like to be
-able to pass the code from stdin as this will ease to write the org babel code.
+able to pass the code from =stdin= as this will ease to write the org babel code.
 Here is the full script:
 
 #+begin_src bash
@@ -288,8 +282,5 @@ draw rounded_corners dragon(origin,240 right) withcolor (.6,.2,.7);
 #+NAME: fig:dragon
 [[file:dragon.png]]
 
-And, that's it for today.
 I hope it will help people to find the resources to write org babel
-integrations.
-But also perhaps it will make you discover Metapost. As this is an incredible
-language to generate very high quality figures.
+integrations as well as help people use Metapost more.
