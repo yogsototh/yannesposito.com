@@ -1,17 +1,18 @@
 <!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>ob-metapost</title><meta name=author content="Yann Esposito"><meta name=description content="Metapost for generating images in
 Org Mode"><meta name=keywords content="emacs metapost"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><meta name=theme-color media="(prefers-color-scheme: light)" content="#d84100"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#2E3440"><header><div id=logo><a href=/><div class=vis-hidden>Go to Home</div><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="#00" stroke-width="1" fill="#2e3440"/><circle class="i1" cx="32" cy="32" r="12" stroke="#800" stroke-width="1" fill="#c20"/><circle class="i0" cx="32" cy="32" r="5" stroke-width="1" stroke="#f60" fill="#fa0"/><ellipse class="e" cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="#fff"/></svg></a></div><div class=content><h1>ob-metapost</h1><div class=meta><span class=yyydate>[2024-12-19 Thu]</span> on
-<a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract>Metapost for generating images in Org Mode</div></div></header><main id=content><article><div class=notes><p>When you search how to generate picture in org-mode on the Internet,
-the answer only focus on graphviz, ditaa and sometime plantuml, gnuplot
-or mermaid. Sometime they mention TikZ for LaTeX.<p>But, what about the great Metapost?<p>Metapost was a gem when I discovered it. This is a programming
-language made to generate images. And it is awesome.<p>This is how I quickly created an emacs package (not yet distributed)
-to use metapost in my org-mode documents.</div><h1 id=the-script>The script</h1><p>One of the main issue with metapost is that, like LaTeX, this
-generate a bunch of temporary files and cluter your current directory
-with them. There is also a notion that metapost is done to generate not
-a single, but multiple files.<p>For our usecase, we just want a program to generate a single
+<a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract>Metapost for generating images in Org Mode</div></div></header><main id=content><article><p>When I searched how to generate pictures in org-mode on the Internet,
+Metapost is surprisingly missing.<p>If you never tried Metapost, I think you should really take a look at
+this gem.<p>This article will simply provide an example how I could create an
+emacs package (not yet distributed) to use Metapost in my org-mode
+documents.<h1 id=the-script>The script</h1><p>One of the main issue with Metapost is that, like
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>L</mi><mi>A</mi></msup><msub><mi>T</mi><mi>E</mi></msub><mi>X</mi></mrow><annotation encoding="application/x-tex">L^AT_EX</annotation></semantics></math>,
+it generates a bunch of temporary files and clutter your current
+directory with them. There is also a notion that Metapost is done to
+generate not a single, but multiple files.<p>For our use case, we just want a program to generate a single
 image.<p>This is why I wrote a very simple <code>mp2png</code> script. It is
-close the one open-source <code>mp2png.sh</code> I could find in in <a href=https://github.com/foretspaisibles/bsdowl>bsdowl</a>.<p>In short, this script move a metapost single figure code into a
+inspired by <code>mp2png.sh</code> I could find in <a href=https://github.com/foretspaisibles/bsdowl>bsdowl</a>.<p>In short, this script move a Metapost single figure code into a
 temporary directory. We prepare enclose the figure description into a
-metapost template. We perform the compilation in that temporary
+Metapost template. We perform the compilation in that temporary
 directory.<p>If you remove all the ceremony this is simply:<div class=sourceCode id=cb1><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb1-1><a href=#cb1-1 aria-hidden=true tabindex=-1></a><span class=co># Generate a temporary directory</span></span>
 <span id=cb1-2><a href=#cb1-2 aria-hidden=true tabindex=-1></a><span class=va>tmpdir</span><span class=op>=</span><span class=st>&quot;</span><span class=va>$(</span><span class=fu>mktemp</span> <span class=at>-d</span><span class=va>)</span><span class=st>&quot;</span></span>
 <span id=cb1-3><a href=#cb1-3 aria-hidden=true tabindex=-1></a><span class=co># Name the temporary metapost</span></span>
@@ -35,8 +36,8 @@ directory.<p>If you remove all the ceremony this is simply:<div class=sourceCode
 <span id=cb1-21><a href=#cb1-21 aria-hidden=true tabindex=-1></a><span class=ex>gm</span> convert <span class=at>-density</span> <span class=st>&quot;</span><span class=va>$density</span><span class=st>&quot;</span> <span class=st>&quot;tmp-1.eps&quot;</span> <span class=st>&quot;tmp-1.png&quot;</span></span>
 <span id=cb1-22><a href=#cb1-22 aria-hidden=true tabindex=-1></a><span class=co># Return to the original directory</span></span>
 <span id=cb1-23><a href=#cb1-23 aria-hidden=true tabindex=-1></a><span class=bu>popd</span> <span class=kw>||</span> <span class=ex>err</span> <span class=st>&quot;ERROR: popd (tmpdir= </span><span class=dt>\&quot;</span><span class=va>${tmpdir}</span><span class=dt>\&quot;</span><span class=st>)&quot;</span></span></code></pre></div><p>With all the details this become a bit more complex because I would
-like to be able to pass the code from stdin as this will ease to write
-the org babel code. Here is the full script:<div class=sourceCode id=cb2><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb2-1><a href=#cb2-1 aria-hidden=true tabindex=-1></a><span class=co>#!/usr/bin/env zsh</span></span>
+like to be able to pass the code from <code class=verbatim>stdin</code> as this will ease to write the org babel
+code. Here is the full script:<div class=sourceCode id=cb2><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb2-1><a href=#cb2-1 aria-hidden=true tabindex=-1></a><span class=co>#!/usr/bin/env zsh</span></span>
 <span id=cb2-2><a href=#cb2-2 aria-hidden=true tabindex=-1></a></span>
 <span id=cb2-3><a href=#cb2-3 aria-hidden=true tabindex=-1></a><span class=co># dependencies:</span></span>
 <span id=cb2-4><a href=#cb2-4 aria-hidden=true tabindex=-1></a><span class=co># - metapost</span></span>
@@ -220,10 +221,8 @@ vardef rounded_corners expr p =
   endfor .. subpath (n-r, n) of p
 enddef;
 draw rounded_corners dragon(origin,240 right) withcolor (.6,.2,.7);
-</code></pre><figure><img src=dragon.png.webp title=dragon alt="Dragon fractal"><figcaption>Dragon fractal</figcaption></figure><p>And, that's it for today. I hope it will help people to find the
-resources to write org babel integrations. But also perhaps it will make
-you discover Metapost. As this is an incredible language to generate
-very high quality figures.</article></main><footer id=postamble class=status><div class=content><nav role=navigation><a href=/index.html>Home</a> |
+</code></pre><figure><img src=dragon.png.webp title=dragon alt="Dragon fractal"><figcaption>Dragon fractal</figcaption></figure><p>I hope it will help people to find the resources to write org babel
+integrations as well as help people use Metapost more.</article></main><footer id=postamble class=status><div class=content><nav role=navigation><a href=/index.html>Home</a> |
 <a href=/slides.html>Slides</a> |
 <a href=/about-me.html>About</a> |
 <a href=#logo>↑↑↑</a></nav></div></footer>
