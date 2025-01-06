@@ -189,6 +189,16 @@ deploy: $(ALL)
 	engine/sync.sh # deploy to her.esy.fun
 	engine/ye-com-fastpublish.hs # deploy to yannesposito.com (via github pages)
 
+.PHONY: watch
+watch:
+	@echo "Watching"
+	engine/watch.sh
+
+.PHONY: serve
+serve:
+	@echo "Serve"
+	engine/serve.sh
+
 .PHONY: clean
 clean:
 	-[ -f $(ENV_VARS) ] && rm $(ENV_VARS)
