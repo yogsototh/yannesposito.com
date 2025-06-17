@@ -14,8 +14,8 @@
   <link>gemini://her.esy.fun</link>
   <description><![CDATA[her.esy.fun articles, mostly random personal thoughts]]></description>
   <language>en</language>
-  <pubDate>Thu, 19 Dec 2024 00:00:00 +0100</pubDate>
-  <lastBuildDate>Mon, 06 Jan 2025 00:00:00 +0100</lastBuildDate>
+  <pubDate>Tue, 17 Jun 2025 00:00:00 +0200</pubDate>
+  <lastBuildDate>Tue, 17 Jun 2025 00:00:00 +0200</lastBuildDate>
   <generator>mkrss.sh</generator>
   <webMaster>yann@esposito.host (Yann Esposito)</webMaster>
   <image>
@@ -23,6 +23,283 @@
     <title>her.esy.fun</title>
     <link>gemini://her.esy.fun</link>
   </image>
+
+<item>
+<title>AI Assistants in Doom Emacs 31 on macOS with Clojure MCP server</title>
+<guid>gemini://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.gmi</guid>
+<pubDate>Tue, 17 Jun 2025 00:00:00 +0200</pubDate>
+<category>ai</category>
+<category>llm</category>
+<category>emacs</category>
+<category>mcp</category>
+<category>clojure</category>
+<category>setup</category>
+<category>claude</category>
+<category>copilot</category>
+<category>gptel</category>
+<category>doom-emacs</category>
+<description><![CDATA[
+# AI Assistants in Doom Emacs 31 on macOS with Clojure MCP server
+description: 
+keywords:  ai llm emacs mcp clojure setup claude copilot gptel doom-emacs
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2025-06-17 Tue]
+
+______
+This article is about how to setup Emacs (doom-emacs in particlar) to work with
+most AI Assitants for Clojure projects using Clojure-MCP to provide the AI
+assistant the ability to run commands in the Clojure REPL.
+______
+
+# Introduction
+
+By the end of this article, you'll be able to give instructions to the AI
+Assistant and it will use the REPL of your specific project to execute them.
+For example, I asked the assistant to list all users in my project's database
+(running locally, of course).
+With my setup, the assistant could:
+
+* analyze the project (source and document files)
+* discover the service and functions that could perform the operation to list all users
+* ran the code in the repl, and got back all users
+* used this answer to group the users (by org which makes sense for my project)
+* rendered the result as an org-mode file.
+
+I ran into a few bumps along the way since this setup uses some pretty
+cutting-edge tools and libraries.
+It took me a bit of time to work through these issues, which is exactly why I'm
+putting this article together - partly to help others who might face the same
+challenges, and partly as a reference for my future self.
+
+If you follow this guide you should endup with a fully working setup with:
+Emacs + AI Assitant + Clojure-MCP development environment.
+
+* **Platform**: macOS
+* **Editor**: Emacs Plus 31 with Doom Emacs
+* **Emacs packages**:
+
+=> https://github.com/karthink/gptel =gptel=
+ for LLM interaction
+
+=> https://github.com/lizqwerscott/mcp.el mcp
+ (Model Context Protocol) support
+* **Development Stack**:
+
+=> https://github.com/bhauman/clojure-mcp =clojure-mcp=
+ server
+  - Custom MCP startup scripts for project integration
+
+# Steps
+## Emacs
+### Install latest emacs-plus
+
+```bash
+brew install emacs-plus --with-native-comp --with-modern-black-dragon-icon
+```
+
+**** emacs-plus and native-comp shenanigans
+
+Currently to fix emacs-plus from brew on macOS native-comp, add this to the
+beginning of your =~/.emacs.d/early-init.el=.
+
+```emacs-lisp
+;; FIX NATIVE COMP: https://github.com/d12frosted/homebrew-emacs-plus/issues/554#issuecomment-2909894593
+(setenv "LIBRARY_PATH"
+        (mapconcat 'identity
+                   '("/opt/homebrew/opt/gcc/lib/gcc/15"
+                     "/opt/homebrew/opt/libgccjit/lib/gcc/15"
+                     "/opt/homebrew/opt/gcc/lib/gcc/15/gcc/aarch64-apple-darwin24/15")
+                   ":"))
+```
+
+### doom-emacs
+
+As I started from an already existing ~doom-emacs~ installation. I will not cover
+that part. Please refer to the doom-emacs installation
+
+=> https://github.com/doomemacs/doomemacs?tab=readme-ov-file#install project documentation
+ if
+you want to install it .
+
+**** Declare the new packages to use
+
+In =config.el=:
+
+```elisp
+...
+:tools
+  ...
+  llm ;; <- uncomment this line
+  ...
+```
+
+In =~/.doom.d/packages.el=:
+
+```elisp
+(package! mcp
+    :pin "3a380185597f56290057f370ab65dde89a20a18f")
+```
+
+Then configure the packages:
+
+In =~/.doom.d/config.el=:
+
+```elisp
+;; LLM
+(use-package! gptel
+  :init
+  ;; declare the default llm configuration
+  ;; for me this is co-pilot with claude-sonnet-4
+  (setq gptel-default-mode 'org-mode ;; I want the llm to reply to me with org-mode format.
+        gptel-backend (gptel-make-gh-copilot "Copilot")
+        gptel-model 'claude-sonnet-4)
+  (require 'gptel-integrations) ;; <- for mcp
+  ;; declare another llm configuration, I also use GPT4All to consume locally only
+  (gptel-make-gpt4all "GPT4All"
+                      :protocol "http"
+                      :host "localhost:4891"
+                      ;; "~/Library/Application Support/nomic.ai/GPT4All"
+                      :models '(Meta-Llama-3-8B-Instruct.Q4_0.gguf)))
+
+(use-package! mcp
+  :after gptel
+  :config (require 'mcp-hub)
+  :init (setq mcp-hub-servers
+              ;; this is the important block here
+              ;; it tells that it can launch an MCP server for my-project by running the following
+              ;; command line:
+              ;;    clojure-mcp my-project
+              '(("my-project" :command "clojure-mcp" :args ("my-project"))))
+  :hook (after-init . mcp-hub-start-all-server))
+```
+
+**** Rebuild / Install doom-emacs
+
+After using another emacs version you need to rebuild your emacs packages.
+
+```bash
+doom sync -u
+doom rebuild
+```
+
+This will take a while.
+
+## Clojure-MCP
+### Update your global Clojure aliases
+
+The file =~/.clojure/deps.edn=:
+
+```clojure
+{:aliases
+ {:mcp
+  {:deps {org.slf4j/slf4j-nop {:mvn/version "2.0.16"} ;; Required for stdio server
+          com.bhauman/clojure-mcp {:git/url "https://github.com/bhauman/clojure-mcp.git"
+                                   :git/tag "v0.1.4-alpha"
+                                   :git/sha "080b29b"}}
+   :exec-fn clojure-mcp.main/start-mcp-server
+   :exec-args {:port 7888}}}
+ }
+```
+
+### Create the command line to launch the Clojure MCP Server
+
+```bash
+#!/usr/bin/env bash
+
+case $1 in
+    my-project) PORT=7888;;
+    *) echo "I don't know how to start this project ($1)" >&2
+       exit 1;
+esac
+
+clojure -X:mcp --port $PORT
+```
+
+### Link Clojure MCP to your Clojure project
+
+It is important to perform the operation in the correct order.
+So *FIRST* go to your project and start the repl.
+Personally I work on a very big professional Clojure project that started even
+before =deps.edn= was thing in Clojure.
+So I could start the repl with a lein command:
+
+```bash
+  lein repl :start :port 7888
+  ```
+
+Got it! Here's your project setup in a friendlier tone:
+
+Since my project is pretty large and has its own restart helpers, I don't use
+the headless mode that the clojure-mcp docs suggest.
+Instead, I fire up the project with :start mode so I can manually load all the
+namespaces and get everything running with a the ~(reset!)~ command.
+
+Once my project is running (after ~reset!~) *ONLY THEN* I start the Clojure mcp server.
+
+I could test that by running my ~clojure-mcp my-project~ command, and I get back a
+list of JSON objects lines:
+
+```bash
+> clojure-mcp my-project
+{"jsonrpc":"2.0","method":"notifications/tools/list_changed"}
+...
+{"jsonrpc":"2.0","method":"notifications/resources/list_changed"}
+...
+{"jsonrpc":"2.0","method":"notifications/prompts/list_changed"}
+```
+
+So this is a good sign.
+
+## Using it
+
+Now, everything should be ready to use.
+
+After starting my repl, I launch emacs (if emacs was already started, you
+probably need to restart your mcp server)
+
+Once emacs is started, open gptel menu (~SPC o l m~).
+Try to add tools (if they are not there ; type ~M+~ and start the mcp if not started)
+
+Once done, here you go.
+
+~SPC o l l~ => will create a new buffer to send orders to the LLM.
+I started with:
+
+______
+Analyze the codebase structure, Document key files, dependencies and available
+tools. Generate or update a comprehensive documentation in a format optimized
+for LLM Assistants. Save this documentation in the file =PROJECT_SUMMARY.md=.
+______
+
+This should generate this =PROJECT_SUMMARY.md= file and you should generally
+always add this file to your LLM session context when working on your project.
+
+Now, to show how powerful this setup is, I could ask:
+
+> Can you list all the users in the database?
+
+And the AI Assistant (it was claude) was able to analyse the project, discover
+the service to use, call the correct methods of this service to list all users
+in my local environment DB.
+The result was then rendered as a nice org-mode file where users were grouped by Org.
+This was even better that what I could expect.
+
+I could als ask how he could perform this operation, and the assistant returned
+the commands he exectued in the repl.
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://git.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes
+]]></description>
+</item>
+
 
 <item>
 <title>ob-metapost</title>
@@ -2602,431 +2879,6 @@ Can be an integer to determine the exact padding."
 
 ;;; doom-zen-writer-theme.el ends here
 ```
-
-=> /index.gmi Home
-=> /gem-atom.xml Feed
-=> /slides.gmi Slides
-=> /about-me.gmi About
-
-=> https://git.esy.fun code
-=> https://espial.esy.fun/u:yogsototh bookmarks
-=> https://espial.esy.fun/u:yogsototh/notes notes
-]]></description>
-</item>
-
-
-<item>
-<title>Cool looking org-mode</title>
-<guid>gemini://her.esy.fun/posts/0020-cool-looking-org-mode/index.gmi</guid>
-<pubDate>Sat, 21 Aug 2021 00:00:00 +0200</pubDate>
-<category>org-mode</category>
-<category>emacs</category>
-<description><![CDATA[
-# Cool looking org-mode
-description:  A configuration to make org-mode look even better.
-keywords:  org-mode emacs
-author:  Yann Esposito
-email:  yann@esposito.host
-=> /files/publickey.txt gpg
-date:  [2021-08-21 Sat]
-
-______
-TL;DR: My tweaked configuration to make org-mode even more pleasant to use.
-______
-
-## The code
-
-At the end of this article there is a long digression about why I ended up here.
-But instead of bothering you with the why here is a what it looks like, and
-how to achieve it.
-
-First you need to install some dependencies.
-
-1. Install nerdfonts[fn:nerdfonts]
-2. Tell org-mode to use =variable-pitch-mode= (variable width font)
-3. Use ~(setq org-hide-emphasis-markers t)~
-4. Configure a lot of org-mode specific faces to still use a monospaced font.
-
-Here are some images of the result.
-Notice one important factor of the feel is that I work on a mac with retina
-display.
-Often font rendering feel too bold by default.
-But this is perfect to have a writing environment even if screenshot does
-not look as slick as other ones, the usage is superior.
-
-attr_org:  :width 560
-attr_html:  top
-caption:  org-mode headers
-name:  fig:top
-=> ./top.png
-attr_org:  :width 560
-attr_html:  img-with-caption
-caption:  org-mode some inline image
-name:  fig:img-with-caption
-=> ./img-with-caption.png
-
-attr_org:  :width 560
-attr_html:  code
-caption:  org-mode with some code block
-name:  fig:img-with-caption
-=> ./code.png
-
-attr_org:  :width 560
-attr_html:  Org mode with a modified doom-solarized light theme (use a grey background)
-caption:  Org mode with a modified doom-solarized light theme (use a grey background)
-name:  fig:nano-emacs
-=> ./y-org-mode.png
-
-The main trick is to change org-mode to use different font depending on the
-kind of bloc.
-I use two fonts variant which are an iA Writer clone fonts; iM Writing Nerd Font.
-
-First you need to install nerd-fonts[fn:nerdfonts].
-You will get that =iMWritingDuoS Nerd Font=.
-If you look at the code block; I support the case when the font is
-not installed and fall back to Georgia or PT Serif.
-One nice little bonus of the config is to make the fixed width fonts smaller.
-This is often something I like when writing in org-mode.
-
-There is a minor dependency on =doom= as I use =doom-color= for the color of
-the links.
-But you could easily use any color you like if you do not use doom.
-
-```emacs-lisp
-(setq org-ellipsis " [+]")
-(add-hook 'org-mode-hook 'variable-pitch-mode)
-(let* ((variable-tuple
-        (cond
-         ((x-list-fonts "iMWritingDuoS Nerd Font")   '(:family "iMWritingDuoS Nerd Font"))
-         ((x-list-fonts "Georgia")   '(:family "Georgia"))
-         ((x-list-fonts "PT Serif")  '(:family "PT Serif"))))
-       (fixed-tuple
-        (cond
-         ((x-list-fonts "iMWritingDuoS Nerd Font Mono")   '(:family "iMWritingDuoS Nerd Font Mono"   :height 160))
-         ((x-list-fonts "Menlo")               '(:family "Menlo"    :height 120))
-         ((x-list-fonts "PT Mono")             '(:family "PT Mono"  :height 120))))
-       (headline `(:inherit default :weight bold)))
-  (custom-theme-set-faces
-   'user
-   `(org-level-1 ((t (,@headline ,@variable-tuple))))
-   `(org-level-2 ((t (,@headline ,@variable-tuple))))
-   `(org-level-3 ((t (,@headline ,@variable-tuple))))
-   `(org-level-4 ((t (,@headline ,@variable-tuple))))
-   `(org-level-5 ((t (,@headline ,@variable-tuple))))
-   `(org-level-6 ((t (,@headline ,@variable-tuple))))
-   `(org-level-7 ((t (,@headline ,@variable-tuple))))
-   `(org-level-8 ((t (,@headline ,@variable-tuple))))
-   `(org-document-title ((t (,@headline ,@variable-tuple))))
-
-   `(variable-pitch     ((t ,@variable-tuple)))
-   `(fixed-pitch        ((t ,@fixed-tuple)))
-
-   '(org-ellipsis ((t (:inherit fixed-pitch :foreground "gray40" :underline nil))))
-   '(org-block            ((t (:inherit fixed-pitch))))
-   '(org-block-begin-line ((t (:inherit fixed-pitch))))
-   '(org-block-end-line   ((t (:inherit fixed-pitch))))
-   '(org-src              ((t (:inherit fixed-pitch))))
-   '(org-properties       ((t (:inherit fixed-pitch))))
-   '(org-code             ((t (:inherit (shadow fixed-pitch)))))
-   '(org-date             ((t (:inherit (shadow fixed-pitch)))))
-   '(org-document-info    ((t (:inherit (shadow fixed-pitch)))))
-   '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
-   '(org-drawer           ((t (:inherit (shadow fixed-pitch)))))
-   '(org-indent           ((t (:inherit (org-hide fixed-pitch)))))
-   `(org-link             ((t (:inherit fixed-pitch :foreground ,(doom-color 'blue) :underline t))))
-   '(org-meta-line        ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-   '(org-property-value   ((t (:inherit fixed-pitch))) t)
-   '(org-special-keyword  ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-   '(org-table            ((t (:inherit fixed-pitch))))
-   '(org-tag              ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
-   '(org-verbatim         ((t (:inherit (shadow fixed-pitch)))))))
-```
-
-[fn:nerdfonts] https://www.nerdfonts.com
-
-## Digression about why I did that;
-
-For some reason a went to the rabbit hole of tweaking my emacs.
-In fact, it first started as; let's try to switch from
-=doom-emacs=[fn:doom-emacs] to =nano-emacs=[fn:nano-emacs].
-But, doing so, I realized I wouldn't be able to reach the quality and
-optimization provided by doom-emacs myself.
-So instead of doing this, I first tried to copy the theme of nano.
-Then I realized one of the biggest factor of nano look & feel was
-its usage of "Roboto Mono" but with weight light (or Thin).
-
-See
-
-attr_org:  :width 560
-attr_html:  nano-emacs look (light theme)
-caption:  GNU Emacs / N Λ N O Look (light theme)
-name:  fig:nano-emacs
-=> ./nano-emacs-light.png
-
-
-
-attr_org:  :width 560
-attr_html:  nano-emacs look (dark theme)
-caption:  GNU Emacs / N Λ N O Look (dark theme)
-name:  fig:nano-emacs
-=> ./nano-emacs-dark.png
-
-OK so...
-I just tried to match the theme colors.
-It was easy to create a theme with matching colors.
-*But*, to make it really looks like nano; almost monochrome with two accent
-colors; it would mean a lot more work than anyone could expect.
-For most emacs mode you probably need to add a set of specific font faces.
-This choice is also what makes nano looks so good too.
-This is not just about the color, but about a lot more details than that.
-Using the good colors only at the right place is difficult to achieve.
-And not only the colors, but also, the correct fonts, the spacing of text
-elements etc...
-
-Unfortunately if you want the nano look and feel in doom, it is much more
-work than just copying the nano theme.
-
-But this research of look and feel opened the door to using thin fonts in
-emacs.
-And also tweaking the fonts which really improve the look & feel of emacs.
-
-With this conf, I do not use the same font for coding and for writing
-prose or a blog post with code blocks.
-So far, I like this new look and feel.
-
-[fn:doom-emacs] https://github.com/hlissner/doom-emacs
-[fn:nano-emacs] https://github.com/rougier/nano-emacs
-
-## Bonuses
-
-### Thin Code fonts
-
-After lot of try, I finally switched my default coding font to SauceCodePro
-Nerd Font Mono with weight ~semi-light~.
-This is a clone of Adobe =SourceCode Pro=.
-And on a retina display it is really nice to use.
-
-```emacs-lisp
-(setq doom-font (font-spec :family "SauceCodePro Nerd Font Mono" :size 12 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "iMWritingDuoS Nerd Font" :size 14))
-```
-
-### An unfinished nano theme for doom
-
-Even though the result is not 100% satisfactory, you could start using my work.
-Save this file into =~/.doom.d/themes/doom-nano-theme.el=:
-
-``` lisp
-;;; doom-nano-theme.el --- inspired by Nicolas Rougier nano-theme -*- lexical-binding: t; no-byte-compile: t; -*-
-;;
-;; Author: Yann Esposito <https://yannesposito.com>
-;; Created: August 16, 2021
-;; Version: 1.0.0
-;; Keywords: custom themes, faces
-;; Homepage: https://github.com/hlissner/emacs-doom-themes
-;; Package-Requires: ((emacs "25.1") (cl-lib "0.5") (doom-themes "2.2.1"))
-;;
-;;; Commentary:
-;;
-;; Ported from nano-theme: https://github.com/rougier/nano-theme
-;;
-;;; Code:
-
-(require 'doom-themes)
-
-;;; Variables
-
-(defgroup doom-plain-theme nil
-  "Options for the `doom-plain' theme."
-  :group 'doom-themes)
-
-(defcustom doom-plain-padded-modeline doom-themes-padded-modeline
-  "If non-nil, adds a 4px padding to the mode-line.
-Can be an integer to determine the exact padding."
-  :group 'doom-plain-theme
-  :type '(or integer boolean))
-;;
-;;; Theme definition
-
-(def-doom-theme doom-nano
-  "Theme inspired by Nicolas Rougier nano-theme"
-
-  ;; name      default/256/16
-  ((nano-color-foreground '("#37474F")) ;; Blue Grey / L800
-   (nano-color-background '("#FFFFFF")) ;; White
-   (nano-color-highlight  '("#FAFAFA")) ;; Very Light Grey
-   (nano-color-critical   '("#FF6F00")) ;; Amber / L900
-   (nano-color-salient    '("#673AB7")) ;; Deep Purple / L500
-   (nano-color-strong     '("#000000")) ;; Black
-   (nano-color-popout     '("#FFAB91")) ;; Deep Orange / L200
-   (nano-color-subtle     '("#ECEFF1")) ;; Blue Grey / L50
-   (nano-color-faded      '("#B0BEC5")) ;; Blue Grey / L200
-
-   (bg         nano-color-background)
-   (bg-alt     nano-color-highlight)
-   (base0      '("#18282f"))
-   (base1      '("#24323a"))
-   (base2      '("#556066"))
-   (base3      '("#6f787d"))
-   (base4      '("#8a9296"))
-   (base5      '("#a6acaf"))
-   (base6      '("#e7e8e9"))
-   (base7      '("#f6f6f6"))
-   (base8      '("#fafafa"))
-   (fg         nano-color-foreground)
-   (fg-alt     nano-color-faded)
-
-   (grey       fg)
-   (red        fg)
-   (blue       fg)
-   (dark-blue  fg)
-   (orange     fg)
-   (green      fg)
-   (teal       fg)
-   (yellow     fg)
-   (magenta    fg)
-   (violet     fg)
-   (cyan       fg)
-   (dark-cyan  fg)
-
-
-   ;; face categories -- required for all themes
-   (highlight      nano-color-salient)
-   (vertical-bar   base5)
-   (selection      nano-color-highlight)
-   (builtin        nano-color-salient)
-   (comments       nano-color-faded)
-   (doc-comments   nano-color-faded)
-   (constants      nano-color-strong)
-   (functions      nano-color-salient)
-   (keywords       nano-color-strong)
-   (methods        nano-color-salient)
-   (operators      nano-color-strong)
-   (type           nano-color-strong)
-   (strings        base0)
-   (variables      base0)
-   (numbers        base0)
-   (region         base4)
-   (error          nano-color-critical)
-   (warning        nano-color-popout)
-   (success        nano-color-salient)
-   (vc-modified    nano-color-salient)
-   (vc-added       fg-alt)
-   (vc-deleted     nano-color-critical)
-
-   ;; custom categories
-   (-modeline-pad
-    (when doom-plain-padded-modeline
-      (if (integerp doom-plain-padded-modeline) doom-plain-padded-modeline 4)))
-
-   (modeline-bg              (doom-darken bg-alt 0.15))
-   (modeline-bg-alt          (doom-darken bg-alt 0.1))
-   (modeline-bg-inactive     (doom-darken bg-alt 0.1))
-   (modeline-bg-inactive-alt bg-alt)
-   (modeline-fg              fg)
-   (modeline-fg-alt          (doom-darken modeline-bg-inactive 0.35)))
-
-  ;;;; Base theme face overrides
-  ((error   :underline `(:style wave :color ,error))
-   (warning :underline `(:style wave :color ,warning))
-   ((font-lock-constant-face &override)      :slant 'italic)
-   ((font-lock-comment-face &override)       :slant 'italic)
-   ((font-lock-function-name-face &override) :slant 'italic)
-   ((font-lock-type-face &override)          :slant 'italic)
-   ;;(hl-line :background base8)
-   ((line-number &override) :foreground base3)
-   ((line-number-current-line &override) :foreground base2)
-   (mode-line
-    :background modeline-bg :foreground modeline-fg
-    :box (if -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg)))
-   (mode-line-inactive
-    :background modeline-bg-inactive :foreground modeline-fg-alt
-    :box (if -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive)))
-   (mode-line-emphasis :foreground highlight)
-
-   ;;;; doom-modeline
-   (doom-modeline-bar :background modeline-bg)
-   (doom-modeline-bar-inactive :inherit 'doom-modeline-bar)
-   (doom-modeline-project-dir :foreground fg)
-   (doom-modeline-buffer-file :foreground fg)
-   (doom-modeline-buffer-modified :weight 'bold :foreground "#000000")
-   (doom-modeline-panel :inherit 'mode-line-highlight :background base3 :foreground fg)
-   ;;;; ivy
-   (ivy-posframe :background bg-alt)
-   ;;;; magit
-   ((magit-diff-added-highlight &override)   :foreground fg :background (doom-blend vc-added bg 0.3))
-   ((magit-diff-removed &override)           :foreground (doom-lighten fg 0.4) :background (doom-blend vc-deleted bg 0.1))
-   ((magit-diff-removed-highlight &override) :foreground fg :background (doom-blend vc-deleted bg 0.22))
-   ;;;; lsp-mode
-   (lsp-headerline-breadcrumb-symbols-face :foreground keywords :weight 'bold)
-   ;;;; outline <built-in>
-   (outline-1 :slant   'italic :foreground fg-alt)
-   (outline-2 :inherit 'outline-1 :foreground base2)
-   (outline-3 :inherit 'outline-2)
-   (outline-4 :inherit 'outline-3)
-   (outline-5 :inherit 'outline-4)
-   (outline-6 :inherit 'outline-5)
-   (outline-7 :inherit 'outline-6)
-   (outline-8 :inherit 'outline-7)
-
-   (org-level-1 :inherit 'org-level-1 :foreground nano-color-strong)
-   (org-level-2 :inherit 'org-level-2 :foreground nano-color-strong)
-   (org-level-3 :inherit 'org-level-3 :foreground nano-color-strong)
-   (org-level-4 :inherit 'org-level-4 :foreground nano-color-strong)
-   (org-level-5 :inherit 'org-level-5 :foreground nano-color-strong)
-   (org-level-6 :inherit 'org-level-6 :foreground nano-color-strong)
-   (org-level-7 :inherit 'org-level-7 :foreground nano-color-strong)
-   (org-level-8 :inherit 'org-level-8 :foreground nano-color-strong)
-
-   (org-code     :inherit 'org-code
-                 :foreground nano-color-salient
-                 :weight 'bold)
-   (org-verbatim :inherit 'org-verbatim
-                 :foreground nano-color-salient
-                 :weight 'bold)
-   (org-upcoming-deadline :inherit 'org-upcoming-deadline
-                          :foreground nano-color-critical
-                          :weight 'bold)
-   (org-upcoming-distant-deadline :inherit 'org-upcoming-distant-deadline
-                                  :foreground nano-color-salient)
-
-   (org-habit-overdue-face
-    :inherit 'org-habit-overdue-face
-    :background fg-alt)
-   (org-habit-overdue-future-face
-    :inherit 'org-habit-overdue-future-face
-    :background nano-color-subtle)
-   (org-habit-alert-face
-    :inherit 'org-habit-alert-face
-    :background nano-color-critical)
-   (org-habit-alert-future-face
-    :inherit 'org-habit-alert-future-face
-    :background nano-color-subtle)
-
-   (org-scheduled-today :inherit 'org-scheduled-today :foreground fg)
-   (org-scheduled-previously :inherit 'org-scheduled-previously :foreground fg)
-
-   ;;;; org <built-in>
-   ((org-block &override) :background bg-alt)
-   ((org-block-begin-line &override) :foreground base5)
-   ;;;; solaire-mode
-   (solaire-mode-line-face
-    :inherit 'mode-line
-    :background modeline-bg-alt
-    :box (if -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-alt)))
-   (solaire-mode-line-inactive-face
-    :inherit 'mode-line-inactive
-    :background modeline-bg-inactive-alt
-    :box (if -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive-alt)))))
-
-;;; doom-plain-theme.el ends here
-```
-
-You will probably need more work to achieve the colors you expect.
-For that, using ~SPC-u C-x =~ will probably be useful.
-It will show the font face under the cursor.
-
-Best of luck.
 
 => /index.gmi Home
 => /gem-atom.xml Feed

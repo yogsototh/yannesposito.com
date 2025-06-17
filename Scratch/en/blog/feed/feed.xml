@@ -14,8 +14,8 @@
   <link>https://her.esy.fun</link>
   <description><![CDATA[her.esy.fun articles, mostly random personal thoughts]]></description>
   <language>en</language>
-  <pubDate>Thu, 19 Dec 2024 00:00:00 +0100</pubDate>
-  <lastBuildDate>Mon, 06 Jan 2025 00:00:00 +0100</lastBuildDate>
+  <pubDate>Tue, 17 Jun 2025 00:00:00 +0200</pubDate>
+  <lastBuildDate>Tue, 17 Jun 2025 00:00:00 +0200</lastBuildDate>
   <generator>mkrss.sh</generator>
   <webMaster>yann@esposito.host (Yann Esposito)</webMaster>
   <image>
@@ -23,6 +23,136 @@
     <title>her.esy.fun</title>
     <link>https://her.esy.fun</link>
   </image>
+
+<item>
+<title>AI Assistants in Doom Emacs 31 on macOS with Clojure MCP
+server</title>
+<guid>https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html</guid>
+<pubDate>Tue, 17 Jun 2025 00:00:00 +0200</pubDate>
+<category>ai</category>
+<category>llm</category>
+<category>emacs</category>
+<category>mcp</category>
+<category>clojure</category>
+<category>setup</category>
+<category>claude</category>
+<category>copilot</category>
+<category>gptel</category>
+<category>doom-emacs</category>
+<description><![CDATA[
+<main id="content"><article><div class="notes"><p>This article is about how to setup Emacs (doom-emacs in particlar) to
+work with most AI Assitants for Clojure projects using Clojure-MCP to
+provide the AI assistant the ability to run commands in the Clojure
+REPL.</p></div><h1 id="introduction">Introduction</h1><p>By the end of this article, you'll be able to give instructions to
+the AI Assistant and it will use the REPL of your specific project to
+execute them. For example, I asked the assistant to list all users in my
+project's database (running locally, of course). With my setup, the
+assistant could:</p><ul><li>analyze the project (source and document files)</li><li>discover the service and functions that could perform the operation
+to list all users</li><li>ran the code in the repl, and got back all users</li><li>used this answer to group the users (by org which makes sense for my
+project)</li><li>rendered the result as an org-mode file.</li></ul><p>I ran into a few bumps along the way since this setup uses some
+pretty cutting-edge tools and libraries. It took me a bit of time to
+work through these issues, which is exactly why I'm putting this article
+together - partly to help others who might face the same challenges, and
+partly as a reference for my future self.</p><p>If you follow this guide you should endup with a fully working setup
+with: Emacs + AI Assitant + Clojure-MCP development environment.</p><ul><li><strong><strong>Platform</strong></strong>: macOS</li><li><strong><strong>Editor</strong></strong>: Emacs Plus 31 with Doom
+Emacs</li><li><strong><strong>Emacs packages</strong></strong>:<ul><li><a href="https://github.com/karthink/gptel"><code class="verbatim">gptel</code></a> for LLM interaction</li><li><a href="https://github.com/lizqwerscott/mcp.el">mcp</a> (Model
+Context Protocol) support</li></ul></li><li><strong><strong>Development Stack</strong></strong>:<ul><li><a href="https://github.com/bhauman/clojure-mcp"><code class="verbatim">clojure-mcp</code></a> server</li><li>Custom MCP startup scripts for project integration</li></ul></li></ul><h1 id="steps">Steps</h1><h2 id="emacs">Emacs</h2><h3 id="install-latest-emacs-plus">Install latest emacs-plus</h3><div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install emacs-plus <span class="at">--with-native-comp</span> <span class="at">--with-modern-black-dragon-icon</span></span></code></pre></div><ol><li><p>emacs-plus and native-comp shenanigans</p><p>Currently to fix emacs-plus from brew on macOS native-comp, add this
+to the beginning of your <code class="verbatim">~/.emacs.d/early-init.el</code>.</p><div class="sourceCode" id="cb2" data-org-language="emacs-lisp"><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id="cb2-1"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">;; FIX NATIVE COMP: https://github.com/d12frosted/homebrew-emacs-plus/issues/554#issuecomment-2909894593</span></span>
+<span id="cb2-2"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb2-2" aria-hidden="true" tabindex="-1"></a>(setenv <span class="st">&quot;LIBRARY_PATH&quot;</span></span>
+<span id="cb2-3"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb2-3" aria-hidden="true" tabindex="-1"></a>        (mapconcat <span class="dt">&#39;identity</span></span>
+<span id="cb2-4"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb2-4" aria-hidden="true" tabindex="-1"></a>                   &#39;(<span class="st">&quot;/opt/homebrew/opt/gcc/lib/gcc/15&quot;</span></span>
+<span id="cb2-5"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb2-5" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;/opt/homebrew/opt/libgccjit/lib/gcc/15&quot;</span></span>
+<span id="cb2-6"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb2-6" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;/opt/homebrew/opt/gcc/lib/gcc/15/gcc/aarch64-apple-darwin24/15&quot;</span>)</span>
+<span id="cb2-7"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb2-7" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;:&quot;</span>))</span></code></pre></div></li></ol><h3 id="doom-emacs">doom-emacs</h3><p>As I started from an already existing <code>doom-emacs</code>
+installation. I will not cover that part. Please refer to the doom-emacs
+installation <a href="https://github.com/doomemacs/doomemacs?tab=readme-ov-file#install">project
+documentation</a> if you want to install it .</p><ol><li><p>Declare the new packages to use</p><p>In <code class="verbatim">config.el</code>:</p><pre class="elisp"><code>...
+:tools
+  ...
+  llm ;; &lt;- uncomment this line
+  ...
+</code></pre><p>In <code class="verbatim">~/.doom.d/packages.el</code>:</p><pre class="elisp"><code>(package! mcp
+    :pin &quot;3a380185597f56290057f370ab65dde89a20a18f&quot;)
+</code></pre><p>Then configure the packages:</p><p>In <code class="verbatim">~/.doom.d/config.el</code>:</p><pre class="elisp"><code>;; LLM
+(use-package! gptel
+  :init
+  ;; declare the default llm configuration
+  ;; for me this is co-pilot with claude-sonnet-4
+  (setq gptel-default-mode &#39;org-mode ;; I want the llm to reply to me with org-mode format.
+        gptel-backend (gptel-make-gh-copilot &quot;Copilot&quot;)
+        gptel-model &#39;claude-sonnet-4)
+  (require &#39;gptel-integrations) ;; &lt;- for mcp
+  ;; declare another llm configuration, I also use GPT4All to consume locally only
+  (gptel-make-gpt4all &quot;GPT4All&quot;
+                      :protocol &quot;http&quot;
+                      :host &quot;localhost:4891&quot;
+                      ;; &quot;~/Library/Application Support/nomic.ai/GPT4All&quot;
+                      :models &#39;(Meta-Llama-3-8B-Instruct.Q4_0.gguf)))
+
+(use-package! mcp
+  :after gptel
+  :config (require &#39;mcp-hub)
+  :init (setq mcp-hub-servers
+              ;; this is the important block here
+              ;; it tells that it can launch an MCP server for my-project by running the following
+              ;; command line:
+              ;;    clojure-mcp my-project
+              &#39;((&quot;my-project&quot; :command &quot;clojure-mcp&quot; :args (&quot;my-project&quot;))))
+  :hook (after-init . mcp-hub-start-all-server))
+</code></pre></li><li><p>Rebuild / Install doom-emacs</p><p>After using another emacs version you need to rebuild your emacs
+packages.</p><div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">doom</span> sync <span class="at">-u</span></span>
+<span id="cb6-2"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">doom</span> rebuild</span></code></pre></div><p>This will take a while.</p></li></ol><h2 id="clojure-mcp">Clojure-MCP</h2><h3 id="update-your-global-clojure-aliases">Update your global Clojure
+aliases</h3><p>The file <code class="verbatim">~/.clojure/deps.edn</code>:</p><div class="sourceCode" id="cb7"><pre class="sourceCode clojure"><code class="sourceCode clojure"><span id="cb7-1"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb7-1" aria-hidden="true" tabindex="-1"></a>{<span class="at">:aliases</span></span>
+<span id="cb7-2"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb7-2" aria-hidden="true" tabindex="-1"></a> {<span class="at">:mcp</span></span>
+<span id="cb7-3"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb7-3" aria-hidden="true" tabindex="-1"></a>  {<span class="at">:deps</span> {org.slf4j/slf4j-nop {<span class="at">:mvn/version</span> <span class="st">&quot;2.0.16&quot;</span>} <span class="co">;; Required for stdio server</span></span>
+<span id="cb7-4"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb7-4" aria-hidden="true" tabindex="-1"></a>          com.bhauman/clojure-mcp {<span class="at">:git/url</span> <span class="st">&quot;https://github.com/bhauman/clojure-mcp.git&quot;</span></span>
+<span id="cb7-5"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb7-5" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">:git/tag</span> <span class="st">&quot;v0.1.4-alpha&quot;</span></span>
+<span id="cb7-6"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb7-6" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">:git/sha</span> <span class="st">&quot;080b29b&quot;</span>}}</span>
+<span id="cb7-7"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb7-7" aria-hidden="true" tabindex="-1"></a>   <span class="at">:exec-fn</span> clojure-mcp.main/start-mcp-server</span>
+<span id="cb7-8"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb7-8" aria-hidden="true" tabindex="-1"></a>   <span class="at">:exec-args</span> {<span class="at">:port</span> <span class="dv">7888</span>}}}</span>
+<span id="cb7-9"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb7-9" aria-hidden="true" tabindex="-1"></a> }</span></code></pre></div><h3 id="create-the-command-line-to-launch-the-clojure-mcp-server">Create
+the command line to launch the Clojure MCP Server</h3><div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env bash</span></span>
+<span id="cb8-2"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="va">$1</span> <span class="kw">in</span></span>
+<span id="cb8-4"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="ss">my-project</span><span class="kw">)</span> <span class="va">PORT</span><span class="op">=</span>7888<span class="cf">;;</span></span>
+<span id="cb8-5"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="pp">*</span><span class="kw">)</span> <span class="bu">echo</span> <span class="st">&quot;I don&#39;t know how to start this project (</span><span class="va">$1</span><span class="st">)&quot;</span> <span class="op">&gt;&amp;</span><span class="dv">2</span></span>
+<span id="cb8-6"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb8-6" aria-hidden="true" tabindex="-1"></a>       <span class="bu">exit</span> 1<span class="kw">;</span></span>
+<span id="cb8-7"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="cf">esac</span></span>
+<span id="cb8-8"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="ex">clojure</span> <span class="at">-X:mcp</span> <span class="at">--port</span> <span class="va">$PORT</span></span></code></pre></div><h3 id="link-clojure-mcp-to-your-clojure-project">Link Clojure MCP to
+your Clojure project</h3><p>It is important to perform the operation in the correct order. So
+<strong>FIRST</strong> go to your project and start the repl. Personally
+I work on a very big professional Clojure project that started even
+before <code class="verbatim">deps.edn</code> was thing in Clojure. So I
+could start the repl with a lein command:</p><div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">lein</span> repl :start :port 7888</span></code></pre></div><p>Got it! Here's your project setup in a friendlier tone:</p><p>Since my project is pretty large and has its own restart helpers, I
+don't use the headless mode that the clojure-mcp docs suggest. Instead,
+I fire up the project with :start mode so I can manually load all the
+namespaces and get everything running with a the <code>(reset!)</code>
+command.</p><p>Once my project is running (after <code>reset!</code>) <strong>ONLY
+THEN</strong> I start the Clojure mcp server.</p><p>I could test that by running my <code>clojure-mcp my-project</code>
+command, and I get back a list of JSON objects lines:</p><div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> clojure-mcp <span class="ex">my-project</span></span>
+<span id="cb10-2"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="dt">{</span><span class="st">&quot;jsonrpc&quot;</span><span class="dt">:</span><span class="st">&quot;2.0&quot;</span><span class="op">,</span><span class="st">&quot;method&quot;</span><span class="dt">:</span><span class="st">&quot;notifications/tools/list_changed&quot;</span><span class="dt">}</span></span>
+<span id="cb10-3"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb10-4"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="dt">{</span><span class="st">&quot;jsonrpc&quot;</span><span class="dt">:</span><span class="st">&quot;2.0&quot;</span><span class="op">,</span><span class="st">&quot;method&quot;</span><span class="dt">:</span><span class="st">&quot;notifications/resources/list_changed&quot;</span><span class="dt">}</span></span>
+<span id="cb10-5"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb10-6"><a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="dt">{</span><span class="st">&quot;jsonrpc&quot;</span><span class="dt">:</span><span class="st">&quot;2.0&quot;</span><span class="op">,</span><span class="st">&quot;method&quot;</span><span class="dt">:</span><span class="st">&quot;notifications/prompts/list_changed&quot;</span><span class="dt">}</span></span></code></pre></div><p>So this is a good sign.</p><h2 id="using-it">Using it</h2><p>Now, everything should be ready to use.</p><p>After starting my repl, I launch emacs (if emacs was already started,
+you probably need to restart your mcp server)</p><p>Once emacs is started, open gptel menu (<code>SPC o l m</code>). Try
+to add tools (if they are not there ; type <code>M+</code> and start the
+mcp if not started)</p><p>Once done, here you go.</p><p><code>SPC o l l</code> => will create a new buffer to send orders
+to the LLM. I started with:</p><blockquote><p>Analyze the codebase structure, Document key files, dependencies and
+available tools. Generate or update a comprehensive documentation in a
+format optimized for LLM Assistants. Save this documentation in the file
+<code class="verbatim">PROJECT_SUMMARY.md</code>.</p></blockquote><p>This should generate this <code class="verbatim">PROJECT_SUMMARY.md</code> file and you should generally
+always add this file to your LLM session context when working on your
+project.</p><p>Now, to show how powerful this setup is, I could ask:</p><p>> Can you list all the users in the database?</p><p>And the AI Assistant (it was claude) was able to analyse the project,
+discover the service to use, call the correct methods of this service to
+list all users in my local environment DB. The result was then rendered
+as a nice org-mode file where users were grouped by Org. This was even
+better that what I could expect.</p><p>I could als ask how he could perform this operation, and the
+assistant returned the commands he exectued in the repl.</p></article></main>
+]]></description>
+</item>
+
 
 <item>
 <title>ob-metapost</title>
@@ -1740,316 +1870,6 @@ I think a clone of the iAWriter font.</p><div class="sourceCode" id="cb4" data-o
 <span id="cb5-152"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-152" aria-hidden="true" tabindex="-1"></a>    :box (<span class="kw">if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive-alt)))))</span>
 <span id="cb5-153"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-153" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-154"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-154" aria-hidden="true" tabindex="-1"></a><span class="co">;;; doom-zen-writer-theme.el ends here</span></span></code></pre></div></article></main>
-]]></description>
-</item>
-
-
-<item>
-<title>Cool looking org-mode</title>
-<guid>https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html</guid>
-<pubDate>Sat, 21 Aug 2021 00:00:00 +0200</pubDate>
-<category>org-mode</category>
-<category>emacs</category>
-<description><![CDATA[
-<main id="content"><article><div class="notes"><p>TL;DR: My tweaked configuration to make org-mode even more pleasant
-to use.</p></div><h2 id="the-code">The code</h2><p>At the end of this article there is a long digression about why I
-ended up here. But instead of bothering you with the why here is a what
-it looks like, and how to achieve it.</p><p>First you need to install some dependencies.</p><ol><li>Install nerdfonts<a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></li><li>Tell org-mode to use <code class="verbatim">variable-pitch-mode</code> (variable width font)</li><li>Use <code>(setq org-hide-emphasis-markers t)</code></li><li>Configure a lot of org-mode specific faces to still use a monospaced
-font.</li></ol><p>Here are some images of the result. Notice one important factor of
-the feel is that I work on a mac with retina display. Often font
-rendering feel too bold by default. But this is perfect to have a
-writing environment even if screenshot does not look as slick as other
-ones, the usage is superior.</p><figure><img src="https://her.esy.fun/posts/0020-cool-looking-org-mode/top.png.webp" title="top" alt="org-mode headers"></img><figcaption aria-hidden="true">org-mode headers</figcaption></figure><figure><img src="https://her.esy.fun/posts/0020-cool-looking-org-mode/img-with-caption.png.webp" title="img-with-caption" alt="org-mode some inline image"></img><figcaption aria-hidden="true">org-mode some inline image</figcaption></figure><figure><img src="https://her.esy.fun/posts/0020-cool-looking-org-mode/code.png.webp" title="img-with-caption" alt="org-mode with some code block"></img><figcaption aria-hidden="true">org-mode with some code
-block</figcaption></figure><figure><img src="https://her.esy.fun/posts/0020-cool-looking-org-mode/y-org-mode.png.webp" title="nano-emacs" alt="Org mode with a modified doom-solarized light theme (use a grey background)"></img><figcaption aria-hidden="true">Org mode with a modified doom-solarized
-light theme (use a grey background)</figcaption></figure><p>The main trick is to change org-mode to use different font depending
-on the kind of bloc. I use two fonts variant which are an iA Writer
-clone fonts; iM Writing Nerd Font.</p><p>First you need to install nerd-fonts<a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>.
-You will get that <code class="verbatim">iMWritingDuoS Nerd Font</code>.
-If you look at the code block; I support the case when the font is not
-installed and fall back to Georgia or PT Serif. One nice little bonus of
-the config is to make the fixed width fonts smaller. This is often
-something I like when writing in org-mode.</p><p>There is a minor dependency on <code class="verbatim">doom</code> as
-I use <code class="verbatim">doom-color</code> for the color of the
-links. But you could easily use any color you like if you do not use
-doom.</p><div class="sourceCode" id="cb1" data-org-language="emacs-lisp"><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id="cb1-1"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">setq</span> org-ellipsis <span class="st">&quot; [+]&quot;</span>)</span>
-<span id="cb1-2"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-2" aria-hidden="true" tabindex="-1"></a>(add-hook <span class="dt">&#39;org-mode-hook</span> <span class="dt">&#39;variable-pitch-mode</span>)</span>
-<span id="cb1-3"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-3" aria-hidden="true" tabindex="-1"></a>(<span class="kw">let*</span> ((variable-tuple</span>
-<span id="cb1-4"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-4" aria-hidden="true" tabindex="-1"></a>        (<span class="kw">cond</span></span>
-<span id="cb1-5"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-5" aria-hidden="true" tabindex="-1"></a>         ((x-list-fonts <span class="st">&quot;iMWritingDuoS Nerd Font&quot;</span>)   &#39;(:family <span class="st">&quot;iMWritingDuoS Nerd Font&quot;</span>))</span>
-<span id="cb1-6"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-6" aria-hidden="true" tabindex="-1"></a>         ((x-list-fonts <span class="st">&quot;Georgia&quot;</span>)   &#39;(:family <span class="st">&quot;Georgia&quot;</span>))</span>
-<span id="cb1-7"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-7" aria-hidden="true" tabindex="-1"></a>         ((x-list-fonts <span class="st">&quot;PT Serif&quot;</span>)  &#39;(:family <span class="st">&quot;PT Serif&quot;</span>))))</span>
-<span id="cb1-8"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-8" aria-hidden="true" tabindex="-1"></a>       (fixed-tuple</span>
-<span id="cb1-9"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-9" aria-hidden="true" tabindex="-1"></a>        (<span class="kw">cond</span></span>
-<span id="cb1-10"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-10" aria-hidden="true" tabindex="-1"></a>         ((x-list-fonts <span class="st">&quot;iMWritingDuoS Nerd Font Mono&quot;</span>)   &#39;(:family <span class="st">&quot;iMWritingDuoS Nerd Font Mono&quot;</span>   :height <span class="dv">160</span>))</span>
-<span id="cb1-11"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-11" aria-hidden="true" tabindex="-1"></a>         ((x-list-fonts <span class="st">&quot;Menlo&quot;</span>)               &#39;(:family <span class="st">&quot;Menlo&quot;</span>    :height <span class="dv">120</span>))</span>
-<span id="cb1-12"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-12" aria-hidden="true" tabindex="-1"></a>         ((x-list-fonts <span class="st">&quot;PT Mono&quot;</span>)             &#39;(:family <span class="st">&quot;PT Mono&quot;</span>  :height <span class="dv">120</span>))))</span>
-<span id="cb1-13"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-13" aria-hidden="true" tabindex="-1"></a>       (headline `(:inherit default :weight bold)))</span>
-<span id="cb1-14"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-14" aria-hidden="true" tabindex="-1"></a>  (custom-theme-set-faces</span>
-<span id="cb1-15"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-15" aria-hidden="true" tabindex="-1"></a>   <span class="dt">&#39;user</span></span>
-<span id="cb1-16"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-16" aria-hidden="true" tabindex="-1"></a>   `(org-level-1 ((<span class="kw">t</span> (,@headline ,@variable-tuple))))</span>
-<span id="cb1-17"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-17" aria-hidden="true" tabindex="-1"></a>   `(org-level-2 ((<span class="kw">t</span> (,@headline ,@variable-tuple))))</span>
-<span id="cb1-18"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-18" aria-hidden="true" tabindex="-1"></a>   `(org-level-3 ((<span class="kw">t</span> (,@headline ,@variable-tuple))))</span>
-<span id="cb1-19"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-19" aria-hidden="true" tabindex="-1"></a>   `(org-level-4 ((<span class="kw">t</span> (,@headline ,@variable-tuple))))</span>
-<span id="cb1-20"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-20" aria-hidden="true" tabindex="-1"></a>   `(org-level-5 ((<span class="kw">t</span> (,@headline ,@variable-tuple))))</span>
-<span id="cb1-21"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-21" aria-hidden="true" tabindex="-1"></a>   `(org-level-6 ((<span class="kw">t</span> (,@headline ,@variable-tuple))))</span>
-<span id="cb1-22"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-22" aria-hidden="true" tabindex="-1"></a>   `(org-level-7 ((<span class="kw">t</span> (,@headline ,@variable-tuple))))</span>
-<span id="cb1-23"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-23" aria-hidden="true" tabindex="-1"></a>   `(org-level-8 ((<span class="kw">t</span> (,@headline ,@variable-tuple))))</span>
-<span id="cb1-24"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-24" aria-hidden="true" tabindex="-1"></a>   `(org-document-title ((<span class="kw">t</span> (,@headline ,@variable-tuple))))</span>
-<span id="cb1-25"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-26" aria-hidden="true" tabindex="-1"></a>   `(variable-pitch     ((<span class="kw">t</span> ,@variable-tuple)))</span>
-<span id="cb1-27"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-27" aria-hidden="true" tabindex="-1"></a>   `(fixed-pitch        ((<span class="kw">t</span> ,@fixed-tuple)))</span>
-<span id="cb1-28"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-29" aria-hidden="true" tabindex="-1"></a>   &#39;(org-ellipsis ((<span class="kw">t</span> (:inherit fixed-pitch :foreground <span class="st">&quot;gray40&quot;</span> :underline <span class="kw">nil</span>))))</span>
-<span id="cb1-30"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-30" aria-hidden="true" tabindex="-1"></a>   &#39;(org-block            ((<span class="kw">t</span> (:inherit fixed-pitch))))</span>
-<span id="cb1-31"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-31" aria-hidden="true" tabindex="-1"></a>   &#39;(org-block-begin-line ((<span class="kw">t</span> (:inherit fixed-pitch))))</span>
-<span id="cb1-32"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-32" aria-hidden="true" tabindex="-1"></a>   &#39;(org-block-end-line   ((<span class="kw">t</span> (:inherit fixed-pitch))))</span>
-<span id="cb1-33"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-33" aria-hidden="true" tabindex="-1"></a>   &#39;(org-src              ((<span class="kw">t</span> (:inherit fixed-pitch))))</span>
-<span id="cb1-34"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-34" aria-hidden="true" tabindex="-1"></a>   &#39;(org-properties       ((<span class="kw">t</span> (:inherit fixed-pitch))))</span>
-<span id="cb1-35"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-35" aria-hidden="true" tabindex="-1"></a>   &#39;(org-code             ((<span class="kw">t</span> (:inherit (<span class="kw">shadow</span> fixed-pitch)))))</span>
-<span id="cb1-36"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-36" aria-hidden="true" tabindex="-1"></a>   &#39;(org-date             ((<span class="kw">t</span> (:inherit (<span class="kw">shadow</span> fixed-pitch)))))</span>
-<span id="cb1-37"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-37" aria-hidden="true" tabindex="-1"></a>   &#39;(org-document-info    ((<span class="kw">t</span> (:inherit (<span class="kw">shadow</span> fixed-pitch)))))</span>
-<span id="cb1-38"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-38" aria-hidden="true" tabindex="-1"></a>   &#39;(org-document-info-keyword ((<span class="kw">t</span> (:inherit (<span class="kw">shadow</span> fixed-pitch)))))</span>
-<span id="cb1-39"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-39" aria-hidden="true" tabindex="-1"></a>   &#39;(org-drawer           ((<span class="kw">t</span> (:inherit (<span class="kw">shadow</span> fixed-pitch)))))</span>
-<span id="cb1-40"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-40" aria-hidden="true" tabindex="-1"></a>   &#39;(org-indent           ((<span class="kw">t</span> (:inherit (org-hide fixed-pitch)))))</span>
-<span id="cb1-41"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-41" aria-hidden="true" tabindex="-1"></a>   `(org-link             ((<span class="kw">t</span> (:inherit fixed-pitch :foreground ,(doom-color <span class="dt">&#39;blue</span>) :underline <span class="kw">t</span>))))</span>
-<span id="cb1-42"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-42" aria-hidden="true" tabindex="-1"></a>   &#39;(org-meta-line        ((<span class="kw">t</span> (:inherit (font-lock-comment-face fixed-pitch)))))</span>
-<span id="cb1-43"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-43" aria-hidden="true" tabindex="-1"></a>   &#39;(org-property-value   ((<span class="kw">t</span> (:inherit fixed-pitch))) <span class="kw">t</span>)</span>
-<span id="cb1-44"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-44" aria-hidden="true" tabindex="-1"></a>   &#39;(org-special-keyword  ((<span class="kw">t</span> (:inherit (font-lock-comment-face fixed-pitch)))))</span>
-<span id="cb1-45"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-45" aria-hidden="true" tabindex="-1"></a>   &#39;(org-table            ((<span class="kw">t</span> (:inherit fixed-pitch))))</span>
-<span id="cb1-46"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-46" aria-hidden="true" tabindex="-1"></a>   &#39;(org-tag              ((<span class="kw">t</span> (:inherit (<span class="kw">shadow</span> fixed-pitch) :weight bold :height <span class="fl">0.8</span>))))</span>
-<span id="cb1-47"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb1-47" aria-hidden="true" tabindex="-1"></a>   &#39;(org-verbatim         ((<span class="kw">t</span> (:inherit (<span class="kw">shadow</span> fixed-pitch)))))))</span></code></pre></div><h2 id="digression-about-why-i-did-that-">Digression about why I did
-that;</h2><p>For some reason a went to the rabbit hole of tweaking my emacs. In
-fact, it first started as; let's try to switch from <code class="verbatim">doom-emacs</code><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> to <code class="verbatim">nano-emacs</code><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>. But, doing so, I
-realized I wouldn't be able to reach the quality and optimization
-provided by doom-emacs myself. So instead of doing this, I first tried
-to copy the theme of nano. Then I realized one of the biggest factor of
-nano look & feel was its usage of "Roboto Mono" but with weight
-light (or Thin).</p><p>See</p><figure><img src="https://her.esy.fun/posts/0020-cool-looking-org-mode/nano-emacs-light.png.webp" title="nano-emacs" alt="GNU Emacs / N Λ N O Look (light theme)"></img><figcaption aria-hidden="true">GNU Emacs / N Λ N O Look (light
-theme)</figcaption></figure><figure><img src="https://her.esy.fun/posts/0020-cool-looking-org-mode/nano-emacs-dark.png.webp" title="nano-emacs" alt="GNU Emacs / N Λ N O Look (dark theme)"></img><figcaption aria-hidden="true">GNU Emacs / N Λ N O Look (dark
-theme)</figcaption></figure><p>OK so… I just tried to match the theme colors. It was easy to create
-a theme with matching colors. <strong>But</strong>, to make it really
-looks like nano; almost monochrome with two accent colors; it would mean
-a lot more work than anyone could expect. For most emacs mode you
-probably need to add a set of specific font faces. This choice is also
-what makes nano looks so good too. This is not just about the color, but
-about a lot more details than that. Using the good colors only at the
-right place is difficult to achieve. And not only the colors, but also,
-the correct fonts, the spacing of text elements etc…</p><p>Unfortunately if you want the nano look and feel in doom, it is much
-more work than just copying the nano theme.</p><p>But this research of look and feel opened the door to using thin
-fonts in emacs. And also tweaking the fonts which really improve the
-look & feel of emacs.</p><p>With this conf, I do not use the same font for coding and for writing
-prose or a blog post with code blocks. So far, I like this new look and
-feel.</p><h2 id="bonuses">Bonuses</h2><h3 id="thin-code-fonts">Thin Code fonts</h3><p>After lot of try, I finally switched my default coding font to
-SauceCodePro Nerd Font Mono with weight <code>semi-light</code>. This is
-a clone of Adobe <code class="verbatim">SourceCode Pro</code>. And on a
-retina display it is really nice to use.</p><div class="sourceCode" id="cb2" data-org-language="emacs-lisp"><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id="cb2-1"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb2-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">setq</span> doom-font (font-spec :family <span class="st">&quot;SauceCodePro Nerd Font Mono&quot;</span> :size <span class="dv">12</span> :weight <span class="dt">&#39;semi-light</span>)</span>
-<span id="cb2-2"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb2-2" aria-hidden="true" tabindex="-1"></a>      doom-variable-pitch-font (font-spec :family <span class="st">&quot;iMWritingDuoS Nerd Font&quot;</span> :size <span class="dv">14</span>))</span></code></pre></div><h3 id="an-unfinished-nano-theme-for-doom">An unfinished nano theme for
-doom</h3><p>Even though the result is not 100% satisfactory, you could start
-using my work. Save this file into <code class="verbatim">~/.doom.d/themes/doom-nano-theme.el</code>:</p><div class="sourceCode" id="cb3" data-org-language="lisp"><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id="cb3-1"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">;;; doom-nano-theme.el --- inspired by Nicolas Rougier nano-theme -*- lexical-binding: t; no-byte-compile: t; -*-</span></span>
-<span id="cb3-2"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">;;</span></span>
-<span id="cb3-3"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">;; Author: Yann Esposito &lt;https://yannesposito.com&gt;</span></span>
-<span id="cb3-4"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">;; Created: August 16, 2021</span></span>
-<span id="cb3-5"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">;; Version: 1.0.0</span></span>
-<span id="cb3-6"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">;; Keywords: custom themes, faces</span></span>
-<span id="cb3-7"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">;; Homepage: https://github.com/hlissner/emacs-doom-themes</span></span>
-<span id="cb3-8"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">;; Package-Requires: ((emacs &quot;25.1&quot;) (cl-lib &quot;0.5&quot;) (doom-themes &quot;2.2.1&quot;))</span></span>
-<span id="cb3-9"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">;;</span></span>
-<span id="cb3-10"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">;;; Commentary:</span></span>
-<span id="cb3-11"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">;;</span></span>
-<span id="cb3-12"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">;; Ported from nano-theme: https://github.com/rougier/nano-theme</span></span>
-<span id="cb3-13"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">;;</span></span>
-<span id="cb3-14"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">;;; Code:</span></span>
-<span id="cb3-15"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-16"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-16" aria-hidden="true" tabindex="-1"></a>(<span class="kw">require</span> <span class="dt">&#39;doom-themes</span>)</span>
-<span id="cb3-17"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-18"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">;;; Variables</span></span>
-<span id="cb3-19"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-20"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-20" aria-hidden="true" tabindex="-1"></a>(defgroup doom-plain-theme <span class="kw">nil</span></span>
-<span id="cb3-21"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Options for the `doom-plain&#39; theme.&quot;</span></span>
-<span id="cb3-22"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-22" aria-hidden="true" tabindex="-1"></a>  :group <span class="dt">&#39;doom-themes</span>)</span>
-<span id="cb3-23"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-24"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-24" aria-hidden="true" tabindex="-1"></a>(defcustom doom-plain-padded-modeline doom-themes-padded-modeline</span>
-<span id="cb3-25"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;If non-nil, adds a 4px padding to the mode-line.</span></span>
-<span id="cb3-26"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="st">Can be an integer to determine the exact padding.&quot;</span></span>
-<span id="cb3-27"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-27" aria-hidden="true" tabindex="-1"></a>  :group <span class="dt">&#39;doom-plain-theme</span></span>
-<span id="cb3-28"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="bu">:type</span> &#39;(<span class="kw">or</span> <span class="kw">integer</span> <span class="kw">boolean</span>))</span>
-<span id="cb3-29"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="co">;;</span></span>
-<span id="cb3-30"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="co">;;; Theme definition</span></span>
-<span id="cb3-31"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-32"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-32" aria-hidden="true" tabindex="-1"></a>(def-doom-theme doom-nano</span>
-<span id="cb3-33"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-33" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Theme inspired by Nicolas Rougier nano-theme&quot;</span></span>
-<span id="cb3-34"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-35"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-35" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; name      default/256/16</span></span>
-<span id="cb3-36"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-36" aria-hidden="true" tabindex="-1"></a>  ((nano-color-foreground &#39;(<span class="st">&quot;#37474F&quot;</span>)) <span class="co">;; Blue Grey / L800</span></span>
-<span id="cb3-37"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-37" aria-hidden="true" tabindex="-1"></a>   (nano-color-background &#39;(<span class="st">&quot;#FFFFFF&quot;</span>)) <span class="co">;; White</span></span>
-<span id="cb3-38"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-38" aria-hidden="true" tabindex="-1"></a>   (nano-color-highlight  &#39;(<span class="st">&quot;#FAFAFA&quot;</span>)) <span class="co">;; Very Light Grey</span></span>
-<span id="cb3-39"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-39" aria-hidden="true" tabindex="-1"></a>   (nano-color-critical   &#39;(<span class="st">&quot;#FF6F00&quot;</span>)) <span class="co">;; Amber / L900</span></span>
-<span id="cb3-40"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-40" aria-hidden="true" tabindex="-1"></a>   (nano-color-salient    &#39;(<span class="st">&quot;#673AB7&quot;</span>)) <span class="co">;; Deep Purple / L500</span></span>
-<span id="cb3-41"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-41" aria-hidden="true" tabindex="-1"></a>   (nano-color-strong     &#39;(<span class="st">&quot;#000000&quot;</span>)) <span class="co">;; Black</span></span>
-<span id="cb3-42"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-42" aria-hidden="true" tabindex="-1"></a>   (nano-color-popout     &#39;(<span class="st">&quot;#FFAB91&quot;</span>)) <span class="co">;; Deep Orange / L200</span></span>
-<span id="cb3-43"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-43" aria-hidden="true" tabindex="-1"></a>   (nano-color-subtle     &#39;(<span class="st">&quot;#ECEFF1&quot;</span>)) <span class="co">;; Blue Grey / L50</span></span>
-<span id="cb3-44"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-44" aria-hidden="true" tabindex="-1"></a>   (nano-color-faded      &#39;(<span class="st">&quot;#B0BEC5&quot;</span>)) <span class="co">;; Blue Grey / L200</span></span>
-<span id="cb3-45"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-46"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-46" aria-hidden="true" tabindex="-1"></a>   (bg         nano-color-background)</span>
-<span id="cb3-47"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-47" aria-hidden="true" tabindex="-1"></a>   (bg-alt     nano-color-highlight)</span>
-<span id="cb3-48"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-48" aria-hidden="true" tabindex="-1"></a>   (base0      &#39;(<span class="st">&quot;#18282f&quot;</span>))</span>
-<span id="cb3-49"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-49" aria-hidden="true" tabindex="-1"></a>   (base1      &#39;(<span class="st">&quot;#24323a&quot;</span>))</span>
-<span id="cb3-50"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-50" aria-hidden="true" tabindex="-1"></a>   (base2      &#39;(<span class="st">&quot;#556066&quot;</span>))</span>
-<span id="cb3-51"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-51" aria-hidden="true" tabindex="-1"></a>   (base3      &#39;(<span class="st">&quot;#6f787d&quot;</span>))</span>
-<span id="cb3-52"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-52" aria-hidden="true" tabindex="-1"></a>   (base4      &#39;(<span class="st">&quot;#8a9296&quot;</span>))</span>
-<span id="cb3-53"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-53" aria-hidden="true" tabindex="-1"></a>   (base5      &#39;(<span class="st">&quot;#a6acaf&quot;</span>))</span>
-<span id="cb3-54"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-54" aria-hidden="true" tabindex="-1"></a>   (base6      &#39;(<span class="st">&quot;#e7e8e9&quot;</span>))</span>
-<span id="cb3-55"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-55" aria-hidden="true" tabindex="-1"></a>   (base7      &#39;(<span class="st">&quot;#f6f6f6&quot;</span>))</span>
-<span id="cb3-56"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-56" aria-hidden="true" tabindex="-1"></a>   (base8      &#39;(<span class="st">&quot;#fafafa&quot;</span>))</span>
-<span id="cb3-57"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-57" aria-hidden="true" tabindex="-1"></a>   (fg         nano-color-foreground)</span>
-<span id="cb3-58"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-58" aria-hidden="true" tabindex="-1"></a>   (fg-alt     nano-color-faded)</span>
-<span id="cb3-59"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-60"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-60" aria-hidden="true" tabindex="-1"></a>   (grey       fg)</span>
-<span id="cb3-61"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-61" aria-hidden="true" tabindex="-1"></a>   (red        fg)</span>
-<span id="cb3-62"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-62" aria-hidden="true" tabindex="-1"></a>   (blue       fg)</span>
-<span id="cb3-63"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-63" aria-hidden="true" tabindex="-1"></a>   (dark-blue  fg)</span>
-<span id="cb3-64"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-64" aria-hidden="true" tabindex="-1"></a>   (orange     fg)</span>
-<span id="cb3-65"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-65" aria-hidden="true" tabindex="-1"></a>   (green      fg)</span>
-<span id="cb3-66"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-66" aria-hidden="true" tabindex="-1"></a>   (teal       fg)</span>
-<span id="cb3-67"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-67" aria-hidden="true" tabindex="-1"></a>   (yellow     fg)</span>
-<span id="cb3-68"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-68" aria-hidden="true" tabindex="-1"></a>   (magenta    fg)</span>
-<span id="cb3-69"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-69" aria-hidden="true" tabindex="-1"></a>   (violet     fg)</span>
-<span id="cb3-70"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-70" aria-hidden="true" tabindex="-1"></a>   (cyan       fg)</span>
-<span id="cb3-71"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-71" aria-hidden="true" tabindex="-1"></a>   (dark-cyan  fg)</span>
-<span id="cb3-72"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-73"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-74"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-74" aria-hidden="true" tabindex="-1"></a>   <span class="co">;; face categories -- required for all themes</span></span>
-<span id="cb3-75"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-75" aria-hidden="true" tabindex="-1"></a>   (highlight      nano-color-salient)</span>
-<span id="cb3-76"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-76" aria-hidden="true" tabindex="-1"></a>   (vertical-bar   base5)</span>
-<span id="cb3-77"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-77" aria-hidden="true" tabindex="-1"></a>   (selection      nano-color-highlight)</span>
-<span id="cb3-78"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-78" aria-hidden="true" tabindex="-1"></a>   (builtin        nano-color-salient)</span>
-<span id="cb3-79"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-79" aria-hidden="true" tabindex="-1"></a>   (comments       nano-color-faded)</span>
-<span id="cb3-80"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-80" aria-hidden="true" tabindex="-1"></a>   (doc-comments   nano-color-faded)</span>
-<span id="cb3-81"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-81" aria-hidden="true" tabindex="-1"></a>   (constants      nano-color-strong)</span>
-<span id="cb3-82"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-82" aria-hidden="true" tabindex="-1"></a>   (functions      nano-color-salient)</span>
-<span id="cb3-83"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-83" aria-hidden="true" tabindex="-1"></a>   (keywords       nano-color-strong)</span>
-<span id="cb3-84"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-84" aria-hidden="true" tabindex="-1"></a>   (methods        nano-color-salient)</span>
-<span id="cb3-85"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-85" aria-hidden="true" tabindex="-1"></a>   (operators      nano-color-strong)</span>
-<span id="cb3-86"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-86" aria-hidden="true" tabindex="-1"></a>   (<span class="kw">type</span>           nano-color-strong)</span>
-<span id="cb3-87"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-87" aria-hidden="true" tabindex="-1"></a>   (strings        base0)</span>
-<span id="cb3-88"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-88" aria-hidden="true" tabindex="-1"></a>   (variables      base0)</span>
-<span id="cb3-89"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-89" aria-hidden="true" tabindex="-1"></a>   (numbers        base0)</span>
-<span id="cb3-90"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-90" aria-hidden="true" tabindex="-1"></a>   (region         base4)</span>
-<span id="cb3-91"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-91" aria-hidden="true" tabindex="-1"></a>   (<span class="kw">error</span>          nano-color-critical)</span>
-<span id="cb3-92"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-92" aria-hidden="true" tabindex="-1"></a>   (<span class="kw">warning</span>        nano-color-popout)</span>
-<span id="cb3-93"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-93" aria-hidden="true" tabindex="-1"></a>   (success        nano-color-salient)</span>
-<span id="cb3-94"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-94" aria-hidden="true" tabindex="-1"></a>   (vc-modified    nano-color-salient)</span>
-<span id="cb3-95"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-95" aria-hidden="true" tabindex="-1"></a>   (vc-added       fg-alt)</span>
-<span id="cb3-96"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-96" aria-hidden="true" tabindex="-1"></a>   (vc-deleted     nano-color-critical)</span>
-<span id="cb3-97"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-98"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-98" aria-hidden="true" tabindex="-1"></a>   <span class="co">;; custom categories</span></span>
-<span id="cb3-99"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-99" aria-hidden="true" tabindex="-1"></a>   (-modeline-pad</span>
-<span id="cb3-100"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-100" aria-hidden="true" tabindex="-1"></a>    (<span class="kw">when</span> doom-plain-padded-modeline</span>
-<span id="cb3-101"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-101" aria-hidden="true" tabindex="-1"></a>      (<span class="kw">if</span> (<span class="kw">integerp</span> doom-plain-padded-modeline) doom-plain-padded-modeline <span class="dv">4</span>)))</span>
-<span id="cb3-102"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-103"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-103" aria-hidden="true" tabindex="-1"></a>   (modeline-bg              (doom-darken bg-alt <span class="fl">0.15</span>))</span>
-<span id="cb3-104"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-104" aria-hidden="true" tabindex="-1"></a>   (modeline-bg-alt          (doom-darken bg-alt <span class="fl">0.1</span>))</span>
-<span id="cb3-105"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-105" aria-hidden="true" tabindex="-1"></a>   (modeline-bg-inactive     (doom-darken bg-alt <span class="fl">0.1</span>))</span>
-<span id="cb3-106"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-106" aria-hidden="true" tabindex="-1"></a>   (modeline-bg-inactive-alt bg-alt)</span>
-<span id="cb3-107"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-107" aria-hidden="true" tabindex="-1"></a>   (modeline-fg              fg)</span>
-<span id="cb3-108"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-108" aria-hidden="true" tabindex="-1"></a>   (modeline-fg-alt          (doom-darken modeline-bg-inactive <span class="fl">0.35</span>)))</span>
-<span id="cb3-109"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-110"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-110" aria-hidden="true" tabindex="-1"></a>  <span class="co">;;;; Base theme face overrides</span></span>
-<span id="cb3-111"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-111" aria-hidden="true" tabindex="-1"></a>  ((<span class="kw">error</span>   :underline `(:style wave :color ,<span class="kw">error</span>))</span>
-<span id="cb3-112"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-112" aria-hidden="true" tabindex="-1"></a>   (<span class="kw">warning</span> :underline `(:style wave :color ,<span class="kw">warning</span>))</span>
-<span id="cb3-113"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-113" aria-hidden="true" tabindex="-1"></a>   ((font-lock-constant-face &amp;override)      :slant <span class="dt">&#39;italic</span>)</span>
-<span id="cb3-114"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-114" aria-hidden="true" tabindex="-1"></a>   ((font-lock-comment-face &amp;override)       :slant <span class="dt">&#39;italic</span>)</span>
-<span id="cb3-115"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-115" aria-hidden="true" tabindex="-1"></a>   ((font-lock-function-name-face &amp;override) :slant <span class="dt">&#39;italic</span>)</span>
-<span id="cb3-116"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-116" aria-hidden="true" tabindex="-1"></a>   ((font-lock-type-face &amp;override)          :slant <span class="dt">&#39;italic</span>)</span>
-<span id="cb3-117"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-117" aria-hidden="true" tabindex="-1"></a>   <span class="co">;;(hl-line :background base8)</span></span>
-<span id="cb3-118"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-118" aria-hidden="true" tabindex="-1"></a>   ((line-number &amp;override) :foreground base3)</span>
-<span id="cb3-119"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-119" aria-hidden="true" tabindex="-1"></a>   ((line-number-current-line &amp;override) :foreground base2)</span>
-<span id="cb3-120"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-120" aria-hidden="true" tabindex="-1"></a>   (mode-line</span>
-<span id="cb3-121"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-121" aria-hidden="true" tabindex="-1"></a>    :background modeline-bg :foreground modeline-fg</span>
-<span id="cb3-122"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-122" aria-hidden="true" tabindex="-1"></a>    :box (<span class="kw">if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg)))</span>
-<span id="cb3-123"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-123" aria-hidden="true" tabindex="-1"></a>   (mode-line-inactive</span>
-<span id="cb3-124"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-124" aria-hidden="true" tabindex="-1"></a>    :background modeline-bg-inactive :foreground modeline-fg-alt</span>
-<span id="cb3-125"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-125" aria-hidden="true" tabindex="-1"></a>    :box (<span class="kw">if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive)))</span>
-<span id="cb3-126"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-126" aria-hidden="true" tabindex="-1"></a>   (mode-line-emphasis :foreground highlight)</span>
-<span id="cb3-127"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-128"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-128" aria-hidden="true" tabindex="-1"></a>   <span class="co">;;;; doom-modeline</span></span>
-<span id="cb3-129"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-129" aria-hidden="true" tabindex="-1"></a>   (doom-modeline-bar :background modeline-bg)</span>
-<span id="cb3-130"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-130" aria-hidden="true" tabindex="-1"></a>   (doom-modeline-bar-inactive :inherit <span class="dt">&#39;doom-modeline-bar</span>)</span>
-<span id="cb3-131"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-131" aria-hidden="true" tabindex="-1"></a>   (doom-modeline-project-dir :foreground fg)</span>
-<span id="cb3-132"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-132" aria-hidden="true" tabindex="-1"></a>   (doom-modeline-buffer-file :foreground fg)</span>
-<span id="cb3-133"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-133" aria-hidden="true" tabindex="-1"></a>   (doom-modeline-buffer-modified :weight <span class="dt">&#39;bold</span> :foreground <span class="st">&quot;#000000&quot;</span>)</span>
-<span id="cb3-134"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-134" aria-hidden="true" tabindex="-1"></a>   (doom-modeline-panel :inherit <span class="dt">&#39;mode-line-highlight</span> :background base3 :foreground fg)</span>
-<span id="cb3-135"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-135" aria-hidden="true" tabindex="-1"></a>   <span class="co">;;;; ivy</span></span>
-<span id="cb3-136"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-136" aria-hidden="true" tabindex="-1"></a>   (ivy-posframe :background bg-alt)</span>
-<span id="cb3-137"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-137" aria-hidden="true" tabindex="-1"></a>   <span class="co">;;;; magit</span></span>
-<span id="cb3-138"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-138" aria-hidden="true" tabindex="-1"></a>   ((magit-diff-added-highlight &amp;override)   :foreground fg :background (doom-blend vc-added bg <span class="fl">0.3</span>))</span>
-<span id="cb3-139"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-139" aria-hidden="true" tabindex="-1"></a>   ((magit-diff-removed &amp;override)           :foreground (doom-lighten fg <span class="fl">0.4</span>) :background (doom-blend vc-deleted bg <span class="fl">0.1</span>))</span>
-<span id="cb3-140"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-140" aria-hidden="true" tabindex="-1"></a>   ((magit-diff-removed-highlight &amp;override) :foreground fg :background (doom-blend vc-deleted bg <span class="fl">0.22</span>))</span>
-<span id="cb3-141"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-141" aria-hidden="true" tabindex="-1"></a>   <span class="co">;;;; lsp-mode</span></span>
-<span id="cb3-142"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-142" aria-hidden="true" tabindex="-1"></a>   (lsp-headerline-breadcrumb-symbols-face :foreground keywords :weight <span class="dt">&#39;bold</span>)</span>
-<span id="cb3-143"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-143" aria-hidden="true" tabindex="-1"></a>   <span class="co">;;;; outline &lt;built-in&gt;</span></span>
-<span id="cb3-144"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-144" aria-hidden="true" tabindex="-1"></a>   (outline-1 :slant   <span class="dt">&#39;italic</span> :foreground fg-alt)</span>
-<span id="cb3-145"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-145" aria-hidden="true" tabindex="-1"></a>   (outline-2 :inherit <span class="dt">&#39;outline-1</span> :foreground base2)</span>
-<span id="cb3-146"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-146" aria-hidden="true" tabindex="-1"></a>   (outline-3 :inherit <span class="dt">&#39;outline-2</span>)</span>
-<span id="cb3-147"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-147" aria-hidden="true" tabindex="-1"></a>   (outline-4 :inherit <span class="dt">&#39;outline-3</span>)</span>
-<span id="cb3-148"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-148" aria-hidden="true" tabindex="-1"></a>   (outline-5 :inherit <span class="dt">&#39;outline-4</span>)</span>
-<span id="cb3-149"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-149" aria-hidden="true" tabindex="-1"></a>   (outline-6 :inherit <span class="dt">&#39;outline-5</span>)</span>
-<span id="cb3-150"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-150" aria-hidden="true" tabindex="-1"></a>   (outline-7 :inherit <span class="dt">&#39;outline-6</span>)</span>
-<span id="cb3-151"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-151" aria-hidden="true" tabindex="-1"></a>   (outline-8 :inherit <span class="dt">&#39;outline-7</span>)</span>
-<span id="cb3-152"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-153"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-153" aria-hidden="true" tabindex="-1"></a>   (org-level-1 :inherit <span class="dt">&#39;org-level-1</span> :foreground nano-color-strong)</span>
-<span id="cb3-154"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-154" aria-hidden="true" tabindex="-1"></a>   (org-level-2 :inherit <span class="dt">&#39;org-level-2</span> :foreground nano-color-strong)</span>
-<span id="cb3-155"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-155" aria-hidden="true" tabindex="-1"></a>   (org-level-3 :inherit <span class="dt">&#39;org-level-3</span> :foreground nano-color-strong)</span>
-<span id="cb3-156"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-156" aria-hidden="true" tabindex="-1"></a>   (org-level-4 :inherit <span class="dt">&#39;org-level-4</span> :foreground nano-color-strong)</span>
-<span id="cb3-157"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-157" aria-hidden="true" tabindex="-1"></a>   (org-level-5 :inherit <span class="dt">&#39;org-level-5</span> :foreground nano-color-strong)</span>
-<span id="cb3-158"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-158" aria-hidden="true" tabindex="-1"></a>   (org-level-6 :inherit <span class="dt">&#39;org-level-6</span> :foreground nano-color-strong)</span>
-<span id="cb3-159"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-159" aria-hidden="true" tabindex="-1"></a>   (org-level-7 :inherit <span class="dt">&#39;org-level-7</span> :foreground nano-color-strong)</span>
-<span id="cb3-160"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-160" aria-hidden="true" tabindex="-1"></a>   (org-level-8 :inherit <span class="dt">&#39;org-level-8</span> :foreground nano-color-strong)</span>
-<span id="cb3-161"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-162"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-162" aria-hidden="true" tabindex="-1"></a>   (org-code     :inherit <span class="dt">&#39;org-code</span></span>
-<span id="cb3-163"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-163" aria-hidden="true" tabindex="-1"></a>                 :foreground nano-color-salient</span>
-<span id="cb3-164"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-164" aria-hidden="true" tabindex="-1"></a>                 :weight <span class="dt">&#39;bold</span>)</span>
-<span id="cb3-165"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-165" aria-hidden="true" tabindex="-1"></a>   (org-verbatim :inherit <span class="dt">&#39;org-verbatim</span></span>
-<span id="cb3-166"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-166" aria-hidden="true" tabindex="-1"></a>                 :foreground nano-color-salient</span>
-<span id="cb3-167"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-167" aria-hidden="true" tabindex="-1"></a>                 :weight <span class="dt">&#39;bold</span>)</span>
-<span id="cb3-168"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-168" aria-hidden="true" tabindex="-1"></a>   (org-upcoming-deadline :inherit <span class="dt">&#39;org-upcoming-deadline</span></span>
-<span id="cb3-169"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-169" aria-hidden="true" tabindex="-1"></a>                          :foreground nano-color-critical</span>
-<span id="cb3-170"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-170" aria-hidden="true" tabindex="-1"></a>                          :weight <span class="dt">&#39;bold</span>)</span>
-<span id="cb3-171"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-171" aria-hidden="true" tabindex="-1"></a>   (org-upcoming-distant-deadline :inherit <span class="dt">&#39;org-upcoming-distant-deadline</span></span>
-<span id="cb3-172"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-172" aria-hidden="true" tabindex="-1"></a>                                  :foreground nano-color-salient)</span>
-<span id="cb3-173"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-174"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-174" aria-hidden="true" tabindex="-1"></a>   (org-habit-overdue-face</span>
-<span id="cb3-175"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-175" aria-hidden="true" tabindex="-1"></a>    :inherit <span class="dt">&#39;org-habit-overdue-face</span></span>
-<span id="cb3-176"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-176" aria-hidden="true" tabindex="-1"></a>    :background fg-alt)</span>
-<span id="cb3-177"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-177" aria-hidden="true" tabindex="-1"></a>   (org-habit-overdue-future-face</span>
-<span id="cb3-178"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-178" aria-hidden="true" tabindex="-1"></a>    :inherit <span class="dt">&#39;org-habit-overdue-future-face</span></span>
-<span id="cb3-179"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-179" aria-hidden="true" tabindex="-1"></a>    :background nano-color-subtle)</span>
-<span id="cb3-180"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-180" aria-hidden="true" tabindex="-1"></a>   (org-habit-alert-face</span>
-<span id="cb3-181"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-181" aria-hidden="true" tabindex="-1"></a>    :inherit <span class="dt">&#39;org-habit-alert-face</span></span>
-<span id="cb3-182"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-182" aria-hidden="true" tabindex="-1"></a>    :background nano-color-critical)</span>
-<span id="cb3-183"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-183" aria-hidden="true" tabindex="-1"></a>   (org-habit-alert-future-face</span>
-<span id="cb3-184"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-184" aria-hidden="true" tabindex="-1"></a>    :inherit <span class="dt">&#39;org-habit-alert-future-face</span></span>
-<span id="cb3-185"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-185" aria-hidden="true" tabindex="-1"></a>    :background nano-color-subtle)</span>
-<span id="cb3-186"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-187"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-187" aria-hidden="true" tabindex="-1"></a>   (org-scheduled-today :inherit <span class="dt">&#39;org-scheduled-today</span> :foreground fg)</span>
-<span id="cb3-188"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-188" aria-hidden="true" tabindex="-1"></a>   (org-scheduled-previously :inherit <span class="dt">&#39;org-scheduled-previously</span> :foreground fg)</span>
-<span id="cb3-189"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-189" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-190"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-190" aria-hidden="true" tabindex="-1"></a>   <span class="co">;;;; org &lt;built-in&gt;</span></span>
-<span id="cb3-191"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-191" aria-hidden="true" tabindex="-1"></a>   ((org-block &amp;override) :background bg-alt)</span>
-<span id="cb3-192"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-192" aria-hidden="true" tabindex="-1"></a>   ((org-block-begin-line &amp;override) :foreground base5)</span>
-<span id="cb3-193"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-193" aria-hidden="true" tabindex="-1"></a>   <span class="co">;;;; solaire-mode</span></span>
-<span id="cb3-194"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-194" aria-hidden="true" tabindex="-1"></a>   (solaire-mode-line-face</span>
-<span id="cb3-195"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-195" aria-hidden="true" tabindex="-1"></a>    :inherit <span class="dt">&#39;mode-line</span></span>
-<span id="cb3-196"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-196" aria-hidden="true" tabindex="-1"></a>    :background modeline-bg-alt</span>
-<span id="cb3-197"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-197" aria-hidden="true" tabindex="-1"></a>    :box (<span class="kw">if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-alt)))</span>
-<span id="cb3-198"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-198" aria-hidden="true" tabindex="-1"></a>   (solaire-mode-line-inactive-face</span>
-<span id="cb3-199"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-199" aria-hidden="true" tabindex="-1"></a>    :inherit <span class="dt">&#39;mode-line-inactive</span></span>
-<span id="cb3-200"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-200" aria-hidden="true" tabindex="-1"></a>    :background modeline-bg-inactive-alt</span>
-<span id="cb3-201"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-201" aria-hidden="true" tabindex="-1"></a>    :box (<span class="kw">if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive-alt)))))</span>
-<span id="cb3-202"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-202" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-203"><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#cb3-203" aria-hidden="true" tabindex="-1"></a><span class="co">;;; doom-plain-theme.el ends here</span></span></code></pre></div><p>You will probably need more work to achieve the colors you expect.
-For that, using <code>SPC-u C-x =</code> will probably be useful. It
-will show the font face under the cursor.</p><p>Best of luck.</p><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr></hr><ol><li id="fn1"><p><a href="https://www.nerdfonts.com">https://www.nerdfonts.com</a><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li><li id="fn2"><p><a href="https://www.nerdfonts.com">https://www.nerdfonts.com</a><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li><li id="fn3"><p><a href="https://github.com/hlissner/doom-emacs">https://github.com/hlissner/doom-emacs</a><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li><li id="fn4"><p><a href="https://github.com/rougier/nano-emacs">https://github.com/rougier/nano-emacs</a><a href="https://her.esy.fun/posts/0020-cool-looking-org-mode/index.html#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li></ol></section></article></main>
 ]]></description>
 </item>
 

@@ -1,0 +1,117 @@
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>AI Assistants in Doom Emacs 31 on macOS with Clojure MCP
+server</title><meta name=author content="Yann Esposito"><meta name=description content><meta name=keywords content="ai llm emacs mcp clojure setup claude
+copilot gptel doom-emacs"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><meta name=theme-color media="(prefers-color-scheme: light)" content="#d84100"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#2E3440"><header><div id=logo><a href=/><div class=vis-hidden>Go to Home</div><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="#00" stroke-width="1" fill="#2e3440"/><circle class="i1" cx="32" cy="32" r="12" stroke="#800" stroke-width="1" fill="#c20"/><circle class="i0" cx="32" cy="32" r="5" stroke-width="1" stroke="#f60" fill="#fa0"/><ellipse class="e" cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="#fff"/></svg></a></div><div class=content><h1>AI Assistants in Doom Emacs 31 on macOS with Clojure MCP
+server</h1><div class=meta><span class=yyydate>[2025-06-17 Tue]</span> on
+<a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract></div></div></header><main id=content><article><div class=notes><p>This article is about how to setup Emacs (doom-emacs in particlar) to
+work with most AI Assitants for Clojure projects using Clojure-MCP to
+provide the AI assistant the ability to run commands in the Clojure
+REPL.</div><h1 id=introduction>Introduction</h1><p>By the end of this article, you'll be able to give instructions to
+the AI Assistant and it will use the REPL of your specific project to
+execute them. For example, I asked the assistant to list all users in my
+project's database (running locally, of course). With my setup, the
+assistant could:<ul><li>analyze the project (source and document files)<li>discover the service and functions that could perform the operation
+to list all users<li>ran the code in the repl, and got back all users<li>used this answer to group the users (by org which makes sense for my
+project)<li>rendered the result as an org-mode file.</ul><p>I ran into a few bumps along the way since this setup uses some
+pretty cutting-edge tools and libraries. It took me a bit of time to
+work through these issues, which is exactly why I'm putting this article
+together - partly to help others who might face the same challenges, and
+partly as a reference for my future self.<p>If you follow this guide you should endup with a fully working setup
+with: Emacs + AI Assitant + Clojure-MCP development environment.<ul><li><strong><strong>Platform</strong></strong>: macOS<li><strong><strong>Editor</strong></strong>: Emacs Plus 31 with Doom
+Emacs<li><strong><strong>Emacs packages</strong></strong>:<ul><li><a href=https://github.com/karthink/gptel><code class=verbatim>gptel</code></a> for LLM interaction<li><a href=https://github.com/lizqwerscott/mcp.el>mcp</a> (Model
+Context Protocol) support</ul><li><strong><strong>Development Stack</strong></strong>:<ul><li><a href=https://github.com/bhauman/clojure-mcp><code class=verbatim>clojure-mcp</code></a> server<li>Custom MCP startup scripts for project integration</ul></ul><h1 id=steps>Steps</h1><h2 id=emacs>Emacs</h2><h3 id=install-latest-emacs-plus>Install latest emacs-plus</h3><div class=sourceCode id=cb1><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb1-1><a href=#cb1-1 aria-hidden=true tabindex=-1></a><span class=ex>brew</span> install emacs-plus <span class=at>--with-native-comp</span> <span class=at>--with-modern-black-dragon-icon</span></span></code></pre></div><ol><li><p>emacs-plus and native-comp shenanigans<p>Currently to fix emacs-plus from brew on macOS native-comp, add this
+to the beginning of your <code class=verbatim>~/.emacs.d/early-init.el</code>.<div class=sourceCode id=cb2 data-org-language=emacs-lisp><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id=cb2-1><a href=#cb2-1 aria-hidden=true tabindex=-1></a><span class=co>;; FIX NATIVE COMP: https://github.com/d12frosted/homebrew-emacs-plus/issues/554#issuecomment-2909894593</span></span>
+<span id=cb2-2><a href=#cb2-2 aria-hidden=true tabindex=-1></a>(setenv <span class=st>&quot;LIBRARY_PATH&quot;</span></span>
+<span id=cb2-3><a href=#cb2-3 aria-hidden=true tabindex=-1></a>        (mapconcat <span class=dt>&#39;identity</span></span>
+<span id=cb2-4><a href=#cb2-4 aria-hidden=true tabindex=-1></a>                   &#39;(<span class=st>&quot;/opt/homebrew/opt/gcc/lib/gcc/15&quot;</span></span>
+<span id=cb2-5><a href=#cb2-5 aria-hidden=true tabindex=-1></a>                     <span class=st>&quot;/opt/homebrew/opt/libgccjit/lib/gcc/15&quot;</span></span>
+<span id=cb2-6><a href=#cb2-6 aria-hidden=true tabindex=-1></a>                     <span class=st>&quot;/opt/homebrew/opt/gcc/lib/gcc/15/gcc/aarch64-apple-darwin24/15&quot;</span>)</span>
+<span id=cb2-7><a href=#cb2-7 aria-hidden=true tabindex=-1></a>                   <span class=st>&quot;:&quot;</span>))</span></code></pre></div></ol><h3 id=doom-emacs>doom-emacs</h3><p>As I started from an already existing <code>doom-emacs</code>
+installation. I will not cover that part. Please refer to the doom-emacs
+installation <a href="https://github.com/doomemacs/doomemacs?tab=readme-ov-file#install">project
+documentation</a> if you want to install it .<ol><li><p>Declare the new packages to use<p>In <code class=verbatim>config.el</code>:<pre class=elisp><code>...
+:tools
+  ...
+  llm ;; &lt;- uncomment this line
+  ...
+</code></pre><p>In <code class=verbatim>~/.doom.d/packages.el</code>:<pre class=elisp><code>(package! mcp
+    :pin &quot;3a380185597f56290057f370ab65dde89a20a18f&quot;)
+</code></pre><p>Then configure the packages:<p>In <code class=verbatim>~/.doom.d/config.el</code>:<pre class=elisp><code>;; LLM
+(use-package! gptel
+  :init
+  ;; declare the default llm configuration
+  ;; for me this is co-pilot with claude-sonnet-4
+  (setq gptel-default-mode &#39;org-mode ;; I want the llm to reply to me with org-mode format.
+        gptel-backend (gptel-make-gh-copilot &quot;Copilot&quot;)
+        gptel-model &#39;claude-sonnet-4)
+  (require &#39;gptel-integrations) ;; &lt;- for mcp
+  ;; declare another llm configuration, I also use GPT4All to consume locally only
+  (gptel-make-gpt4all &quot;GPT4All&quot;
+                      :protocol &quot;http&quot;
+                      :host &quot;localhost:4891&quot;
+                      ;; &quot;~/Library/Application Support/nomic.ai/GPT4All&quot;
+                      :models &#39;(Meta-Llama-3-8B-Instruct.Q4_0.gguf)))
+
+(use-package! mcp
+  :after gptel
+  :config (require &#39;mcp-hub)
+  :init (setq mcp-hub-servers
+              ;; this is the important block here
+              ;; it tells that it can launch an MCP server for my-project by running the following
+              ;; command line:
+              ;;    clojure-mcp my-project
+              &#39;((&quot;my-project&quot; :command &quot;clojure-mcp&quot; :args (&quot;my-project&quot;))))
+  :hook (after-init . mcp-hub-start-all-server))
+</code></pre><li><p>Rebuild / Install doom-emacs<p>After using another emacs version you need to rebuild your emacs
+packages.<div class=sourceCode id=cb6><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb6-1><a href=#cb6-1 aria-hidden=true tabindex=-1></a><span class=ex>doom</span> sync <span class=at>-u</span></span>
+<span id=cb6-2><a href=#cb6-2 aria-hidden=true tabindex=-1></a><span class=ex>doom</span> rebuild</span></code></pre></div><p>This will take a while.</ol><h2 id=clojure-mcp>Clojure-MCP</h2><h3 id=update-your-global-clojure-aliases>Update your global Clojure
+aliases</h3><p>The file <code class=verbatim>~/.clojure/deps.edn</code>:<div class=sourceCode id=cb7><pre class="sourceCode clojure"><code class="sourceCode clojure"><span id=cb7-1><a href=#cb7-1 aria-hidden=true tabindex=-1></a>{<span class=at>:aliases</span></span>
+<span id=cb7-2><a href=#cb7-2 aria-hidden=true tabindex=-1></a> {<span class=at>:mcp</span></span>
+<span id=cb7-3><a href=#cb7-3 aria-hidden=true tabindex=-1></a>  {<span class=at>:deps</span> {org.slf4j/slf4j-nop {<span class=at>:mvn/version</span> <span class=st>&quot;2.0.16&quot;</span>} <span class=co>;; Required for stdio server</span></span>
+<span id=cb7-4><a href=#cb7-4 aria-hidden=true tabindex=-1></a>          com.bhauman/clojure-mcp {<span class=at>:git/url</span> <span class=st>&quot;https://github.com/bhauman/clojure-mcp.git&quot;</span></span>
+<span id=cb7-5><a href=#cb7-5 aria-hidden=true tabindex=-1></a>                                   <span class=at>:git/tag</span> <span class=st>&quot;v0.1.4-alpha&quot;</span></span>
+<span id=cb7-6><a href=#cb7-6 aria-hidden=true tabindex=-1></a>                                   <span class=at>:git/sha</span> <span class=st>&quot;080b29b&quot;</span>}}</span>
+<span id=cb7-7><a href=#cb7-7 aria-hidden=true tabindex=-1></a>   <span class=at>:exec-fn</span> clojure-mcp.main/start-mcp-server</span>
+<span id=cb7-8><a href=#cb7-8 aria-hidden=true tabindex=-1></a>   <span class=at>:exec-args</span> {<span class=at>:port</span> <span class=dv>7888</span>}}}</span>
+<span id=cb7-9><a href=#cb7-9 aria-hidden=true tabindex=-1></a> }</span></code></pre></div><h3 id=create-the-command-line-to-launch-the-clojure-mcp-server>Create
+the command line to launch the Clojure MCP Server</h3><div class=sourceCode id=cb8><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb8-1><a href=#cb8-1 aria-hidden=true tabindex=-1></a><span class=co>#!/usr/bin/env bash</span></span>
+<span id=cb8-2><a href=#cb8-2 aria-hidden=true tabindex=-1></a></span>
+<span id=cb8-3><a href=#cb8-3 aria-hidden=true tabindex=-1></a><span class=cf>case</span> <span class=va>$1</span> <span class=kw>in</span></span>
+<span id=cb8-4><a href=#cb8-4 aria-hidden=true tabindex=-1></a>    <span class=ss>my-project</span><span class=kw>)</span> <span class=va>PORT</span><span class=op>=</span>7888<span class=cf>;;</span></span>
+<span id=cb8-5><a href=#cb8-5 aria-hidden=true tabindex=-1></a>    <span class=pp>*</span><span class=kw>)</span> <span class=bu>echo</span> <span class=st>&quot;I don&#39;t know how to start this project (</span><span class=va>$1</span><span class=st>)&quot;</span> <span class=op>&gt;&amp;</span><span class=dv>2</span></span>
+<span id=cb8-6><a href=#cb8-6 aria-hidden=true tabindex=-1></a>       <span class=bu>exit</span> 1<span class=kw>;</span></span>
+<span id=cb8-7><a href=#cb8-7 aria-hidden=true tabindex=-1></a><span class=cf>esac</span></span>
+<span id=cb8-8><a href=#cb8-8 aria-hidden=true tabindex=-1></a></span>
+<span id=cb8-9><a href=#cb8-9 aria-hidden=true tabindex=-1></a><span class=ex>clojure</span> <span class=at>-X:mcp</span> <span class=at>--port</span> <span class=va>$PORT</span></span></code></pre></div><h3 id=link-clojure-mcp-to-your-clojure-project>Link Clojure MCP to
+your Clojure project</h3><p>It is important to perform the operation in the correct order. So
+<strong>FIRST</strong> go to your project and start the repl. Personally
+I work on a very big professional Clojure project that started even
+before <code class=verbatim>deps.edn</code> was thing in Clojure. So I
+could start the repl with a lein command:<div class=sourceCode id=cb9><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb9-1><a href=#cb9-1 aria-hidden=true tabindex=-1></a><span class=ex>lein</span> repl :start :port 7888</span></code></pre></div><p>Got it! Here's your project setup in a friendlier tone:<p>Since my project is pretty large and has its own restart helpers, I
+don't use the headless mode that the clojure-mcp docs suggest. Instead,
+I fire up the project with :start mode so I can manually load all the
+namespaces and get everything running with a the <code>(reset!)</code>
+command.<p>Once my project is running (after <code>reset!</code>) <strong>ONLY
+THEN</strong> I start the Clojure mcp server.<p>I could test that by running my <code>clojure-mcp my-project</code>
+command, and I get back a list of JSON objects lines:<div class=sourceCode id=cb10><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb10-1><a href=#cb10-1 aria-hidden=true tabindex=-1></a><span class=op>&gt;</span> clojure-mcp <span class=ex>my-project</span></span>
+<span id=cb10-2><a href=#cb10-2 aria-hidden=true tabindex=-1></a><span class=dt>{</span><span class=st>&quot;jsonrpc&quot;</span><span class=dt>:</span><span class=st>&quot;2.0&quot;</span><span class=op>,</span><span class=st>&quot;method&quot;</span><span class=dt>:</span><span class=st>&quot;notifications/tools/list_changed&quot;</span><span class=dt>}</span></span>
+<span id=cb10-3><a href=#cb10-3 aria-hidden=true tabindex=-1></a><span class=ex>...</span></span>
+<span id=cb10-4><a href=#cb10-4 aria-hidden=true tabindex=-1></a><span class=dt>{</span><span class=st>&quot;jsonrpc&quot;</span><span class=dt>:</span><span class=st>&quot;2.0&quot;</span><span class=op>,</span><span class=st>&quot;method&quot;</span><span class=dt>:</span><span class=st>&quot;notifications/resources/list_changed&quot;</span><span class=dt>}</span></span>
+<span id=cb10-5><a href=#cb10-5 aria-hidden=true tabindex=-1></a><span class=ex>...</span></span>
+<span id=cb10-6><a href=#cb10-6 aria-hidden=true tabindex=-1></a><span class=dt>{</span><span class=st>&quot;jsonrpc&quot;</span><span class=dt>:</span><span class=st>&quot;2.0&quot;</span><span class=op>,</span><span class=st>&quot;method&quot;</span><span class=dt>:</span><span class=st>&quot;notifications/prompts/list_changed&quot;</span><span class=dt>}</span></span></code></pre></div><p>So this is a good sign.<h2 id=using-it>Using it</h2><p>Now, everything should be ready to use.<p>After starting my repl, I launch emacs (if emacs was already started,
+you probably need to restart your mcp server)<p>Once emacs is started, open gptel menu (<code>SPC o l m</code>). Try
+to add tools (if they are not there ; type <code>M+</code> and start the
+mcp if not started)<p>Once done, here you go.<p><code>SPC o l l</code> => will create a new buffer to send orders
+to the LLM. I started with:<blockquote><p>Analyze the codebase structure, Document key files, dependencies and
+available tools. Generate or update a comprehensive documentation in a
+format optimized for LLM Assistants. Save this documentation in the file
+<code class=verbatim>PROJECT_SUMMARY.md</code>.</blockquote><p>This should generate this <code class=verbatim>PROJECT_SUMMARY.md</code> file and you should generally
+always add this file to your LLM session context when working on your
+project.<p>Now, to show how powerful this setup is, I could ask:<p>> Can you list all the users in the database?<p>And the AI Assistant (it was claude) was able to analyse the project,
+discover the service to use, call the correct methods of this service to
+list all users in my local environment DB. The result was then rendered
+as a nice org-mode file where users were grouped by Org. This was even
+better that what I could expect.<p>I could als ask how he could perform this operation, and the
+assistant returned the commands he exectued in the repl.</article></main><footer id=postamble class=status><div class=content><nav role=navigation><a href=/index.html>Home</a> |
+<a href=/slides.html>Slides</a> |
+<a href=/about-me.html>About</a> |
+<a href=#logo>↑↑↑</a></nav></div></footer>
