@@ -1,0 +1,334 @@
+#+title: AI Assistant return of experience
+#+description: My return of experience from using AI agents again into a big real-world production ready project.
+#+keywords: llm ai agent claude gpt chatgpt copilot
+#+author: Yann Esposito
+#+email: yann@esposito.host
+#+date: [2025-07-03 Thu]
+#+lang: en
+#+options: auto-id:t
+#+startup: showeverything
+
+#+begin_notes
+*TL;DR of TL;DR:* With the correct setup LLM-based AI Assistant have their place
+in the Software Developer tool-belt.
+#+end_notes
+
+#+begin_notes
+*TL;DR:*
+
+1. *Evaluations*
+   - The Good:
+     - =(++)= answering specific technical questions (with references),
+     - =(++)= write small unreliable scripts nor prod-level quality (if helped)
+     - =(+)= simple/repetitive coding tasks, boilerplate,
+     - =(+)= review
+     - =(+)= documentation writing
+   - The Bad:
+     - =(-)= test writing
+     - =(-)= Perform specific, small, and easy (beginner junior) production-ready programming task.
+   - The Ugly:
+     - =(--)= Big tasks that would require a lot of intermediate steps.
+     - =(---)= Code a feature with a production quality. It is a lot faster and
+       more reliable to code manually. Almost all invested time was lost.
+2. *Setup:* need to support *AI Agent*, *MCP* (Clojure-MCP in particular!), *RAG*
+3. *Limitations:* bullshitting, non-verbal reasoning, complex coding tasks, self reference
+4. *Conclusions:*
+   - Main lesson: Great for small and easy tasks but you already need some expertise.
+   - Using AI Agent is a skill like learning other tools like =git=.
+     - They bring value and are an improvement
+     - never blindly trust ; always double check the answers
+     - Learn what you can and cannot delegate
+   - I would say that you can *PARTIALLY* delegate about 20% of the daily tasks; code
+     review, documentation, code analysis.
+   - WORKS VERY POORLY without advanced latest setup (MCP, RAG, reasoning, agent
+     behavior), probably cost a lot.
+   - AI Workflows potentially superior to AI Agents?
+#+end_notes
+
+* Introduction
+:PROPERTIES:
+:CUSTOM_ID: introduction
+:END:
+
+My past encounters with LLMs were far from impressive. So, what made me decide
+to give them another chance?
+
+- I saw a [[https://github.com/cloudflare/workers-oauth-provider/?tab=readme-ov-file#written-using-claude][GitHub repository showing a full OAuth2 Provider]] built using Claude.
+  One commit per prompt.
+  I didn't follow all commits, but it was nice to see that this was possible.
+- [[https://github.com/bhauman/clojure-mcp][Clojure-MCP]] ; I didn't knew at that time precisely how that could be a game
+  changer, but it is.
+- Heard good things about Claude for programming and I saw a few web app made
+  from just a few directives.
+
+
+* The Setup
+:PROPERTIES:
+:CUSTOM_ID: the-setup
+:END:
+Setting things up was not straightforward.
+But once done I must admit I was really impressed.
+
+I feel AI Agent are now like Versioning System (=git=) and Build Systems (=make=).
+These are tools worthy of learning.
+But from my experience they only provide value if you have a full setup:
+- *Agent*: The AI needs to work on its own, handling several connected tasks
+  without asking for your input every time.
+- *Clojure-MCP*; it makes these tools way better, even if you code in another language.
+- *RAG*; the system must support file/buffer context to add in order to be able to
+  follow your project best practices.
+
+See [[https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html][my previous article]] to see all details of my current setup.
+
+* Limitations
+:PROPERTIES:
+:CUSTOM_ID: limitations
+:END:
+
+Before we dig into what these tools does well, let’s be clear about what they
+can’t handle. It is important to know these limits not to lose your time.
+You can ask people, and even the AI assistant itself about its limitations.
+This give a first broad idea, mainly when human is deeply involved.
+But there are also very precises tasks for which these system provide poor results.
+
+** Counting
+:PROPERTIES:
+:CUSTOM_ID: counting
+:END:
+
+Language models are notoriously bad at counting. Now, they have more and more
+tools at their disposal to help them count. But don't trust them.
+
+First
+
+#+begin_quote
+> How many r are in recursively?
+
+To count the letter 'r' in the word "recursively", I'll examine each letter:
+
+r-e-c-u-r-s-i-v-e-l-y
+
+Looking at each position:
+1. r - this is an 'r' ✓
+2. e - not an 'r'
+3. c - not an 'r'
+4. u - not an 'r'
+5. r - this is an 'r' ✓
+6. s - not an 'r'
+7. i - not an 'r'
+8. v - not an 'r'
+9. e - not an 'r'
+10. l - not an 'r'
+11. y - not an 'r'
+
+There are *2* letter 'r's in the word "recursively".
+#+end_quote
+
+Good :). But it was a bit verbose.
+Let's try again
+
+#+begin_quote
+> How many r are in recursively? Be succinct and direct.
+
+There are 3 r's in "recursively".
+#+end_quote
+
+In fact, event, when not asking to be succinct, I got some errors (counting up to
+3 or 4).
+
+** Self reference
+:PROPERTIES:
+:CUSTOM_ID: self-reference
+:END:
+
+Now, let's try to make the Agent self aware of its own answer, yeah, this is
+exactly the tricky question LLMs are bad at:
+
+#+begin_quote
+> Good now could you give me the number of letter in your next answer?
+
+This answer contains exactly 12 letters.
+
+> How many letters are there in "This answer contains exactly 12 letters."?
+
+I need to count the letters in the phrase "This answer contains exactly 12 letters."
+Let me count each character that is a letter (excluding spaces, punctuation, and numbers):
+"This answer contains exactly 12 letters."
+
+T-h-i-s (4) + a-n-s-w-e-r (6) + c-o-n-t-a-i-n-s (8) + e-x-a-c-t-l-y (7) + l-e-t-t-e-r-s (7)
+
+Total: 4 + 6 + 8 + 7 + 7 = 32 letters
+
+There are *32 letters* in "This answer contains exactly 12 letters."
+
+The statement is self-contradictory since it claims to contain exactly 12 letters but actually contains 32 letters.
+#+end_quote
+
+** Algebraic reasoning
+:PROPERTIES:
+:CUSTOM_ID: algebraic-reasoning
+:END:
+
+When asking about using transducer for a solution already using the function
+~reduce~ it simply wasn't able to do it.
+The LLM can regurgitate the definition of transducers and how they work.
+But doing such a transformation need some algebraic reasoning that is pretty
+alien to language reasoning. Like counting (arithmetic reasoning) it fails flat.
+
+
+* Productivity Gain
+:PROPERTIES:
+:CUSTOM_ID: productivity-gain
+:END:
+** =(--)= Hard/Advanced Programming
+:PROPERTIES:
+:CUSTOM_ID: -------hard-advanced-programming
+:END:
+
+First, let's make it clear.
+For real, production-ready, quality development or complex tasks with advanced
+requirements these tools are a *NET NEGATIVE*.
+
+If the task at hand is not small in scope, with a clear specification
+the system will act as a /confidently wrong junior developer/.
+In the end, most your time will be lost.
+
+Worse than that, discovering the problems generated by the tools will not be
+a trivial task, and in the end result in a lot more time loss than if you would
+simply not have used any AI Agent.
+
+So be conscious about the difficulty of the task at hand.
+
+** =(+)= Boilerplate
+:PROPERTIES:
+:CUSTOM_ID: ------boilerplate
+:END:
+
+For writing boilerplate code following your project's best practices I would say
+my experience was positive.
+Some subtle errors could appear, and this was not great.
+Still, it is faster to use the AI for the boilerplate than typing it yourself
+most of the time.
+
+** =(++)= Small disposable scripts that don't need to be reliable
+:PROPERTIES:
+:CUSTOM_ID: -------small-disposable-scripts-that-don't-need-to-be-reliable
+:END:
+
+If you need to write a script that don't need to be highly reliable.
+In that case, I can say my experience was a *BIG NET POSITIVE*.
+It worked because the tasks to write this script was:
+- small in scope
+- clear technical design
+
+It built he tool for me in a few seconds which would have taken me more time
+just typing it.
+
+An important remark however, is that if you know what would be the "Best tool
+for the work", this would also tremendously improve the speed and quality of the
+result.
+
+I asked the Agent to build the same tool twice. First in bash, second
+using [[https://babashka.org][babashka]]. And for my specific need, not only it was a lot faster to build
+the tool using babashka, but the result was clearly superior both in design and
+quality as well as efficiency.
+
+** =(+)= PR Reviewing
+:PROPERTIES:
+:CUSTOM_ID: ------pr-reviewing
+:END:
+
+I think a nice use case of AI Assistant is to ask it to generate a review of
+your PR locally prior to send it to show it to your team.
+- about 10% is plain wrong and MUST be ignored
+- 70% not useful, but could be ignored,
+- *20%* are good recommendations.
+
+While 20% is not much, this is still a net positive.
+Personally I feel that using AI just for review would already be a good reason to
+add them to your tool-belt.
+
+** =(++)= Asking specific technical details about your own project
+:PROPERTIES:
+:CUSTOM_ID: -------asking-specific-technical-details-about-your-own-project
+:END:
+
+Using RAG + Clojure-MCP to search and discover the details of your Project, this
+ended up being very useful.
+
+I work on a huge base code. We created a full platform from scratch that
+contains hundreds of technical details.
+Some of them are long forgotten in some documentation, and some were not even
+cleanly documented due to time pressure during the delivery.
+
+Still I could ask these very specific questions and got a clear answer.
+Of course, as you should never trust the system fully, I asked for the source
+code and documentation to be able to verify the answer.
+And it worked perfectly.
+
+Typically I could ask "What is the HTTP Header to use for this
+specific feature?" and it looks at the code and returns the value with a small
+documentation and pointer to the sources.
+
+** =(+)= Writing doc
+:PROPERTIES:
+:CUSTOM_ID: ------writing-doc
+:END:
+
+While everything must be proofread because *you cannot fully trust the Agent*,
+this generally gives a good first pass overview and can generate a documentation
+of mediocre quality.
+If you want a good documentation it will need a lot more time.
+But I still give a positive outcome as existing and bad documentation is still a
+net positive comparatively to no documentation.
+
+** =(-)= Writing tests
+:PROPERTIES:
+:CUSTOM_ID: ------writing-tests
+:END:
+
+In my experience, asking these agent to write tests can either be a net positive
+or a full net negative were I had to delete all generated tests.
+So I wouldn't recommend using AI code generation for writing advanced tests cases.
+But I feel this is fine for very specific small functions. And even there, you
+really need to be cautious about passing tests that are not useful at all
+and just give a false sense of safety.
+
+Sometime it is just better to write the tests, at least the cases but not the
+boilerplate, yourself to be sure you are testing the correct thing.
+
+** =(++)= Familiarize with foreign code
+:PROPERTIES:
+:CUSTOM_ID: -------familiarize-with-foreign-code
+:END:
+
+The ability to generate a =PROJECT_SUMMARY.md= as suggested by the Clojure-MCP
+tutorial, proves that these tool can really help grasp a new project. It's
+structure, the generic ideas, etc…
+
+This is not totally perfect, but I got impressive results, so this count as *NET
+POSITIVE*.
+
+* Conclusions
+:PROPERTIES:
+:CUSTOM_ID: conclusions
+:END:
+
+With this new tryout of the AI tools I could discover tasks for which they
+are useful.
+In terms of productivity, I believe their benefits depend tremendously on the
+type of work you assign them. I feel they have a place as a daily-use tool,
+particularly for pre-reviewing your code and helping you write documents.
+
+To be effective you need to:
+
+1. Be ale to use something at least as efficient as /Claude 4 Sonnet/; so an *Agent*
+   with *Clojure-MCP*, *RAG* support.
+2. Be conscious about the *scope* and *complexity* of the task
+3. Be able to provide *precise technical specification* of the task
+4. Always be conscious (evaluate and monitor) the time it would take to complete
+   the task manually versus the time spent supervising the automated tool.
+
+If you familiarize yourself with these agents, really try Clojure-MCP.
+It is a game changer and that provide a pretty huge advantage to Clojure
+comparatively to other programming languages.
