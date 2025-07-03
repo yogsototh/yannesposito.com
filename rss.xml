@@ -14,8 +14,8 @@
   <link>https://her.esy.fun</link>
   <description><![CDATA[her.esy.fun articles, mostly random personal thoughts]]></description>
   <language>en</language>
-  <pubDate>Tue, 17 Jun 2025 00:00:00 +0200</pubDate>
-  <lastBuildDate>Thu, 19 Jun 2025 00:00:00 +0200</lastBuildDate>
+  <pubDate>Thu, 03 Jul 2025 00:00:00 +0200</pubDate>
+  <lastBuildDate>Thu, 03 Jul 2025 00:00:00 +0200</lastBuildDate>
   <generator>mkrss.sh</generator>
   <webMaster>yann@esposito.host (Yann Esposito)</webMaster>
   <image>
@@ -25,8 +25,140 @@
   </image>
 
 <item>
-<title>AI Assistants in Doom Emacs 31 on macOS with Clojure MCP
-server</title>
+<title>AI Assistant return of experience</title>
+<guid>https://her.esy.fun/posts/0030-ai-assistant-return-of-experience/index.html</guid>
+<pubDate>Thu, 03 Jul 2025 00:00:00 +0200</pubDate>
+<category>llm</category>
+<category>ai</category>
+<category>agent</category>
+<category>claude</category>
+<category>gpt</category>
+<category>chatgpt</category>
+<category>copilot</category>
+<description><![CDATA[
+<main id="content"><article><div class="notes"><p><strong>TL;DR of TL;DR:</strong> With the correct setup LLM-based AI
+Assistant have their place in the Software Developer tool-belt.</p></div><div class="notes"><p><strong>TL;DR:</strong></p><ol><li><strong>Evaluations</strong><ul><li>The Good:<ul><li><code class="verbatim">(++)</code> answering specific technical
+questions (with references),</li><li><code class="verbatim">(++)</code> write small unreliable scripts
+nor prod-level quality (if helped)</li><li><code class="verbatim">(+)</code> simple/repetitive coding tasks,
+boilerplate,</li><li><code class="verbatim">(+)</code> review</li><li><code class="verbatim">(+)</code> documentation writing</li></ul></li><li>The Bad:<ul><li><code class="verbatim">(-)</code> test writing</li><li><code class="verbatim">(-)</code> Perform specific, small, and easy
+(beginner junior) production-ready programming task.</li></ul></li><li>The Ugly:<ul><li><code class="verbatim">(--)</code> Big tasks that would require a
+lot of intermediate steps.</li><li><code class="verbatim">(---)</code> Code a feature with a production
+quality. It is a lot faster and more reliable to code manually. Almost
+all invested time was lost.</li></ul></li></ul></li><li><strong>Setup:</strong> need to support <strong>AI Agent</strong>,
+<strong>MCP</strong> (Clojure-MCP in particular!),
+<strong>RAG</strong></li><li><strong>Limitations:</strong> bullshitting, non-verbal reasoning,
+complex coding tasks, self reference</li><li><strong>Conclusions:</strong><ul><li>Main lesson: Great for small and easy tasks but you already need
+some expertise.</li><li>Using AI Agent is a skill like learning other tools like <code class="verbatim">git</code>.<ul><li>They bring value and are an improvement</li><li>never blindly trust ; always double check the answers</li><li>Learn what you can and cannot delegate</li></ul></li><li>I would say that you can <strong>PARTIALLY</strong> delegate about
+20% of the daily tasks; code review, documentation, code analysis.</li><li>WORKS VERY POORLY without advanced latest setup (MCP, RAG,
+reasoning, agent behavior), probably cost a lot.</li><li>AI Workflows potentially superior to AI Agents?</li></ul></li></ol></div><h1 id="introduction">Introduction</h1><p>My past encounters with LLMs were far from impressive. So, what made
+me decide to give them another chance?</p><ul><li>I saw a <a href="https://github.com/cloudflare/workers-oauth-provider/?tab=readme-ov-file#written-using-claude">GitHub
+repository showing a full OAuth2 Provider</a> built using Claude. One
+commit per prompt. I didn't follow all commits, but it was nice to see
+that this was possible.</li><li><a href="https://github.com/bhauman/clojure-mcp">Clojure-MCP</a> ; I
+didn't knew at that time precisely how that could be a game changer, but
+it is.</li><li>Heard good things about Claude for programming and I saw a few web
+app made from just a few directives.</li></ul><h1 id="the-setup">The Setup</h1><p>Setting things up was not straightforward. But once done I must admit
+I was really impressed.</p><p>I feel AI Agent are now like Versioning System (<code class="verbatim">git</code>) and Build Systems (<code class="verbatim">make</code>). These are tools worthy of learning. But
+from my experience they only provide value if you have a full setup:</p><ul><li><strong>Agent</strong>: The AI needs to work on its own, handling
+several connected tasks without asking for your input every time.</li><li><strong>Clojure-MCP</strong>; it makes these tools way better, even
+if you code in another language.</li><li><strong>RAG</strong>; the system must support file/buffer context to
+add in order to be able to follow your project best practices.</li></ul><p>See <a href="https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html">my
+previous article</a> to see all details of my current setup.</p><h1 id="limitations">Limitations</h1><p>Before we dig into what these tools does well, let’s be clear about
+what they can’t handle. It is important to know these limits not to lose
+your time. You can ask people, and even the AI assistant itself about
+its limitations. This give a first broad idea, mainly when human is
+deeply involved. But there are also very precises tasks for which these
+system provide poor results.</p><h2 id="counting">Counting</h2><p>Language models are notoriously bad at counting. Now, they have more
+and more tools at their disposal to help them count. But don't trust
+them.</p><p>First</p><blockquote><p>> How many r are in recursively?</p><p>To count the letter 'r' in the word "recursively", I'll examine each
+letter:</p><p>r-e-c-u-r-s-i-v-e-l-y</p><p>Looking at each position:</p><ol><li>r - this is an 'r' ✓</li><li>e - not an 'r'</li><li>c - not an 'r'</li><li>u - not an 'r'</li><li>r - this is an 'r' ✓</li><li>s - not an 'r'</li><li>i - not an 'r'</li><li>v - not an 'r'</li><li>e - not an 'r'</li><li>l - not an 'r'</li><li>y - not an 'r'</li></ol><p>There are <strong>2</strong> letter 'r's in the word
+"recursively".</p></blockquote><p>Good :). But it was a bit verbose. Let's try again</p><blockquote><p>> How many r are in recursively? Be succinct and direct.</p><p>There are 3 r's in "recursively".</p></blockquote><p>In fact, event, when not asking to be succinct, I got some errors
+(counting up to 3 or 4).</p><h2 id="self-reference">Self reference</h2><p>Now, let's try to make the Agent self aware of its own answer, yeah,
+this is exactly the tricky question LLMs are bad at:</p><blockquote><p>> Good now could you give me the number of letter in your next
+answer?</p><p>This answer contains exactly 12 letters.</p><p>> How many letters are there in "This answer contains exactly 12
+letters."?</p><p>I need to count the letters in the phrase "This answer contains
+exactly 12 letters." Let me count each character that is a letter
+(excluding spaces, punctuation, and numbers): "This answer contains
+exactly 12 letters."</p><p>T-h-i-s (4) + a-n-s-w-e-r (6) + c-o-n-t-a-i-n-s (8) + e-x-a-c-t-l-y
+(7) + l-e-t-t-e-r-s (7)</p><p>Total: 4 + 6 + 8 + 7 + 7 = 32 letters</p><p>There are <strong>32 letters</strong> in "This answer contains
+exactly 12 letters."</p><p>The statement is self-contradictory since it claims to contain
+exactly 12 letters but actually contains 32 letters.</p></blockquote><h2 id="algebraic-reasoning">Algebraic reasoning</h2><p>When asking about using transducer for a solution already using the
+function <code>reduce</code> it simply wasn't able to do it. The LLM can
+regurgitate the definition of transducers and how they work. But doing
+such a transformation need some algebraic reasoning that is pretty alien
+to language reasoning. Like counting (arithmetic reasoning) it fails
+flat.</p><h1 id="productivity-gain">Productivity Gain</h1><h2 id="-------hard-advanced-programming"><code class="verbatim">(--)</code> Hard/Advanced Programming</h2><p>First, let's make it clear. For real, production-ready, quality
+development or complex tasks with advanced requirements these tools are
+a <strong>NET NEGATIVE</strong>.</p><p>If the task at hand is not small in scope, with a clear specification
+the system will act as a <em>confidently wrong junior developer</em>. In
+the end, most your time will be lost.</p><p>Worse than that, discovering the problems generated by the tools will
+not be a trivial task, and in the end result in a lot more time loss
+than if you would simply not have used any AI Agent.</p><p>So be conscious about the difficulty of the task at hand.</p><h2 id="------boilerplate"><code class="verbatim">(+)</code>
+Boilerplate</h2><p>For writing boilerplate code following your project's best practices
+I would say my experience was positive. Some subtle errors could appear,
+and this was not great. Still, it is faster to use the AI for the
+boilerplate than typing it yourself most of the time.</p><h2 id="-------small-disposable-scripts-that-don't-need-to-be-reliable"><code class="verbatim">(++)</code> Small disposable scripts that don't need to
+be reliable</h2><p>If you need to write a script that don't need to be highly reliable.
+In that case, I can say my experience was a <strong>BIG NET
+POSITIVE</strong>. It worked because the tasks to write this script
+was:</p><ul><li>small in scope</li><li>clear technical design</li></ul><p>It built he tool for me in a few seconds which would have taken me
+more time just typing it.</p><p>An important remark however, is that if you know what would be the
+"Best tool for the work", this would also tremendously improve the speed
+and quality of the result.</p><p>I asked the Agent to build the same tool twice. First in bash, second
+using <a href="https://babashka.org">babashka</a>. And for my specific
+need, not only it was a lot faster to build the tool using babashka, but
+the result was clearly superior both in design and quality as well as
+efficiency.</p><h2 id="------pr-reviewing"><code class="verbatim">(+)</code> PR
+Reviewing</h2><p>I think a nice use case of AI Assistant is to ask it to generate a
+review of your PR locally prior to send it to show it to your team.</p><ul><li>about 10% is plain wrong and MUST be ignored</li><li>70% not useful, but could be ignored,</li><li><strong>20%</strong> are good recommendations.</li></ul><p>While 20% is not much, this is still a net positive. Personally I
+feel that using AI just for review would already be a good reason to add
+them to your tool-belt.</p><h2 id="-------asking-specific-technical-details-about-your-own-project"><code class="verbatim">(++)</code> Asking specific technical details about
+your own project</h2><p>Using RAG + Clojure-MCP to search and discover the details of your
+Project, this ended up being very useful.</p><p>I work on a huge base code. We created a full platform from scratch
+that contains hundreds of technical details. Some of them are long
+forgotten in some documentation, and some were not even cleanly
+documented due to time pressure during the delivery.</p><p>Still I could ask these very specific questions and got a clear
+answer. Of course, as you should never trust the system fully, I asked
+for the source code and documentation to be able to verify the answer.
+And it worked perfectly.</p><p>Typically I could ask "What is the HTTP Header to use for this
+specific feature?" and it looks at the code and returns the value with a
+small documentation and pointer to the sources.</p><h2 id="------writing-doc"><code class="verbatim">(+)</code> Writing
+doc</h2><p>While everything must be proofread because <strong>you cannot fully
+trust the Agent</strong>, this generally gives a good first pass
+overview and can generate a documentation of mediocre quality. If you
+want a good documentation it will need a lot more time. But I still give
+a positive outcome as existing and bad documentation is still a net
+positive comparatively to no documentation.</p><h2 id="------writing-tests"><code class="verbatim">(-)</code> Writing
+tests</h2><p>In my experience, asking these agent to write tests can either be a
+net positive or a full net negative were I had to delete all generated
+tests. So I wouldn't recommend using AI code generation for writing
+advanced tests cases. But I feel this is fine for very specific small
+functions. And even there, you really need to be cautious about passing
+tests that are not useful at all and just give a false sense of
+safety.</p><p>Sometime it is just better to write the tests, at least the cases but
+not the boilerplate, yourself to be sure you are testing the correct
+thing.</p><h2 id="-------familiarize-with-foreign-code"><code class="verbatim">(++)</code> Familiarize with foreign code</h2><p>The ability to generate a <code class="verbatim">PROJECT_SUMMARY.md</code> as suggested by the
+Clojure-MCP tutorial, proves that these tool can really help grasp a new
+project. It's structure, the generic ideas, etc…</p><p>This is not totally perfect, but I got impressive results, so this
+count as <strong>NET POSITIVE</strong>.</p><h1 id="conclusions">Conclusions</h1><p>With this new tryout of the AI tools I could discover tasks for which
+they are useful. In terms of productivity, I believe their benefits
+depend tremendously on the type of work you assign them. I feel they
+have a place as a daily-use tool, particularly for pre-reviewing your
+code and helping you write documents.</p><p>To be effective you need to:</p><ol><li>Be ale to use something at least as efficient as <em>Claude 4
+Sonnet</em>; so an <strong>Agent</strong> with
+<strong>Clojure-MCP</strong>, <strong>RAG</strong> support.</li><li>Be conscious about the <strong>scope</strong> and
+<strong>complexity</strong> of the task</li><li>Be able to provide <strong>precise technical specification</strong>
+of the task</li><li>Always be conscious (evaluate and monitor) the time it would take to
+complete the task manually versus the time spent supervising the
+automated tool.</li></ol><p>If you familiarize yourself with these agents, really try
+Clojure-MCP. It is a game changer and that provide a pretty huge
+advantage to Clojure comparatively to other programming languages.</p></article></main>
+]]></description>
+</item>
+
+
+<item>
+<title>AI Assistants setup in Emacs & Clojure-MCP</title>
 <guid>https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html</guid>
 <pubDate>Tue, 17 Jun 2025 00:00:00 +0200</pubDate>
 <category>ai</category>
@@ -1629,247 +1761,6 @@ future. Because bootstrapping is generally not trivial. I will probably
 update this post if something is missing.</p><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr></hr><ol><li id="fn1"><p>I use fish for interactive shell. I use <code>zsh</code>
 for quick dirty scripts (a lot better than bash), and I switch to <a href="https://hackage.haskell.org/package/turtle">turtle</a> if I need
 to be serious about the script.<a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li></ol></section></article></main>
-]]></description>
-</item>
-
-
-<item>
-<title>iA writer clone within doom-emacs</title>
-<guid>https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html</guid>
-<pubDate>Sun, 24 Oct 2021 00:00:00 +0200</pubDate>
-<category>emacs</category>
-<category>org-mode</category>
-<description><![CDATA[
-<main id="content"><article><p>So I played with tweaking my emacs configuration again. I think I
-made something worth to be shared. I wanted to have the same effect than
-in iA writer within emacs. And I just reached this.</p><p>So the effect I am looking to achieve can be seen in this video.</p><video src="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/zen-writer-demo.mov" width="100%" controls="(null)" autoplay="(null)">
-</video><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/zen-writer-demo.mov">zen-writer-demo video (7.2MB)</a><p>It highlight the current sentence (in black) while the rest of the
-text is gray. The main issue with the <code class="verbatim">hl-sentence</code> package alone is that it set a
-specific face to the current sentence, but does not affect the other
-text in the buffer. In fact to make it work as I would expect, you need
-to make the default color grey, and only set black for the highlighted
-text.</p><p>Fortunately, I have recently created a personal theme close to that.
-I just created a new specific one. Everything is mostly "gray" except
-the font <code>hl-sentence</code> which is black.</p><p>And that's it. So to make it all work I need.</p><ul><li>a Gray theme,</li><li>the package <code>hl-sentence</code>,</li><li>the <code>writeroom</code> package.</li></ul><p>So how to achieve that yourself? Here is how I do it.</p><h2 id="the-zen-writer-theme">The zen-writer theme</h2><p>Download <a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/doom-zen-writer-theme.el">Doom Zen-Writer
-theme</a>. This depend on doom-themes and here is the code of the theme.
-Just put it in you <code class="verbatim">~/.doom.d/themes</code>
-directory.</p><h2 id="add-this-is-your--packages-el-">add this is your
-<code>packages.el</code></h2><pre class="elisp"><code>(package! hl-sentence
-  :pin &quot;86ae38d3103bd20da5485cbdd59dfbd396c45ee4&quot;)
-</code></pre><h2 id="helpers">Helpers</h2><p>You probably want to be able to put you out of this writing mode.
-Here is a <a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/zen-writer.el">zen-writer.el</a> file that contain my
-keymaps and useful functions.</p><p>Put it in you <code class="verbatim">~/.doom.d/</code> directory and
-in you <code class="verbatim">config.el</code> put</p><div class="sourceCode" id="cb2" data-org-language="emacs-lisp"><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id="cb2-1"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb2-1" aria-hidden="true" tabindex="-1"></a>(load! <span class="st">&quot;~/.doom.d/zen-writer.el&quot;</span>)</span></code></pre></div><p>And with this you should pass to zen mode with
-<code>SPC y z z</code>.</p><p>To make the un-zen works. You will need to have a
-<code>y/auto-update-theme</code> function that set your current theme.
-My function change the theme depending on the time of the day or the day
-of the week.</p><p>So here it is for inspiration:</p><div class="sourceCode" id="cb3" data-org-language="emacs-lisp"><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id="cb3-1"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">defun</span><span class="fu"> y/auto-update-theme </span>()</span>
-<span id="cb3-2"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;depending on time use different theme&quot;</span></span>
-<span id="cb3-3"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; very early =&gt; gruvbox-light, solarized-light, nord-light</span></span>
-<span id="cb3-4"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-4" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">let*</span> ((day-of-week (format-time-string <span class="st">&quot;%a&quot;</span>))</span>
-<span id="cb3-5"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-5" aria-hidden="true" tabindex="-1"></a>         (week-end? (<span class="kw">or</span> (<span class="kw">equal</span> <span class="st">&quot;Sat&quot;</span> day-of-week)</span>
-<span id="cb3-6"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-6" aria-hidden="true" tabindex="-1"></a>                        (<span class="kw">equal</span> <span class="st">&quot;Sun&quot;</span> day-of-week)))</span>
-<span id="cb3-7"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-7" aria-hidden="true" tabindex="-1"></a>         (hour (<span class="kw">nth</span> <span class="dv">2</span> (decode-time (current-time))))</span>
-<span id="cb3-8"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-8" aria-hidden="true" tabindex="-1"></a>         (time-to-sleep? (<span class="kw">or</span> (<span class="op">&gt;</span> hour <span class="dv">22</span>) (<span class="op">&lt;</span> hour <span class="dv">7</span>)))</span>
-<span id="cb3-9"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-10" aria-hidden="true" tabindex="-1"></a>         (theme (<span class="kw">cond</span></span>
-<span id="cb3-11"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-11" aria-hidden="true" tabindex="-1"></a>                 (time-to-sleep?  <span class="dt">&#39;doom-plain-dark</span>)</span>
-<span id="cb3-12"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-12" aria-hidden="true" tabindex="-1"></a>                 (week-end?       <span class="dt">&#39;doom-nord-light</span>)</span>
-<span id="cb3-13"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-13" aria-hidden="true" tabindex="-1"></a>                 ((<span class="op">&lt;=</span> <span class="dv">7</span> hour <span class="dv">8</span>)   <span class="dt">&#39;doom-gruvbox-light</span>)</span>
-<span id="cb3-14"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-14" aria-hidden="true" tabindex="-1"></a>                 ((<span class="op">=</span> <span class="dv">9</span> hour)      <span class="dt">&#39;doom-solarized-light</span>)</span>
-<span id="cb3-15"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-15" aria-hidden="true" tabindex="-1"></a>                 ((<span class="op">&lt;=</span> <span class="dv">10</span> hour <span class="dv">16</span>) <span class="dt">&#39;doom-solarized-white</span>)</span>
-<span id="cb3-16"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-16" aria-hidden="true" tabindex="-1"></a>                 ((<span class="op">&lt;=</span> <span class="dv">17</span> hour <span class="dv">18</span>) <span class="dt">&#39;doom-gruvbox-light</span>)</span>
-<span id="cb3-17"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-17" aria-hidden="true" tabindex="-1"></a>                 ((<span class="op">&lt;=</span> <span class="dv">19</span> hour <span class="dv">22</span>) <span class="dt">&#39;doom-oceanic-next</span>))))</span>
-<span id="cb3-18"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-18" aria-hidden="true" tabindex="-1"></a>    (<span class="kw">when</span> (<span class="kw">not</span> (<span class="kw">equal</span> doom-theme theme))</span>
-<span id="cb3-19"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-19" aria-hidden="true" tabindex="-1"></a>      (<span class="kw">setq</span> doom-theme theme)</span>
-<span id="cb3-20"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-20" aria-hidden="true" tabindex="-1"></a>      (load-theme doom-theme <span class="kw">t</span>))</span>
-<span id="cb3-21"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">;; run that function again next hour</span></span>
-<span id="cb3-22"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb3-22" aria-hidden="true" tabindex="-1"></a>    (run-at-time (<span class="kw">format</span> <span class="st">&quot;%02d:%02d&quot;</span> (<span class="op">+</span> hour <span class="dv">1</span>) <span class="dv">0</span>) <span class="kw">nil</span> <span class="dt">&#39;y/auto-update-theme</span>)))</span></code></pre></div><h2 id="bonus">Bonus</h2><p>I use Nerd Fonts and in particular the font `iMWritingDuoS` which is
-I think a clone of the iAWriter font.</p><div class="sourceCode" id="cb4" data-org-language="emacs-lisp"><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id="cb4-1"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb4-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">setq</span> doom-variable-pitch-font</span>
-<span id="cb4-2"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb4-2" aria-hidden="true" tabindex="-1"></a>      (font-spec :family <span class="st">&quot;iMWritingDuoS Nerd Font&quot;</span> :size <span class="dv">12</span>))</span></code></pre></div><p>I hope you find this useful. I really like how it looks now.</p><h2 id="annex">Annex</h2><p>The code source used in this article.</p><h3 id="zen-writer">zen-writer</h3><div class="sourceCode" id="zen-writer.el" data-org-language="emacs-lisp" data-tangle="zen-writer.el"><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id="zen-writer.el-1"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-1" aria-hidden="true" tabindex="-1"></a><span class="co">;;; zen-writer.el -*- lexical-binding: t; -*-</span></span>
-<span id="zen-writer.el-2"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="zen-writer.el-3"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-3" aria-hidden="true" tabindex="-1"></a>(<span class="kw">defun</span><span class="fu"> y/zen </span>()</span>
-<span id="zen-writer.el-4"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-4" aria-hidden="true" tabindex="-1"></a>  (interactive)</span>
-<span id="zen-writer.el-5"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-5" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">setq</span> doom-theme <span class="dt">&#39;doom-zen-writer</span>)</span>
-<span id="zen-writer.el-6"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-6" aria-hidden="true" tabindex="-1"></a>  (load-theme doom-theme <span class="kw">t</span>)</span>
-<span id="zen-writer.el-7"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-7" aria-hidden="true" tabindex="-1"></a>  (hl-sentence-mode +1))</span>
-<span id="zen-writer.el-8"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="zen-writer.el-9"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-9" aria-hidden="true" tabindex="-1"></a>(<span class="kw">defun</span><span class="fu"> y/unzen </span>()</span>
-<span id="zen-writer.el-10"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-10" aria-hidden="true" tabindex="-1"></a>  (interactive)</span>
-<span id="zen-writer.el-11"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-11" aria-hidden="true" tabindex="-1"></a>  (y/auto-update-theme)</span>
-<span id="zen-writer.el-12"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-12" aria-hidden="true" tabindex="-1"></a>  (hl-sentence-mode -1))</span>
-<span id="zen-writer.el-13"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="zen-writer.el-14"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-14" aria-hidden="true" tabindex="-1"></a>(<span class="kw">defun</span><span class="fu"> y/zen-full </span>()</span>
-<span id="zen-writer.el-15"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-15" aria-hidden="true" tabindex="-1"></a>  (interactive)</span>
-<span id="zen-writer.el-16"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-16" aria-hidden="true" tabindex="-1"></a>  (y/zen)</span>
-<span id="zen-writer.el-17"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-17" aria-hidden="true" tabindex="-1"></a>  (toggle-frame-fullscreen)</span>
-<span id="zen-writer.el-18"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-18" aria-hidden="true" tabindex="-1"></a>  (doom-big-font-mode +1))</span>
-<span id="zen-writer.el-19"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="zen-writer.el-20"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-20" aria-hidden="true" tabindex="-1"></a>(<span class="kw">defun</span><span class="fu"> y/unzen-full </span>()</span>
-<span id="zen-writer.el-21"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-21" aria-hidden="true" tabindex="-1"></a>  (interactive)</span>
-<span id="zen-writer.el-22"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-22" aria-hidden="true" tabindex="-1"></a>  (y/unzen)</span>
-<span id="zen-writer.el-23"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-23" aria-hidden="true" tabindex="-1"></a>  (toggle-frame-fullscreen)</span>
-<span id="zen-writer.el-24"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-24" aria-hidden="true" tabindex="-1"></a>  (doom-big-font-mode -1))</span>
-<span id="zen-writer.el-25"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="zen-writer.el-26"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-26" aria-hidden="true" tabindex="-1"></a>(map! :leader</span>
-<span id="zen-writer.el-27"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-27" aria-hidden="true" tabindex="-1"></a>      (:prefix (<span class="st">&quot;y z&quot;</span> . <span class="st">&quot;Zen Writer&quot;</span>)</span>
-<span id="zen-writer.el-28"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-28" aria-hidden="true" tabindex="-1"></a>       :desc <span class="st">&quot;Full Zen Writer&quot;</span> <span class="st">&quot;z&quot;</span> <span class="op">#&#39;</span>y/zen-full</span>
-<span id="zen-writer.el-29"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-29" aria-hidden="true" tabindex="-1"></a>       :desc <span class="st">&quot;un-Full Zen Writer&quot;</span> <span class="st">&quot;u&quot;</span> <span class="op">#&#39;</span>y/unzen-full</span>
-<span id="zen-writer.el-30"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-30" aria-hidden="true" tabindex="-1"></a>       :desc <span class="st">&quot;Zen Writer&quot;</span> <span class="st">&quot;t&quot;</span> <span class="op">#&#39;</span>y/zen</span>
-<span id="zen-writer.el-31"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#zen-writer.el-31" aria-hidden="true" tabindex="-1"></a>       :desc <span class="st">&quot;un-Zen Writer&quot;</span> <span class="st">&quot;q&quot;</span> <span class="op">#&#39;</span>y/unzen))</span></code></pre></div><h3 id="zen-writer-doom-theme">zen-writer doom theme</h3><div class="sourceCode" id="cb5" data-org-language="emacs-lisp" data-tangle="doom-zen-writer-theme.el"><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp"><span id="cb5-1"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">;;; doom-zen-writer-theme.el --- -*- lexical-binding: t; no-byte-compile: t; -*-</span></span>
-<span id="cb5-2"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">;;</span></span>
-<span id="cb5-3"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">;; Author: Yann Esposito &lt;https://github.com/yogsototh&gt;</span></span>
-<span id="cb5-4"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">;; Created: October 24, 2021</span></span>
-<span id="cb5-5"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">;; Version: 1.0.0</span></span>
-<span id="cb5-6"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">;; Keywords: custom themes, faces</span></span>
-<span id="cb5-7"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">;; Homepage: https://github.com/hlissner/emacs-doom-themes</span></span>
-<span id="cb5-8"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">;; Package-Requires: ((emacs &quot;25.1&quot;) (cl-lib &quot;0.5&quot;) (doom-themes &quot;2.2.1&quot;))</span></span>
-<span id="cb5-9"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">;;</span></span>
-<span id="cb5-10"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">;;; Code:</span></span>
-<span id="cb5-11"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-12"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-12" aria-hidden="true" tabindex="-1"></a>(<span class="kw">require</span> <span class="dt">&#39;doom-themes</span>)</span>
-<span id="cb5-13"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">;;</span></span>
-<span id="cb5-15"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">;;; Variables</span></span>
-<span id="cb5-16"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-17"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-17" aria-hidden="true" tabindex="-1"></a>(defgroup doom-plain-theme <span class="kw">nil</span></span>
-<span id="cb5-18"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Options for the `doom-plain&#39; theme.&quot;</span></span>
-<span id="cb5-19"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-19" aria-hidden="true" tabindex="-1"></a>  :group <span class="dt">&#39;doom-themes</span>)</span>
-<span id="cb5-20"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-21"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-21" aria-hidden="true" tabindex="-1"></a>(defcustom doom-plain-padded-modeline doom-themes-padded-modeline</span>
-<span id="cb5-22"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;If non-nil, adds a 4px padding to the mode-line.</span></span>
-<span id="cb5-23"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="st">Can be an integer to determine the exact padding.&quot;</span></span>
-<span id="cb5-24"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-24" aria-hidden="true" tabindex="-1"></a>  :group <span class="dt">&#39;doom-plain-theme</span></span>
-<span id="cb5-25"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="bu">:type</span> &#39;(<span class="kw">or</span> <span class="kw">integer</span> <span class="kw">boolean</span>))</span>
-<span id="cb5-26"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-27"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-28"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">;;</span></span>
-<span id="cb5-29"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="co">;;; Theme definition</span></span>
-<span id="cb5-30"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-31"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-31" aria-hidden="true" tabindex="-1"></a>(def-doom-theme doom-zen-writer</span>
-<span id="cb5-32"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-32" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Theme inspired by gko&#39;s plain.&quot;</span></span>
-<span id="cb5-33"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-34"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-34" aria-hidden="true" tabindex="-1"></a>  <span class="co">;; name      default/256/16</span></span>
-<span id="cb5-35"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-35" aria-hidden="true" tabindex="-1"></a>  ((bg         &#39;(<span class="st">&quot;#ffffff&quot;</span>))</span>
-<span id="cb5-36"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-36" aria-hidden="true" tabindex="-1"></a>   (bg-alt     &#39;(<span class="st">&quot;#eaecea&quot;</span>))</span>
-<span id="cb5-37"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-37" aria-hidden="true" tabindex="-1"></a>   (base0      &#39;(<span class="st">&quot;#969896&quot;</span>))</span>
-<span id="cb5-38"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-38" aria-hidden="true" tabindex="-1"></a>   (base1      &#39;(<span class="st">&quot;#f1f3f5&quot;</span>))</span>
-<span id="cb5-39"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-39" aria-hidden="true" tabindex="-1"></a>   (base2      &#39;(<span class="st">&quot;#606666&quot;</span>))</span>
-<span id="cb5-40"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-40" aria-hidden="true" tabindex="-1"></a>   (base3      &#39;(<span class="st">&quot;#cccccc&quot;</span>))</span>
-<span id="cb5-41"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-41" aria-hidden="true" tabindex="-1"></a>   (base4      &#39;(<span class="st">&quot;#e7e7e7&quot;</span>))</span>
-<span id="cb5-42"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-42" aria-hidden="true" tabindex="-1"></a>   (base5      &#39;(<span class="st">&quot;#a5a8a6&quot;</span>))</span>
-<span id="cb5-43"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-43" aria-hidden="true" tabindex="-1"></a>   (base6      &#39;(<span class="st">&quot;#fafafa&quot;</span>))</span>
-<span id="cb5-44"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-44" aria-hidden="true" tabindex="-1"></a>   (base7      &#39;(<span class="st">&quot;#dfdfdf&quot;</span>))</span>
-<span id="cb5-45"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-45" aria-hidden="true" tabindex="-1"></a>   (base8      &#39;(<span class="st">&quot;#fafafa&quot;</span>))</span>
-<span id="cb5-46"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-46" aria-hidden="true" tabindex="-1"></a>   (fg         &#39;(<span class="st">&quot;#969896&quot;</span>))</span>
-<span id="cb5-47"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-47" aria-hidden="true" tabindex="-1"></a>   (fg-alt     (doom-lighten fg <span class="fl">0.15</span>))</span>
-<span id="cb5-48"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-49"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-49" aria-hidden="true" tabindex="-1"></a>   (grey       fg)</span>
-<span id="cb5-50"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-50" aria-hidden="true" tabindex="-1"></a>   (red        fg)</span>
-<span id="cb5-51"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-51" aria-hidden="true" tabindex="-1"></a>   (blue       fg)</span>
-<span id="cb5-52"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-52" aria-hidden="true" tabindex="-1"></a>   (dark-blue  fg)</span>
-<span id="cb5-53"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-53" aria-hidden="true" tabindex="-1"></a>   (orange     fg)</span>
-<span id="cb5-54"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-54" aria-hidden="true" tabindex="-1"></a>   (green      fg)</span>
-<span id="cb5-55"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-55" aria-hidden="true" tabindex="-1"></a>   (teal       fg)</span>
-<span id="cb5-56"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-56" aria-hidden="true" tabindex="-1"></a>   (yellow     fg)</span>
-<span id="cb5-57"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-57" aria-hidden="true" tabindex="-1"></a>   (magenta    fg)</span>
-<span id="cb5-58"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-58" aria-hidden="true" tabindex="-1"></a>   (violet     fg)</span>
-<span id="cb5-59"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-59" aria-hidden="true" tabindex="-1"></a>   (cyan       fg)</span>
-<span id="cb5-60"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-60" aria-hidden="true" tabindex="-1"></a>   (dark-cyan  fg)</span>
-<span id="cb5-61"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-62"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-62" aria-hidden="true" tabindex="-1"></a>   <span class="co">;; face categories -- required for all themes</span></span>
-<span id="cb5-63"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-63" aria-hidden="true" tabindex="-1"></a>   (highlight      base2)</span>
-<span id="cb5-64"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-64" aria-hidden="true" tabindex="-1"></a>   (vertical-bar   base5)</span>
-<span id="cb5-65"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-65" aria-hidden="true" tabindex="-1"></a>   (selection      base1)</span>
-<span id="cb5-66"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-66" aria-hidden="true" tabindex="-1"></a>   (builtin        base0)</span>
-<span id="cb5-67"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-67" aria-hidden="true" tabindex="-1"></a>   (comments       base5)</span>
-<span id="cb5-68"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-68" aria-hidden="true" tabindex="-1"></a>   (doc-comments   base5)</span>
-<span id="cb5-69"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-69" aria-hidden="true" tabindex="-1"></a>   (constants      base0)</span>
-<span id="cb5-70"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-70" aria-hidden="true" tabindex="-1"></a>   (functions      fg)</span>
-<span id="cb5-71"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-71" aria-hidden="true" tabindex="-1"></a>   (keywords       fg)</span>
-<span id="cb5-72"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-72" aria-hidden="true" tabindex="-1"></a>   (methods        fg)</span>
-<span id="cb5-73"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-73" aria-hidden="true" tabindex="-1"></a>   (operators      fg)</span>
-<span id="cb5-74"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-74" aria-hidden="true" tabindex="-1"></a>   (<span class="kw">type</span>           fg)</span>
-<span id="cb5-75"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-75" aria-hidden="true" tabindex="-1"></a>   (strings        base0)</span>
-<span id="cb5-76"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-76" aria-hidden="true" tabindex="-1"></a>   (variables      base0)</span>
-<span id="cb5-77"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-77" aria-hidden="true" tabindex="-1"></a>   (numbers        base0)</span>
-<span id="cb5-78"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-78" aria-hidden="true" tabindex="-1"></a>   (region         base4)</span>
-<span id="cb5-79"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-79" aria-hidden="true" tabindex="-1"></a>   (<span class="kw">error</span>          (doom-blend fg <span class="st">&quot;#ff0000&quot;</span> <span class="fl">0.4</span>))</span>
-<span id="cb5-80"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-80" aria-hidden="true" tabindex="-1"></a>   (<span class="kw">warning</span>        base2)</span>
-<span id="cb5-81"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-81" aria-hidden="true" tabindex="-1"></a>   (success        green)</span>
-<span id="cb5-82"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-82" aria-hidden="true" tabindex="-1"></a>   (vc-modified    base5)</span>
-<span id="cb5-83"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-83" aria-hidden="true" tabindex="-1"></a>   (vc-added       (doom-lighten fg <span class="fl">0.7</span>))</span>
-<span id="cb5-84"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-84" aria-hidden="true" tabindex="-1"></a>   (vc-deleted     base2)</span>
-<span id="cb5-85"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-86"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-86" aria-hidden="true" tabindex="-1"></a>   <span class="co">;; custom categories</span></span>
-<span id="cb5-87"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-87" aria-hidden="true" tabindex="-1"></a>   (-modeline-pad</span>
-<span id="cb5-88"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-88" aria-hidden="true" tabindex="-1"></a>    (<span class="kw">when</span> doom-plain-padded-modeline</span>
-<span id="cb5-89"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-89" aria-hidden="true" tabindex="-1"></a>      (<span class="kw">if</span> (<span class="kw">integerp</span> doom-plain-padded-modeline) doom-plain-padded-modeline <span class="dv">4</span>)))</span>
-<span id="cb5-90"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-91"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-91" aria-hidden="true" tabindex="-1"></a>   (modeline-bg              (doom-darken bg-alt <span class="fl">0.15</span>))</span>
-<span id="cb5-92"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-92" aria-hidden="true" tabindex="-1"></a>   (modeline-bg-alt          (doom-darken bg-alt <span class="fl">0.1</span>))</span>
-<span id="cb5-93"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-93" aria-hidden="true" tabindex="-1"></a>   (modeline-bg-inactive     (doom-darken bg-alt <span class="fl">0.1</span>))</span>
-<span id="cb5-94"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-94" aria-hidden="true" tabindex="-1"></a>   (modeline-bg-inactive-alt bg-alt)</span>
-<span id="cb5-95"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-95" aria-hidden="true" tabindex="-1"></a>   (modeline-fg              fg)</span>
-<span id="cb5-96"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-96" aria-hidden="true" tabindex="-1"></a>   (modeline-fg-alt          (doom-darken modeline-bg-inactive <span class="fl">0.35</span>)))</span>
-<span id="cb5-97"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-98"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-98" aria-hidden="true" tabindex="-1"></a>  <span class="co">;;;; Base theme face overrides</span></span>
-<span id="cb5-99"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-99" aria-hidden="true" tabindex="-1"></a>  ((<span class="kw">error</span>   :underline `(:style wave :color ,<span class="kw">error</span>))</span>
-<span id="cb5-100"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-100" aria-hidden="true" tabindex="-1"></a>   (<span class="kw">warning</span> :underline `(:style wave :color ,<span class="kw">warning</span>))</span>
-<span id="cb5-101"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-101" aria-hidden="true" tabindex="-1"></a>   (hl-sentence :foreground <span class="st">&quot;#000000&quot;</span> :background bg)</span>
-<span id="cb5-102"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-102" aria-hidden="true" tabindex="-1"></a>   ((font-lock-constant-face &amp;override)      :slant <span class="dt">&#39;italic</span>)</span>
-<span id="cb5-103"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-103" aria-hidden="true" tabindex="-1"></a>   ((font-lock-comment-face &amp;override)       :slant <span class="dt">&#39;italic</span>)</span>
-<span id="cb5-104"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-104" aria-hidden="true" tabindex="-1"></a>   ((font-lock-function-name-face &amp;override) :slant <span class="dt">&#39;italic</span>)</span>
-<span id="cb5-105"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-105" aria-hidden="true" tabindex="-1"></a>   ((font-lock-type-face &amp;override)          :slant <span class="dt">&#39;italic</span>)</span>
-<span id="cb5-106"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-106" aria-hidden="true" tabindex="-1"></a>   (hl-line :background base8)</span>
-<span id="cb5-107"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-107" aria-hidden="true" tabindex="-1"></a>   ((line-number &amp;override) :foreground base3)</span>
-<span id="cb5-108"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-108" aria-hidden="true" tabindex="-1"></a>   ((line-number-current-line &amp;override) :foreground base2)</span>
-<span id="cb5-109"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-109" aria-hidden="true" tabindex="-1"></a>   (mode-line</span>
-<span id="cb5-110"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-110" aria-hidden="true" tabindex="-1"></a>    :background modeline-bg :foreground modeline-fg</span>
-<span id="cb5-111"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-111" aria-hidden="true" tabindex="-1"></a>    :box (<span class="kw">if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg)))</span>
-<span id="cb5-112"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-112" aria-hidden="true" tabindex="-1"></a>   (mode-line-inactive</span>
-<span id="cb5-113"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-113" aria-hidden="true" tabindex="-1"></a>    :background modeline-bg-inactive :foreground modeline-fg-alt</span>
-<span id="cb5-114"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-114" aria-hidden="true" tabindex="-1"></a>    :box (<span class="kw">if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive)))</span>
-<span id="cb5-115"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-115" aria-hidden="true" tabindex="-1"></a>   (mode-line-emphasis :foreground highlight)</span>
-<span id="cb5-116"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-117"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-117" aria-hidden="true" tabindex="-1"></a>   <span class="co">;;;; doom-modeline</span></span>
-<span id="cb5-118"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-118" aria-hidden="true" tabindex="-1"></a>   (doom-modeline-bar :background modeline-bg)</span>
-<span id="cb5-119"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-119" aria-hidden="true" tabindex="-1"></a>   (doom-modeline-bar-inactive :inherit <span class="dt">&#39;doom-modeline-bar</span>)</span>
-<span id="cb5-120"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-120" aria-hidden="true" tabindex="-1"></a>   (doom-modeline-project-dir :foreground fg)</span>
-<span id="cb5-121"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-121" aria-hidden="true" tabindex="-1"></a>   (doom-modeline-buffer-file :foreground fg)</span>
-<span id="cb5-122"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-122" aria-hidden="true" tabindex="-1"></a>   (doom-modeline-buffer-modified :weight <span class="dt">&#39;bold</span> :foreground <span class="st">&quot;#000000&quot;</span>)</span>
-<span id="cb5-123"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-123" aria-hidden="true" tabindex="-1"></a>   (doom-modeline-panel :inherit <span class="dt">&#39;mode-line-highlight</span> :background base3 :foreground fg)</span>
-<span id="cb5-124"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-124" aria-hidden="true" tabindex="-1"></a>   <span class="co">;;;; ivy</span></span>
-<span id="cb5-125"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-125" aria-hidden="true" tabindex="-1"></a>   (ivy-posframe :background bg-alt)</span>
-<span id="cb5-126"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-126" aria-hidden="true" tabindex="-1"></a>   <span class="co">;;;; magit</span></span>
-<span id="cb5-127"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-127" aria-hidden="true" tabindex="-1"></a>   ((magit-diff-added-highlight &amp;override)   :foreground fg :background (doom-blend vc-added bg <span class="fl">0.3</span>))</span>
-<span id="cb5-128"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-128" aria-hidden="true" tabindex="-1"></a>   ((magit-diff-removed &amp;override)           :foreground (doom-lighten fg <span class="fl">0.4</span>) :background (doom-blend vc-deleted bg <span class="fl">0.1</span>))</span>
-<span id="cb5-129"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-129" aria-hidden="true" tabindex="-1"></a>   ((magit-diff-removed-highlight &amp;override) :foreground fg :background (doom-blend vc-deleted bg <span class="fl">0.22</span>))</span>
-<span id="cb5-130"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-130" aria-hidden="true" tabindex="-1"></a>   <span class="co">;;;; lsp-mode</span></span>
-<span id="cb5-131"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-131" aria-hidden="true" tabindex="-1"></a>   (lsp-headerline-breadcrumb-symbols-face :foreground keywords :weight <span class="dt">&#39;bold</span>)</span>
-<span id="cb5-132"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-132" aria-hidden="true" tabindex="-1"></a>   <span class="co">;;;; outline &lt;built-in&gt;</span></span>
-<span id="cb5-133"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-133" aria-hidden="true" tabindex="-1"></a>   (outline-1 :slant <span class="dt">&#39;italic</span> :foreground fg-alt)</span>
-<span id="cb5-134"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-134" aria-hidden="true" tabindex="-1"></a>   (outline-2 :inherit <span class="dt">&#39;outline-1</span> :foreground base2)</span>
-<span id="cb5-135"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-135" aria-hidden="true" tabindex="-1"></a>   (outline-3 :inherit <span class="dt">&#39;outline-2</span>)</span>
-<span id="cb5-136"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-136" aria-hidden="true" tabindex="-1"></a>   (outline-4 :inherit <span class="dt">&#39;outline-3</span>)</span>
-<span id="cb5-137"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-137" aria-hidden="true" tabindex="-1"></a>   (outline-5 :inherit <span class="dt">&#39;outline-4</span>)</span>
-<span id="cb5-138"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-138" aria-hidden="true" tabindex="-1"></a>   (outline-6 :inherit <span class="dt">&#39;outline-5</span>)</span>
-<span id="cb5-139"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-139" aria-hidden="true" tabindex="-1"></a>   (outline-7 :inherit <span class="dt">&#39;outline-6</span>)</span>
-<span id="cb5-140"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-140" aria-hidden="true" tabindex="-1"></a>   (outline-8 :inherit <span class="dt">&#39;outline-7</span>)</span>
-<span id="cb5-141"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-141" aria-hidden="true" tabindex="-1"></a>   <span class="co">;;;; org &lt;built-in&gt;</span></span>
-<span id="cb5-142"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-142" aria-hidden="true" tabindex="-1"></a>   ((org-block &amp;override) :background bg-alt)</span>
-<span id="cb5-143"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-143" aria-hidden="true" tabindex="-1"></a>   ((org-block-begin-line &amp;override) :foreground base5)</span>
-<span id="cb5-144"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-144" aria-hidden="true" tabindex="-1"></a>   <span class="co">;;;; solaire-mode</span></span>
-<span id="cb5-145"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-145" aria-hidden="true" tabindex="-1"></a>   (solaire-mode-line-face</span>
-<span id="cb5-146"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-146" aria-hidden="true" tabindex="-1"></a>    :inherit <span class="dt">&#39;mode-line</span></span>
-<span id="cb5-147"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-147" aria-hidden="true" tabindex="-1"></a>    :background modeline-bg-alt</span>
-<span id="cb5-148"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-148" aria-hidden="true" tabindex="-1"></a>    :box (<span class="kw">if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-alt)))</span>
-<span id="cb5-149"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-149" aria-hidden="true" tabindex="-1"></a>   (solaire-mode-line-inactive-face</span>
-<span id="cb5-150"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-150" aria-hidden="true" tabindex="-1"></a>    :inherit <span class="dt">&#39;mode-line-inactive</span></span>
-<span id="cb5-151"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-151" aria-hidden="true" tabindex="-1"></a>    :background modeline-bg-inactive-alt</span>
-<span id="cb5-152"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-152" aria-hidden="true" tabindex="-1"></a>    :box (<span class="kw">if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive-alt)))))</span>
-<span id="cb5-153"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-154"><a href="https://her.esy.fun/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-154" aria-hidden="true" tabindex="-1"></a><span class="co">;;; doom-zen-writer-theme.el ends here</span></span></code></pre></div></article></main>
 ]]></description>
 </item>
 

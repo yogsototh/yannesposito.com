@@ -1,0 +1,124 @@
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>AI Assistant return of experience</title><meta name=author content="Yann Esposito"><meta name=description content="My return of experience from using
+AI agents again into a big real-world production ready project."><meta name=keywords content="llm ai agent claude gpt chatgpt
+copilot"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><meta name=theme-color media="(prefers-color-scheme: light)" content="#d84100"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#2E3440"><header><div id=logo><a href=/><div class=vis-hidden>Go to Home</div><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="#00" stroke-width="1" fill="#2e3440"/><circle class="i1" cx="32" cy="32" r="12" stroke="#800" stroke-width="1" fill="#c20"/><circle class="i0" cx="32" cy="32" r="5" stroke-width="1" stroke="#f60" fill="#fa0"/><ellipse class="e" cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="#fff"/></svg></a></div><div class=content><h1>AI Assistant return of experience</h1><div class=meta><span class=yyydate>[2025-07-03 Thu]</span> on
+<a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract>My return of experience from using AI agents again into a big real-world
+production ready project.</div></div></header><main id=content><article><div class=notes><p><strong>TL;DR of TL;DR:</strong> With the correct setup LLM-based AI
+Assistant have their place in the Software Developer tool-belt.</div><div class=notes><p><strong>TL;DR:</strong><ol><li><strong>Evaluations</strong><ul><li>The Good:<ul><li><code class=verbatim>(++)</code> answering specific technical
+questions (with references),<li><code class=verbatim>(++)</code> write small unreliable scripts
+nor prod-level quality (if helped)<li><code class=verbatim>(+)</code> simple/repetitive coding tasks,
+boilerplate,<li><code class=verbatim>(+)</code> review<li><code class=verbatim>(+)</code> documentation writing</ul><li>The Bad:<ul><li><code class=verbatim>(-)</code> test writing<li><code class=verbatim>(-)</code> Perform specific, small, and easy
+(beginner junior) production-ready programming task.</ul><li>The Ugly:<ul><li><code class=verbatim>(--)</code> Big tasks that would require a
+lot of intermediate steps.<li><code class=verbatim>(---)</code> Code a feature with a production
+quality. It is a lot faster and more reliable to code manually. Almost
+all invested time was lost.</ul></ul><li><strong>Setup:</strong> need to support <strong>AI Agent</strong>,
+<strong>MCP</strong> (Clojure-MCP in particular!),
+<strong>RAG</strong><li><strong>Limitations:</strong> bullshitting, non-verbal reasoning,
+complex coding tasks, self reference<li><strong>Conclusions:</strong><ul><li>Main lesson: Great for small and easy tasks but you already need
+some expertise.<li>Using AI Agent is a skill like learning other tools like <code class=verbatim>git</code>.<ul><li>They bring value and are an improvement<li>never blindly trust ; always double check the answers<li>Learn what you can and cannot delegate</ul><li>I would say that you can <strong>PARTIALLY</strong> delegate about
+20% of the daily tasks; code review, documentation, code analysis.<li>WORKS VERY POORLY without advanced latest setup (MCP, RAG,
+reasoning, agent behavior), probably cost a lot.<li>AI Workflows potentially superior to AI Agents?</ul></ol></div><h1 id=introduction>Introduction</h1><p>My past encounters with LLMs were far from impressive. So, what made
+me decide to give them another chance?<ul><li>I saw a <a href="https://github.com/cloudflare/workers-oauth-provider/?tab=readme-ov-file#written-using-claude">GitHub
+repository showing a full OAuth2 Provider</a> built using Claude. One
+commit per prompt. I didn't follow all commits, but it was nice to see
+that this was possible.<li><a href=https://github.com/bhauman/clojure-mcp>Clojure-MCP</a> ; I
+didn't knew at that time precisely how that could be a game changer, but
+it is.<li>Heard good things about Claude for programming and I saw a few web
+app made from just a few directives.</ul><h1 id=the-setup>The Setup</h1><p>Setting things up was not straightforward. But once done I must admit
+I was really impressed.<p>I feel AI Agent are now like Versioning System (<code class=verbatim>git</code>) and Build Systems (<code class=verbatim>make</code>). These are tools worthy of learning. But
+from my experience they only provide value if you have a full setup:<ul><li><strong>Agent</strong>: The AI needs to work on its own, handling
+several connected tasks without asking for your input every time.<li><strong>Clojure-MCP</strong>; it makes these tools way better, even
+if you code in another language.<li><strong>RAG</strong>; the system must support file/buffer context to
+add in order to be able to follow your project best practices.</ul><p>See <a href=https://her.esy.fun/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html>my
+previous article</a> to see all details of my current setup.<h1 id=limitations>Limitations</h1><p>Before we dig into what these tools does well, let’s be clear about
+what they can’t handle. It is important to know these limits not to lose
+your time. You can ask people, and even the AI assistant itself about
+its limitations. This give a first broad idea, mainly when human is
+deeply involved. But there are also very precises tasks for which these
+system provide poor results.<h2 id=counting>Counting</h2><p>Language models are notoriously bad at counting. Now, they have more
+and more tools at their disposal to help them count. But don't trust
+them.<p>First<blockquote><p>> How many r are in recursively?<p>To count the letter 'r' in the word "recursively", I'll examine each
+letter:<p>r-e-c-u-r-s-i-v-e-l-y<p>Looking at each position:<ol><li>r - this is an 'r' ✓<li>e - not an 'r'<li>c - not an 'r'<li>u - not an 'r'<li>r - this is an 'r' ✓<li>s - not an 'r'<li>i - not an 'r'<li>v - not an 'r'<li>e - not an 'r'<li>l - not an 'r'<li>y - not an 'r'</ol><p>There are <strong>2</strong> letter 'r's in the word
+"recursively".</blockquote><p>Good :). But it was a bit verbose. Let's try again<blockquote><p>> How many r are in recursively? Be succinct and direct.<p>There are 3 r's in "recursively".</blockquote><p>In fact, event, when not asking to be succinct, I got some errors
+(counting up to 3 or 4).<h2 id=self-reference>Self reference</h2><p>Now, let's try to make the Agent self aware of its own answer, yeah,
+this is exactly the tricky question LLMs are bad at:<blockquote><p>> Good now could you give me the number of letter in your next
+answer?<p>This answer contains exactly 12 letters.<p>> How many letters are there in "This answer contains exactly 12
+letters."?<p>I need to count the letters in the phrase "This answer contains
+exactly 12 letters." Let me count each character that is a letter
+(excluding spaces, punctuation, and numbers): "This answer contains
+exactly 12 letters."<p>T-h-i-s (4) + a-n-s-w-e-r (6) + c-o-n-t-a-i-n-s (8) + e-x-a-c-t-l-y
+(7) + l-e-t-t-e-r-s (7)<p>Total: 4 + 6 + 8 + 7 + 7 = 32 letters<p>There are <strong>32 letters</strong> in "This answer contains
+exactly 12 letters."<p>The statement is self-contradictory since it claims to contain
+exactly 12 letters but actually contains 32 letters.</blockquote><h2 id=algebraic-reasoning>Algebraic reasoning</h2><p>When asking about using transducer for a solution already using the
+function <code>reduce</code> it simply wasn't able to do it. The LLM can
+regurgitate the definition of transducers and how they work. But doing
+such a transformation need some algebraic reasoning that is pretty alien
+to language reasoning. Like counting (arithmetic reasoning) it fails
+flat.<h1 id=productivity-gain>Productivity Gain</h1><h2 id=-------hard-advanced-programming><code class=verbatim>(--)</code> Hard/Advanced Programming</h2><p>First, let's make it clear. For real, production-ready, quality
+development or complex tasks with advanced requirements these tools are
+a <strong>NET NEGATIVE</strong>.<p>If the task at hand is not small in scope, with a clear specification
+the system will act as a <em>confidently wrong junior developer</em>. In
+the end, most your time will be lost.<p>Worse than that, discovering the problems generated by the tools will
+not be a trivial task, and in the end result in a lot more time loss
+than if you would simply not have used any AI Agent.<p>So be conscious about the difficulty of the task at hand.<h2 id=------boilerplate><code class=verbatim>(+)</code>
+Boilerplate</h2><p>For writing boilerplate code following your project's best practices
+I would say my experience was positive. Some subtle errors could appear,
+and this was not great. Still, it is faster to use the AI for the
+boilerplate than typing it yourself most of the time.<h2 id="-------small-disposable-scripts-that-don't-need-to-be-reliable"><code class=verbatim>(++)</code> Small disposable scripts that don't need to
+be reliable</h2><p>If you need to write a script that don't need to be highly reliable.
+In that case, I can say my experience was a <strong>BIG NET
+POSITIVE</strong>. It worked because the tasks to write this script
+was:<ul><li>small in scope<li>clear technical design</ul><p>It built he tool for me in a few seconds which would have taken me
+more time just typing it.<p>An important remark however, is that if you know what would be the
+"Best tool for the work", this would also tremendously improve the speed
+and quality of the result.<p>I asked the Agent to build the same tool twice. First in bash, second
+using <a href=https://babashka.org>babashka</a>. And for my specific
+need, not only it was a lot faster to build the tool using babashka, but
+the result was clearly superior both in design and quality as well as
+efficiency.<h2 id=------pr-reviewing><code class=verbatim>(+)</code> PR
+Reviewing</h2><p>I think a nice use case of AI Assistant is to ask it to generate a
+review of your PR locally prior to send it to show it to your team.<ul><li>about 10% is plain wrong and MUST be ignored<li>70% not useful, but could be ignored,<li><strong>20%</strong> are good recommendations.</ul><p>While 20% is not much, this is still a net positive. Personally I
+feel that using AI just for review would already be a good reason to add
+them to your tool-belt.<h2 id=-------asking-specific-technical-details-about-your-own-project><code class=verbatim>(++)</code> Asking specific technical details about
+your own project</h2><p>Using RAG + Clojure-MCP to search and discover the details of your
+Project, this ended up being very useful.<p>I work on a huge base code. We created a full platform from scratch
+that contains hundreds of technical details. Some of them are long
+forgotten in some documentation, and some were not even cleanly
+documented due to time pressure during the delivery.<p>Still I could ask these very specific questions and got a clear
+answer. Of course, as you should never trust the system fully, I asked
+for the source code and documentation to be able to verify the answer.
+And it worked perfectly.<p>Typically I could ask "What is the HTTP Header to use for this
+specific feature?" and it looks at the code and returns the value with a
+small documentation and pointer to the sources.<h2 id=------writing-doc><code class=verbatim>(+)</code> Writing
+doc</h2><p>While everything must be proofread because <strong>you cannot fully
+trust the Agent</strong>, this generally gives a good first pass
+overview and can generate a documentation of mediocre quality. If you
+want a good documentation it will need a lot more time. But I still give
+a positive outcome as existing and bad documentation is still a net
+positive comparatively to no documentation.<h2 id=------writing-tests><code class=verbatim>(-)</code> Writing
+tests</h2><p>In my experience, asking these agent to write tests can either be a
+net positive or a full net negative were I had to delete all generated
+tests. So I wouldn't recommend using AI code generation for writing
+advanced tests cases. But I feel this is fine for very specific small
+functions. And even there, you really need to be cautious about passing
+tests that are not useful at all and just give a false sense of
+safety.<p>Sometime it is just better to write the tests, at least the cases but
+not the boilerplate, yourself to be sure you are testing the correct
+thing.<h2 id=-------familiarize-with-foreign-code><code class=verbatim>(++)</code> Familiarize with foreign code</h2><p>The ability to generate a <code class=verbatim>PROJECT_SUMMARY.md</code> as suggested by the
+Clojure-MCP tutorial, proves that these tool can really help grasp a new
+project. It's structure, the generic ideas, etc…<p>This is not totally perfect, but I got impressive results, so this
+count as <strong>NET POSITIVE</strong>.<h1 id=conclusions>Conclusions</h1><p>With this new tryout of the AI tools I could discover tasks for which
+they are useful. In terms of productivity, I believe their benefits
+depend tremendously on the type of work you assign them. I feel they
+have a place as a daily-use tool, particularly for pre-reviewing your
+code and helping you write documents.<p>To be effective you need to:<ol><li>Be ale to use something at least as efficient as <em>Claude 4
+Sonnet</em>; so an <strong>Agent</strong> with
+<strong>Clojure-MCP</strong>, <strong>RAG</strong> support.<li>Be conscious about the <strong>scope</strong> and
+<strong>complexity</strong> of the task<li>Be able to provide <strong>precise technical specification</strong>
+of the task<li>Always be conscious (evaluate and monitor) the time it would take to
+complete the task manually versus the time spent supervising the
+automated tool.</ol><p>If you familiarize yourself with these agents, really try
+Clojure-MCP. It is a game changer and that provide a pretty huge
+advantage to Clojure comparatively to other programming languages.</article></main><footer id=postamble class=status><div class=content><nav role=navigation><a href=/index.html>Home</a> |
+<a href=/slides.html>Slides</a> |
+<a href=/about-me.html>About</a> |
+<a href=#logo>↑↑↑</a></nav></div></footer>
