@@ -71,6 +71,19 @@ $(DST_DIR)/%.html: $(SRC_DIR)/%.org $(PANDOC_TEMPLATE) $(PANDOC_LUA_FILTER) $(PA
 html: $(DST_PANDOC_FILES)
 ALL += html
 
+
+# ORG -> PDF
+DST_PDF_FILES ?= $(patsubst %$(EXT),%.pdf, \
+                        $(patsubst $(SRC_DIR)/%,$(DST_DIR)/%, \
+                            $(SRC_PANDOC_FILES)))
+ORG2PDF := engine/org2pdf.sh
+$(DST_DIR)/%.pdf: $(SRC_DIR)/%.org $(ORG2PDF) $(ENV_VARS)
+	@mkdir -p "$(dir $@)"
+	$(ORG2PDF) "$<" "$@"
+.PHONY: pdf
+pdf: $(DST_PDF_FILES)
+ALL += pdf
+
 # INDEXES
 SRC_POSTS_DIR ?= $(SRC_DIR)/posts
 DST_POSTS_DIR ?= $(DST_DIR)/posts
