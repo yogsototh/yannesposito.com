@@ -15,5 +15,6 @@ pandoc $tocoption \
        --from org \
        --to latex \
        --pdf-engine=xelatex \
+       --toc-depth=4 \
        $orgfile \
        --output "$pdffile"
