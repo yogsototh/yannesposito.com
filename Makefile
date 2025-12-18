@@ -89,7 +89,7 @@ endef
 ENV_VARS  := ./engine/envvars.sh
 NIX_FILES := ./shell.nix $(wildcard nix/*)
 
-$(ENV_VARS): $(NIX_FILES) | $$(dir $$@).dir
+$(ENV_VARS): $(NIX_FILES)
 	@echo "export PATH=\"$(PATH)\"" > $@
 
 ALL += envvars
