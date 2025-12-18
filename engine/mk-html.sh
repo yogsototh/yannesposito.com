@@ -14,7 +14,7 @@ if grep -ie '^#+options:' "$orgfile" | grep 'toc:t'>/dev/null; then
     tocoption="--toc"
 fi
 
-set -x
+# Filter out known harmless warnings (auto-id:t is a custom org directive)
 pandoc $tocoption \
        --template="$template" \
        --lua-filter="$luafilter" \
@@ -24,5 +24,6 @@ pandoc $tocoption \
        --from org \
        --to html5 \
        --standalone \
-       $orgfile \
-       --output "$htmlfile"
+       "$orgfile" \
+       --output "$htmlfile" \
+       2> >(grep -v 'auto-id:t' >&2)

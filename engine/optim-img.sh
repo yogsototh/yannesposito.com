@@ -8,7 +8,7 @@ sizeof() {
 }
 
 
-convert "$src" -resize 800x800\> "$dst"
+magick "$src" -resize 860x860\> "$dst"
 
 before=$(sizeof $src)
 
