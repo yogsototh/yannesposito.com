@@ -14,8 +14,8 @@
   <link>https://her.esy.fun</link>
   <description><![CDATA[her.esy.fun articles, mostly random personal thoughts]]></description>
   <language>en</language>
-  <pubDate>Thu, 03 Jul 2025 00:00:00 +0200</pubDate>
-  <lastBuildDate>Sun, 21 Dec 2025 00:00:00 +0100</lastBuildDate>
+  <pubDate>Sun, 21 Dec 2025 00:00:00 +0100</pubDate>
+  <lastBuildDate>Sun, 21 Dec 2025 15:41:00 +0100</lastBuildDate>
   <generator>mkrss.sh</generator>
   <webMaster>yann@esposito.host (Yann Esposito)</webMaster>
   <image>
@@ -23,6 +23,74 @@
     <title>her.esy.fun</title>
     <link>https://her.esy.fun</link>
   </image>
+
+<item>
+<title>How I protect my forgejo instance from AI Web
+Crawlers</title>
+<guid>https://her.esy.fun/posts/0031-how-i-protect-my-forgejo-instance-from-ai-web-crawlers/index.html</guid>
+<pubDate>Sun, 21 Dec 2025 00:00:00 +0100</pubDate>
+<category>blog</category>
+<category>static</category>
+<description><![CDATA[
+<main id="content"><article><h1 id="tl-dr-">TL;DR:</h1><p>Put that in your nginx config:</p><pre><code>location / {
+  # needed to still allow git clone from http/https URLs
+  if ($http_user_agent ~* &quot;git/|git-lfs/&quot;) {
+        set $bypass_cookie 1;
+  }
+  # If we see the expected cookie; we could also bypass the blocker page
+  if ($cookie_Yogsototh_opens_the_door = &quot;1&quot;) {
+        set $bypass_cookie 1;
+  }
+  # Redirect to 418 if neither condition is met
+  if ($bypass_cookie != 1) {
+     add_header Content-Type text/html always;
+     return 418 &#39;&lt;script&gt;document.cookie = &quot;Yogsototh_opens_the_door=1; Path=/;&quot;; window.location.reload();&lt;/script&gt;&#39;;
+  }
+  # rest of your nginx config
+</code></pre><p>Preferably run a string replace from
+<code>Yogsototh_opens_the_door</code> to your own personal Cookie
+name.</p><p>Main advantage, is that it is almost invisible to the users of my
+website compartively to other solutions like Anubis.</p><h1 id="more-detail">More detail</h1><p>Not so long ago I started to host my code to <a href="https://forgejo.org">forgejo</a>. There is a promise that in the
+future it will support federation and forgejo is the same project that
+is used for <a href="https://codeberg.org">codeberg</a>.</p><p>The only problem I had was one day, I discovered that my entire node
+was down. At first I didn't investigate and just restarted the node. But
+soon after a few hours, it was down again. Looking at the reason,
+clearly thousands of requests that looked at every commit which put too
+much pressure on the system. Who could be so interested in using the web
+API to look at every commit instead, of… you know, clone the repository
+locally and explore it. Quickly, yep, like so many of you, I discovered
+that tons of crawlers that did not respect the <code>robots.txt</code>
+are crawling my forgejo instance until death ensues.</p><p>So I had no choice, I first used a radical approach and blocked my
+website entirely except from me. But hey, why having a public forge if
+not for people to be able to look into it time to time?</p><p>I then installed Anubis, but it wasn't really for me. It is way too
+heavy for my needs, not as easy as I would have hoped to configure and
+install.</p><p>Then I saw this article <a href="https://fxgn.dev/blog/anubis/">You
+don't need anubis</a> on <a href="https://lobste.rs">lobste.rs</a> using
+a simple configuration in caddy that should block these pesky crawlers.
+I made some adjustments to adapt it to nginx. For now, this is working
+perfectly well, my users are just redirected once, without really
+noticing it. And they could use forgejo as they could before. And this
+puts the crawlers away.</p><p>The strategy is pretty basic; in fact, a lot less advanced than the
+strategy adopted by Anubis. For every access of my website, I just check
+if the user has a specific cookie set. If not, I redirect the user to a
+418 HTML page containing some js code to execute that set this specific
+cookie and reload the page.</p><p>That's it.</p><p>I also tried to return a 302 and add a cookie from the response
+without javascript, but the crawlers are immune to that second strategy.
+Unfortunately this means, my website could only be seen if you enable
+javascript in your browser. I feel this is acceptable. I guess, someday
+this very basic protection will not be enough and my forgejo instance
+will break again, and I will be forced to use more advanced system like
+<a href="https://anubis.techaro.lol">Anubis</a> or perhaps even <a href="https://iocaine.madhouse-project.org">iocaine</a>.</p><p>I hope this could be helpful, because, I recently saw many
+discussions on that subject where people were not totally happy to use
+Anubis, while at least for me, this quick dirty fix does the trick. And
+I am fully aware that this would be very easy to bypass. But for now, I
+think the volume is more important than the quality for these crawlers
+and it may take a while for them to need to adapt. Also, by publishing
+this, I know if too many people use the same trick, quickly, these
+crawlers will adapt.</p></article></main>
+]]></description>
+</item>
+
 
 <item>
 <title>AI Assistant return of experience</title>
@@ -1584,160 +1652,6 @@ in the PATH for the demon, I ran:</p><pre><code>launchctl config user path &quot
 my computer this is fine for me.</p><p>Then:</p><pre><code>launchctl load ~/Library/LaunchAgents/y.mothership.plist
 launchctl start mothership
 </code></pre><p>And that's about it.</p></article></main>
-]]></description>
-</item>
-
-
-<item>
-<title>My personal environment sync</title>
-<guid>https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html</guid>
-<pubDate>Sat, 30 Oct 2021 00:00:00 +0200</pubDate>
-<category>programming</category>
-<description><![CDATA[
-<main id="content"><article><p>I have a quite specific system that I improved along the years to
-manage my local environment. Think about, binaries I expect to have in
-my shell, as well as configuration files for various utilities, and a
-few personal scripts.</p><p>The notion of what is exactly my local environment is not perfectly
-defined. I expect every of my computers to behave slightly differently.
-Some are for work-only, some personal use only.</p><p>For the things I want everywhere, I have a peculiar personal
-system.</p><p>I use a personal script that depends on <a href="https://yadm.io">yadm</a> and <a href="https://github.com/nix-community/home-manager">home-manager</a>.</p><p>My script try to check if some files where updated and react
-accordingly:</p><ol><li>I download the dot-files changes via <code class="verbatim">yadm</code>.</li><li>If my home-manager files changes, it will run
-<code>home-manager switch</code> ; if it fails, try to update nix
-channels then try again.</li><li>If my doom emacs packages changed, it will run
-<code>doom sync</code></li><li>If the script itself changed, it re-run the script after updating
-itself.</li></ol><p>If the script detect that I changed my emacs configuration, it runs
-<code>doom
-sync</code> or <code>doom sync -u</code>.</p><p>Here it is:</p><div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb1-2"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">### logs fn helpers</span></span>
-<span id="cb1-4"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">## colors for tput</span></span>
-<span id="cb1-6"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># black=0</span></span>
-<span id="cb1-7"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="va">red</span><span class="op">=</span>1</span>
-<span id="cb1-8"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="va">green</span><span class="op">=</span>2</span>
-<span id="cb1-9"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="va">yellow</span><span class="op">=</span>3</span>
-<span id="cb1-10"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="va">blue</span><span class="op">=</span>4</span>
-<span id="cb1-11"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># magenta=5</span></span>
-<span id="cb1-12"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># cyan=6</span></span>
-<span id="cb1-13"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># white=7</span></span>
-<span id="cb1-14"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">highpr()</span> <span class="kw">{</span></span>
-<span id="cb1-15"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">printf</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">tput</span> setaf <span class="va">$green)</span><span class="st">→</span><span class="va">$(</span><span class="fu">tput</span> sgr0<span class="va">)</span><span class="st"> </span><span class="va">$(</span><span class="fu">tput</span> bold<span class="va">)</span><span class="st">%-60s</span><span class="va">$(</span><span class="fu">tput</span> sgr0<span class="va">)</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$*</span><span class="st">&quot;</span></span>
-<span id="cb1-16"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
-<span id="cb1-17"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ok()</span> <span class="kw">{</span></span>
-<span id="cb1-18"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">local</span> <span class="va">txt</span><span class="op">=</span><span class="st">&quot;OK&quot;</span></span>
-<span id="cb1-19"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="at">-e</span> <span class="st">&quot; [</span><span class="va">$(</span><span class="fu">tput</span> bold<span class="va">)$(</span><span class="fu">tput</span> setaf <span class="va">$green)${txt}$(</span><span class="fu">tput</span> sgr0<span class="va">)</span><span class="st">]&quot;</span> <span class="op">&gt;&amp;</span><span class="dv">2</span></span>
-<span id="cb1-20"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
-<span id="cb1-21"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">info()</span> <span class="kw">{</span></span>
-<span id="cb1-22"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="at">-e</span> <span class="st">&quot; [</span><span class="va">$(</span><span class="fu">tput</span> bold<span class="va">)$(</span><span class="fu">tput</span> setaf <span class="va">$blue)$*$(</span><span class="fu">tput</span> sgr0<span class="va">)</span><span class="st">]&quot;</span> <span class="op">&gt;&amp;</span><span class="dv">2</span></span>
-<span id="cb1-23"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
-<span id="cb1-24"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">warn()</span> <span class="kw">{</span></span>
-<span id="cb1-25"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="at">-e</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">tput</span> bold<span class="va">)$(</span><span class="fu">tput</span> setaf <span class="va">$yellow)$*$(</span><span class="fu">tput</span> sgr0<span class="va">)</span><span class="st">&quot;</span> <span class="op">&gt;&amp;</span><span class="dv">2</span></span>
-<span id="cb1-26"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
-<span id="cb1-27"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">err()</span> <span class="kw">{</span></span>
-<span id="cb1-28"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="at">-e</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">tput</span> bold<span class="va">)$(</span><span class="fu">tput</span> setaf <span class="va">$red)$*$(</span><span class="fu">tput</span> sgr0<span class="va">)</span><span class="st">&quot;</span> <span class="op">&gt;&amp;</span><span class="dv">2</span></span>
-<span id="cb1-29"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
-<span id="cb1-30"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">fail()</span> <span class="kw">{</span></span>
-<span id="cb1-31"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-31" aria-hidden="true" tabindex="-1"></a>    <span class="ex">err</span> <span class="at">-e</span> <span class="st">&quot;\n[ERR] </span><span class="va">$*</span><span class="st">&quot;</span></span>
-<span id="cb1-32"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="bu">exit</span> 1</span>
-<span id="cb1-33"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
-<span id="cb1-34"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-35"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="ex">highpr</span> <span class="st">&quot;check nix&quot;</span></span>
-<span id="cb1-36"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="ot">! </span><span class="bu">[</span> <span class="ot">-x</span> <span class="st">&quot;</span><span class="va">$(</span><span class="bu">command</span> <span class="at">-v</span> nix<span class="va">)</span><span class="st">&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb1-37"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-37" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span></span>
-<span id="cb1-38"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-38" aria-hidden="true" tabindex="-1"></a>    <span class="ex">err</span> <span class="st">&quot;nix does not seem to be installed.&quot;</span></span>
-<span id="cb1-39"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-39" aria-hidden="true" tabindex="-1"></a>    <span class="ex">err</span> <span class="st">&quot;Install it from: https://nixos.org/nix/&quot;</span></span>
-<span id="cb1-40"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="bu">exit</span> 1</span>
-<span id="cb1-41"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
-<span id="cb1-42"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="ex">ok</span></span>
-<span id="cb1-43"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-44"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="ex">highpr</span> <span class="st">&quot;yadm fetch&quot;</span></span>
-<span id="cb1-45"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="ex">yadm</span> fetch <span class="at">--quiet</span>  <span class="kw">||</span> <span class="ex">fail</span> <span class="st">&quot;yadm fetch failed&quot;</span></span>
-<span id="cb1-46"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="ex">ok</span></span>
-<span id="cb1-47"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-48"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="co"># check the hash of a few files before doing yadm pull</span></span>
-<span id="cb1-49"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="va">OLD_SYNC_ENV_ID</span><span class="op">=</span><span class="va">$(</span><span class="ex">yadm</span> rev-parse HEAD:bin/sync-env.sh<span class="va">)</span></span>
-<span id="cb1-50"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="va">OLD_HOME_MANAGER_ID</span><span class="op">=</span><span class="va">$(</span><span class="ex">yadm</span> rev-parse HEAD:.config/nixpkgs/home.nix<span class="va">)</span></span>
-<span id="cb1-51"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="va">OLD_DOOM_PACKAGES</span><span class="op">=</span><span class="va">$(</span><span class="ex">yadm</span> rev-parse HEAD:.doom.d/packages.el<span class="va">)</span></span>
-<span id="cb1-52"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="va">OLD_DOOM_INIT</span><span class="op">=</span><span class="va">$(</span><span class="ex">yadm</span> rev-parse HEAD:.doom.d/init.el<span class="va">)</span></span>
-<span id="cb1-53"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-54"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="ex">highpr</span> <span class="st">&quot;yadm pull&quot;</span></span>
-<span id="cb1-55"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="ex">yadm</span> pull <span class="at">--quiet</span> <span class="kw">||</span> <span class="ex">fail</span> <span class="st">&quot;yadm pull failed&quot;</span></span>
-<span id="cb1-56"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="ex">ok</span></span>
-<span id="cb1-57"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-58"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="co"># check the hash of a few files after doing yadm pull</span></span>
-<span id="cb1-59"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-59" aria-hidden="true" tabindex="-1"></a><span class="va">NEW_SYNC_ENV_ID</span><span class="op">=</span><span class="va">$(</span><span class="ex">yadm</span> rev-parse HEAD:bin/sync-env.sh<span class="va">)</span></span>
-<span id="cb1-60"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-60" aria-hidden="true" tabindex="-1"></a><span class="va">NEW_HOME_MANAGER_ID</span><span class="op">=</span><span class="va">$(</span><span class="ex">yadm</span> rev-parse HEAD:.config/nixpkgs/home.nix<span class="va">)</span></span>
-<span id="cb1-61"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="va">NEW_DOOM_PACKAGES</span><span class="op">=</span><span class="va">$(</span><span class="ex">yadm</span> rev-parse HEAD:.doom.d/packages.el<span class="va">)</span></span>
-<span id="cb1-62"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="va">NEW_DOOM_INIT</span><span class="op">=</span><span class="va">$(</span><span class="ex">yadm</span> rev-parse HEAD:.doom.d/init.el<span class="va">)</span></span>
-<span id="cb1-63"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-64"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="ex">highpr</span> <span class="st">&quot;check sync-env diff&quot;</span></span>
-<span id="cb1-65"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="ot">! </span><span class="bu">[</span> <span class="st">&quot;</span><span class="va">$OLD_SYNC_ENV_ID</span><span class="st">&quot;</span> <span class="ot">=</span> <span class="st">&quot;</span><span class="va">$NEW_SYNC_ENV_ID</span><span class="st">&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb1-66"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-66" aria-hidden="true" tabindex="-1"></a>    <span class="ex">warn</span> <span class="st">&quot; changed&quot;</span></span>
-<span id="cb1-67"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-67" aria-hidden="true" tabindex="-1"></a>    <span class="ex">warn</span> <span class="st">&quot; Starting ~/bin/sync-env.sh again&quot;</span></span>
-<span id="cb1-68"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-68" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span></span>
-<span id="cb1-69"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-69" aria-hidden="true" tabindex="-1"></a>    <span class="ex">~/bin/sync-env.sh</span></span>
-<span id="cb1-70"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-70" aria-hidden="true" tabindex="-1"></a>    <span class="bu">exit</span> <span class="va">$?</span></span>
-<span id="cb1-71"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-71" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
-<span id="cb1-72"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-72" aria-hidden="true" tabindex="-1"></a><span class="ex">ok</span></span>
-<span id="cb1-73"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-74"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-74" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">-f</span> <span class="st">&quot;</span><span class="va">$HOME</span><span class="st">/.yadm/files.gpg&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb1-75"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-75" aria-hidden="true" tabindex="-1"></a>  <span class="ex">highpr</span> <span class="st">&quot;yadm decrypt&quot;</span></span>
-<span id="cb1-76"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-76" aria-hidden="true" tabindex="-1"></a>  <span class="ex">yadm</span> decrypt <span class="kw">||</span> <span class="ex">fail</span> <span class="st">&quot;yadm decrypt failed&quot;</span></span>
-<span id="cb1-77"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-77" aria-hidden="true" tabindex="-1"></a>  <span class="ex">ok</span></span>
-<span id="cb1-78"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-78" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
-<span id="cb1-79"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-80"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-80" aria-hidden="true" tabindex="-1"></a><span class="ex">highpr</span> <span class="st">&quot;home-manager&quot;</span></span>
-<span id="cb1-81"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-81" aria-hidden="true" tabindex="-1"></a><span class="va">USERNAME_NIX_FILE</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$HOME</span><span class="st">/.config/nixpkgs/username.nix&quot;</span></span>
-<span id="cb1-82"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-82" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">!</span> <span class="ot">-f</span>  <span class="st">&quot;</span><span class="va">$USERNAME_NIX_FILE</span><span class="st">&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb1-83"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-83" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">&quot;</span><span class="dt">\&quot;</span><span class="va">$USER</span><span class="dt">\&quot;</span><span class="st">&quot;</span> <span class="op">&gt;&gt;</span> <span class="st">&quot;</span><span class="va">$USERNAME_NIX_FILE</span><span class="st">&quot;</span></span>
-<span id="cb1-84"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-84" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
-<span id="cb1-85"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-85" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="ot">! </span><span class="bu">[</span> <span class="st">&quot;</span><span class="va">$OLD_HOME_MANAGER_ID</span><span class="st">&quot;</span> <span class="ot">=</span> <span class="st">&quot;</span><span class="va">$NEW_HOME_MANAGER_ID</span><span class="st">&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb1-86"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-86" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span></span>
-<span id="cb1-87"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-87" aria-hidden="true" tabindex="-1"></a>    <span class="ex">highpr</span> <span class="st">&quot;home-manager switch&quot;</span></span>
-<span id="cb1-88"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-88" aria-hidden="true" tabindex="-1"></a>    <span class="ex">home-manager</span> switch <span class="kw">||</span> <span class="dt">\</span></span>
-<span id="cb1-89"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-89" aria-hidden="true" tabindex="-1"></a>      <span class="kw">(</span> <span class="ex">nix-channel</span> <span class="at">--update</span> <span class="kw">&amp;&amp;</span> <span class="ex">home-manager</span> switch <span class="kw">)</span> <span class="kw">||</span> <span class="dt">\</span></span>
-<span id="cb1-90"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-90" aria-hidden="true" tabindex="-1"></a>      <span class="ex">fail</span> <span class="st">&quot;home-manager switch failed&quot;</span></span>
-<span id="cb1-91"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-91" aria-hidden="true" tabindex="-1"></a>    <span class="ex">ok</span></span>
-<span id="cb1-92"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-92" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
-<span id="cb1-93"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-93" aria-hidden="true" tabindex="-1"></a>    <span class="ex">info</span> <span class="st">&quot;skipped&quot;</span></span>
-<span id="cb1-94"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-94" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
-<span id="cb1-95"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-96"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-96" aria-hidden="true" tabindex="-1"></a><span class="ex">highpr</span> <span class="st">&quot;doom-emacs&quot;</span></span>
-<span id="cb1-97"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-97" aria-hidden="true" tabindex="-1"></a><span class="va">doompath</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$HOME</span><span class="st">/.emacs.d/bin/doom&quot;</span></span>
-<span id="cb1-98"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-98" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="ot">! </span><span class="bu">[</span> <span class="st">&quot;</span><span class="va">$OLD_DOOM_PACKAGES</span><span class="st">&quot;</span> <span class="ot">=</span> <span class="st">&quot;</span><span class="va">$NEW_DOOM_PACKAGES</span><span class="st">&quot;</span> <span class="bu">]</span> <span class="kw">||</span> <span class="dt">\</span></span>
-<span id="cb1-99"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-99" aria-hidden="true" tabindex="-1"></a>   <span class="ot">! </span><span class="bu">[</span> <span class="st">&quot;</span><span class="va">$OLD_DOOM_INIT</span><span class="st">&quot;</span>     <span class="ot">=</span> <span class="st">&quot;</span><span class="va">$NEW_DOOM_INIT</span><span class="st">&quot;</span>  <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb1-100"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-100" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="kw">[[</span> <span class="ot">-x</span> <span class="va">$doompath</span> <span class="kw">]];</span> <span class="cf">then</span></span>
-<span id="cb1-101"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-101" aria-hidden="true" tabindex="-1"></a>      <span class="bu">echo</span></span>
-<span id="cb1-102"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-102" aria-hidden="true" tabindex="-1"></a>      <span class="ex">highpr</span> <span class="st">&quot;doom sync&quot;</span></span>
-<span id="cb1-103"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-103" aria-hidden="true" tabindex="-1"></a>      <span class="va">$doompath</span> sync <span class="kw">||</span> <span class="ex">fail</span> <span class="st">&quot;doom failed to sync&quot;</span></span>
-<span id="cb1-104"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-104" aria-hidden="true" tabindex="-1"></a>      <span class="ex">ok</span></span>
-<span id="cb1-105"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-105" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span></span>
-<span id="cb1-106"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-106" aria-hidden="true" tabindex="-1"></a>     <span class="ex">fail</span> <span class="st">&quot;Cannot find doom executable at </span><span class="va">$doompath</span><span class="st">&quot;</span><span class="kw">;</span></span>
-<span id="cb1-107"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-107" aria-hidden="true" tabindex="-1"></a>  <span class="cf">fi</span></span>
-<span id="cb1-108"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-108" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
-<span id="cb1-109"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-109" aria-hidden="true" tabindex="-1"></a>   <span class="ex">info</span> <span class="st">&quot;skipped&quot;</span></span>
-<span id="cb1-110"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb1-110" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code></pre></div><h2 id="boostraping">Bootstrapping</h2><p>Bootstrapping this system is always a nice problem to think about. It
-is smooth when everything is set but to bootstrap it I need binaries
-installed by this system… So… How to handle the dependency cycle
-correctly?</p><p>To minimize the pain, I removed more and more bootstrapping
-dependencies. Now my almost single dependence for bootstrapping my
-environment is <code class="verbatim">nix</code>. I haven't initialized
-any machine for a long time now. The following should work.</p><ol><li><p>Use fish<a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> <code>chsh /bin/fish</code></p></li><li><p>Install nix
-<code>curl -L https://nixos.org/nix/install | sh</code></p></li><li><p>Install home-manager</p><div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nix-channel</span> <span class="at">--add</span> https://github.com/nix-community/home-manager/archive/release-21.05.tar.gz home-manager</span>
-<span id="cb2-2"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">nix-channel</span> <span class="at">--update</span></span>
-<span id="cb2-3"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">NIX_PATH</span><span class="op">=</span><span class="va">$HOME</span>/.nix-defexpr/channels<span class="va">${NIX_PATH</span><span class="op">:+</span>:<span class="va">}$NIX_PATH</span></span>
-<span id="cb2-4"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">nix-shell</span> <span class="st">&#39;&lt;home-manager&gt;&#39;</span> <span class="at">-A</span> install</span></code></pre></div></li><li><p>Install and use <code>yadm</code></p><div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nix-shell</span> <span class="at">-p</span> yadm</span>
-<span id="cb3-2"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">yadm</span> boostrap</span>
-<span id="cb3-3"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">yadm</span> remote set-url origin <span class="op">&lt;</span>url-to-my-dot-files-repo<span class="op">&gt;</span></span>
-<span id="cb3-4"><a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ex">yadm</span> pull</span></code></pre></div></li><li><p>Still in the <code class="verbatim">nix-shell</code> with <code class="verbatim">yadm</code> run <code>~/bin/sync-env.sh</code></p></li></ol><p>There is a risk that step 3 fail because I pin most of my packages in
-home-manager configuration, and it will try to install <code class="verbatim">yadm</code>. This can conflict with the <code class="verbatim">yadm</code> installed in the current <code class="verbatim">nix-shell</code>. So sometime I need to:</p><ol><li>Remove the line installing <code class="verbatim">yadm</code> in my
-home-manager configuration first</li><li>run <code class="verbatim">home-manager sync</code></li><li>get out of the <code class="verbatim">nix-shell</code>,</li><li>add <code class="verbatim">yadm</code> back in the <code class="verbatim">home-manager</code> config</li><li>run <code class="verbatim">home-manager sync</code> again, but this
-time out of the <code class="verbatim">nix-shell</code>.</li><li>Finally I can run my <code class="verbatim">~/bin/sync-env.sh</code>
-command.</li></ol><p>So this post will probably be useful as a personal note in the
-future. Because bootstrapping is generally not trivial. I will probably
-update this post if something is missing.</p><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr></hr><ol><li id="fn1"><p>I use fish for interactive shell. I use <code>zsh</code>
-for quick dirty scripts (a lot better than bash), and I switch to <a href="https://hackage.haskell.org/package/turtle">turtle</a> if I need
-to be serious about the script.<a href="https://her.esy.fun/posts/0021-my-personal-environment-sync/index.html#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li></ol></section></article></main>
 ]]></description>
 </item>
 

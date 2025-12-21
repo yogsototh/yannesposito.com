@@ -14,7 +14,7 @@
   <link>gemini://her.esy.fun</link>
   <description><![CDATA[her.esy.fun articles, mostly random personal thoughts]]></description>
   <language>en</language>
-  <pubDate>Thu, 03 Jul 2025 00:00:00 +0200</pubDate>
+  <pubDate>Sun, 21 Dec 2025 00:00:00 +0100</pubDate>
   <lastBuildDate></lastBuildDate>
   <generator>mkrss.sh</generator>
   <webMaster>yann@esposito.host (Yann Esposito)</webMaster>
@@ -23,6 +23,131 @@
     <title>her.esy.fun</title>
     <link>gemini://her.esy.fun</link>
   </image>
+
+<item>
+<title>How I protect my forgejo instance from AI Web Crawlers</title>
+<guid>gemini://her.esy.fun/posts/0031-how-i-protect-my-forgejo-instance-from-ai-web-crawlers/index.gmi</guid>
+<pubDate>Sun, 21 Dec 2025 00:00:00 +0100</pubDate>
+<category>blog</category>
+<category>static</category>
+<description><![CDATA[
+# How I protect my forgejo instance from AI Web Crawlers
+description:  This article describes my nginx configuration and strategy on how to prevent
+description:  web crawlers from putting down my instance while still serving most people with minimal amount
+description:  of friction.
+keywords:  blog static
+author:  Yann Esposito
+email:  yann@esposito.host
+=> /files/publickey.txt gpg
+date:  [2025-12-21 Dim]
+
+# TL;DR:
+
+Put that in your nginx config:
+
+```
+location / {
+  # needed to still allow git clone from http/https URLs
+  if ($http_user_agent ~* "git/|git-lfs/") {
+        set $bypass_cookie 1;
+  }
+  # If we see the expected cookie; we could also bypass the blocker page
+  if ($cookie_Yogsototh_opens_the_door = "1") {
+        set $bypass_cookie 1;
+  }
+  # Redirect to 418 if neither condition is met
+  if ($bypass_cookie != 1) {
+     add_header Content-Type text/html always;
+     return 418 '<script>document.cookie = "Yogsototh_opens_the_door=1; Path=/;"; window.location.reload();</script>';
+  }
+  # rest of your nginx config
+```
+
+Preferably run a string replace from ~Yogsototh_opens_the_door~ to your own
+personal Cookie name.
+
+Main advantage, is that it is almost invisible to the users of my website
+compartively to other solutions like Anubis.
+
+# More detail
+
+Not so long ago I started to host my code to
+
+=> https://forgejo.org forgejo
+There is a promise that in the future it will support federation and forgejo is
+the same project that is used for
+
+=> https://codeberg.org codeberg
+
+The only problem I had was one day, I discovered that my entire node was down.
+At first I didn't investigate and just restarted the node. But soon after a few
+hours, it was down again. Looking at the reason, clearly thousands of requests
+that looked at every commit which put too much pressure on the system.
+Who could be so interested in using the web API to look at every commit
+instead, of... you know, clone the repository locally and explore it.
+Quickly, yep, like so many of you, I discovered that tons of crawlers that did
+not respect the ~robots.txt~ are crawling my forgejo instance until death ensues.
+
+So I had no choice, I first used a radical approach and blocked my website entirely
+except from me. But hey, why having a public forge if not for people to be able
+to look into it time to time?
+
+I then installed Anubis, but it wasn't really for me. It is way too heavy for my
+needs, not as easy as I would have hoped to configure and install.
+
+Then I saw this article
+
+=> https://fxgn.dev/blog/anubis/ You don't need anubis
+ on
+
+=> https://lobste.rs lobste.rs
+
+
+using a simple configuration in caddy that should block these pesky crawlers.
+I made some adjustments to adapt it to nginx.
+For now, this is working perfectly well, my users are just
+redirected once, without really noticing it. And they could use forgejo as they
+could before. And this puts the crawlers away. 
+
+The strategy is pretty basic; in fact, a lot less advanced than the strategy
+adopted by Anubis. For every access of my website, I just check if the user has
+a specific cookie set. If not, I redirect the user to a 418 HTML page containing
+some js code to execute that set this specific cookie and reload the page.
+
+That's it.
+
+I also tried to return a 302 and add a cookie from the response without
+javascript, but the crawlers are immune to that second strategy. Unfortunately this
+means, my website could only be seen if you enable javascript in your browser.
+I feel this is acceptable.
+I guess, someday this very basic protection will not be enough and my forgejo
+instance will break again, and I will be forced to use more advanced system like
+
+
+=> https://anubis.techaro.lol Anubis
+ or perhaps even
+
+=> https://iocaine.madhouse-project.org iocaine
+
+I hope this could be helpful, because, I recently saw many discussions on that
+subject where people were not totally happy to use Anubis, while at least for
+me, this quick dirty fix does the trick. And I am fully aware that this would be
+very easy to bypass. But for now, I think the volume is more important than the
+quality for these crawlers and it may take a while for them to need to adapt.
+Also, by publishing this, I know if too many people use the same trick, quickly,
+these crawlers will adapt.
+
+=> /index.gmi Home
+=> /gem-atom.xml Feed
+=> /slides.gmi Slides
+=> /about-me.gmi About
+
+=> https://git.esy.fun code
+=> https://espial.esy.fun/u:yogsototh bookmarks
+=> https://espial.esy.fun/u:yogsototh/notes notes
+]]></description>
+</item>
+
 
 <item>
 <title>AI Assistant return of experience</title>
@@ -2546,232 +2671,6 @@ launchctl start mothership
 
 
 And that's about it.
-
-=> /index.gmi Home
-=> /gem-atom.xml Feed
-=> /slides.gmi Slides
-=> /about-me.gmi About
-
-=> https://git.esy.fun code
-=> https://espial.esy.fun/u:yogsototh bookmarks
-=> https://espial.esy.fun/u:yogsototh/notes notes
-]]></description>
-</item>
-
-
-<item>
-<title>My personal environment sync</title>
-<guid>gemini://her.esy.fun/posts/0021-my-personal-environment-sync/index.gmi</guid>
-<pubDate>Sat, 30 Oct 2021 00:00:00 +0200</pubDate>
-<category>programming</category>
-<description><![CDATA[
-# My personal environment sync
-description: 
-keywords:  programming
-author:  Yann Esposito
-email:  yann@esposito.host
-=> /files/publickey.txt gpg
-date:  [2021-10-30 Sat]
-
-I have a quite specific system that I improved along the years to manage my
-local environment.
-Think about, binaries I expect to have in my shell, as well as
-configuration files for various utilities, and a few personal scripts.
-
-The notion of what is exactly my local environment is not perfectly defined.
-I expect every of my computers to behave slightly differently.
-Some are for work-only, some personal use only.
-
-For the things I want everywhere, I have a peculiar personal system.
-
-I use a personal script that depends on
-
-=> https://yadm.io yadm
- and
-
-=> https://github.com/nix-community/home-manager home-manager
-
-My script try to check if some files where updated and react accordingly:
-
-1. I download the dot-files changes via =yadm=.
-2. If my home-manager files changes, it will run ~home-manager switch~
-   ; if it fails, try to update nix channels then try again.
-3. If my doom emacs packages changed, it will run ~doom sync~
-4. If the script itself changed, it re-run the script after updating itself.
-
-If the script detect that I changed my emacs configuration, it runs ~doom
-sync~ or ~doom sync -u~.
-
-Here it is:
-
-```bash
-#!/bin/bash
-
-### logs fn helpers
-
-## colors for tput
-# black=0
-red=1
-green=2
-yellow=3
-blue=4
-# magenta=5
-# cyan=6
-# white=7
-highpr() {
-    printf "$(tput setaf $green)→$(tput sgr0) $(tput bold)%-60s$(tput sgr0)" "$*"
-}
-ok() {
-    local txt="OK"
-    echo -e " [$(tput bold)$(tput setaf $green)${txt}$(tput sgr0)]" >&2
-}
-info() {
-    echo -e " [$(tput bold)$(tput setaf $blue)$*$(tput sgr0)]" >&2
-}
-warn() {
-    echo -e "$(tput bold)$(tput setaf $yellow)$*$(tput sgr0)" >&2
-}
-err() {
-    echo -e "$(tput bold)$(tput setaf $red)$*$(tput sgr0)" >&2
-}
-fail() {
-    err -e "\n[ERR] $*"
-    exit 1
-}
-
-highpr "check nix"
-if ! [ -x "$(command -v nix)" ]; then
-    echo
-    err "nix does not seem to be installed."
-    err "Install it from: https://nixos.org/nix/"
-    exit 1
-fi
-ok
-
-highpr "yadm fetch"
-yadm fetch --quiet  || fail "yadm fetch failed"
-ok
-
-# check the hash of a few files before doing yadm pull
-OLD_SYNC_ENV_ID=$(yadm rev-parse HEAD:bin/sync-env.sh)
-OLD_HOME_MANAGER_ID=$(yadm rev-parse HEAD:.config/nixpkgs/home.nix)
-OLD_DOOM_PACKAGES=$(yadm rev-parse HEAD:.doom.d/packages.el)
-OLD_DOOM_INIT=$(yadm rev-parse HEAD:.doom.d/init.el)
-
-highpr "yadm pull"
-yadm pull --quiet || fail "yadm pull failed"
-ok
-
-# check the hash of a few files after doing yadm pull
-NEW_SYNC_ENV_ID=$(yadm rev-parse HEAD:bin/sync-env.sh)
-NEW_HOME_MANAGER_ID=$(yadm rev-parse HEAD:.config/nixpkgs/home.nix)
-NEW_DOOM_PACKAGES=$(yadm rev-parse HEAD:.doom.d/packages.el)
-NEW_DOOM_INIT=$(yadm rev-parse HEAD:.doom.d/init.el)
-
-highpr "check sync-env diff"
-if ! [ "$OLD_SYNC_ENV_ID" = "$NEW_SYNC_ENV_ID" ]; then
-    warn " changed"
-    warn " Starting ~/bin/sync-env.sh again"
-    echo
-    ~/bin/sync-env.sh
-    exit $?
-fi
-ok
-
-if [ -f "$HOME/.yadm/files.gpg" ]; then
-  highpr "yadm decrypt"
-  yadm decrypt || fail "yadm decrypt failed"
-  ok
-fi
-
-highpr "home-manager"
-USERNAME_NIX_FILE="$HOME/.config/nixpkgs/username.nix"
-if [ ! -f  "$USERNAME_NIX_FILE" ]; then
-  echo "\"$USER\"" >> "$USERNAME_NIX_FILE"
-fi
-if ! [ "$OLD_HOME_MANAGER_ID" = "$NEW_HOME_MANAGER_ID" ]; then
-    echo
-    highpr "home-manager switch"
-    home-manager switch || \
-      ( nix-channel --update && home-manager switch ) || \
-      fail "home-manager switch failed"
-    ok
-else
-    info "skipped"
-fi
-
-highpr "doom-emacs"
-doompath="$HOME/.emacs.d/bin/doom"
-if ! [ "$OLD_DOOM_PACKAGES" = "$NEW_DOOM_PACKAGES" ] || \
-   ! [ "$OLD_DOOM_INIT"     = "$NEW_DOOM_INIT"  ]; then
-  if =>  -x $doompath ; then
-      echo
-      highpr "doom sync"
-      $doompath sync || fail "doom failed to sync"
-      ok
-  else
-     fail "Cannot find doom executable at $doompath";
-  fi
-else
-   info "skipped"
-fi
-```
-
-## Bootstrapping
-
-Bootstrapping this system is always a nice problem to think about.
-It is smooth when everything is set but to bootstrap it I need binaries
-installed by this system...
-So...
-How to handle the dependency cycle correctly?
-
-To minimize the pain, I removed more and more bootstrapping dependencies.
-Now my almost single dependence for bootstrapping my environment is =nix=.
-I haven't initialized any machine for a long time now.
-The following should work.
-
-0. Use fish[fn:fish]  ~chsh /bin/fish~
-1. Install nix
-   ~curl -L https://nixos.org/nix/install | sh~
-2. Install home-manager
-   ```bash
-   nix-channel --add https://github.com/nix-community/home-manager/archive/release-21.05.tar.gz home-manager
-   nix-channel --update
-   export NIX_PATH=$HOME/.nix-defexpr/channels${NIX_PATH:+:}$NIX_PATH
-   nix-shell '<home-manager>' -A install
-   ```
-3. Install and use ~yadm~
-   ```bash
-   nix-shell -p yadm
-   yadm boostrap
-   yadm remote set-url origin <url-to-my-dot-files-repo>
-   yadm pull
-   ```
-4. Still in the =nix-shell= with =yadm= run ~~/bin/sync-env.sh~
-
-
-There is a risk that step 3 fail because I pin most of my packages in
-home-manager configuration, and it will try to install =yadm=. This can
-conflict with the =yadm= installed in the current =nix-shell=.
-So sometime I need to:
-
-1. Remove the line installing =yadm= in my home-manager configuration first
-2. run =home-manager sync=
-3. get out of the =nix-shell=,
-4. add =yadm= back in the =home-manager= config
-5. run =home-manager sync= again, but this time out of the =nix-shell=.
-6. Finally I can run my =~/bin/sync-env.sh= command.
-
-So this post will probably be useful as a personal note in the future.
-Because bootstrapping is generally not trivial.
-I will probably update this post if something is missing.
-
-[fn:fish] I use fish for interactive shell. I use ~zsh~ for quick dirty
-scripts (a lot better than bash), and I switch to
-
-=> https://hackage.haskell.org/package/turtle turtle
- if I need to be
-serious about the script.
 
 => /index.gmi Home
 => /gem-atom.xml Feed
