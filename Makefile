@@ -215,7 +215,7 @@ gemini: gmi gmi-index gmi-atom
 # ==============================================================================
 # Main Targets
 # ==============================================================================
-.PHONY: site deploy watch serve clean
+.PHONY: site deploy watch serve clean clean-html
 
 site: $(ALL)
 
@@ -233,6 +233,11 @@ clean:
 	@rm -f $(ENV_VARS)
 	@rm -rf $(DST_DIR)/* $(CACHE_DIR)/*
 	@find . -name '.dir' -delete
+
+clean-html:
+	@find $(DST_DIR) -name '*.html' -delete
+	@rm -f $(DST_DIR)/index.html $(DST_DIR)/rss.xml
+	@rm -rf $(CACHE_DIR)/rss
 
 # Debug: show what would be built
 .PHONY: debug
