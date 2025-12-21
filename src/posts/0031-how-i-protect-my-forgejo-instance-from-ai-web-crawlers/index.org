@@ -1,6 +1,6 @@
 #+title: How I protect my forgejo instance from AI Web Crawlers
-#+description: This article describe my nginx configuration and strategy on how to prevent
-#+description: web crawler to put down my instance while still serving most people with minimal amount
+#+description: This article describes my nginx configuration and strategy on how to prevent
+#+description: web crawlers from putting down my instance while still serving most people with minimal amount
 #+description: of friction.
 #+keywords: blog static
 #+author: Yann Esposito
@@ -38,6 +38,9 @@ location / {
 Preferably run a string replace from ~Yogsototh_opens_the_door~ to your own
 personal Cookie name.
 
+Main advantage, is that it is almost invisible to the users of my website
+compartively to other solutions like Anubis.
+
 * More detail
 :PROPERTIES:
 :CUSTOM_ID: more-detail
@@ -49,26 +52,26 @@ the same project that is used for [[https://codeberg.org][codeberg]].
 
 The only problem I had was one day, I discovered that my entire node was down.
 At first I didn't investigate and just restarted the node. But soon after a few
-hours, it was down again. Looking at the reason, clearly thousands of request
+hours, it was down again. Looking at the reason, clearly thousands of requests
 that looked at every commit which put too much pressure on the system.
 Who could be so interested in using the web API to look at every commit
-instead, of.. you know, clone the repository locally and explore it.
-Quickly, yep, like so many of you, I discovered that a tons of crawler that did
-not respect the ~robots.txt~ are crawling my forgejo instance until death ensure.
+instead, of... you know, clone the repository locally and explore it.
+Quickly, yep, like so many of you, I discovered that tons of crawlers that did
+not respect the ~robots.txt~ are crawling my forgejo instance until death ensues.
 
-So I had no choice, I first use a radical approach and blocked my website entirely
+So I had no choice, I first used a radical approach and blocked my website entirely
 except from me. But hey, why having a public forge if not for people to be able
 to look into it time to time?
 
 I then installed Anubis, but it wasn't really for me. It is way too heavy for my
 needs, not as easy as I would have hoped to configure and install.
 
-Then I saw an article I think on [[https://lobste.rs][lobste.rs]] mentioning how you don't need Anubis
-to protect your website introducing a caddy configuration that should block
-these pesky crawlers. I made some adjustments and I can say, for now, this is
-working perfectly well, my users are just redirected once, without really
-noticing it. And they could use forgejo as the could before. And this put the
-crawlers away.
+Then I saw this article [[https://fxgn.dev/blog/anubis/][You don't need anubis]] on [[https://lobste.rs][lobste.rs]] 
+using a simple configuration in caddy that should block these pesky crawlers.
+I made some adjustments to adapt it to nginx.
+For now, this is working perfectly well, my users are just
+redirected once, without really noticing it. And they could use forgejo as they
+could before. And this puts the crawlers away. 
 
 The strategy is pretty basic; in fact, a lot less advanced than the strategy
 adopted by Anubis. For every access of my website, I just check if the user has
@@ -77,18 +80,18 @@ some js code to execute that set this specific cookie and reload the page.
 
 That's it.
 
-I also tried to return a 302 and adding a cookie from the response without
-javascript, but the crawler are immune to that second strategy. Unfortunately this
-mean, my website could only be seen if you enable javascript in your browser.
+I also tried to return a 302 and add a cookie from the response without
+javascript, but the crawlers are immune to that second strategy. Unfortunately this
+means, my website could only be seen if you enable javascript in your browser.
 I feel this is acceptable.
 I guess, someday this very basic protection will not be enough and my forgejo
 instance will break again, and I will be forced to use more advanced system like
 [[https://anubis.techaro.lol][Anubis]] or perhaps even [[https://iocaine.madhouse-project.org][iocaine]].
 
-I hope this could be helpful, because, I recently saw many discussion on that
+I hope this could be helpful, because, I recently saw many discussions on that
 subject where people were not totally happy to use Anubis, while at least for
 me, this quick dirty fix does the trick. And I am fully aware that this would be
 very easy to bypass. But for now, I think the volume is more important than the
-quality for these crawler and it may take a while for them to need to adapt.
+quality for these crawlers and it may take a while for them to need to adapt.
 Also, by publishing this, I know if too many people use the same trick, quickly,
-these crawler will adapt.
+these crawlers will adapt.
