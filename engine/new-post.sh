@@ -19,7 +19,7 @@ done | sort -n | tail -n 1
 n=$(lastnumber)
 newdir=$(printf "%04d-%s" $((n+1)) "$scrub")
 dst="$postsdir/$newdir/index.org"
-today=$(date +"[%Y-%m-%d %a]")
+today=$(date +"[%Y-%m-%d]")
 
 mkdir "${dst:h}"
 cat > "$dst" <<EOF
