@@ -43,6 +43,8 @@ mkcategories(){
 
 autoload -U colors && colors
 
+protect() { echo "$*" | sed 's/&/&amp;/g;s/</&lt;/g;s/>/&gt;/g' }
+
 xfic="$fic"
 postfile="$(echo "$fic"|sed 's#^'$postsdir'/##')"
 blogfile="$(echo "$fic"|sed 's#.xml$#.html#;s#^'$indexdir'/#posts/#')"
@@ -57,7 +59,7 @@ categories=$(mkcategories $keywords)
 absoluteurl="${websiteurl}/${blogfile}"
 [[ ! -d $(dirname $dst) ]] && mkdir -p $(dirname $dst)
 { printf "\\n<item>"
-  printf "\\n<title>%s</title>" "$title"
+  printf "\\n<title>%s</title>" "$(protect "$title")"
   printf "\\n<guid>%s</guid>" "$absoluteurl"
   printf "\\n<pubDate>%s</pubDate>%s" "$rssdate"
   printf "%s" "$categories"

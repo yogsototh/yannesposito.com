@@ -60,7 +60,7 @@ for fic in $(ls $tmpdir/*.rss | sort -r | head -n $maxarticles ); do
 done
 
 rssmaxdate=$(formatdate $(for d in $dates; do echo $d; done | sort -r | head -n 1))
-rssbuilddate=$(formatdate $(date))
+rssbuilddate=$(formatdate $(date -I))
 {
 cat <<END
 <?xml version="1.0" encoding="utf-8"?>
@@ -80,7 +80,7 @@ cat <<END
   <description><![CDATA[${rssdescription}]]></description>
   <language>${rsslang}</language>
   <pubDate>${rssmaxdate}</pubDate>
-  <lastBuildDate>$rssbuilddate</lastBuildDate>
+  <lastBuildDate>${rssbuilddate}</lastBuildDate>
   <generator>mkrss.sh</generator>
   <webMaster>${rssauthor}</webMaster>
   <image>
