@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+autoload -U colors && colors
+
 src="$1"
 dst="$2"
 
@@ -24,9 +26,16 @@ fi
 
 if (( before <= after )); then
   cp -f "$src" "$dst"
-  print -- "[0%] cp $before => $before"
+  print -- "${fg[red]}[ 0%]${reset_color} (${src:t}) cp $before => $before"
 else
   gain=$(( ( (before - after) * 100 ) / before ))
-  print -- "[$gain%] convert $before => $after"
+  if (( gain < 10 )) then
+     print -n -- "${fg[red]}[ $gain%]${reset_color} (${src:t}) "
+  elif (( gain < 20 )) then
+       print -n -- "${fg[yellow]}[$gain%]${reset_color} (${src:t}) "
+  else
+      print -n -- "${fg[green]}[$gain%]${reset_color} "
+  fi
+  print -- "convert $before => $after"
 fi
 
