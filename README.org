@@ -17,3 +17,49 @@ I tried to make my website optimized, so should use very few resources, no js is
 needed, no tracker, no comments (on purpose, people can contact me via email if
 they wish to).
 
+** Development Environment
+
+This project uses *Nix flakes* for a reproducible development environment.
+All dependencies are precisely versioned and locked.
+
+*** Quick Start
+
+**** Option 1: Nix (Recommended)
+
+#+begin_src bash
+# Install Nix (one-time setup)
+curl --proto '=https' --tlsv1.2 -sSf -L \
+  https://install.determinate.systems/nix | sh -s -- install
+
+# Enter development environment
+nix develop
+
+# Build the site
+make
+
+# Serve locally
+make serve
+
+# Watch for changes
+make watch
+#+end_src
+
+**** Option 2: Manual Setup
+
+Install dependencies manually (not recommended, versions may differ):
+- pandoc, imagemagick, libwebp
+- GHC (Haskell) with protolude, turtle, ansi-terminal
+- lighttpd, rsync, fswatch, entr
+- Standard Unix tools: make, zsh, perl
+
+*** Documentation
+
+See [[file:SETUP_NIX.md][SETUP_NIX.md]] for detailed Nix setup instructions and troubleshooting.
+
+*** Why Nix?
+
+- Reproducible builds across all machines
+- No dependency conflicts
+- 15-20 year sustainability guarantee
+- Zero cloud dependencies
+
