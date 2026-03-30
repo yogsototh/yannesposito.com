@@ -58,8 +58,29 @@ hr { opacity: 0.3; }
   .post-title > a { padding: 0.5em; }
 }
 
-#logo svg { width: 5em; }
-#logo > a { height: 5em; display: inline-block; border-radius: 2.5em; }
+#logo > a {
+    width: 5em; height: 5em;
+    display: inline-block;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    clip-path: polygon(34.4% 3.1%, 65.6% 3.1%, 65.6% 6.2%, 75.0% 6.2%, 75.0% 9.4%, 78.1% 9.4%, 78.1% 12.5%, 81.2% 12.5%, 81.2% 15.6%, 84.4% 15.6%, 84.4% 18.8%, 87.5% 18.8%, 87.5% 21.9%, 90.6% 21.9%, 90.6% 25.0%, 93.8% 25.0%, 93.8% 34.4%, 96.9% 34.4%, 96.9% 65.6%, 93.8% 65.6%, 93.8% 75.0%, 90.6% 75.0%, 90.6% 78.1%, 87.5% 78.1%, 87.5% 81.2%, 84.4% 81.2%, 84.4% 84.4%, 81.2% 84.4%, 81.2% 87.5%, 78.1% 87.5%, 78.1% 90.6%, 75.0% 90.6%, 75.0% 93.8%, 65.6% 93.8%, 65.6% 96.9%, 34.4% 96.9%, 34.4% 93.8%, 25.0% 93.8%, 25.0% 90.6%, 21.9% 90.6%, 21.9% 87.5%, 18.8% 87.5%, 18.8% 84.4%, 15.6% 84.4%, 15.6% 81.2%, 12.5% 81.2%, 12.5% 78.1%, 9.4% 78.1%, 9.4% 75.0%, 6.2% 75.0%, 6.2% 65.6%, 3.1% 65.6%, 3.1% 34.4%, 6.2% 34.4%, 6.2% 25.0%, 9.4% 25.0%, 9.4% 21.9%, 12.5% 21.9%, 12.5% 18.8%, 15.6% 18.8%, 15.6% 15.6%, 18.8% 15.6%, 18.8% 12.5%, 21.9% 12.5%, 21.9% 9.4%, 25.0% 9.4%, 25.0% 6.2%, 34.4% 6.2%, 34.4% 3.1%);
+    transition: width 0.4s ease, height 0.4s ease, clip-path 0.4s ease;
+}
+#logo img {
+    width: 15em; height: 15em;
+    max-width: none;
+    image-rendering: pixelated;
+    border: none;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+}
+#logo > a:hover {
+    width: 15em; height: 15em;
+    z-index: 9999;
+    clip-path: circle(50%);
+}
 /* For assistive technology we sometime want to keep a text in a link */
 /* while not showing it. */
 .vis-hidden {
@@ -88,9 +109,6 @@ header > .content > h1 { padding: .5rem 0; margin: 0; text-align: center; }
 img {box-sizing: border-box;}
 figure img { display: block; margin: 0 auto; max-width: 100%; }
 
-#logo svg:hover .e { fill: rgba(255,255,255,0.5); }
-#logo svg:hover .i0 { fill: var(--r); stroke: var(--r); }
-#logo svg:hover .i1 { fill: var(--r); stroke: var(--o); }
 
 img { max-width: 100%; border: solid var(--gr); }
 li p { margin: 0; padding: 0; }

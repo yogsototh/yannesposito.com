@@ -135,7 +135,7 @@ $(eval $(call transform,html,\
   .org,.html,\
   $(NO_DRAFT),$(PANDOC_DEPS) $(ENV_VARS),\
   @engine/mk-html.sh templates/post.html engine/links-to-html.lua engine/img-to-webp.lua engine/metas.lua "$$<" "$$@.tmp" && \
-   cat "$$@.tmp" | minify --type text/html > "$$@" && rm -f "$$@.tmp"))
+   cat "$$@.tmp" | minify --type=html > "$$@" && rm -f "$$@.tmp"))
 
 # --- Gemini (org → gmi) -------------------------------------------------------
 GMI_DEPS := engine/org2gemini.sh engine/org2gemini_step1.sh
