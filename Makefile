@@ -215,7 +215,7 @@ gemini: gmi gmi-index gmi-atom
 # ==============================================================================
 # Main Targets
 # ==============================================================================
-.PHONY: site deploy watch serve clean clean-html
+.PHONY: site deploy watch serve clean clean-html logo
 
 site: $(ALL)
 
@@ -238,6 +238,9 @@ clean-html:
 	@find $(DST_DIR) -name '*.html' -delete
 	@rm -f $(DST_DIR)/index.html $(DST_DIR)/rss.xml
 	@rm -rf $(CACHE_DIR)/rss
+
+logo:
+	cd logo && nix-shell -p python3Packages.pillow --run "python3 gen_pixel_art.py && python3 make_round_logo.py && python3 make_favicon.py"
 
 # Debug: show what would be built
 .PHONY: debug
