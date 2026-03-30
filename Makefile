@@ -215,9 +215,9 @@ gemini: gmi gmi-index gmi-atom
 # ==============================================================================
 # Main Targets
 # ==============================================================================
-.PHONY: site deploy watch serve clean clean-html logo
+.PHONY: site deploy watch serve clean clean-html
 
-site: $(ALL)
+site: $(LOGO_OUTPUTS) $(ALL)
 
 deploy: site
 	@engine/sync.sh
@@ -239,7 +239,14 @@ clean-html:
 	@rm -f $(DST_DIR)/index.html $(DST_DIR)/rss.xml
 	@rm -rf $(CACHE_DIR)/rss
 
-logo:
+# --- Logo (pixel art generation) ----------------------------------------------
+LOGO_SCRIPTS := logo/gen_pixel_art.py logo/make_round_logo.py logo/make_favicon.py
+LOGO_OUTPUTS := $(SRC_DIR)/Scratch/img/yogsototh-logo.png \
+                $(SRC_DIR)/Scratch/img/yogsototh-logo-hd.png \
+                $(SRC_DIR)/favicon.ico \
+                $(SRC_DIR)/Scratch/img/favicon.ico
+
+$(LOGO_OUTPUTS): $(LOGO_SCRIPTS)
 	cd logo && nix-shell -p python3Packages.pillow --run "python3 gen_pixel_art.py && python3 make_round_logo.py && python3 make_favicon.py"
 
 # Debug: show what would be built
