@@ -1,4 +1,5 @@
-<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Modern IRC</title><meta name=author content="Yann Esposito"><meta name=description content="Why and how to have modern and
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Modern IRC</title>
+<meta name=author content="Yann Esposito"><meta name=description content="Why and how to have modern and
 respectful chat system with IRC."><meta name=keywords content="self-hosting chat irc"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><meta name=theme-color media="(prefers-color-scheme: light)" content="#d84100"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#2E3440"><header><div id=logo><a href=/><div class=vis-hidden>Go to Home</div><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="#00" stroke-width="1" fill="#2e3440"/><circle class="i1" cx="32" cy="32" r="12" stroke="#800" stroke-width="1" fill="#c20"/><circle class="i0" cx="32" cy="32" r="5" stroke-width="1" stroke="#f60" fill="#fa0"/><ellipse class="e" cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="#fff"/></svg></a></div><div class=content><h1>Modern IRC</h1><div class=meta><span class=yyydate>[2019-10-19 Sat]</span> on
 <a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract>Why and how to have modern and respectful chat system with IRC.</div></div></header><main id=content><nav id=toc role=doc-toc><ul><li><a href=#why-irc- id=toc-why-irc->Why IRC?</a><ul><li><a href=#about-failed-attempts--properties---custom-id--different-tries id=toc-about-failed-attempts--properties---custom-id--different-tries>About
 failed attempts</a></ul><li><a href=#tutorial id=toc-tutorial>Tutorial</a><ul><li><a href=#self-host id=toc-self-host>Self Host</a><ul><li><a href=#create-a-reverse-proxy-with-nginx id=toc-create-a-reverse-proxy-with-nginx>Create a reverse proxy with
@@ -113,27 +114,26 @@ sources. Choose the latest version if you can.<pre><code>&gt; wget https://znc.i
 &gt; make install
 </code></pre><p>Then create your config file for example via:<pre><code>&gt; znc --makeconf
 </code></pre><p>For the question, keep buffers after replay, you should certainly
-answer yes. To use znc web interface behind an nginx reverse proxy:<pre class=conf><code> &lt;Listener listener0&gt;
-        AllowIRC = false
-        AllowWeb = true
-        Host = localhost
-        IPv4 = true
-        IPv6 = false
-        Port = 10001
-        SSL = false
-        URIPrefix = /
-&lt;/Listener&gt;
-
-&lt;Listener listener1&gt;
-        AllowIRC = true
-        AllowWeb = false
-        IPv4 = true
-        IPv6 = true
-        Port = 10002
-        SSL = true
-        URIPrefix = /
-&lt;/Listener&gt;
-</code></pre><p>Now you can put your ZNC behind a reverse proxy.<p>In order not to miss any message in your clients you should keep a
+answer yes. To use znc web interface behind an nginx reverse proxy:<div class=sourceCode id=cb6><pre class="sourceCode conf"><code class="sourceCode toml"><span id=cb6-1><a href=#cb6-1 aria-hidden=true tabindex=-1></a> <span class=er>&lt;</span><span class=dt>Listener</span> <span class=dt>listener0</span><span class=er>&gt;</span></span>
+<span id=cb6-2><a href=#cb6-2 aria-hidden=true tabindex=-1></a>        <span class=dt>AllowIRC</span> <span class=op>=</span> <span class=cn>false</span></span>
+<span id=cb6-3><a href=#cb6-3 aria-hidden=true tabindex=-1></a>        <span class=dt>AllowWeb</span> <span class=op>=</span> <span class=cn>true</span></span>
+<span id=cb6-4><a href=#cb6-4 aria-hidden=true tabindex=-1></a>        <span class=dt>Host</span> <span class=op>=</span> <span class=dt>localhost</span></span>
+<span id=cb6-5><a href=#cb6-5 aria-hidden=true tabindex=-1></a>        <span class=dt>IPv4</span> <span class=op>=</span> <span class=cn>true</span></span>
+<span id=cb6-6><a href=#cb6-6 aria-hidden=true tabindex=-1></a>        <span class=dt>IPv6</span> <span class=op>=</span> <span class=cn>false</span></span>
+<span id=cb6-7><a href=#cb6-7 aria-hidden=true tabindex=-1></a>        <span class=dt>Port</span> <span class=op>=</span> <span class=dv>10001</span></span>
+<span id=cb6-8><a href=#cb6-8 aria-hidden=true tabindex=-1></a>        <span class=dt>SSL</span> <span class=op>=</span> <span class=cn>false</span></span>
+<span id=cb6-9><a href=#cb6-9 aria-hidden=true tabindex=-1></a>        <span class=dt>URIPrefix</span> <span class=op>=</span> <span class=er>/</span></span>
+<span id=cb6-10><a href=#cb6-10 aria-hidden=true tabindex=-1></a><span class=er>&lt;/</span><span class=dt>Listener</span><span class=er>&gt;</span></span>
+<span id=cb6-11><a href=#cb6-11 aria-hidden=true tabindex=-1></a></span>
+<span id=cb6-12><a href=#cb6-12 aria-hidden=true tabindex=-1></a><span class=er>&lt;</span><span class=dt>Listener</span> <span class=dt>listener1</span><span class=er>&gt;</span></span>
+<span id=cb6-13><a href=#cb6-13 aria-hidden=true tabindex=-1></a>        <span class=dt>AllowIRC</span> <span class=op>=</span> <span class=cn>true</span></span>
+<span id=cb6-14><a href=#cb6-14 aria-hidden=true tabindex=-1></a>        <span class=dt>AllowWeb</span> <span class=op>=</span> <span class=cn>false</span></span>
+<span id=cb6-15><a href=#cb6-15 aria-hidden=true tabindex=-1></a>        <span class=dt>IPv4</span> <span class=op>=</span> <span class=cn>true</span></span>
+<span id=cb6-16><a href=#cb6-16 aria-hidden=true tabindex=-1></a>        <span class=dt>IPv6</span> <span class=op>=</span> <span class=cn>true</span></span>
+<span id=cb6-17><a href=#cb6-17 aria-hidden=true tabindex=-1></a>        <span class=dt>Port</span> <span class=op>=</span> <span class=dv>10002</span></span>
+<span id=cb6-18><a href=#cb6-18 aria-hidden=true tabindex=-1></a>        <span class=dt>SSL</span> <span class=op>=</span> <span class=cn>true</span></span>
+<span id=cb6-19><a href=#cb6-19 aria-hidden=true tabindex=-1></a>        <span class=dt>URIPrefix</span> <span class=op>=</span> <span class=er>/</span></span>
+<span id=cb6-20><a href=#cb6-20 aria-hidden=true tabindex=-1></a><span class=er>&lt;/</span><span class=dt>Listener</span><span class=er>&gt;</span></span></code></pre></div><p>Now you can put your ZNC behind a reverse proxy.<p>In order not to miss any message in your clients you should keep a
 bouncer running for you that will keep all IRC messages. But in order to
 sync this history correctly among all your different IRC clients you
 should install the playback module. And if you wish to receive push
@@ -146,13 +146,13 @@ this <a href=https://wiki.znc.in/Playback>ZNC playback module</a>.<pre><code>&gt
 &gt; cd znc-palaver
 &gt; znc-buildmod palaver.cpp
 &gt; cp palaver.so ~/.znc/modules/
-</code></pre><h3 id=configure-your-irc-servers>Configure your IRC servers</h3><p>Now you should be able to reach <code class=verbatim>znc.my.domain</code>. You should see something like<figure><img src=./znc-login.png.webp alt="ZNC Login Page"><figcaption aria-hidden=true>ZNC Login Page</figcaption></figure><p>Login with your admin user (set during the configuration or znc).
-Then go to your Global settings<figure><img src=./znc-global-settings.png.webp alt="ZNC Global Settings"><figcaption aria-hidden=true>ZNC Global Settings</figcaption></figure><p>And if you scroll down you should see a list of modules. Select the
-playback and palaver modules and save your preferences.<figure><img src=./znc-modules.png.webp alt="ZNC Modules"><figcaption aria-hidden=true>ZNC Modules</figcaption></figure><p>Then under the global settings, go to your User settings and scroll
-down to see the Flags:<figure><img src=./znc-user-settings-flags.png.webp alt="ZNC User Settings Flags"><figcaption aria-hidden=true>ZNC User Settings Flags</figcaption></figure><p>Take care to unselect the "Auto Clear Chan Buffer", "Auto Clear Query
+</code></pre><h3 id=configure-your-irc-servers>Configure your IRC servers</h3><p>Now you should be able to reach <code class=verbatim>znc.my.domain</code>. You should see something like<figure><img src=./znc-login.png.webp><figcaption>ZNC Login Page</figcaption></figure><p>Login with your admin user (set during the configuration or znc).
+Then go to your Global settings<figure><img src=./znc-global-settings.png.webp><figcaption>ZNC Global Settings</figcaption></figure><p>And if you scroll down you should see a list of modules. Select the
+playback and palaver modules and save your preferences.<figure><img src=./znc-modules.png.webp><figcaption>ZNC Modules</figcaption></figure><p>Then under the global settings, go to your User settings and scroll
+down to see the Flags:<figure><img src=./znc-user-settings-flags.png.webp><figcaption>ZNC User Settings Flags</figcaption></figure><p>Take care to unselect the "Auto Clear Chan Buffer", "Auto Clear Query
 Buffer" and to select "Multi Clients". If you forget to do that, the
 playback plugin will not work as expected.<p>Finally add your IRC server to via the Network block (in your User
-Settings):<figure><img src=./znc-add-network.png.webp alt="ZNC Add Network"><figcaption aria-hidden=true>ZNC Add Network</figcaption></figure><p>From now on, you should always appear as a connected user to your IRC
+Settings):<figure><img src=./znc-add-network.png.webp><figcaption>ZNC Add Network</figcaption></figure><p>From now on, you should always appear as a connected user to your IRC
 server. This is your ZNC bouncer reading all the messages for you even
 when you are not here.<h2 id=install-configure-clients>Install/configure clients</h2><h3 id=weechat>weechat</h3><p>Weechat the IRC client I use the most. It is terminal based, use very
 few resources, it is fast, dense and very nice to use.<ol><li><p>add the <a href=https://weechat.org/scripts/source/zncplayback.py.html/>weechat

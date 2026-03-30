@@ -1,10 +1,10 @@
-<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Org agenda on your startup page</title><meta name=author content="Yann Esposito"><meta name=description content><meta name=keywords content="blog static"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><meta name=theme-color media="(prefers-color-scheme: light)" content="#d84100"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#2E3440"><header><div id=logo><a href=/><div class=vis-hidden>Go to Home</div><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="#00" stroke-width="1" fill="#2e3440"/><circle class="i1" cx="32" cy="32" r="12" stroke="#800" stroke-width="1" fill="#c20"/><circle class="i0" cx="32" cy="32" r="5" stroke-width="1" stroke="#f60" fill="#fa0"/><ellipse class="e" cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="#fff"/></svg></a></div><div class=content><h1>Org agenda on your startup page</h1><div class=meta><span class=yyydate>[2022-05-05 Thu]</span> on
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Org agenda on your startup page</title>
+<meta name=author content="Yann Esposito"><meta name=description content><meta name=keywords content="blog static"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><meta name=theme-color media="(prefers-color-scheme: light)" content="#d84100"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#2E3440"><header><div id=logo><a href=/><div class=vis-hidden>Go to Home</div><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="#00" stroke-width="1" fill="#2e3440"/><circle class="i1" cx="32" cy="32" r="12" stroke="#800" stroke-width="1" fill="#c20"/><circle class="i0" cx="32" cy="32" r="5" stroke-width="1" stroke="#f60" fill="#fa0"/><ellipse class="e" cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="#fff"/></svg></a></div><div class=content><h1>Org agenda on your startup page</h1><div class=meta><span class=yyydate>[2022-05-05 Thu]</span> on
 <a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract></div></div></header><main id=content><article><h1 id=d88a1458-07bb-4c73-86c3-9f09b3d6a1ad id=your-org-agenda-at-your-homepage>Your org-agenda at your
 homepage</h1><p>During most of the day my emacs is open. But I sometime forget to
 look at my org-agenda. This is why I wanted to find another way to be
 exposed to it.<p>And one thing I am mostly exposed to is my personal start page. This
-is just the default page I see when I open my browser.<p>Here is the end result:<figure><img src=./agenda-html.png.webp title=agenda-html alt="The result inside my start page"><figcaption aria-hidden=true>The result inside my start
-page</figcaption></figure><p>My start page is named <em>mothership</em>. And I just put the
+is just the default page I see when I open my browser.<p>Here is the end result:<figure id=fig:agenda-html><img src=./agenda-html.png.webp><figcaption>The result inside my start page</figcaption></figure><p>My start page is named <em>mothership</em>. And I just put the
 org-agenda at the top of the page inside an iframe. I have a service
 that start a server on localhost and I configured my browser to use it
 as startup page. That's it.<p>So now, here is how to sync my org-agenda on this start page.<p>In my <code>config.el</code>:<pre class=elisp><code>(setq y/mothership &quot;~/dev/mothership/&quot;)
@@ -19,16 +19,16 @@ to the export file <code class=verbatim>~/dev/mothership/agenda.html</code>.<p>A
 <span id=cb2-3><a href=#cb2-3 aria-hidden=true tabindex=-1></a>  <span class=at>--load</span> <span class=st>&quot;</span><span class=va>$HOME</span><span class=st>/.emacs.d/init.el&quot;</span> <span class=dt>\</span></span>
 <span id=cb2-4><a href=#cb2-4 aria-hidden=true tabindex=-1></a>  <span class=at>--eval</span> <span class=st>&#39;(org-batch-store-agenda-views)&#39;</span> <span class=dt>\</span></span>
 <span id=cb2-5><a href=#cb2-5 aria-hidden=true tabindex=-1></a>  <span class=at>--kill</span></span></code></pre></div><div class=sourceCode id=cb3><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb3-1><a href=#cb3-1 aria-hidden=true tabindex=-1></a><span class=ex>*/5</span> <span class=pp>*</span> <span class=pp>*</span> <span class=pp>*</span> <span class=pp>*</span> /Users/esposito/dev/mothership/export-agenda.sh</span></code></pre></div><p>And finally in my start-page html I just need to add an iframe like
-so:<div class=sourceCode id=cb4><pre class="sourceCode html"><code class="sourceCode html"><span id=cb4-1><a href=#cb4-1 aria-hidden=true tabindex=-1></a><span class=kw>&lt;iframe</span> <span class=er>id</span><span class=ot>=</span><span class=st>&quot;agenda&quot;</span> <span class=er>src</span><span class=ot>=</span><span class=st>&quot;agenda.html&quot;</span><span class=kw>&gt;&lt;/iframe&gt;</span></span></code></pre></div><p>But as I also want to be able to toggle the agenda, and auto-resize
-the iframe. So I added a bit of js code:<div class=sourceCode id=cb5><pre class="sourceCode html"><code class="sourceCode html"><span id=cb5-1><a href=#cb5-1 aria-hidden=true tabindex=-1></a><span class=kw>&lt;div</span> <span class=er>id</span><span class=ot>=</span><span class=st>&quot;agendatoggle&quot;</span><span class=kw>&gt;</span>[-]<span class=kw>&lt;/div&gt;&lt;br/&gt;</span></span>
-<span id=cb5-2><a href=#cb5-2 aria-hidden=true tabindex=-1></a><span class=kw>&lt;script&gt;</span></span>
+so:<div class=sourceCode id=cb4><pre class="sourceCode html"><code class="sourceCode html"><span id=cb4-1><a href=#cb4-1 aria-hidden=true tabindex=-1></a><span class=dt>&lt;</span><span class=kw>iframe</span><span class=ot> id</span><span class=op>=</span><span class=st>&quot;agenda&quot;</span><span class=ot> src</span><span class=op>=</span><span class=st>&quot;agenda.html&quot;</span><span class=dt>&gt;&lt;/</span><span class=kw>iframe</span><span class=dt>&gt;</span></span></code></pre></div><p>But as I also want to be able to toggle the agenda, and auto-resize
+the iframe. So I added a bit of js code:<div class=sourceCode id=cb5><pre class="sourceCode html"><code class="sourceCode html"><span id=cb5-1><a href=#cb5-1 aria-hidden=true tabindex=-1></a><span class=dt>&lt;</span><span class=kw>div</span><span class=ot> id</span><span class=op>=</span><span class=st>&quot;agendatoggle&quot;</span><span class=dt>&gt;</span>[-]<span class=dt>&lt;/</span><span class=kw>div</span><span class=dt>&gt;&lt;</span><span class=kw>br</span><span class=dt>/&gt;</span></span>
+<span id=cb5-2><a href=#cb5-2 aria-hidden=true tabindex=-1></a><span class=dt>&lt;</span><span class=kw>script</span><span class=dt>&gt;</span></span>
 <span id=cb5-3><a href=#cb5-3 aria-hidden=true tabindex=-1></a><span class=kw>function</span> <span class=fu>resizeIframe</span>(iframe) {</span>
 <span id=cb5-4><a href=#cb5-4 aria-hidden=true tabindex=-1></a>  iframe<span class=op>.</span><span class=at>height</span> <span class=op>=</span> ( iframe<span class=op>.</span><span class=at>contentWindow</span><span class=op>.</span><span class=at>document</span><span class=op>.</span><span class=at>body</span><span class=op>.</span><span class=at>scrollHeight</span> <span class=op>+</span> <span class=dv>30</span>) <span class=op>+</span> <span class=st>&quot;px&quot;</span><span class=op>;</span></span>
 <span id=cb5-5><a href=#cb5-5 aria-hidden=true tabindex=-1></a>}</span>
-<span id=cb5-6><a href=#cb5-6 aria-hidden=true tabindex=-1></a><span class=kw>&lt;/script&gt;</span></span>
-<span id=cb5-7><a href=#cb5-7 aria-hidden=true tabindex=-1></a><span class=kw>&lt;iframe</span> <span class=er>id</span><span class=ot>=</span><span class=st>&quot;agenda&quot;</span> <span class=er>src</span><span class=ot>=</span><span class=st>&quot;agenda.html&quot;</span> <span class=er>onload</span><span class=ot>=</span><span class=st>&quot;resizeIframe(this)&quot;</span><span class=kw>&gt;&lt;/iframe&gt;</span></span>
-<span id=cb5-8><a href=#cb5-8 aria-hidden=true tabindex=-1></a><span class=kw>&lt;/div&gt;</span></span>
-<span id=cb5-9><a href=#cb5-9 aria-hidden=true tabindex=-1></a><span class=kw>&lt;script&gt;</span></span>
+<span id=cb5-6><a href=#cb5-6 aria-hidden=true tabindex=-1></a><span class=dt>&lt;/</span><span class=kw>script</span><span class=dt>&gt;</span></span>
+<span id=cb5-7><a href=#cb5-7 aria-hidden=true tabindex=-1></a><span class=dt>&lt;</span><span class=kw>iframe</span><span class=ot> id</span><span class=op>=</span><span class=st>&quot;agenda&quot;</span><span class=ot> src</span><span class=op>=</span><span class=st>&quot;agenda.html&quot;</span><span class=ot> onload</span><span class=op>=</span><span class=st>&quot;resizeIframe(this)&quot;</span><span class=dt>&gt;&lt;/</span><span class=kw>iframe</span><span class=dt>&gt;</span></span>
+<span id=cb5-8><a href=#cb5-8 aria-hidden=true tabindex=-1></a><span class=dt>&lt;/</span><span class=kw>div</span><span class=dt>&gt;</span></span>
+<span id=cb5-9><a href=#cb5-9 aria-hidden=true tabindex=-1></a><span class=dt>&lt;</span><span class=kw>script</span><span class=dt>&gt;</span></span>
 <span id=cb5-10><a href=#cb5-10 aria-hidden=true tabindex=-1></a></span>
 <span id=cb5-11><a href=#cb5-11 aria-hidden=true tabindex=-1></a><span class=kw>function</span> <span class=fu>hideAgenda</span> () {</span>
 <span id=cb5-12><a href=#cb5-12 aria-hidden=true tabindex=-1></a>  <span class=kw>let</span> agenda <span class=op>=</span> <span class=bu>document</span><span class=op>.</span><span class=fu>getElementById</span>(<span class=st>&quot;agenda&quot;</span>)<span class=op>;</span></span>
@@ -49,37 +49,36 @@ the iframe. So I added a bit of js code:<div class=sourceCode id=cb5><pre class=
 <span id=cb5-27><a href=#cb5-27 aria-hidden=true tabindex=-1></a>}</span>
 <span id=cb5-28><a href=#cb5-28 aria-hidden=true tabindex=-1></a></span>
 <span id=cb5-29><a href=#cb5-29 aria-hidden=true tabindex=-1></a><span class=fu>showAgenda</span>()<span class=op>;</span></span>
-<span id=cb5-30><a href=#cb5-30 aria-hidden=true tabindex=-1></a><span class=kw>&lt;/script&gt;</span></span></code></pre></div><p>And that's it. That's a neat trick, and so I'm glad to put a small
+<span id=cb5-30><a href=#cb5-30 aria-hidden=true tabindex=-1></a><span class=dt>&lt;/</span><span class=kw>script</span><span class=dt>&gt;</span></span></code></pre></div><p>And that's it. That's a neat trick, and so I'm glad to put a small
 post about it.<h2 id=bonuses>Bonuses</h2><h3 id=auto-resize-iframe>auto-resize iframe</h3><p>In order to auto-resize the iframe you must have a non <code class=verbatim>file:///</code> URL in the browser. So you must serve
 your start page. After a lot of different way to serve my pages, I
-finally use <code>lighttpd</code> inside a <code>nix-shell</code>.<p>So I added the following to my startpage code:<p>A <a href=./lighttpd.conf>./lighttpd.conf</a> file<pre class=conf data-tangle=lighttpd.conf><code>server.bind = &quot;127.0.0.1&quot;
-server.port = 31337
-server.document-root = var.CWD
-
-index-file.names = ( &quot;index.html&quot; )
-
-mimetype.assign = (
-  &quot;.css&quot;        =&gt;  &quot;text/css&quot;,
-  &quot;.gif&quot;        =&gt;  &quot;image/gif&quot;,
-  &quot;.htm&quot;        =&gt;  &quot;text/html&quot;,
-  &quot;.html&quot;       =&gt;  &quot;text/html&quot;,
-  &quot;.jpeg&quot;       =&gt;  &quot;image/jpeg&quot;,
-  &quot;.jpg&quot;        =&gt;  &quot;image/jpeg&quot;,
-  &quot;.js&quot;         =&gt;  &quot;text/javascript&quot;,
-  &quot;.png&quot;        =&gt;  &quot;image/png&quot;,
-  &quot;.swf&quot;        =&gt;  &quot;application/x-shockwave-flash&quot;,
-  &quot;.txt&quot;        =&gt;  &quot;text/plain&quot;,
-  &quot;.gmi&quot;        =&gt;  &quot;text/plain&quot;,
-  &quot;.svg&quot;        =&gt;  &quot;image/svg+xml&quot;,
-  &quot;.svgz&quot;       =&gt;  &quot;image/svg+xml&quot;
-)
-
-# Making sure file uploads above 64k always work when using IE or Safari
-# For more information, see http://trac.lighttpd.net/trac/ticket/360
-$HTTP[&quot;useragent&quot;] =~ &quot;^(.*MSIE.*)|(.*AppleWebKit.*)$&quot; {
-  server.max-keep-alive-requests = 0
-}
-</code></pre><p>With a<div class=sourceCode id=cb7 data-tangle=serve.sh><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb7-1><a href=#cb7-1 aria-hidden=true tabindex=-1></a><span class=co>#! /user/bin/env nix-shell</span></span>
+finally use <code>lighttpd</code> inside a <code>nix-shell</code>.<p>So I added the following to my startpage code:<p>A <a href=./lighttpd.conf>./lighttpd.conf</a> file<div class=sourceCode id=cb6 data-tangle=lighttpd.conf><pre class="sourceCode conf"><code class="sourceCode toml"><span id=cb6-1><a href=#cb6-1 aria-hidden=true tabindex=-1></a><span class=dt>server.bind</span> <span class=op>=</span> <span class=st>&quot;127.0.0.1&quot;</span></span>
+<span id=cb6-2><a href=#cb6-2 aria-hidden=true tabindex=-1></a><span class=dt>server.port</span> <span class=op>=</span> <span class=dv>31337</span></span>
+<span id=cb6-3><a href=#cb6-3 aria-hidden=true tabindex=-1></a><span class=dt>server.document-root</span> <span class=op>=</span> <span class=dt>var.CWD</span></span>
+<span id=cb6-4><a href=#cb6-4 aria-hidden=true tabindex=-1></a></span>
+<span id=cb6-5><a href=#cb6-5 aria-hidden=true tabindex=-1></a><span class=dt>index-file.names</span> <span class=op>=</span> <span class=er>(</span> <span class=dt>&quot;index.html&quot;</span> <span class=er>)</span></span>
+<span id=cb6-6><a href=#cb6-6 aria-hidden=true tabindex=-1></a></span>
+<span id=cb6-7><a href=#cb6-7 aria-hidden=true tabindex=-1></a><span class=dt>mimetype.assign</span> <span class=op>=</span> <span class=er>(</span></span>
+<span id=cb6-8><a href=#cb6-8 aria-hidden=true tabindex=-1></a>  <span class=dt>&quot;.css&quot;</span>        <span class=op>=</span><span class=er>&gt;</span>  <span class=dt>&quot;text/css&quot;</span><span class=er>,</span></span>
+<span id=cb6-9><a href=#cb6-9 aria-hidden=true tabindex=-1></a>  <span class=dt>&quot;.gif&quot;</span>        <span class=op>=</span><span class=er>&gt;</span>  <span class=dt>&quot;image/gif&quot;</span><span class=er>,</span></span>
+<span id=cb6-10><a href=#cb6-10 aria-hidden=true tabindex=-1></a>  <span class=dt>&quot;.htm&quot;</span>        <span class=op>=</span><span class=er>&gt;</span>  <span class=dt>&quot;text/html&quot;</span><span class=er>,</span></span>
+<span id=cb6-11><a href=#cb6-11 aria-hidden=true tabindex=-1></a>  <span class=dt>&quot;.html&quot;</span>       <span class=op>=</span><span class=er>&gt;</span>  <span class=dt>&quot;text/html&quot;</span><span class=er>,</span></span>
+<span id=cb6-12><a href=#cb6-12 aria-hidden=true tabindex=-1></a>  <span class=dt>&quot;.jpeg&quot;</span>       <span class=op>=</span><span class=er>&gt;</span>  <span class=dt>&quot;image/jpeg&quot;</span><span class=er>,</span></span>
+<span id=cb6-13><a href=#cb6-13 aria-hidden=true tabindex=-1></a>  <span class=dt>&quot;.jpg&quot;</span>        <span class=op>=</span><span class=er>&gt;</span>  <span class=dt>&quot;image/jpeg&quot;</span><span class=er>,</span></span>
+<span id=cb6-14><a href=#cb6-14 aria-hidden=true tabindex=-1></a>  <span class=dt>&quot;.js&quot;</span>         <span class=op>=</span><span class=er>&gt;</span>  <span class=dt>&quot;text/javascript&quot;</span><span class=er>,</span></span>
+<span id=cb6-15><a href=#cb6-15 aria-hidden=true tabindex=-1></a>  <span class=dt>&quot;.png&quot;</span>        <span class=op>=</span><span class=er>&gt;</span>  <span class=dt>&quot;image/png&quot;</span><span class=er>,</span></span>
+<span id=cb6-16><a href=#cb6-16 aria-hidden=true tabindex=-1></a>  <span class=dt>&quot;.swf&quot;</span>        <span class=op>=</span><span class=er>&gt;</span>  <span class=dt>&quot;application/x-shockwave-flash&quot;</span><span class=er>,</span></span>
+<span id=cb6-17><a href=#cb6-17 aria-hidden=true tabindex=-1></a>  <span class=dt>&quot;.txt&quot;</span>        <span class=op>=</span><span class=er>&gt;</span>  <span class=dt>&quot;text/plain&quot;</span><span class=er>,</span></span>
+<span id=cb6-18><a href=#cb6-18 aria-hidden=true tabindex=-1></a>  <span class=dt>&quot;.gmi&quot;</span>        <span class=op>=</span><span class=er>&gt;</span>  <span class=dt>&quot;text/plain&quot;</span><span class=er>,</span></span>
+<span id=cb6-19><a href=#cb6-19 aria-hidden=true tabindex=-1></a>  <span class=dt>&quot;.svg&quot;</span>        <span class=op>=</span><span class=er>&gt;</span>  <span class=dt>&quot;image/svg+xml&quot;</span><span class=er>,</span></span>
+<span id=cb6-20><a href=#cb6-20 aria-hidden=true tabindex=-1></a>  <span class=dt>&quot;.svgz&quot;</span>       <span class=op>=</span><span class=er>&gt;</span>  <span class=dt>&quot;image/svg+xml&quot;</span></span>
+<span id=cb6-21><a href=#cb6-21 aria-hidden=true tabindex=-1></a><span class=er>)</span></span>
+<span id=cb6-22><a href=#cb6-22 aria-hidden=true tabindex=-1></a></span>
+<span id=cb6-23><a href=#cb6-23 aria-hidden=true tabindex=-1></a><span class=co># Making sure file uploads above 64k always work when using IE or Safari</span></span>
+<span id=cb6-24><a href=#cb6-24 aria-hidden=true tabindex=-1></a><span class=co># For more information, see http://trac.lighttpd.net/trac/ticket/360</span></span>
+<span id=cb6-25><a href=#cb6-25 aria-hidden=true tabindex=-1></a><span class=er>$</span><span class=dt>HTTP</span><span class=kw>[&quot;</span><span class=dt>useragent&quot;</span><span class=kw>]</span> <span class=op>=</span><span class=er>~</span> <span class=dt>&quot;^(.*MSIE.*)|(.*AppleWebKit.*)$&quot;</span> <span class=er>{</span></span>
+<span id=cb6-26><a href=#cb6-26 aria-hidden=true tabindex=-1></a>  <span class=dt>server.max-keep-alive-requests</span> <span class=op>=</span> <span class=dv>0</span></span>
+<span id=cb6-27><a href=#cb6-27 aria-hidden=true tabindex=-1></a><span class=er>}</span></span></code></pre></div><p>With a<div class=sourceCode id=cb7 data-tangle=serve.sh><pre class="sourceCode bash"><code class="sourceCode bash"><span id=cb7-1><a href=#cb7-1 aria-hidden=true tabindex=-1></a><span class=co>#! /user/bin/env nix-shell</span></span>
 <span id=cb7-2><a href=#cb7-2 aria-hidden=true tabindex=-1></a><span class=co>#! nix-shell shell.nix -i bash</span></span>
 <span id=cb7-3><a href=#cb7-3 aria-hidden=true tabindex=-1></a><span class=va>webdir</span><span class=op>=</span><span class=st>&quot;_site&quot;</span></span>
 <span id=cb7-4><a href=#cb7-4 aria-hidden=true tabindex=-1></a><span class=va>port</span><span class=op>=</span><span class=st>&quot;</span><span class=va>$(</span><span class=fu>grep</span> server.port ./lighttpd.conf<span class=kw>|</span><span class=fu>sed</span> <span class=st>&#39;s/[^0-9]*//&#39;</span><span class=va>)</span><span class=st>&quot;</span></span>

@@ -1,4 +1,5 @@
-<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Learn Haskell Now!</title><meta name=author content="Yann Esposito"><meta name=description content="A short and intense introduction
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Learn Haskell Now!</title>
+<meta name=author content="Yann Esposito"><meta name=description content="A short and intense introduction
 to Haskell. This is an update of my old (2012) article. A lot of things
 have changed since then. Mostly I changed my approach about the easiest
 way to install a Haskell playground. I removed the not as important
@@ -94,7 +95,7 @@ what Haskell is all about.<p>In contrast, this article is a brief and dense over
 aspects of Haskell. I also added some information I lacked while I
 learned Haskell.<p>The article contains five parts:<ul><li><p><strong>Essential Haskell</strong>: Haskell syntax, and some
 essential notions.<li><p><strong>First Dive</strong>:<ul><li>Functional style; a progressive example, from imperative to
-functional style<li>Types; types and a standard binary tree example<li>Infinite Structure; manipulate an infinite binary tree!</ul><li><p><strong>Dive into the impure</strong>:<ul><li>Deal with IO; A minimal example<li>IO trick explained; the hidden detail I lacked to understand IO<li>Monads; incredible how we can generalize</ul><li><p><strong>Start swimming</strong>: Start a new project.</ul><h2 id=install>Install</h2><figure><img src=./Haskell-logo.png.webp alt="Haskell logo"><figcaption aria-hidden=true>Haskell logo</figcaption></figure><p>If you are not using either Linux nor macOS, you should look here: <a href=https://www.haskell.org/downloads/>https://www.haskell.org/downloads/</a>.
+functional style<li>Types; types and a standard binary tree example<li>Infinite Structure; manipulate an infinite binary tree!</ul><li><p><strong>Dive into the impure</strong>:<ul><li>Deal with IO; A minimal example<li>IO trick explained; the hidden detail I lacked to understand IO<li>Monads; incredible how we can generalize</ul><li><p><strong>Start swimming</strong>: Start a new project.</ul><h2 id=install>Install</h2><figure><img src=./Haskell-logo.png.webp><figcaption>Haskell logo</figcaption></figure><p>If you are not using either Linux nor macOS, you should look here: <a href=https://www.haskell.org/downloads/>https://www.haskell.org/downloads/</a>.
 Otherwise, you can follow my advice to use nix:<ol><li><p>Install <a href=https://nixos.org/nix>nix</a> (The version I
 used while writting this article was nix (Nix) 2.3.1, future 2.X.X
 versions should work with the examples in this article)<li><p>create a new empty directory <code class=verbatim>hsenv</code>
@@ -152,7 +153,7 @@ I can assume the executable I want are present.</ul></div><div class=notes><p><s
 ~ echo &quot;use nix&quot; &gt; .envrc
 ~ direnv allow
 </code></pre><p>Now each time you'll cd into your hsenv directory you'll get the
-environment set for you.</div><h2 id="don't-be-afraid">Don't be afraid</h2><figure><img src=./munch_TheScream.jpg.webp alt="The Scream"><figcaption aria-hidden=true>The Scream</figcaption></figure><p>Many books/articles about Haskell start by introducing some esoteric
+environment set for you.</div><h2 id="don't-be-afraid">Don't be afraid</h2><figure><img src=./munch_TheScream.jpg.webp><figcaption>The Scream</figcaption></figure><p>Many books/articles about Haskell start by introducing some esoteric
 formula (quick sort, Fibonacci, etc…). I will do the exact opposite. At
 first I won't show you any Haskell super power. I will start with
 similarities between Haskell and other programming languages. Let's jump
@@ -182,7 +183,7 @@ languages:<div class=sourceCode id=cb7><pre class="sourceCode python"><code clas
 main part of this tutorial will be dedicated to explaining why.<p>In Haskell there is a <code class=verbatim>main</code> function and
 every object has a type. The type of <code class=verbatim>main</code>
 is <code class=verbatim>IO ()</code>. This means <code class=verbatim>main</code> will cause side effects.<p>Just remember that Haskell can look a lot like mainstream imperative
-languages.<h2 id=very-basic-haskell>Very basic Haskell</h2><figure><img src=./picasso_owl.jpg.webp alt="Picasso minimal owl"><figcaption aria-hidden=true>Picasso minimal owl</figcaption></figure><p>Before continuing you need to be warned about some essential
+languages.<h2 id=very-basic-haskell>Very basic Haskell</h2><figure><img src=./picasso_owl.jpg.webp><figcaption>Picasso minimal owl</figcaption></figure><p>Before continuing you need to be warned about some essential
 properties of Haskell.<p><em>Functional</em><p>Haskell is a functional language. If you have an imperative language
 background, you'll have to learn a lot of new things. Hopefully many of
 these new concepts will help you to program even in imperative
@@ -305,7 +306,7 @@ fail:<div class=sourceCode id=cb27><pre class="sourceCode haskell"><code class="
 <span id=cb27-9><a href=#cb27-9 aria-hidden=true tabindex=-1></a>main <span class=ot>=</span> <span class=fu>print</span> (f x y)</span></code></pre></div><p>The compiler complains. The two parameters must have the same
 type.<p>If you believe that this is a bad idea, and that the compiler should
 make the transformation from one type to another for you, you should
-really watch this great (and funny) video: <a href=https://www.destroyallsoftware.com/talks/wat>WAT</a><h1 id=essential-haskell>Essential Haskell</h1><figure><img src=./kandinsky_gugg.jpg.webp alt="Kandinsky Gugg"><figcaption aria-hidden=true>Kandinsky Gugg</figcaption></figure><p>I suggest that you skim this part. Think of it as a reference.
+really watch this great (and funny) video: <a href=https://www.destroyallsoftware.com/talks/wat>WAT</a><h1 id=essential-haskell>Essential Haskell</h1><figure><img src=./kandinsky_gugg.jpg.webp><figcaption>Kandinsky Gugg</figcaption></figure><p>I suggest that you skim this part. Think of it as a reference.
 Haskell has a lot of features. A lot of information is missing here.
 Come back here if the notation feels strange.<p>I use the <code class=verbatim>⇔</code> symbol to state that two
 expression are equivalent. It is a meta notation, <code class=verbatim>⇔</code> does not exists in Haskell. I will also use
@@ -411,8 +412,7 @@ in Python, bad indentation can break your code!</blockquote><div class=sourceCod
 10
 10
 </code></pre><h1 id=first-dive>First dive</h1><p>In this part, you will be introduced to functional style, types and
-infinite structures manipulation.<h2 id=functional-style>Functional style</h2><figure><img src=./hr_giger_biomechanicallandscape_500.jpg.webp alt="Biomechanical Landscape by H.R. Giger"><figcaption aria-hidden=true>Biomechanical Landscape by H.R.
-Giger</figcaption></figure><p>In this section, I will give a short example of the impressive
+infinite structures manipulation.<h2 id=functional-style>Functional style</h2><figure><img src=./hr_giger_biomechanicallandscape_500.jpg.webp><figcaption>Biomechanical Landscape by H.R. Giger</figcaption></figure><p>In this section, I will give a short example of the impressive
 refactoring ability provided by Haskell. We will select a problem and
 solve it in a standard imperative way. Then I will make the code evolve.
 The end result will be both more elegant and easier to adapt.<p>Let's solve the following problem:<blockquote><p>Given a list of integers, return the sum of the even numbers in the
@@ -537,7 +537,7 @@ For example, instead of writing:<div class=sourceCode id=cb61><pre class="source
 <span id=cb63-6><a href=#cb63-6 aria-hidden=true tabindex=-1></a>        accumSum n (x<span class=op>:</span>xs) <span class=ot>=</span></span>
 <span id=cb63-7><a href=#cb63-7 aria-hidden=true tabindex=-1></a>             <span class=kw>if</span> <span class=fu>even</span> x</span>
 <span id=cb63-8><a href=#cb63-8 aria-hidden=true tabindex=-1></a>                <span class=kw>then</span> accumSum (n<span class=op>+</span>x) xs</span>
-<span id=cb63-9><a href=#cb63-9 aria-hidden=true tabindex=-1></a>                <span class=kw>else</span> accumSum n xs</span></code></pre></div><h3 id=higher-order-functions>Higher Order Functions</h3><figure><img src=./escher_polygon.png.webp alt=Escher><figcaption aria-hidden=true>Escher</figcaption></figure><p>To make things even better we should use higher order functions. What
+<span id=cb63-9><a href=#cb63-9 aria-hidden=true tabindex=-1></a>                <span class=kw>else</span> accumSum n xs</span></code></pre></div><h3 id=higher-order-functions>Higher Order Functions</h3><figure><img src=./escher_polygon.png.webp><figcaption>Escher</figcaption></figure><p>To make things even better we should use higher order functions. What
 are these beasts? Higher order functions are functions taking functions
 as parameters.<p>Here are some examples:<div class=sourceCode id=cb64><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id=cb64-1><a href=#cb64-1 aria-hidden=true tabindex=-1></a><span class=fu>filter</span><span class=ot> ::</span> (a <span class=ot>-&gt;</span> <span class=dt>Bool</span>) <span class=ot>-&gt;</span> [a] <span class=ot>-&gt;</span> [a]</span>
 <span id=cb64-2><a href=#cb64-2 aria-hidden=true tabindex=-1></a><span class=fu>map</span><span class=ot> ::</span> (a <span class=ot>-&gt;</span> b) <span class=ot>-&gt;</span> [a] <span class=ot>-&gt;</span> [b]</span>
@@ -621,8 +621,7 @@ when first learning Haskell. A lot of effort tends to go into explaining
 the superiority of the functional approach. Then when you start using an
 imperative style with Haskell, it can be hard to understand when and how
 to use it.<p>But before talking about this Haskell super-power, we must talk about
-another essential aspect of Haskell: <em>Types</em>.<h2 id=types>Types</h2><figure><img src=./salvador-dali-the-madonna-of-port-lligat.jpg.webp alt="Dali, the madonna of port Lligat"><figcaption aria-hidden=true>Dali, the madonna of port
-Lligat</figcaption></figure><blockquote><p><abbr title="too long; didn't read">tl;dr:</abbr><ul><li><code class=verbatim>type Name = AnotherType</code> is just an
+another essential aspect of Haskell: <em>Types</em>.<h2 id=types>Types</h2><figure><img src=./salvador-dali-the-madonna-of-port-lligat.jpg.webp><figcaption>Dali, the madonna of port Lligat</figcaption></figure><blockquote><p><abbr title="too long; didn't read">tl;dr:</abbr><ul><li><code class=verbatim>type Name = AnotherType</code> is just an
 alias and the compiler doesn't mark any difference between <code class=verbatim>Name</code> and <code class=verbatim>AnotherType</code>.<li><code class=verbatim>data Name = NameConstructor AnotherType</code> does
 mark a difference.<li><code class=verbatim>data</code> can construct structures which
 can be recursives.<li><code class=verbatim>deriving</code> is magic and creates
@@ -736,7 +735,7 @@ function for you. We'll see soon how you can use your own <code class=verbatim>s
 <span id=cb98-2><a href=#cb98-2 aria-hidden=true tabindex=-1></a>      <span class=fu>print</span> (<span class=dv>0</span> <span class=op>:::</span> <span class=dv>1</span> <span class=op>:::</span> <span class=dt>Nil</span>)</span>
 <span id=cb98-3><a href=#cb98-3 aria-hidden=true tabindex=-1></a>      <span class=fu>print</span> (convertList [<span class=dv>0</span>,<span class=dv>1</span>])</span></code></pre></div><p>This prints:<pre class=example><code>0 ::: (1 ::: Nil)
 0 ::: (1 ::: Nil)
-</code></pre><h3 id=trees>Trees</h3><figure><img src=./magritte-l-arbre.jpg.webp alt="Magritte, l'Arbre"><figcaption aria-hidden=true>Magritte, l'Arbre</figcaption></figure><p>We'll just give another standard example: binary trees.<div class=sourceCode id=cb100 data-tangle=tree.hs><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id=cb100-1><a href=#cb100-1 aria-hidden=true tabindex=-1></a><span class=kw>data</span> <span class=dt>BinTree</span> a <span class=ot>=</span> <span class=dt>Empty</span></span>
+</code></pre><h3 id=trees>Trees</h3><figure><img src=./magritte-l-arbre.jpg.webp><figcaption>Magritte, l'Arbre</figcaption></figure><p>We'll just give another standard example: binary trees.<div class=sourceCode id=cb100 data-tangle=tree.hs><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id=cb100-1><a href=#cb100-1 aria-hidden=true tabindex=-1></a><span class=kw>data</span> <span class=dt>BinTree</span> a <span class=ot>=</span> <span class=dt>Empty</span></span>
 <span id=cb100-2><a href=#cb100-2 aria-hidden=true tabindex=-1></a>                 <span class=op>|</span> <span class=dt>Node</span> a (<span class=dt>BinTree</span> a) (<span class=dt>BinTree</span> a)</span>
 <span id=cb100-3><a href=#cb100-3 aria-hidden=true tabindex=-1></a>                              <span class=kw>deriving</span> (<span class=dt>Show</span>)</span></code></pre></div><p>We will also create a function which turns a list into an ordered
 binary tree.<div class=sourceCode id=cb101 data-tangle=tree.hs><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id=cb101-1><a href=#cb101-1 aria-hidden=true tabindex=-1></a><span class=ot>treeFromList ::</span> (<span class=dt>Ord</span> a) <span class=ot>=&gt;</span> [a] <span class=ot>-&gt;</span> <span class=dt>BinTree</span> a</span>
@@ -861,7 +860,7 @@ be the higher order type <code class=verbatim>Tree</code> and <code class=verbat
 take a Tree of lists and will return a list of trees. For it to work
 <code class=verbatim>[]</code> need to be part of the <code class=verbatim>Applicative</code> class type (which is the case). I
 will not enter into the details about what <code class=verbatim>Applicative</code> type class is here. But just with
-this, you should start to have a better intuition about what <code class=verbatim>sequenceA</code> is about.<h2 id=infinite-structures>Infinite Structures</h2><figure><img src=./escher_infinite_lizards.jpg.webp alt=Escher><figcaption aria-hidden=true>Escher</figcaption></figure><p>It is often said that Haskell is <em>lazy</em>.<p>In fact, if you are a bit pedantic, you should say that <a href=http://www.haskell.org/haskellwiki/Lazy_vs._non-strict>Haskell is
+this, you should start to have a better intuition about what <code class=verbatim>sequenceA</code> is about.<h2 id=infinite-structures>Infinite Structures</h2><figure><img src=./escher_infinite_lizards.jpg.webp><figcaption>Escher</figcaption></figure><p>It is often said that Haskell is <em>lazy</em>.<p>In fact, if you are a bit pedantic, you should say that <a href=http://www.haskell.org/haskellwiki/Lazy_vs._non-strict>Haskell is
 <em>non-strict</em></a>. Laziness is just a common implementation for
 non-strict languages.<p>Then what does "not-strict" mean? From the Haskell wiki:<blockquote><p>Reduction (the mathematical term for evaluation) proceeds from the
 outside in.<p>so if you have <code class=verbatim>(a+(b*c))</code> then you first
@@ -1043,7 +1042,7 @@ IO?</ul><p>Be prepared, the answers might be complex. But they are all very
 rewarding.<p>In this section you will first introduced about how to <em>use</em>
 IO. That should not be that hard. Then, a harder section should explain
 how IO works. And the last part will talk about how we can generalize
-why we learned so far with IO to many different types.<h2 id=deal-with-io>Deal With IO</h2><figure><img src=./magritte_carte_blanche.jpg.webp alt="Magritte, Carte blanche"><figcaption aria-hidden=true>Magritte, Carte blanche</figcaption></figure><blockquote><p><abbr title="too long; didn't read">tl;dr:</abbr><p>A typical function doing <code class=verbatim>IO</code> looks a lot
+why we learned so far with IO to many different types.<h2 id=deal-with-io>Deal With IO</h2><figure><img src=./magritte_carte_blanche.jpg.webp><figcaption>Magritte, Carte blanche</figcaption></figure><blockquote><p><abbr title="too long; didn't read">tl;dr:</abbr><p>A typical function doing <code class=verbatim>IO</code> looks a lot
 like an imperative program:<div class=sourceCode id=cb126><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id=cb126-1><a href=#cb126-1 aria-hidden=true tabindex=-1></a><span class=ot>f ::</span> <span class=dt>IO</span> a</span>
 <span id=cb126-2><a href=#cb126-2 aria-hidden=true tabindex=-1></a>f <span class=ot>=</span> <span class=kw>do</span></span>
 <span id=cb126-3><a href=#cb126-3 aria-hidden=true tabindex=-1></a>  x <span class=ot>&lt;-</span> action1</span>
@@ -1140,8 +1139,7 @@ with regard to the range of expressions available. For example, <code class=verb
 <em>action</em> which returns an element of type <code class=verbatim>a</code>. <code class=verbatim>IO</code> represents
 actions; under the hood, <code class=verbatim>IO a</code> is the type
 of a function. Read the next section if you are curious.</ul><p>If you practice a bit, you should be able to <em>use</em> <code class=verbatim>IO</code>.<blockquote><p><em>Exercises</em>:<ul><li>Make a program that sums all of its arguments. Hint: use the
-function <code class=verbatim>getArgs</code>.</ul></blockquote><h2 id=io-trick-explained>IO trick explained</h2><figure><img src=./magritte_pipe.jpg.webp alt="Magritte, ceci n'est pas une pipe"><figcaption aria-hidden=true>Magritte, ceci n'est pas une
-pipe</figcaption></figure><blockquote><p><abbr title="too long; didn't read">tl;dr:</abbr><p>To separate pure and impure parts, <code class=verbatim>main</code>
+function <code class=verbatim>getArgs</code>.</ul></blockquote><h2 id=io-trick-explained>IO trick explained</h2><figure><img src=./magritte_pipe.jpg.webp><figcaption>Magritte, ceci n'est pas une pipe</figcaption></figure><blockquote><p><abbr title="too long; didn't read">tl;dr:</abbr><p>To separate pure and impure parts, <code class=verbatim>main</code>
 is defined as a function which modifies the state of the world.<pre class=example><code>main :: World -&gt; World
 </code></pre><p>A function is guaranteed to have side effects only if it has this
 type. But look at a typical main function:<div class=sourceCode id=cb143><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id=cb143-1><a href=#cb143-1 aria-hidden=true tabindex=-1></a>main w0 <span class=ot>=</span></span>
@@ -1228,8 +1226,8 @@ action can take a parameter from the result of a line above.<p>For example, we c
 <span id=cb158-4><a href=#cb158-4 aria-hidden=true tabindex=-1></a><span class=op>...</span></span></code></pre></div><p>With, of course: <code class=verbatim>actionN w :: (World) -> (a,World)</code>.<blockquote><p><strong>IMPORTANT</strong>: there are only two important patterns to
 consider:<div class=sourceCode id=cb159><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id=cb159-1><a href=#cb159-1 aria-hidden=true tabindex=-1></a><span class=kw>let</span> (x,w1) <span class=ot>=</span> action1 w0 <span class=kw>in</span></span>
 <span id=cb159-2><a href=#cb159-2 aria-hidden=true tabindex=-1></a><span class=kw>let</span> (y,w2) <span class=ot>=</span> action2 x w1 <span class=kw>in</span></span></code></pre></div><p>and<div class=sourceCode id=cb160><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id=cb160-1><a href=#cb160-1 aria-hidden=true tabindex=-1></a><span class=kw>let</span> (_,w1) <span class=ot>=</span> action1 w0 <span class=kw>in</span></span>
-<span id=cb160-2><a href=#cb160-2 aria-hidden=true tabindex=-1></a><span class=kw>let</span> (y,w2) <span class=ot>=</span> action2 w1 <span class=kw>in</span></span></code></pre></div></blockquote><figure><img src=./slave-market-with-the-disappearing-bust-of-voltaire.jpg.webp alt="Slave Market with the disappearing bust of Voltaire"><figcaption aria-hidden=true>Slave Market with the disappearing bust
-of Voltaire</figcaption></figure><p>Now, we will do a magic trick. We will make the temporary world
+<span id=cb160-2><a href=#cb160-2 aria-hidden=true tabindex=-1></a><span class=kw>let</span> (y,w2) <span class=ot>=</span> action2 w1 <span class=kw>in</span></span></code></pre></div></blockquote><figure><img src=./slave-market-with-the-disappearing-bust-of-voltaire.jpg.webp><figcaption>Slave Market with the disappearing bust of
+Voltaire</figcaption></figure><p>Now, we will do a magic trick. We will make the temporary world
 symbols <em>disappear</em>. We will <code class=verbatim>bind</code>
 the two lines. Let's define the <code class=verbatim>bind</code>
 function. Its type is quite intimidating at first:<div class=sourceCode id=cb161><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id=cb161-1><a href=#cb161-1 aria-hidden=true tabindex=-1></a><span class=ot>bind ::</span> (<span class=dt>World</span> <span class=ot>-&gt;</span> (a,<span class=dt>World</span>))</span>
@@ -1503,7 +1501,7 @@ mind:<div class=sourceCode id=cb195><pre class="sourceCode haskell"><code class=
 <span id=cb195-5><a href=#cb195-5 aria-hidden=true tabindex=-1></a></span>
 <span id=cb195-6><a href=#cb195-6 aria-hidden=true tabindex=-1></a>    <span class=fu>return</span> x <span class=ot>=</span> <span class=dt>Just</span> x</span></code></pre></div><p>The <code class=verbatim>Maybe</code> monad proved to be useful
 while being a very simple example. We saw the utility of the <code class=verbatim>IO</code> monad. But now for a cooler example,
-lists.<h3 id=the-list-monad>The list monad</h3><figure><img src=./golconde.jpg.webp alt="Golconde de Magritte"><figcaption aria-hidden=true>Golconde de Magritte</figcaption></figure><p>The list monad helps us to simulate non-deterministic computations.
+lists.<h3 id=the-list-monad>The list monad</h3><figure><img src=./golconde.jpg.webp><figcaption>Golconde de Magritte</figcaption></figure><p>The list monad helps us to simulate non-deterministic computations.
 Here we go:<div class=sourceCode id=cb196 data-tangle=list_monad.hs><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id=cb196-1><a href=#cb196-1 aria-hidden=true tabindex=-1></a><span class=kw>import</span> <span class=dt>Control.Monad</span> (guard)</span>
 <span id=cb196-2><a href=#cb196-2 aria-hidden=true tabindex=-1></a></span>
 <span id=cb196-3><a href=#cb196-3 aria-hidden=true tabindex=-1></a>allCases <span class=ot>=</span> [<span class=dv>1</span><span class=op>..</span><span class=dv>10</span>]</span>

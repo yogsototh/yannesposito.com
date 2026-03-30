@@ -1,4 +1,5 @@
-<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>ob-metapost</title><meta name=author content="Yann Esposito"><meta name=description content="Metapost for generating images in
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>ob-metapost</title>
+<meta name=author content="Yann Esposito"><meta name=description content="Metapost for generating images in
 Org Mode"><meta name=keywords content="emacs metapost"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><meta name=theme-color media="(prefers-color-scheme: light)" content="#d84100"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#2E3440"><header><div id=logo><a href=/><div class=vis-hidden>Go to Home</div><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="#00" stroke-width="1" fill="#2e3440"/><circle class="i1" cx="32" cy="32" r="12" stroke="#800" stroke-width="1" fill="#c20"/><circle class="i0" cx="32" cy="32" r="5" stroke-width="1" stroke="#f60" fill="#fa0"/><ellipse class="e" cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="#fff"/></svg></a></div><div class=content><h1>ob-metapost</h1><div class=meta><span class=yyydate>[2024-12-19 Thu]</span> on
 <a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract>Metapost for generating images in Org Mode</div></div></header><main id=content><article><p>When I searched how to generate pictures in org-mode on the Internet,
 Metapost is surprisingly missing.<p>If you never tried Metapost, I think you should really take a look at
@@ -203,7 +204,7 @@ z3 = z1 - (u,0);
 z4 = z1 + (-u,u);
 z5 = z1 + (0,u);
 draw z3--z4--z5;
-</code></pre><figure><img src=triangle.png.webp title=triangle alt="Triangle with LaTeX fonts"><figcaption>Triangle with LaTeX fonts</figcaption></figure><p>or this:<pre class=metapost data-file=dragon.png><code>numeric r, theta; r = sqrt 1/2; theta = 45;
+</code></pre><figure id=fig:triangle alt="Triangle with LaTeX fonts"><img src=triangle.png.webp><figcaption>Triangle with LaTeX fonts</figcaption></figure><p>or this:<pre class=metapost data-file=dragon.png><code>numeric r, theta; r = sqrt 1/2; theta = 45;
 vardef dragon(expr a, b) =
   if abs(a-b) &gt; 8:
     save p; pair p;
@@ -221,7 +222,7 @@ vardef rounded_corners expr p =
   endfor .. subpath (n-r, n) of p
 enddef;
 draw rounded_corners dragon(origin,240 right) withcolor (.6,.2,.7);
-</code></pre><figure><img src=dragon.png.webp title=dragon alt="Dragon fractal"><figcaption>Dragon fractal</figcaption></figure><p>I hope it will help people to find the resources to write org babel
+</code></pre><figure id=fig:dragon alt="Dragon fractal"><img src=dragon.png.webp><figcaption>Dragon fractal</figcaption></figure><p>I hope it will help people to find the resources to write org babel
 integrations as well as help people use Metapost more.</article></main><footer id=postamble class=status><div class=content><nav role=navigation><a href=/index.html>Home</a> |
 <a href=/slides.html>Slides</a> |
 <a href=/about-me.html>About</a> |

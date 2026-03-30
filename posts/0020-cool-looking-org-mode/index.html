@@ -1,4 +1,5 @@
-<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Cool looking org-mode</title><meta name=author content="Yann Esposito"><meta name=description content="A configuration to make org-mode
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Cool looking org-mode</title>
+<meta name=author content="Yann Esposito"><meta name=description content="A configuration to make org-mode
 look even better."><meta name=keywords content="org-mode emacs"><link rel=stylesheet href=/css/y.css><link rel=alternate type=application/rss+xml href=/rss.xml><link rel=icon href=/favicon.ico><meta name=theme-color media="(prefers-color-scheme: light)" content="#d84100"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#2E3440"><header><div id=logo><a href=/><div class=vis-hidden>Go to Home</div><svg width="5em" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" stroke="#00" stroke-width="1" fill="#2e3440"/><circle class="i1" cx="32" cy="32" r="12" stroke="#800" stroke-width="1" fill="#c20"/><circle class="i0" cx="32" cy="32" r="5" stroke-width="1" stroke="#f60" fill="#fa0"/><ellipse class="e" cx="32" cy="14" rx="14" ry="8" stroke-width="0" fill="#fff"/></svg></a></div><div class=content><h1>Cool looking org-mode</h1><div class=meta><span class=yyydate>[2021-08-21 Sat]</span> on
 <a href=https://her.esy.fun><span class=author>Yann Esposito</span>'s blog</a></div><div class=abstract>A configuration to make org-mode look even better.</div></div></header><main id=content><article><div class=notes><p>TL;DR: My tweaked configuration to make org-mode even more pleasant
 to use.</div><h2 id=the-code>The code</h2><p>At the end of this article there is a long digression about why I
@@ -8,9 +9,8 @@ font.</ol><p>Here are some images of the result. Notice one important factor of
 the feel is that I work on a mac with retina display. Often font
 rendering feel too bold by default. But this is perfect to have a
 writing environment even if screenshot does not look as slick as other
-ones, the usage is superior.<figure><img src=./top.png.webp title=top alt="org-mode headers"><figcaption aria-hidden=true>org-mode headers</figcaption></figure><figure><img src=./img-with-caption.png.webp title=img-with-caption alt="org-mode some inline image"><figcaption aria-hidden=true>org-mode some inline image</figcaption></figure><figure><img src=./code.png.webp title=img-with-caption alt="org-mode with some code block"><figcaption aria-hidden=true>org-mode with some code
-block</figcaption></figure><figure><img src=./y-org-mode.png.webp title=nano-emacs alt="Org mode with a modified doom-solarized light theme (use a grey background)"><figcaption aria-hidden=true>Org mode with a modified doom-solarized
-light theme (use a grey background)</figcaption></figure><p>The main trick is to change org-mode to use different font depending
+ones, the usage is superior.<figure id=fig:top><img src=./top.png.webp><figcaption>org-mode headers</figcaption></figure><figure id=fig:img-with-caption><img src=./img-with-caption.png.webp><figcaption>org-mode some inline image</figcaption></figure><figure id=fig:img-with-caption><img src=./code.png.webp><figcaption>org-mode with some code block</figcaption></figure><figure id=fig:nano-emacs><img src=./y-org-mode.png.webp><figcaption>Org mode with a modified doom-solarized light theme (use a
+grey background)</figcaption></figure><p>The main trick is to change org-mode to use different font depending
 on the kind of bloc. I use two fonts variant which are an iA Writer
 clone fonts; iM Writing Nerd Font.<p>First you need to install nerd-fonts<a href=#fn2 class=footnote-ref id=fnref2 role=doc-noteref><sup>2</sup></a>.
 You will get that <code class=verbatim>iMWritingDuoS Nerd Font</code>.
@@ -73,9 +73,7 @@ realized I wouldn't be able to reach the quality and optimization
 provided by doom-emacs myself. So instead of doing this, I first tried
 to copy the theme of nano. Then I realized one of the biggest factor of
 nano look & feel was its usage of "Roboto Mono" but with weight
-light (or Thin).<p>See<figure><img src=./nano-emacs-light.png.webp title=nano-emacs alt="GNU Emacs / N Λ N O Look (light theme)"><figcaption aria-hidden=true>GNU Emacs / N Λ N O Look (light
-theme)</figcaption></figure><figure><img src=./nano-emacs-dark.png.webp title=nano-emacs alt="GNU Emacs / N Λ N O Look (dark theme)"><figcaption aria-hidden=true>GNU Emacs / N Λ N O Look (dark
-theme)</figcaption></figure><p>OK so… I just tried to match the theme colors. It was easy to create
+light (or Thin).<p>See<figure id=fig:nano-emacs><img src=./nano-emacs-light.png.webp><figcaption>GNU Emacs / N Λ N O Look (light theme)</figcaption></figure><figure id=fig:nano-emacs><img src=./nano-emacs-dark.png.webp><figcaption>GNU Emacs / N Λ N O Look (dark theme)</figcaption></figure><p>OK so… I just tried to match the theme colors. It was easy to create
 a theme with matching colors. <strong>But</strong>, to make it really
 looks like nano; almost monochrome with two accent colors; it would mean
 a lot more work than anyone could expect. For most emacs mode you
@@ -192,7 +190,7 @@ using my work. Save this file into <code class=verbatim>~/.doom.d/themes/doom-na
 <span id=cb3-96><a href=#cb3-96 aria-hidden=true tabindex=-1></a>   (vc-deleted     nano-color-critical)</span>
 <span id=cb3-97><a href=#cb3-97 aria-hidden=true tabindex=-1></a></span>
 <span id=cb3-98><a href=#cb3-98 aria-hidden=true tabindex=-1></a>   <span class=co>;; custom categories</span></span>
-<span id=cb3-99><a href=#cb3-99 aria-hidden=true tabindex=-1></a>   (-modeline-pad</span>
+<span id=cb3-99><a href=#cb3-99 aria-hidden=true tabindex=-1></a>   (<span class=op>-</span>modeline-pad</span>
 <span id=cb3-100><a href=#cb3-100 aria-hidden=true tabindex=-1></a>    (<span class=kw>when</span> doom-plain-padded-modeline</span>
 <span id=cb3-101><a href=#cb3-101 aria-hidden=true tabindex=-1></a>      (<span class=kw>if</span> (<span class=kw>integerp</span> doom-plain-padded-modeline) doom-plain-padded-modeline <span class=dv>4</span>)))</span>
 <span id=cb3-102><a href=#cb3-102 aria-hidden=true tabindex=-1></a></span>
@@ -215,10 +213,10 @@ using my work. Save this file into <code class=verbatim>~/.doom.d/themes/doom-na
 <span id=cb3-119><a href=#cb3-119 aria-hidden=true tabindex=-1></a>   ((line-number-current-line &amp;override) :foreground base2)</span>
 <span id=cb3-120><a href=#cb3-120 aria-hidden=true tabindex=-1></a>   (mode-line</span>
 <span id=cb3-121><a href=#cb3-121 aria-hidden=true tabindex=-1></a>    :background modeline-bg :foreground modeline-fg</span>
-<span id=cb3-122><a href=#cb3-122 aria-hidden=true tabindex=-1></a>    :box (<span class=kw>if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg)))</span>
+<span id=cb3-122><a href=#cb3-122 aria-hidden=true tabindex=-1></a>    :box (<span class=kw>if</span> <span class=op>-</span>modeline-pad `(:line-width ,<span class=op>-</span>modeline-pad :color ,modeline-bg)))</span>
 <span id=cb3-123><a href=#cb3-123 aria-hidden=true tabindex=-1></a>   (mode-line-inactive</span>
 <span id=cb3-124><a href=#cb3-124 aria-hidden=true tabindex=-1></a>    :background modeline-bg-inactive :foreground modeline-fg-alt</span>
-<span id=cb3-125><a href=#cb3-125 aria-hidden=true tabindex=-1></a>    :box (<span class=kw>if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive)))</span>
+<span id=cb3-125><a href=#cb3-125 aria-hidden=true tabindex=-1></a>    :box (<span class=kw>if</span> <span class=op>-</span>modeline-pad `(:line-width ,<span class=op>-</span>modeline-pad :color ,modeline-bg-inactive)))</span>
 <span id=cb3-126><a href=#cb3-126 aria-hidden=true tabindex=-1></a>   (mode-line-emphasis :foreground highlight)</span>
 <span id=cb3-127><a href=#cb3-127 aria-hidden=true tabindex=-1></a></span>
 <span id=cb3-128><a href=#cb3-128 aria-hidden=true tabindex=-1></a>   <span class=co>;;;; doom-modeline</span></span>
@@ -290,11 +288,11 @@ using my work. Save this file into <code class=verbatim>~/.doom.d/themes/doom-na
 <span id=cb3-194><a href=#cb3-194 aria-hidden=true tabindex=-1></a>   (solaire-mode-line-face</span>
 <span id=cb3-195><a href=#cb3-195 aria-hidden=true tabindex=-1></a>    :inherit <span class=dt>&#39;mode-line</span></span>
 <span id=cb3-196><a href=#cb3-196 aria-hidden=true tabindex=-1></a>    :background modeline-bg-alt</span>
-<span id=cb3-197><a href=#cb3-197 aria-hidden=true tabindex=-1></a>    :box (<span class=kw>if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-alt)))</span>
+<span id=cb3-197><a href=#cb3-197 aria-hidden=true tabindex=-1></a>    :box (<span class=kw>if</span> <span class=op>-</span>modeline-pad `(:line-width ,<span class=op>-</span>modeline-pad :color ,modeline-bg-alt)))</span>
 <span id=cb3-198><a href=#cb3-198 aria-hidden=true tabindex=-1></a>   (solaire-mode-line-inactive-face</span>
 <span id=cb3-199><a href=#cb3-199 aria-hidden=true tabindex=-1></a>    :inherit <span class=dt>&#39;mode-line-inactive</span></span>
 <span id=cb3-200><a href=#cb3-200 aria-hidden=true tabindex=-1></a>    :background modeline-bg-inactive-alt</span>
-<span id=cb3-201><a href=#cb3-201 aria-hidden=true tabindex=-1></a>    :box (<span class=kw>if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive-alt)))))</span>
+<span id=cb3-201><a href=#cb3-201 aria-hidden=true tabindex=-1></a>    :box (<span class=kw>if</span> <span class=op>-</span>modeline-pad `(:line-width ,<span class=op>-</span>modeline-pad :color ,modeline-bg-inactive-alt)))))</span>
 <span id=cb3-202><a href=#cb3-202 aria-hidden=true tabindex=-1></a></span>
 <span id=cb3-203><a href=#cb3-203 aria-hidden=true tabindex=-1></a><span class=co>;;; doom-plain-theme.el ends here</span></span></code></pre></div><p>You will probably need more work to achieve the colors you expect.
 For that, using <code>SPC-u C-x =</code> will probably be useful. It
