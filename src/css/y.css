@@ -62,27 +62,13 @@ hr { opacity: 0.3; }
 }
 
 #logo > a {
-    width: 5em; height: 5em;
     display: inline-block;
-    overflow: hidden;
-    position: relative;
-    z-index: 1;
-    clip-path: polygon(31.2% 6.2%, 68.8% 6.2%, 68.8% 12.5%, 75.0% 12.5%, 75.0% 18.8%, 81.2% 18.8%, 81.2% 25.0%, 87.5% 25.0%, 87.5% 31.2%, 93.8% 31.2%, 93.8% 68.8%, 87.5% 68.8%, 87.5% 75.0%, 81.2% 75.0%, 81.2% 81.2%, 75.0% 81.2%, 75.0% 87.5%, 68.8% 87.5%, 68.8% 93.8%, 31.2% 93.8%, 31.2% 87.5%, 25.0% 87.5%, 25.0% 81.2%, 18.8% 81.2%, 18.8% 75.0%, 12.5% 75.0%, 12.5% 68.8%, 6.2% 68.8%, 6.2% 31.2%, 12.5% 31.2%, 12.5% 25.0%, 18.8% 25.0%, 18.8% 18.8%, 25.0% 18.8%, 25.0% 12.5%, 31.2% 12.5%);
-    transition: width 0.4s ease, height 0.4s ease, clip-path 0.4s ease;
 }
 #logo img {
-    width: 40em; height: 40em;
-    max-width: none;
     image-rendering: pixelated;
     border: none;
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(calc(-50% - 0.15625em), -50%);
-}
-#logo > a:hover {
-    width: 40em; height: 40em;
-    z-index: 9999;
-    clip-path: circle(50%);
+    height: 12rem;
+    filter: none;
 }
 /* For assistive technology we sometime want to keep a text in a link */
 /* while not showing it. */
@@ -178,26 +164,27 @@ img:hover,svg:hover { filter: none; }
 @media (prefers-color-scheme: dark)
 {
     :root {
-        --r: oklch(0.7 0.12 30);
-        --o: oklch(0.75 0.12 65);     /* orange */
-        --y: oklch(0.75 0.15 100);    /* yellow */
-        --g: oklch(0.7 0.12 155);     /* green */
-        --ol: oklch(0.72 0.12 130);   /* soft olive, titles */
-        --c: oklch(0.7 0.12 185);     /* teal */
-        --b: oklch(0.7 0.12 265);     /* blue-violet */
-        --v: oklch(0.7 0.12 305);     /* purple */
-        --m: oklch(0.7 0.12 340);     /* magenta */
-        --yl: oklch(0.2 0.06 140);   /* very dark olive-green, h3 bg */
-        --bg: hsl(270,20%,6%);
-        --bg2: hsl(270,20%,18%);
-        --fg: hsl(270,20%,80%);
-        --hl: hsl(270,10%,93%);
-        --soft: hsl(270,20%,35%);
-        --gr: hsl(270,20%,20%);
+        --r: oklch(0.65 0.14 30);     /* red — from logo iris #c20 */
+        --o: oklch(0.75 0.14 65);     /* orange — from logo pupil contour #f60 */
+        --y: oklch(0.8 0.15 90);      /* yellow — from logo pupil #fa0 */
+        --g: oklch(0.7 0.1 155);      /* green */
+        --ol: oklch(0.72 0.08 240);   /* steel blue — from logo outer stroke #a3aec2 */
+        --c: oklch(0.7 0.08 220);     /* slate teal — from logo bg tone */
+        --b: oklch(0.7 0.1 260);      /* blue */
+        --v: oklch(0.65 0.12 305);    /* purple */
+        --m: oklch(0.65 0.12 340);    /* magenta */
+        --yl: oklch(0.2 0.03 240);    /* dark blue-grey, h3 bg — from logo bg #2E3440 */
+        --bg: #2E3440;                /* logo background */
+        --bg2: #3B4252;               /* lighter Nord shade */
+        --fg: #a3aec2;                /* logo outer stroke color */
+        --hl: #ECEFF4;               /* Nord snow */
+        --soft: #4C566A;              /* Nord muted */
+        --gr: #3B4252;                /* Nord dark */
     }
     body { border-image: repeating-linear-gradient(to right,
-         var(--r) 0% 2%, var(--ol) 2% 4%, var(--b) 4% 6%, var(--o) 6% 8%,
-         var(--v) 8% 10%, var(--g) 10% 12%, var(--m) 12% 14%, var(--c) 14% 16%) 1; }
+         #800 0% 4%, #c20 4% 8%,
+         #f60 8% 12%, #fa0 12% 16%,
+         #a3aec2 16% 20%, #4C566A 20% 24%) 1; }
     img { filter: brightness(0.6) sepia(100%) hue-rotate(185deg) saturate(0.5); }
     img:hover { filter:  brightness(0.7); }
 }
