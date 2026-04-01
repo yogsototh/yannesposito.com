@@ -843,6 +843,306 @@ def generate_eye_with_spheres(size=128):
     return img
 
 
+# =============================================================
+# Variation 7: Classic Eye (recalls the old SVG logo colors/structure)
+# =============================================================
+
+# Sphere color themes matching the CSS palette (oklch converted to sRGB approx.)
+SPHERE_THEMES = {
+    "violet": {
+        # --v oklch(0.5 0.25 305) and --b oklch(0.5 0.25 265)
+        "sphere_bright": (170, 100, 210),
+        "sphere_mid": (100, 50, 150),
+        "sphere_dim": (55, 25, 90),
+        "sphere_glow": (130, 70, 180),
+        "star_accent": (140, 80, 200),
+    },
+    "multi": {
+        # Use per-sphere coloring; these are defaults for connections etc.
+        "sphere_bright": (170, 100, 210),
+        "sphere_mid": (100, 50, 150),
+        "sphere_dim": (55, 25, 90),
+        "sphere_glow": (100, 160, 160),
+        "star_accent": (140, 80, 200),
+    },
+    "teal": {
+        # --c oklch(0.5 0.25 185) and --g oklch(0.5 0.25 155)
+        "sphere_bright": (0, 150, 160),
+        "sphere_mid": (0, 100, 110),
+        "sphere_dim": (0, 55, 65),
+        "sphere_glow": (40, 140, 120),
+        "star_accent": (60, 170, 150),
+    },
+}
+
+# Per-sphere color sets for the "multi" theme
+# Cycling through: red, orange, violet, teal, blue, magenta, green
+MULTI_SPHERE_COLORS = [
+    # (bright, mid, dim) tuples matching CSS --r, --o, --v, --c, --b, --m, --g
+    ((210, 60, 50), (150, 30, 30), (80, 15, 15)),       # red --r
+    ((210, 130, 30), (160, 90, 10), (90, 50, 5)),       # orange --o
+    ((170, 100, 210), (100, 50, 150), (55, 25, 90)),    # violet --v
+    ((0, 150, 160), (0, 100, 110), (0, 55, 65)),        # teal --c
+    ((60, 80, 200), (35, 50, 140), (18, 25, 80)),       # blue --b
+    ((180, 60, 140), (120, 30, 90), (65, 15, 50)),      # magenta --m
+    ((50, 160, 80), (28, 100, 45), (14, 55, 25)),       # green --g
+    ((200, 170, 40), (140, 115, 15), (75, 60, 8)),      # yellow --y
+]
+
+
+def generate_classic_eye(size=128, sphere_theme="violet"):
+    """Pixel art eye recalling the old SVG logo: dark background, red iris,
+    orange pupil, white highlight ellipse. Colorful cosmic spheres."""
+    sph = SPHERE_THEMES[sphere_theme]
+
+    pal = {
+        "bg": (12, 10, 22),            # deep purple-black (matches dark mode bg hsl(270,20%,6%))
+        "dark": (25, 20, 40),
+        "mid_dark": (45, 35, 65),
+        "mid": (70, 55, 100),
+        "mid_light": (100, 80, 130),
+        "light": (140, 120, 170),
+        "highlight": (190, 175, 215),
+        "bright": (236, 232, 244),
+        # Spheres (from theme)
+        "sphere_bright": sph["sphere_bright"],
+        "sphere_mid": sph["sphere_mid"],
+        "sphere_dim": sph["sphere_dim"],
+        "sphere_glow": sph["sphere_glow"],
+        # Eye: red iris (from old #c20)
+        "iris_bright": (220, 60, 20),
+        "iris_mid": (204, 34, 0),       # #cc2200 = old #c20
+        "iris_dark": (136, 0, 0),       # #880000 = old stroke #800
+        # Pupil: orange/amber (from old #fa0)
+        "sclera_light": (210, 220, 195),
+        "sclera_mid": (170, 185, 155),
+        "pupil_bright": (255, 170, 0),  # #ffaa00 = old #fa0
+        "pupil_mid": (255, 102, 0),     # #ff6600 = old stroke #f60
+        "pupil_dark": (180, 70, 0),
+        "pupil_core": (60, 20, 5),
+        # Tentacles: hazel brown-green
+        "tentacle_bright": (140, 155, 70),
+        "tentacle_mid": (100, 115, 48),
+        "tentacle_dark": (60, 72, 28),
+        "sucker": (180, 170, 50),
+    }
+
+    img = Image.new("RGBA", (size, size), pal["bg"] + (255,))
+    s = size / 128.0
+    cx, cy = size // 2, size // 2
+
+    # --- Background: sparse stars ---
+    add_stars(img, size * 2, pal["highlight"], seed=1)
+    add_stars(img, size, sph["star_accent"], seed=2)
+
+    # --- Tentacles with spheres at their tips ---
+    rng = random.Random(42)
+    num_tentacles = 18
+    # Pre-generate tentacle parameters for variety
+    tentacle_params = []
+    for i in range(num_tentacles):
+        base_angle = 2 * math.pi * i / num_tentacles
+        angle = base_angle + rng.uniform(-0.25, 0.25)
+        length = rng.uniform(38, 58) * s
+        sphere_r = rng.choice([3, 4, 5, 5, 6, 7, 7, 8]) * s
+        wobble_freq = rng.uniform(5, 9)
+        wobble_amp = rng.uniform(5, 10)
+        tentacle_params.append((angle, length, sphere_r, wobble_freq, wobble_amp))
+
+    # Draw tentacles first, then spheres on top
+    tip_positions = []
+    for i, (angle, length, sphere_r, wobble_freq, wobble_amp) in enumerate(tentacle_params):
+        segments = 35
+        prev_x, prev_y = cx, cy
+        final_x, final_y = cx, cy
+        for seg in range(segments):
+            t = seg / segments
+            r = length * t
+            wobble = math.sin(t * wobble_freq + i * 1.3) * (wobble_amp * s * t)
+            nx = cx + int(r * math.cos(angle) + wobble * math.cos(angle + math.pi / 2))
+            ny = cy + int(r * math.sin(angle) + wobble * math.sin(angle + math.pi / 2))
+            thickness = max(1, int((1 - t) * 7.5 * s))
+            if t < 0.3:
+                c = pal["tentacle_bright"]
+            elif t < 0.6:
+                c = pal["tentacle_mid"] if seg % 2 == 0 else pal["tentacle_bright"]
+            else:
+                c = pal["tentacle_dark"] if seg % 2 == 0 else pal["tentacle_mid"]
+            draw_line_pixels(img, prev_x, prev_y, nx, ny, c)
+            perp_angle = angle + math.pi / 2
+            for tt in range(1, thickness):
+                ox = int(tt * 0.7 * math.cos(perp_angle))
+                oy = int(tt * 0.7 * math.sin(perp_angle))
+                draw_line_pixels(img, prev_x + ox, prev_y + oy, nx + ox, ny + oy, c)
+                draw_line_pixels(img, prev_x - ox, prev_y - oy, nx - ox, ny - oy, c)
+            prev_x, prev_y = nx, ny
+            final_x, final_y = nx, ny
+        tip_positions.append((final_x, final_y, max(2, int(sphere_r))))
+
+    # Draw spheres at tentacle tips
+    for idx, (sx, sy, sr) in enumerate(tip_positions):
+        if sphere_theme == "multi":
+            mc = MULTI_SPHERE_COLORS[idx % len(MULTI_SPHERE_COLORS)]
+            sb, sm, sd = mc
+        else:
+            sb = pal["sphere_bright"]
+            sm = pal["sphere_mid"]
+            sd = pal["sphere_dim"]
+
+        if sr >= 5:
+            draw_dithered_circle(img, sx, sy, sr, [sb, sm, sd])
+            hx, hy = sx - sr // 3, sy - sr // 3
+            set_pixel(img, hx, hy, pal["bright"])
+            if sr > 6:
+                set_pixel(img, hx + 1, hy, pal["highlight"])
+                set_pixel(img, hx, hy + 1, pal["highlight"])
+            for angle_deg in range(0, 360, 4):
+                a = math.radians(angle_deg)
+                gx = sx + int((sr + 1) * math.cos(a))
+                gy = sy + int((sr + 1) * math.sin(a))
+                if 0 <= gx < size and 0 <= gy < size:
+                    cur = img.getpixel((gx, gy))
+                    if cur[:3] == pal["bg"]:
+                        set_pixel(img, gx, gy, pal["mid_dark"])
+        elif sr >= 3:
+            draw_dithered_circle(img, sx, sy, sr, [sb, sm, sd])
+            set_pixel(img, sx - sr // 3, sy - sr // 3, pal["bright"])
+        else:
+            draw_circle_pixels(img, sx, sy, sr, sb, sm)
+
+    # --- Eye socket glow ---
+    eye_hw = int(26 * s)   # half-width of the eye (tip to center)
+    eye_hh = int(11 * s)   # half-height at the widest point
+    # Arc radius for the leaf/vesica shape: two circular arcs
+    # Each arc center is offset vertically; the arcs cross at the left and right tips.
+    # R and d are chosen so the arcs meet at (+-eye_hw, 0) with max height eye_hh.
+    # For a symmetric lens: R = (eye_hw^2 + eye_hh^2) / (2*eye_hh)
+    arc_R = (eye_hw * eye_hw + eye_hh * eye_hh) / (2.0 * eye_hh)
+    arc_d = arc_R - eye_hh  # vertical offset of arc centers from cy
+
+    def in_eye_shape(dx, dy):
+        """Check if point (dx, dy) relative to center is inside the leaf shape.
+        The shape is the intersection of two circles:
+        - upper arc: center at (0, +arc_d), radius arc_R (curves downward)
+        - lower arc: center at (0, -arc_d), radius arc_R (curves upward)
+        """
+        d1_sq = dx * dx + (dy - arc_d) ** 2
+        d2_sq = dx * dx + (dy + arc_d) ** 2
+        return d1_sq <= arc_R * arc_R and d2_sq <= arc_R * arc_R
+
+    def eye_shape_dist(dx, dy):
+        """Approximate normalized distance from center to edge of the leaf shape.
+        0 at center, 1 at the boundary."""
+        d1 = math.sqrt(dx * dx + (dy - arc_d) ** 2)
+        d2 = math.sqrt(dx * dx + (dy + arc_d) ** 2)
+        # The closer we are to either arc boundary, the closer to the edge
+        margin1 = arc_R - d1
+        margin2 = arc_R - d2
+        min_margin = min(margin1, margin2)
+        # Normalize: at center the margin is arc_R - arc_d = eye_hh
+        return 1.0 - min_margin / eye_hh if eye_hh > 0 else 0
+
+    socket_pad = int(10 * s)
+    socket_scale = (eye_hw + socket_pad) / max(eye_hw, 1)
+    for dy in range(-eye_hh - socket_pad, eye_hh + socket_pad + 1):
+        for dx in range(-eye_hw - socket_pad, eye_hw + socket_pad + 1):
+            sdx = dx / socket_scale
+            sdy = dy / socket_scale
+            if in_eye_shape(sdx, sdy):
+                fade = eye_shape_dist(sdx, sdy)
+                fade = max(0.0, min(1.0, fade))
+                # Fade from light center to tentacle flesh at edges
+                if fade < 0.2:
+                    c = pal["light"]
+                elif fade < 0.35:
+                    c = pal["light"] if (dx + dy) % 2 == 0 else pal["mid_light"]
+                elif fade < 0.5:
+                    c = pal["mid_light"] if (dx + dy) % 2 == 0 else pal["mid"]
+                elif fade < 0.65:
+                    c = pal["tentacle_bright"] if (dx + dy) % 2 == 0 else pal["mid"]
+                elif fade < 0.8:
+                    c = pal["tentacle_mid"] if (dx + dy) % 2 == 0 else pal["tentacle_bright"]
+                else:
+                    c = pal["tentacle_dark"] if (dx + dy) % 3 == 0 else pal["tentacle_mid"]
+                set_pixel(img, cx + dx, cy + dy, c)
+
+    # --- Eye shape (leaf / vesica piscis) with RED iris and ORANGE pupil ---
+    for dy in range(-eye_hh, eye_hh + 1):
+        for dx in range(-eye_hw, eye_hw + 1):
+            if not in_eye_shape(dx, dy):
+                continue
+            iris_r = 9 * s
+            raw_dist = math.sqrt(dx * dx + dy * dy)
+            if raw_dist < 5.5 * s:
+                # Pupil: orange/amber core like old logo #fa0
+                pupil_h = 5.5 * s
+                slit_width = 1.5 * s * max(0, 1 - (dy / pupil_h) ** 2)
+                if abs(dx) < max(1, slit_width):
+                    core_dist = math.sqrt(dx * dx + dy * dy) / (3 * s)
+                    if core_dist < 0.3:
+                        c = pal["pupil_core"]
+                    elif core_dist < 0.6:
+                        c = pal["pupil_mid"] if (dx + dy) % 2 == 0 else pal["pupil_dark"]
+                    else:
+                        c = pal["pupil_bright"] if (dx + dy) % 2 == 0 else pal["pupil_mid"]
+                else:
+                    c = pal["iris_dark"] if (dx + dy) % 2 == 0 else pal["pupil_dark"]
+            elif raw_dist < iris_r:
+                # Iris: red/crimson like old logo #c20
+                t = raw_dist / iris_r
+                angle_from_center = math.atan2(dy, dx)
+                radial_pat = math.sin(angle_from_center * 8) > 0
+                if t < 0.45:
+                    c = pal["iris_bright"] if radial_pat else pal["iris_mid"]
+                elif t < 0.7:
+                    c = pal["iris_mid"] if (dx + dy) % 2 == 0 else pal["iris_dark"]
+                else:
+                    c = pal["iris_dark"] if radial_pat else pal["tentacle_bright"]
+            else:
+                # Sclera
+                edge_t = (raw_dist - iris_r) / (max(eye_hw, eye_hh) - iris_r + 1)
+                if edge_t < 0.4:
+                    c = pal["sclera_light"] if (dx + dy) % 3 != 0 else pal["sclera_mid"]
+                else:
+                    c = pal["sclera_mid"] if (dx + dy) % 2 == 0 else pal["light"]
+            set_pixel(img, cx + dx, cy + dy, c)
+
+    # Eye outline: trace the boundary of the leaf shape
+    for dy in range(-eye_hh - 1, eye_hh + 2):
+        for dx in range(-eye_hw - 1, eye_hw + 2):
+            if in_eye_shape(dx, dy):
+                # Check if any neighbor is outside
+                is_border = False
+                for ndx, ndy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                    if not in_eye_shape(dx + ndx, dy + ndy):
+                        is_border = True
+                        break
+                if is_border:
+                    set_pixel(img, cx + dx, cy + dy, pal["iris_dark"])
+
+    # --- White highlight ellipse at top (like old SVG logo) ---
+    hl_cx = cx
+    hl_cy = cy - int(4 * s)
+    hl_rx = int(5 * s)
+    hl_ry = int(2.5 * s)
+    for dy in range(-hl_ry - 1, hl_ry + 2):
+        for dx in range(-hl_rx - 1, hl_rx + 2):
+            norm = (dx / max(hl_rx, 1)) ** 2 + (dy / max(hl_ry, 1)) ** 2
+            if norm <= 1.0:
+                if norm < 0.3:
+                    c = pal["bright"]
+                elif norm < 0.7:
+                    c = pal["bright"] if (dx + dy) % 2 == 0 else pal["highlight"]
+                else:
+                    c = pal["highlight"] if (dx + dy) % 2 == 0 else pal["sclera_light"]
+                set_pixel(img, hl_cx + dx, hl_cy + dy, c)
+
+    # Small secondary specular
+    set_pixel(img, cx + int(3 * s), cy + int(2 * s), pal["highlight"])
+
+    return img
+
+
 def upscale_nearest(img, factor):
     """Upscale with nearest neighbor to preserve pixels."""
     w, h = img.size
@@ -851,8 +1151,8 @@ def upscale_nearest(img, factor):
 
 def main():
     generators = [
-        ("eye-cosmic", generate_eye_with_spheres,
-         "Eldritch eye with cosmic spheres background"),
+        ("eye-cosmic", lambda size: generate_classic_eye(size, "multi"),
+         "Classic eye with multicolor spheres"),
     ]
 
     for name, gen_fn, desc in generators:
@@ -870,17 +1170,17 @@ def main():
         img_128.save(path_128)
         print(f"  -> {path_128}")
 
-        # 256x256 version (regenerated at higher resolution)
-        img_256 = gen_fn(256)
+        # 256x256 version (2x upscale of 128 for consistent pixel look)
+        img_256 = upscale_nearest(img_128, 2)
         path_256 = f"{OUTPUT_DIR}/yogsototh-{name}-256.png"
         img_256.save(path_256)
-        print(f"  -> {path_256}")
+        print(f"  -> {path_256} (2x upscale of 128)")
 
-        # Also save a 4x upscaled version of 128 for crisp preview
+        # 512x512 version (4x upscale of 128 for crisp preview)
         img_512 = upscale_nearest(img_128, 4)
         path_512 = f"{OUTPUT_DIR}/yogsototh-{name}-128x4.png"
         img_512.save(path_512)
-        print(f"  -> {path_512} (4x upscale for preview)")
+        print(f"  -> {path_512} (4x upscale of 128)")
 
     print("\nDone! Generated 5 variations x 3 sizes = 15 images.")
 

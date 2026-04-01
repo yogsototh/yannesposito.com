@@ -24,10 +24,8 @@ html,body { margin: 0; padding: 0; border: 0; }
 body {border-top: solid 20px;
        border-bottom: solid 20px;
        border-image: repeating-linear-gradient(to right,
-         var(--v) 0% 2%, var(--b) 2% 4%, var(--c) 4% 6%, var(--g) 6% 8%,
-         var(--c) 8% 10%, var(--b) 10% 12%,
-         var(--v) 12% 14%, var(--c) 14% 16%, var(--g) 16% 18%,
-         var(--b) 18% 20%, var(--g) 20% 22%, var(--c) 22% 24%) 1;
+         var(--r) 0% 2%, var(--ol) 2% 4%, var(--b) 4% 6%, var(--o) 6% 8%,
+         var(--v) 8% 10%, var(--g) 10% 12%, var(--m) 12% 14%, var(--c) 14% 16%) 1;
        box-sizing: border-box; min-height: 100vh;
        font-size-adjust: ex-height 0.50;}
 * { box-sizing: border-box; }
@@ -47,7 +45,7 @@ pre { overflow-x: auto;
       border: solid 1px;
       border-left: solid .5rem;
     }
-pre > code { background: none; padding: 0; }
+pre > code { background: none; outline: none; padding: 0; }
 code { padding: 1px 3px; }
 figure { margin: 1rem 0; padding: 0; }
 hr { opacity: 0.3; }
@@ -69,20 +67,20 @@ hr { opacity: 0.3; }
     overflow: hidden;
     position: relative;
     z-index: 1;
-    clip-path: polygon(34.4% 3.1%, 65.6% 3.1%, 65.6% 6.2%, 75.0% 6.2%, 75.0% 9.4%, 78.1% 9.4%, 78.1% 12.5%, 81.2% 12.5%, 81.2% 15.6%, 84.4% 15.6%, 84.4% 18.8%, 87.5% 18.8%, 87.5% 21.9%, 90.6% 21.9%, 90.6% 25.0%, 93.8% 25.0%, 93.8% 34.4%, 96.9% 34.4%, 96.9% 65.6%, 93.8% 65.6%, 93.8% 75.0%, 90.6% 75.0%, 90.6% 78.1%, 87.5% 78.1%, 87.5% 81.2%, 84.4% 81.2%, 84.4% 84.4%, 81.2% 84.4%, 81.2% 87.5%, 78.1% 87.5%, 78.1% 90.6%, 75.0% 90.6%, 75.0% 93.8%, 65.6% 93.8%, 65.6% 96.9%, 34.4% 96.9%, 34.4% 93.8%, 25.0% 93.8%, 25.0% 90.6%, 21.9% 90.6%, 21.9% 87.5%, 18.8% 87.5%, 18.8% 84.4%, 15.6% 84.4%, 15.6% 81.2%, 12.5% 81.2%, 12.5% 78.1%, 9.4% 78.1%, 9.4% 75.0%, 6.2% 75.0%, 6.2% 65.6%, 3.1% 65.6%, 3.1% 34.4%, 6.2% 34.4%, 6.2% 25.0%, 9.4% 25.0%, 9.4% 21.9%, 12.5% 21.9%, 12.5% 18.8%, 15.6% 18.8%, 15.6% 15.6%, 18.8% 15.6%, 18.8% 12.5%, 21.9% 12.5%, 21.9% 9.4%, 25.0% 9.4%, 25.0% 6.2%, 34.4% 6.2%, 34.4% 3.1%);
+    clip-path: polygon(31.2% 6.2%, 68.8% 6.2%, 68.8% 12.5%, 75.0% 12.5%, 75.0% 18.8%, 81.2% 18.8%, 81.2% 25.0%, 87.5% 25.0%, 87.5% 31.2%, 93.8% 31.2%, 93.8% 68.8%, 87.5% 68.8%, 87.5% 75.0%, 81.2% 75.0%, 81.2% 81.2%, 75.0% 81.2%, 75.0% 87.5%, 68.8% 87.5%, 68.8% 93.8%, 31.2% 93.8%, 31.2% 87.5%, 25.0% 87.5%, 25.0% 81.2%, 18.8% 81.2%, 18.8% 75.0%, 12.5% 75.0%, 12.5% 68.8%, 6.2% 68.8%, 6.2% 31.2%, 12.5% 31.2%, 12.5% 25.0%, 18.8% 25.0%, 18.8% 18.8%, 25.0% 18.8%, 25.0% 12.5%, 31.2% 12.5%);
     transition: width 0.4s ease, height 0.4s ease, clip-path 0.4s ease;
 }
 #logo img {
-    width: 15em; height: 15em;
+    width: 40em; height: 40em;
     max-width: none;
     image-rendering: pixelated;
     border: none;
     position: absolute;
     top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(calc(-50% - 0.15625em), -50%);
 }
 #logo > a:hover {
-    width: 15em; height: 15em;
+    width: 40em; height: 40em;
     z-index: 9999;
     clip-path: circle(50%);
 }
@@ -152,15 +150,16 @@ video { border: solid 1px; }
 /* COLORS */
 /* colortheme switch */
 :root {
-    --r: oklch(0.5 0.25 30);
-    --o: oklch(0.6 0.25 65);      /* orange, midpoint between red and yellow */
-    --y: oklch(0.6 0.30 100);     /* yellow, shifted away from orange */
-    --g: oklch(0.5 0.25 155);     /* green, tentacles */
-    --c: oklch(0.5 0.25 185);     /* teal, sphere glow */
-    --b: oklch(0.5 0.25 265);     /* blue-violet, shifted bluer away from --v */
-    --v: oklch(0.5 0.25 305);     /* purple */
-    --m: oklch(0.5 0.25 340);
-    --yl: oklch(1 0.15 110);
+    --r: oklch(0.5 0.15 30);
+    --o: oklch(0.6 0.15 65);      /* orange */
+    --y: oklch(0.6 0.18 100);     /* yellow */
+    --g: oklch(0.5 0.15 155);     /* green */
+    --ol: oklch(0.55 0.15 130);   /* soft olive, titles */
+    --c: oklch(0.5 0.15 185);     /* teal */
+    --b: oklch(0.5 0.15 265);     /* blue-violet */
+    --v: oklch(0.5 0.15 305);     /* purple */
+    --m: oklch(0.5 0.15 340);     /* magenta */
+    --yl: oklch(0.96 0.08 140);   /* very light olive-green, h3 bg */
 
     --bg: #fff;
     --bg2: oklch(0.98 0.005 285);
@@ -179,15 +178,16 @@ img:hover,svg:hover { filter: none; }
 @media (prefers-color-scheme: dark)
 {
     :root {
-        --r: oklch(0.7 0.20 30);
-        --o: oklch(0.75 0.20 65);     /* orange, midpoint between red and yellow */
-        --y: oklch(0.75 0.25 100);    /* yellow, shifted away from orange */
-        --g: oklch(0.7 0.20 155);     /* green, tentacles */
-        --c: oklch(0.7 0.20 185);     /* teal, sphere glow */
-        --b: oklch(0.7 0.20 265);     /* blue-violet, shifted bluer away from --v */
-        --v: oklch(0.7 0.20 305);     /* purple */
-        --m: oklch(0.7 0.20 340);
-        --yl: oklch(0.2 0.15 0);
+        --r: oklch(0.7 0.12 30);
+        --o: oklch(0.75 0.12 65);     /* orange */
+        --y: oklch(0.75 0.15 100);    /* yellow */
+        --g: oklch(0.7 0.12 155);     /* green */
+        --ol: oklch(0.72 0.12 130);   /* soft olive, titles */
+        --c: oklch(0.7 0.12 185);     /* teal */
+        --b: oklch(0.7 0.12 265);     /* blue-violet */
+        --v: oklch(0.7 0.12 305);     /* purple */
+        --m: oklch(0.7 0.12 340);     /* magenta */
+        --yl: oklch(0.2 0.06 140);   /* very dark olive-green, h3 bg */
         --bg: hsl(270,20%,6%);
         --bg2: hsl(270,20%,18%);
         --fg: hsl(270,20%,80%);
@@ -196,20 +196,18 @@ img:hover,svg:hover { filter: none; }
         --gr: hsl(270,20%,20%);
     }
     body { border-image: repeating-linear-gradient(to right,
-         rgb(84,35,112) 0% 2%, rgb(35,42,118) 2% 4%, rgb(0,84,91) 4% 6%, rgb(28,70,42) 6% 8%,
-         rgb(0,84,91) 8% 10%, rgb(35,42,118) 10% 12%,
-         rgb(84,35,112) 12% 14%, rgb(0,84,91) 14% 16%, rgb(28,70,42) 16% 18%,
-         rgb(35,42,118) 18% 20%, rgb(28,70,42) 20% 22%, rgb(0,84,91) 22% 24%) 1; }
+         var(--r) 0% 2%, var(--ol) 2% 4%, var(--b) 4% 6%, var(--o) 6% 8%,
+         var(--v) 8% 10%, var(--g) 10% 12%, var(--m) 12% 14%, var(--c) 14% 16%) 1; }
     img { filter: brightness(0.6) sepia(100%) hue-rotate(185deg) saturate(0.5); }
     img:hover { filter:  brightness(0.7); }
 }
 
 strong, b, i, emph, h1, h2, h3, h4, h5, h6 { color: var(--hl); }
-h1, h2 { color: var(--v); }
-h3 { color: var(--m); background: var(--yl);}
+h1, h2 { color: var(--ol); }
+h3 { color: var(--ol); background: var(--yl);}
 h4, h5, h6 { color: var(--fg); }
 pre { border-color: var(--soft); }
-code,sup,sub { background: oklch(from var(--gr) l c h / 0.7); }
+code,sup,sub { outline: 1px solid oklch(from var(--fg) l c h / 0.15); }
 a > sup:hover, a > sub:hover { background: var(--o); color: var(--bg); }
 body, body > div {
     background: var(--bg);
@@ -240,4 +238,4 @@ footer { background: var(--bg2); border-color: var(--soft); padding-bottom: 4em;
 .inlineblockimg { display: inline-block; }
 .inlineblockimg > img { display: inline-block; vertical-align: middle; width: 3em; }
 
-header > .content > h1 { color: var(--bg); background: var(--v); }
+header > .content > h1 { color: var(--bg); background: var(--ol); }

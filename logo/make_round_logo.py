@@ -28,7 +28,7 @@ def make_soft_circle_mask(size, fade_px=3):
     return mask
 
 
-# Round versions of the base images (not used by site, but kept for reference)
+# Round versions of the base images
 for size_label, src_name, fade in [
     ("128", "yogsototh-eye-cosmic-128.png", 3),
     ("256", "yogsototh-eye-cosmic-256.png", 5),
@@ -41,7 +41,6 @@ for size_label, src_name, fade in [
     print(f"Saved {out_path}")
 
 # Logo small: crop center eye from 128px, downscale to 32px, upscale to 512px
-# This version shows only the eye with chunky visible pixels at small display sizes.
 img = Image.open(f"{IMG_DIR}/yogsototh-eye-cosmic-128.png").convert("RGBA")
 cx, cy = 64, 64
 crop_r = 28
@@ -53,7 +52,7 @@ img.putalpha(mask)
 img.save(f"{IMG_DIR}/yogsototh-logo.png")
 print("Saved yogsototh-logo.png (eye-only crop, 32px base, chunky)")
 
-# Logo HD: 128px base upscaled 4x to 512px - full detail with spheres for hover zoom.
+# Logo HD: 128px base upscaled 4x to 512px
 img = Image.open(f"{IMG_DIR}/yogsototh-eye-cosmic-128.png").convert("RGBA")
 img = img.resize((512, 512), Image.NEAREST)
 mask = make_soft_circle_mask(512, fade_px=10)
