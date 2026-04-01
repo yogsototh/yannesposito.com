@@ -249,6 +249,13 @@ LOGO_OUTPUTS := $(SRC_DIR)/Scratch/img/yogsototh-logo.png \
 $(LOGO_OUTPUTS): $(LOGO_SCRIPTS)
 	cd logo && nix-shell -p python3Packages.pillow --run "python3 gen_pixel_art.py && python3 make_round_logo.py && python3 make_favicon.py"
 
+# --- Link checking ---------------------------------------------------------------
+.PHONY: check-links fix-links
+check-links:
+	@engine/check-links.sh
+fix-links:
+	@engine/check-links.sh --quick --fix
+
 # Debug: show what would be built
 .PHONY: debug
 debug:
