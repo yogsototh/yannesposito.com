@@ -9,7 +9,7 @@ rssfile="$webdir/rss.xml"
 indexdir=".cache/rss"
 
 # maximal number of articles to put in the RSS file
-maxarticles=10
+maxarticles=20
 
 # RSS Metas
 rsstitle="her.esy.fun"

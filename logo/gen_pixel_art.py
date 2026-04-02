@@ -927,13 +927,9 @@ def generate_classic_eye(size=128, sphere_theme="violet"):
         "sucker": (180, 170, 50),
     }
 
-    img = Image.new("RGBA", (size, size), pal["bg"] + (255,))
+    img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     s = size / 128.0
     cx, cy = size // 2, size // 2
-
-    # --- Background: sparse stars ---
-    add_stars(img, size * 2, pal["highlight"], seed=1)
-    add_stars(img, size, sph["star_accent"], seed=2)
 
     # --- Tentacles with spheres at their tips ---
     rng = random.Random(42)
