@@ -160,6 +160,7 @@ video { border: solid 1px; }
     --soft: oklch(0.85 0.005 285);
     --fg: oklch(0.15 0.005 285);
     --hl: #000;
+    --vis: oklch(0.45 0.005 285);  /* visited links, subtle grey */
 }
 
 /*
@@ -171,27 +172,24 @@ img:hover,svg:hover { filter: none; }
 @media (prefers-color-scheme: dark)
 {
     :root {
-        --r: oklch(0.65 0.14 30);     /* red — from logo iris #c20 */
-        --o: oklch(0.75 0.14 65);     /* orange — from logo pupil contour #f60 */
-        --y: oklch(0.8 0.15 90);      /* yellow — from logo pupil #fa0 */
-        --g: oklch(0.7 0.1 155);      /* green */
-        --ol: oklch(0.72 0.08 240);   /* steel blue — from logo outer stroke #a3aec2 */
-        --c: oklch(0.7 0.08 220);     /* slate teal — from logo bg tone */
-        --b: oklch(0.7 0.1 260);      /* blue */
+        --r: oklch(0.65 0.14 30);     /* red */
+        --o: oklch(0.75 0.14 65);     /* orange */
+        --y: oklch(0.8 0.15 100);     /* yellow */
+        --g: oklch(0.7 0.12 155);     /* green */
+        --ol: oklch(0.72 0.1 130);    /* olive — same hue as light mode */
+        --c: oklch(0.7 0.1 185);      /* teal — same hue as light mode */
+        --b: oklch(0.7 0.1 265);      /* blue-violet */
         --v: oklch(0.65 0.12 305);    /* purple */
         --m: oklch(0.65 0.12 340);    /* magenta */
-        --yl: oklch(0.2 0.03 240);    /* dark blue-grey, h3 bg — from logo bg #2E3440 */
-        --bg: #2E3440;                /* logo background */
-        --bg2: #3B4252;               /* lighter Nord shade */
-        --fg: #a3aec2;                /* logo outer stroke color */
-        --hl: #ECEFF4;               /* Nord snow */
-        --soft: #4C566A;              /* Nord muted */
-        --gr: #3B4252;                /* Nord dark */
+        --yl: oklch(0.2 0.04 145);    /* dark olive-green, h3 bg */
+        --bg: oklch(0.2 0.02 150);    /* dark green-tinted bg */
+        --bg2: oklch(0.24 0.02 150);  /* slightly lighter */
+        --fg: oklch(0.8 0.03 150);    /* light green-grey text */
+        --hl: oklch(0.95 0.01 150);   /* near-white with green tint */
+        --soft: oklch(0.35 0.02 150); /* muted green-grey */
+        --gr: oklch(0.24 0.02 150);   /* dark green-grey */
+        --vis: oklch(0.65 0.03 150);  /* visited links, dimmer green */
     }
-    body { border-image: repeating-linear-gradient(to right,
-         #800 0% 4%, #c20 4% 8%,
-         #f60 8% 12%, #fa0 12% 16%,
-         #a3aec2 16% 20%, #4C566A 20% 24%) 1; }
     img { filter: brightness(0.6) sepia(100%) hue-rotate(185deg) saturate(0.5); }
     img:hover { filter:  brightness(0.7); }
     ::selection { background: #BF6A2E; color: #ECEFF4; }
@@ -212,7 +210,7 @@ a { text-decoration: underline;
     text-decoration-thickness: 2px;
     text-decoration-color: var(--soft);
     color: var(--hl); }
-a:visited { color: var(--fg); }
+a:visited { color: var(--vis); }
 a:hover { color: var(--v);
           text-decoration-color: var(--v);
         }
