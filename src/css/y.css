@@ -21,9 +21,7 @@ h1,h2,h3,h4,h5,h6,.sans {
     font-family: var(--sans);
 }
 html,body { margin: 0; padding: 0; border: 0; }
-body {border-top: solid 8px var(--ol);
-       border-bottom: solid 8px var(--ol);
-       box-sizing: border-box; min-height: 100vh;
+body {box-sizing: border-box; min-height: 100vh;
        font-size-adjust: ex-height 0.50;}
 * { box-sizing: border-box; }
 
@@ -69,7 +67,6 @@ hr { opacity: 0.3; }
     height: 7em;
     filter: none;
     vertical-align: middle;
-    transition: filter 0.3s ease;
 }
 #logo:hover img {
     filter: sepia(100%) hue-rotate(230deg) saturate(2);
@@ -222,6 +219,16 @@ a:visited { color: var(--vis); }
 a:hover { color: var(--v);
           text-decoration-color: var(--v);
         }
+/* Links in running text keep the body colour and are flagged only by a small
+   superscript asterisk, so they never interrupt the line or recolour it while
+   reading. The underline appears on hover as the click affordance. Lists, nav
+   and titles keep the underline. */
+p a, p a:visited { text-decoration: none; color: inherit; }
+p a::after { content: "*"; color: var(--v); font-size: 0.7em;
+             vertical-align: super; line-height: 0; }
+/* Footnote references are already superscript markers; don't double them. */
+p :is(sup, sub) a::after { content: none; }
+p a:hover { text-decoration: underline; }
 /* ---- SYNTAX HIGHLIGHTING ---- */
 .ex { color:var(--v); }
 .op, .fu, .ot {color:var(--b);}
@@ -240,3 +247,119 @@ footer { background: var(--bg2); border-color: var(--soft); padding-bottom: 4em;
 .inlineblockimg > img { display: inline-block; vertical-align: middle; width: 3em; }
 
 header > .content > h1 { color: var(--bg); background: var(--ol); }
+
+/* ---- PIXEL ----
+   The logo is a 32x32 sprite shown at 7em (~126px), so one sprite pixel is
+   ~4 screen pixels. Everything below is drawn on that 4px grid so the page
+   reads as part of the sprite. Pure CSS: no image, no webfont, no script.
+   Lengths are literal 4px/8px rather than a --px variable and calc(): the
+   `minify` build step mangles calc() inside multi-value background shorthands
+   (it drops the space in `calc(...)  <len>` and rewrites keyword positions
+   like `top <len> left`), which threw the second frieze row to 50% height. */
+
+/* Frieze: the top and bottom band, a pixel gradient three 4x4 rows deep. Each
+   cell is one 4px sprite pixel. The band shades from the logo grey to the
+   background over three rows: a solid line at the page edge, then two dithered
+   rows of the same grey at lower opacity, the last offset by one pixel for a
+   checker fade. --ol is the logo's grey (the disc in light mode, the rim in
+   dark), so the fade works in both. */
+body {
+    --g2: oklch(from var(--ol) l c h / 0.6);
+    --g3: oklch(from var(--ol) l c h / 0.3);
+    background-image:
+        linear-gradient(var(--ol) 0 0),
+        linear-gradient(90deg, var(--g2) 0 4px, transparent 4px),
+        linear-gradient(90deg, var(--g3) 0 4px, transparent 4px),
+        linear-gradient(var(--ol) 0 0),
+        linear-gradient(90deg, var(--g2) 0 4px, transparent 4px),
+        linear-gradient(90deg, var(--g3) 0 4px, transparent 4px);
+    background-size:
+        100% 4px, 8px 4px, 8px 4px,
+        100% 4px, 8px 4px, 8px 4px;
+    background-position:
+        0 0, 0 4px, 4px 8px,
+        0 100%, 0 calc(100% - 4px), 4px calc(100% - 8px);
+    background-repeat:
+        no-repeat, repeat-x, repeat-x,
+        no-repeat, repeat-x, repeat-x;
+}
+
+/* Footer separator: the same pixel frieze along the footer's top edge, in
+   place of its 1px rule. The rows are mirrored vs. the top band: the dithered
+   rows lead in from the content and the solid line sits against the footer, so
+   both friezes point their fade inward. --g2/--g3 inherit from body. */
+footer {
+    border-top: 0;
+    padding-top: 1.5em;
+    background-color: var(--bg2);
+    background-image:
+        linear-gradient(var(--ol) 0 0),
+        linear-gradient(90deg, var(--g2) 0 4px, transparent 4px),
+        linear-gradient(90deg, var(--g3) 0 4px, transparent 4px);
+    background-size: 100% 4px, 8px 4px, 8px 4px;
+    background-position: 0 8px, 0 4px, 4px 0;
+    background-repeat: no-repeat, repeat-x, repeat-x;
+}
+
+/* Notched boxes: a 4px border drawn as four offset hard shadows, so the corners
+   stay empty like a sprite box. */
+:is(pre, blockquote, table, #toc, .notes, pre.example, .line-block) {
+    border: 0;
+    --b: 0 -4px 0 var(--soft),
+         0 4px 0 var(--soft),
+         -4px 0 0 var(--soft),
+         4px 0 0 var(--soft);
+    box-shadow: var(--b);
+}
+/* pre keeps its accent bar, drawn inside so the notched corners survive. */
+pre {
+    box-shadow: var(--b), inset 8px 0 0 var(--soft);
+    padding-left: 12px;
+}
+
+/* Links keep the browser's native underline (see the COLORS block): it follows
+   the text rather than the box, so it never paints under the logo image, never
+   trails past a short link, and wraps across lines for free. A pixel underline
+   was tried and dropped: painting a 4x4 row under every link was too heavy on
+   inline body links and underlined the logo. */
+
+/* Dithered rules: hr becomes the same checkerboard as the frieze. */
+hr {
+    border: 0;
+    height: 4px;
+    opacity: 1;
+    background: repeating-conic-gradient(var(--soft) 0 25%, transparent 0 50%)
+                0 0 / 8px 8px;
+}
+
+/* Square bullets: the last curve left in the body text. */
+ul, #toc ul { list-style: square; }
+
+/* Pixel grid: spacing snapped to multiples of 4px so nothing sits off-grid. */
+:is(pre, .notes, .abstract, #toc, blockquote) { padding: 16px; }
+:is(figure, table, hr, .abstract, .notes) { margin-block: 16px; }
+code { padding: 1px 4px; }
+
+/* ---- ARTICLE INDEX ----
+   Each dated entry becomes a "date | title" grid, so a long title wraps inside
+   its own column instead of dropping under the date and losing its alignment.
+   Scoped with :has(.pubDate), which leaves the dateless "Popular" list its
+   square bullets. */
+#content ul:has(.pubDate) { list-style: none; padding-left: 0; }
+#content li:has(.pubDate) {
+    display: grid;
+    grid-template-columns: 6.5em 1fr;
+    column-gap: 1em;
+    align-items: baseline;
+    margin-block: 0.2em;
+}
+#content li:has(.pubDate) .pubDate { width: auto; }
+/* The title link fills its column, so the whole width is a tap target; the
+   native underline still tracks only the text. */
+#content li:has(.pubDate) .post-title,
+#content li:has(.pubDate) .post-title > a { display: block; min-width: 0; }
+/* On small screens give each entry a ~44px tall tap target (Apple's minimum).
+   Vertical-only padding keeps the title aligned with its date column. */
+@media (max-width: 640px) {
+    #content li:has(.pubDate) .post-title > a { padding: 0.5em 0; }
+}
