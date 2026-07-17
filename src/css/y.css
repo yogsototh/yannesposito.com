@@ -21,11 +21,8 @@ h1,h2,h3,h4,h5,h6,.sans {
     font-family: var(--sans);
 }
 html,body { margin: 0; padding: 0; border: 0; }
-body {border-top: solid 20px;
-       border-bottom: solid 20px;
-       border-image: repeating-linear-gradient(to right,
-         var(--r) 0% 2%, var(--ol) 2% 4%, var(--b) 4% 6%, var(--o) 6% 8%,
-         var(--v) 8% 10%, var(--g) 10% 12%, var(--m) 12% 14%, var(--c) 14% 16%) 1;
+body {border-top: solid 8px var(--ol);
+       border-bottom: solid 8px var(--ol);
        box-sizing: border-box; min-height: 100vh;
        font-size-adjust: ex-height 0.50;}
 * { box-sizing: border-box; }
@@ -142,25 +139,35 @@ video { border: solid 1px; }
 
 /* COLORS */
 /* colortheme switch */
+/* The palette follows the logo. Its disc is #2E3440 and its rim #a3aec2, so the
+   titles and the band take those two greys: the disc in light mode, the rim in
+   dark. Everything cold sits on hue 265, the disc's own hue. The eye's red and
+   amber stay the only warm accents on the page.
+   The hues below drive the syntax highlighting, where colors sit on white and
+   must be told apart at a glance. Each one carries as much chroma as sRGB
+   actually holds at its lightness, and clears 4.5:1 on white. --o and --y are
+   only ~37 degrees apart, so they are split by lightness as well: a bright
+   orange against a dark gold. Yellow cannot be both vivid and readable on
+   white, and readable wins. */
 :root {
-    --r: oklch(0.5 0.15 30);
-    --o: oklch(0.6 0.15 65);      /* orange */
-    --y: oklch(0.6 0.18 100);     /* yellow */
-    --g: oklch(0.5 0.15 155);     /* green */
-    --ol: oklch(0.55 0.15 130);   /* soft olive, titles */
-    --c: oklch(0.5 0.15 185);     /* teal */
-    --b: oklch(0.5 0.15 265);     /* blue-violet */
-    --v: oklch(0.5 0.15 305);     /* purple */
-    --m: oklch(0.5 0.15 340);     /* magenta */
-    --yl: oklch(0.96 0.08 140);   /* very light olive-green, h3 bg */
+    --r: oklch(0.5 0.199 28);     /* red, the iris */
+    --o: oklch(0.57 0.133 58);    /* orange, the pupil */
+    --y: oklch(0.45 0.09 95);     /* dark gold */
+    --g: oklch(0.5 0.153 145);    /* green */
+    --ol: oklch(0.32 0.022 265);  /* the disc, #2E3440: titles and band */
+    --c: oklch(0.52 0.086 195);   /* teal */
+    --b: oklch(0.48 0.174 258);   /* blue */
+    --v: oklch(0.45 0.21 300);    /* purple */
+    --m: oklch(0.48 0.194 352);   /* magenta */
+    --yl: oklch(0.95 0.008 265);  /* pale slate, h3 bg */
 
     --bg: #fff;
-    --bg2: oklch(0.98 0.005 285);
-    --gr: oklch(0.95 0.005 285);
-    --soft: oklch(0.85 0.005 285);
-    --fg: oklch(0.15 0.005 285);
-    --hl: #000;
-    --vis: oklch(0.45 0.005 285);  /* visited links, subtle grey */
+    --bg2: oklch(0.98 0.005 265);
+    --gr: oklch(0.95 0.005 265);
+    --soft: oklch(0.85 0.008 265);
+    --fg: oklch(0.16 0.008 265);
+    --hl: oklch(0.1 0.01 265);
+    --vis: oklch(0.45 0.008 265);  /* visited links, subtle grey */
 }
 
 /*
@@ -172,23 +179,24 @@ img:hover,svg:hover { filter: none; }
 @media (prefers-color-scheme: dark)
 {
     :root {
-        --r: oklch(0.65 0.14 30);     /* red */
-        --o: oklch(0.75 0.14 65);     /* orange */
-        --y: oklch(0.8 0.15 100);     /* yellow */
-        --g: oklch(0.7 0.12 155);     /* green */
-        --ol: oklch(0.72 0.1 130);    /* olive — same hue as light mode */
-        --c: oklch(0.7 0.1 185);      /* teal — same hue as light mode */
-        --b: oklch(0.7 0.1 265);      /* blue-violet */
-        --v: oklch(0.65 0.12 305);    /* purple */
-        --m: oklch(0.65 0.12 340);    /* magenta */
-        --yl: oklch(0.2 0.04 145);    /* dark olive-green, h3 bg */
-        --bg: oklch(0.2 0.02 150);    /* dark green-tinted bg */
-        --bg2: oklch(0.24 0.02 150);  /* slightly lighter */
-        --fg: oklch(0.8 0.03 150);    /* light green-grey text */
-        --hl: oklch(0.95 0.01 150);   /* near-white with green tint */
-        --soft: oklch(0.35 0.02 150); /* muted green-grey */
-        --gr: oklch(0.24 0.02 150);   /* dark green-grey */
-        --vis: oklch(0.65 0.03 150);  /* visited links, dimmer green */
+        /* Same hues as light mode, lifted to clear 4.5:1 on the dark bg. */
+        --r: oklch(0.68 0.16 28);     /* red, the iris */
+        --o: oklch(0.74 0.14 58);     /* orange, the pupil */
+        --y: oklch(0.85 0.16 95);     /* yellow */
+        --g: oklch(0.72 0.15 145);    /* green */
+        --ol: oklch(0.78 0.028 265);  /* the rim, #a3aec2: titles and band */
+        --c: oklch(0.76 0.11 195);    /* teal */
+        --b: oklch(0.7 0.154 258);    /* blue */
+        --v: oklch(0.68 0.18 300);    /* purple */
+        --m: oklch(0.7 0.17 352);     /* magenta */
+        --yl: oklch(0.27 0.015 265);  /* dark slate, h3 bg */
+        --bg: oklch(0.21 0.015 265);  /* dark slate bg, the disc's hue */
+        --bg2: oklch(0.25 0.015 265); /* slightly lighter */
+        --fg: oklch(0.82 0.02 265);   /* light slate text */
+        --hl: oklch(0.95 0.01 265);   /* near-white, cold */
+        --soft: oklch(0.36 0.015 265);/* muted slate */
+        --gr: oklch(0.25 0.015 265);  /* dark slate grey */
+        --vis: oklch(0.65 0.015 265); /* visited links, dimmer slate */
     }
     img { filter: brightness(0.6) sepia(100%) hue-rotate(185deg) saturate(0.5); }
     img:hover { filter:  brightness(0.7); }
