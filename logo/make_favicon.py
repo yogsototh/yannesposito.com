@@ -1,49 +1,35 @@
 #!/usr/bin/env python3
-"""Generate favicon.ico matching the small logo appearance (eye crop + staircase circle).
+"""Generate favicon.ico from the classic eye, on the same pixel grid as the logo.
 
-The favicon uses the same eye-only crop as yogsototh-logo.png with a pixelated
-circle mask (staircase edges), not a smooth one.
+The 32px icon is the logo's own base grid and the 64px one is that grid doubled,
+so the favicon and the header logo show the same pixels. The 16px icon is drawn
+flat: at that size the dithered shading would only read as noise.
+
+The eye is already transparent outside its disc, so no circular mask is applied.
 
 Run from the logo/ directory:
     nix-shell -p python3Packages.pillow --run "python3 make_favicon.py"
 """
-from PIL import Image
-import math
+from gen_classic_eye import make_eye, upscale_nearest
 
 IMG_DIR = "../src/Scratch/img"
 
-
-def make_pixelated_circle_mask(size):
-    """Create a circle mask with hard pixel edges (no anti-aliasing)."""
-    mask = Image.new("L", (size, size), 0)
-    cx, cy = size / 2, size / 2
-    r = size / 2 - 0.5
-    for y in range(size):
-        for x in range(size):
-            dist = math.sqrt((x + 0.5 - cx) ** 2 + (y + 0.5 - cy) ** 2)
-            mask.putpixel((x, y), 255 if dist <= r else 0)
-    return mask
-
-
-# Use the same source and crop as make_round_logo.py for the small logo
-src = Image.open(f"{IMG_DIR}/yogsototh-eye-cosmic-128.png").convert("RGBA")
-cx, cy = 64, 64
-crop_r = 28
-src = src.crop((cx - crop_r, cy - crop_r, cx + crop_r, cy + crop_r))
-
-sizes = [16, 32, 48, 64]
-icons = []
-for sz in sizes:
-    img = src.resize((sz, sz), Image.NEAREST)
-    mask = make_pixelated_circle_mask(sz)
-    img.putalpha(mask)
-    icons.append(img)
+# Pillow drops any requested size larger than the image it saves, and only
+# reuses an appended image when its size matches exactly. So the largest icon
+# has to be the one saved, with the smaller ones appended.
+icons = [
+    make_eye(16, shaded=False),
+    make_eye(32),
+    upscale_nearest(make_eye(32), 2),
+]
+largest = icons[-1]
+others = icons[:-1]
 
 for path in ["../src/favicon.ico", f"{IMG_DIR}/favicon.ico"]:
-    icons[0].save(
+    largest.save(
         path,
         format="ICO",
-        sizes=[(sz, sz) for sz in sizes],
-        append_images=icons[1:],
+        sizes=[img.size for img in icons],
+        append_images=others,
     )
-    print(f"Saved {path}")
+    print(f"Saved {path} ({', '.join(f'{i.size[0]}px' for i in icons)})")

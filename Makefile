@@ -240,14 +240,15 @@ clean-html:
 	@rm -rf $(CACHE_DIR)/rss
 
 # --- Logo (pixel art generation) ----------------------------------------------
-LOGO_SCRIPTS := logo/gen_pixel_art.py logo/make_round_logo.py logo/make_favicon.py
-LOGO_OUTPUTS := $(SRC_DIR)/Scratch/img/yogsototh-logo.png \
-                $(SRC_DIR)/Scratch/img/yogsototh-logo-hd.png \
+LOGO_SCRIPTS := logo/gen_classic_eye.py logo/make_favicon.py
+LOGO_OUTPUTS := $(SRC_DIR)/Scratch/img/yogsototh-eye-32.png \
+                $(SRC_DIR)/Scratch/img/yogsototh-eye-128.png \
+                $(SRC_DIR)/Scratch/img/yogsototh-eye-256.png \
                 $(SRC_DIR)/favicon.ico \
                 $(SRC_DIR)/Scratch/img/favicon.ico
 
 $(LOGO_OUTPUTS): $(LOGO_SCRIPTS)
-	cd logo && nix-shell -p python3Packages.pillow --run "python3 gen_pixel_art.py && python3 make_round_logo.py && python3 make_favicon.py"
+	cd logo && nix-shell -p python3Packages.pillow --run "python3 gen_classic_eye.py && python3 make_favicon.py"
 
 # --- Link checking ---------------------------------------------------------------
 .PHONY: check-links fix-links
