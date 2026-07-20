@@ -352,8 +352,29 @@ hr {
                 0 0 / 8px 8px;
 }
 
-/* Square bullets: the last curve left in the body text. */
+/* Square bullets: the last curve left in the body text, scaled up on ::marker
+   so the square reads as a pixel. Sizing the marker rather than drawing a box
+   on ::before keeps the browser's own baseline alignment, which hand-placed
+   pseudo-elements lose. --fg over the inherited colour: the bullet belongs to
+   the text.
+
+   1.6em is a boundary, not a taste call. The engine draws the square at a
+   fixed fraction of the marker's font-size (~0.23 in Blink) and anchors it
+   near the baseline, so enlarging it grows the square upward and drags it
+   left, away from the text. Measured against the x-height: 1.4em still sits
+   inside it, 1.6em puts the square's top exactly on it, 1.8em and up break
+   above it and read as unaligned. No fix is available -- ::marker takes no
+   vertical-align, and line-height moves the whole line, marker and text
+   together.
+
+   `ex` was considered, to pin the square to the x-height whatever the font.
+   It is redundant here: body sets font-size-adjust: ex-height 0.50, which
+   already holds the x-height at 0.5em for every font in the stack, so 1.6em
+   and 3.2ex render identically (verified across two very different fonts).
+   Neither unit could guarantee square == x-height anyway, since the 0.23
+   ratio is the engine's to choose, not the author's. */
 ul, #toc ul { list-style: square; }
+ul > li::marker { font-size: 1.6em; color: var(--fg); }
 
 /* Pixel grid: spacing snapped to multiples of 4px so nothing sits off-grid. */
 :is(pre, .notes, .abstract, #toc, blockquote) { padding: 16px; }
