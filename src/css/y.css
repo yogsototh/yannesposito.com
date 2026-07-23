@@ -35,6 +35,9 @@ h1,h2,h3,h4,h5,h6,.abstract,nav,.meta {
 }
 header > .content > h1 { margin: 0 0 1rem 0; }
 p, li { text-align: justify; hyphens: auto; text-wrap: pretty; }
+/* The table of contents is navigation, not prose: never justify its entries
+   (a wrapped entry would otherwise stretch its first line). */
+#toc :is(li, a) { text-align: left; }
 pre { overflow-x: auto;
       padding: 1rem;
       border: solid 1px;
@@ -497,4 +500,6 @@ h3, h4, h5, h6 { font-size: calc(1rem * sqrt(var(--phi)));  line-height: 28px; }
    Vertical-only padding keeps the title aligned with its date column. */
 @media (max-width: 640px) {
     #content li:has(.pubDate) .post-title > a { padding: 0.5em 0; }
+    /* A narrow column makes justified text gappy: fall back to ragged-left. */
+    p, li, .abstract { text-align: left; }
 }
