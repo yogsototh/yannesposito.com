@@ -14,6 +14,13 @@
            padding-top: 0;
          }
 #content :first-child { margin-top: 0; }
+/* Slides are presentation pages: content fills the slide frame edge to edge, so
+   drop the article reading measures from y.css. Text and code take the full
+   width; code is capped at 100% so long lines scroll inside the frame instead
+   of pushing past it; headings keep max-width:none so their full-bleed rule
+   (width: 100% + 2rem below) reaches the frame borders. */
+#content article > * { margin-inline: 0 !important; max-width: 100% !important; }
+#content article > :is(h1, h2, h3, h4, h5, h6) { max-width: none !important; }
 h1,h2,h3,h4,h5,h6 { font-size: 1rem; }
 h1,h2,h3,footer {
     border-top: solid;
@@ -35,4 +42,7 @@ h3 { margin-top: 2rem;
    }
 footer { border-top: solid 3px;
          border-bottom: solid 3px;
-         padding: 1rem 1rem 0 1rem; margin-bottom: 0; background: var(--rbg);}
+         padding: 1rem 1rem 0 1rem; margin-bottom: 0; background: var(--rbg);
+         /* full-width already (body context), so the +2rem/-1rem from the
+            heading rule above would overflow the viewport: keep it contained. */
+         width: 100%; left: 0;}
