@@ -41,3 +41,20 @@ body:before {
      }
 a.sourceLine { text-decoration: none; }
 a.sourceLine:hover { text-decoration: none; }
+
+/* --- Reading measure for the archived layout --------------------------------
+   Archived posts wrap the body in <div class="corps"> instead of <article>, so
+   the measure rules in y.css (scoped to `#content article > ...`) never reach
+   them and the prose runs the full width. Re-apply the same golden-ratio
+   measures here, reusing --measure / --wide / --phi (declared on #content in
+   y.css and inherited down to .corps). This file is loaded only by archived
+   pages, so it cannot affect the main articles. */
+.corps > :is(p, ul, ol, dl, blockquote,
+             h1, h2, h3, h4, h5, h6, .notes, .intro, figure) {
+    max-width: var(--measure);
+    margin-inline: auto;
+}
+.corps > :is(pre, div.sourceCode, table) {
+    max-width: var(--wide);
+    margin-inline: auto;
+}
