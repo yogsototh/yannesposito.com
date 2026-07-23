@@ -92,6 +92,22 @@ main#content { clear: both; }
     overflow: hidden;
     margin: 0 auto;
 }
+
+/* Two nested measures, both centred on the same axis.
+   The 94ch band above holds wide content (code, media); prose is pulled in to
+   a 70ch reading measure. Inverted on purpose: cap the prose and leave the
+   wide elements at the full band, so both <pre> forms (bare, and the
+   div.sourceCode wrapper Pandoc emits for highlighted code) stay full width. */
+#content article > :is(p, ul, ol, dl, blockquote,
+                       h1, h2, h3, h4, h5, h6,
+                       .notes, .abstract, #toc, .line-block, section) {
+    max-width: 70ch;
+    margin-inline: auto;
+}
+#content article > :is(pre, div.sourceCode, figure, table) {
+    max-width: 94ch;
+    margin-inline: auto;
+}
 header { padding-top: 5px; margin: 0 auto; }
 footer { border-top: 1px solid; }
 header > .content { padding-top: 0; text-align: left; }
