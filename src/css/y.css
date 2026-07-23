@@ -1,5 +1,5 @@
 html {
-    line-height: 1.5em;
+    line-height: 28px; /* vertical-rhythm baseline: 7 x 4px, on the pixel grid */
     font-size: 18px;
 }
 
@@ -136,7 +136,7 @@ main#content { clear: both; }
 /* The generated table of contents is a direct child of #content, before the
    <article>, so the measure group above (scoped to `#content article > ...`)
    misses it and it runs the full wide band. Pin it to the reading measure too. */
-#content > #toc { max-width: var(--measure); margin-inline: auto; }
+#content > #toc { max-width: var(--measure); margin-inline: auto; margin-block: 24px; }
 header { padding-top: 5px; margin: 0 auto; }
 footer { border-top: 1px solid; }
 header > .content { padding-top: 0; text-align: left; }
@@ -388,7 +388,7 @@ footer {
    is the wide-band block; its inner <pre> must fill it flush. Without this, the
    24px margin the rule above gives every <pre> would inset the highlighted box
    by 24px and knock it out of line with bare <pre> blocks (e.g. pre.example). */
-.sourceCode > pre { margin-inline: 0; }
+.sourceCode > pre { margin: 0; }
 
 /* blockquote and #toc: no box, a thick left rule sized to the TEXT height.
    Zeroing the vertical padding and collapsing the first/last child margins
@@ -454,8 +454,26 @@ ul > li::marker { font-size: 1.6em; color: var(--fg); }
 
 /* Pixel grid: spacing snapped to multiples of 4px so nothing sits off-grid. */
 :is(pre, .notes, .abstract) { padding: 16px; }
-:is(figure, table, hr, .abstract, .notes) { margin-block: 16px; }
+:is(hr, .abstract) { margin-block: 16px; }
 code { padding: 1px 4px; }
+
+/* ---- VERTICAL RHYTHM ----
+   Everything snaps to the 4px pixel grid; the ratios are the golden ratio.
+   The body baseline is 28px (7x4, set on <html>). Text-flow blocks take one
+   16px step below; framed blocks and media take 24px. Headings sit on a
+   sqrt(phi) type scale (a gentle progression, like the wide band) and take far
+   more room above than below (~phi^2), so each attaches to the section it opens
+   instead of floating between two. Every heading line-height is a multiple of
+   4px. --phi is inherited from #content / .content. */
+:is(p, ul, ol, dl) { margin-block: 0 16px; }
+li { margin-block: 0; }
+:is(blockquote, pre, figure, table, .notes, .line-block, div.sourceCode) {
+    margin-block: 24px;
+}
+h1, h2, h3, h4, h5, h6 { margin-block: 40px 16px; }
+h1 { font-size: calc(1rem * var(--phi) * sqrt(var(--phi))); line-height: 40px; }
+h2 { font-size: calc(1rem * var(--phi));                    line-height: 32px; }
+h3, h4, h5, h6 { font-size: calc(1rem * sqrt(var(--phi)));  line-height: 28px; }
 
 /* ---- ARTICLE INDEX ----
    Each dated entry becomes a "date | title" grid, so a long title wraps inside
