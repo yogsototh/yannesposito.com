@@ -34,7 +34,7 @@ h1,h2,h3,h4,h5,h6,.abstract,nav,.meta {
     }
 }
 header > .content > h1 { margin: 0 0 1rem 0; }
-p { text-align: left; hyphens: auto; }
+p, li { text-align: justify; hyphens: auto; text-wrap: pretty; }
 pre { overflow-x: auto;
       padding: 1rem;
       border: solid 1px;
@@ -49,7 +49,20 @@ hr { opacity: 0.3; }
 .details { display: inline-block; min-width: 9em; font-size: small; }
 .abstract,.notes { margin: 1rem 10% 0; font-size: 0.875em; }
 .notes { border: dotted 1px; padding: 1em 2em;}
-.abstract { font-style: italic; padding: 1rem; }
+/* The abstract lives in the <header>, outside #content article, so the measure
+   group can't reach it. Its font is smaller, so matching the body's pixel width
+   would give it a longer character measure; instead relate it to the body by the
+   golden ratio -- the abstract is the minor section, measure / phi. --measure and
+   --phi are inherited (the header's .content sets them), so this holds in the
+   header too. */
+.abstract {
+    font-style: italic;
+    padding: 1rem;
+    max-width: calc(var(--measure) / var(--phi));
+    margin-inline: auto;
+    text-align: justify;
+    text-wrap: pretty;
+}
 .post-title { display: inline-block; min-width: 18em; }
 .post-title > a { display: inline-block; min-width: 100%; }
 
@@ -85,33 +98,53 @@ hr { opacity: 0.3; }
     white-space: nowrap;
 }
 header, footer { text-align: center; }
+/* The reading measures, frozen to px at the body font. Registered as <length>
+   so 70ch/94ch are computed here, where the font is the body serif, and then
+   inherit as a fixed pixel length -- a block's own font-size (e.g. the 0.875em
+   on .notes and #toc) can no longer shrink its ch and knock its centred edge
+   out of line with the full-size blocks. */
+@property --measure { syntax: "<length>"; inherits: true; initial-value: 0px; }
+@property --wide    { syntax: "<length>"; inherits: true; initial-value: 0px; }
+
 main#content { clear: both; }
 #content,.content {
     padding: 1rem;
-    max-width: 94ch; /* 94 char long text */
+    --phi: 1.618;                                     /* golden ratio */
+    --measure: 70ch;                                  /* prose reading measure */
+    --wide: calc(var(--measure) * sqrt(var(--phi)));  /* wide band = measure x sqrt(phi) (~89ch) */
+    max-width: var(--wide);
     overflow: hidden;
     margin: 0 auto;
 }
 
-/* Two nested measures, both centred on the same axis.
-   The 94ch band above holds wide content (code, media); prose is pulled in to
-   a 70ch reading measure. Inverted on purpose: cap the prose and leave the
-   wide elements at the full band, so both <pre> forms (bare, and the
-   div.sourceCode wrapper Pandoc emits for highlighted code) stay full width. */
+/* Two nested measures, both centred on the same axis, related by the golden
+   ratio: prose sits at a 70ch reading measure, and the wide band that holds
+   code and media is measure x sqrt(phi) (~89ch) -- full phi read too wide.
+   Inverted on purpose: cap the prose and leave the wide elements at the full
+   band, so both <pre> forms (bare, and the div.sourceCode wrapper Pandoc emits
+   for highlighted code) stay full. */
 #content article > :is(p, ul, ol, dl, blockquote,
                        h1, h2, h3, h4, h5, h6,
-                       .notes, .abstract, #toc, .line-block, section) {
-    max-width: 70ch;
+                       .notes, .abstract, #toc, .line-block, section, figure) {
+    max-width: var(--measure);
     margin-inline: auto;
 }
-#content article > :is(pre, div.sourceCode, figure, table) {
-    max-width: 94ch;
+#content article > :is(pre, div.sourceCode) {
+    max-width: var(--wide);
     margin-inline: auto;
 }
+/* The generated table of contents is a direct child of #content, before the
+   <article>, so the measure group above (scoped to `#content article > ...`)
+   misses it and it runs the full wide band. Pin it to the reading measure too. */
+#content > #toc { max-width: var(--measure); margin-inline: auto; }
 header { padding-top: 5px; margin: 0 auto; }
 footer { border-top: 1px solid; }
 header > .content { padding-top: 0; text-align: left; }
-header > .content > h1 { padding: .5rem 0; margin: 0; text-align: center; }
+/* Title height is kept a whole number of 8px cells so the checkerboard ring
+   closes flush at the bottom whatever the line count: line-height and vertical
+   padding are exact multiples of 8px (the border is already 8px), and being
+   integers they avoid the sub-pixel drift a calc()ed line-height would leave. */
+header > .content > h1 { padding: 8px 0; margin: 0; text-align: center; line-height: 40px; }
 img {box-sizing: border-box;}
 figure img { display: block; margin: 0 auto; max-width: 100%; }
 
@@ -136,9 +169,9 @@ footer { padding: 0;
          margin: 0;
        }
 footer > .content { margin: 0 auto; padding: 0; }
-table { margin: 1rem 0; line-height: 1em; max-width: 100%; overflow: scroll;
-        display: block;
-        border: solid 1px;}
+table { margin: 1rem auto; line-height: 1em;
+        display: block; width: max-content; max-width: 100%;
+        overflow-x: auto;}
 table th { padding: .1em 1em; }
 table td { padding: .1em 1em; }
 nav { text-align: center; padding: 1em 0;  }
@@ -271,7 +304,7 @@ footer { background: var(--bg2); border-color: var(--soft); padding-bottom: 4em;
    border box. */
 header > .content > h1 {
     color: var(--bg);
-    border: 4px solid transparent;
+    border: 8px solid transparent;
     background-color: transparent;
     background-image:
         linear-gradient(var(--ol) 0 0),
@@ -337,21 +370,48 @@ footer {
 }
 
 /* Notched boxes: a 4px border drawn as four offset hard shadows, so the corners
-   stay empty like a sprite box. */
-:is(pre, blockquote, table, #toc, .notes, pre.example, .line-block) {
+   stay empty like a sprite box. Code and verse keep the neutral grey frame;
+   .notes takes the same frame in the font colour so a callout reads as an
+   emphasised box. blockquote/#toc get lighter left-rule treatments below. The
+   frame colour is a per-type custom property (default --soft) routed through a
+   var() fallback. (--nb, not --b: --b is already the blue palette colour.) */
+:is(pre, .notes, pre.example, .line-block) {
     border: 0;
-    --b: 0 -8px 0 var(--soft),
-         0 8px 0 var(--soft),
-         -8px 0 0 var(--soft),
-         8px 0 0 var(--soft);
-    box-shadow: var(--b);
+    --nb: 0 -8px 0 var(--frame, var(--soft)),
+          0  8px 0 var(--frame, var(--soft)),
+         -8px  0 0 var(--frame, var(--soft)),
+          8px  0 0 var(--frame, var(--soft));
+    box-shadow: var(--nb);
     margin: 24px;
 }
-/* pre keeps its accent bar, drawn inside so the notched corners survive. */
-pre {
-    box-shadow: var(--b), inset 8px 0 0 var(--soft);
-    padding-left: 12px;
+/* Pandoc wraps highlighted code in <div class="sourceCode"><pre>. That wrapper
+   is the wide-band block; its inner <pre> must fill it flush. Without this, the
+   24px margin the rule above gives every <pre> would inset the highlighted box
+   by 24px and knock it out of line with bare <pre> blocks (e.g. pre.example). */
+.sourceCode > pre { margin-inline: 0; }
+
+/* blockquote and #toc: no box, a thick left rule sized to the TEXT height.
+   Zeroing the vertical padding and collapsing the first/last child margins
+   makes the rule span exactly the lines, not the padding box (which, with the
+   exporter's own <p> margins, ran well past the text top and bottom). */
+:is(blockquote, #toc) {
+    box-shadow: none;
+    border: 0;
+    border-left: 8px solid var(--fg);
+    padding-block: 0;
+    padding-left: 1em;
 }
+:is(blockquote, #toc) > :first-child { margin-top: 0; }
+:is(blockquote, #toc) > :last-child  { margin-bottom: 0; }
+
+/* .notes: the sprite frame in the font colour -- an emphasised callout box. */
+.notes { --frame: var(--fg); }
+
+/* table: drop the heavy pixel box for light horizontal rules -- a thick header
+   rule over thin row rules, hard-edged so it still reads as pixel work. */
+table  { box-shadow: none; border: 0; }
+table th { border: 0; border-bottom: 2px solid var(--fg); }
+table td { border: 0; border-bottom: 1px solid var(--soft); }
 
 /* Links keep the browser's native underline (see the COLORS block): it follows
    the text rather than the box, so it never paints under the logo image, never
@@ -393,7 +453,7 @@ ul, #toc ul { list-style: square; }
 ul > li::marker { font-size: 1.6em; color: var(--fg); }
 
 /* Pixel grid: spacing snapped to multiples of 4px so nothing sits off-grid. */
-:is(pre, .notes, .abstract, #toc, blockquote) { padding: 16px; }
+:is(pre, .notes, .abstract) { padding: 16px; }
 :is(figure, table, hr, .abstract, .notes) { margin-block: 16px; }
 code { padding: 1px 4px; }
 
