@@ -12,7 +12,7 @@ fic="$1"
 dst="$2"
 
 # RSS Metas
-websiteurl="https://her.esy.fun"
+websiteurl="https://yannesposito.com"
 
 # HTML Accessors (similar to CSS accessors)
 dateaccessor='.yyydate'

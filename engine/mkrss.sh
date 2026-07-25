@@ -12,13 +12,13 @@ indexdir=".cache/rss"
 maxarticles=20
 
 # RSS Metas
-rsstitle="her.esy.fun"
-rssurl="https://her.esy.fun/rss.xml"
-websiteurl="https://her.esy.fun"
-rssdescription="her.esy.fun articles, mostly random personal thoughts"
+rsstitle="yannesposito.com"
+rssurl="https://yannesposito.com/rss.xml"
+websiteurl="https://yannesposito.com"
+rssdescription="yannesposito.com articles, mostly random personal thoughts"
 rsslang="en"
 rssauthor="yann@esposito.host (Yann Esposito)"
-rssimgurl="https://her.esy.fun/img/FlatAvatar.png"
+rssimgurl="https://yannesposito.com/img/FlatAvatar.png"
 
 # HTML Accessors (similar to CSS accessors)
 dateaccessor='pubDate'

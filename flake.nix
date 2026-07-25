@@ -1,5 +1,5 @@
 {
-  description = "her.esy.fun - Personal static website generator";
+  description = "yannesposito.com - Personal static website generator";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
@@ -63,7 +63,7 @@
           ];
 
           shellHook = ''
-            echo "her.esy.fun development environment"
+            echo "yannesposito.com development environment"
             echo ""
             echo "Available tools:"
             echo "  make        - $(make --version | head -1)"
