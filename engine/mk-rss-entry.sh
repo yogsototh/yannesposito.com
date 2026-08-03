@@ -29,7 +29,10 @@ formatdate() {
 }
 
 finddate(){ < $1 hxselect -c $dateaccessor | sed 's/\[//g;s/\]//g;s/ .*$//' }
-findtitle(){ < $1 hxselect -c $titleaccessor }
+# Titles are wrapped over several lines in the source HTML; collapse the
+# whitespace so readers do not display a line break mid-title.
+squash(){ tr '\n' ' ' | sed 's/  */ /g;s/^ //;s/ $//' }
+findtitle(){ < $1 hxselect -c $titleaccessor | squash }
 getcontent(){
     < $1 hxselect $contentaccessor | \
                   perl -pe 'use URI; $base="'$2'"; s# (href|src)="((?!https?://)[^"]*)"#" ".$1."=\"".URI->new_abs($2,$base)->as_string."\""#eig' }
@@ -43,7 +46,10 @@ mkcategories(){
 
 autoload -U colors && colors
 
-protect() { echo "$*" | sed 's/&/&amp;/g;s/</&lt;/g;s/>/&gt;/g' }
+# The & in a sed replacement means "the matched text", hence the backslashes:
+# without them, < was rewritten to <lt; instead of &lt;.
+# printf, not echo: zsh's echo expands \n and \t inside the value.
+protect() { printf '%s' "$*" | sed 's/&/\&amp;/g;s/</\&lt;/g;s/>/\&gt;/g' }
 
 xfic="$fic"
 postfile="$(echo "$fic"|sed 's#^'$postsdir'/##')"

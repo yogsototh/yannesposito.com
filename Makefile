@@ -166,6 +166,7 @@ _POST_HTMLS   := $(patsubst $(POSTS_SRC)/%.org,$(POSTS_DST)/%.html,$(_POST_ORGS)
 _POST_XMLS    := $(patsubst $(POSTS_SRC)/%.org,$(POSTS_CACHE)/%.xml,$(_POST_ORGS))
 _POST_INDEXES := $(patsubst $(POSTS_SRC)/%.org,$(POSTS_CACHE)/%.index,$(_POST_ORGS))
 _POST_RSSS    := $(patsubst $(POSTS_SRC)/%.org,$(POSTS_CACHE)/%.rss,$(_POST_ORGS))
+_POST_ATOMS   := $(patsubst $(POSTS_SRC)/%.org,$(POSTS_CACHE)/%.atom,$(_POST_ORGS))
 
 # Step 1: html → xml (clean HTML for parsing)
 $(POSTS_CACHE)/%.xml: $(POSTS_DST)/%.html $(ENV_VARS) | $$(@D)/.dir
@@ -179,6 +180,10 @@ $(POSTS_CACHE)/%.index: $(POSTS_CACHE)/%.xml engine/mk-index-entry.sh $(ENV_VARS
 $(POSTS_CACHE)/%.rss: $(POSTS_CACHE)/%.xml engine/mk-rss-entry.sh $(ENV_VARS) | $$(@D)/.dir
 	@engine/mk-rss-entry.sh "$<" "$@"
 
+# Step 4: xml → atom entries
+$(POSTS_CACHE)/%.atom: $(POSTS_CACHE)/%.xml engine/mk-atom-entry.sh $(ENV_VARS) | $$(@D)/.dir
+	@engine/mk-atom-entry.sh "$<" "$@"
+
 # Aggregation: index entries → index.html
 $(DST_DIR)/index.html: $(_POST_INDEXES) engine/mk-index.sh templates/index.html $(ENV_VARS) | $$(@D)/.dir
 	@engine/mk-index.sh
@@ -187,10 +192,15 @@ $(DST_DIR)/index.html: $(_POST_INDEXES) engine/mk-index.sh templates/index.html 
 $(DST_DIR)/rss.xml: $(_POST_RSSS) engine/mkrss.sh $(ENV_VARS) | $$(@D)/.dir
 	@engine/mkrss.sh
 
-.PHONY: index rss
+# Aggregation: atom entries → atom.xml
+$(DST_DIR)/atom.xml: $(_POST_ATOMS) engine/mkatom.sh $(ENV_VARS) | $$(@D)/.dir
+	@engine/mkatom.sh
+
+.PHONY: index rss atom
 index: $(DST_DIR)/index.html
 rss: $(DST_DIR)/rss.xml
-ALL += index rss
+atom: $(DST_DIR)/atom.xml
+ALL += index rss atom
 
 # ==============================================================================
 # Gemini Index & Atom Feed
@@ -236,7 +246,7 @@ clean:
 
 clean-html:
 	@find $(DST_DIR) -name '*.html' -delete
-	@rm -f $(DST_DIR)/index.html $(DST_DIR)/rss.xml
+	@rm -f $(DST_DIR)/index.html $(DST_DIR)/rss.xml $(DST_DIR)/atom.xml
 	@rm -rf $(CACHE_DIR)/rss
 
 # --- Logo (pixel art generation) ----------------------------------------------

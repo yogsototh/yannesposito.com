@@ -14,5 +14,7 @@ echo "Optim HTML size"
 # ./engine/update-file-size.sh
 echo "Building RSS"
 ./engine/mkrss.sh
+echo "Building Atom"
+./engine/mkatom.sh
 echo "Building Gemini Atom"
 ./engine/mk-gemini-atom.sh
