@@ -1,36 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0"
-	   xmlns:content="http://purl.org/rss/1.0/modules/content/"
-	   xmlns:wfw="http://wellformedweb.org/CommentAPI/"
-	   xmlns:dc="http://purl.org/dc/elements/1.1/"
-	   xmlns:atom="http://www.w3.org/2005/Atom"
-	   xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
-	   xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
-	   xmlns:georss="http://www.georss.org/georss"
-     xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
-     xmlns:media="http://search.yahoo.com/mrss/"><channel>
-  <title>yannesposito.com</title>
-  <atom:link href="https://yannesposito.com/rss.xml" rel="self" type="application/rss+xml" />
-  <link>https://yannesposito.com</link>
-  <description><![CDATA[yannesposito.com articles, mostly random personal thoughts]]></description>
-  <language>en</language>
-  <pubDate>Sun, 21 Dec 2025 00:00:00 +0100</pubDate>
-  <lastBuildDate>Mon, 03 Aug 2026 16:05:00 +0200</lastBuildDate>
-  <generator>mkrss.sh</generator>
-  <webMaster>yann@esposito.host (Yann Esposito)</webMaster>
-  <image>
-    <url>https://yannesposito.com/img/FlatAvatar.png</url>
-    <title>yannesposito.com</title>
-    <link>https://yannesposito.com</link>
-  </image>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+  <title type="text">yannesposito.com</title>
+  <subtitle type="text">yannesposito.com articles, mostly random personal thoughts</subtitle>
+  <id>https://yannesposito.com/</id>
+  <link rel="self" type="application/atom+xml" href="https://yannesposito.com/atom.xml"/>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/"/>
+  <link rel="alternate" type="application/rss+xml" href="https://yannesposito.com/rss.xml"/>
+  <updated>2025-12-21T00:00:00+01:00</updated>
+  <author>
+    <name>Yann Esposito</name>
+    <email>yann@esposito.host</email>
+    <uri>https://yannesposito.com/</uri>
+  </author>
+  <logo>https://yannesposito.com/img/FlatAvatar.png</logo>
+  <icon>https://yannesposito.com/favicon.ico</icon>
+  <generator uri="https://yannesposito.com/">mkatom.sh</generator>
 
-<item>
-<title>How I protect my forgejo instance from AI Web Crawlers</title>
-<guid>https://yannesposito.com/posts/0031-how-i-protect-my-forgejo-instance-from-ai-web-crawlers/index.html</guid>
-<pubDate>Sun, 21 Dec 2025 00:00:00 +0100</pubDate>
-<category>blog</category>
-<category>static</category>
-<description><![CDATA[
+<entry>
+  <title type="text">How I protect my forgejo instance from AI Web Crawlers</title>
+  <id>https://yannesposito.com/posts/0031-how-i-protect-my-forgejo-instance-from-ai-web-crawlers/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0031-how-i-protect-my-forgejo-instance-from-ai-web-crawlers/index.html"/>
+  <published>2025-12-21T00:00:00+01:00</published>
+  <updated>2025-12-21T00:00:00+01:00</updated>
+  <category term="blog"/>
+  <category term="static"/>
+  <summary type="text">This article describes my nginx configuration and strategy on how to prevent web crawlers from putting down my instance while still serving most people with minimal amount of friction.</summary>
+  <content type="html"><![CDATA[
 <main id="content"><article><h1 id="tl-dr-">TL;DR:</h1><p>Put that in your nginx config:</p><pre><code>location / {
   # needed to still allow git clone from http/https URLs
   if ($http_user_agent ~* &quot;git/|git-lfs/&quot;) {
@@ -87,22 +82,25 @@ think the volume is more important than the quality for these crawlers
 and it may take a while for them to need to adapt. Also, by publishing
 this, I know if too many people use the same trick, quickly, these
 crawlers will adapt.</p></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
 
-<item>
-<title>AI Assistant return of experience</title>
-<guid>https://yannesposito.com/posts/0030-ai-assistant-return-of-experience/index.html</guid>
-<pubDate>Thu, 03 Jul 2025 00:00:00 +0200</pubDate>
-<category>llm</category>
-<category>ai</category>
-<category>agent</category>
-<category>claude</category>
-<category>gpt</category>
-<category>chatgpt</category>
-<category>copilot</category>
-<description><![CDATA[
+<entry>
+  <title type="text">AI Assistant return of experience</title>
+  <id>https://yannesposito.com/posts/0030-ai-assistant-return-of-experience/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0030-ai-assistant-return-of-experience/index.html"/>
+  <published>2025-07-03T00:00:00+02:00</published>
+  <updated>2025-07-03T00:00:00+02:00</updated>
+  <category term="llm"/>
+  <category term="ai"/>
+  <category term="agent"/>
+  <category term="claude"/>
+  <category term="gpt"/>
+  <category term="chatgpt"/>
+  <category term="copilot"/>
+  <summary type="text">My return of experience from using AI agents again into a big real-world production ready project.</summary>
+  <content type="html"><![CDATA[
 <main id="content"><article><div class="notes"><p><strong>TL;DR of TL;DR:</strong> With the correct setup LLM-based AI
 Assistant have their place in the Software Developer tool-belt.</p></div><div class="notes"><p><strong>TL;DR:</strong></p><ol><li><strong>Evaluations</strong><ul><li>The Good:<ul><li><code class="verbatim">(++)</code> answering specific technical
 questions (with references),</li><li><code class="verbatim">(++)</code> write small unreliable scripts
@@ -196,25 +194,28 @@ complete the task manually versus the time spent supervising the
 automated tool.</li></ol><p>If you familiarize yourself with these agents, really try
 Clojure-MCP. It is a game changer and that provide a pretty huge
 advantage to Clojure comparatively to other programming languages.</p></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
 
-<item>
-<title>AI Assistants setup in Emacs &amp; Clojure-MCP</title>
-<guid>https://yannesposito.com/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html</guid>
-<pubDate>Tue, 17 Jun 2025 00:00:00 +0200</pubDate>
-<category>ai</category>
-<category>llm</category>
-<category>emacs</category>
-<category>mcp</category>
-<category>clojure</category>
-<category>setup</category>
-<category>claude</category>
-<category>copilot</category>
-<category>gptel</category>
-<category>doom-emacs</category>
-<description><![CDATA[
+<entry>
+  <title type="text">AI Assistants setup in Emacs &amp; Clojure-MCP</title>
+  <id>https://yannesposito.com/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0029-ai-assistants-in-doom-emacs-31-on-macos-with-clojure-mcp-server/index.html"/>
+  <published>2025-06-17T00:00:00+02:00</published>
+  <updated>2025-06-17T00:00:00+02:00</updated>
+  <category term="ai"/>
+  <category term="llm"/>
+  <category term="emacs"/>
+  <category term="mcp"/>
+  <category term="clojure"/>
+  <category term="setup"/>
+  <category term="claude"/>
+  <category term="copilot"/>
+  <category term="gptel"/>
+  <category term="doom-emacs"/>
+  <summary type="text">AI Assistants setup in Doom Emacs 31 on macOS with Clojure MCP server</summary>
+  <content type="html"><![CDATA[
 <main id="content"><article><div class="notes"><p>This article is about how to setup Emacs (doom-emacs in particlar) to
 work with most AI Assitants for Clojure projects using Clojure-MCP to
 provide the AI assistant the ability to run commands in the Clojure
@@ -326,17 +327,20 @@ list all users in my local environment DB. The result was then rendered
 as a nice org-mode file where users were grouped by Org. This was even
 better that what I could expect.</p><p>I could als ask how he could perform this operation, and the
 assistant returned the commands he exectued in the repl.</p></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
 
-<item>
-<title>ob-metapost</title>
-<guid>https://yannesposito.com/posts/0028-ob-metapost/index.html</guid>
-<pubDate>Thu, 19 Dec 2024 00:00:00 +0100</pubDate>
-<category>emacs</category>
-<category>metapost</category>
-<description><![CDATA[
+<entry>
+  <title type="text">ob-metapost</title>
+  <id>https://yannesposito.com/posts/0028-ob-metapost/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0028-ob-metapost/index.html"/>
+  <published>2024-12-19T00:00:00+01:00</published>
+  <updated>2024-12-19T00:00:00+01:00</updated>
+  <category term="emacs"/>
+  <category term="metapost"/>
+  <summary type="text">Metapost for generating images in Org Mode</summary>
+  <content type="html"><![CDATA[
 <main id="content"><article><p>When I searched how to generate pictures in org-mode on the Internet,
 Metapost is surprisingly missing.</p><p>If you never tried Metapost, I think you should really take a look at
 this gem.</p><p>This article will simply provide an example how I could create an
@@ -560,18 +564,21 @@ enddef;
 draw rounded_corners dragon(origin,240 right) withcolor (.6,.2,.7);
 </code></pre><figure><img src="https://yannesposito.com/posts/0028-ob-metapost/dragon.png.webp" title="dragon" alt="Dragon fractal"></img><figcaption>Dragon fractal</figcaption></figure><p>I hope it will help people to find the resources to write org babel
 integrations as well as help people use Metapost more.</p></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
 
-<item>
-<title>How I became rich with AI and how you can join me!</title>
-<guid>https://yannesposito.com/posts/0027-how-i-became-rich-with-ai-and-how-you-can-join-me/index.html</guid>
-<pubDate>Thu, 05 Sep 2024 00:00:00 +0200</pubDate>
-<category>blog</category>
-<category>satire</category>
-<category>ai</category>
-<description><![CDATA[
+<entry>
+  <title type="text">How I became rich with AI and how you can join me!</title>
+  <id>https://yannesposito.com/posts/0027-how-i-became-rich-with-ai-and-how-you-can-join-me/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0027-how-i-became-rich-with-ai-and-how-you-can-join-me/index.html"/>
+  <published>2024-09-05T00:00:00+02:00</published>
+  <updated>2024-09-05T00:00:00+02:00</updated>
+  <category term="blog"/>
+  <category term="satire"/>
+  <category term="ai"/>
+  <summary type="text">Subscribe to AImmortal and become rich, learn Kung fu, become immortal and more!</summary>
+  <content type="html"><![CDATA[
 <main id="content"><article><div class="notes"><p><strong>WARNING</strong></p><div class="line-block">Humor is the least shared thing.<br></br>     —Forgotten politician</div><p>Things appear to have changed in the recent years. The same content
 is put in front of the eyes of so many people that a few of them are no
 more able to distinguish if a content is a satire or dead serious. With
@@ -629,17 +636,20 @@ AI-focused company and upgrade to our premium package. Trust us, you
 won't regret it…</p><p>Join
 <strong>AImmmortal</strong><br></br><br></br><button style="font-size:1.5rem;padding:.5rem;background:var(--bg2);color:var(--fg)">
 <strong>Click Here to Subscribe to our AI Premium Package</strong><br></br><span style="font-size:.75rem">(starting at $10,000.00/month)</span></button></p></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
 
-<item>
-<title>BRUT: a bare-bones CSS Framework</title>
-<guid>https://yannesposito.com/posts/0026-brut-a-bare-bones-css-framework/index.html</guid>
-<pubDate>Thu, 25 Jul 2024 00:00:00 +0200</pubDate>
-<category>blog</category>
-<category>static</category>
-<description><![CDATA[
+<entry>
+  <title type="text">BRUT: a bare-bones CSS Framework</title>
+  <id>https://yannesposito.com/posts/0026-brut-a-bare-bones-css-framework/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0026-brut-a-bare-bones-css-framework/index.html"/>
+  <published>2024-07-25T00:00:00+02:00</published>
+  <updated>2024-07-25T00:00:00+02:00</updated>
+  <category term="blog"/>
+  <category term="static"/>
+  <summary type="text">(null)</summary>
+  <content type="html"><![CDATA[
 <main id="content"><article><div class="notes"><p><em>TL;DR:</em> <a href="https://brut.esy.fun"><code class="verbatim">brut.esy.fun</code></a></p><p><strong>Warning</strong>: I built this CSS Framework for my personal
 use. I am not a UI developer, and I am certainly not following best
 practices. That being said, I used this for a few different internal
@@ -719,18 +729,21 @@ as a CDN, I configured my server to add a few <a href="https://content-security-
 linking directly to the CSS and force people to copy it locally. I
 consider that 8kB is small enough that this should probably not be
 necessary.</p></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
 
-<item>
-<title>A quick CORS proxy in a few lines of Clojure</title>
-<guid>https://yannesposito.com/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html</guid>
-<pubDate>Fri, 08 Mar 2024 00:00:00 +0100</pubDate>
-<category>clojure</category>
-<category>CORS</category>
-<category>web</category>
-<description><![CDATA[
+<entry>
+  <title type="text">A quick CORS proxy in a few lines of Clojure</title>
+  <id>https://yannesposito.com/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0025-a-quick-cors-proxy-in-a-few-lines-of-clojure/index.html"/>
+  <published>2024-03-08T00:00:00+01:00</published>
+  <updated>2024-03-08T00:00:00+01:00</updated>
+  <category term="clojure"/>
+  <category term="CORS"/>
+  <category term="web"/>
+  <summary type="text">(null)</summary>
+  <content type="html"><![CDATA[
 <main id="content"><article><p>When I open a new tab in my browser I see my hand-made starter
 homepage. This is a single HTML file on my computer. Not a hosted
 website. This homepage is really useful and along the years I added some
@@ -903,17 +916,20 @@ status.</p><p>That's it. Another tool I created myself to prevent me using a
 service checking for the status of my website and sending me
 notifications about it. None of my website is crucial enough not be ok
 to wait a few hours to be re-enabled.</p></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
 
-<item>
-<title>Replace docker-compose with nix-shell</title>
-<guid>https://yannesposito.com/posts/0024-replace-docker-compose-with-nix-shell/index.html</guid>
-<pubDate>Thu, 02 Mar 2023 00:00:00 +0100</pubDate>
-<category>blog</category>
-<category>static</category>
-<description><![CDATA[
+<entry>
+  <title type="text">Replace docker-compose with nix-shell</title>
+  <id>https://yannesposito.com/posts/0024-replace-docker-compose-with-nix-shell/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0024-replace-docker-compose-with-nix-shell/index.html"/>
+  <published>2023-03-02T00:00:00+01:00</published>
+  <updated>2023-03-02T00:00:00+01:00</updated>
+  <category term="blog"/>
+  <category term="static"/>
+  <summary type="text">This is how I created a docker-compose replacement with nix-shell. Here is a solution to have a composable nix shell representation focused on replacing docker-compose.</summary>
+  <content type="html"><![CDATA[
 <main id="content"><article><p>At work we use <code class="verbatim">docker-compose</code> to run
 integration tests on a big project that need to connect to multiple
 different databases as well as a few other services. This article is
@@ -1353,18 +1369,21 @@ postgres</h3><p>For postgres:</p><div class="sourceCode" id="cb17"><pre class="s
 <span id="cb18-6"><a href="https://yannesposito.com/posts/0024-replace-docker-compose-with-nix-shell/index.html#cb18-6" aria-hidden="true" tabindex="-1"></a>     <span class="va">nativeBuildInputs</span> <span class="op">=</span> nativeBuildInputs <span class="op">;</span></span>
 <span id="cb18-7"><a href="https://yannesposito.com/posts/0024-replace-docker-compose-with-nix-shell/index.html#cb18-7" aria-hidden="true" tabindex="-1"></a>     <span class="va">shellHook</span>         <span class="op">=</span> shellHook<span class="op">;</span></span>
 <span id="cb18-8"><a href="https://yannesposito.com/posts/0024-replace-docker-compose-with-nix-shell/index.html#cb18-8" aria-hidden="true" tabindex="-1"></a>   <span class="op">})</span></span></code></pre></div></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
 
-<item>
-<title>My first ChatGPT exchange</title>
-<guid>https://yannesposito.com/posts/0023-my-first-chatgpt-exchange/index.html</guid>
-<pubDate>Sun, 11 Dec 2022 00:00:00 +0100</pubDate>
-<category>machine-learning</category>
-<category>ai</category>
-<category>gpt</category>
-<description><![CDATA[
+<entry>
+  <title type="text">My first ChatGPT exchange</title>
+  <id>https://yannesposito.com/posts/0023-my-first-chatgpt-exchange/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0023-my-first-chatgpt-exchange/index.html"/>
+  <published>2022-12-11T00:00:00+01:00</published>
+  <updated>2022-12-11T00:00:00+01:00</updated>
+  <category term="machine-learning"/>
+  <category term="ai"/>
+  <category term="gpt"/>
+  <summary type="text">My first interaction with ChatGPT about Clojure and Monads.</summary>
+  <content type="html"><![CDATA[
 <main id="content"><article><h1 id="the-first-few-questions-for-chatgpt">The first few questions for
 ChatGPT</h1><p>I finally opened an account to beta-test ChatGPT. I must say, I am
 quite impressed. I asked it a few questions that I could have asked
@@ -1528,17 +1547,20 @@ and the <code>Some</code> and <code>None</code> types:</p><div class="sourceCode
 value. The <code>map</code> and <code>flat-map</code> functions are then
 used to apply different functions to the values contained in the
 <code>Option</code> types, and the…</p></blockquote></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
 
-<item>
-<title>Org agenda on your startup page</title>
-<guid>https://yannesposito.com/posts/0022-org-agenda-on-your-startup-page/index.html</guid>
-<pubDate>Thu, 05 May 2022 00:00:00 +0200</pubDate>
-<category>blog</category>
-<category>static</category>
-<description><![CDATA[
+<entry>
+  <title type="text">Org agenda on your startup page</title>
+  <id>https://yannesposito.com/posts/0022-org-agenda-on-your-startup-page/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0022-org-agenda-on-your-startup-page/index.html"/>
+  <published>2022-05-05T00:00:00+02:00</published>
+  <updated>2022-05-05T00:00:00+02:00</updated>
+  <category term="blog"/>
+  <category term="static"/>
+  <summary type="text">(null)</summary>
+  <content type="html"><![CDATA[
 <main id="content"><article><h1 id="d88a1458-07bb-4c73-86c3-9f09b3d6a1ad" id="your-org-agenda-at-your-homepage">Your org-agenda at your
 homepage</h1><p>During most of the day my emacs is open. But I sometime forget to
 look at my org-agenda. This is why I wanted to find another way to be
@@ -1651,16 +1673,19 @@ in the PATH for the demon, I ran:</p><pre><code>launchctl config user path &quot
 my computer this is fine for me.</p><p>Then:</p><pre><code>launchctl load ~/Library/LaunchAgents/y.mothership.plist
 launchctl start mothership
 </code></pre><p>And that's about it.</p></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
 
-<item>
-<title>My personal environment sync</title>
-<guid>https://yannesposito.com/posts/0021-my-personal-environment-sync/index.html</guid>
-<pubDate>Sat, 30 Oct 2021 00:00:00 +0200</pubDate>
-<category>programming</category>
-<description><![CDATA[
+<entry>
+  <title type="text">My personal environment sync</title>
+  <id>https://yannesposito.com/posts/0021-my-personal-environment-sync/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0021-my-personal-environment-sync/index.html"/>
+  <published>2021-10-30T00:00:00+02:00</published>
+  <updated>2021-10-30T00:00:00+02:00</updated>
+  <category term="programming"/>
+  <summary type="text">(null)</summary>
+  <content type="html"><![CDATA[
 <main id="content"><article><p>I have a quite specific system that I improved along the years to
 manage my local environment. Think about, binaries I expect to have in
 my shell, as well as configuration files for various utilities, and a
@@ -1805,17 +1830,20 @@ future. Because bootstrapping is generally not trivial. I will probably
 update this post if something is missing.</p><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr></hr><ol><li id="fn1"><p>I use fish for interactive shell. I use <code>zsh</code>
 for quick dirty scripts (a lot better than bash), and I switch to <a href="https://hackage.haskell.org/package/turtle">turtle</a> if I need
 to be serious about the script.<a href="https://yannesposito.com/posts/0021-my-personal-environment-sync/index.html#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li></ol></section></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
 
-<item>
-<title>iA writer clone within doom-emacs</title>
-<guid>https://yannesposito.com/posts/0021-ia-writer-clone-within-doom-emacs/index.html</guid>
-<pubDate>Sun, 24 Oct 2021 00:00:00 +0200</pubDate>
-<category>emacs</category>
-<category>org-mode</category>
-<description><![CDATA[
+<entry>
+  <title type="text">iA writer clone within doom-emacs</title>
+  <id>https://yannesposito.com/posts/0021-ia-writer-clone-within-doom-emacs/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0021-ia-writer-clone-within-doom-emacs/index.html"/>
+  <published>2021-10-24T00:00:00+02:00</published>
+  <updated>2021-10-24T00:00:00+02:00</updated>
+  <category term="emacs"/>
+  <category term="org-mode"/>
+  <summary type="text">(null)</summary>
+  <content type="html"><![CDATA[
 <main id="content"><article><p>So I played with tweaking my emacs configuration again. I think I
 made something worth to be shared. I wanted to have the same effect than
 in iA writer within emacs. And I just reached this.</p><p>So the effect I am looking to achieve can be seen in this video.</p><video src="https://yannesposito.com/posts/0021-ia-writer-clone-within-doom-emacs/zen-writer-demo.mov" width="100%" controls="(null)" autoplay="(null)">
@@ -2046,17 +2074,20 @@ I think a clone of the iAWriter font.</p><div class="sourceCode" id="cb4" data-o
 <span id="cb5-152"><a href="https://yannesposito.com/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-152" aria-hidden="true" tabindex="-1"></a>    :box (<span class="kw">if</span> -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive-alt)))))</span>
 <span id="cb5-153"><a href="https://yannesposito.com/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-153" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-154"><a href="https://yannesposito.com/posts/0021-ia-writer-clone-within-doom-emacs/index.html#cb5-154" aria-hidden="true" tabindex="-1"></a><span class="co">;;; doom-zen-writer-theme.el ends here</span></span></code></pre></div></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
 
-<item>
-<title>Cool looking org-mode</title>
-<guid>https://yannesposito.com/posts/0020-cool-looking-org-mode/index.html</guid>
-<pubDate>Sat, 21 Aug 2021 00:00:00 +0200</pubDate>
-<category>org-mode</category>
-<category>emacs</category>
-<description><![CDATA[
+<entry>
+  <title type="text">Cool looking org-mode</title>
+  <id>https://yannesposito.com/posts/0020-cool-looking-org-mode/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0020-cool-looking-org-mode/index.html"/>
+  <published>2021-08-21T00:00:00+02:00</published>
+  <updated>2021-08-21T00:00:00+02:00</updated>
+  <category term="org-mode"/>
+  <category term="emacs"/>
+  <summary type="text">A configuration to make org-mode look even better.</summary>
+  <content type="html"><![CDATA[
 <main id="content"><article><div class="notes"><p>TL;DR: My tweaked configuration to make org-mode even more pleasant
 to use.</p></div><h2 id="the-code">The code</h2><p>At the end of this article there is a long digression about why I
 ended up here. But instead of bothering you with the why here is a what
@@ -2356,16 +2387,19 @@ using my work. Save this file into <code class="verbatim">~/.doom.d/themes/doom-
 <span id="cb3-203"><a href="https://yannesposito.com/posts/0020-cool-looking-org-mode/index.html#cb3-203" aria-hidden="true" tabindex="-1"></a><span class="co">;;; doom-plain-theme.el ends here</span></span></code></pre></div><p>You will probably need more work to achieve the colors you expect.
 For that, using <code>SPC-u C-x =</code> will probably be useful. It
 will show the font face under the cursor.</p><p>Best of luck.</p><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr></hr><ol><li id="fn1"><p><a href="https://www.nerdfonts.com">https://www.nerdfonts.com</a><a href="https://yannesposito.com/posts/0020-cool-looking-org-mode/index.html#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li><li id="fn2"><p><a href="https://www.nerdfonts.com">https://www.nerdfonts.com</a><a href="https://yannesposito.com/posts/0020-cool-looking-org-mode/index.html#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li><li id="fn3"><p><a href="https://github.com/hlissner/doom-emacs">https://github.com/hlissner/doom-emacs</a><a href="https://yannesposito.com/posts/0020-cool-looking-org-mode/index.html#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li><li id="fn4"><p><a href="https://github.com/rougier/nano-emacs">https://github.com/rougier/nano-emacs</a><a href="https://yannesposito.com/posts/0020-cool-looking-org-mode/index.html#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li></ol></section></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
 
-<item>
-<title>Utopia (2013)</title>
-<guid>https://yannesposito.com/posts/0019-utopia-tv-show/index.html</guid>
-<pubDate>Tue, 01 Jun 2021 00:00:00 +0200</pubDate>
-<category>tv-show</category>
-<description><![CDATA[
+<entry>
+  <title type="text">Utopia (2013)</title>
+  <id>https://yannesposito.com/posts/0019-utopia-tv-show/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0019-utopia-tv-show/index.html"/>
+  <published>2021-06-01T00:00:00+02:00</published>
+  <updated>2021-06-01T00:00:00+02:00</updated>
+  <category term="tv-show"/>
+  <summary type="text">The Utopia (2013-2014) British TV Show deserve to be known. In the age of COVID19 it is even more relevant. The filmography is magistral, as well as the soundtrack, acting, and overall atmosphere. I really urge you to at least take a look at the opening scene.</summary>
+  <content type="html"><![CDATA[
 <main id="content"><article><figure><img src="https://yannesposito.com/posts/0019-utopia-tv-show/utopia-s01.jpg.webp" alt="Utopia"></img><figcaption aria-hidden="true">Utopia</figcaption></figure><p>I wanted to write a few articles about great shows lot of people
 around me do not know about. <a href="https://www.themoviedb.org/tv/46511-utopia">Utopia (2013)</a> is
 one of these TV Shows that deserve more attention.</p><p>The <strong>filmography</strong> is quite original. I have never seen
@@ -2385,17 +2419,20 @@ then search no further this one is a great original choice. If you are
 still unsure, just watch the opening scene, it is quite incredible.</p><p>ps: Also try to get the original content. Amazon Prime apparently cut
 some very important scene and also changed the ratio which hurt the very
 good image work.</p></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
 
-<item>
-<title>Fast Static Site with make</title>
-<guid>https://yannesposito.com/posts/0018-makefile-as-static-site-builder-follow-up/index.html</guid>
-<pubDate>Tue, 25 May 2021 00:00:00 +0200</pubDate>
-<category>blog</category>
-<category>static</category>
-<description><![CDATA[
+<entry>
+  <title type="text">Fast Static Site with make</title>
+  <id>https://yannesposito.com/posts/0018-makefile-as-static-site-builder-follow-up/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0018-makefile-as-static-site-builder-follow-up/index.html"/>
+  <published>2021-05-25T00:00:00+02:00</published>
+  <updated>2021-05-25T00:00:00+02:00</updated>
+  <category term="blog"/>
+  <category term="static"/>
+  <summary type="text">A deeper view of my static site builder Makefile</summary>
+  <content type="html"><![CDATA[
 <main id="content"><article><p>This article will dig a bit deeper about my <code class="verbatim">Makefile</code> based static website generator. In a <a href="https://yannesposito.com/posts/0017-static-blog-builder/index.html">previous
 article</a> I just gave the rationale and an overview to do it yourself.
 Mainly it is very fast and portable.</p><p>A few goals reached by my current build system are:</p><ol><li>Be fast and make the minimal amount of work as possible. I don't
@@ -2756,17 +2793,20 @@ also need to generate an index and an atom file for gemini:</p><div class="sourc
 <span id="cb19-10"><a href="https://yannesposito.com/posts/0018-makefile-as-static-site-builder-follow-up/index.html#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="dv">clean:</span></span>
 <span id="cb19-11"><a href="https://yannesposito.com/posts/0018-makefile-as-static-site-builder-follow-up/index.html#cb19-11" aria-hidden="true" tabindex="-1"></a>    <span class="ch">-</span><span class="fu">[ ! -z </span><span class="st">&quot;</span><span class="ch">$(</span><span class="dt">DST_DIR</span><span class="ch">)</span><span class="st">&quot;</span><span class="fu"> ] &amp;&amp; rm -rf </span><span class="ch">$(</span><span class="dt">DST_DIR</span><span class="ch">)</span><span class="fu">/*</span></span>
 <span id="cb19-12"><a href="https://yannesposito.com/posts/0018-makefile-as-static-site-builder-follow-up/index.html#cb19-12" aria-hidden="true" tabindex="-1"></a>    <span class="ch">-</span><span class="fu">[ ! -z </span><span class="st">&quot;</span><span class="ch">$(</span><span class="dt">CACHE_DIR</span><span class="ch">)</span><span class="st">&quot;</span><span class="fu"> ] &amp;&amp; rm -rf </span><span class="ch">$(</span><span class="dt">CACHE_DIR</span><span class="ch">)</span><span class="fu">/*</span></span></code></pre></div></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
 
-<item>
-<title>Static Blog Builder</title>
-<guid>https://yannesposito.com/posts/0017-static-blog-builder/index.html</guid>
-<pubDate>Sat, 01 May 2021 00:00:00 +0200</pubDate>
-<category>blog</category>
-<category>static</category>
-<description><![CDATA[
+<entry>
+  <title type="text">Static Blog Builder</title>
+  <id>https://yannesposito.com/posts/0017-static-blog-builder/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0017-static-blog-builder/index.html"/>
+  <published>2021-05-01T00:00:00+02:00</published>
+  <updated>2021-05-01T00:00:00+02:00</updated>
+  <category term="blog"/>
+  <category term="static"/>
+  <summary type="text">Minimal and fast static website builder with make.</summary>
+  <content type="html"><![CDATA[
 <main id="content"><article><p>As someone on the Internet said not so far ago. Building its own
 static building system is a rite of passage for many developers. It has
 a lot of nice features. It gives a goal with a feeling of
@@ -2903,18 +2943,21 @@ builder itself is very simple, very stable and still very efficient.</p><p>As a 
 that's great. There are plenty of things to learn along the way. Still
 if you want something stable for a long time, with a minimal amount of
 dependencies, I think this Makefile is really a great start.</p></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
 
-<item>
-<title>Gemini</title>
-<guid>https://yannesposito.com/posts/0016-gemini/index.html</guid>
-<pubDate>Mon, 09 Nov 2020 00:00:00 +0100</pubDate>
-<category>internet</category>
-<category>gopher</category>
-<category>gemini</category>
-<description><![CDATA[
+<entry>
+  <title type="text">Gemini</title>
+  <id>https://yannesposito.com/posts/0016-gemini/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0016-gemini/index.html"/>
+  <published>2020-11-09T00:00:00+01:00</published>
+  <updated>2020-11-09T00:00:00+01:00</updated>
+  <category term="internet"/>
+  <category term="gopher"/>
+  <category term="gemini"/>
+  <summary type="text">How I discovered gemini</summary>
+  <content type="html"><![CDATA[
 <main id="content"><article><p>This weekend I read an article about gopher and gemini. I already
 seen articles about gemini pass. Somehow, it was more appealing to me
 than gopher space for totally subjective reasons I think. Anyway this
@@ -2940,16 +2983,19 @@ format is a kind of super simplified markdown. I really like the
 simplicity of it.</p><p>Here are a few links to get you started.</p><p>Web:</p><ul><li><a href="https://gemini.circumlunar.space">gemini homepage</a></li><li><a href="https://thelambdalab.xyz/elpher/">elpher emacs gopher and
 gemini client</a></li><li><a href="https://portal.mozz.us/gemini/gemini.circumlunar.space/">Explore
 gemini from the web</a></li></ul><p>Gopher:</p><ul><li><a href="gopher://thelambdalab.xyz/1/projects/elpher/">elpher</a></li></ul><p>Gemini:</p><ul><li><a href="gemini://her.esy.fun">my website in gemini</a></li></ul></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
 
-<item>
-<title>How I use org-mode</title>
-<guid>https://yannesposito.com/posts/0015-how-i-use-org-mode/index.html</guid>
-<pubDate>Thu, 29 Oct 2020 00:00:00 +0100</pubDate>
-<category>org-mode</category>
-<description><![CDATA[
+<entry>
+  <title type="text">How I use org-mode</title>
+  <id>https://yannesposito.com/posts/0015-how-i-use-org-mode/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0015-how-i-use-org-mode/index.html"/>
+  <published>2020-10-29T00:00:00+01:00</published>
+  <updated>2020-10-29T00:00:00+01:00</updated>
+  <category term="org-mode"/>
+  <summary type="text">How I use org-mode</summary>
+  <content type="html"><![CDATA[
 <main id="content"><nav id="toc" role="doc-toc"><ul><li><a href="https://yannesposito.com/posts/0015-how-i-use-org-mode/index.html#overview" id="toc-overview">Overview</a><ul><li><a href="https://yannesposito.com/posts/0015-how-i-use-org-mode/index.html#daily-routine" id="toc-daily-routine">daily
 routine</a></li><li><a href="https://yannesposito.com/posts/0015-how-i-use-org-mode/index.html#document-writing" id="toc-document-writing">document
 writing</a></li><li><a href="https://yannesposito.com/posts/0015-how-i-use-org-mode/index.html#note-taking" id="toc-note-taking">note taking</a></li><li><a href="https://yannesposito.com/posts/0015-how-i-use-org-mode/index.html#journaling" id="toc-journaling">journal</a></li></ul></li><li><a href="https://yannesposito.com/posts/0015-how-i-use-org-mode/index.html#task-management" id="toc-task-management">Task
@@ -3313,16 +3359,19 @@ using <a href="https://github.com/hlissner/doom-emacs">doom-emacs</a> is
 a lot better than using my own personal configuration from scratch
 because I wouldn't be able to end up with so much configuration
 quality.<a href="https://yannesposito.com/posts/0015-how-i-use-org-mode/index.html#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li></ol></section></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
 
-<item>
-<title>Auto change emacs theme</title>
-<guid>https://yannesposito.com/posts/0014-change-emacs-theme-automatically/index.html</guid>
-<pubDate>Tue, 22 Sep 2020 00:00:00 +0200</pubDate>
-<category>emacs</category>
-<description><![CDATA[
+<entry>
+  <title type="text">Auto change emacs theme</title>
+  <id>https://yannesposito.com/posts/0014-change-emacs-theme-automatically/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0014-change-emacs-theme-automatically/index.html"/>
+  <published>2020-09-22T00:00:00+02:00</published>
+  <updated>2020-09-22T00:00:00+02:00</updated>
+  <category term="emacs"/>
+  <summary type="text">A small snippet to automatically change theme in emacs.</summary>
+  <content type="html"><![CDATA[
 <main id="content"><article><p>One thing I kind of like is the ability to change emacs theme
 depending of the hour. There are two possibilities. One would be to sync
 with the sun using the current location. There is an emacs package for
@@ -3351,17 +3400,20 @@ good enough. So here is my piece of code I added to my doom-emacs <code class="v
 <span id="cb1-16"><a href="https://yannesposito.com/posts/0014-change-emacs-theme-automatically/index.html#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-17"><a href="https://yannesposito.com/posts/0014-change-emacs-theme-automatically/index.html#cb1-17" aria-hidden="true" tabindex="-1"></a>(y/auto-update-theme)</span></code></pre></div><p>I'm still playing with it. So there still might be a bug. Use at your
 own risk. Happy hacking to all of you.</p></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
 
-<item>
-<title>How to choose your tools</title>
-<guid>https://yannesposito.com/posts/0013-how-to-choose-your-tools/index.html</guid>
-<pubDate>Sat, 09 May 2020 00:00:00 +0200</pubDate>
-<category>emacs</category>
-<category>softwares</category>
-<description><![CDATA[
+<entry>
+  <title type="text">How to choose your tools</title>
+  <id>https://yannesposito.com/posts/0013-how-to-choose-your-tools/index.html</id>
+  <link rel="alternate" type="text/html" href="https://yannesposito.com/posts/0013-how-to-choose-your-tools/index.html"/>
+  <published>2020-05-09T00:00:00+02:00</published>
+  <updated>2020-05-09T00:00:00+02:00</updated>
+  <category term="emacs"/>
+  <category term="softwares"/>
+  <summary type="text">Modern tools tend to disappear. An app on the web will change, and could break for the worst. Quite often it is worth investing into tools with steep learning curve.</summary>
+  <content type="html"><![CDATA[
 <main id="content"><article><p>This week I didn't take a look at HN to grab some news. And this
 week-end, in the morning I read those:</p><ul><li><a href="https://news.ycombinator.com/item?id=23102430">Zoom
 acquires keybase</a></li><li><a href="https://news.ycombinator.com/item?id=23107123">Making Emacs
@@ -3485,8 +3537,7 @@ big system separately.</p><p>Howevery I'm deeply convinced the investment is rea
 source</em>; c.f <a href="https://www.gnu.org/philosophy/open-source-misses-the-point.en.html">Why
 Open Source misses the point of Free Software</a><a href="https://yannesposito.com/posts/0013-how-to-choose-your-tools/index.html#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li><li id="fn2"><p><a href="http://yannesposito.com/Scratch/en/blog/Learn-Vim-Progressively/">Lear
 Vim Progressively</a> is an old "popular" blog post of mine.<a href="https://yannesposito.com/posts/0013-how-to-choose-your-tools/index.html#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li></ol></section></article></main>
-]]></description>
-</item>
+]]></content>
+</entry>
 
-</channel>
-</rss>
+</feed>
